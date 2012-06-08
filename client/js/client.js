@@ -35,7 +35,7 @@ XSS.Client = function() {
             help    : {page: 'help'},
             credits : {page: 'credits'},
             back    : {menu: 'main'},
-            name    : {menu: 'matchmaking'}, // TODO: depends on context
+            name    : {menu: 'matchmaking'},
             quick   : {menu: 'gametype'},
             host    : {menu: 'gametype'}
         },
@@ -140,28 +140,38 @@ XSS.Client = function() {
         },
 
         menuToInput = function(inputName) {
-            var newMenuOptions, inputTextPixels, inputCaretPos, onInput,
-                events = 'keydown.' + inputName + ' keyup.' + inputName,
-                inputPixels = (menuInputs[inputName])(),
-                labelBBox = XSS.drawables.getboundingBox(inputPixels),
-                inputTextLeft = labelBBox.x2 + 4;
+            var inputPixels, inputCaretPos, onInput,
+                repaintEvents   = 'keydown.' + inputName + ' keyup.' + inputName,
+                labelPixels     = (menuInputs[inputName])(),
+                labelBBox       = XSS.drawables.getboundingBox(labelPixels),
+                inputTextLeft   = labelBBox.x2 + 4,
 
-            newMenuOptions = {start: XSS.settings.width, end: 0, callback: function() {
-                paintables.menuInstruct = {pixels: getMenuInstructionPixels('Start typing and press Enter when you’re done.')};
-                paintables.menu = {pixels: inputPixels};
+                inputSubmit = function() {
+                    delete paintables.menu;
+                    delete paintables.input;
 
-                onInput = function(e) {
+                    XSS.input.focus().off(repaintEvents);
+                    XSS.effects.stopPulse('caret');
+                    XSS.effects.swipe('input', labelPixels.concat(inputPixels));
+
+                    var menu = menuActions[inputName].menu;
+                    var menuPixels = getMenu(menu);
+                    var newMenuOptions = {start: XSS.settings.width, end: 0, callback: function() {
+                        currentMenu = menu;
+                        showMenuScreen(menu);
+                    }};
+
+                    XSS.effects.swipe('newMenu', menuPixels, newMenuOptions);
+
+                },
+
+                inputUpdate = function() {
                     var input = XSS.input[0],
                         inputTextValue = input.value;
 
-                    if (e && e.which === 13) { // Enter Key
-                        XSS.input.focus().off(events);
-                        return;
-                    }
-
-                    inputTextPixels = XSS.font.write(inputTextLeft, labelBBox.y, inputTextValue);
-                    inputCaretPos = XSS.font.getLength(inputTextValue.substr(0, input.selectionStart));
-                    paintables.text = {pixels: inputTextPixels};
+                    inputPixels      = XSS.font.write(inputTextLeft, labelBBox.y, inputTextValue);
+                    inputCaretPos    = XSS.font.getLength(inputTextValue.substr(0, input.selectionStart));
+                    paintables.input = {pixels: inputPixels};
 
                     // Disallow selections because it is too annoying to visually represent it
                     if (input.selectionStart !== input.selectionEnd) {
@@ -173,17 +183,29 @@ XSS.Client = function() {
                     XSS.effects.pulse('caret', XSS.drawables.line(
                         inputCaretPos + inputTextLeft, labelBBox.y - 1,
                         inputCaretPos + inputTextLeft, labelBBox.y2));
+                },
+
+                paintForm = function () {
+
+                    paintables.menu = {pixels: labelPixels};
+                    paintables.menuInstruct = {pixels: getMenuInstructionPixels('Start typing and press Enter when you’re done.')};
+
+                    onInput = function (e) {
+                        if (e.which === 13) {
+                            inputSubmit();
+                        } else {
+                            inputUpdate();
+                        }
+                    };
+
+                    XSS.input.focus();
+                    XSS.input.on(repaintEvents, onInput);
+
+                    inputUpdate();
                 };
 
-                XSS.input.focus();
-                XSS.input.attr({maxlength: 12});
-                XSS.input.on(events, onInput);
-
-                onInput();
-            }};
-
             XSS.effects.swipe('oldmenu', getMenu(currentMenu));
-            XSS.effects.swipe('input', inputPixels, newMenuOptions);
+            XSS.effects.swipe('input', labelPixels, {start: XSS.settings.width, end: 0, callback: paintForm});
 
             currentMenu = false;
             delete paintables.menu;
