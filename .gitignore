@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+.Trashes
+Thumbs.db
+
+# You should install these yourself
+node_modules
