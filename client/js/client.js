@@ -141,6 +141,7 @@ XSS.Client = function() {
 
         menuToInput = function(inputName) {
             var newMenuOptions, inputTextPixels, inputCaretPos, onInput,
+                events = 'keydown.' + inputName + ' keyup.' + inputName,
                 inputPixels = (menuInputs[inputName])(),
                 labelBBox = XSS.drawables.getboundingBox(inputPixels),
                 inputTextLeft = labelBBox.x2 + 4;
@@ -149,9 +150,15 @@ XSS.Client = function() {
                 paintables.menuInstruct = {pixels: getMenuInstructionPixels('Start typing and press Enter when you’re done.')};
                 paintables.menu = {pixels: inputPixels};
 
-                onInput = function() {
+                onInput = function(e) {
                     var input = XSS.input[0],
                         inputTextValue = input.value;
+
+                    if (e && e.which === 13) { // Enter Key
+                        XSS.input.focus().off(events);
+                        return;
+                    }
+
                     inputTextPixels = XSS.font.write(inputTextLeft, labelBBox.y, inputTextValue);
                     inputCaretPos = XSS.font.getLength(inputTextValue.substr(0, input.selectionStart));
                     paintables.text = {pixels: inputTextPixels};
@@ -168,7 +175,10 @@ XSS.Client = function() {
                         inputCaretPos + inputTextLeft, labelBBox.y2));
                 };
 
-                XSS.input.focus().on('keydown.' + inputName + ' keyup.' + inputName, onInput);
+                XSS.input.focus();
+                XSS.input.attr({maxlength: 12});
+                XSS.input.on(events, onInput);
+
                 onInput();
             }};
 
