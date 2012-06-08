@@ -3,7 +3,7 @@
 XSS.Client = function() {
     'use strict';
 
-    var paintables         = XSS.canvas.paintables,
+    var canvasPixels       = XSS.canvas.pixels,
         marginLeft         = 40,
         marginTop          = 63,
         currentMenu        = 'main',
@@ -107,9 +107,9 @@ XSS.Client = function() {
         },
 
         showMenuScreen = function(menu) {
-            paintables.structure    = {pixels: XSS.drawables.getPreGameCanvasPixels()};
-            paintables.menuInstruct = {pixels: getMenuInstructionPixels('Use arrow keys to navigate and Enter to select.')};
-            paintables.menu         = {pixels: getMenu(menu)};
+            canvasPixels.structure    = {pixels: XSS.drawables.getPreGameCanvasPixels()};
+            canvasPixels.menuInstruct = {pixels: getMenuInstructionPixels('Use arrow keys to navigate and Enter to select.')};
+            canvasPixels.menu         = {pixels: getMenu(menu)};
         },
 
         switchMenus = function(menu) {
@@ -118,20 +118,20 @@ XSS.Client = function() {
 
             newMenuOptions = {start: XSS.settings.width, end: 0, callback: function() {
                 currentMenu = menu;
-                paintables.menu = {pixels: menuPixels};
+                canvasPixels.menu = {pixels: menuPixels};
             }};
 
             XSS.effects.swipe('oldmenu', getMenu(currentMenu));
             XSS.effects.swipe('newMenu', menuPixels, newMenuOptions);
 
             currentMenu = false;
-            delete paintables.menu;
+            delete canvasPixels.menu;
         },
 
         menuToPage = function(page) {
             var backToMenu = currentMenu;
-            paintables.menu = {pixels: (menuPages[page])()};
-            paintables.menuInstruct = {pixels: getMenuInstructionPixels('')};
+            canvasPixels.menu = {pixels: (menuPages[page])()};
+            canvasPixels.menuInstruct = {pixels: getMenuInstructionPixels('')};
             currentMenu = false;
             $(document).one('keydown', function() {
                 currentMenu = backToMenu;
@@ -147,8 +147,8 @@ XSS.Client = function() {
                 inputTextLeft   = labelBBox.x2 + 4,
 
                 inputSubmit = function() {
-                    delete paintables.menu;
-                    delete paintables.input;
+                    delete canvasPixels.menu;
+                    delete canvasPixels.input;
 
                     XSS.input.focus().off(repaintEvents);
                     XSS.effects.stopPulse('caret');
@@ -171,7 +171,7 @@ XSS.Client = function() {
 
                     inputPixels      = XSS.font.write(inputTextLeft, labelBBox.y, inputTextValue);
                     inputCaretPos    = XSS.font.getLength(inputTextValue.substr(0, input.selectionStart));
-                    paintables.input = {pixels: inputPixels};
+                    canvasPixels.input = {pixels: inputPixels};
 
                     // Disallow selections because it is too annoying to visually represent it
                     if (input.selectionStart !== input.selectionEnd) {
@@ -187,8 +187,12 @@ XSS.Client = function() {
 
                 paintForm = function () {
 
-                    paintables.menu = {pixels: labelPixels};
-                    paintables.menuInstruct = {pixels: getMenuInstructionPixels('Start typing and press Enter when you’re done.')};
+                    canvasPixels.menu = {
+                        pixels: labelPixels
+                    };
+                    canvasPixels.menuInstruct = {
+                        pixels: getMenuInstructionPixels('Start typing and press Enter when you’re done.')
+                    };
 
                     onInput = function (e) {
                         if (e.which === 13) {
@@ -208,7 +212,7 @@ XSS.Client = function() {
             XSS.effects.swipe('input', labelPixels, {start: XSS.settings.width, end: 0, callback: paintForm});
 
             currentMenu = false;
-            delete paintables.menu;
+            delete canvasPixels.menu;
         };
 
     $(document).on('/xss/client/menu/chosen', function(e, option) {
@@ -230,14 +234,14 @@ XSS.Client = function() {
     $(document).on('/xss/client/key/up.menu', function() {
         if (currentMenu) {
             menuOptionSelected[currentMenu]--;
-            paintables.menu = {pixels: getMenu(currentMenu)};
+            canvasPixels.menu = {pixels: getMenu(currentMenu)};
         }
     });
 
     $(document).on('/xss/client/key/down.menu', function() {
         if (currentMenu) {
             menuOptionSelected[currentMenu]++;
-            paintables.menu = {pixels: getMenu(currentMenu)};
+            canvasPixels.menu = {pixels: getMenu(currentMenu)};
         }
     });
 
@@ -269,10 +273,10 @@ XSS.Client = function() {
 
     XSS.input.on('click', function() {
         if (currentMenu) {
-            paintables.mousemove = {pixels: XSS.font.write(15, XSS.settings.height - 12, 'POINTING DEVICES ARE NOT SUPPORTED - USE KEYBOARD')};
+            canvasPixels.mousemove = {pixels: XSS.font.write(15, XSS.settings.height - 12, 'POINTING DEVICES ARE NOT SUPPORTED - USE KEYBOARD')};
             window.clearTimeout(XSS.mouseTimer);
             XSS.mouseTimer = window.setTimeout(function() {
-                delete paintables.mousemove;
+                delete canvasPixels.mousemove;
             }, 1500);
         }
     });

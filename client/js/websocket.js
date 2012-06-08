@@ -3,7 +3,9 @@
 XSS.WebSocket = function() {
     'use strict';
 
-    return; // TODO ENABLE
+    return;
+    // TODO ENABLE
+    // TODO Switch to socket.io?
 
     var SupportedWebSocket = XSS.getWebSocket(),
 
@@ -26,9 +28,9 @@ XSS.WebSocket = function() {
     };
 
     socket.onmessage = function(message) {
-        var json = JSON.parse(message.paintables);
-        console.log(['IN', json.action, json.paintables]);
-        $(document).trigger('/xss/client/' + json.action, [json.paintables]);
+        var json = JSON.parse(message.pixels);
+        console.log(['IN', json.action, json.pixels]);
+        $(document).trigger('/xss/client/' + json.action, [json.pixels]);
     };
 
     return {

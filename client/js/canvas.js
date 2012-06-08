@@ -3,7 +3,7 @@
 XSS.Canvas = function() {
     'use strict';
 
-    var paintables = {},                           // Data to paint
+    var pixels = {},                               // Pixels to paint
 
         settings   = XSS.settings,
         width      = settings.width  * settings.s, // Canvas width
@@ -62,7 +62,7 @@ XSS.Canvas = function() {
 
             // OHSHI
             if (fps < 15) {
-                console.warn('Slow FPS:', fps, ', Pixels:', paintables.toSource().length);
+                console.log('Slow FPS:', fps, ', Pixels:', pixels.toSource().length);
             }
 
             // Clear ze canvas
@@ -72,25 +72,25 @@ XSS.Canvas = function() {
             $(document).trigger('/xss/canvas/paint', [diff]);
 
             // Paint!
-            for (var k in paintables) {
-                if (paintables.hasOwnProperty(k) && paintables[k]) {
+            for (var k in pixels) {
+                if (pixels.hasOwnProperty(k) && pixels[k]) {
 
-                    ctx.globalAlpha = paintables[k].opacity || 1;
+                    ctx.globalAlpha = pixels[k].opacity || 1;
 
                     // Some data is dynamic, caching overhead could slow down rendering
-                    if (paintables[k].cache === false) {
-                        paintData(ctx, paintables[k].pixels);
+                    if (pixels[k].cache === false) {
+                        paintData(ctx, pixels[k].pixels);
                     }
 
                     // Offscreen painting + caching output when possible
                     // Throw array array data
                     else {
-                        if (!paintables[k].canvas) {
-                            paintables[k] = {
-                                canvas: paintOffscreen(paintables[k].pixels)
+                        if (!pixels[k].canvas) {
+                            pixels[k] = {
+                                canvas: paintOffscreen(pixels[k].pixels)
                             };
                         }
-                        ctx.drawImage(paintables[k].canvas, 0, 0);
+                        ctx.drawImage(pixels[k].canvas, 0, 0);
                     }
                 }
             }
@@ -114,7 +114,7 @@ XSS.Canvas = function() {
 
     return {
         canvas: canvas,
-        paintables: paintables
+        pixels: pixels
     };
 
 };

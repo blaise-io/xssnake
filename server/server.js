@@ -42,8 +42,8 @@ var start = function() {
         /** @namespace message.utf8Data */
         connection.on('message', function(message) {
             var json = JSON.parse(message.utf8Data);
-            console.log('IN', json.action, json.paintables, client);
-            events.emit('/xss/message/' + json.action, json.paintables, client);
+            console.log('IN', json.action, json.data, client);
+            events.emit('/xss/message/' + json.action, json.data, client);
         }.bind(this));
 
         connection.on('close', function() {

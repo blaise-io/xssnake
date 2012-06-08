@@ -3,7 +3,7 @@
 XSS.Effects = function() {
     'use strict';
 
-    var paintables = XSS.canvas.paintables,
+    var CanvasPixels = XSS.canvas.pixels,
 
         shiftPixels = function(pixels, x, y) {
             var pixelsShifted = [];
@@ -18,12 +18,12 @@ XSS.Effects = function() {
 
         pulse = function(name, pixels, duration, progress) {
             var grow = true,
-                paintable = 'pulse_' + name;
+                pixelsname = 'pulse_' + name;
 
             duration = duration || 250;
             progress = progress || 1;
 
-            $(document).on('/xss/canvas/paint.' + paintable, function(e, diff) {
+            $(document).on('/xss/canvas/paint.' + pixelsname, function(e, diff) {
 
                 progress += (grow) ? diff : -1 * diff;
 
@@ -35,20 +35,20 @@ XSS.Effects = function() {
                     grow = false;
                 }
 
-                paintables[paintable] = {
+                CanvasPixels[pixelsname] = {
                     cache: false,
                     opacity: progress / duration,
                     pixels: pixels
                 };
             });
 
-            return paintable;
+            return pixelsname;
         },
 
         stopPulse = function(name) {
             var paintable = 'pulse_' + name;
             $(document).off('/xss/canvas/paint.' + paintable);
-            delete paintables[paintable];
+            delete CanvasPixels[paintable];
         },
 
         swipeHorizontal = function(name, pixels, options) {
@@ -73,9 +73,9 @@ XSS.Effects = function() {
                     $(document).off(listener);
                     $(document).trigger(trigger);
 
-                    delete paintables['swipeleft_' + name];
+                    delete CanvasPixels['swipeleft_' + name];
                 } else {
-                    paintables['swipeleft_' + name] = {
+                    CanvasPixels['swipeleft_' + name] = {
                         cache: false,
                         pixels: shiftPixels(pixels, Math.floor(start - ((start - end) * (progress / duration))), 0)
                     };
