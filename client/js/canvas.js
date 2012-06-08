@@ -25,7 +25,6 @@ XSS.Canvas = function() {
             return Math.round(number / settings.s) * settings.s;
         },
 
-
         // Create a canvas on the fly and paint
         paintOffscreen = function(data) {
             var canvasTmp;

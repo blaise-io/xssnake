@@ -107,9 +107,9 @@ XSS.Client = function() {
         },
 
         showMenuScreen = function(menu) {
-            paintables.structure = {pixels: XSS.drawables.getPreGameCanvasPixels()};
+            paintables.structure    = {pixels: XSS.drawables.getPreGameCanvasPixels()};
             paintables.menuInstruct = {pixels: getMenuInstructionPixels('Use arrow keys to navigate and Enter to select.')};
-            paintables.menu = {pixels: getMenu(menu)};
+            paintables.menu         = {pixels: getMenu(menu)};
         },
 
         switchMenus = function(menu) {
