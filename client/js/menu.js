@@ -14,13 +14,16 @@ XSS.menuSettings = {
 };
 
 
-XSS.stage = 'main';
+XSS.currentStageName = 'main';
+
+
+XSS.menuHistory = [XSS.currentStageName];
 
 
 XSS.SelectMenu = function(name) {
     'use strict';
 
-    var addOption, getPixels, options = [];
+    var addOption, getOptionByIndex, getPixels, options = [];
 
     addOption = function(value, title, description) {
         options.push({
@@ -30,8 +33,14 @@ XSS.SelectMenu = function(name) {
         });
     };
 
+    getOptionByIndex = function(index) {
+        return options[index];
+    };
+
     getPixels = function() {
-        if (XSS.menuChoices[name] < 0) {
+        if (typeof XSS.menuChoices[name] === 'undefined') {
+            XSS.menuChoices[name] = 0;
+        } else if (XSS.menuChoices[name] < 0) {
             XSS.menuChoices[name] = options.length - 1;
         } else if (XSS.menuChoices[name] > options.length - 1) {
             XSS.menuChoices[name] = 0;
@@ -46,8 +55,9 @@ XSS.SelectMenu = function(name) {
     };
 
     return {
-        addOption : addOption,
-        getPixels : getPixels
+        addOption        : addOption,
+        getOptionByIndex : getOptionByIndex,
+        getPixels        : getPixels
     };
 };
 
@@ -55,11 +65,11 @@ XSS.SelectMenu = function(name) {
 XSS.BaseSelectStage = function(name, selectMenu) {
     'use strict';
 
-    var getPixels, getStageType, addEventHandlers,
-        upEvent = '/xss/key/up.' + name,
-        downEvent = '/xss/key/down.' + name,
-        SelectEvent = '/xss/key/enter.' + name,
-        BackEvent = '/xss/key/escape.' + name + ' /xss/key/backspace.' + name;
+    var getPixels, getStageType, addEventHandlers, removeEventHandlers,
+        upEvent     = '/xss/key/up.' + name,
+        downEvent   = '/xss/key/down.' + name,
+        selectEvent = '/xss/key/enter.' + name,
+        backEvent   = '/xss/key/escape.' + name + ' /xss/key/backspace.' + name;
 
     getPixels = function() {
         return selectMenu.getPixels(XSS.menuChoices[name]);
@@ -74,20 +84,38 @@ XSS.BaseSelectStage = function(name, selectMenu) {
 
         $(document).on(downEvent, function() {
             XSS.menuChoices[name] += 1;
-            XSS.menu.updateStage();
+            XSS.menu.refreshStage();
         });
 
         $(document).on(upEvent, function() {
             XSS.menuChoices[name] -= 1;
-            XSS.menu.updateStage();
+            XSS.menu.refreshStage();
+        });
+
+        $(document).on(selectEvent, function() {
+            var option = selectMenu.getOptionByIndex(XSS.menuChoices[name]);
+            XSS.menu.switchStage(XSS.currentStageName, option.value);
+        });
+
+        $(document).on(backEvent, function() {
+            var previousStageName, historyLength = XSS.menuHistory.length;
+            if (historyLength > 1) {
+                previousStageName = XSS.menuHistory[historyLength - 2];
+                XSS.menu.switchStage(XSS.currentStageName, previousStageName, {back: true});
+            }
         });
     };
 
+    removeEventHandlers = function() {
+        $(document).off([downEvent, upEvent, selectEvent].join(' '));
+    };
+
     return {
-        getPixels       : getPixels,
-        getTravelPixels : getPixels,
-        getStageType    : getStageType,
-        addEventHandlers: addEventHandlers
+        getPixels           : getPixels,
+        getTravelPixels     : getPixels,
+        getStageType        : getStageType,
+        addEventHandlers    : addEventHandlers,
+        removeEventHandlers : removeEventHandlers
     };
 };
 
@@ -108,7 +136,7 @@ XSS.MainStage = function(name) {
 XSS.MultiPlayerStage = function(name) {
     'use strict';
 
-    var menu = new XSS.SelectMenu();
+    var menu = new XSS.SelectMenu(name);
     menu.addOption('quick', 'QUICK MATCH WITH A STRANGER', 'Quickly play a game using matchmaking.');
     menu.addOption('host', 'HOST A PRIVATE GAME', 'Generates a secret game URL to give to a friend.');
 
@@ -119,30 +147,50 @@ XSS.MultiPlayerStage = function(name) {
 XSS.Menu = function() {
     'use strict';
 
-    var stages, initStage, showStage, updateStage;
+    var stages, newStage, switchStage, refreshStage, updateStage;
 
     stages = {
-            main: XSS.MainStage('main'),
-            mp  : XSS.MultiPlayerStage('mp')
+        main : XSS.MainStage('main'),
+        mp   : XSS.MultiPlayerStage('mp')
     };
 
-    initStage = function(stage) {
+    newStage = function(stageName) {
+        var stage = stages[stageName];
+
         XSS.canvas.pixels.instruction = {
             pixels: XSS.font.write(XSS.menuSettings.left, 45, XSS.StageInstructions[stage.getStageType()])
         };
 
-        showStage(stage);
+        updateStage(stage);
         stage.addEventHandlers();
     };
 
-    updateStage = function() {
-        showStage(stages[XSS.stage]);
+    refreshStage = function() {
+        updateStage(stages[XSS.currentStageName]);
     };
 
-    showStage = function(stage) {
+    updateStage = function(stage) {
         XSS.canvas.pixels.stage = {
             pixels: stage.getPixels()
         };
+    };
+
+    switchStage = function(currentStageName, newStageName, options) {
+        options = options || {};
+
+        // Unload old stage
+        stages[currentStageName].removeEventHandlers();
+
+        // Load new stage
+        XSS.currentStageName = newStageName;
+        newStage(newStageName);
+
+        // Log history
+        if (options.back) {
+            XSS.menuHistory.pop();
+        } else {
+            XSS.menuHistory.push(newStageName);
+        }
     };
 
     XSS.canvas.pixels.border = {
@@ -153,12 +201,12 @@ XSS.Menu = function() {
         pixels: XSS.drawables.getHeaderPixels(XSS.menuSettings.left, 23)
     };
 
-    initStage(stages[XSS.stage]);
-
-    // TODO: Enter, Escape travelpixels
+    newStage(XSS.currentStageName);
 
     return {
-        updateStage: updateStage
+        newStage     : newStage,
+        refreshStage : refreshStage,
+        switchStage  : switchStage
     };
 
 };
