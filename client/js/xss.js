@@ -28,18 +28,30 @@ var XSS = {
         }
 
         // DOM
-        this.input      = $('<input>').appendTo(document.body).attr({autofocus: true});
+        this.input = $('<input>').appendTo(document.body).attr({autofocus: true});
+
+        $(document).on('keydown', function(e) {
+            switch (e.which) {
+                case 13: $(document).trigger('/xss/key/enter'); break;
+                case 8:  $(document).trigger('/xss/key/backspace'); break;
+                case 27: $(document).trigger('/xss/key/escape'); break;
+                case 37: $(document).trigger('/xss/key/left'); break;
+                case 38: $(document).trigger('/xss/key/up'); break;
+                case 39: $(document).trigger('/xss/key/right');break;
+                case 40: $(document).trigger('/xss/key/down'); break;
+            }
+        });
 
         // Objects
-        this.canvas     = new XSS.Canvas();
-        this.socket     = new XSS.WebSocket();
-        this.font       = new XSS.Font();
-        this.drawables  = new XSS.Drawables();
-        this.effects    = new XSS.Effects();
-        this.client     = new XSS.Client();
+        this.canvas    = new XSS.Canvas();
+        this.socket    = new XSS.WebSocket();
+        this.font      = new XSS.Font();
+        this.drawables = new XSS.Drawables();
+        this.effects   = new XSS.Effects();
+        this.menu      = new XSS.Menu();
 
         // Shortcuts
-        this.send   = this.socket.send;
+        this.send      = this.socket.send;
     },
 
     detectCanvas: function() {

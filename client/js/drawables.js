@@ -35,7 +35,7 @@ XSS.Drawables = function() {
         },
 
         // Background before game starts
-        getPreGameCanvasPixels = function() {
+        getOuterBorderPixels = function() {
             return [].concat(
                 // Top
                 line(1, 0, w - 1, 0),
@@ -52,27 +52,35 @@ XSS.Drawables = function() {
             );
         },
 
+        getHeaderPixels = function(x, y) {
+            var welcome = XSS.font.write(0, 0, 'WELCOME  2  XSSNAKE');
+            return [].concat(
+                XSS.effects.zoomX2(welcome, x, y),
+                XSS.font.write(x, y+13, (new Array(45)).join('+'))
+            );
+        },
+
         getMenuPixels = function(name, x, y, menu) {
             var pixels = [],
                 options = menu.options,
                 selected = menu.selected || 0,
-                help = options[selected][2];
+                description = options[selected].description;
 
             // Option
             for (var i = 0, m = options.length; i < m; i++) {
                 pixels = pixels.concat(
-                    XSS.font.write(x, y + (i * 9), options[i][1], (selected === i))
+                    XSS.font.write(x, y + (i * 9), options[i].title, (selected === i))
                 );
             }
 
             // Help text line(s)
-            if (help) {
-                if (typeof help === 'string') {
-                    help = [help];
+            if (description) {
+                if (typeof description === 'string') {
+                    description = [description];
                 }
-                for (var j = 0, n = help.length; j < n; j++) {
+                for (var j = 0, n = description.length; j < n; j++) {
                     pixels = pixels.concat(
-                        XSS.font.write(x, y + ((i + 1 + j) * 9), help[j])
+                        XSS.font.write(x, y + ((i + 1 + j) * 9), description[j])
                     );
                 }
             }
@@ -116,7 +124,8 @@ XSS.Drawables = function() {
 
     return {
         line: line,
-        getPreGameCanvasPixels: getPreGameCanvasPixels,
+        getHeaderPixels: getHeaderPixels,
+        getOuterBorderPixels: getOuterBorderPixels,
         getMenuPixels: getMenuPixels,
         getboundingBox: getboundingBox
     };
