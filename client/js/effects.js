@@ -6,13 +6,20 @@ XSS.Effects = function() {
     var CanvasPixels = XSS.canvas.pixels,
 
         shiftPixels = function(pixels, x, y) {
-            var pixelsShifted = [];
+            var xx, yy,
+                pixelsShifted = [],
+                w = XSS.settings.width,
+                h = XSS.settings.height;
+
             for (var i = 0, m = pixels.length; i < m; i++) {
-                pixelsShifted.push([
-                    pixels[i][0] + x,
-                    pixels[i][1] + y
-                ]);
+                xx = pixels[i][0] + x;
+                yy = pixels[i][1] + y;
+                if (xx < 0 || yy < 0 || xx > w || yy > h) {
+                    continue;
+                }
+                pixelsShifted.push([xx, yy]);
             }
+
             return pixelsShifted;
         },
 
@@ -58,8 +65,8 @@ XSS.Effects = function() {
                 listener = '/xss/canvas/paint.swipeleft_' + name,
                 trigger  = '/xss/effects/swipe/complete/' + name,
                 start    = (typeof options.start === 'number') ? options.start : 0,
-                end      = (typeof options.end   === 'number') ? options.end : XSS.settings.width * -1,
-                duration = options.duration || 300;
+                end      = (typeof options.end   === 'number') ? options.end : -XSS.settings.width,
+                duration = options.duration || 256;
 
             $(document).on(listener, function(e, diff) {
 

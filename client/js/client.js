@@ -143,7 +143,7 @@ XSS.Client = function() {
             var inputPixels, inputCaretPos, onInput,
                 repaintEvents   = 'keydown.' + inputName + ' keyup.' + inputName,
                 labelPixels     = (menuInputs[inputName])(),
-                labelBBox       = XSS.drawables.getboundingBox(labelPixels),
+                labelBBox       = XSS.drawables.getBoundingBox(labelPixels),
                 inputTextLeft   = labelBBox.x2 + 4,
 
                 inputSubmit = function() {

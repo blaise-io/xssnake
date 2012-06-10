@@ -88,7 +88,7 @@ XSS.Drawables = function() {
             return pixels;
         },
 
-        getboundingBox = function(pixels) {
+        getBoundingBox = function(pixels) {
             var x, y,
                 minX = false,
                 minY = false,
@@ -127,6 +127,6 @@ XSS.Drawables = function() {
         getHeaderPixels: getHeaderPixels,
         getOuterBorderPixels: getOuterBorderPixels,
         getMenuPixels: getMenuPixels,
-        getboundingBox: getboundingBox
+        getBoundingBox: getBoundingBox
     };
 };

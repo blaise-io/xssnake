@@ -32,8 +32,8 @@ var XSS = {
 
         $(document).on('keydown', function(e) {
             switch (e.which) {
+                case  8: $(document).trigger('/xss/key/backspace'); break;
                 case 13: $(document).trigger('/xss/key/enter'); break;
-                case 8:  $(document).trigger('/xss/key/backspace'); break;
                 case 27: $(document).trigger('/xss/key/escape'); break;
                 case 37: $(document).trigger('/xss/key/left'); break;
                 case 38: $(document).trigger('/xss/key/up'); break;

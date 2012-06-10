@@ -62,7 +62,7 @@ XSS.Canvas = function() {
 
             // OHSHI
             if (fps < 15) {
-                console.log('Slow FPS:', fps, ', Pixels:', pixels.toSource().length);
+                console.log('low FPS:', fps);
             }
 
             // Clear ze canvas
