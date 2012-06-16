@@ -6,56 +6,20 @@ XSS.Effects = function() {
     var CanvasPixels = XSS.canvas.pixels,
 
         shiftPixels = function(pixels, x, y) {
-            var xx, yy,
-                pixelsShifted = [],
+            var sx, sy, pixelsShifted = [],
                 w = XSS.settings.width,
                 h = XSS.settings.height;
 
             for (var i = 0, m = pixels.length; i < m; i++) {
-                xx = pixels[i][0] + x;
-                yy = pixels[i][1] + y;
-                if (xx < 0 || yy < 0 || xx > w || yy > h) {
+                sx = pixels[i][0] + x;
+                sy = pixels[i][1] + y;
+                if (sx < 0 || sy < 0 || sx > w || sy > h) {
                     continue;
                 }
-                pixelsShifted.push([xx, yy]);
+                pixelsShifted.push([sx, sy]);
             }
 
             return pixelsShifted;
-        },
-
-        pulse = function(name, pixels, duration, progress) {
-            var grow = true,
-                pixelsname = 'pulse_' + name;
-
-            duration = duration || 250;
-            progress = progress || 1;
-
-            $(document).on('/xss/canvas/paint.' + pixelsname, function(e, diff) {
-
-                progress += (grow) ? diff : -1 * diff;
-
-                if (progress <= 0) {
-                    progress = 0.01;
-                    grow = true;
-                } else if (progress > duration) {
-                    progress = duration;
-                    grow = false;
-                }
-
-                CanvasPixels[pixelsname] = {
-                    cache: false,
-                    opacity: progress / duration,
-                    pixels: pixels
-                };
-            });
-
-            return pixelsname;
-        },
-
-        stopPulse = function(name) {
-            var paintable = 'pulse_' + name;
-            $(document).off('/xss/canvas/paint.' + paintable);
-            delete CanvasPixels[paintable];
         },
 
         swipeHorizontal = function(name, pixels, options) {
@@ -63,10 +27,10 @@ XSS.Effects = function() {
 
             var progress = 0,
                 listener = '/xss/canvas/paint.swipeleft_' + name,
-                trigger  = '/xss/effects/swipe/complete/' + name,
-                start    = (typeof options.start === 'number') ? options.start : 0,
-                end      = (typeof options.end   === 'number') ? options.end : -XSS.settings.width,
-                duration = options.duration || 256;
+                trigger = '/xss/effects/swipe/complete/' + name,
+                start = (typeof options.start === 'number') ? options.start : 0,
+                end = (typeof options.end === 'number') ? options.end : -XSS.settings.width,
+                duration = options.duration || XSS.settings.width; // Lock speed to pixels
 
             $(document).on(listener, function(e, diff) {
 
@@ -83,8 +47,8 @@ XSS.Effects = function() {
                     delete CanvasPixels['swipeleft_' + name];
                 } else {
                     CanvasPixels['swipeleft_' + name] = {
-                        cache: false,
-                        pixels: shiftPixels(pixels, Math.floor(start - ((start - end) * (progress / duration))), 0)
+                        cache : false,
+                        pixels: shiftPixels(pixels, Math.round(start - ((start - end) * (progress / duration))), 0)
                     };
                 }
             });
@@ -106,10 +70,7 @@ XSS.Effects = function() {
         };
 
     return {
-        pulse: pulse,
-        stopPulse: stopPulse,
-        swipe: swipeHorizontal,
+        swipe : swipeHorizontal,
         zoomX2: zoomX2
     };
-
 };
