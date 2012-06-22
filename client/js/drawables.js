@@ -55,10 +55,11 @@ XSS.Drawables = function() {
     };
 
     getHeaderPixels = function(x, y) {
-        var welcome = XSS.font.write(0, 0, 'WELCOME  2  XSSNAKE');
+        y = y || 18;
+        var welcome = XSS.font.write(0, 0, '<XSSNAKE>');
         return [].concat(
-            XSS.effects.zoomX2(welcome, x, y),
-            XSS.font.write(x, y + 13, (new Array(45)).join('+'))
+            XSS.effects.zoomX4(welcome, x, y),
+            XSS.font.write(x, y + 20, (new Array(45)).join('+'))
         );
     };
 
@@ -66,7 +67,7 @@ XSS.Drawables = function() {
         var pixels = [],
             options = menu.options,
             selected = menu.selected || 0,
-            description = options[selected].description;
+            description = options[selected] ? options[selected].description : '';
 
         // Option
         for (var i = 0, m = options.length; i < m; i++) {

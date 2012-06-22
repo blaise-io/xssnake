@@ -99,7 +99,7 @@ XSS.Canvas = function() {
             // FPS
             fps = Math.round(1000 / diff);
             time = now;
-            if (fps < 15) {
+            if (fps > 1 && fps <= 15) { // (fps==1) = window has no focus
                 console.log('low FPS');
             }
 

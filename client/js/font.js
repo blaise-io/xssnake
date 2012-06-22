@@ -345,18 +345,18 @@ XSS.Font = function() {
         'X    ');
 
     glyphs['<'] = parseGlyph('' +
-        '   X' +
         '  X ' +
         ' X  ' +
-        '  X ' +
-        '   X');
-
-    glyphs['>'] = parseGlyph('' +
         'X   ' +
         ' X  ' +
-        '  X ' +
+        '  X ');
+
+    glyphs['>'] = parseGlyph('' +
         ' X  ' +
-        'X   ');
+        '  X ' +
+        '   X' +
+        '  X ' +
+        ' X  ');
 
     glyphs['0'] = parseGlyph('' +
         ' XX ' +

@@ -3,12 +3,6 @@
 XSS.menuChoices = {};
 
 
-XSS.StageInstructions = {
-    select: 'Use arrow keys to navigate and Enter to select.',
-    screen: ''
-};
-
-
 XSS.menuSettings = {
     left: 40,
     top : 64
@@ -62,17 +56,68 @@ XSS.SelectMenu = function(name) {
     };
 };
 
-XSS.BaseScreenStage = function(name, screen) {
+
+XSS.BaseInputStage = function(name) {
     'use strict';
 
-    var returnEvent = ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' '),
+    var options = {
+            minlength: 0,
+            maxlength: 150,
+            name     : name,
+            value    : '',
+            label    : ''
+        },
+
+        setOption = function(option, value) {
+            options[option] = value;
+        },
+
+        getInstruction = function() {
+            return 'Start typing and press Enter when you’re done';
+        },
+
+        getPixels = function() {
+            return [];
+        },
+
+        addEventHandlers = function() {
+        },
+
+        removeEventHandlers = function() {
+        },
+
+        removePixels = function() {
+        };
+
+    return {
+        setOption          : setOption,
+        getInstruction     : getInstruction,
+        getPixels          : getPixels,
+        getTravelPixels    : getPixels,
+        addEventHandlers   : addEventHandlers,
+        removeEventHandlers: removeEventHandlers,
+        removePixels       : removePixels
+    };
+};
+
+
+XSS.BaseScreenStage = function(name) {
+    'use strict';
+
+    var screen = [],
+
+        returnEvent = ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' '),
+
+        setScreen = function(overwriteScreen) {
+            screen = overwriteScreen;
+        },
+
+        getInstruction = function() {
+            return 'Press Esc to go back';
+        },
 
         getPixels = function() {
             return screen;
-        },
-
-        getStageType = function() {
-            return 'screen';
         },
 
         addEventHandlers = function() {
@@ -94,9 +139,10 @@ XSS.BaseScreenStage = function(name, screen) {
         };
 
     return {
+        setScreen          : setScreen,
+        getInstruction     : getInstruction,
         getPixels          : getPixels,
         getTravelPixels    : getPixels,
-        getStageType       : getStageType,
         addEventHandlers   : addEventHandlers,
         removeEventHandlers: removeEventHandlers,
         removePixels       : removePixels
@@ -104,22 +150,28 @@ XSS.BaseScreenStage = function(name, screen) {
 };
 
 
-XSS.BaseSelectStage = function(name, selectMenu) {
+XSS.BaseSelectStage = function(name) {
     'use strict';
 
-    var events = {
+    var menu = new XSS.SelectMenu(name),
+
+        events = {
             up    : '/xss/key/up.' + name,
             down  : '/xss/key/down.' + name,
             select: '/xss/key/enter.' + name,
             back  : ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' ')
         },
 
-        getPixels = function() {
-            return selectMenu.getPixels(XSS.menuChoices[name]);
+        getInstruction = function() {
+            return 'Use arrow keys to navigate and Enter to select.';
         },
 
-        getStageType = function() {
-            return 'select';
+        getPixels = function() {
+            return menu.getPixels(XSS.menuChoices[name]);
+        },
+
+        setMenu = function(overwriteMenu) {
+            menu = overwriteMenu;
         },
 
         addEventHandlers = function() {
@@ -136,7 +188,7 @@ XSS.BaseSelectStage = function(name, selectMenu) {
             });
 
             $(document).on(events.select, function() {
-                var option = selectMenu.getOptionByIndex(XSS.menuChoices[name]);
+                var option = menu.getOptionByIndex(XSS.menuChoices[name]);
                 XSS.menu.switchStage(XSS.currentStageName, option.value);
             });
 
@@ -158,9 +210,10 @@ XSS.BaseSelectStage = function(name, selectMenu) {
         };
 
     return {
+        setMenu            : setMenu,
+        getInstruction     : getInstruction,
         getPixels          : getPixels,
         getTravelPixels    : getPixels,
-        getStageType       : getStageType,
         addEventHandlers   : addEventHandlers,
         removeEventHandlers: removeEventHandlers,
         removePixels       : removePixels
@@ -171,79 +224,111 @@ XSS.BaseSelectStage = function(name, selectMenu) {
 XSS.MainStage = function(name) {
     'use strict';
 
-    var menu = new XSS.SelectMenu(name);
+    var stage, menu;
+
+    menu = new XSS.SelectMenu(name);
     menu.addOption('mp', 'MULTIPLAYER', 'Play with a friend or (un)friendly stranger.');
     menu.addOption('sp', 'SINGLE PLAYER', 'Play with yourself, get some practise.');
     menu.addOption('help', 'HEEELP?!!', 'How do I use this computer electronic device?');
     menu.addOption('credits', 'CREDITS', 'Made by Blaise Kal, 2012.');
 
-    return new XSS.BaseSelectStage(name, menu);
+    stage = new XSS.BaseSelectStage(name);
+    stage.setMenu(menu);
+
+    return stage;
 };
 
 
 XSS.MultiPlayerStage = function(name) {
     'use strict';
 
-    var menu = new XSS.SelectMenu(name);
+    var stage, menu;
+
+    menu = new XSS.SelectMenu(name);
     menu.addOption('quick', 'QUICK MATCH WITH A STRANGER', 'Quickly play a game using matchmaking.');
     menu.addOption('host', 'HOST A PRIVATE GAME', 'Generates a secret game URL to give to a friend.');
 
-    return new XSS.BaseSelectStage(name, menu);
+    stage = new XSS.BaseSelectStage(name);
+    stage.setMenu(menu);
+
+    return stage;
 };
 
 
 XSS.GameTypeStage = function(name) {
     'use strict';
 
-    var menu = new XSS.SelectMenu(name);
+    var stage, menu;
+
+    menu = new XSS.SelectMenu(name);
     menu.addOption('friendly', 'FRIENDLY MODE', 'May slightly dent your ego ♥');
     menu.addOption('xss', 'XSS MODE', ['The winner of the game is able to execute Java-',
         'script in the browser of the loser...  alert(’☠’)']);
 
-    return new XSS.BaseSelectStage(name, menu);
+    stage = new XSS.BaseSelectStage(name);
+    stage.menu = menu;
+
+    return stage;
 };
 
 
 XSS.CreditsStage = function(name) {
     'use strict';
 
-    var screen,
+    var screen, stage,
         left = XSS.menuSettings.left,
         top = XSS.menuSettings.top;
 
     screen = [].concat(
-        XSS.effects.zoomX2(XSS.font.write(0, 0, '* Credits'), left, top - 14),
-        XSS.font.write(left, top + 9, 'Blaise Kal:'),
-        XSS.font.write(left, top + 18, 'Placeholder:'),
+        XSS.effects.zoomX2(XSS.font.write(0, 0, '<CREDITS>'), left, top),
+        XSS.font.write(left, top + 18, 'Blaise Kal:'),
         XSS.font.write(left, top + 27, 'Placeholder:'),
-        XSS.font.write(left, top + 40, '(press Esc to go back)'),
-        XSS.font.write(left + 52, top + 9, 'Code, Pixels, Concept'),
-        XSS.font.write(left + 52, top + 18, 'Testing, Hosting'),
-        XSS.font.write(left + 52, top + 27, 'Testing, Snoek')
+        XSS.font.write(left, top + 35, 'Placeholder:'),
+        XSS.font.write(left + 52, top + 18, 'Code, Pixels, Concept'),
+        XSS.font.write(left + 52, top + 27, 'Testing, Hosting'),
+        XSS.font.write(left + 52, top + 35, 'Testing, Snoek')
     );
 
-    return new XSS.BaseScreenStage(name, screen);
+    stage = new XSS.BaseScreenStage(name);
+    stage.setScreen(screen);
+
+    return stage;
 };
 
 
 XSS.HelpStage = function(name) {
     'use strict';
 
-    var screen,
+    var screen, stage,
         left = XSS.menuSettings.left,
         top = XSS.menuSettings.top;
 
     screen = [].concat(
-        XSS.effects.zoomX2(XSS.font.write(0, 0, '* Heeelp?!!'), left, top - 14),
-        XSS.font.write(left, top + 9, '• Play using the arrow keys on your keyboard'),
-        XSS.font.write(left, top + 18, '• You can chat during the game by typing+enter'),
-        XSS.font.write(left, top + 27, '• Open Source at github.com/blaisekal/xssnake'),
-        XSS.font.write(left, top + 36, '• Github is also for bugs and feature requests'),
-        XSS.font.write(left, top + 45, '• Other questions or issues: blaisekal@gmail.com'),
-        XSS.font.write(left, top + 58, '(press Esc to go back)')
+        XSS.effects.zoomX2(XSS.font.write(0, 0, '<HEEELP?!!>'), left, top),
+        XSS.font.write(left, top + 18, '• Play using the arrow keys on your keyboard'),
+        XSS.font.write(left, top + 27, '• You can chat during the game by typing+enter'),
+        XSS.font.write(left, top + 35, '• Open Source at github.com/blaisekal/xssnake'),
+        XSS.font.write(left, top + 45, '• Github is also for bugs and feature requests'),
+        XSS.font.write(left, top + 54, '• Other questions or issues: blaisekal@gmail.com')
     );
 
-    return new XSS.BaseScreenStage(name, screen);
+    stage = new XSS.BaseScreenStage(name);
+    stage.setScreen(screen);
+
+    return stage;
+};
+
+
+XSS.InputNameStage = function(name) {
+    'use strict';
+
+    var screen;
+    screen = new XSS.BaseInputStage(name);
+    screen.setOption('label', 'What’s your name?');
+    screen.setOption('minlength', 2);
+    screen.setOption('maxlength', 10);
+
+    return screen;
 };
 
 
@@ -252,9 +337,10 @@ XSS.Menu = function() {
 
     var stages = {
             main   : XSS.MainStage('main'),
-            mp     : XSS.MultiPlayerStage('mp'),
+            mp     : XSS.InputNameStage('mp'),
+            // mp     : XSS.MultiPlayerStage('mp'),
             type   : XSS.GameTypeStage('type'),
-            help   : XSS.HelpStage('credits'),
+            help   : XSS.HelpStage('help'),
             credits: XSS.CreditsStage('credits')
         },
 
@@ -262,7 +348,7 @@ XSS.Menu = function() {
             var stage = stages[stageName];
 
             XSS.canvas.pixels.instruction = {
-                pixels: XSS.font.write(XSS.menuSettings.left, 45, XSS.StageInstructions[stage.getStageType()])
+                pixels: XSS.font.write(XSS.menuSettings.left, 45, stage.getInstruction())
             };
 
             updateStage(stage);
@@ -298,7 +384,6 @@ XSS.Menu = function() {
         },
 
         switchStage = function(currentStageName, newStageName, options) {
-
             var onAnimateDone = function() {
                 // Load new stage
                 XSS.currentStageName = newStageName;
@@ -311,6 +396,10 @@ XSS.Menu = function() {
                     XSS.menuHistory.push(newStageName);
                 }
             };
+
+            if (!stages[newStageName]) {
+                throw new Error('Stage does not exist: ' + newStageName);
+            }
 
             // Unload old stage
             stages[currentStageName].removeEventHandlers();
@@ -331,7 +420,7 @@ XSS.Menu = function() {
     };
 
     XSS.canvas.pixels.header = {
-        pixels: XSS.drawables.getHeaderPixels(XSS.menuSettings.left, 23)
+        pixels: XSS.drawables.getHeaderPixels(XSS.menuSettings.left)
     };
 
     newStage(XSS.currentStageName);

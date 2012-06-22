@@ -67,10 +67,15 @@ XSS.Effects = function() {
                 ]);
             }
             return pixelsZoomed;
+        },
+
+        zoomX4 = function(pixels, shiftX, shiftY) {
+            return zoomX2(zoomX2(pixels, 0, 0), shiftX, shiftY);
         };
 
     return {
         swipe : swipeHorizontal,
-        zoomX2: zoomX2
+        zoomX2: zoomX2,
+        zoomX4: zoomX4
     };
 };
