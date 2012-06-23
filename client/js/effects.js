@@ -3,7 +3,7 @@
 XSS.Effects = function() {
     'use strict';
 
-    var CanvasPixels = XSS.canvas.pixels,
+    var canvasPixels = XSS.canvas.pixels,
 
         shiftPixels = function(pixels, x, y) {
             var sx, sy, pixelsShifted = [],
@@ -20,6 +20,36 @@ XSS.Effects = function() {
             }
 
             return pixelsShifted;
+        },
+
+        blink = function(name, pixels, speed) {
+            var namespace = 'blink_' + name,
+                listener = '/xss/canvas/paint.' + namespace,
+                lastSwitch = 0,
+                show = 1;
+
+            speed = (typeof speed === 'number') ? speed : 500;
+
+            $(document).on(listener, function(e, diff) {
+                lastSwitch += diff;
+                if (lastSwitch > speed) {
+                    lastSwitch = 0;
+                    show = !show;
+                }
+                if (show) {
+                    canvasPixels[namespace] = {
+                        pixels: pixels,
+                        cache : false
+                    };
+                } else {
+                    delete canvasPixels[namespace];
+                }
+            });
+        },
+
+        blinkStop = function(name) {
+            var listener = '/xss/canvas/paint.blink_' + name;
+            $(document).off(listener);
         },
 
         swipeHorizontal = function(name, pixels, options) {
@@ -44,9 +74,9 @@ XSS.Effects = function() {
                     $(document).off(listener);
                     $(document).trigger(trigger);
 
-                    delete CanvasPixels['swipeleft_' + name];
+                    delete canvasPixels['swipeleft_' + name];
                 } else {
-                    CanvasPixels['swipeleft_' + name] = {
+                    canvasPixels['swipeleft_' + name] = {
                         cache : false,
                         pixels: shiftPixels(pixels, Math.round(start - ((start - end) * (progress / duration))), 0)
                     };
@@ -74,8 +104,10 @@ XSS.Effects = function() {
         };
 
     return {
-        swipe : swipeHorizontal,
-        zoomX2: zoomX2,
-        zoomX4: zoomX4
+        swipe    : swipeHorizontal,
+        blink    : blink,
+        blinkStop: blinkStop,
+        zoomX2   : zoomX2,
+        zoomX4   : zoomX4
     };
 };

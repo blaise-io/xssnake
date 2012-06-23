@@ -60,16 +60,43 @@ XSS.SelectMenu = function(name) {
 XSS.BaseInputStage = function(name) {
     'use strict';
 
-    var options = {
-            minlength: 0,
-            maxlength: 150,
-            name     : name,
-            value    : '',
-            label    : ''
+    var input = XSS.input,
+
+        left = XSS.menuSettings.left,
+
+        top = XSS.menuSettings.top,
+
+        val = '',
+
+        minlength = 0,
+
+        maxlength = 150,
+
+        defaultValue = '',
+
+        label = '',
+
+        labelWsp = 2,
+
+        labelWidth = 0,
+
+        inputEvents = ['keydown.' + name, 'keyup.' + name].join(' '),
+
+        setMinlength = function(minlengthOverwrite) {
+            minlength = minlengthOverwrite;
         },
 
-        setOption = function(option, value) {
-            options[option] = value;
+        setMaxlength = function(maxlengthOverwrite) {
+            maxlength = maxlengthOverwrite;
+        },
+
+        setDefaultValue = function(defaultValueOverwrite) {
+            defaultValue = defaultValueOverwrite;
+        },
+
+        setLabel = function(labelOverwrite) {
+            label = labelOverwrite;
+            labelWidth = XSS.font.getLength(label) + labelWsp;
         },
 
         getInstruction = function() {
@@ -77,20 +104,61 @@ XSS.BaseInputStage = function(name) {
         },
 
         getPixels = function() {
-            return [];
+            return [].concat(
+                XSS.font.write(left, top, label),
+                XSS.font.write(left + labelWidth + labelWsp, top, val)
+            );
         },
 
         addEventHandlers = function() {
+            input.on(inputEvents, function(e) {
+                if (e.which === 13) {
+                    inputSubmit();
+                } else {
+                    inputUpdate();
+                }
+            });
+            input.trigger('focus');
+            inputUpdate();
         },
 
         removeEventHandlers = function() {
+            input.off('inputEvents');
         },
 
         removePixels = function() {
+            XSS.effects.blinkStop('caret');
+        },
+
+        inputSubmit = function() {
+        },
+
+        inputUpdate = function() {
+            var caretTextPos, caretGlobPos, caret;
+
+            // Selected text: too much hassle
+            if (input[0].selectionStart !== input[0].selectionEnd) {
+                input[0].selectionStart = input[0].selectionEnd;
+            }
+
+            val = input.val();
+
+            caretTextPos = XSS.font.getLength(val.substr(0, input[0].selectionStart));
+            caretTextPos = caretTextPos || -1;
+
+            caretGlobPos = left + labelWidth + labelWsp + caretTextPos;
+
+            caret = XSS.drawables.line(caretGlobPos, top - 1, caretGlobPos, top + 6);
+
+            XSS.effects.blink('caret', caret);
+            XSS.menu.refreshStage();
         };
 
     return {
-        setOption          : setOption,
+        setMinlength       : setMinlength,
+        setMaxlength       : setMaxlength,
+        setLabel           : setLabel,
+        setDefaultValue    : setDefaultValue,
         getInstruction     : getInstruction,
         getPixels          : getPixels,
         getTravelPixels    : getPixels,
@@ -322,13 +390,15 @@ XSS.HelpStage = function(name) {
 XSS.InputNameStage = function(name) {
     'use strict';
 
-    var screen;
-    screen = new XSS.BaseInputStage(name);
-    screen.setOption('label', 'What’s your name?');
-    screen.setOption('minlength', 2);
-    screen.setOption('maxlength', 10);
+    var stage;
 
-    return screen;
+    stage = new XSS.BaseInputStage(name);
+    stage.setLabel('What’s your name?');
+    stage.setMinlength(2);
+    stage.setMaxlength(10);
+    // stage.setContinue('mptype');
+
+    return stage;
 };
 
 
