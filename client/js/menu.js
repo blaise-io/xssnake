@@ -78,7 +78,7 @@ XSS.BaseInputStage = function(name) {
 
         labelWsp = 2,
 
-        labelWidth = 0,
+        labelWidth = labelWsp,
 
         enterEvent = '/xss/key/enter.' + name,
 
@@ -115,22 +115,20 @@ XSS.BaseInputStage = function(name) {
         addEventHandlers = function() {
             input.on(inputEvents, inputUpdate);
             input.trigger('focus').trigger('keyup');
-
-            XSS.doc.on(enterEvent, function() {
-
-            });
+            XSS.doc.on(enterEvent, inputSubmit);
         },
 
         removeEventHandlers = function() {
             input.off('inputEvents');
             XSS.doc.off(enterEvent);
-        },
-
-        removePixels = function() {
             XSS.effects.blinkStop('caret');
         },
 
+        removePixels = function() {
+        },
+
         inputSubmit = function() {
+            XSS.menu.switchStage(name, 'type');
         },
 
         inputUpdate = function() {
@@ -466,6 +464,8 @@ XSS.Menu = function() {
                     XSS.menuHistory.push(newStageName);
                 }
             };
+
+            console.log(arguments);
 
             if (!stages[newStageName]) {
                 throw new Error('Stage does not exist: ' + newStageName);
