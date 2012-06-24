@@ -1,4 +1,4 @@
-/*global XSS: true */
+/*globals XSS*/
 
 XSS.Canvas = function() {
     'use strict';
@@ -104,7 +104,7 @@ XSS.Canvas = function() {
             }
 
             // Last call for animations
-            $(document).trigger('/xss/canvas/paint', [diff]);
+            XSS.doc.trigger('/xss/canvas/paint', [diff]);
 
             // Clear the canvas
             ctx.clearRect(0, 0, width, height);

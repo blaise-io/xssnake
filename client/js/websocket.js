@@ -1,4 +1,4 @@
-/*global XSS: true */
+/*globals XSS*/
 
 XSS.WebSocket = function() {
     'use strict';
@@ -20,17 +20,17 @@ XSS.WebSocket = function() {
         };
 
     socket.onopen = function() {
-        $(document).trigger('/xss/socket/open');
+        XSS.doc.trigger('/xss/socket/open');
     };
 
     socket.onclose = function() {
-        $(document).trigger('/xss/socket/close');
+        XSS.doc.trigger('/xss/socket/close');
     };
 
     socket.onmessage = function(message) {
         var json = JSON.parse(message.pixels);
         console.log(['IN', json.action, json.pixels]);
-        $(document).trigger('/xss/client/' + json.action, [json.pixels]);
+        XSS.doc.trigger('/xss/client/' + json.action, [json.pixels]);
     };
 
     return {

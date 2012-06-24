@@ -1,4 +1,4 @@
-/*global XSS: true */
+/*globals XSS*/
 
 XSS.Drawables = function() {
     'use strict';

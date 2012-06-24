@@ -80,6 +80,8 @@ XSS.BaseInputStage = function(name) {
 
         labelWidth = 0,
 
+        enterEvent = '/xss/key/enter.' + name,
+
         inputEvents = ['keydown.' + name, 'keyup.' + name].join(' '),
 
         setMinlength = function(minlengthOverwrite) {
@@ -111,19 +113,17 @@ XSS.BaseInputStage = function(name) {
         },
 
         addEventHandlers = function() {
-            input.on(inputEvents, function(e) {
-                if (e.which === 13) {
-                    inputSubmit();
-                } else {
-                    inputUpdate();
-                }
+            input.on(inputEvents, inputUpdate);
+            input.trigger('focus').trigger('keyup');
+
+            XSS.doc.on(enterEvent, function() {
+
             });
-            input.trigger('focus');
-            inputUpdate();
         },
 
         removeEventHandlers = function() {
             input.off('inputEvents');
+            XSS.doc.off(enterEvent);
         },
 
         removePixels = function() {
@@ -189,7 +189,7 @@ XSS.BaseScreenStage = function(name) {
         },
 
         addEventHandlers = function() {
-            $(document).on(returnEvent, function() {
+            XSS.doc.on(returnEvent, function() {
                 var previousStageName, historyLength = XSS.menuHistory.length;
                 if (historyLength > 1) {
                     previousStageName = XSS.menuHistory[historyLength - 2];
@@ -199,7 +199,7 @@ XSS.BaseScreenStage = function(name) {
         },
 
         removeEventHandlers = function() {
-            $(document).off(returnEvent);
+            XSS.doc.off(returnEvent);
         },
 
         removePixels = function() {
@@ -245,22 +245,22 @@ XSS.BaseSelectStage = function(name) {
         addEventHandlers = function() {
             XSS.menuChoices[name] = XSS.menuChoices[name] || 0;
 
-            $(document).on(events.down, function() {
+            XSS.doc.on(events.down, function() {
                 XSS.menuChoices[name] += 1;
                 XSS.menu.refreshStage();
             });
 
-            $(document).on(events.up, function() {
+            XSS.doc.on(events.up, function() {
                 XSS.menuChoices[name] -= 1;
                 XSS.menu.refreshStage();
             });
 
-            $(document).on(events.select, function() {
+            XSS.doc.on(events.select, function() {
                 var option = menu.getOptionByIndex(XSS.menuChoices[name]);
                 XSS.menu.switchStage(XSS.currentStageName, option.value);
             });
 
-            $(document).on(events.back, function() {
+            XSS.doc.on(events.back, function() {
                 var previousStageName, historyLength = XSS.menuHistory.length;
                 if (historyLength > 1) {
                     previousStageName = XSS.menuHistory[historyLength - 2];
@@ -270,7 +270,7 @@ XSS.BaseSelectStage = function(name) {
         },
 
         removeEventHandlers = function() {
-            $(document).off([events.down, events.up, events.select, events.back].join(' '));
+            XSS.doc.off([events.down, events.up, events.select, events.back].join(' '));
         },
 
         removePixels = function() {

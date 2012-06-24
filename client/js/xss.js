@@ -1,77 +1,92 @@
-/*jshint globalstrict:true */
-'use strict';
+var XSS = {};
 
+// Document Ready
 $(function() {
-    XSS.init();
+    'use strict';
+
+    $.extend(XSS, new XSS.Core());
+
+    XSS.canvas    = new XSS.Canvas();
+    XSS.socket    = new XSS.WebSocket();
+    XSS.font      = new XSS.Font();
+    XSS.drawables = new XSS.Drawables();
+    XSS.effects   = new XSS.Effects();
+    XSS.menu      = new XSS.Menu();
+
 });
 
-var XSS = {
 
-    settings: {
-        width   : 256, // Tiles wide
-        height  : 160, // Tiles high
-        s       : 4    // Tile size
-    },
+XSS.Core = function() {
+    'use strict';
 
-    init: function() {
+    var doc = $(document),
 
-        if (!this.detectCanvas()) {
-            $(document.body).text('Your browser does not support canvas.');
-            return false;
-        } else if (!this.getWebSocket()) {
-            $(document.body).text('Your browser does not support websockets.');
-            return false;
-        }
+        settings = {
+            width : 256, // Tiles wide
+            height: 160, // Tiles high
+            s     : 4    // Tile size
+        },
 
-        if (!window.requestAnimationFrame) {
-            this.setRequestAnimationFrame();
-        }
+        init = function() {
+            detectSupport();
+            initKeyTriggers();
+        },
 
-        // DOM
-        this.input = $('<input>').appendTo(document.body).attr({autofocus: true});
+        input = $('<input>').appendTo(document.body).attr({autofocus: true}),
 
-        $(document).on('keydown', function(e) {
-            switch (e.which) {
-                case  8: $(document).trigger('/xss/key/backspace'); break;
-                case 13: $(document).trigger('/xss/key/enter'); break;
-                case 27: $(document).trigger('/xss/key/escape'); break;
-                case 37: $(document).trigger('/xss/key/left'); break;
-                case 38: $(document).trigger('/xss/key/up'); break;
-                case 39: $(document).trigger('/xss/key/right');break;
-                case 40: $(document).trigger('/xss/key/down'); break;
+        detectSupport = function() {
+            if (!detectCanvas()) {
+                $(document.body).text('Your browser does not support canvas.');
+                return false;
+            } else if (!getWebSocket()) {
+                $(document.body).text('Your browser does not support websockets.');
+                return false;
             }
-        });
 
-        // Objects
-        this.canvas    = new XSS.Canvas();
-        this.socket    = new XSS.WebSocket();
-        this.font      = new XSS.Font();
-        this.drawables = new XSS.Drawables();
-        this.effects   = new XSS.Effects();
-        this.menu      = new XSS.Menu();
+            if (!window.requestAnimationFrame) {
+                setRequestAnimationFrame();
+            }
+        },
 
-        // Shortcuts
-        this.send      = this.socket.send;
-    },
+        initKeyTriggers = function() {
+            doc.on('keydown', function(e) {
+                switch (e.which) {
+                    case  8: XSS.doc.trigger('/xss/key/backspace'); break;
+                    case 13: XSS.doc.trigger('/xss/key/enter'); break;
+                    case 27: XSS.doc.trigger('/xss/key/escape'); break;
+                    case 37: XSS.doc.trigger('/xss/key/left'); break;
+                    case 38: XSS.doc.trigger('/xss/key/up'); break;
+                    case 39: XSS.doc.trigger('/xss/key/right'); break;
+                    case 40: XSS.doc.trigger('/xss/key/down'); break;
+                }
+            });
+        },
 
-    detectCanvas: function() {
-        return window.CanvasRenderingContext2D;
-    },
+        detectCanvas = function() {
+            return window.CanvasRenderingContext2D;
+        },
 
-    getWebSocket: function() {
-        return window.WebSocket || window.MozWebSocket;
-    },
+        getWebSocket = function() {
+            return window.WebSocket || window.MozWebSocket;
+        },
 
-    setRequestAnimationFrame: function() {
-        var vendors = ['ms', 'moz', 'webkit', 'o'];
-        for (var i = 0, m = vendors.length; i < m && !window.requestAnimationFrame; i++) {
-            window.requestAnimationFrame = window[vendors[i] + 'RequestAnimationFrame'];
-        }
-        if (!window.requestAnimationFrame) {
-            window.requestAnimationFrame = function(callback) {
-                window.setTimeout(callback, 1000 / 60);
-            };
-        }
-    }
+        setRequestAnimationFrame = function() {
+            var vendors = ['ms', 'moz', 'webkit', 'o'];
+            for (var i = 0, m = vendors.length; i < m && !window.requestAnimationFrame; i++) {
+                window.requestAnimationFrame = window[vendors[i] + 'RequestAnimationFrame'];
+            }
+            if (!window.requestAnimationFrame) {
+                window.requestAnimationFrame = function(callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+            }
+        };
 
+    init();
+
+    return {
+        doc     : doc,
+        input   : input,
+        settings: settings
+    };
 };

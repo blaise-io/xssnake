@@ -1,4 +1,4 @@
-/*global XSS: true */
+/*globals XSS*/
 
 XSS.Effects = function() {
     'use strict';
@@ -30,7 +30,7 @@ XSS.Effects = function() {
 
             speed = (typeof speed === 'number') ? speed : 500;
 
-            $(document).on(listener, function(e, diff) {
+            XSS.doc.on(listener, function(e, diff) {
                 lastSwitch += diff;
                 if (lastSwitch > speed) {
                     lastSwitch = 0;
@@ -49,7 +49,7 @@ XSS.Effects = function() {
 
         blinkStop = function(name) {
             var listener = '/xss/canvas/paint.blink_' + name;
-            $(document).off(listener);
+            XSS.doc.off(listener);
         },
 
         swipeHorizontal = function(name, pixels, options) {
@@ -62,7 +62,7 @@ XSS.Effects = function() {
                 end = (typeof options.end === 'number') ? options.end : -XSS.settings.width,
                 duration = options.duration || XSS.settings.width; // Lock speed to pixels
 
-            $(document).on(listener, function(e, diff) {
+            XSS.doc.on(listener, function(e, diff) {
 
                 progress += diff;
 
@@ -71,8 +71,8 @@ XSS.Effects = function() {
                         options.callback();
                     }
 
-                    $(document).off(listener);
-                    $(document).trigger(trigger);
+                    XSS.doc.off(listener);
+                    XSS.doc.trigger(trigger);
 
                     delete canvasPixels['swipeleft_' + name];
                 } else {
