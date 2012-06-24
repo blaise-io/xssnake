@@ -18,7 +18,6 @@ XSS.menuHistory = [XSS.currentStageName];
 /**
  * SelectMenu
  * Creates a single navigatable verticle menu
- *
  * @param name
  * @constructor
  */
@@ -67,7 +66,6 @@ XSS.SelectMenu = function(name) {
 /**
  * BaseInputStage
  * Stage with a form input
- *
  * @param name
  * @constructor
  */
@@ -184,7 +182,6 @@ XSS.BaseInputStage = function(name) {
 /**
  * BaseScreenStage
  * Stage with static content
- *
  * @param name
  * @constructor
  */
@@ -240,7 +237,6 @@ XSS.BaseScreenStage = function(name) {
 /**
  * BaseSelectStage
  * Stage with a vertical select menu
- *
  * @param name
  * @constructor
  */
@@ -318,7 +314,6 @@ XSS.BaseSelectStage = function(name) {
 /**
  * Main Stage
  * Shown on first screen
- *
  * @param name
  * @return {XSS.BaseSelectStage}
  * @constructor
@@ -343,7 +338,6 @@ XSS.MainStage = function(name) {
 
 /**
  * Multiplayer Stage
- *
  * @param name
  * @return {XSS.BaseSelectStage}
  * @constructor
@@ -366,7 +360,6 @@ XSS.MultiPlayerStage = function(name) {
 
 /**
  * Game Type Stage
- *
  * @param name
  * @return {XSS.BaseSelectStage}
  * @constructor
@@ -390,7 +383,6 @@ XSS.GameTypeStage = function(name) {
 
 /**
  * Credits Stage
- *
  * @param name
  * @return {XSS.BaseScreenStage}
  * @constructor
@@ -421,7 +413,6 @@ XSS.CreditsStage = function(name) {
 
 /**
  * Help Stage
- *
  * @param name
  * @return {XSS.BaseScreenStage}
  * @constructor
@@ -451,7 +442,6 @@ XSS.HelpStage = function(name) {
 
 /**
  * Input name Stage
- *
  * @param name
  * @return {XSS.BaseInputStage}
  * @constructor
@@ -472,10 +462,7 @@ XSS.InputNameStage = function(name) {
 
 
 /**
- * Menu
  * Menu instantiation, stage switching
- *
-
  * @constructor
  */
 XSS.Menu = function() {

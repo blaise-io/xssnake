@@ -5,8 +5,6 @@
 /**
  * Effects
  * Pixel transformations
- *
- * @return {Object}
  * @constructor
  */
 XSS.Effects = function() {

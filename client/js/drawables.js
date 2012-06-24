@@ -3,8 +3,6 @@
 /**
  * Drawables
  * Repeating graphic definitions
- *
- * @return {Object}
  * @constructor
  */
 XSS.Drawables = function() {

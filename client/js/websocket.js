@@ -2,9 +2,6 @@
 
 /**
  * Websocket
- * Server communication
- *
- * @return {Object}
  * @constructor
  */
 XSS.WebSocket = function() {

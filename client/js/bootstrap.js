@@ -4,8 +4,6 @@
 /**
  * Bootstrap
  * Detect support, init global listeners
- *
- * @return {Object}
  * @constructor
  */
 XSS.Bootstrap = function() {

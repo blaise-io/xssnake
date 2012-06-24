@@ -3,8 +3,6 @@
 /**
  * Canvas
  * Display pixels
- *
- * @return {Object}
  * @constructor
  */
 XSS.Canvas = function() {

@@ -4,8 +4,6 @@
 /**
  * Font
  * Pixel font definition and writing texts
- *
- * @return {Object}
  * @constructor
  */
 XSS.Font = function() {
