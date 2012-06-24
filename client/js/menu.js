@@ -15,6 +15,13 @@ XSS.currentStageName = 'main';
 XSS.menuHistory = [XSS.currentStageName];
 
 
+/**
+ * SelectMenu
+ * Creates a single navigatable verticle menu
+ *
+ * @param name
+ * @constructor
+ */
 XSS.SelectMenu = function(name) {
     'use strict';
 
@@ -57,10 +64,17 @@ XSS.SelectMenu = function(name) {
 };
 
 
+/**
+ * BaseInputStage
+ * Stage with a form input
+ *
+ * @param name
+ * @constructor
+ */
 XSS.BaseInputStage = function(name) {
     'use strict';
 
-    var input = XSS.input,
+    var input = XSS.bootstrap.input,
 
         left = XSS.menuSettings.left,
 
@@ -167,6 +181,13 @@ XSS.BaseInputStage = function(name) {
 };
 
 
+/**
+ * BaseScreenStage
+ * Stage with static content
+ *
+ * @param name
+ * @constructor
+ */
 XSS.BaseScreenStage = function(name) {
     'use strict';
 
@@ -216,6 +237,13 @@ XSS.BaseScreenStage = function(name) {
 };
 
 
+/**
+ * BaseSelectStage
+ * Stage with a vertical select menu
+ *
+ * @param name
+ * @constructor
+ */
 XSS.BaseSelectStage = function(name) {
     'use strict';
 
@@ -287,6 +315,14 @@ XSS.BaseSelectStage = function(name) {
 };
 
 
+/**
+ * Main Stage
+ * Shown on first screen
+ *
+ * @param name
+ * @return {XSS.BaseSelectStage}
+ * @constructor
+ */
 XSS.MainStage = function(name) {
     'use strict';
 
@@ -305,6 +341,13 @@ XSS.MainStage = function(name) {
 };
 
 
+/**
+ * Multiplayer Stage
+ *
+ * @param name
+ * @return {XSS.BaseSelectStage}
+ * @constructor
+ */
 XSS.MultiPlayerStage = function(name) {
     'use strict';
 
@@ -321,6 +364,13 @@ XSS.MultiPlayerStage = function(name) {
 };
 
 
+/**
+ * Game Type Stage
+ *
+ * @param name
+ * @return {XSS.BaseSelectStage}
+ * @constructor
+ */
 XSS.GameTypeStage = function(name) {
     'use strict';
 
@@ -338,6 +388,13 @@ XSS.GameTypeStage = function(name) {
 };
 
 
+/**
+ * Credits Stage
+ *
+ * @param name
+ * @return {XSS.BaseScreenStage}
+ * @constructor
+ */
 XSS.CreditsStage = function(name) {
     'use strict';
 
@@ -362,6 +419,13 @@ XSS.CreditsStage = function(name) {
 };
 
 
+/**
+ * Help Stage
+ *
+ * @param name
+ * @return {XSS.BaseScreenStage}
+ * @constructor
+ */
 XSS.HelpStage = function(name) {
     'use strict';
 
@@ -385,6 +449,13 @@ XSS.HelpStage = function(name) {
 };
 
 
+/**
+ * Input name Stage
+ *
+ * @param name
+ * @return {XSS.BaseInputStage}
+ * @constructor
+ */
 XSS.InputNameStage = function(name) {
     'use strict';
 
@@ -400,16 +471,23 @@ XSS.InputNameStage = function(name) {
 };
 
 
+/**
+ * Menu
+ * Menu instantiation, stage switching
+ *
+
+ * @constructor
+ */
 XSS.Menu = function() {
     'use strict';
 
     var stages = {
-            main   : XSS.MainStage('main'),
-            mp     : XSS.InputNameStage('mp'),
+            'main'   : XSS.MainStage('main'),
+            'mp'     : XSS.InputNameStage('mp'),
             // mp     : XSS.MultiPlayerStage('mp'),
-            type   : XSS.GameTypeStage('type'),
-            help   : XSS.HelpStage('help'),
-            credits: XSS.CreditsStage('credits')
+            'type'   : XSS.GameTypeStage('type'),
+            'help'   : XSS.HelpStage('help'),
+            'credits': XSS.CreditsStage('credits')
         },
 
         newStage = function(stageName) {
@@ -464,8 +542,6 @@ XSS.Menu = function() {
                     XSS.menuHistory.push(newStageName);
                 }
             };
-
-            console.log(arguments);
 
             if (!stages[newStageName]) {
                 throw new Error('Stage does not exist: ' + newStageName);

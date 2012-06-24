@@ -1,5 +1,12 @@
 /*globals XSS*/
 
+/**
+ * Canvas
+ * Display pixels
+ *
+ * @return {Object}
+ * @constructor
+ */
 XSS.Canvas = function() {
     'use strict';
 
@@ -74,7 +81,7 @@ XSS.Canvas = function() {
 
             // Some data is dynamic, caching overhead could slow down rendering
             if (pixels.cache === false) {
-                paintData(ctx, pixels.pixels);
+                paintData(ctx, pixels.pixels, {});
             }
 
             // Paint offscreen and cache result
@@ -94,14 +101,14 @@ XSS.Canvas = function() {
                 diff = now - time;
 
             // Make appointment for next paint
-            window.requestAnimationFrame(paint);
+            window.requestAnimationFrame(paint, canvas[0]);
 
             // FPS
             fps = Math.round(1000 / diff);
             time = now;
-            if (fps > 1 && fps <= 15) { // (fps==1) = window has no focus
-                console.log('low FPS');
-            }
+//            if (fps > 1 && fps <= 15) {
+//                console.log('low FPS');
+//            }
 
             // Last call for animations
             XSS.doc.trigger('/xss/canvas/paint', [diff]);
@@ -122,8 +129,8 @@ XSS.Canvas = function() {
     canvas.css(getCanvasPosition());
     canvas.appendTo(document.body);
 
-    // Paint loop
-    window.requestAnimationFrame(paint, canvas);
+    // Start paint loop
+    paint();
 
     // DOM events
     $(window).on('resize', function() {

@@ -1,5 +1,14 @@
 /*globals XSS*/
 
+// TODO: Separate animation and static effects
+
+/**
+ * Effects
+ * Pixel transformations
+ *
+ * @return {Object}
+ * @constructor
+ */
 XSS.Effects = function() {
     'use strict';
 

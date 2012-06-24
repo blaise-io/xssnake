@@ -1,5 +1,12 @@
 /*globals XSS*/
 
+/**
+ * Drawables
+ * Repeating graphic definitions
+ *
+ * @return {Object}
+ * @constructor
+ */
 XSS.Drawables = function() {
     'use strict';
 

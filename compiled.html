@@ -1,0 +1,51 @@
+<!doctype html>
+
+<title>&lt;XSSNAKE&gt; (compiled)</title>
+
+<meta charset="utf-8">
+<meta name="author" content="2012 Blaise Kal">
+<meta name="description" content="Play an unfriendly game of XSSNAKE: Multiplayer Snake with an XSS twist.">
+
+<link rel="icon" href="client/img/icon.png">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    html {
+        background: #dba;
+    }
+
+    body {
+        background: url('client/img/pattern.png') repeat 0 0;
+        box-shadow: inset 0 2px 2px rgba(0, 0, 0, .15);
+    }
+
+    input {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        z-index: 1;
+        cursor: none;
+        cursor: default;
+        border: none;
+    }
+</style>
+
+<script src="client/lib/jquery.min.js"></script>
+
+<!-- Points to a place where all client js is compiled by Google Closure Compiler -->
+<script src="http://127.0.0.1/build"></script>
