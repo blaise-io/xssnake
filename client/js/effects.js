@@ -55,8 +55,10 @@ XSS.Effects = function() {
         },
 
         blinkStop = function(name) {
-            var listener = '/xss/canvas/paint.blink_' + name;
+            var namespace = 'blink_' + name,
+                listener = '/xss/canvas/paint.' + namespace;
             XSS.doc.off(listener);
+            delete canvasPixels[namespace];
         },
 
         swipeHorizontal = function(name, pixels, options) {

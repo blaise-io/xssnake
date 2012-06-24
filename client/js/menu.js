@@ -131,12 +131,13 @@ XSS.BaseInputStage = function(name) {
         },
 
         removeEventHandlers = function() {
-            input.off('inputEvents');
+            input.off(inputEvents);
             XSS.doc.off(enterEvent);
             XSS.effects.blinkStop('caret');
         },
 
         removePixels = function() {
+            delete XSS.canvas.pixels.stage;
         },
 
         inputSubmit = function() {
