@@ -61,6 +61,28 @@ XSS.Effects = function() {
             delete canvasPixels[namespace];
         },
 
+        decay = function(name, pixels, time) {
+            var namespace = 'decay_' + name;
+
+            time = time || 1000;
+
+            canvasPixels[namespace] = {
+                pixels: pixels,
+                cache : false
+            };
+
+            window.clearTimeout(XSS[namespace]);
+
+            XSS[namespace] = window.setTimeout(function() {
+                delete canvasPixels[namespace];
+            }, time);
+        },
+
+        decayNow = function(name) {
+            var namespace = 'decay_' + name;
+            delete canvasPixels[namespace];
+        },
+
         swipeHorizontal = function(name, pixels, options) {
             options = options || {};
 
@@ -116,6 +138,8 @@ XSS.Effects = function() {
         swipe    : swipeHorizontal,
         blink    : blink,
         blinkStop: blinkStop,
+        decay    : decay,
+        decayNow : decayNow,
         zoomX2   : zoomX2,
         zoomX4   : zoomX4
     };

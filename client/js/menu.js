@@ -75,35 +75,28 @@ XSS.BaseInputStage = function(name) {
     var input = XSS.bootstrap.input,
 
         left = XSS.menuSettings.left,
-
         top = XSS.menuSettings.top,
 
         val = '',
-
-        minlength = 0,
-
-        maxlength = 150,
-
-        defaultValue = '',
-
         label = '',
-
         labelWsp = 2,
-
         labelWidth = labelWsp,
 
         enterEvent = '/xss/key/enter.' + name,
-
+        backEvent = '/xss/key/escape.' + name,
         inputEvents = ['keydown.' + name, 'keyup.' + name].join(' '),
 
+        minlength = 0,
         setMinlength = function(minlengthOverwrite) {
             minlength = minlengthOverwrite;
         },
 
+        maxlength = 150,
         setMaxlength = function(maxlengthOverwrite) {
             maxlength = maxlengthOverwrite;
         },
 
+        defaultValue = '',
         setDefaultValue = function(defaultValueOverwrite) {
             defaultValue = defaultValueOverwrite;
         },
@@ -124,28 +117,57 @@ XSS.BaseInputStage = function(name) {
             );
         },
 
-        addEventHandlers = function() {
+        initStage = function() {
             input.on(inputEvents, inputUpdate);
             input.trigger('focus').trigger('keyup');
+            input.val(XSS.menuChoices[name]);
+
             XSS.doc.on(enterEvent, inputSubmit);
+            XSS.doc.on(backEvent, function() {
+                XSS.menu.goToPreviousStage();
+            });
         },
 
-        removeEventHandlers = function() {
+        destroyStage = function() {
             input.off(inputEvents);
             XSS.doc.off(enterEvent);
+            XSS.doc.off(backEvent);
             XSS.effects.blinkStop('caret');
+            XSS.effects.decayNow('error');
         },
 
         removePixels = function() {
             delete XSS.canvas.pixels.stage;
         },
 
+        getInputError = function(val) {
+            if (val.length < minlength) {
+                return 'Too short!!!';
+            } else if (val.length > maxlength) {
+                return 'Too long!!!';
+            } else {
+                return false;
+            }
+        },
+
         inputSubmit = function() {
-            XSS.menu.switchStage(name, 'type');
+            var value, error;
+
+            value = $.trim(input.val());
+            error = getInputError(val);
+
+            if (error === false) {
+                XSS.menu.switchStage(name, 'type');
+                XSS.menuChoices[name] = value;
+            } else {
+                XSS.effects.decay('error', XSS.font.write(left, top + 9, error));
+            }
+
+            return false;
         },
 
         inputUpdate = function() {
-            var caretTextPos, caretGlobPos, caret;
+            var caretLeftText, caretLeftGlobal, caret;
 
             // Selected text: too much hassle
             if (input[0].selectionStart !== input[0].selectionEnd) {
@@ -154,28 +176,28 @@ XSS.BaseInputStage = function(name) {
 
             val = input.val();
 
-            caretTextPos = XSS.font.getLength(val.substr(0, input[0].selectionStart));
-            caretTextPos = caretTextPos || -1;
+            caretLeftText = XSS.font.getLength(val.substr(0, input[0].selectionStart));
+            caretLeftText = caretLeftText || -1;
 
-            caretGlobPos = left + labelWidth + labelWsp + caretTextPos;
+            caretLeftGlobal = left + labelWidth + labelWsp + caretLeftText;
 
-            caret = XSS.drawables.line(caretGlobPos, top - 1, caretGlobPos, top + 6);
+            caret = XSS.drawables.line(caretLeftGlobal, top - 1, caretLeftGlobal, top + 6);
 
             XSS.effects.blink('caret', caret);
             XSS.menu.refreshStage();
         };
 
     return {
-        setMinlength       : setMinlength,
-        setMaxlength       : setMaxlength,
-        setLabel           : setLabel,
-        setDefaultValue    : setDefaultValue,
-        getInstruction     : getInstruction,
-        getPixels          : getPixels,
-        getTravelPixels    : getPixels,
-        addEventHandlers   : addEventHandlers,
-        removeEventHandlers: removeEventHandlers,
-        removePixels       : removePixels
+        setMinlength   : setMinlength,
+        setMaxlength   : setMaxlength,
+        setLabel       : setLabel,
+        setDefaultValue: setDefaultValue,
+        getInstruction : getInstruction,
+        getPixels      : getPixels,
+        getTravelPixels: getPixels,
+        initStage      : initStage,
+        destroyStage   : destroyStage,
+        removePixels   : removePixels
     };
 };
 
@@ -191,7 +213,7 @@ XSS.BaseScreenStage = function(name) {
 
     var screen = [],
 
-        returnEvent = ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' '),
+        backEvent = ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' '),
 
         setScreen = function(overwriteScreen) {
             screen = overwriteScreen;
@@ -205,18 +227,14 @@ XSS.BaseScreenStage = function(name) {
             return screen;
         },
 
-        addEventHandlers = function() {
-            XSS.doc.on(returnEvent, function() {
-                var previousStageName, historyLength = XSS.menuHistory.length;
-                if (historyLength > 1) {
-                    previousStageName = XSS.menuHistory[historyLength - 2];
-                    XSS.menu.switchStage(XSS.currentStageName, previousStageName, {back: true});
-                }
+        initStage = function() {
+            XSS.doc.on(backEvent, function() {
+                XSS.menu.goToPreviousStage();
             });
         },
 
-        removeEventHandlers = function() {
-            XSS.doc.off(returnEvent);
+        destroyStage = function() {
+            XSS.doc.off(backEvent);
         },
 
         removePixels = function() {
@@ -224,13 +242,13 @@ XSS.BaseScreenStage = function(name) {
         };
 
     return {
-        setScreen          : setScreen,
-        getInstruction     : getInstruction,
-        getPixels          : getPixels,
-        getTravelPixels    : getPixels,
-        addEventHandlers   : addEventHandlers,
-        removeEventHandlers: removeEventHandlers,
-        removePixels       : removePixels
+        setScreen      : setScreen,
+        getInstruction : getInstruction,
+        getPixels      : getPixels,
+        getTravelPixels: getPixels,
+        initStage      : initStage,
+        destroyStage   : destroyStage,
+        removePixels   : removePixels
     };
 };
 
@@ -265,7 +283,7 @@ XSS.BaseSelectStage = function(name) {
             menu = overwriteMenu;
         },
 
-        addEventHandlers = function() {
+        initStage = function() {
             XSS.menuChoices[name] = XSS.menuChoices[name] || 0;
 
             XSS.doc.on(events.down, function() {
@@ -284,15 +302,11 @@ XSS.BaseSelectStage = function(name) {
             });
 
             XSS.doc.on(events.back, function() {
-                var previousStageName, historyLength = XSS.menuHistory.length;
-                if (historyLength > 1) {
-                    previousStageName = XSS.menuHistory[historyLength - 2];
-                    XSS.menu.switchStage(XSS.currentStageName, previousStageName, {back: true});
-                }
+                XSS.menu.goToPreviousStage();
             });
         },
 
-        removeEventHandlers = function() {
+        destroyStage = function() {
             XSS.doc.off([events.down, events.up, events.select, events.back].join(' '));
         },
 
@@ -301,13 +315,13 @@ XSS.BaseSelectStage = function(name) {
         };
 
     return {
-        setMenu            : setMenu,
-        getInstruction     : getInstruction,
-        getPixels          : getPixels,
-        getTravelPixels    : getPixels,
-        addEventHandlers   : addEventHandlers,
-        removeEventHandlers: removeEventHandlers,
-        removePixels       : removePixels
+        setMenu        : setMenu,
+        getInstruction : getInstruction,
+        getPixels      : getPixels,
+        getTravelPixels: getPixels,
+        initStage      : initStage,
+        destroyStage   : destroyStage,
+        removePixels   : removePixels
     };
 };
 
@@ -372,11 +386,12 @@ XSS.GameTypeStage = function(name) {
 
     menu = new XSS.SelectMenu(name);
     menu.addOption('friendly', 'FRIENDLY MODE', 'May slightly dent your ego ♥');
-    menu.addOption('xss', 'XSS MODE', ['The winner of the game is able to execute Java-',
+    menu.addOption('xss', 'XSS MODE', [
+        'The winner of the game is able to execute Java-',
         'script in the browser of the loser...  alert(’☠’)']);
 
     stage = new XSS.BaseSelectStage(name);
-    stage.menu = menu;
+    stage.setMenu(menu);
 
     return stage;
 };
@@ -486,7 +501,15 @@ XSS.Menu = function() {
             };
 
             updateStage(stage);
-            stage.addEventHandlers();
+            stage.initStage();
+        },
+
+        goToPreviousStage = function() {
+            var previousStageName, historyLength = XSS.menuHistory.length;
+            if (historyLength > 1) {
+                previousStageName = XSS.menuHistory[historyLength - 2];
+                switchStage(XSS.currentStageName, previousStageName, {back: true});
+            }
         },
 
         refreshStage = function() {
@@ -536,7 +559,7 @@ XSS.Menu = function() {
             }
 
             // Unload old stage
-            stages[currentStageName].removeEventHandlers();
+            stages[currentStageName].destroyStage();
             stages[currentStageName].removePixels();
 
             delete XSS.canvas.pixels.instruction;
@@ -560,8 +583,9 @@ XSS.Menu = function() {
     newStage(XSS.currentStageName);
 
     return {
-        newStage    : newStage,
-        refreshStage: refreshStage,
-        switchStage : switchStage
+        goToPreviousStage: goToPreviousStage,
+        newStage         : newStage,
+        refreshStage     : refreshStage,
+        switchStage      : switchStage
     };
 };

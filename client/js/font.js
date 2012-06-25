@@ -168,6 +168,9 @@ XSS.Font = function() {
         ' XXX  ');
 
     glyphs[' '] = parseGlyph(MIN, '' +
+        '  ' +
+        '  ' +
+        '  ' +
         '  ');
 
     glyphs['.'] = parseGlyph(MIN, '' +
