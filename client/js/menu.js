@@ -118,9 +118,9 @@ XSS.BaseInputStage = function(name) {
         },
 
         initStage = function() {
+            input.val(XSS.menuChoices[name] || '');
             input.on(inputEvents, inputUpdate);
             input.trigger('focus').trigger('keyup');
-            input.val(XSS.menuChoices[name]);
 
             XSS.doc.on(enterEvent, inputSubmit);
             XSS.doc.on(backEvent, function() {
@@ -129,6 +129,7 @@ XSS.BaseInputStage = function(name) {
         },
 
         destroyStage = function() {
+            XSS.menuChoices[name] = val;
             input.off(inputEvents);
             XSS.doc.off(enterEvent);
             XSS.doc.off(backEvent);
@@ -151,14 +152,9 @@ XSS.BaseInputStage = function(name) {
         },
 
         inputSubmit = function() {
-            var value, error;
-
-            value = $.trim(input.val());
-            error = getInputError(val);
-
+            var error = getInputError(val);
             if (error === false) {
                 XSS.menu.switchStage(name, 'type');
-                XSS.menuChoices[name] = value;
             } else {
                 XSS.effects.decay('error', XSS.font.write(left, top + 9, error));
             }
