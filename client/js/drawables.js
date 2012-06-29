@@ -1,19 +1,18 @@
+/*jshint globalstrict:true*/
 /*globals XSS*/
+
+'use strict';
 
 /**
  * Drawables
- * Repeating graphic definitions
+ * Pixel object definitions
  * @constructor
  */
-XSS.Drawables = function() {
-    'use strict';
+function Drawables() {}
 
-    var w, h, line, getOuterBorderPixels, getBoundingBox, getHeaderPixels, getMenuPixels;
+Drawables.prototype = {
 
-    w = XSS.settings.width - 1;  // Width as index
-    h = XSS.settings.height - 1; // Heigh as index
-
-    line = function(x0, y0, x1, y1) {
+    line: function(x0, y0, x1, y1) {
         var pixels = [],
             dx = Math.abs(x1 - x0),
             dy = Math.abs(y1 - y0),
@@ -39,36 +38,39 @@ XSS.Drawables = function() {
         }
 
         return pixels;
-    };
+    },
 
     // Background before game starts
-    getOuterBorderPixels = function() {
+    getOuterBorderPixels: function() {
+        var w = XSS.HPIXELS - 1,
+            h = XSS.VPIXELS - 1;
+
         return [].concat(
             // Top
-            line(1, 0, w - 1, 0),
-            line(0, 1, w, 1),
+            this.line(1, 0, w - 1, 0),
+            this.line(0, 1, w, 1),
             // Bottom
-            line(1, h, w - 1, h),
-            line(0, h - 1, w, h - 1),
+            this.line(1, h, w - 1, h),
+            this.line(0, h - 1, w, h - 1),
             // Left
-            line(0, 2, 0, h - 2),
-            line(1, 2, 1, h - 2),
+            this.line(0, 2, 0, h - 2),
+            this.line(1, 2, 1, h - 2),
             // Right
-            line(w, 2, w, h - 2),
-            line(w - 1, 2, w - 1, h - 2)
+            this.line(w, 2, w, h - 2),
+            this.line(w - 1, 2, w - 1, h - 2)
         );
-    };
+    },
 
-    getHeaderPixels = function(x, y) {
+    getHeaderPixels: function(x, y) {
         y = y || 18;
         var welcome = XSS.font.write(0, 0, '<XSSNAKE>');
         return [].concat(
             XSS.effects.zoomX4(welcome, x, y),
             XSS.font.write(x, y + 20, (new Array(45)).join('+'))
         );
-    };
+    },
 
-    getMenuPixels = function(name, x, y, menu) {
+    getMenuPixels: function(name, x, y, menu) {
         var pixels = [],
             options = menu.options,
             selected = menu.selected || 0,
@@ -94,9 +96,9 @@ XSS.Drawables = function() {
         }
 
         return pixels;
-    };
+    },
 
-    getBoundingBox = function(pixels) {
+    getBoundingBox: function(pixels) {
         var x, y,
             minX = false,
             minY = false,
@@ -128,13 +130,6 @@ XSS.Drawables = function() {
             width : 1 + maxX - minX,
             height: 1 + maxY - minY
         };
-    };
+    }
 
-    return {
-        line                : line,
-        getHeaderPixels     : getHeaderPixels,
-        getOuterBorderPixels: getOuterBorderPixels,
-        getMenuPixels       : getMenuPixels,
-        getBoundingBox      : getBoundingBox
-    };
 };

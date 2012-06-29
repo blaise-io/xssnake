@@ -1,32 +1,41 @@
-var XSS = {
-    doc     : $(document),
-    settings: {
-        width : 256, // Tiles wide
-        height: 160, // Tiles high
-        s     : 4    // Tile size
-    }
-};
+/*jshint globalstrict:true*/
+/*globals Canvas, Drawables, Effects, Font, Menu, Stages*/
 
-window.requestAnimationFrame = window.requestAnimationFrame || (function() {
-    'use strict';
-    return window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function(callback) {
-            window.setTimeout(callback, 1000 / 60);
-        };
-})();
+'use strict';
 
-$(function() {
-    'use strict';
+var XSS = {};
 
-    // Components
-    XSS.bootstrap = new XSS.Bootstrap();
-    XSS.canvas    = new XSS.Canvas();
-    XSS.socket    = new XSS.WebSocket();
-    XSS.font      = new XSS.Font();
-    XSS.drawables = new XSS.Drawables();
-    XSS.effects   = new XSS.Effects();
-    XSS.menu      = new XSS.Menu();
+/** @const */
+XSS.HPIXELS = 256;
+
+/** @const */
+XSS.VPIXELS = 160;
+
+/** @const */
+XSS.PIXELSIZE = 4;
+
+$(window).on('load', function() {
+
+    XSS.doc = $(document.body);
+
+    XSS.input = $('<input>').appendTo(XSS.doc).attr('autofocus', 1);
+
+    XSS.doc.on('keydown', function(e) {
+        switch (e.which) {
+            case  8: XSS.doc.trigger('/xss/key/backspace'); break;
+            case 13: XSS.doc.trigger('/xss/key/enter'); break;
+            case 27: XSS.doc.trigger('/xss/key/escape'); break;
+            case 37: XSS.doc.trigger('/xss/key/left'); break;
+            case 38: XSS.doc.trigger('/xss/key/up'); break;
+            case 39: XSS.doc.trigger('/xss/key/right'); break;
+            case 40: XSS.doc.trigger('/xss/key/down'); break;
+        }
+    });
+
+    XSS.canvas    = new Canvas();
+    XSS.drawables = new Drawables();
+    XSS.effects   = new Effects();
+    XSS.font      = new Font();
+    XSS.menu      = new Menu();
+    XSS.stages    = new Stages();
 });

@@ -110,7 +110,7 @@ var pairClients = function(client1, client2) {
 var handleMode = function(mode, client) {
     var opponent;
 
-    mode = (mode === 'xss') ? 'xss' : 'safe';
+    mode = (mode === 'XSS') ? 'XSS' : 'safe';
     opponent = findOpponent(client, mode);
     setClientData(client, 'mode', mode);
 

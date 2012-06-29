@@ -1,19 +1,19 @@
+/*jshint globalstrict:true*/
 /*globals XSS*/
+
+'use strict';
+
+/** @const */
+XSS.MENULEFT = 40;
+
+/** @const */
+XSS.MENUTOP = 64;
 
 XSS.menuChoices = {};
 
-
-XSS.menuSettings = {
-    left: 40,
-    top : 64
-};
-
-
 XSS.currentStageName = 'main';
 
-
 XSS.menuHistory = [XSS.currentStageName];
-
 
 /**
  * SelectMenu
@@ -21,24 +21,29 @@ XSS.menuHistory = [XSS.currentStageName];
  * @param name
  * @constructor
  */
-XSS.SelectMenu = function(name) {
-    'use strict';
+function SelectMenu(name) {
+    this.options = [];
+    this.name = name;
+}
 
-    var addOption, getOptionByIndex, getPixels, options = [];
+SelectMenu.prototype = {
 
-    addOption = function(value, title, description) {
-        options.push({
+    addOption: function(value, title, description) {
+        this.options.push({
             value      : value,
             title      : title,
             description: description
         });
-    };
+    },
 
-    getOptionByIndex = function(index) {
-        return options[index];
-    };
+    getOptionByIndex: function(index) {
+        return this.options[index];
+    },
 
-    getPixels = function() {
+    getPixels: function() {
+        var name = this.name,
+            options = this.options;
+
         if (typeof XSS.menuChoices[name] === 'undefined') {
             XSS.menuChoices[name] = 0;
         } else if (XSS.menuChoices[name] < 0) {
@@ -52,14 +57,24 @@ XSS.SelectMenu = function(name) {
             options : options
         };
 
-        return XSS.drawables.getMenuPixels(name, XSS.menuSettings.left, XSS.menuSettings.top, settings);
-    };
+        return XSS.drawables.getMenuPixels(name, XSS.MENULEFT, XSS.MENUTOP, settings);
+    }
+};
 
-    return {
-        addOption       : addOption,
-        getOptionByIndex: getOptionByIndex,
-        getPixels       : getPixels
-    };
+/**
+ * @interface
+ */
+function Stage(name) {
+    this.name = name;
+}
+
+Stage.prototype = {
+
+    getInstruction: function() {},
+    getPixels     : function() {},
+    createStage   : function() {},
+    destroyStage  : function() {}
+
 };
 
 
@@ -68,114 +83,110 @@ XSS.SelectMenu = function(name) {
  * Stage with a form input
  * @param name
  * @constructor
+ * @implements {Stage}
  */
-XSS.BaseInputStage = function(name) {
-    'use strict';
+function BaseInputStage(name) {
+    this.name = name;
+    this.val = '';
+    this.minlength = 0;
+    this.maxlength = 150;
+    this.defaultValue = '';
+    this.label = '';
+    this.labelWsp = this.labelWidth = 2;
+    this.enterEvent = '/xss/key/enter.' + this.name;
+    this.backEvent = '/xss/key/escape.' + name;
+    this.inputEvents = ['keydown.' + this.name, 'keyup.' + this.name].join(' ');
+}
 
-    var input = XSS.bootstrap.input,
+BaseInputStage.prototype = {
 
-        left = XSS.menuSettings.left,
+    setLabel: function(label) {
+        this.label = label;
+        this.labelWidth = XSS.font.getLength(label) + this.labelWsp;
+    },
 
-        top = XSS.menuSettings.top,
+    getInstruction: function() {
+        return 'Start typing and press Enter when you’re done';
+    },
 
-        val = '',
+    getPixels: function() {
+        return [].concat(
+            XSS.font.write(XSS.MENULEFT, XSS.MENUTOP, this.label),
+            XSS.font.write(XSS.MENULEFT + this.labelWidth + this.labelWsp, XSS.MENUTOP, this.val)
+        );
+    },
 
-        minlength = 0,
+    createStage: function() {
+        XSS.input.on(this.inputEvents, this.inputUpdate.bind(this));
+        XSS.input.trigger('focus').trigger('keyup');
+        XSS.input.attr('maxlength', this.maxlength);
 
-        maxlength = 150,
+        XSS.doc.on(this.enterEvent, this.inputSubmit.bind(this));
+        XSS.doc.on(this.backEvent, function() {
+            XSS.menu.goToPreviousStage();
+        });
+    },
 
-        defaultValue = '',
+    destroyStage: function() {
+        XSS.input.off(this.inputEvents);
+        XSS.input.removeAttr('maxlength');
 
-        label = '',
+        XSS.doc.off(this.enterEvent);
+        XSS.doc.off(this.backEvent);
 
-        labelWsp = 2,
+        XSS.effects.blinkStop('caret');
+        XSS.effects.decayNow('error');
+    },
 
-        labelWidth = labelWsp,
+    /** @private */
+    getInputError: function(val) {
+        if (val.length < this.minlength) {
+            return 'Too short!!!';
+        } else if (val.length > this.maxlength) {
+            return 'Too long!!!';
+        } else {
+            return false;
+        }
+    },
 
-        enterEvent = '/xss/key/enter.' + name,
+    /** @private */
+    inputSubmit: function() {
+        var value, error;
 
-        inputEvents = ['keydown.' + name, 'keyup.' + name].join(' '),
+        value = $.trim(XSS.input.val());
+        error = this.getInputError(value);
 
-        setMinlength = function(minlengthOverwrite) {
-            minlength = minlengthOverwrite;
-        },
+        if (error === false) {
+            XSS.menu.switchStage(this.name, 'type');
+            XSS.menuChoices[this.name] = value;
+        } else {
+            XSS.effects.decay('error', XSS.font.write(XSS.MENULEFT, XSS.MENUTOP + 9, error));
+        }
 
-        setMaxlength = function(maxlengthOverwrite) {
-            maxlength = maxlengthOverwrite;
-        },
+        return false;
+    },
 
-        setDefaultValue = function(defaultValueOverwrite) {
-            defaultValue = defaultValueOverwrite;
-        },
+    /** @private */
+    inputUpdate: function() {
+        var caretTextPos, caretGlobPos, caret;
 
-        setLabel = function(labelOverwrite) {
-            label = labelOverwrite;
-            labelWidth = XSS.font.getLength(label) + labelWsp;
-        },
+        // Selected text: too much hassle
+        if (XSS.input[0].selectionStart !== XSS.input[0].selectionEnd) {
+            XSS.input[0].selectionStart = XSS.input[0].selectionEnd;
+        }
 
-        getInstruction = function() {
-            return 'Start typing and press Enter when you’re done';
-        },
+        this.val = XSS.input.val();
 
-        getPixels = function() {
-            return [].concat(
-                XSS.font.write(left, top, label),
-                XSS.font.write(left + labelWidth + labelWsp, top, val)
-            );
-        },
+        caretTextPos = XSS.font.getLength(this.val.substr(0, XSS.input[0].selectionStart));
+        caretTextPos = caretTextPos || -1;
 
-        addEventHandlers = function() {
-            input.on(inputEvents, inputUpdate);
-            input.trigger('focus').trigger('keyup');
-            XSS.doc.on(enterEvent, inputSubmit);
-        },
+        caretGlobPos = XSS.MENULEFT + this.labelWidth + this.labelWsp + caretTextPos;
 
-        removeEventHandlers = function() {
-            input.off('inputEvents');
-            XSS.doc.off(enterEvent);
-            XSS.effects.blinkStop('caret');
-        },
+        caret = XSS.drawables.line(caretGlobPos, XSS.MENUTOP - 1, caretGlobPos, XSS.MENUTOP + 6);
 
-        removePixels = function() {
-        },
-
-        inputSubmit = function() {
-            XSS.menu.switchStage(name, 'type');
-        },
-
-        inputUpdate = function() {
-            var caretTextPos, caretGlobPos, caret;
-
-            // Selected text: too much hassle
-            if (input[0].selectionStart !== input[0].selectionEnd) {
-                input[0].selectionStart = input[0].selectionEnd;
-            }
-
-            val = input.val();
-
-            caretTextPos = XSS.font.getLength(val.substr(0, input[0].selectionStart));
-            caretTextPos = caretTextPos || -1;
-
-            caretGlobPos = left + labelWidth + labelWsp + caretTextPos;
-
-            caret = XSS.drawables.line(caretGlobPos, top - 1, caretGlobPos, top + 6);
-
-            XSS.effects.blink('caret', caret);
-            XSS.menu.refreshStage();
-        };
-
-    return {
-        setMinlength       : setMinlength,
-        setMaxlength       : setMaxlength,
-        setLabel           : setLabel,
-        setDefaultValue    : setDefaultValue,
-        getInstruction     : getInstruction,
-        getPixels          : getPixels,
-        getTravelPixels    : getPixels,
-        addEventHandlers   : addEventHandlers,
-        removeEventHandlers: removeEventHandlers,
-        removePixels       : removePixels
-    };
+        XSS.effects.blink('caret', caret);
+        XSS.menu.refreshStage();
+    }
 };
 
 
@@ -184,53 +195,35 @@ XSS.BaseInputStage = function(name) {
  * Stage with static content
  * @param name
  * @constructor
+ * @implements {Stage}
  */
-XSS.BaseScreenStage = function(name) {
-    'use strict';
+function BaseScreenStage(name) {
+    this.name = name;
+    this.screen = [];
+    this.backEvent = ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' ');
+}
 
-    var screen = [],
+BaseScreenStage.prototype = {
 
-        returnEvent = ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' '),
+    getInstruction: function() {
+        return 'Press Esc to go back to the futuuuuuuuuuuuuure';
+    },
 
-        setScreen = function(overwriteScreen) {
-            screen = overwriteScreen;
-        },
+    getPixels: function() {
+        return this.screen;
+    },
 
-        getInstruction = function() {
-            return 'Press Esc to go back';
-        },
+    createStage: function() {
+        XSS.doc.on(this.backEvent, function() {
+            XSS.menu.goToPreviousStage();
+        });
+    },
 
-        getPixels = function() {
-            return screen;
-        },
+    destroyStage: function() {
+        XSS.doc.off(this.backEvent);
+        delete XSS.canvas.objects.stage;
+    }
 
-        addEventHandlers = function() {
-            XSS.doc.on(returnEvent, function() {
-                var previousStageName, historyLength = XSS.menuHistory.length;
-                if (historyLength > 1) {
-                    previousStageName = XSS.menuHistory[historyLength - 2];
-                    XSS.menu.switchStage(XSS.currentStageName, previousStageName, {back: true});
-                }
-            });
-        },
-
-        removeEventHandlers = function() {
-            XSS.doc.off(returnEvent);
-        },
-
-        removePixels = function() {
-            delete XSS.canvas.pixels.stage;
-        };
-
-    return {
-        setScreen          : setScreen,
-        getInstruction     : getInstruction,
-        getPixels          : getPixels,
-        getTravelPixels    : getPixels,
-        addEventHandlers   : addEventHandlers,
-        removeEventHandlers: removeEventHandlers,
-        removePixels       : removePixels
-    };
 };
 
 
@@ -239,328 +232,162 @@ XSS.BaseScreenStage = function(name) {
  * Stage with a vertical select menu
  * @param name
  * @constructor
+ * @implements {Stage}
  */
-XSS.BaseSelectStage = function(name) {
-    'use strict';
-
-    var menu = new XSS.SelectMenu(name),
-
-        events = {
-            up    : '/xss/key/up.' + name,
-            down  : '/xss/key/down.' + name,
-            select: '/xss/key/enter.' + name,
-            back  : ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' ')
-        },
-
-        getInstruction = function() {
-            return 'Use arrow keys to navigate and Enter to select.';
-        },
-
-        getPixels = function() {
-            return menu.getPixels(XSS.menuChoices[name]);
-        },
-
-        setMenu = function(overwriteMenu) {
-            menu = overwriteMenu;
-        },
-
-        addEventHandlers = function() {
-            XSS.menuChoices[name] = XSS.menuChoices[name] || 0;
-
-            XSS.doc.on(events.down, function() {
-                XSS.menuChoices[name] += 1;
-                XSS.menu.refreshStage();
-            });
-
-            XSS.doc.on(events.up, function() {
-                XSS.menuChoices[name] -= 1;
-                XSS.menu.refreshStage();
-            });
-
-            XSS.doc.on(events.select, function() {
-                var option = menu.getOptionByIndex(XSS.menuChoices[name]);
-                XSS.menu.switchStage(XSS.currentStageName, option.value);
-            });
-
-            XSS.doc.on(events.back, function() {
-                var previousStageName, historyLength = XSS.menuHistory.length;
-                if (historyLength > 1) {
-                    previousStageName = XSS.menuHistory[historyLength - 2];
-                    XSS.menu.switchStage(XSS.currentStageName, previousStageName, {back: true});
-                }
-            });
-        },
-
-        removeEventHandlers = function() {
-            XSS.doc.off([events.down, events.up, events.select, events.back].join(' '));
-        },
-
-        removePixels = function() {
-            delete XSS.canvas.pixels.stage;
-        };
-
-    return {
-        setMenu            : setMenu,
-        getInstruction     : getInstruction,
-        getPixels          : getPixels,
-        getTravelPixels    : getPixels,
-        addEventHandlers   : addEventHandlers,
-        removeEventHandlers: removeEventHandlers,
-        removePixels       : removePixels
+function BaseSelectStage(name) {
+    this.name = name;
+    this.menu = new SelectMenu(name);
+    this.events = {
+        up    : '/xss/key/up.' + name,
+        down  : '/xss/key/down.' + name,
+        select: '/xss/key/enter.' + name,
+        back  : ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' ')
     };
+}
+
+BaseSelectStage.prototype = {
+
+    getInstruction: function() {
+        return 'Use arrow keys to navigate and Enter to select.';
+    },
+
+    getPixels: function() {
+        return this.menu.getPixels();
+    },
+
+    createStage: function() {
+        XSS.menuChoices[this.name] = XSS.menuChoices[this.name] || 0;
+
+        XSS.doc.on(this.events.down, function() {
+            XSS.menuChoices[this.name] += 1;
+            XSS.menu.refreshStage();
+        }.bind(this));
+
+        XSS.doc.on(this.events.up, function() {
+            XSS.menuChoices[this.name] -= 1;
+            XSS.menu.refreshStage();
+        }.bind(this));
+
+        XSS.doc.on(this.events.select, function() {
+            var option = this.menu.getOptionByIndex(XSS.menuChoices[this.name]);
+            XSS.menu.switchStage(XSS.currentStageName, option.value);
+        }.bind(this));
+
+        XSS.doc.on(this.events.back, function() {
+            XSS.menu.goToPreviousStage();
+        });
+    },
+
+    destroyStage: function() {
+        XSS.doc.off([this.events.down, this.events.up, this.events.select, this.events.back].join(' '));
+        delete XSS.canvas.objects.stage;
+    }
+
 };
-
-
-/**
- * Main Stage
- * Shown on first screen
- * @param name
- * @return {XSS.BaseSelectStage}
- * @constructor
- */
-XSS.MainStage = function(name) {
-    'use strict';
-
-    var stage, menu;
-
-    menu = new XSS.SelectMenu(name);
-    menu.addOption('mp', 'MULTIPLAYER', 'Play with a friend or (un)friendly stranger.');
-    menu.addOption('sp', 'SINGLE PLAYER', 'Play with yourself, get some practise.');
-    menu.addOption('help', 'HEEELP?!!', 'How do I use this computer electronic device?');
-    menu.addOption('credits', 'CREDITS', 'Made by Blaise Kal, 2012.');
-
-    stage = new XSS.BaseSelectStage(name);
-    stage.setMenu(menu);
-
-    return stage;
-};
-
-
-/**
- * Multiplayer Stage
- * @param name
- * @return {XSS.BaseSelectStage}
- * @constructor
- */
-XSS.MultiPlayerStage = function(name) {
-    'use strict';
-
-    var stage, menu;
-
-    menu = new XSS.SelectMenu(name);
-    menu.addOption('quick', 'QUICK MATCH WITH A STRANGER', 'Quickly play a game using matchmaking.');
-    menu.addOption('host', 'HOST A PRIVATE GAME', 'Generates a secret game URL to give to a friend.');
-
-    stage = new XSS.BaseSelectStage(name);
-    stage.setMenu(menu);
-
-    return stage;
-};
-
-
-/**
- * Game Type Stage
- * @param name
- * @return {XSS.BaseSelectStage}
- * @constructor
- */
-XSS.GameTypeStage = function(name) {
-    'use strict';
-
-    var stage, menu;
-
-    menu = new XSS.SelectMenu(name);
-    menu.addOption('friendly', 'FRIENDLY MODE', 'May slightly dent your ego ♥');
-    menu.addOption('xss', 'XSS MODE', ['The winner of the game is able to execute Java-',
-        'script in the browser of the loser...  alert(’☠’)']);
-
-    stage = new XSS.BaseSelectStage(name);
-    stage.menu = menu;
-
-    return stage;
-};
-
-
-/**
- * Credits Stage
- * @param name
- * @return {XSS.BaseScreenStage}
- * @constructor
- */
-XSS.CreditsStage = function(name) {
-    'use strict';
-
-    var screen, stage,
-        left = XSS.menuSettings.left,
-        top = XSS.menuSettings.top;
-
-    screen = [].concat(
-        XSS.effects.zoomX2(XSS.font.write(0, 0, '<CREDITS>'), left, top),
-        XSS.font.write(left, top + 18, 'Blaise Kal:'),
-        XSS.font.write(left, top + 27, 'Placeholder:'),
-        XSS.font.write(left, top + 35, 'Placeholder:'),
-        XSS.font.write(left + 52, top + 18, 'Code, Pixels, Concept'),
-        XSS.font.write(left + 52, top + 27, 'Testing, Hosting'),
-        XSS.font.write(left + 52, top + 35, 'Testing, Snoek')
-    );
-
-    stage = new XSS.BaseScreenStage(name);
-    stage.setScreen(screen);
-
-    return stage;
-};
-
-
-/**
- * Help Stage
- * @param name
- * @return {XSS.BaseScreenStage}
- * @constructor
- */
-XSS.HelpStage = function(name) {
-    'use strict';
-
-    var screen, stage,
-        left = XSS.menuSettings.left,
-        top = XSS.menuSettings.top;
-
-    screen = [].concat(
-        XSS.effects.zoomX2(XSS.font.write(0, 0, '<HEEELP?!!>'), left, top),
-        XSS.font.write(left, top + 18, '• Play using the arrow keys on your keyboard'),
-        XSS.font.write(left, top + 27, '• You can chat during the game by typing+enter'),
-        XSS.font.write(left, top + 35, '• Open Source at github.com/blaisekal/xssnake'),
-        XSS.font.write(left, top + 45, '• Github is also for bugs and feature requests'),
-        XSS.font.write(left, top + 54, '• Other questions or issues: blaisekal@gmail.com')
-    );
-
-    stage = new XSS.BaseScreenStage(name);
-    stage.setScreen(screen);
-
-    return stage;
-};
-
-
-/**
- * Input name Stage
- * @param name
- * @return {XSS.BaseInputStage}
- * @constructor
- */
-XSS.InputNameStage = function(name) {
-    'use strict';
-
-    var stage;
-
-    stage = new XSS.BaseInputStage(name);
-    stage.setLabel('What’s your name?');
-    stage.setMinlength(2);
-    stage.setMaxlength(10);
-    // stage.setContinue('mptype');
-
-    return stage;
-};
-
 
 /**
  * Menu instantiation, stage switching
  * @constructor
  */
-XSS.Menu = function() {
-    'use strict';
+function Menu() {}
 
-    var stages = {
-            'main'   : XSS.MainStage('main'),
-            'mp'     : XSS.InputNameStage('mp'),
-            // mp     : XSS.MultiPlayerStage('mp'),
-            'type'   : XSS.GameTypeStage('type'),
-            'help'   : XSS.HelpStage('help'),
-            'credits': XSS.CreditsStage('credits')
-        },
+Menu.prototype = {
 
-        newStage = function(stageName) {
-            var stage = stages[stageName];
+    setStages: function(stages) {
+        this.stages = stages;
+    },
 
-            XSS.canvas.pixels.instruction = {
-                pixels: XSS.font.write(XSS.menuSettings.left, 45, stage.getInstruction())
-            };
+    newStage: function(stageName) {
+        var stage = this.stages[stageName];
 
-            updateStage(stage);
-            stage.addEventHandlers();
-        },
-
-        refreshStage = function() {
-            updateStage(stages[XSS.currentStageName]);
-        },
-
-        updateStage = function(stage) {
-            XSS.canvas.pixels.stage = {
-                pixels: stage.getPixels()
-            };
-        },
-
-        animateSwitchStage = function(oldStagePixels, newStagePixels, back, callback) {
-            var oldStagePixelsAnim, newStagePixelsAnim,
-                width = XSS.settings.width;
-
-            if (back) {
-                oldStagePixelsAnim = {start: 0, end: width};
-                newStagePixelsAnim = {start: -width, end: 0};
-            } else {
-                oldStagePixelsAnim = {start: 0, end: -width};
-                newStagePixelsAnim = {start: width, end: 0};
-            }
-
-            $.extend(newStagePixelsAnim, {callback: callback});
-
-            XSS.effects.swipe('oldstage', oldStagePixels, oldStagePixelsAnim);
-            XSS.effects.swipe('newstage', newStagePixels, newStagePixelsAnim);
-        },
-
-        switchStage = function(currentStageName, newStageName, options) {
-            var onAnimateDone = function() {
-                // Load new stage
-                XSS.currentStageName = newStageName;
-                newStage(newStageName);
-
-                // Log history
-                if (options && options.back) {
-                    XSS.menuHistory.pop();
-                } else {
-                    XSS.menuHistory.push(newStageName);
-                }
-            };
-
-            if (!stages[newStageName]) {
-                throw new Error('Stage does not exist: ' + newStageName);
-            }
-
-            // Unload old stage
-            stages[currentStageName].removeEventHandlers();
-            stages[currentStageName].removePixels();
-
-            delete XSS.canvas.pixels.instruction;
-
-            animateSwitchStage(
-                stages[currentStageName].getTravelPixels(),
-                stages[newStageName].getTravelPixels(),
-                (options && options.back),
-                onAnimateDone
-            );
+        XSS.canvas.objects.instruction = {
+            pixels: XSS.font.write(XSS.MENULEFT, 45, stage.getInstruction())
         };
 
-    XSS.canvas.pixels.border = {
-        pixels: XSS.drawables.getOuterBorderPixels()
-    };
+        this.updateStage(stage);
+        stage.createStage();
+    },
 
-    XSS.canvas.pixels.header = {
-        pixels: XSS.drawables.getHeaderPixels(XSS.menuSettings.left)
-    };
+    switchStage: function(currentStageName, newStageName, options) {
+        var onAnimateDone = function() {
+            // Load new stage
+            XSS.currentStageName = newStageName;
+            this.newStage(newStageName);
 
-    newStage(XSS.currentStageName);
+            // Log history
+            if (options && options.back) {
+                XSS.menuHistory.pop();
+            } else {
+                XSS.menuHistory.push(newStageName);
+            }
+        };
 
-    return {
-        newStage    : newStage,
-        refreshStage: refreshStage,
-        switchStage : switchStage
-    };
+        if (!this.stages[newStageName]) {
+            throw new Error('Stage does not exist: ' + newStageName);
+        }
+
+        // Unload old stage
+        this.stages[currentStageName].destroyStage();
+
+        delete XSS.canvas.objects.instruction;
+        delete XSS.canvas.objects.stage;
+
+        this.animateSwitchStage(
+            this.stages[currentStageName].getPixels(),
+            this.stages[newStageName].getPixels(),
+            (options && options.back),
+            onAnimateDone.bind(this)
+        );
+    },
+
+    goToPreviousStage: function() {
+        var previousStageName,
+            historyLength = XSS.menuHistory.length;
+        if (historyLength > 1) {
+            previousStageName = XSS.menuHistory[historyLength - 2];
+            this.switchStage(XSS.currentStageName, previousStageName, {back: true});
+        }
+    },
+
+    setupMenuSkeletton: function() {
+        XSS.canvas.objects.border = {
+            pixels: XSS.drawables.getOuterBorderPixels()
+        };
+
+        XSS.canvas.objects.header = {
+            pixels: XSS.drawables.getHeaderPixels(XSS.MENULEFT)
+        };
+    },
+
+    /** @private */
+    refreshStage: function() {
+        this.updateStage(this.stages[XSS.currentStageName]);
+    },
+
+    /** @private */
+    updateStage: function(stage) {
+        XSS.canvas.objects.stage = {
+            pixels: stage.getPixels()
+        };
+    },
+
+    /** @private */
+    animateSwitchStage: function(oldStagePixels, newStagePixels, back, callback) {
+        var oldStagePixelsAnim, newStagePixelsAnim,
+            width = XSS.HPIXELS;
+
+        if (back) {
+            oldStagePixelsAnim = {start: 0, end: width};
+            newStagePixelsAnim = {start: -width, end: 0};
+        } else {
+            oldStagePixelsAnim = {start: 0, end: -width};
+            newStagePixelsAnim = {start: width, end: 0};
+        }
+
+        $.extend(newStagePixelsAnim, {callback: callback});
+
+        XSS.effects.swipe('oldstage', oldStagePixels, oldStagePixelsAnim);
+        XSS.effects.swipe('newstage', newStagePixels, newStagePixelsAnim);
+    }
+
 };
