@@ -1,23 +1,41 @@
 /*jshint globalstrict:true*/
-/*globals XSS, SelectMenu, BaseSelectStage, BaseScreenStage, BaseInputStage*/
+/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage*/
 
 'use strict';
+
+
+/**
+ * Set up stages
+ * @constructor
+ */
+function Stages() {
+    XSS.menu.setStages({
+        'main'   : XSS.MainStage('main'),
+        'name'   : XSS.NameStage('name'),
+        'room'   : XSS.RoomStage('room'),
+        'type'   : XSS.TypeStage('type'),
+        'help'   : XSS.HelpStage('help'),
+        'credits': XSS.CreditsStage('credits')
+    });
+    XSS.menu.newStage(XSS.currentStageName);
+    XSS.menu.setupMenuSkeletton();
+}
 
 /**
  * Main Stage
  * @param name
- * @returns BaseSelectStage
+ * @returns SelectStage
  */
 XSS.MainStage = function(name) {
     var stage, menu;
 
     menu = new SelectMenu(name);
-    menu.addOption('mp', 'MULTIPLAYER', 'Play with a friend or (un)friendly stranger.');
+    menu.addOption('mp', 'MULTIPLAYER', 'Play with a friend or (un)friendly stranger.', {nextStage: 'name'});
     menu.addOption('sp', 'SINGLE PLAYER', 'Play with yourself, get some practise.');
     menu.addOption('help', 'HEEELP?!!', 'How do I use this computer electronic device?');
     menu.addOption('credits', 'CREDITS', 'Made by Blaise Kal, 2012.');
 
-    stage = new BaseSelectStage(name);
+    stage = new SelectStage(name);
     stage.menu = menu;
 
     return stage;
@@ -25,18 +43,18 @@ XSS.MainStage = function(name) {
 
 
 /**
- * Multiplayer Stage
+ * Room Type Stage
  * @param name
- * @returns BaseSelectStage
+ * @returns SelectStage
  */
-XSS.MultiPlayerStage = function(name) {
+XSS.RoomStage = function(name) {
     var stage, menu;
 
     menu = new SelectMenu(name);
-    menu.addOption('quick', 'QUICK MATCH WITH A STRANGER', 'Quickly play a game using matchmaking.');
-    menu.addOption('host', 'HOST A PRIVATE GAME', 'Generates a secret game URL to give to a friend.');
+    menu.addOption('quick', 'QUICK MATCH WITH A STRANGER', 'Quickly play a game using matchmaking.', {nextStage: 'type'});
+    menu.addOption('private', 'HOST A PRIVATE GAME', 'Generates a secret game URL to give to a friend.', {nextStage: 'type'});
 
-    stage = new BaseSelectStage(name);
+    stage = new SelectStage(name);
     stage.menu = menu;
 
     return stage;
@@ -46,17 +64,17 @@ XSS.MultiPlayerStage = function(name) {
 /**
  * Game Type Stage
  * @param name
- * @returns BaseSelectStage
+ * @returns SelectStage
  */
-XSS.GameTypeStage = function(name) {
+XSS.TypeStage = function(name) {
     var stage, menu;
 
     menu = new SelectMenu(name);
-    menu.addOption('friendly', 'FRIENDLY MODE', 'May slightly dent your ego ♥');
+    menu.addOption('friendly', 'FRIENDLY MODE', 'May slightly dent your ego ♥', {nextStage: 'mp'});
     menu.addOption('XSS', 'XSS MODE', ['The winner of the game is able to execute Java-',
-        'script in the browser of the loser...  alert(’☠’)']);
+        'script in the browser of the loser...  alert(’☠’)'], {nextStage: 'mp'});
 
-    stage = new BaseSelectStage(name);
+    stage = new SelectStage(name);
     stage.menu = menu;
 
     return stage;
@@ -66,7 +84,7 @@ XSS.GameTypeStage = function(name) {
 /**
  * Credits Stage
  * @param name
- * @returns BaseScreenStage
+ * @returns ScreenStage
  */
 XSS.CreditsStage = function(name) {
     var screen, stage,
@@ -83,7 +101,7 @@ XSS.CreditsStage = function(name) {
         XSS.font.write(left + 52, top + 35, 'Testing, Snoek')
     );
 
-    stage = new BaseScreenStage(name);
+    stage = new ScreenStage(name);
     stage.screen = screen;
 
     return stage;
@@ -93,7 +111,7 @@ XSS.CreditsStage = function(name) {
 /**
  * Help Stage
  * @param name
- * @return {BaseScreenStage}
+ * @return {ScreenStage}
  */
 XSS.HelpStage = function(name) {
     var screen, stage,
@@ -109,7 +127,7 @@ XSS.HelpStage = function(name) {
         XSS.font.write(left, top + 54, '• Other questions or issues: blaisekal@gmail.com')
     );
 
-    stage = new BaseScreenStage(name);
+    stage = new ScreenStage(name);
     stage.screen = screen;
 
     return stage;
@@ -119,31 +137,15 @@ XSS.HelpStage = function(name) {
 /**
  * Input name Stage
  * @param name
- * @return {BaseInputStage}
+ * @return {InputStage}
  */
-XSS.InputNameStage = function(name) {
+XSS.NameStage = function(name) {
     var stage;
 
-    stage = new BaseInputStage(name);
+    stage = new InputStage(name, 'room');
     stage.setLabel('What’s your name?');
     stage.minlength = 2;
     stage.maxlength = 10;
 
     return stage;
 };
-
-/**
- * Set up stages
- * @constructor
- */
-function Stages() {
-    XSS.menu.setStages({
-        'main'   : XSS.MainStage('main'),
-        'mp'     : XSS.InputNameStage('mp'),
-        'type'   : XSS.GameTypeStage('type'),
-        'help'   : XSS.HelpStage('help'),
-        'credits': XSS.CreditsStage('credits')
-    });
-    XSS.menu.newStage(XSS.currentStageName);
-    XSS.menu.setupMenuSkeletton();
-}

@@ -3,7 +3,7 @@
 
 'use strict';
 
-// TODO: Separate animation and static effects
+// TODO: Separate animation - and static effects
 
 /**
  * Effects
@@ -17,17 +17,15 @@ function Effects() {
 Effects.prototype = {
 
     shiftPixels: function(pixels, x, y) {
-        var sx, sy, pixelsShifted = [],
-            w = XSS.HPIXELS,
-            h = XSS.VPIXELS;
+        var sx, sy,
+            pixelsShifted = [];
 
         for (var i = 0, m = pixels.length; i < m; i++) {
             sx = pixels[i][0] + x;
             sy = pixels[i][1] + y;
-            if (sx < 0 || sy < 0 || sx > w || sy > h) {
-                continue;
+            if (sx > 0 && sy > 0 && sx <= XSS.HPIXELS && sy <= XSS.VPIXELS) {
+                pixelsShifted.push([sx, sy]);
             }
-            pixelsShifted.push([sx, sy]);
         }
 
         return pixelsShifted;

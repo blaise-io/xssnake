@@ -14,7 +14,7 @@ XSS.VPIXELS = 160;
 /** @const */
 XSS.PIXELSIZE = 4;
 
-$(window).on('load', function() {
+$(function() {
 
     XSS.doc = $(document.body);
 

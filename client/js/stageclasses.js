@@ -28,16 +28,17 @@ function SelectMenu(name) {
 
 SelectMenu.prototype = {
 
-    addOption: function(value, title, description) {
+    addOption: function(value, title, description, settings) {
         this.options.push({
             value      : value,
             title      : title,
-            description: description
+            description: description,
+            settings   : settings || {}
         });
     },
 
-    getOptionByIndex: function(index) {
-        return this.options[index];
+    getOptionNextStage: function(index) {
+        return this.options[index].settings.nextStage || this.options[index].value;
     },
 
     getPixels: function() {
@@ -85,20 +86,27 @@ Stage.prototype = {
  * @constructor
  * @implements {Stage}
  */
-function BaseInputStage(name) {
+function InputStage(name, nextStage) {
     this.name = name;
+    this.nextStage = nextStage;
+
     this.val = '';
+    this.defaultValue = '';
+
     this.minlength = 0;
     this.maxlength = 150;
-    this.defaultValue = '';
+
     this.label = '';
     this.labelWsp = this.labelWidth = 2;
-    this.enterEvent = '/xss/key/enter.' + this.name;
-    this.backEvent = '/xss/key/escape.' + name;
-    this.inputEvents = ['keydown.' + this.name, 'keyup.' + this.name].join(' ');
+
+    this.events = {
+        enter: '/xss/key/enter.' + this.name,
+        back : '/xss/key/escape.' + name,
+        input: ['keydown.' + this.name, 'keyup.' + this.name].join(' ')
+    };
 }
 
-BaseInputStage.prototype = {
+InputStage.prototype = {
 
     setLabel: function(label) {
         this.label = label;
@@ -117,22 +125,22 @@ BaseInputStage.prototype = {
     },
 
     createStage: function() {
-        XSS.input.on(this.inputEvents, this.inputUpdate.bind(this));
+        XSS.input.on(this.events.input, this.inputUpdate.bind(this));
         XSS.input.trigger('focus').trigger('keyup');
         XSS.input.attr('maxlength', this.maxlength);
 
-        XSS.doc.on(this.enterEvent, this.inputSubmit.bind(this));
-        XSS.doc.on(this.backEvent, function() {
+        XSS.doc.on(this.events.enter, this.inputSubmit.bind(this));
+        XSS.doc.on(this.events.back, function() {
             XSS.menu.goToPreviousStage();
         });
     },
 
     destroyStage: function() {
-        XSS.input.off(this.inputEvents);
+        XSS.input.off(this.events.input);
         XSS.input.removeAttr('maxlength');
 
-        XSS.doc.off(this.enterEvent);
-        XSS.doc.off(this.backEvent);
+        XSS.doc.off(this.events.enter);
+        XSS.doc.off(this.events.back);
 
         XSS.effects.blinkStop('caret');
         XSS.effects.decayNow('error');
@@ -157,7 +165,7 @@ BaseInputStage.prototype = {
         error = this.getInputError(value);
 
         if (error === false) {
-            XSS.menu.switchStage(this.name, 'type');
+            XSS.menu.switchStage(this.name, this.nextStage);
             XSS.menuChoices[this.name] = value;
         } else {
             XSS.effects.decay('error', XSS.font.write(XSS.MENULEFT, XSS.MENUTOP + 9, error));
@@ -197,13 +205,13 @@ BaseInputStage.prototype = {
  * @constructor
  * @implements {Stage}
  */
-function BaseScreenStage(name) {
+function ScreenStage(name) {
     this.name = name;
     this.screen = [];
     this.backEvent = ['/xss/key/escape.' + name, '/xss/key/backspace.' + name].join(' ');
 }
 
-BaseScreenStage.prototype = {
+ScreenStage.prototype = {
 
     getInstruction: function() {
         return 'Press Esc to go back to the futuuuuuuuuuuuuure';
@@ -234,9 +242,10 @@ BaseScreenStage.prototype = {
  * @constructor
  * @implements {Stage}
  */
-function BaseSelectStage(name) {
-    this.name = name;
-    this.menu = new SelectMenu(name);
+function SelectStage(name) {
+    this.name   = name;
+    this.map    = {};
+    this.menu   = new SelectMenu(name);
     this.events = {
         up    : '/xss/key/up.' + name,
         down  : '/xss/key/down.' + name,
@@ -245,7 +254,7 @@ function BaseSelectStage(name) {
     };
 }
 
-BaseSelectStage.prototype = {
+SelectStage.prototype = {
 
     getInstruction: function() {
         return 'Use arrow keys to navigate and Enter to select.';
@@ -269,8 +278,8 @@ BaseSelectStage.prototype = {
         }.bind(this));
 
         XSS.doc.on(this.events.select, function() {
-            var option = this.menu.getOptionByIndex(XSS.menuChoices[this.name]);
-            XSS.menu.switchStage(XSS.currentStageName, option.value);
+            var nextStage = this.menu.getOptionNextStage(XSS.menuChoices[this.name]);
+            XSS.menu.switchStage(XSS.currentStageName, nextStage);
         }.bind(this));
 
         XSS.doc.on(this.events.back, function() {
