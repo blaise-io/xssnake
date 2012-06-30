@@ -6,5 +6,5 @@ Thumbs.db
 # You should install these yourself
 node_modules
 
-# Build it on-the-fly by running `node server/build.js`
+# Build it by running `node server/build.js`
 compiled.js
