@@ -20,7 +20,7 @@ Effects.prototype = {
         var sx, sy,
             pixelsShifted = [];
 
-        for (var i = 0, m = pixels.length; i < m; i++) {
+        for (var i = 0, m = pixels.length; i < m; ++i) {
             sx = pixels[i][0] + x;
             sy = pixels[i][1] + y;
             if (sx > 0 && sy > 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
@@ -43,7 +43,7 @@ Effects.prototype = {
         painter = function(e, diff) {
             lastSwitch += diff;
             if (lastSwitch > speed) {
-                lastSwitch = 0;
+                lastSwitch -= speed;
                 show = !show;
             }
             if (show) {
@@ -121,9 +121,25 @@ Effects.prototype = {
         XSS.doc.on(listener, painter.bind(this));
     },
 
+    // Slow!
+    zoom: function(pixels, zoom, shiftX, shiftY) {
+        var pixelsZoomed = [];
+        for (var i = 0, m = pixels.length; i < m; ++i) {
+            for (var xx = 0; xx !== zoom; ++xx) {
+                for (var yy = 0; yy !== zoom; ++yy) {
+                    pixelsZoomed = pixelsZoomed.concat([[
+                        shiftX + xx + pixels[i][0] * zoom,
+                        shiftY + yy + pixels[i][1] * zoom
+                    ]]);
+                }
+            }
+        }
+        return pixelsZoomed;
+    },
+
     zoomX2: function(pixels, shiftX, shiftY) {
         var pixelsZoomed = [], x, y;
-        for (var i = 0, m = pixels.length; i < m; i++) {
+        for (var i = 0, m = pixels.length; i < m; ++i) {
             x = pixels[i][0];
             y = pixels[i][1];
             pixelsZoomed = pixelsZoomed.concat([

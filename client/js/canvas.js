@@ -166,6 +166,7 @@ Canvas.prototype = {
         if (fps > 1 && fps <= 15) {
             console.log('low FPS');
         }
+        document.title = fps;
 
         // Last call for animations
         XSS.doc.trigger('/xss/canvas/paint', [diff]);
