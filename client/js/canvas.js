@@ -11,10 +11,10 @@ function Canvas() {
     this.objects = {};
 
     /** @const */
-    this.CANVASWIDTH =  XSS.HPIXELS * XSS.PIXELSIZE;
+    this.CANVASWIDTH =  XSS.PIXELS_H * XSS.PIXEL_SIZE;
 
     /** @const */
-    this.CANVASHEIGHT = XSS.VPIXELS * XSS.PIXELSIZE;
+    this.CANVASHEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
 
     this.canvas = this.setupCanvas();
     this.ctx = this.canvas[0].getContext('2d');
@@ -73,7 +73,7 @@ Canvas.prototype = {
         var bbox = XSS.drawables.getBoundingBox(pixels);
         for (var k in bbox) {
             if (bbox.hasOwnProperty(k)) {
-                bbox[k] *= XSS.PIXELSIZE;
+                bbox[k] *= XSS.PIXEL_SIZE;
             }
         }
         return bbox;
@@ -81,7 +81,7 @@ Canvas.prototype = {
 
     /** @private */
     snapToFatPixels: function(number) {
-        return Math.round(number / XSS.PIXELSIZE) * XSS.PIXELSIZE;
+        return Math.round(number / XSS.PIXEL_SIZE) * XSS.PIXEL_SIZE;
     },
 
     /** @private */
@@ -104,7 +104,7 @@ Canvas.prototype = {
 
     /** @private */
     paintData: function(context, data, offset) {
-        var s = XSS.PIXELSIZE,
+        var s = XSS.PIXEL_SIZE,
             i = data.length;
 
         offset.x = offset.x || 0;

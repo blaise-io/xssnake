@@ -5,32 +5,94 @@
 
 var XSS = {};
 
-/** @const */
-XSS.HPIXELS = 256;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.PIXELS_H = 256;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.PIXELS_V = 160;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.PIXEL_SIZE = 4;
 
-/** @const */
-XSS.VPIXELS = 160;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.KEY_BACKSPACE = 8;
 
-/** @const */
-XSS.PIXELSIZE = 4;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.KEY_ENTER = 13;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.KEY_ESCAPE = 27;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.KEY_LEFT = 37;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.KEY_UP = 38;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.KEY_RIGHT = 39;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.KEY_DOWN = 40;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.DIRECTION_LEFT = 0;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.DIRECTION_UP = 1;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.DIRECTION_RIGHT = 2;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.DIRECTION_DOWN = 3;
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.MENU_LEFT = 40;
+
+/**
+ * @type {Number}
+ * @const
+ */
+XSS.MENU_TOP = 64;
+
 
 $(function() {
-
-    XSS.doc = $(document.body);
-
-    XSS.input = $('<input>').appendTo(XSS.doc).attr('autofocus', 1);
-
-    XSS.doc.on('keydown', function(e) {
-        switch (e.which) {
-            case  8: XSS.doc.trigger('/xss/key/backspace'); break;
-            case 13: XSS.doc.trigger('/xss/key/enter'); break;
-            case 27: XSS.doc.trigger('/xss/key/escape'); break;
-            case 37: XSS.doc.trigger('/xss/key/left'); break;
-            case 38: XSS.doc.trigger('/xss/key/up'); break;
-            case 39: XSS.doc.trigger('/xss/key/right'); break;
-            case 40: XSS.doc.trigger('/xss/key/down'); break;
-        }
-    });
+    XSS.doc       = $('body');
+    XSS.input     = $('input');
 
     XSS.canvas    = new Canvas();
     XSS.drawables = new Drawables();
@@ -38,4 +100,6 @@ $(function() {
     XSS.font      = new Font();
     XSS.menu      = new Menu();
     XSS.stages    = new Stages();
+
+    XSS.stages.init();
 });

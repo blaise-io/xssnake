@@ -23,8 +23,10 @@ closure.addFiles(
     homeDir + 'client/js/effects.js',
     homeDir + 'client/js/font.js',
     homeDir + 'client/js/stageclasses.js',
-    homeDir + 'client/js/stageobjects.js'
+    homeDir + 'client/js/stageobjects.js',
+    homeDir + 'client/js/game.js'
 );
 
 closure.replace(/'use strict';/g, '');
+
 closure.compile(outputFile, compilerConfig);

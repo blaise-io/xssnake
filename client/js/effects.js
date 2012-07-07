@@ -23,7 +23,7 @@ Effects.prototype = {
         for (var i = 0, m = pixels.length; i < m; i++) {
             sx = pixels[i][0] + x;
             sy = pixels[i][1] + y;
-            if (sx > 0 && sy > 0 && sx <= XSS.HPIXELS && sy <= XSS.VPIXELS) {
+            if (sx > 0 && sy > 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
                 pixelsShifted.push([sx, sy]);
             }
         }
@@ -95,8 +95,8 @@ Effects.prototype = {
             listener = '/xss/canvas/paint.swipeleft_' + name,
             trigger = '/xss/effects/swipe/complete/' + name,
             start = (typeof options.start === 'number') ? options.start : 0,
-            end = (typeof options.end === 'number') ? options.end : -XSS.HPIXELS,
-            duration = options.duration || XSS.HPIXELS; // Lock speed to pixels
+            end = (typeof options.end === 'number') ? options.end : -XSS.PIXELS_H,
+            duration = options.duration || XSS.PIXELS_H; // Lock speed to pixels
 
         painter = function(e, diff) {
             progress += diff;

@@ -42,8 +42,8 @@ Drawables.prototype = {
 
     // Background before game starts
     getOuterBorderPixels: function() {
-        var w = XSS.HPIXELS - 1,
-            h = XSS.VPIXELS - 1;
+        var w = XSS.PIXELS_H - 1,
+            h = XSS.PIXELS_V - 1;
 
         return [].concat(
             // Top

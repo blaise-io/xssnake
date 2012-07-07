@@ -25,7 +25,7 @@ var getClientData = function() {
 };
 
 var deleteClientData = function() {
-    return (arguments.length === 2) ? clientData[arguments[0]][arguments[1]] : clientData[arguments[0]];
+    return (arguments.length === 2) ? delete clientData[arguments[0]][arguments[1]] : delete clientData[arguments[0]];
 };
 
 var addClient = function(client) {

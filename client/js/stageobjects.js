@@ -9,6 +9,11 @@
  * @constructor
  */
 function Stages() {
+
+    this.choices = {};
+    this.current = 'main';
+    this.history = [this.current];
+
     XSS.menu.setStages({
         'main'   : XSS.MainStage('main'),
         'name'   : XSS.NameStage('name'),
@@ -17,9 +22,14 @@ function Stages() {
         'help'   : XSS.HelpStage('help'),
         'credits': XSS.CreditsStage('credits')
     });
-    XSS.menu.newStage(XSS.currentStageName);
-    XSS.menu.setupMenuSkeletton();
 }
+
+Stages.prototype = {
+    init: function() {
+        XSS.menu.newStage(this.current);
+        XSS.menu.setupMenuSkeletton();
+    }
+};
 
 /**
  * Main Stage
@@ -88,8 +98,8 @@ XSS.TypeStage = function(name) {
  */
 XSS.CreditsStage = function(name) {
     var screen, stage,
-        left = XSS.MENULEFT,
-        top = XSS.MENUTOP;
+        left = XSS.MENU_LEFT,
+        top = XSS.MENU_TOP;
 
     screen = [].concat(
         XSS.effects.zoomX2(XSS.font.write(0, 0, '<CREDITS>'), left, top),
@@ -115,8 +125,8 @@ XSS.CreditsStage = function(name) {
  */
 XSS.HelpStage = function(name) {
     var screen, stage,
-        left = XSS.MENULEFT,
-        top = XSS.MENUTOP;
+        left = XSS.MENU_LEFT,
+        top = XSS.MENU_TOP;
 
     screen = [].concat(
         XSS.effects.zoomX2(XSS.font.write(0, 0, '<HEEELP?!!>'), left, top),

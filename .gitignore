@@ -1,10 +1,10 @@
+# System - and IDE generated files
 .idea
 .DS_Store
 .Trashes
 Thumbs.db
+desktop.ini
 
-# You should install these yourself
+# Install/build these files yourself. See readme.
 node_modules
-
-# Build it by running `node server/build.js`
 compiled.js
