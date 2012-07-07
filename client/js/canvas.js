@@ -11,10 +11,10 @@ function Canvas() {
     this.objects = {};
 
     /** @const */
-    this.CANVASWIDTH =  XSS.PIXELS_H * XSS.PIXEL_SIZE;
+    this.CANVAS_WIDTH =  XSS.PIXELS_H * XSS.PIXEL_SIZE;
 
     /** @const */
-    this.CANVASHEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
+    this.CANVAS_HEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
 
     this.canvas = this.setupCanvas();
     this.ctx = this.canvas[0].getContext('2d');
@@ -55,16 +55,24 @@ Canvas.prototype = {
     setupCanvas: function() {
         var canvas;
         canvas = $('<canvas>').appendTo(XSS.doc);
-        canvas.attr({width: this.CANVASWIDTH, height: this.CANVASHEIGHT});
+        canvas.attr({width: this.CANVAS_WIDTH, height: this.CANVAS_HEIGHT});
         return canvas;
     },
 
     /** @private */
     getCanvasPosition: function() {
+        var windowCenter, windowMiddle, left, top;
+
+        windowCenter = $(window).width() / 2;
+        windowMiddle = $(window).height() / 2;
+
+        left = this.snapToFatPixels(windowCenter - (this.CANVAS_WIDTH / 2));
+        top = this.snapToFatPixels(windowMiddle - (this.CANVAS_HEIGHT / 2));
+
         return {
             position: 'absolute',
-            left    : Math.max(0, this.snapToFatPixels(($(window).width() / 2)  - (this.CANVASWIDTH / 2))),
-            top     : Math.max(0, this.snapToFatPixels(($(window).height() / 2) - (this.CANVASHEIGHT / 2)))
+            left    : Math.max(0, left),
+            top     : Math.max(0, top)
         };
     },
 
@@ -163,7 +171,7 @@ Canvas.prototype = {
         XSS.doc.trigger('/xss/canvas/paint', [diff]);
 
         // Clear the canvas
-        this.ctx.clearRect(0, 0, this.CANVASWIDTH, this.CANVASHEIGHT);
+        this.ctx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
 
         // Paint!
         for (var k in this.objects) {
