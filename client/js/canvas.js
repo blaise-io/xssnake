@@ -163,9 +163,6 @@ Canvas.prototype = {
         // FPS
         fps = Math.round(1000 / diff);
         this.time = now;
-        if (fps > 1 && fps <= 15) {
-            console.log('low FPS');
-        }
         document.title = fps;
 
         // Last call for animations

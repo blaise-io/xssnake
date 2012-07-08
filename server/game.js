@@ -1,12 +1,13 @@
-// X:\dir\to\root supervisor -n exit -w server server/init.js
+// XSSNAKE# supervisor -w server/ -n exit server/game.js
 
-global.xss = {
-    events     : new (require('events')).EventEmitter(), // Global events hook
-    clients    : {}, // Array with [id, connection] for every connected client
-    clientData : {}, // Object containing data for every client
-    clientPK   : 1   // Auto-incrementing int for unique primary keys
+var xss = {
+    clients    : {}, // {clientid1: socket, clientid2: socket}
+    rooms      : {}, // {roomid: [clientid1, clientid2]}
+    clientData : {}, // {clientid1: {}, clientid2: {}}
+    clientPK   : 0   // Auto-incrementing int for unique primary keys
 };
 
-require('lib/server.js').start();
-require('lib/clients.js').start();
-require('lib/chat.js').start();
+global.xss = xss;
+
+xss.server = require('./lib/server.js');
+xss.server.start();

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals Canvas, Drawables, Effects, Font, Menu, Stages, Game*/
+/*globals Canvas, Drawables, Effects, Font, Menu, Stages, Socket, Game*/
 
 'use strict';
 
@@ -100,6 +100,7 @@ $(function() {
     XSS.font      = new Font();
     XSS.menu      = new Menu();
     XSS.stages    = new Stages();
+    XSS.socket    = new Socket();
     XSS.game      = new Game();
 
     XSS.game.init();

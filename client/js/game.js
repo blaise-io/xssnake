@@ -1,6 +1,8 @@
 /*jshint globalstrict:true, sub:true*/
 /*globals XSS*/
 
+// TODO: Make Snake a separate object
+
 'use strict';
 
 /**
@@ -14,7 +16,6 @@ Game.prototype = {
 
     init: function() {
 
-
         this.snakeHead = [10, 10];
         this.snakeDirection = 2;
         this.snakeDirectionRequests = [];
@@ -27,6 +28,12 @@ Game.prototype = {
         XSS.canvas.objects.border = {
             pixels: XSS.drawables.getOuterBorderPixels()
         };
+
+//        XSS.socket.init(function(socket) {
+//            socket.emit('/xss/name', 'Blaise');
+//            socket.emit('/xss/game', {'mode': 'XSS', 'room': 'public'});
+//            this.addEventHandlers();
+//        }.bind(this));
 
         this.addEventHandlers();
     },

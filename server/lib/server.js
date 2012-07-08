@@ -1,82 +1,89 @@
-/**
- * Server
- * Starts server. Emits server events to global events object.
- */
-
 /*jshint globalstrict:true */
+
 'use strict';
 
-var events   = global.xss.events;
-var clients  = global.xss.clients;
-var clientPK = global.xss.clientPK;
+var fs = require('fs'),
+    http = require('http'),
+    socketio = require('socket.io'),
+    xss = global.xss;
 
 var start = function() {
+    var app = http.createServer(httpRequestHandler),
+        io = socketio.listen(app, { log: false });
 
-    // Config
-    var port      = 1337;
+    app.listen(80);
 
-    // NodeJS Modules
-    var http      = require('http');
-    var websocket = require('websocket');
+    io.sockets.on('connection', function(socket) {
+        addSocketEventHandlers(socket);
+    });
+};
 
-    // Create server
-    var httpServer = http.createServer(function(request, response) {
-        response.writeHead(406); // Not acceptable, want ws://
-        response.end();
-    }).listen(port);
+var addSocketEventHandlers = function(socket) {
+    var clientID;
 
-    var server = new websocket.server({
-        httpServer: httpServer
+    // Emit connect
+    clientID = registerClient(socket);
+    socket.emit('/xss/connect', {id: clientID});
+
+    // Handle disconnect
+    socket.on('disconnect', function() {
+        unRegisterClient(clientID);
     });
 
-    // Yay, we have visitors!
-    server.on('request', function(request) {
-        var connection = request.accept(null, request.origin),
-            client = clientPK;
-
-        clients[clientPK] = connection;
-        clientPK++;
-
-        events.emit('/xss/server/connect', client);
-
-        /** @namespace message.utf8Data */
-        connection.on('message', function(message) {
-            var json = JSON.parse(message.utf8Data);
-            console.log('IN', json.action, json.data, client);
-            events.emit('/xss/message/' + json.action, json.data, client);
-        }.bind(this));
-
-        connection.on('close', function() {
-            delete clients[client];
-            events.emit('/xss/server/disconnect', client);
-        }.bind(this));
+    socket.on('/xss/name', function(data) {
+        console.log(data);
     });
 
+    socket.on('/xss/game', function(data) {
+        console.log(data);
+    });
+};
+
+var registerClient = function(socket) {
+    var clientID = ++xss.clientPK;
+    xss.clients[clientID] = socket;
+    return clientID;
+};
+
+var unRegisterClient = function(clientID) {
+    delete xss.clients[clientID];
+};
+
+var httpRequestHandler = function(req, res) {
+    var file, onIndexFileRead;
+
+    file = __dirname + '/../index2.html';
+    onIndexFileRead = function(err, data) {
+        if (err) {
+            res.writeHead(500);
+            return res.end('Error loading ' + file);
+        }
+        res.writeHead(200);
+        res.end(data);
+    };
+
+    fs.readFile(file, onIndexFileRead);
 };
 
 var send = function(client, action, data) {
-    if (!clients[client]) {
+    if (!xss.clients[client]) {
         console.warn('Attempting to send data to a disconnected client:', client);
     } else {
-        console.log('OUT', action, data, client);
-        clients[client].sendUTF(JSON.stringify({
-            action: action,
-            data:   data
-        }));
+        xss.clients[client].emit(action, data);
     }
 };
 
 var sendAll = function(action, data) {
-    for (var client in clients) {
-        if (clients.hasOwnProperty(client)) {
+    for (var client in xss.clients) {
+        if (xss.clients.hasOwnProperty(client)) {
             send(client, action, data);
         }
     }
 };
 
 var sendOthers = function(action, data, exclude) {
-    for (var client in clients) {
-        if (clients.hasOwnProperty(client) && exclude !== client) {
+    for (var client in xss.clients) {
+        if (xss.clients.hasOwnProperty(client) && exclude !== client) {
             send(client, action, data);
         }
     }

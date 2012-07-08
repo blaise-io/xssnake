@@ -7,26 +7,22 @@
 
 
 var closure = require('./lib/closure.js'),
-
-    homeDir = __dirname + '/../',
-
-    outputFile = homeDir + 'compiled.js',
-
-    compilerConfig = {
-        externs_url: 'http://closure-compiler.googlecode.com/svn/trunk/contrib/externs/jquery-1.7.js'
-    };
+    home = __dirname + '/../',
+    file = home + 'compiled.js',
+    conf = { externs_url: 'http://closure-compiler.googlecode.com/svn/trunk/contrib/externs/jquery-1.7.js' };
 
 closure.addFiles(
-    homeDir + 'client/js/init.js',
-    homeDir + 'client/js/drawables.js',
-    homeDir + 'client/js/canvas.js',
-    homeDir + 'client/js/effects.js',
-    homeDir + 'client/js/font.js',
-    homeDir + 'client/js/stageclasses.js',
-    homeDir + 'client/js/stageobjects.js',
-    homeDir + 'client/js/game.js'
+    home + 'client/js/init.js',
+    home + 'client/js/drawables.js',
+    home + 'client/js/canvas.js',
+    home + 'client/js/effects.js',
+    home + 'client/js/font.js',
+    home + 'client/js/stageclasses.js',
+    home + 'client/js/stageobjects.js',
+    home + 'client/js/socket.js',
+    home + 'client/js/client.js',
+    home + 'client/js/game.js'
 );
 
 closure.replace(/'use strict';/g, '');
-
-closure.compile(outputFile, compilerConfig);
+closure.compile(file, conf);
