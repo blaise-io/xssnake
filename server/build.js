@@ -9,12 +9,13 @@
 var closure = require('./lib/closure.js'),
     home = __dirname + '/../',
     file = home + 'compiled.js',
-    conf = { externs_url: 'http://closure-compiler.googlecode.com/svn/trunk/contrib/externs/jquery-1.7.js' };
+    conf = {};
 
 closure.addFiles(
     home + 'client/js/init.js',
-    home + 'client/js/drawables.js',
+    home + 'client/js/utils.js',
     home + 'client/js/canvas.js',
+    home + 'client/js/drawables.js',
     home + 'client/js/effects.js',
     home + 'client/js/font.js',
     home + 'client/js/stageclasses.js',

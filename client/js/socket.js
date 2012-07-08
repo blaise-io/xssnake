@@ -14,10 +14,8 @@ function Socket() {
 Socket.prototype = {
 
     init: function(callback) {
-        $.ajaxSetup({ cache: true });
-
         /** @namespace io */
-        $.getScript('http://localhost/socket.io/socket.io.js', function() {
+        XSS.utils.loadScript('http://localhost/socket.io/socket.io.js', function() {
             this.socket = io.connect(this.host);
             this.addEventHandlers(callback);
         }.bind(this));

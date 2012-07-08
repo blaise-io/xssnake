@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals Canvas, Drawables, Effects, Font, Menu, Stages, Socket, Game*/
+/*globals Utils, Canvas, Drawables, Effects, Font, Menu, Stages, Socket, Game*/
 
 'use strict';
 
@@ -90,10 +90,12 @@ XSS.MENU_LEFT = 40;
 XSS.MENU_TOP = 64;
 
 
-$(function() {
-    XSS.doc       = $('body');
-    XSS.input     = $('input');
+window.onload = function() {
 
+    XSS.doc       = document.body;
+    XSS.input     = document.querySelector('input');
+
+    XSS.utils     = new Utils();
     XSS.canvas    = new Canvas();
     XSS.drawables = new Drawables();
     XSS.effects   = new Effects();
@@ -103,5 +105,6 @@ $(function() {
     XSS.socket    = new Socket();
     XSS.game      = new Game();
 
-    XSS.game.init();
-});
+    XSS.stages.init();
+
+};

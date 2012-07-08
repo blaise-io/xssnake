@@ -17,7 +17,7 @@ function Canvas() {
     this.CANVAS_HEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
 
     this.canvas = this.setupCanvas();
-    this.ctx = this.canvas[0].getContext('2d');
+    this.ctx = this.canvas.getContext('2d');
 
     this.setRequestAnimationFrame();
     this.positionCanvas();
@@ -43,37 +43,32 @@ Canvas.prototype = {
 
     /** @private */
     addEventHandlers: function() {
-        $(window).on('resize', this.positionCanvas.bind(this));
+        window.onresize = this.positionCanvas.bind(this);
     },
 
     /** @private */
     positionCanvas: function() {
-        this.canvas.css(this.getCanvasPosition());
-    },
+        var windowCenter, windowMiddle, left, top, style;
 
-    /** @private */
-    setupCanvas: function() {
-        var canvas;
-        canvas = $('<canvas>').appendTo(XSS.doc);
-        canvas.attr({width: this.CANVAS_WIDTH, height: this.CANVAS_HEIGHT});
-        return canvas;
-    },
-
-    /** @private */
-    getCanvasPosition: function() {
-        var windowCenter, windowMiddle, left, top;
-
-        windowCenter = $(window).width() / 2;
-        windowMiddle = $(window).height() / 2;
+        windowCenter = window.innerWidth / 2;
+        windowMiddle = window.innerHeight / 2;
 
         left = this.snapToFatPixels(windowCenter - (this.CANVAS_WIDTH / 2));
         top = this.snapToFatPixels(windowMiddle - (this.CANVAS_HEIGHT / 2));
 
-        return {
-            position: 'absolute',
-            left    : Math.max(0, left),
-            top     : Math.max(0, top)
-        };
+        style = this.canvas.style;
+        style.position = 'absolute';
+        style.left = Math.max(0, left) + 'px';
+        style.top = Math.max(0, top) + 'px';
+    },
+
+    /** @private */
+    setupCanvas: function() {
+        var canvas = document.createElement('canvas');
+        canvas.setAttribute('width', this.CANVAS_WIDTH);
+        canvas.setAttribute('height', this.CANVAS_HEIGHT);
+        XSS.doc.appendChild(canvas);
+        return canvas;
     },
 
     /** @private */
@@ -94,18 +89,18 @@ Canvas.prototype = {
 
     /** @private */
     paintOffscreen: function(data) {
-        var canvasTmp, bbox;
+        var bbox, canvas;
 
         bbox = this.getBoundingBoxInPixels(data);
 
-        canvasTmp = document.createElement('canvas');
-        canvasTmp.width = bbox.width;
-        canvasTmp.height = bbox.height;
+        canvas = document.createElement('canvas');
+        canvas.setAttribute('width', bbox.width);
+        canvas.setAttribute('height', bbox.height);
 
-        this.paintData(canvasTmp.getContext('2d'), data, bbox);
+        this.paintData(canvas.getContext('2d'), data, bbox);
 
         return {
-            canvas: canvasTmp,
+            canvas: canvas,
             bbox  : bbox
         };
     },
@@ -128,6 +123,8 @@ Canvas.prototype = {
 
     /** @private */
     paintItem: function(name, object) {
+        var offscreen;
+
         if (!object) {
             throw new Error('Empty object: ' + name);
         }
@@ -144,7 +141,9 @@ Canvas.prototype = {
         // Paint offscreen and cache result
         else {
             if (!object.canvas) {
-                object = $.extend(object, this.paintOffscreen(object.pixels));
+                offscreen = this.paintOffscreen(object.pixels);
+                object.canvas = offscreen.canvas;
+                object.bbox = offscreen.bbox;
                 delete object.pixels;
             }
             this.ctx.drawImage(object.canvas, object.bbox.x, object.bbox.y);
@@ -158,15 +157,15 @@ Canvas.prototype = {
             diff = now - this.time;
 
         // Make appointment for next paint
-        window.requestAnimationFrame(this.paint.bind(this), this.canvas[0]);
+        window.requestAnimationFrame(this.paint.bind(this), this.canvas);
 
         // FPS
         fps = Math.round(1000 / diff);
         this.time = now;
-        document.title = fps;
+        document.title = 'XXSNAKE ' + fps;
 
         // Last call for animations
-        XSS.doc.trigger('/xss/canvas/paint', [diff]);
+        XSS.utils.publish('/canvas/paint', diff);
 
         // Clear the canvas
         this.ctx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);

@@ -41,8 +41,8 @@ Game.prototype = {
     directionShiftMap: [[-1, 0], [0, -1], [1, 0], [0, 1]],
 
     addEventHandlers: function() {
-        XSS.doc.on('keydown.gamekeys', this.handleKey.bind(this));
-        XSS.doc.on('/xss/canvas/paint', this.moveSnake.bind(this));
+        XSS.doc.addEventListener('keydown', this.handleKey.bind(this));
+        XSS.utils.subscribe('/canvas/paint', 'movesnake', this.moveSnake.bind(this));
     },
 
     handleKey: function(e) {
@@ -69,7 +69,7 @@ Game.prototype = {
     },
 
     isAllowedTurn: function(turn) {
-        // 0: no turn, 2: bumping into torso
+        // Disallow 0: no turn, 2: bumping into torso
         return turn === 1 || turn === 3;
     },
 
@@ -107,7 +107,7 @@ Game.prototype = {
         return false;
     },
 
-    moveSnake: function(e, diff) {
+    moveSnake: function(diff) {
         var directionShift, snakeHeadTemp;
         this.lastStep += diff;
 
@@ -126,7 +126,7 @@ Game.prototype = {
 
             if (this.isCrash(snakeHeadTemp)) {
                 this.snakePixels.shift(); // Cut off the tail
-                XSS.doc.off('/xss/canvas/paint');
+                XSS.utils.unsubscribe('/canvas/paint', 'movesnake');
                 XSS.effects.blink('collision', XSS.effects.zoomX4([snakeHeadTemp], 0, 0), 120);
                 XSS.canvas.objects.gameover = {
                     pixels: XSS.font.write(XSS.PIXELS_H / 2 - 30, Math.round(XSS.PIXELS_V / 2.2), 'GAME OVER', true)
@@ -140,6 +140,7 @@ Game.prototype = {
             }
 
             XSS.canvas.objects.snake = {
+                cache: false,
                 pixels: XSS.effects.zoomX4(this.snakePixels, 0, 0)
             };
         }

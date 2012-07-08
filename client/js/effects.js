@@ -11,7 +11,8 @@
  * @constructor
  */
 function Effects() {
-    this.canvasPixels = XSS.canvas.objects;
+    this.canvasObjects = XSS.canvas.objects;
+    this.publishPaint = '/canvas/paint';
 }
 
 Effects.prototype = {
@@ -34,36 +35,35 @@ Effects.prototype = {
     blink: function(name, pixels, speed) {
         var painter,
             namespace = 'blink_' + name,
-            listener = '/xss/canvas/paint.' + namespace,
             lastSwitch = 0,
             show = 1;
 
         speed = (typeof speed === 'number') ? speed : 500;
 
-        painter = function(e, diff) {
+        painter = function(diff) {
             lastSwitch += diff;
+
             if (lastSwitch > speed) {
                 lastSwitch -= speed;
                 show = !show;
-            }
-            if (show) {
-                this.canvasPixels[namespace] = {
-                    pixels: pixels,
-                    cache : false
-                };
-            } else {
-                delete this.canvasPixels[namespace];
+                if (show) {
+                    this.canvasObjects[namespace] = {
+                        pixels: pixels,
+                        cache : false
+                    };
+                } else {
+                    delete this.canvasObjects[namespace];
+                }
             }
         };
 
-        XSS.doc.on(listener, painter.bind(this));
+        XSS.utils.subscribe(this.publishPaint, namespace, painter.bind(this));
     },
 
     blinkStop: function(name) {
-        var listener = '/xss/canvas/paint.blink_' + name,
-            namespace = 'blink_' + name;
-        XSS.doc.off(listener);
-        delete this.canvasPixels[namespace];
+        var namespace = 'blink_' + name;
+        XSS.utils.unsubscribe(this.publishPaint, namespace);
+        delete this.canvasObjects[namespace];
     },
 
     decay: function(name, pixels, time) {
@@ -71,54 +71,50 @@ Effects.prototype = {
 
         time = time || 500;
 
-        this.canvasPixels[namespace] = {
+        this.canvasObjects[namespace] = {
             pixels: pixels
         };
 
         window.clearTimeout(XSS[namespace]);
 
         XSS[namespace] = window.setTimeout(function() {
-            delete this.canvasPixels[namespace];
+            delete this.canvasObjects[namespace];
         }.bind(this), time);
     },
 
     decayNow: function(name) {
         var namespace = 'decay_' + name;
-        delete this.canvasPixels[namespace];
+        delete this.canvasObjects[namespace];
     },
 
     swipe: function(name, pixels, options) {
         options = options || {};
 
         var painter,
+            event = this.publishPaint,
             progress = 0,
-            listener = '/xss/canvas/paint.swipeleft_' + name,
-            trigger = '/xss/effects/swipe/complete/' + name,
+            namespace = 'swipeleft_' + name,
             start = (typeof options.start === 'number') ? options.start : 0,
             end = (typeof options.end === 'number') ? options.end : -XSS.PIXELS_H,
             duration = options.duration || XSS.PIXELS_H; // Lock speed to pixels
 
-        painter = function(e, diff) {
+        painter = function(diff) {
             progress += diff;
-
             if (progress > duration) {
+                XSS.utils.unsubscribe(event, namespace);
+                delete this.canvasObjects[namespace];
                 if (options.callback) {
                     options.callback();
                 }
-
-                XSS.doc.off(listener);
-                XSS.doc.trigger(trigger);
-
-                delete this.canvasPixels['swipeleft_' + name];
             } else {
-                this.canvasPixels['swipeleft_' + name] = {
+                this.canvasObjects[namespace] = {
                     cache : false,
                     pixels: this.shiftPixels(pixels, Math.round(start - ((start - end) * (progress / duration))), 0)
                 };
             }
         };
 
-        XSS.doc.on(listener, painter.bind(this));
+        XSS.utils.subscribe(this.publishPaint, namespace, painter.bind(this));
     },
 
     // Slow!
