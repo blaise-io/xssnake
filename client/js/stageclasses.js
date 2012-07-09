@@ -84,7 +84,10 @@ function InputStage(name, nextStage) {
     this.maxlength = 150;
 
     this.label = '';
-    this.labelWsp = this.labelWidth = 2;
+    this.labelWsp = 2;
+
+    this.handleKeys = this.handleKeys.bind(this);
+    this.inputUpdate = this.inputUpdate.bind(this);
 }
 
 InputStage.prototype = {
@@ -99,29 +102,32 @@ InputStage.prototype = {
     },
 
     getPixels: function() {
+        var left = XSS.MENU_LEFT + this.labelWidth + this.labelWsp;
         return [].concat(
             XSS.font.write(XSS.MENU_LEFT, XSS.MENU_TOP, this.label),
-            XSS.font.write(XSS.MENU_LEFT + this.labelWidth + this.labelWsp, XSS.MENU_TOP, this.getInputvalue())
+            XSS.font.write(left, XSS.MENU_TOP, this.getInputvalue())
         );
     },
 
     createStage: function() {
-        XSS.input.addEventListener('keydown', this.inputUpdate.bind(this));
-        XSS.input.addEventListener('keyup', this.inputUpdate.bind(this));
+        XSS.input.addEventListener('keydown', this.inputUpdate);
+        XSS.input.addEventListener('keyup', this.inputUpdate);
         XSS.input.focus();
 
         XSS.input.value = '';
         XSS.input.value = this.getInputvalue(); // Places caret at end
         XSS.input.setAttribute('maxlength', this.maxlength);
 
-        document.addEventListener('keydown', this.handleKeys.bind(this));
+        this.inputUpdate();
+
+        document.addEventListener('keydown', this.handleKeys);
     },
 
     destroyStage: function() {
-        XSS.input.removeEventListener('keydown', this.inputUpdate.bind(this));
-        XSS.input.removeEventListener('keyup', this.inputUpdate.bind(this));
+        XSS.input.removeEventListener('keydown', this.inputUpdate);
+        XSS.input.removeEventListener('keyup', this.inputUpdate);
 
-        document.removeEventListener('keydown', this.handleKeys.bind(this));
+        document.removeEventListener('keydown', this.handleKeys);
 
         XSS.effects.blinkStop('caret');
         XSS.effects.decayNow('error');
@@ -154,7 +160,7 @@ InputStage.prototype = {
 
     /** @private */
     inputSubmit: function() {
-        var value, error;
+        var value, error, pixels;
 
         value = this.getInputvalue();
         error = this.getInputError(value);
@@ -163,7 +169,8 @@ InputStage.prototype = {
             XSS.menu.switchStage(this.name, this.nextStage);
             XSS.stages.choices[this.name] = value;
         } else {
-            XSS.effects.decay('error', XSS.font.write(XSS.MENU_LEFT, XSS.MENU_TOP + 9, error));
+            pixels = XSS.font.write(XSS.MENU_LEFT, XSS.MENU_TOP + 9, error);
+            XSS.effects.decay('error', pixels);
         }
 
         return false;
@@ -171,7 +178,7 @@ InputStage.prototype = {
 
     /** @private */
     inputUpdate: function() {
-        var caretTextPos, caretGlobPos, caret, value;
+        var crateText, caretLeft, caret, value, valuePixelWidth;
 
         // Selected text: too much hassle
         if (XSS.input.selectionStart !== XSS.input.selectionEnd) {
@@ -179,17 +186,21 @@ InputStage.prototype = {
         }
 
         value = this.getInputvalue();
+        valuePixelWidth = value.substr(0, XSS.input.selectionStart);
 
-        caretTextPos = XSS.font.getLength(value.substr(0, XSS.input.selectionStart));
-        caretTextPos = caretTextPos || -1;
+        crateText = XSS.font.getLength(valuePixelWidth) || -1;
+        caretLeft = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + crateText;
 
-        caretGlobPos = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + caretTextPos;
+        caret = XSS.drawables.line(
+            caretLeft, XSS.MENU_TOP - 1,
+            caretLeft, XSS.MENU_TOP + 6
+        );
 
-        caret = XSS.drawables.line(caretGlobPos, XSS.MENU_TOP - 1, caretGlobPos, XSS.MENU_TOP + 6);
-
+        XSS.effects.blinkStop('caret');
         XSS.effects.blink('caret', caret);
         XSS.menu.refreshStage();
     }
+
 };
 
 
@@ -243,8 +254,9 @@ ScreenStage.prototype = {
  * @implements {Stage}
  */
 function SelectStage(name) {
-    this.name   = name;
-    this.menu   = new SelectMenu(name);
+    this.name = name;
+    this.menu = new SelectMenu(name);
+    this.handleKeys = this.handleKeys.bind(this);
 }
 
 SelectStage.prototype = {
@@ -259,7 +271,7 @@ SelectStage.prototype = {
 
     createStage: function() {
         XSS.stages.choices[this.name] = XSS.stages.choices[this.name] || 0;
-        document.addEventListener('keydown', this.handleKeys.bind(this));
+        document.addEventListener('keydown', this.handleKeys);
     },
 
     handleKeys: function(e) {
@@ -283,7 +295,7 @@ SelectStage.prototype = {
     },
 
     destroyStage: function() {
-        document.removeEventListener('keydown', this.handleKeys.bind(this));
+        document.removeEventListener('keydown', this.handleKeys);
         delete XSS.canvas.objects.stage;
     }
 

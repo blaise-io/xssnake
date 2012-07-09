@@ -19,41 +19,40 @@ Effects.prototype = {
 
     shiftPixels: function(pixels, x, y) {
         var sx, sy,
-            pixelsShifted = [];
+            shifted = [];
 
         for (var i = 0, m = pixels.length; i < m; ++i) {
             sx = pixels[i][0] + x;
             sy = pixels[i][1] + y;
             if (sx > 0 && sy > 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
-                pixelsShifted.push([sx, sy]);
+                shifted.push([sx, sy]);
             }
         }
 
-        return pixelsShifted;
+        return shifted;
     },
 
     blink: function(name, pixels, speed) {
-        var painter,
-            namespace = 'blink_' + name,
-            lastSwitch = 0,
-            show = 1;
+        var painter, namespace, wait, show;
 
-        speed = (typeof speed === 'number') ? speed : 500;
+        namespace = 'blink_' + name;
+        speed = speed || 500;
+        wait = 0;
+        show = 1;
 
         painter = function(diff) {
-            lastSwitch += diff;
-
-            if (lastSwitch > speed) {
-                lastSwitch -= speed;
+            wait += diff;
+            if (wait > speed) {
+                wait -= speed;
                 show = !show;
-                if (show) {
-                    this.canvasObjects[namespace] = {
-                        pixels: pixels,
-                        cache : false
-                    };
-                } else {
-                    delete this.canvasObjects[namespace];
-                }
+            }
+            if (show) {
+                this.canvasObjects[namespace] = {
+                    pixels: pixels,
+                    cache : false
+                };
+            } else {
+                delete this.canvasObjects[namespace];
             }
         };
 

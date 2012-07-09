@@ -153,7 +153,7 @@ XSS.NameStage = function(name) {
     var stage;
 
     stage = new InputStage(name, 'room');
-    stage.setLabel('What’s your name?');
+    stage.setLabel('Hello, my name is');
     stage.minlength = 2;
     stage.maxlength = 10;
 
