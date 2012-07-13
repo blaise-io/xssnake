@@ -5,90 +5,33 @@
 
 var XSS = {};
 
-/**
- * @type {Number}
- * @const
- */
-XSS.PIXELS_H = 256;
-/**
- * @type {Number}
- * @const
- */
-XSS.PIXELS_V = 160;
-/**
- * @type {Number}
- * @const
- */
-XSS.PIXEL_SIZE = 4;
+/** @const */ XSS.PIXELS_H = 256;
+/** @const */ XSS.PIXELS_V = 160;
+/** @const */ XSS.PIXEL_SIZE = 4;
 
-/**
- * @type {Number}
- * @const
- */
-XSS.KEY_BACKSPACE = 8;
+/** @const */ XSS.CANVAS_WIDTH = XSS.PIXELS_H * XSS.PIXEL_SIZE;
+/** @const */ XSS.CANVAS_HEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
 
-/**
- * @type {Number}
- * @const
- */
-XSS.KEY_ENTER = 13;
-/**
- * @type {Number}
- * @const
- */
-XSS.KEY_ESCAPE = 27;
-/**
- * @type {Number}
- * @const
- */
-XSS.KEY_LEFT = 37;
-/**
- * @type {Number}
- * @const
- */
-XSS.KEY_UP = 38;
-/**
- * @type {Number}
- * @const
- */
-XSS.KEY_RIGHT = 39;
-/**
- * @type {Number}
- * @const
- */
-XSS.KEY_DOWN = 40;
-/**
- * @type {Number}
- * @const
- */
-XSS.DIRECTION_LEFT = 0;
-/**
- * @type {Number}
- * @const
- */
-XSS.DIRECTION_UP = 1;
-/**
- * @type {Number}
- * @const
- */
-XSS.DIRECTION_RIGHT = 2;
-/**
- * @type {Number}
- * @const
- */
-XSS.DIRECTION_DOWN = 3;
-/**
- * @type {Number}
- * @const
- */
-XSS.MENU_LEFT = 40;
+/** @const */ XSS.KEY_BACKSPACE = 8;
+/** @const */ XSS.KEY_ENTER = 13;
+/** @const */ XSS.KEY_ESCAPE = 27;
+/** @const */ XSS.KEY_LEFT = 37;
+/** @const */ XSS.KEY_UP = 38;
+/** @const */ XSS.KEY_RIGHT = 39;
+/** @const */ XSS.KEY_DOWN = 40;
 
-/**
- * @type {Number}
- * @const
- */
-XSS.MENU_TOP = 64;
+/** @const */ XSS.DIRECTION_LEFT = 0;
+/** @const */ XSS.DIRECTION_UP = 1;
+/** @const */ XSS.DIRECTION_RIGHT = 2;
+/** @const */ XSS.DIRECTION_DOWN = 3;
 
+/** @const */ XSS.MENU_LEFT = 40;
+/** @const */ XSS.MENU_TOP = 64;
+
+
+window.onerror = function() {
+    XSS.error = true; // Stops draw loop
+};
 
 window.onload = function() {
 
@@ -105,6 +48,10 @@ window.onload = function() {
     XSS.socket    = new Socket();
     XSS.game      = new Game();
 
+    // Shortcuts
+    XSS.ents = XSS.canvas.entities;
+
+    // Goo!
     XSS.stages.init();
 
 };

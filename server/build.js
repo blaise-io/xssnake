@@ -14,6 +14,7 @@ var closure = require('./lib/closure.js'),
 closure.addFiles(
     home + 'client/js/init.js',
     home + 'client/js/utils.js',
+    home + 'client/js/entity.js',
     home + 'client/js/canvas.js',
     home + 'client/js/drawables.js',
     home + 'client/js/effects.js',

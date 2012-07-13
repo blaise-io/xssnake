@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS*/
+/*globals XSS, Entity*/
 
 'use strict';
 
@@ -8,27 +8,21 @@
  * @constructor
  */
 function Canvas() {
-    this.objects = {};
+    this.entities = {};
 
-    /** @const */
-    this.CANVAS_WIDTH =  XSS.PIXELS_H * XSS.PIXEL_SIZE;
-
-    /** @const */
-    this.CANVAS_HEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
-
-    this.canvas = this.setupCanvas();
+    this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setRequestAnimationFrame();
-    this.positionCanvas();
-    this.addEventHandlers();
-    this.paint();
+    this._setRequestAnimationFrame();
+    this._positionCanvas();
+    this._addEventListeners();
+    this._paint();
 }
 
 Canvas.prototype = {
 
     /** @private */
-    setRequestAnimationFrame: function() {
+    _setRequestAnimationFrame: function() {
         window['requestAnimationFrame'] = (function() {
             return window.requestAnimationFrame ||
                 window.webkitRequestAnimationFrame ||
@@ -42,19 +36,19 @@ Canvas.prototype = {
     },
 
     /** @private */
-    addEventHandlers: function() {
-        window.onresize = this.positionCanvas.bind(this);
+    _addEventListeners: function() {
+        window.onresize = this._positionCanvas.bind(this);
     },
 
     /** @private */
-    positionCanvas: function() {
+    _positionCanvas: function() {
         var windowCenter, windowMiddle, left, top, style;
 
         windowCenter = window.innerWidth / 2;
         windowMiddle = window.innerHeight / 2;
 
-        left = this.snapToFatPixels(windowCenter - (this.CANVAS_WIDTH / 2));
-        top = this.snapToFatPixels(windowMiddle - (this.CANVAS_HEIGHT / 2));
+        left = this._snapToFatPixels(windowCenter - (XSS.CANVAS_WIDTH / 2));
+        top = this._snapToFatPixels(windowMiddle - (XSS.CANVAS_HEIGHT / 2));
 
         style = this.canvas.style;
         style.position = 'absolute';
@@ -63,17 +57,17 @@ Canvas.prototype = {
     },
 
     /** @private */
-    setupCanvas: function() {
+    _setupCanvas: function() {
         var canvas = document.createElement('canvas');
-        canvas.setAttribute('width', this.CANVAS_WIDTH);
-        canvas.setAttribute('height', this.CANVAS_HEIGHT);
+        canvas.setAttribute('width', XSS.CANVAS_WIDTH);
+        canvas.setAttribute('height', XSS.CANVAS_HEIGHT);
         XSS.doc.appendChild(canvas);
         return canvas;
     },
 
     /** @private */
-    getBoundingBoxInPixels: function(pixels) {
-        var bbox = XSS.drawables.getBoundingBox(pixels);
+    _getBBoxRealPixels: function(entity) {
+        var bbox = entity.getBBox();
         for (var k in bbox) {
             if (bbox.hasOwnProperty(k)) {
                 bbox[k] *= XSS.PIXEL_SIZE;
@@ -83,21 +77,21 @@ Canvas.prototype = {
     },
 
     /** @private */
-    snapToFatPixels: function(number) {
+    _snapToFatPixels: function(number) {
         return Math.round(number / XSS.PIXEL_SIZE) * XSS.PIXEL_SIZE;
     },
 
     /** @private */
-    paintOffscreen: function(data) {
+    _paintEntityOffscreen: function(entity) {
         var bbox, canvas;
 
-        bbox = this.getBoundingBoxInPixels(data);
+        bbox = this._getBBoxRealPixels(entity);
 
         canvas = document.createElement('canvas');
         canvas.setAttribute('width', bbox.width);
         canvas.setAttribute('height', bbox.height);
 
-        this.paintData(canvas.getContext('2d'), data, bbox);
+        this._paintPixels(canvas.getContext('2d'), entity.pixels(), bbox);
 
         return {
             canvas: canvas,
@@ -106,58 +100,55 @@ Canvas.prototype = {
     },
 
     /** @private */
-    paintData: function(context, data, offset) {
-        var s = XSS.PIXEL_SIZE,
-            i = data.length;
-
+    _paintPixels: function(context, pixels, offset) {
         offset.x = offset.x || 0;
         offset.y = offset.y || 0;
 
         // Dip paint brush
         context.fillStyle = 'rgb(0,0,0)';
 
-        while (i--) {
-            context.fillRect(-offset.x + data[i][0] * s, -offset.y + data[i][1] * s, s - 1, s - 1);
+        for (var i = 0, m = pixels.length; i < m; ++i) {
+            context.fillRect(
+                -offset.x + pixels[i][0] * XSS.PIXEL_SIZE,
+                -offset.y + pixels[i][1] * XSS.PIXEL_SIZE,
+                XSS.PIXEL_SIZE - 1,
+                XSS.PIXEL_SIZE - 1
+            );
         }
     },
 
     /** @private */
-    paintItem: function(name, object) {
-        var offscreen;
+    _paintEntity: function(name, entity) {
+        var cache;
 
-        if (!object) {
-            throw new Error('Empty object: ' + name);
+        if (false === entity instanceof Entity) {
+            throw new Error(name + ' is not an instance of Entity.');
         }
 
-        else if (!object.pixels && !object.canvas) {
-            throw new Error('Cannot draw ' + name + ': ' + JSON.stringify(object));
-        }
-
-        // Some objects are very dynamic, avoid caching overhead
-        if (object.cache === false) {
-            this.paintData(this.ctx, object.pixels, {});
-        }
-
-        // Paint offscreen and cache result
-        else {
-            if (!object.canvas) {
-                offscreen = this.paintOffscreen(object.pixels);
-                object.canvas = offscreen.canvas;
-                object.bbox = offscreen.bbox;
-                delete object.pixels;
+        if (true === entity.enabled()) {
+            if (entity.dynamic()) {
+                this._paintPixels(this.ctx, entity.pixels(), {});
+            } else {
+                cache = entity.cache();
+                if (!cache) {
+                    cache = this._paintEntityOffscreen(entity);
+                    entity.cache(cache);
+                }
+                this.ctx.drawImage(cache.canvas, cache.bbox.x, cache.bbox.y);
             }
-            this.ctx.drawImage(object.canvas, object.bbox.x, object.bbox.y);
         }
     },
 
     /** @private */
-    paint: function() {
+    _paint: function() {
         var fps,
             now = +new Date(),
             diff = now - this.time;
 
-        // Make appointment for next paint
-        window.requestAnimationFrame(this.paint.bind(this), this.canvas);
+        if (!XSS.error) {
+            // Make appointment for next paint
+            window.requestAnimationFrame(this._paint.bind(this), this.canvas);
+        }
 
         // FPS
         fps = Math.round(1000 / diff);
@@ -168,12 +159,12 @@ Canvas.prototype = {
         XSS.utils.publish('/canvas/paint', diff);
 
         // Clear the canvas
-        this.ctx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
+        this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
 
         // Paint!
-        for (var k in this.objects) {
-            if (this.objects.hasOwnProperty(k)) {
-                this.paintItem(k, this.objects[k]);
+        for (var k in this.entities) {
+            if (this.entities.hasOwnProperty(k)) {
+                this._paintEntity(k, this.entities[k]);
             }
         }
     }

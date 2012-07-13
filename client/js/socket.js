@@ -17,11 +17,11 @@ Socket.prototype = {
         /** @namespace io */
         XSS.utils.loadScript('http://localhost/socket.io/socket.io.js', function() {
             this.socket = io.connect(this.host);
-            this.addEventHandlers(callback);
+            this._addEventListeners(callback);
         }.bind(this));
     },
 
-    addEventHandlers: function(callback) {
+    _addEventListeners: function(callback) {
         this.socket.on('/xss/connect', function(data) {
             XSS.me = new Client(data['id']);
             if (callback) {
