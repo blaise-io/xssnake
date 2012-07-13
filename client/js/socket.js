@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, sub:true */
+/*jshint globalstrict:true, sub:true*/
 /*globals XSS, Client, io*/
 
 'use strict';
@@ -16,9 +16,17 @@ Socket.prototype = {
     init: function(callback) {
         /** @namespace io */
         XSS.utils.loadScript('http://localhost/socket.io/socket.io.js', function() {
-            this.socket = io.connect(this.host);
+            this.socket = this.connect(this.host);
             this._addEventListeners(callback);
         }.bind(this));
+    },
+
+    /**
+     * @param {string} host
+     * @return {{on: function(string, function(Object)) }}
+     */
+    connect: function(host) {
+        return io.connect(host);
     },
 
     _addEventListeners: function(callback) {

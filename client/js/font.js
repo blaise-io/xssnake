@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Entity*/
+/*globals XSS, PixelEntity*/
 
 'use strict';
 

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, Entity*/
+/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, PixelEntity*/
 
 'use strict';
 
@@ -100,12 +100,12 @@ XSS.CreditsStage = function(name) {
     left = XSS.MENU_LEFT;
     top = XSS.MENU_TOP;
 
-    screen = new Entity(
+    screen = new PixelEntity(
         XSS.effects.zoomX2(XSS.font.write(0, 0, '<CREDITS>'), left, top),
         XSS.font.write(left, top + 18, 'Blaise Kal:'),
         XSS.font.write(left, top + 27, 'Placeholder:'),
         XSS.font.write(left, top + 35, 'Placeholder:'),
-        XSS.font.write(left + 52, top + 18, 'Code, Pixels, Concept'),
+        XSS.font.write(left + 52, top + 18, 'Code, PixelEntity, Concept'),
         XSS.font.write(left + 52, top + 27, 'Testing, Hosting'),
         XSS.font.write(left + 52, top + 35, 'Testing, Snoek')
     );
@@ -126,7 +126,7 @@ XSS.HelpStage = function(name) {
     left = XSS.MENU_LEFT;
     top = XSS.MENU_TOP;
 
-    screen = new Entity(
+    screen = new PixelEntity(
         XSS.effects.zoomX2(XSS.font.write(0, 0, '<HEEELP?!!>'), left, top),
         XSS.font.write(left, top + 18, '• Play using the arrow keys on your keyboard'),
         XSS.font.write(left, top + 27, '• You can chat during the game by typing+enter'),

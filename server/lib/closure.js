@@ -25,8 +25,11 @@ var replace = function(string, haystack) {
 var getCompilerConfigDefaults = function() {
     return {
         js_code          : code,
+        warning_level    : 'VERBOSE',
+        language         : 'ECMASCRIPT5_STRICT',
         compilation_level: 'ADVANCED_OPTIMIZATIONS',
         output_format    : 'json',
+        jscomp_warning   : 'deprecated',
         output_info      : ['compiled_code', 'errors', 'warnings']
     };
 };

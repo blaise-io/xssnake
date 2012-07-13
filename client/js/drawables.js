@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, Entity*/
+/*globals XSS, PixelEntity*/
 
 'use strict';
 
@@ -13,7 +13,7 @@ function Drawables() {}
 Drawables.prototype = {
 
     getLine: function() {
-        return new Entity(
+        return new PixelEntity(
             this._line.apply(this, arguments)
         );
     },
@@ -23,7 +23,7 @@ Drawables.prototype = {
         var w = XSS.PIXELS_H - 1,
             h = XSS.PIXELS_V - 1;
 
-        return new Entity(
+        return new PixelEntity(
             // Top
             this._line(1, 0, w - 1, 0),
             this._line(0, 1, w, 1),
@@ -42,7 +42,7 @@ Drawables.prototype = {
     getHeader: function(x, y) {
         y = y || 18;
         var welcome = XSS.font.write(0, 0, '<XSSNAKE>');
-        return new Entity(
+        return new PixelEntity(
             XSS.effects.zoomX4(welcome, x, y),
             XSS.font.write(x, y + 20, (new Array(45)).join('+'))
         );

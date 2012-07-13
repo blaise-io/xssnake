@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, Entity*/
+/*globals XSS, PixelEntity*/
 
 'use strict';
 
@@ -11,7 +11,7 @@
  * @constructor
  */
 function Effects() {
-    this.topic = '/canvas/paint';
+    this.topic = '/canvas/update';
 }
 
 Effects.prototype = {

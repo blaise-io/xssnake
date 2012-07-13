@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Entity*/
+/*globals XSS, PixelEntity*/
 
 'use strict';
 
@@ -121,8 +121,8 @@ Canvas.prototype = {
     _paintEntity: function(name, entity) {
         var cache;
 
-        if (false === entity instanceof Entity) {
-            throw new Error(name + ' is not an instance of Entity.');
+        if (false === entity instanceof PixelEntity) {
+            throw new Error(name + ' is not an instance of PixelEntity.');
         }
 
         if (true === entity.enabled()) {
@@ -156,7 +156,7 @@ Canvas.prototype = {
         document.title = 'XXSNAKE ' + fps;
 
         // Last call for animations
-        XSS.utils.publish('/canvas/paint', diff);
+        XSS.utils.publish('/canvas/update', diff);
 
         // Clear the canvas
         this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);

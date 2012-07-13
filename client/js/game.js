@@ -39,8 +39,8 @@ Game.prototype = {
     directionShiftMap: [[-1, 0], [0, -1], [1, 0], [0, 1]],
 
     _addEventListeners: function() {
-        XSS.doc.addEventListener('keydown', this.handleKey.bind(this));
-        XSS.utils.subscribe('/canvas/paint', 'movesnake', this.moveSnake.bind(this));
+        XSS.doc.addEventListener('keydown', this.handleKey.bind(this), false);
+        XSS.utils.subscribe('/canvas/update', 'movesnake', this.moveSnake.bind(this));
     },
 
     handleKey: function(e) {
@@ -124,7 +124,7 @@ Game.prototype = {
 
             if (this.isCrash(snakeHeadTemp)) {
                 this.snakePixels.shift(); // Cut off the tail
-                XSS.utils.unsubscribe('/canvas/paint', 'movesnake');
+                XSS.utils.unsubscribe('/canvas/update', 'movesnake');
                 XSS.effects.blink('collision', XSS.effects.zoomX4([snakeHeadTemp], 0, 0), 120);
                 XSS.ents.gameover = {
                     pixels: XSS.font.write(XSS.PIXELS_H / 2 - 30, Math.round(XSS.PIXELS_V / 2.2), 'GAME OVER', true)
