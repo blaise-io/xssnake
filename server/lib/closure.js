@@ -29,7 +29,6 @@ var getCompilerConfigDefaults = function() {
         language         : 'ECMASCRIPT5_STRICT',
         compilation_level: 'ADVANCED_OPTIMIZATIONS',
         output_format    : 'json',
-        jscomp_warning   : 'deprecated',
         output_info      : ['compiled_code', 'errors', 'warnings']
     };
 };
