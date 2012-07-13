@@ -16,7 +16,6 @@ Initial Setup
 
  * Download and install [Node.js](http://nodejs.org/)
  * Install [Socket.IO](http://socket.io/): `npm install socket.io`
-   — Server not implemented yet
 
 
 Run
@@ -29,6 +28,6 @@ Run
 
 **Production (compiled source)**
 
- * Compile the source: `nodejs server/build.js`
- * Run the game server: `nodejs server/game.js`
+ * Compile the source: `node server/build.js`
+ * Run the game server: `node server/game.js`
  * Open compiled.html to play
