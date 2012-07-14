@@ -10,7 +10,7 @@
  * @constructor
  */
 function SelectMenu(name) {
-    this.options = [];
+    this.opts = [];
     this.name = name;
 }
 
@@ -23,7 +23,7 @@ SelectMenu.prototype = {
      * @param {Object=} settings
      */
     addOption: function(value, title, description, settings) {
-        this.options.push({
+        this.opts.push({
             value      : value,
             title      : title,
             description: description,
@@ -32,7 +32,7 @@ SelectMenu.prototype = {
     },
 
     getNextStage: function(index) {
-        return this.options[index].settings.nextStage || this.options[index].value;
+        return this.opts[index].settings.nextStage || this.opts[index].value;
     },
 
     getEntity: function() {
@@ -42,7 +42,7 @@ SelectMenu.prototype = {
 
     _normalizeSelectedOption: function() {
         var name = this.name,
-            options = this.options;
+            options = this.opts;
 
         if (typeof XSS.stages.choices[name] === 'undefined') {
             XSS.stages.choices[name] = 0;
@@ -54,17 +54,19 @@ SelectMenu.prototype = {
     },
 
     _generateEntity: function() {
-        var x = XSS.MENU_LEFT,
-            y = XSS.MENU_TOP,
-            entity = new PixelEntity(),
-            options = this.options,
-            selected =  XSS.stages.choices[this.name] || 0,
-            description = options[selected] ? options[selected].description : '';
+        var x, y, entity, options, selected, description;
+
+        x = XSS.MENU_LEFT;
+        y = XSS.MENU_TOP;
+        entity = new PixelEntity();
+        options = this.opts;
+        selected = XSS.stages.choices[this.name] || 0;
+        description = options[selected] ? options[selected].description : '';
 
         // Option
         for (var i = 0, m = options.length; i < m; i++) {
             entity.add(
-                XSS.font.write(x, y + (i * 9), options[i].title, (selected === i))
+                XSS.font.draw(x, y + (i * 9), options[i].title, (selected === i))
             );
         }
 
@@ -75,7 +77,7 @@ SelectMenu.prototype = {
             }
             for (var j = 0, n = description.length; j < n; j++) {
                 entity.add(
-                    XSS.font.write(x, y + ((i + 1 + j) * 9), description[j])
+                    XSS.font.draw(x, y + ((i + 1 + j) * 9), description[j])
                 );
             }
         }
@@ -139,14 +141,15 @@ InputStage.prototype = {
     getEntity: function() {
         var left = XSS.MENU_LEFT + this.labelWidth + this.labelWsp;
         return new PixelEntity(
-            XSS.font.write(XSS.MENU_LEFT, XSS.MENU_TOP, this.label),
-            XSS.font.write(left, XSS.MENU_TOP, this.getInputvalue())
+            XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP, this.label),
+            XSS.font.draw(left, XSS.MENU_TOP, this.getInputvalue())
         );
     },
 
     createStage: function() {
-        XSS.input.addEventListener('keydown', this.inputUpdate, false);
-        XSS.input.addEventListener('keyup', this.inputUpdate, false);
+        XSS.on.keydown(this.handleKeys);
+        XSS.on.keydown(this.inputUpdate);
+        XSS.on.keyup(this.inputUpdate);
         XSS.input.focus();
 
         XSS.input.value = '';
@@ -154,15 +157,12 @@ InputStage.prototype = {
         XSS.input.setAttribute('maxlength', this.maxlength);
 
         this.inputUpdate();
-
-        document.addEventListener('keydown', this.handleKeys, false);
     },
 
     destroyStage: function() {
-        XSS.input.removeEventListener('keydown', this.inputUpdate, false);
-        XSS.input.removeEventListener('keyup', this.inputUpdate, false);
-
-        document.removeEventListener('keydown', this.handleKeys, false);
+        XSS.off.keydown(this.handleKeys);
+        XSS.off.keydown(this.inputUpdate);
+        XSS.off.keyup(this.inputUpdate);
 
         XSS.effects.blinkStop('caret');
         XSS.effects.decayNow('error');
@@ -205,7 +205,7 @@ InputStage.prototype = {
             XSS.stages.choices[this.name] = value;
         } else {
             message = new PixelEntity(
-                XSS.font.write(XSS.MENU_LEFT, XSS.MENU_TOP + 9, error)
+                XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP + 9, error)
             );
             XSS.effects.decay('error', message);
         }
@@ -264,7 +264,7 @@ ScreenStage.prototype = {
     },
 
     createStage: function() {
-        document.addEventListener('keydown', this.handleKeys, false);
+        XSS.on.keydown(this.handleKeys);
     },
 
     handleKeys: function(e) {
@@ -276,7 +276,7 @@ ScreenStage.prototype = {
     },
 
     destroyStage: function() {
-        document.removeEventListener('keydown', this.handleKeys, false);
+        XSS.off.keydown(this.handleKeys);
         delete XSS.ents.stage;
     }
 
@@ -308,7 +308,7 @@ SelectStage.prototype = {
 
     createStage: function() {
         XSS.stages.choices[this.name] = XSS.stages.choices[this.name] || 0;
-        document.addEventListener('keydown', this.handleKeys, false);
+        XSS.on.keydown(this.handleKeys);
     },
 
     handleKeys: function(e) {
@@ -332,7 +332,7 @@ SelectStage.prototype = {
     },
 
     destroyStage: function() {
-        document.removeEventListener('keydown', this.handleKeys, false);
+        XSS.off.keydown(this.handleKeys);
         delete XSS.ents.stage;
     }
 
@@ -354,7 +354,7 @@ Menu.prototype = {
         var stage = this.stages[stageName];
 
         XSS.ents.instruction = new PixelEntity(
-            XSS.font.write(XSS.MENU_LEFT, 45, stage.getInstruction())
+            XSS.font.draw(XSS.MENU_LEFT, 45, stage.getInstruction())
         );
 
         this.updateStage(stage);

@@ -2,7 +2,7 @@
  * Compile code using Google Closure Compiler's REST API
  */
 
-/*jshint globalstrict:true, sub:true */
+/*jshint globalstrict:true */
 'use strict';
 
 var fs = require('fs'),

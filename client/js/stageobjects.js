@@ -101,13 +101,13 @@ XSS.CreditsStage = function(name) {
     top = XSS.MENU_TOP;
 
     screen = new PixelEntity(
-        XSS.effects.zoomX2(XSS.font.write(0, 0, '<CREDITS>'), left, top),
-        XSS.font.write(left, top + 18, 'Blaise Kal:'),
-        XSS.font.write(left, top + 27, 'Placeholder:'),
-        XSS.font.write(left, top + 35, 'Placeholder:'),
-        XSS.font.write(left + 52, top + 18, 'Code, PixelEntity, Concept'),
-        XSS.font.write(left + 52, top + 27, 'Testing, Hosting'),
-        XSS.font.write(left + 52, top + 35, 'Testing, Snoek')
+        XSS.effects.zoomX2(XSS.font.draw(0, 0, '<CREDITS>'), left, top),
+        XSS.font.draw(left, top + 18, 'Blaise Kal:'),
+        XSS.font.draw(left, top + 27, 'Placeholder:'),
+        XSS.font.draw(left, top + 35, 'Placeholder:'),
+        XSS.font.draw(left + 52, top + 18, 'Code, PixelEntity, Concept'),
+        XSS.font.draw(left + 52, top + 27, 'Testing, Hosting'),
+        XSS.font.draw(left + 52, top + 35, 'Testing, Snoek')
     );
 
     return new ScreenStage(name, screen);
@@ -127,12 +127,12 @@ XSS.HelpStage = function(name) {
     top = XSS.MENU_TOP;
 
     screen = new PixelEntity(
-        XSS.effects.zoomX2(XSS.font.write(0, 0, '<HEEELP?!!>'), left, top),
-        XSS.font.write(left, top + 18, '• Play using the arrow keys on your keyboard'),
-        XSS.font.write(left, top + 27, '• You can chat during the game by typing+enter'),
-        XSS.font.write(left, top + 35, '• Open Source at github.com/blaisekal/xssnake'),
-        XSS.font.write(left, top + 45, '• Github is also for bugs and feature requests'),
-        XSS.font.write(left, top + 54, '• Other questions or issues: blaisekal@gmail.com')
+        XSS.effects.zoomX2(XSS.font.draw(0, 0, '<HEEELP?!!>'), left, top),
+        XSS.font.draw(left, top + 18, '• Play using the arrow keys on your keyboard'),
+        XSS.font.draw(left, top + 27, '• You can chat during the game by typing+enter'),
+        XSS.font.draw(left, top + 35, '• Open Source at github.com/blaisekal/xssnake'),
+        XSS.font.draw(left, top + 45, '• Github is also for bugs and feature requests'),
+        XSS.font.draw(left, top + 54, '• Other questions or issues: blaisekal@gmail.com')
     );
 
     return new ScreenStage(name, screen);

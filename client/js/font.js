@@ -31,7 +31,7 @@ Font.prototype = {
     /** @private */
     glyphs: {},
 
-    write: function(x, y, str, inverted) {
+    draw: function(x, y, str, inverted) {
         var glyph, pixels = [];
 
         str = this.replaceMissingCharacters(str);

@@ -51,6 +51,24 @@ window.onload = function() {
     // Shortcuts
     XSS.ents = XSS.canvas.entities;
 
+    XSS.on = {
+        keydown: function(listener) {
+            return XSS.doc.addEventListener('keydown', listener, false);
+        },
+        keyup  : function(listener) {
+            return XSS.doc.addEventListener('keyup', listener, false);
+        }
+    };
+
+    XSS.off = {
+        keydown: function(listener) {
+            return XSS.doc.removeEventListener('keydown', listener, false);
+        },
+        keyup  : function(listener) {
+            return XSS.doc.removeEventListener('keyup', listener, false);
+        }
+    };
+
     // Goo!
     XSS.stages.init();
 

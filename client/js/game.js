@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS*/
+/*globals XSS,Entity*/
 
 // TODO: Make Snake a separate object
 
@@ -39,7 +39,7 @@ Game.prototype = {
     directionShiftMap: [[-1, 0], [0, -1], [1, 0], [0, 1]],
 
     _addEventListeners: function() {
-        XSS.doc.addEventListener('keydown', this.handleKey.bind(this), false);
+        XSS.on.keydown(this.handleKey.bind(this));
         XSS.utils.subscribe('/canvas/update', 'movesnake', this.moveSnake.bind(this));
     },
 
@@ -126,9 +126,9 @@ Game.prototype = {
                 this.snakePixels.shift(); // Cut off the tail
                 XSS.utils.unsubscribe('/canvas/update', 'movesnake');
                 XSS.effects.blink('collision', XSS.effects.zoomX4([snakeHeadTemp], 0, 0), 120);
-                XSS.ents.gameover = {
-                    pixels: XSS.font.write(XSS.PIXELS_H / 2 - 30, Math.round(XSS.PIXELS_V / 2.2), 'GAME OVER', true)
-                };
+                XSS.ents.gameover = new Entity(
+                    XSS.font.draw(XSS.PIXELS_H / 2 - 30, Math.round(XSS.PIXELS_V / 2.2), 'GAME OVER', true)
+                );
             } else {
                 this.snakeHead = snakeHeadTemp;
                 this.snakePixels = this.snakePixels.reverse();
