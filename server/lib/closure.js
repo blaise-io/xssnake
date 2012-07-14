@@ -9,6 +9,8 @@ var fs = require('fs'),
     http = require('http'),
     querystring = require('querystring');
 
+var header = '';
+
 var code = '';
 
 var addFiles = function() {
@@ -73,6 +75,10 @@ var compile = function(file, compilerConfigUser) {
     request.end(postdata);
 };
 
+var prepend = function(str) {
+    header = str;
+};
+
 var responseOK = function(file, response) {
     var chunks = [];
 
@@ -113,15 +119,22 @@ var showCompilerMessages = function(json) {
 };
 
 var writeOutputTofile = function(file, code) {
-    fs.writeFile(file, code, function(err) {
-        if (!err) {
-            console.info('Compiled code saved to', fs.realpathSync(file));
-        }
-    });
+    if (!code) {
+        console.error('No code to save.');
+    } else {
+        fs.writeFile(file, header + code, function(err) {
+            if (!err) {
+                console.info('Compiled code saved to', fs.realpathSync(file));
+            } else {
+                console.info('Saving code failed to', fs.realpathSync(file));
+            }
+        });
+    }
 };
 
 module.exports = {
-    replace    : replace,
-    addFiles   : addFiles,
-    compile    : compile
+    replace : replace,
+    prepend : prepend,
+    addFiles: addFiles,
+    compile : compile
 };

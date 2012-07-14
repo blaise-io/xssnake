@@ -34,10 +34,9 @@ Stages.prototype = {
 };
 
 
-
 /**
  * Main Stage
- * @param name
+ * @param {string} name
  * @returns SelectStage
  */
 XSS.MainStage = function(name) {
@@ -53,10 +52,9 @@ XSS.MainStage = function(name) {
 };
 
 
-
 /**
  * Room Type Stage
- * @param name
+ * @param {string} name
  * @returns SelectStage
  */
 XSS.RoomStage = function(name) {
@@ -70,10 +68,9 @@ XSS.RoomStage = function(name) {
 };
 
 
-
 /**
  * Game Type Stage
- * @param name
+ * @param {string} name
  * @returns SelectStage
  */
 XSS.TypeStage = function(name) {
@@ -81,17 +78,16 @@ XSS.TypeStage = function(name) {
 
     menu = new SelectMenu(name);
     menu.addOption('friendly', 'FRIENDLY MODE', 'May slightly dent your ego ♥', {nextStage: 'mp'});
-    menu.addOption('XSS', 'XSS MODE', ['The winner of the game is able to execute Java-',
-        'script in the browser of the loser...  alert(’☠’)'], {nextStage: 'mp'});
+    menu.addOption('XSS', 'XSS MODE', 'The winner of the game is able to execute Java-\n' +
+                                      'script in the browser of the loser...  alert(’☠’)', {nextStage: 'mp'});
 
     return new SelectStage(name, menu);
 };
 
 
-
 /**
  * Credits Stage
- * @param name
+ * @param {string} name
  * @returns ScreenStage
  */
 XSS.CreditsStage = function(name) {
@@ -105,7 +101,7 @@ XSS.CreditsStage = function(name) {
         XSS.font.draw(left, top + 18, 'Blaise Kal:'),
         XSS.font.draw(left, top + 27, 'Placeholder:'),
         XSS.font.draw(left, top + 35, 'Placeholder:'),
-        XSS.font.draw(left + 52, top + 18, 'Code, PixelEntity, Concept'),
+        XSS.font.draw(left + 52, top + 18, 'Code, Pixels, Concept'),
         XSS.font.draw(left + 52, top + 27, 'Testing, Hosting'),
         XSS.font.draw(left + 52, top + 35, 'Testing, Snoek')
     );
@@ -114,10 +110,9 @@ XSS.CreditsStage = function(name) {
 };
 
 
-
 /**
  * Help Stage
- * @param name
+ * @param {string} name
  * @return {ScreenStage}
  */
 XSS.HelpStage = function(name) {
@@ -139,10 +134,9 @@ XSS.HelpStage = function(name) {
 };
 
 
-
 /**
  * Input name Stage
- * @param name
+ * @param {string} name
  * @return {InputStage}
  */
 XSS.NameStage = function(name) {

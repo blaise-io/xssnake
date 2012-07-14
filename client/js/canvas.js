@@ -56,7 +56,10 @@ Canvas.prototype = {
         style.top = Math.max(0, top) + 'px';
     },
 
-    /** @private */
+    /**
+     * @return {Element}
+     * @private
+     */
     _setupCanvas: function() {
         var canvas = document.createElement('canvas');
         canvas.setAttribute('width', XSS.CANVAS_WIDTH);
@@ -65,7 +68,11 @@ Canvas.prototype = {
         return canvas;
     },
 
-    /** @private */
+    /**
+     * @param {PixelEntity} entity
+     * @return {Object}
+     * @private
+     */
     _getBBoxRealPixels: function(entity) {
         var bbox = entity.getBBox();
         for (var k in bbox) {
@@ -76,12 +83,20 @@ Canvas.prototype = {
         return bbox;
     },
 
-    /** @private */
+    /**
+     * @param {number} number
+     * @return {number}
+     * @private
+     */
     _snapToFatPixels: function(number) {
         return Math.round(number / XSS.PIXEL_SIZE) * XSS.PIXEL_SIZE;
     },
 
-    /** @private */
+    /**
+     * @param {PixelEntity} entity
+     * @return {Object}
+     * @private
+     */
     _paintEntityOffscreen: function(entity) {
         var bbox, canvas;
 
@@ -91,7 +106,7 @@ Canvas.prototype = {
         canvas.setAttribute('width', bbox.width);
         canvas.setAttribute('height', bbox.height);
 
-        this._paintPixels(canvas.getContext('2d'), entity.pixels(), bbox);
+        this._paintEntityPixels(canvas.getContext('2d'), entity, bbox);
 
         return {
             canvas: canvas,
@@ -99,8 +114,15 @@ Canvas.prototype = {
         };
     },
 
-    /** @private */
-    _paintPixels: function(context, pixels, offset) {
+    /**
+     * @param {Object} context
+     * @param {PixelEntity} entity
+     * @param {Object} offset
+     * @private
+     */
+    _paintEntityPixels: function(context, entity, offset) {
+        var pixels = entity.pixels();
+
         offset.x = offset.x || 0;
         offset.y = offset.y || 0;
 
@@ -117,17 +139,21 @@ Canvas.prototype = {
         }
     },
 
-    /** @private */
+    /**
+     * @param {string} name
+     * @param {PixelEntity} entity
+     * @private
+     */
     _paintEntity: function(name, entity) {
         var cache;
 
         if (false === entity instanceof PixelEntity) {
-            throw new Error(name + ' is not an instance of PixelEntity.');
+            throw new Error(name);
         }
 
         if (true === entity.enabled()) {
             if (entity.dynamic()) {
-                this._paintPixels(this.ctx, entity.pixels(), {});
+                this._paintEntityPixels(this.ctx, entity, {});
             } else {
                 cache = entity.cache();
                 if (!cache) {

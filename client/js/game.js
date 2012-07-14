@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS,Entity*/
+/*globals XSS,PixelEntity*/
 
 // TODO: Make Snake a separate object
 
@@ -26,6 +26,7 @@ Game.prototype = {
         this.lastStep = 0;
 
         XSS.ents.border = XSS.drawables.getOuterBorder();
+        XSS.ents.snake = new PixelEntity().dynamic(true);
 
 //        XSS.socket.init(function(socket) {
 //            socket.emit('/xss/name', 'Blaise');
@@ -33,58 +34,65 @@ Game.prototype = {
 //            this.addEventHandlers();
 //        }.bind(this));
 
+
         this._addEventListeners();
     },
 
     directionShiftMap: [[-1, 0], [0, -1], [1, 0], [0, 1]],
 
+    /** @private */
     _addEventListeners: function() {
-        XSS.on.keydown(this.handleKey.bind(this));
-        XSS.utils.subscribe('/canvas/update', 'movesnake', this.moveSnake.bind(this));
+        XSS.on.keydown(this._handleKeys.bind(this));
+        XSS.utils.subscribe('/canvas/update', 'movesnake', this._moveSnake.bind(this));
     },
 
-    handleKey: function(e) {
+    /** @private */
+    _handleKeys: function(e) {
         switch (e.which) {
             case XSS.KEY_LEFT:
-                this.changeDirection(XSS.DIRECTION_LEFT);
+                this._changeDirection(XSS.DIRECTION_LEFT);
                 break;
             case XSS.KEY_UP:
-                this.changeDirection(XSS.DIRECTION_UP);
+                this._changeDirection(XSS.DIRECTION_UP);
                 break;
             case XSS.KEY_RIGHT:
-                this.changeDirection(XSS.DIRECTION_RIGHT);
+                this._changeDirection(XSS.DIRECTION_RIGHT);
                 break;
             case XSS.KEY_DOWN:
-                this.changeDirection(XSS.DIRECTION_DOWN);
+                this._changeDirection(XSS.DIRECTION_DOWN);
                 break;
         }
     },
 
-    getLastDirection: function() {
+    /** @private */
+    _getLastDirection: function() {
         return (this.snakeDirectionRequests.length) ?
             this.snakeDirectionRequests[0] :
             this.snakeDirection;
     },
 
-    isAllowedTurn: function(turn) {
+    /** @private */
+    _isTurnAllowed: function(turn) {
         // Disallow 0: no turn, 2: bumping into torso
         return turn === 1 || turn === 3;
     },
 
-    changeDirection: function(direction) {
+    /** @private */
+    _changeDirection: function(direction) {
         var lastDirection, turn;
 
         // Allow max of two cached keys
         if (this.snakeDirectionRequests.length <= 2) {
-            lastDirection = this.getLastDirection();
+            lastDirection = this._getLastDirection();
             turn = Math.abs(direction - lastDirection);
-            if (direction !== lastDirection && this.isAllowedTurn(turn)) {
+            if (direction !== lastDirection && this._isTurnAllowed(turn)) {
                 this.snakeDirectionRequests.push(direction);
             }
         }
     },
 
-    isCrash: function(snakeHead) {
+    /** @private */
+    _isCrash: function(snakeHead) {
         var x, y, snakePixels = this.snakePixels;
 
         // Crash into self
@@ -105,7 +113,8 @@ Game.prototype = {
         return false;
     },
 
-    moveSnake: function(diff) {
+    /** @private */
+    _moveSnake: function(diff) {
         var directionShift, snakeHeadTemp;
         this.lastStep += diff;
 
@@ -122,11 +131,11 @@ Game.prototype = {
             snakeHeadTemp[0] += directionShift[0];
             snakeHeadTemp[1] += directionShift[1];
 
-            if (this.isCrash(snakeHeadTemp)) {
+            if (this._isCrash(snakeHeadTemp)) {
                 this.snakePixels.shift(); // Cut off the tail
                 XSS.utils.unsubscribe('/canvas/update', 'movesnake');
-                XSS.effects.blink('collision', XSS.effects.zoomX4([snakeHeadTemp], 0, 0), 120);
-                XSS.ents.gameover = new Entity(
+                XSS.effects.blink('collision', new PixelEntity(XSS.effects.zoomX4([snakeHeadTemp])), 120);
+                XSS.ents.gameover = new PixelEntity(
                     XSS.font.draw(XSS.PIXELS_H / 2 - 30, Math.round(XSS.PIXELS_V / 2.2), 'GAME OVER', true)
                 );
             } else {
@@ -137,10 +146,9 @@ Game.prototype = {
                 this.lastStep -= this.snakeSpeed;
             }
 
-            XSS.ents.snake = {
-                cache: false,
-                pixels: XSS.effects.zoomX4(this.snakePixels, 0, 0)
-            };
+            XSS.ents.snake.pixels(
+                XSS.effects.zoomX4(this.snakePixels)
+            );
         }
     }
 

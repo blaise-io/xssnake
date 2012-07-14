@@ -16,6 +16,12 @@ function Effects() {
 
 Effects.prototype = {
 
+    /**
+     * @param {Array} pixels
+     * @param {number} x
+     * @param {number} y
+     * @return {Array}
+     */
     shift: function(pixels, x, y) {
         var sx, sy,
             shifted = [];
@@ -31,6 +37,11 @@ Effects.prototype = {
         return shifted;
     },
 
+    /**
+     * @param {String} name
+     * @param {PixelEntity} entity
+     * @param {number=} speed
+     */
     blink: function(name, entity, speed) {
         var updater, ns, progress = 0, show = true;
 
@@ -51,12 +62,20 @@ Effects.prototype = {
         XSS.utils.subscribe(this.topic, ns, updater);
     },
 
+    /**
+     * @param {String} name
+     */
     blinkStop: function(name) {
         var ns = 'blink_' + name;
         XSS.utils.unsubscribe(this.topic, ns);
         delete XSS.ents[ns];
     },
 
+    /**
+     * @param {String} name
+     * @param {PixelEntity} entity
+     * @param {number=} time
+     */
     decay: function(name, entity, time) {
         var updater, ns, progress = 0;
 
@@ -76,12 +95,20 @@ Effects.prototype = {
         XSS.utils.subscribe(this.topic, ns, updater);
     },
 
+    /**
+     * @param {String} name
+     */
     decayNow: function(name) {
         var ns = 'decay_' + name;
         delete XSS.ents[ns];
         XSS.utils.unsubscribe(this.topic, ns);
     },
 
+    /**
+     * @param {String} name
+     * @param {PixelEntity} entity
+     * @param {Object=} options
+     */
     swipe: function(name, entity, options) {
         var updater, ns, start, end, duration, shifted, distance, progress = 0;
 
@@ -113,24 +140,39 @@ Effects.prototype = {
         XSS.utils.subscribe(this.topic, ns, updater);
     },
 
-//    // Slow!
-//    zoom: function(pixels, zoom, shiftX, shiftY) {
-//        var pixelsZoomed = [];
-//        for (var i = 0, m = pixels.length; i < m; ++i) {
-//            for (var xx = 0; xx !== zoom; ++xx) {
-//                for (var yy = 0; yy !== zoom; ++yy) {
-//                    pixelsZoomed = pixelsZoomed.concat([[
-//                        shiftX + xx + pixels[i][0] * zoom,
-//                        shiftY + yy + pixels[i][1] * zoom
-//                    ]]);
-//                }
-//            }
-//        }
-//        return pixelsZoomed;
-//    },
+    /**
+     * @param {Array} pixels
+     * @param {number} zoom
+     * @param {number} shiftX
+     * @param {number} shiftY
+     * @return {Array}
+     * @deprecated
+     */
+    zoom: function(pixels, zoom, shiftX, shiftY) {
+        var pixelsZoomed = [];
+        for (var i = 0, m = pixels.length; i < m; ++i) {
+            for (var xx = 0; xx !== zoom; ++xx) {
+                for (var yy = 0; yy !== zoom; ++yy) {
+                    pixelsZoomed = pixelsZoomed.concat([[
+                        shiftX + xx + pixels[i][0] * zoom,
+                        shiftY + yy + pixels[i][1] * zoom
+                    ]]);
+                }
+            }
+        }
+        return pixelsZoomed;
+    },
 
+    /**
+     * @param {Array} pixels
+     * @param {number=} shiftX
+     * @param {number=} shiftY
+     * @return {Array}
+     */
     zoomX2: function(pixels, shiftX, shiftY) {
         var pixelsZoomed = [], x, y;
+        shiftX = shiftX || 0;
+        shiftY = shiftY || 0;
         for (var i = 0, m = pixels.length; i < m; ++i) {
             x = pixels[i][0];
             y = pixels[i][1];
@@ -144,8 +186,14 @@ Effects.prototype = {
         return pixelsZoomed;
     },
 
+    /**
+     * @param {Array} pixels
+     * @param {number=} shiftX
+     * @param {number=} shiftY
+     * @return {Array}
+     */
     zoomX4: function(pixels, shiftX, shiftY) {
-        return this.zoomX2(this.zoomX2(pixels, 0, 0), shiftX, shiftY);
+        return this.zoomX2(this.zoomX2(pixels, 0, 0), shiftX || 0, shiftY || 0);
     }
 
 };

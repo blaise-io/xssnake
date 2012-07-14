@@ -36,7 +36,8 @@ window.onerror = function() {
 window.onload = function() {
 
     XSS.doc       = document.body;
-    XSS.input     = document.querySelector('input');
+    XSS.input     = document.createElement('input');
+                    XSS.doc.appendChild(XSS.input);
 
     XSS.utils     = new Utils();
     XSS.canvas    = new Canvas();
@@ -49,27 +50,11 @@ window.onload = function() {
     XSS.game      = new Game();
 
     // Shortcuts
-    XSS.ents = XSS.canvas.entities;
+    XSS.ents      = XSS.canvas.entities;
+    XSS.on        = XSS.utils.addListener;
+    XSS.off       = XSS.utils.removeListener;
 
-    XSS.on = {
-        keydown: function(listener) {
-            return XSS.doc.addEventListener('keydown', listener, false);
-        },
-        keyup  : function(listener) {
-            return XSS.doc.addEventListener('keyup', listener, false);
-        }
-    };
-
-    XSS.off = {
-        keydown: function(listener) {
-            return XSS.doc.removeEventListener('keydown', listener, false);
-        },
-        keyup  : function(listener) {
-            return XSS.doc.removeEventListener('keyup', listener, false);
-        }
-    };
-
-    // Goo!
-    XSS.stages.init();
+    // Init
+    XSS.game.init();
 
 };

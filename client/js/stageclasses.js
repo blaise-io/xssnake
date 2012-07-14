@@ -19,7 +19,7 @@ SelectMenu.prototype = {
     /**
      * @param {string} value
      * @param {string} title
-     * @param {(string|Array)} description
+     * @param {string} description
      * @param {Object=} settings
      */
     addOption: function(value, title, description, settings) {
@@ -86,6 +86,7 @@ SelectMenu.prototype = {
     }
 
 };
+
 
 /**
  * @interface
@@ -286,7 +287,8 @@ ScreenStage.prototype = {
 /**
  * BaseSelectStage
  * Stage with a vertical select menu
- * @param name
+ * @param {string} name
+ * @param {SelectMenu=} menu
  * @constructor
  * @implements {Stage}
  */

@@ -6,10 +6,18 @@
 'use strict';
 
 
-var closure = require('./lib/closure.js'),
+var header,
+    util = require('util'),
+    closure = require('./lib/closure.js'),
     home = __dirname + '/../',
-    file = home + 'compiled.js',
-    conf = {};
+    file = home + 'compiled.js';
+
+header = util.format(
+    '// © %d Blaise Kal\n' +
+    '// Compiled using Google Closure Compiler on %s\n' +
+    '// Source available at https://github.com/blaisekal/xssnake\n',
+    new Date().getFullYear(), new Date().toUTCString()
+);
 
 closure.addFiles(
     home + 'client/js/init.js',
@@ -27,4 +35,5 @@ closure.addFiles(
 );
 
 closure.replace(/'use strict';/g, '');
-closure.compile(file, conf);
+closure.prepend(header);
+closure.compile(file);

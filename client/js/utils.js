@@ -32,6 +32,24 @@ Utils.prototype = {
         return destination;
     },
 
+    addListener: {
+        keydown: function(listener) {
+            return XSS.doc.addEventListener('keydown', listener, false);
+        },
+        keyup  : function(listener) {
+            return XSS.doc.addEventListener('keyup', listener, false);
+        }
+    },
+
+    removeListener: {
+        keydown: function(listener) {
+            return XSS.doc.removeEventListener('keydown', listener, false);
+        },
+        keyup  : function(listener) {
+            return XSS.doc.removeEventListener('keyup', listener, false);
+        }
+    },
+
     exec: function(func, args) {
         func.apply(func, args);
     },

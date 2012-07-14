@@ -28,7 +28,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {...Array} var_args
-     * @return {(Object|PixelEntity)}
+     * @return {(Array|PixelEntity)}
      */
     pixels: function(var_args) {
         if (arguments.length === 0) {
@@ -54,7 +54,7 @@ PixelEntity.prototype = {
     },
 
     /**
-     * @param enabled {boolean=}
+     * @param {boolean=} enabled
      * @return {(boolean|PixelEntity)}
      */
     enabled: function(enabled) {
@@ -67,7 +67,7 @@ PixelEntity.prototype = {
     },
 
     /**
-     * @param dynamic {boolean=}
+     * @param {boolean=} dynamic
      * @return {(boolean|PixelEntity)}
      */
     dynamic: function(dynamic) {
@@ -80,7 +80,7 @@ PixelEntity.prototype = {
     },
 
     /**
-     * @param cache {Object=}
+     * @param {Object=} cache
      * @return {(Object|PixelEntity)}
      */
     cache: function(cache) {
