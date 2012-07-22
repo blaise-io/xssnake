@@ -9,29 +9,28 @@ var fs = require('fs'),
     http = require('http'),
     querystring = require('querystring');
 
-var header = '';
-
-var code = '';
+var _header = '';
+var _code = '';
 
 var addFiles = function() {
     for (var i = 0, m = arguments.length; i < m; i++) {
-        code += fs.readFileSync(arguments[i]);
+        _code += fs.readFileSync(arguments[i]);
     }
 };
 
-var replace = function(string, haystack) {
-    code = code.replace(string, haystack);
+var replace = function(string, haycourse) {
+    _code = _code.replace(string, haycourse);
 };
 
 // https://developers.google.com/closure/compiler/docs/api-ref
 var getCompilerConfigDefaults = function() {
     return {
-        js_code          : code,
+        js_code          : _code,
         warning_level    : 'VERBOSE',
         language         : 'ECMASCRIPT5_STRICT',
         compilation_level: 'ADVANCED_OPTIMIZATIONS',
         output_format    : 'json',
-        output_info      : ['compiled_code', 'errors', 'warnings']
+        output_info      : ['compiled_code', 'errors', 'warnings', 'statistics']
     };
 };
 
@@ -50,6 +49,8 @@ var compile = function(file, compilerConfigUser) {
     var request, postdata,
         compilerConfig = getCompilerConfigDefaults(),
         compilerEndpoint = getCompilerEndpoint();
+
+    file = fs.realpathSync(file);
 
     for (var k in compilerConfigUser) {
         if (compilerConfigUser.hasOwnProperty(k)) {
@@ -75,8 +76,8 @@ var compile = function(file, compilerConfigUser) {
     request.end(postdata);
 };
 
-var prepend = function(str) {
-    header = str;
+var header = function(str) {
+    _header = str;
 };
 
 var responseOK = function(file, response) {
@@ -104,17 +105,36 @@ var responseFail = function(response) {
 };
 
 var showCompilerMessages = function(json) {
+    var stats, shaved, kb;
+
     /** @namespace json.warnings {Object} */
     if (json.warnings) {
         console.warn('warnings:', json.warnings);
     }
+
     /** @namespace json.errors {Object} */
     if (json.errors) {
         console.error('errors:', json.errors);
     }
+
     /** @namespace json.statistics {Object} */
+    /** @namespace json.statistics.originalSize */
+    /** @namespace json.statistics.compressedSize */
+    /** @namespace json.statistics.compressedGzipSize */
     if (json.statistics) {
-        console.info('statistics:', json.statistics);
+
+        stats = json.statistics;
+        shaved = (100 - (stats.compressedSize / stats.originalSize * 100)).toPrecision(3);
+        kb = function(bytes) {
+            return Math.round(bytes / 10.24) / 100 + ' KB';
+        };
+
+        console.info();
+        console.info('      Original', kb(stats.originalSize));
+        console.info('    Compressed', kb(stats.compressedSize));
+        console.info('     + GZipped', kb(stats.compressedGzipSize));
+        console.info('        Shaved', shaved + '%');
+        console.info();
     }
 };
 
@@ -122,11 +142,11 @@ var writeOutputTofile = function(file, code) {
     if (!code) {
         console.error('No code to save.');
     } else {
-        fs.writeFile(file, header + code, function(err) {
+        fs.writeFile(file, _header + code, function(err) {
             if (!err) {
-                console.info('Compiled code saved to', fs.realpathSync(file));
+                console.info('Compiled code saved to', file);
             } else {
-                console.info('Saving code failed to', fs.realpathSync(file));
+                console.info('Saving code failed to', file);
             }
         });
     }
@@ -134,7 +154,7 @@ var writeOutputTofile = function(file, code) {
 
 module.exports = {
     replace : replace,
-    prepend : prepend,
+    header  : header,
     addFiles: addFiles,
     compile : compile
 };

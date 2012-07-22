@@ -33,6 +33,6 @@ input {
     opacity: 0;
     z-index: 1;
     cursor: default;
-    cursor: none;
+    /*cursor: none;*/
     border: none;
 }

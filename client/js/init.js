@@ -28,7 +28,6 @@ var XSS = {};
 /** @const */ XSS.MENU_LEFT = 40;
 /** @const */ XSS.MENU_TOP = 64;
 
-
 window.onerror = function() {
     XSS.error = true; // Stops draw loop
 };

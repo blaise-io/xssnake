@@ -1,0 +1,84 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Build level data</title>
+
+<pre>Check your developer console for output data and instructions.</pre>
+
+<script>
+    var start, leveldata, canvas, context, map, image;
+
+    start = +new Date();
+
+    leveldata = [];
+
+    canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 40;
+
+    context = canvas.getContext('2d');
+
+    map = {
+        _0_0_0    : 0, // Wall
+        _255_0_0  : 1, // Spawn 1
+        _0_255_0  : 2, // Spawn 2
+        _0_0_255  : 3, // Spawn 3
+        _255_255_0: 4  // Spawn 4
+    };
+
+    function loadData(index) {
+
+        image = new Image();
+        image.src = './level_images/' + index + '.png';
+
+        // Level image exists
+        image.onload = function() {
+            var r, g, b, a, data, extracted, mapped;
+
+            extracted = {
+                width : image.width,
+                height: image.height,
+                data  : {}
+            };
+
+            context.drawImage(image, 0, 0);
+            data = context.getImageData(0, 0, image.width, image.height).data;
+
+            for (var i = 0, m = data.length / 4; i < m; ++i) {
+                r = data[i * 4];
+                g = data[i * 4 + 1];
+                b = data[i * 4 + 2];
+                a = data[i * 4 + 3];
+
+                if (r * g * b * a !== Math.pow(255, 4)) {
+                    mapped = map['_' + r + '_' + g + '_' + b];
+                    if (typeof mapped === 'undefined') {
+                        throw new Error('Uknown pixel color: ' +
+                                        [r, g, b, a] + ' in image ' + index);
+                    }
+                    extracted.data[i] = map['_' + r + '_' + g + '_' + b];
+                }
+            }
+
+            leveldata.push(extracted);
+            loadData(++index);
+        };
+
+        // Level image does not exist, or image is corrupt
+        image.onerror = function() {
+            var data, output;
+
+            data = leveldata.toSource();
+            output = '    var levels = ' + data + ';';
+
+            console.info('Levels:', index);
+            console.info('Size:', Math.round(data.length / 10.24) / 100, 'KB');
+            console.info('Took:', new Date() - start, 'ms');
+            console.info('Replace line 9 of shared/levels.js with:');
+            console.log(output);
+
+            document.body.innerHTML += '<pre>'+output+'<br><br></pre>'
+        };
+    }
+
+    loadData(0);
+</script>

@@ -1,4 +1,4 @@
-/*jshint globalstrict:true*/
+/*jshint globalstrict:true */
 /*globals XSS*/
 
 'use strict';
@@ -30,6 +30,14 @@ Utils.prototype = {
             }
         }
         return destination;
+    },
+
+    /** @return {string} UUID */
+    uuid: function() {
+        return 'XX-X-X-X-XXX'.replace(/X/g, function() {
+            var segment = Math.floor(((1 + Math.random()) * 0x10000));
+            return segment.toString(16).substr(1);
+        });
     },
 
     addListener: {

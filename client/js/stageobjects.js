@@ -12,7 +12,7 @@ function Stages() {
 
     this.choices = {};
     this.current = 'main';
-    this.history = [this.current];
+    this.course = [this.current];
 
     XSS.menu.setStages({
         'main'   : XSS.MainStage('main'),

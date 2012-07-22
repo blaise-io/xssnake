@@ -39,6 +39,32 @@ Drawables.prototype = {
         );
     },
 
+    getLevelBorder: function() {
+        var w = XSS.PIXELS_H - 1,
+            h = XSS.PIXELS_V - 1;
+
+        return new PixelEntity(
+            this._line(0, h - 24, w, h - 24),
+            this._line(0, h - 25, w, h - 25),
+
+            XSS.font.draw(5, h-22, 'Imaginary crashed into Imaginary'),
+
+            XSS.font.draw(5, h-15, 'Blaise'),
+            XSS.font.draw(51, h-15, '33'),
+            XSS.font.draw(5, h-8, 'Imaginary'),
+            XSS.font.draw(56, h-8, '7'),
+
+            XSS.font.draw(65, h-15, 'Foo'),
+            XSS.font.draw(113, h-15, '52'),
+            XSS.font.draw(65, h-8, 'Blabla'),
+            XSS.font.draw(118, h-8, '2'),
+
+            XSS.font.draw(126, h-22, 'Foo: :,('),
+            XSS.font.draw(126, h-15, 'Blaise: LOL OWNED'),
+            XSS.font.draw(126, h-8, 'Imaginary: Fuck you for cutting me!')
+        );
+    },
+
     getHeader: function(x, y) {
         y = y || 18;
         var welcome = XSS.font.draw(0, 0, '<XSSNAKE>');
@@ -49,25 +75,26 @@ Drawables.prototype = {
     },
 
     _line: function(x0, y0, x1, y1) {
-        var pixels = [],
-            dx = Math.abs(x1 - x0),
-            dy = Math.abs(y1 - y0),
-            sx = x0 < x1 ? 1 : -1,
-            sy = y0 < y1 ? 1 : -1,
-            err = dx - dy,
-            er2;
+        var pixels, dx, dy, sx, sy, err, errTmp;
+
+        pixels = [];
+        dx = Math.abs(x1 - x0);
+        dy = Math.abs(y1 - y0);
+        sx = x0 < x1 ? 1 : -1;
+        sy = y0 < y1 ? 1 : -1;
+        err = dx - dy;
 
         while (true) {
             pixels.push([x0, y0]);
             if (x0 === x1 && y0 === y1) {
                 break;
             }
-            er2 = err;
-            if (er2 > -dx) {
+            errTmp = err;
+            if (errTmp > -dx) {
                 err -= dy;
                 x0 += sx;
             }
-            if (er2 < dy) {
+            if (errTmp < dy) {
                 err += dx;
                 y0 += sy;
             }

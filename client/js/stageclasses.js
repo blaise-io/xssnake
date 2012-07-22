@@ -251,7 +251,7 @@ InputStage.prototype = {
  */
 function ScreenStage(name, screen) {
     this.name = name;
-    this.screen = screen || [];
+    this.entity = screen || [];
 }
 
 ScreenStage.prototype = {
@@ -261,7 +261,7 @@ ScreenStage.prototype = {
     },
 
     getEntity: function() {
-        return this.screen;
+        return this.entity;
     },
 
     createStage: function() {
@@ -369,16 +369,16 @@ Menu.prototype = {
             XSS.stages.current = newStageName;
             this.newStage(newStageName);
 
-            // Log history
+            // Log course
             if (options && options.back) {
-                XSS.stages.history.pop();
+                XSS.stages.course.pop();
             } else {
-                XSS.stages.history.push(newStageName);
+                XSS.stages.course.push(newStageName);
             }
         };
 
         if (!this.stages[newStageName]) {
-            throw new Error('Stage does not exist: ' + newStageName);
+            throw new Error(newStageName);
         }
 
         // Unload old stage
@@ -397,9 +397,9 @@ Menu.prototype = {
 
     goToPreviousStage: function() {
         var previousStageName,
-            historyLength = XSS.stages.history.length;
-        if (historyLength > 1) {
-            previousStageName = XSS.stages.history[historyLength - 2];
+            courseLength = XSS.stages.course.length;
+        if (courseLength > 1) {
+            previousStageName = XSS.stages.course[courseLength - 2];
             this.switchStage(XSS.stages.current, previousStageName, {back: true});
         }
     },

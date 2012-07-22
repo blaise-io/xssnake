@@ -29,7 +29,7 @@ Effects.prototype = {
         for (var i = 0, m = pixels.length; i < m; ++i) {
             sx = pixels[i][0] + x;
             sy = pixels[i][1] + y;
-            if (sx > 0 && sy > 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
+            if (sx >= 0 && sy >= 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
                 shifted.push([sx, sy]);
             }
         }
@@ -51,6 +51,9 @@ Effects.prototype = {
         XSS.ents[ns] = entity.clone().dynamic(true);
 
         updater = function(diff) {
+            if (diff > 100) {
+                return;
+            }
             progress += diff;
             if (progress > speed) {
                 progress -= speed;
@@ -122,6 +125,9 @@ Effects.prototype = {
         XSS.ents[ns] = entity.clone().dynamic(true);
 
         updater = function(diff) {
+            if (diff > 100) {
+                return;
+            }
             progress += diff;
             if (progress < duration) {
                 distance = start - ((start - end) * (progress / duration));

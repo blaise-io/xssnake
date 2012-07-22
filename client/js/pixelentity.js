@@ -5,9 +5,9 @@
 /**
  * PixelEntity
  * @constructor
- * @param {...Array} var_args
+ * @param {...Array} varArgs
  */
-function PixelEntity(var_args) {
+function PixelEntity(varArgs) {
     /** @private */ this._pixels = [];
     /** @private */ this._bbox = null;
     /** @private */ this._cache = null;
@@ -27,10 +27,10 @@ PixelEntity.prototype = {
     },
 
     /**
-     * @param {...Array} var_args
+     * @param {...Array} varArgs
      * @return {(Array|PixelEntity)}
      */
-    pixels: function(var_args) {
+    pixels: function(varArgs) {
         if (arguments.length === 0) {
             return this._pixels; // Getter
         } else {
@@ -41,10 +41,10 @@ PixelEntity.prototype = {
     },
 
     /**
-     * @param {...Array} var_args
+     * @param {...Array} varArgs
      * @return {PixelEntity}
      */
-    add: function(var_args) {
+    add: function(varArgs) {
         for (var i = 0, m = arguments.length; i < m; ++i) {
             this._pixels = this._pixels.concat(arguments[i]);
         }
