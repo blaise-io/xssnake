@@ -15,6 +15,7 @@ function Snake(x, y, direction){
     this.snake = [this.head];
     this.direction = direction;
 
+    this.crashed = false;
     this.parts = 3;
     this.speed = 100; // ms between moves
 
@@ -42,27 +43,33 @@ Snake.prototype = {
         this._handleChangeRequests();
 
         shift = this._directionToShift(this.direction);
-        headShifted = XSS.effects.shift([this.head], shift[0], shift[1]);
+        headShifted = [[this.head[0] + shift[0], this.head[1] + shift[1]]];
 
         this._updateSnakePos(headShifted[0][0], headShifted[0][1]);
         this.entity.pixels(XSS.effects.zoomX4(this.snake, 2, 2));
     },
 
     crash: function() {
-
+        this.crashed = true;
     },
 
     isCrashIntoSelf: function() {
-        for (var i = 0, m = this.snake.length - 1; i < m; ++i) {
-            if (this.snake[i][0] === this.head[0] && this.snake[i][1] === this.head[1]) {
+        var snake = this.snake;
+        for (var i = 0, m = snake.length - 1; i < m; ++i) {
+            if (snake[i][0] === this.head[0] && snake[i][1] === this.head[1]) {
                 return true;
             }
         }
         return false;
     },
 
-    _directionToShift: function(turn) {
-        return [[-1, 0], [0, -1], [1, 0], [0, 1]][turn];
+    /**
+     * @param {number} direction
+     * @return {Array.<number>}
+     * @private
+     */
+    _directionToShift: function(direction) {
+        return [[-1, 0], [0, -1], [1, 0], [0, 1]][direction];
     },
 
     /**
@@ -95,37 +102,47 @@ Snake.prototype = {
         }
     },
 
+    /** @private */
     _handleChangeRequests: function() {
         if (this._snakeTurnRequests.length) {
             this.direction = this._snakeTurnRequests.shift();
         }
     },
 
-    /** @private */
+    /**
+     * @param {number} direction
+     * @private
+     */
     _changeDirection: function(direction) {
-        var lastDirection, turn;
+        var lastDirection, turns;
 
         // Allow max of 2 turn requests in 1 move
         if (this._snakeTurnRequests.length <= 2) {
             lastDirection = this._getLastDirection();
-            turn = Math.abs(direction - lastDirection);
-            if (direction !== lastDirection && this._isTurnAllowed(turn)) {
+            turns = Math.abs(direction - lastDirection);
+            if (direction !== lastDirection && this._isNumTurnAllowed(turns)) {
                 this._snakeTurnRequests.push(direction);
             }
         }
     },
 
-    /** @private */
+    /**
+     * @return {number}
+     * @private
+     */
     _getLastDirection: function() {
         return (this._snakeTurnRequests.length) ?
             this._snakeTurnRequests[0] :
             this.direction;
     },
 
-    /** @private */
-    _isTurnAllowed: function(turn) {
+    /**
+     * @param {number} turns
+     * @private
+     */
+    _isNumTurnAllowed: function(turns) {
         // Disallow 0: no turn, 2: bumping into torso
-        return turn === 1 || turn === 3;
+        return turns === 1 || turns === 3;
     }
 
 };

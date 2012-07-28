@@ -8,13 +8,23 @@
  * Pixel object definitions
  * @constructor
  */
-function Drawables() {}
+function Drawables() {
+}
 
 Drawables.prototype = {
 
     getLine: function() {
         return new PixelEntity(
             this._line.apply(this, arguments)
+        );
+    },
+
+    getApple: function(x, y) {
+        return new PixelEntity(
+            this._line(x + 1, y + 0, x + 2, y + 0),
+            this._line(x + 0, y + 1, x + 3, y + 1),
+            this._line(x + 0, y + 2, x + 3, y + 2),
+            this._line(x + 1, y + 3, x + 2, y + 3)
         );
     },
 
@@ -47,21 +57,21 @@ Drawables.prototype = {
             this._line(0, h - 24, w, h - 24),
             this._line(0, h - 25, w, h - 25),
 
-            XSS.font.draw(5, h-22, 'Imaginary crashed into Imaginary'),
+            XSS.font.draw(5, h - 22, 'Imaginary crashed into Imaginary'),
 
-            XSS.font.draw(5, h-15, 'Blaise'),
-            XSS.font.draw(51, h-15, '33'),
-            XSS.font.draw(5, h-8, 'Imaginary'),
-            XSS.font.draw(56, h-8, '7'),
+            XSS.font.draw(5, h - 15, 'Blaise'),
+            XSS.font.draw(51, h - 15, '33'),
+            XSS.font.draw(5, h - 8, 'Imaginary'),
+            XSS.font.draw(56, h - 8, '7'),
 
-            XSS.font.draw(65, h-15, 'Foo'),
-            XSS.font.draw(113, h-15, '52'),
-            XSS.font.draw(65, h-8, 'Blabla'),
-            XSS.font.draw(118, h-8, '2'),
+            XSS.font.draw(65, h - 15, 'Foo'),
+            XSS.font.draw(113, h - 15, '52'),
+            XSS.font.draw(65, h - 8, 'Blabla'),
+            XSS.font.draw(118, h - 8, '2'),
 
-            XSS.font.draw(126, h-22, 'Foo: :,('),
-            XSS.font.draw(126, h-15, 'Blaise: LOL OWNED'),
-            XSS.font.draw(126, h-8, 'Imaginary: Fuck you for cutting me!')
+            XSS.font.draw(126, h - 22, 'Foo: :,('),
+            XSS.font.draw(126, h - 15, 'Blaise: LOL OWNED'),
+            XSS.font.draw(126, h - 8, 'Imaginary: Fuck you for cutting me!')
         );
     },
 

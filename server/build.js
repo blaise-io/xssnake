@@ -33,6 +33,7 @@ closure.addFiles(
     home + 'client/js/socket.js',
     home + 'client/js/client.js',
     home + 'client/js/snake.js',
+    home + 'client/js/apple.js',
     home + 'shared/levels.js',
     home + 'client/js/world.js',
     home + 'client/js/game.js'

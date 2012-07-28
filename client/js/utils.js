@@ -13,6 +13,10 @@ function Utils() {
 
 Utils.prototype = {
 
+    /**
+     * @param {string} url
+     * @param {function()} callback
+     */
     loadScript: function(url, callback) {
         var script, head;
         script = document.createElement('script');
@@ -23,6 +27,11 @@ Utils.prototype = {
         head.insertBefore(script, head.firstChild);
     },
 
+    /**
+     * @param {!Object} destination
+     * @param {!Object} source
+     * @return {!Object}
+     */
     extend: function(destination, source) {
         for (var k in source) {
             if (source.hasOwnProperty(k)) {
@@ -58,35 +67,52 @@ Utils.prototype = {
         }
     },
 
-    exec: function(func, args) {
-        func.apply(func, args);
-    },
-
+    /**
+     * @param {string} topic
+     */
     publish: function(topic) {
         var args = Array.prototype.slice.call(arguments).splice(1),
             pubsubsTopic = this.subscriptions[topic];
         if (pubsubsTopic) {
-            for (var k in pubsubsTopic) {
-                if (pubsubsTopic.hasOwnProperty(k)) {
-                    this.exec(pubsubsTopic[k], args);
+            for (var key in pubsubsTopic) {
+                if (pubsubsTopic.hasOwnProperty(key)) {
+                    this._exec(pubsubsTopic[key], args);
                 }
             }
         }
     },
 
-    subscribe: function(topic, id, callback) {
+    /**
+     * @param {string} topic
+     * @param {string} key
+     * @param {Object} callback
+     */
+    subscribe: function(topic, key, callback) {
         if (!this.subscriptions[topic]) {
             this.subscriptions[topic] = [];
         }
-        this.subscriptions[topic][id] = callback;
+        this.subscriptions[topic][key] = callback;
     },
 
-    unsubscribe: function(topic, id) {
-        if (typeof id !== 'undefined') {
-            delete this.subscriptions[topic][id];
+    /**
+     * @param {string} topic
+     * @param {string=} key
+     */
+    unsubscribe: function(topic, key) {
+        if (typeof key !== 'undefined') {
+            delete this.subscriptions[topic][key];
         } else {
             delete this.subscriptions[topic];
         }
+    },
+
+    /**
+     * @param {Object} func
+     * @param {Array} args
+     * @private
+     */
+    _exec: function(func, args) {
+        func.apply(func, args);
     }
 
 };

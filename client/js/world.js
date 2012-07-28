@@ -13,15 +13,21 @@ function World(level) {
     this.width = levelTmp.width;
     this.height = levelTmp.height;
     this.data = levelTmp.data;
+    this.entity = this._worldToEntity();
 }
 
 World.prototype = {
 
     addToEntities: function() {
-        XSS.ents.world = this._worldToEntity();
+        XSS.ents.world = this.entity;
     },
 
-    isCrashIntoWorld: function(x, y) {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {boolean}
+     */
+    isWall: function(x, y) {
         if (x < 0 || y < 0) {
             return true;
         } else if ( x >= this.width || y >= this.height) {
@@ -32,31 +38,102 @@ World.prototype = {
         return false;
     },
 
+    /**
+     * @return {Array.<number>}
+     */
+    getRandomOpenTile: function() {
+        var possibities, random, minOpenSpaceNeighbours, samplesPerIteration;
+
+        possibities = this.width * this.height;
+        minOpenSpaceNeighbours = 6;
+        samplesPerIteration = 30;
+
+        while (samplesPerIteration-- && minOpenSpaceNeighbours) {
+            random = Math.floor(Math.random() * possibities);
+            if (this._numOpenNeighbours(random) >= 5) {
+                return this._seqToXY(random);
+            }
+            if (samplesPerIteration === 0) {
+                minOpenSpaceNeighbours--;
+                samplesPerIteration = 50;
+            }
+        }
+
+        return [-1, -1];
+    },
+
+    /**
+     * @param {number} seq
+     * @return {number}
+     * @private
+     */
+    _numOpenNeighbours: function(seq) {
+        var free = 0,
+            xy = this._seqToXY(seq);
+
+        for (var x = -1; x <= 1; x++) {
+            for (var y = -1; y <= 1; y++) {
+                if (this._isOpenSpace(xy[0] + x, xy[1] + y)) {
+                    free++;
+                }
+            }
+        }
+
+        return free;
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {boolean}
+     * @private
+     */
+    _isOpenSpace: function(x, y) {
+        if (this.isWall(x, y)) {
+            return false;
+        }
+
+        // TODO: Snakes occupying spaces
+
+        return true;
+    },
+
+    /**
+     * @return {PixelEntity}
+     * @private
+     */
     _worldToEntity: function() {
-        var k, xy, pixels;
+        var seq, xy, pixels = [];
 
-        pixels = [];
-
-        for (k in this.data) {
-            if (this.data.hasOwnProperty(k)) {
-                if (this.data[k] === 0) {
-                    xy = this._seqToXY(k);
+        for (seq in this.data) {
+            if (this.data.hasOwnProperty(seq)) {
+                if (this.data[seq] === 0) {
+                    xy = this._seqToXY(parseInt(seq, 10));
                     pixels.push(xy);
                 }
             }
         }
 
         pixels = XSS.effects.zoomX4(pixels, 2, 2);
-
         return new PixelEntity(pixels);
     },
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {number}
+     * @private
+     */
     _xyToSeq: function(x, y) {
         return x + this.width * y;
     },
 
+    /**
+     * @param {number} seq
+     * @return {Array.<number>}
+     * @private
+     */
     _seqToXY: function(seq) {
-        seq = parseInt(seq, 10);
         return [
             seq % this.width,
             Math.floor(seq / this.width)
