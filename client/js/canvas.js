@@ -131,8 +131,8 @@ Canvas.prototype = {
 
         for (var i = 0, m = pixels.length; i < m; ++i) {
             context.fillRect(
-                -offset.x + pixels[i][0] * XSS.PIXEL_SIZE,
-                -offset.y + pixels[i][1] * XSS.PIXEL_SIZE,
+                pixels[i][0] * XSS.PIXEL_SIZE - offset.x,
+                pixels[i][1] * XSS.PIXEL_SIZE - offset.y,
                 XSS.PIXEL_SIZE - 1,
                 XSS.PIXEL_SIZE - 1
             );

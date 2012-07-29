@@ -6,7 +6,7 @@
 /**
  * SelectMenu
  * Creates a single navigatable verticle menu
- * @param name
+ * @param {string} name
  * @constructor
  */
 function SelectMenu(name) {
@@ -108,7 +108,7 @@ Stage.prototype = {
 /**
  * BaseInputStage
  * Stage with a form input
- * @param name
+ * @param {string} name
  * @constructor
  * @implements {Stage}
  */
@@ -166,7 +166,7 @@ InputStage.prototype = {
         XSS.off.keyup(this.inputUpdate);
 
         XSS.effects.blinkStop('caret');
-        XSS.effects.decayNow('error');
+        XSS.effects.decayStop('error');
     },
 
     handleKeys: function(e) {
@@ -245,7 +245,7 @@ InputStage.prototype = {
 /**
  * BaseScreenStage
  * Stage with static content
- * @param name
+ * @param {string} name
  * @constructor
  * @implements {Stage}
  */
@@ -352,8 +352,8 @@ Menu.prototype = {
         this.stages = stages;
     },
 
-    newStage: function(stageName) {
-        var stage = this.stages[stageName];
+    newStage: function(name) {
+        var stage = this.stages[name];
 
         XSS.ents.instruction = new PixelEntity(
             XSS.font.draw(XSS.MENU_LEFT, 45, stage.getInstruction())

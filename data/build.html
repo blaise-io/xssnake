@@ -32,22 +32,23 @@
 
         // Level image exists
         image.onload = function() {
-            var r, g, b, a, data, extracted, mapped;
+            var r, g, b, a, imageData, level, mapped;
 
-            extracted = {
+            level = {
                 width : image.width,
                 height: image.height,
-                data  : {}
+                player: {},
+                wall  : []
             };
 
             context.drawImage(image, 0, 0);
-            data = context.getImageData(0, 0, image.width, image.height).data;
+            imageData = context.getImageData(0, 0, image.width, image.height).data;
 
-            for (var i = 0, m = data.length / 4; i < m; ++i) {
-                r = data[i * 4];
-                g = data[i * 4 + 1];
-                b = data[i * 4 + 2];
-                a = data[i * 4 + 3];
+            for (var i = 0, m = imageData.length / 4; i < m; ++i) {
+                r = imageData[i * 4];
+                g = imageData[i * 4 + 1];
+                b = imageData[i * 4 + 2];
+                a = imageData[i * 4 + 3];
 
                 if (r * g * b * a !== Math.pow(255, 4)) {
                     mapped = map['_' + r + '_' + g + '_' + b];
@@ -55,11 +56,16 @@
                         throw new Error('Uknown pixel color: ' +
                                         [r, g, b, a] + ' in image ' + index);
                     }
-                    extracted.data[i] = map['_' + r + '_' + g + '_' + b];
+                    if (mapped === 0) {
+                        level.wall.push(i);
+                    } else {
+                        level.player[mapped] = i;
+                    }
+
                 }
             }
 
-            leveldata.push(extracted);
+            leveldata.push(level);
             loadData(++index);
         };
 

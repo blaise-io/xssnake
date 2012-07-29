@@ -17,16 +17,11 @@ Game.prototype = {
         XSS.ents.border = XSS.drawables.getOuterBorder();
         XSS.ents.levelborder = XSS.drawables.getLevelBorder();
 
-        this.localSnake = new Snake(4, 4, XSS.DIRECTION_RIGHT);
-        this.localSnake.addControls();
-        this.localSnake.addToEntities();
-
-        this.snakes = [this.localSnake];
-
-        this.world = new World(1);
+        this.world = new World(2);
         this.world.addToEntities();
 
-        this.setAppleAtRandomPlace();
+        this.snakes = [this.spawnLocalSnake()];
+        this.apple = this.spawnApple();
 
 //        XSS.socket.init(function(socket) {
 //            socket.emit('/xss/name', 'Blaise');
@@ -41,10 +36,28 @@ Game.prototype = {
         return XSS.effects.zoomX4(pixels, XSS.GAME_LEFT, XSS.GAME_TOP);
     },
 
-    setAppleAtRandomPlace: function() {
-        var openspace = this.world.getRandomOpenTile();
-        this.apple = new Apple(openspace[0], openspace[1]);
-        this.apple.addToEntities();
+    spawnLocalSnake: function() {
+        var snake, player = this.world.getPlayer(1);
+
+        snake = new Snake(player[0], player[1], XSS.DIRECTION_RIGHT);
+        snake.addControls();
+        snake.addToEntities();
+
+        return snake;
+    },
+
+    spawnApple: function() {
+        var apple, tile = this.world.getRandomOpenTile();
+        apple = new Apple(tile[0], tile[1]);
+        apple.addToEntities();
+        return apple;
+    },
+
+    respawnApple: function() {
+        this.apple = null;
+        XSS.effects.delay(function() {
+            this.apple = this.spawnApple();
+        }.bind(this), 100);
     },
 
     /** @private */
@@ -85,11 +98,11 @@ Game.prototype = {
 
     /**
      * @param {Snake} snake
+     * @param {Apple} apple
      * @return {boolean}
      * @private
      */
-    _isNom: function(snake) {
-        var apple = this.apple;
+    _isNom: function(snake, apple) {
         return (snake.head[0] === apple.x && snake.head[1] === apple.y);
     },
 
@@ -103,9 +116,10 @@ Game.prototype = {
             snake = this.snakes[i];
             if (!snake.crashed && snake.snakeProgress >= snake.speed) {
                 snake.move(); // TODO: match against snake.getNextMove();
-                if (this._isNom(snake)) {
+                if (this.apple && this._isNom(snake, this.apple)) {
+                    this.apple.eat();
                     snake.parts += 1;
-                    this.setAppleAtRandomPlace();
+                    this.respawnApple();
                 }
                 if (this._isCrash(snake)) {
                     snake.crash();

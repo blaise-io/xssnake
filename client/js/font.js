@@ -37,21 +37,21 @@ Font.prototype = {
         str = this.replaceMissingCharacters(str);
 
         if (inverted) {
-            pixels = pixels.concat(this.invertHorizontalWhitespace(x - 2, y));
+            this.invertHorizontalWhitespace(pixels, x - 2, y);
         }
 
         for (var i = 0, m = str.length; i < m; i++) {
             glyph = this.glyphs[str[i]];
-            pixels = pixels.concat(this.drawGlyph(x, y, glyph, inverted));
+            this.drawGlyph(pixels, x, y, glyph, inverted);
             if (inverted) {
-                pixels = pixels.concat(this.invertHorizontalWhitespace(x - 1, y));
+                this.invertHorizontalWhitespace(pixels, x - 1, y);
             }
             x = x + 1 + glyph[0].length;
         }
 
         if (inverted) {
-            pixels = pixels.concat(this.invertHorizontalWhitespace(x - 1, y));
-            pixels = pixels.concat(this.invertHorizontalWhitespace(x, y));
+            this.invertHorizontalWhitespace(pixels, x - 1, y);
+            this.invertHorizontalWhitespace(pixels, x, y);
         }
 
         return pixels;
@@ -70,21 +70,17 @@ Font.prototype = {
     },
 
     /** @private */
-    invertHorizontalWhitespace: function(x, y) {
-        var pixels = [];
+    invertHorizontalWhitespace: function(pixels, x, y) {
         for (var i = -2; i < Font.MAX + 1; i++) {
             pixels.push([x, y + i]);
         }
-        return pixels;
     },
 
     /** @private */
-    invertVerticalWhitespace: function(x, y, width) {
-        var pixels = [];
+    invertVerticalWhitespace: function(pixels, x, y, width) {
         for (var i = 0; i + 1 < width; i++) {
             pixels.push([x + i, y]);
         }
-        return pixels;
     },
 
     /** @private */
@@ -104,8 +100,8 @@ Font.prototype = {
     },
 
     /** @private */
-    drawGlyph: function(x, y, glyph, inverted) {
-        var pixels = [], pixel;
+    drawGlyph: function(pixels, x, y, glyph, inverted) {
+        var pixel;
         for (var xx = 0, m = glyph.length; xx < m; xx++) { // y
             for (var yy = 0, mm = glyph[0].length; yy < mm; yy++) { // x
                 pixel = glyph[xx] ? glyph[xx][yy] : false;
@@ -115,14 +111,13 @@ Font.prototype = {
             }
         }
         if (inverted) {
-            pixels = pixels.concat(this.invertVerticalWhitespace(x, y - 1, glyph[0].length + 1)); // Overline 1
-            pixels = pixels.concat(this.invertVerticalWhitespace(x, y - 2, glyph[0].length + 1)); // Overline 2
-            pixels = pixels.concat(this.invertVerticalWhitespace(x, y + Font.MAX, glyph[0].length + 1)); // Underline 2
+            this.invertVerticalWhitespace(pixels, x, y - 1, glyph[0].length + 1); // Overline 1
+            this.invertVerticalWhitespace(pixels, x, y - 2, glyph[0].length + 1); // Overline 2
+            this.invertVerticalWhitespace(pixels, x, y + Font.MAX, glyph[0].length + 1); // Underline 2
             if (glyph.length === Font.MIN) {
-                pixels = pixels.concat(this.invertVerticalWhitespace(x, y + Font.MIN, glyph[0].length + 1)); // Underline 1 when uppercase
+                this.invertVerticalWhitespace(pixels, x, y + Font.MIN, glyph[0].length + 1); // Underline 1 when uppercase
             }
         }
-        return pixels;
     },
 
     /** @private */

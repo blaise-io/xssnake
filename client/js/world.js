@@ -6,15 +6,10 @@
 /**
  * Collisions and levels
  * @constructor
- * @param {number} level_id
+ * @param {number} levelID
  */
-function World(level_id) {
-    var level = XSS.levels[level_id];
-
-    this.data = level.data;
-    this.width = level.width;
-    this.height = level.height;
-
+function World(levelID) {
+    this.level = XSS.levels[levelID];
     this.entity = this._worldToEntity();
 }
 
@@ -30,33 +25,43 @@ World.prototype = {
      * @return {boolean}
      */
     isWall: function(x, y) {
+        var level = this.level;
         if (x < 0 || y < 0) {
             return true;
-        } else if ( x >= this.width || y >= this.height) {
+        } else if ( x >= level.width || y >= level.height) {
             return true;
-        } else if (this.data[this._xyToSeq(x, y)] === 0) {
+        } else if (this._isInnerWall(x, y)) {
             return true;
         }
         return false;
     },
 
     /**
+     * @param {number} player
+     * @return {Array.<number>}
+     */
+    getPlayer: function(player) {
+        var pos = this.level.player[player];
+        return this._seqToXY(pos);
+    },
+
+    /**
      * @return {Array.<number>}
      */
     getRandomOpenTile: function() {
-        var possibities, random, minOpenSpaceNeighbours, samplesPerIteration;
+        var possibities, random, minOpenEdges, samplesPerIteration;
 
-        possibities = this.width * this.height;
-        minOpenSpaceNeighbours = 6;
-        samplesPerIteration = 30;
+        possibities = this.level.width * this.level.height;
+        minOpenEdges = 4;
+        samplesPerIteration = 200;
 
-        while (samplesPerIteration-- && minOpenSpaceNeighbours) {
+        while (samplesPerIteration-- && minOpenEdges) {
             random = Math.floor(Math.random() * possibities);
-            if (this._numOpenNeighbours(random) >= 5) {
+            if (this._getSpawnPreferability(random) >= minOpenEdges) {
                 return this._seqToXY(random);
             }
             if (samplesPerIteration === 0) {
-                minOpenSpaceNeighbours--;
+                minOpenEdges--;
                 samplesPerIteration = 50;
             }
         }
@@ -65,13 +70,37 @@ World.prototype = {
     },
 
     /**
+     * @param {...number} varArgs
+     * @private
+     */
+    _isInnerWall: function(varArgs) {
+        var seq, wall = this.level.wall;
+
+        seq = (arguments.length === 2) ?
+            this._xyToSeq(arguments[0], arguments[1]) :
+            arguments[0];
+
+        for (var i = 0, m = wall.length; i < m; i++) {
+            if (seq === wall[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+
+    /**
      * @param {number} seq
      * @return {number}
      * @private
      */
-    _numOpenNeighbours: function(seq) {
+    _getSpawnPreferability: function(seq) {
         var free = 0,
             xy = this._seqToXY(seq);
+
+        if (!this._isOpenSpace(xy[0], xy[1])) {
+            return 0;
+        }
 
         for (var x = -1; x <= 1; x++) {
             for (var y = -1; y <= 1; y++) {
@@ -105,17 +134,12 @@ World.prototype = {
      * @private
      */
     _worldToEntity: function() {
-        var seq, xy, pixels = [];
+        var xy, pixels = [], wall = this.level.wall;
 
-        for (seq in this.data) {
-            if (this.data.hasOwnProperty(seq)) {
-                if (this.data[seq] === 0) {
-                    xy = this._seqToXY(parseInt(seq, 10));
-                    pixels.push(xy);
-                }
-            }
+        for (var i = 0, m = wall.length; i < m; i++) {
+            xy = this._seqToXY(wall[i]);
+            pixels.push(xy);
         }
-
         return new PixelEntity(XSS.game.zoom(pixels));
     },
 
@@ -126,7 +150,7 @@ World.prototype = {
      * @private
      */
     _xyToSeq: function(x, y) {
-        return x + this.width * y;
+        return x + this.level.width * y;
     },
 
     /**
@@ -136,8 +160,8 @@ World.prototype = {
      */
     _seqToXY: function(seq) {
         return [
-            seq % this.width,
-            Math.floor(seq / this.width)
+            seq % this.level.width,
+            Math.floor(seq / this.level.width)
         ];
     }
 

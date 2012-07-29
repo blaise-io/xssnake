@@ -46,7 +46,10 @@ PixelEntity.prototype = {
      */
     add: function(varArgs) {
         for (var i = 0, m = arguments.length; i < m; ++i) {
-            this._pixels = this._pixels.concat(arguments[i]);
+            // Avoiding concat() for performance reasons
+            for (var ii = 0, mm = arguments[i].length; ii < mm; ii++) {
+                this._pixels.push(arguments[i][ii]);
+            }
         }
         delete this._cache;
         delete this._bbox;

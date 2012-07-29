@@ -1,4 +1,4 @@
-/*jshint globalstrict:true*/
+/*jshint globalstrict:true */
 /*globals XSS, PixelEntity*/
 
 'use strict';
@@ -35,6 +35,25 @@ Effects.prototype = {
         }
 
         return shifted;
+    },
+
+    delay: function(callback, delay) {
+        var updater, progress = 0, ns = XSS.utils.uuid();
+
+        updater = function(diff) {
+            progress += diff;
+            if (progress >= delay) {
+                callback();
+                XSS.utils.unsubscribe(this.topic, ns);
+            }
+        }.bind(this);
+
+        XSS.utils.subscribe(this.topic, ns, updater);
+        return ns;
+    },
+
+    delayStop: function(ns) {
+        XSS.utils.unsubscribe(this.topic, ns);
     },
 
     /**
@@ -101,7 +120,7 @@ Effects.prototype = {
     /**
      * @param {String} name
      */
-    decayNow: function(name) {
+    decayStop: function(name) {
         var ns = 'decay_' + name;
         delete XSS.ents[ns];
         XSS.utils.unsubscribe(this.topic, ns);
@@ -148,29 +167,6 @@ Effects.prototype = {
 
     /**
      * @param {Array} pixels
-     * @param {number} zoom
-     * @param {number} shiftX
-     * @param {number} shiftY
-     * @return {Array}
-     * @deprecated
-     */
-    zoom: function(pixels, zoom, shiftX, shiftY) {
-        var pixelsZoomed = [];
-        for (var i = 0, m = pixels.length; i < m; ++i) {
-            for (var xx = 0; xx !== zoom; ++xx) {
-                for (var yy = 0; yy !== zoom; ++yy) {
-                    pixelsZoomed = pixelsZoomed.concat([[
-                        shiftX + xx + pixels[i][0] * zoom,
-                        shiftY + yy + pixels[i][1] * zoom
-                    ]]);
-                }
-            }
-        }
-        return pixelsZoomed;
-    },
-
-    /**
-     * @param {Array} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
      * @return {Array}
@@ -180,14 +176,14 @@ Effects.prototype = {
         shiftX = shiftX || 0;
         shiftY = shiftY || 0;
         for (var i = 0, m = pixels.length; i < m; ++i) {
-            x = pixels[i][0];
-            y = pixels[i][1];
-            pixelsZoomed = pixelsZoomed.concat([
-                [shiftX + 0 + x * 2, shiftY + 0 + y * 2],
-                [shiftX + 0 + x * 2, shiftY + 1 + y * 2],
-                [shiftX + 1 + x * 2, shiftY + 0 + y * 2],
-                [shiftX + 1 + x * 2, shiftY + 1 + y * 2]
-            ]);
+            x = pixels[i][0] * 2;
+            y = pixels[i][1] * 2;
+            pixelsZoomed.push(
+                [shiftX + 0 + x, shiftY + 0 + y],
+                [shiftX + 0 + x, shiftY + 1 + y],
+                [shiftX + 1 + x, shiftY + 0 + y],
+                [shiftX + 1 + x, shiftY + 1 + y]
+            );
         }
         return pixelsZoomed;
     },

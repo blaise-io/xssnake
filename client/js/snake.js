@@ -16,7 +16,7 @@ function Snake(x, y, direction){
     this.direction = direction;
 
     this.crashed = false;
-    this.parts = 3;
+    this.parts = 4;
     this.speed = 100; // ms between moves
 
     this.snakeProgress = 0;
