@@ -46,7 +46,7 @@ Snake.prototype = {
         headShifted = [[this.head[0] + shift[0], this.head[1] + shift[1]]];
 
         this._updateSnakePos(headShifted[0][0], headShifted[0][1]);
-        this.entity.pixels(XSS.effects.zoomX4(this.snake, 2, 2));
+        this.entity.pixels(XSS.game.zoom(this.snake));
     },
 
     crash: function() {

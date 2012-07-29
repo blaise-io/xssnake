@@ -6,13 +6,15 @@
 /**
  * Collisions and levels
  * @constructor
- * @param {number} level
+ * @param {number} level_id
  */
-function World(level) {
-    var levelTmp = XSS.levels[level];
-    this.width = levelTmp.width;
-    this.height = levelTmp.height;
-    this.data = levelTmp.data;
+function World(level_id) {
+    var level = XSS.levels[level_id];
+
+    this.data = level.data;
+    this.width = level.width;
+    this.height = level.height;
+
     this.entity = this._worldToEntity();
 }
 
@@ -114,8 +116,7 @@ World.prototype = {
             }
         }
 
-        pixels = XSS.effects.zoomX4(pixels, 2, 2);
-        return new PixelEntity(pixels);
+        return new PixelEntity(XSS.game.zoom(pixels));
     },
 
     /**

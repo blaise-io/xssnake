@@ -37,6 +37,10 @@ Game.prototype = {
         this._addEventListeners();
     },
 
+    zoom: function(pixels) {
+        return XSS.effects.zoomX4(pixels, XSS.GAME_LEFT, XSS.GAME_TOP);
+    },
+
     setAppleAtRandomPlace: function() {
         var openspace = this.world.getRandomOpenTile();
         this.apple = new Apple(openspace[0], openspace[1]);

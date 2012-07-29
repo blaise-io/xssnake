@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, PixelEntity*/
+/*globals XSS,PixelEntity,Game*/
 
 'use strict';
 
@@ -13,8 +13,8 @@ function Apple(x, y) {
     this.y = y;
 
     this.entity = XSS.drawables.getApple(
-        this.x * 4 + 2, // TODO: make "2" a setting in Game
-        this.y * 4 + 2
+        this.x * XSS.GAME_TILE + XSS.GAME_LEFT,
+        this.y * XSS.GAME_TILE + XSS.GAME_TOP
     );
 }
 

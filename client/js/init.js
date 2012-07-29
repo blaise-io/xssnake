@@ -28,6 +28,10 @@ var XSS = {};
 /** @const */ XSS.MENU_LEFT = 40;
 /** @const */ XSS.MENU_TOP = 64;
 
+/** @const */ XSS.GAME_LEFT = 2;
+/** @const */ XSS.GAME_TOP = 2;
+/** @const */ XSS.GAME_TILE = 4;
+
 window.onerror = function() {
     XSS.error = true; // Stops draw loop
 };
