@@ -12,7 +12,7 @@
  */
 function Snake(x, y, direction){
     this.head = [x, y];
-    this.snake = [this.head];
+    this.snake = [this.head]; // [0] = tail, [n-1] = head
     this.direction = direction;
 
     this.crashed = false;
@@ -37,15 +37,11 @@ Snake.prototype = {
         XSS.ents[this.entityName] = this.entity;
     },
 
-    move: function() {
-        var headShifted, shift;
-
-        this._handleChangeRequests();
-
-        shift = this._directionToShift(this.direction);
-        headShifted = [[this.head[0] + shift[0], this.head[1] + shift[1]]];
-
-        this._updateSnakePos(headShifted[0][0], headShifted[0][1]);
+    /**
+     * @param {Array.<number>} move
+     */
+    move: function(move) {
+        this._updateSnakePos(move[0], move[1]);
         this.entity.pixels(XSS.game.zoom(this.snake));
     },
 
@@ -53,19 +49,50 @@ Snake.prototype = {
         this.crashed = true;
     },
 
-    isCrashIntoSelf: function() {
+    /**
+     * @param {Array.<number>} head
+     * @return {boolean}
+     */
+    isHead: function(head) {
+        return (head[0] === this.head[0] && head[1] === this.head[1]);
+    },
+
+    /**
+     * @param {Array.<number>} part
+     * @return {number}
+     */
+    _getPart: function(part) {
         var snake = this.snake;
-        for (var i = 0, m = snake.length - 1; i < m; ++i) {
-            if (snake[i][0] === this.head[0] && snake[i][1] === this.head[1]) {
-                return true;
+        for (var i = 0, m = snake.length; i < m; i++) {
+            if (snake[i][0] === part[0] && snake[i][1] === part[1]) {
+                return i;
             }
         }
-        return false;
+        return -1;
+    },
+
+    /**
+     * @param {Array.<number>} part
+     * @return {boolean}
+     */
+    hasPartPredict: function(part) {
+        var treshold = this.crashed ? -1 : 0;
+        return (this._getPart(part) > treshold);
+    },
+
+    /**
+     * @return {Array.<number>}
+     */
+    getNextPosition: function() {
+        var shift;
+        this._handleChangeRequests();
+        shift = this._directionToShift(this.direction);
+        return [this.head[0] + shift[0], this.head[1] + shift[1]];
     },
 
     /**
      * @param {number} direction
-     * @return {Array.<number>}
+     * @return {Array.<Array>}
      * @private
      */
     _directionToShift: function(direction) {
@@ -81,7 +108,7 @@ Snake.prototype = {
             this.snake.shift();
         }
         this.head = [x, y];
-        this.snake.push([x, y]);
+        this.snake.push(this.head);
     },
 
     /** @private */

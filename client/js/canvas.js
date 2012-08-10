@@ -167,9 +167,10 @@ Canvas.prototype = {
 
     /** @private */
     _paint: function() {
-        var fps,
-            now = +new Date(),
-            diff = now - this.time;
+        var fps, now, diff;
+
+        now = +new Date();
+        diff = now - this.time;
 
         if (!XSS.error) {
             // Make appointment for next paint
