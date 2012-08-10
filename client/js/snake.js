@@ -42,7 +42,7 @@ Snake.prototype = {
      */
     move: function(move) {
         this._updateSnakePos(move[0], move[1]);
-        this.entity.pixels(XSS.game.zoom(this.snake));
+        this.entity.pixels(XSS.utils.zoomGame(this.snake));
     },
 
     crash: function() {

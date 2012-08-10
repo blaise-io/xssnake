@@ -49,8 +49,6 @@ window.onload = function() {
     XSS.font      = new Font();
     XSS.menu      = new Menu();
     XSS.stages    = new Stages();
-    XSS.socket    = new Socket();
-    XSS.game      = new Game();
 
     // Shortcuts
     XSS.ents      = XSS.canvas.entities;
@@ -58,6 +56,6 @@ window.onload = function() {
     XSS.off       = XSS.utils.removeListener;
 
     // Init
-    XSS.game.init();
+    XSS.stages.init();
 
 };

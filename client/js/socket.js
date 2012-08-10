@@ -7,16 +7,16 @@
  * Client-Server communication
  * @constructor
  */
-function Socket() {
+function Socket(callback) {
     this.host = 'http://localhost';
+    this.connect(callback);
 }
 
 Socket.prototype = {
 
-    init: function(callback) {
-        /** @namespace io */
+    connect: function(callback) {
         XSS.utils.loadScript('http://localhost/socket.io/socket.io.js', function() {
-            this.socket = this.connect(this.host);
+            this.socket = this.getSocket(this.host);
             this._addEventListeners(callback);
         }.bind(this));
     },
@@ -25,17 +25,20 @@ Socket.prototype = {
      * @param {string} host
      * @return {{on: function(string, function(Object)) }}
      */
-    connect: function(host) {
+    getSocket: function(host) {
         return io.connect(host);
     },
 
     _addEventListeners: function(callback) {
-        this.socket.on('/xss/connect', function(data) {
-            XSS.me = new Client(data['id']);
+        this.socket.on('/c/connect', function(id) {
+            XSS.me = new Client(id);
             if (callback) {
                 callback(this);
             }
-            this.socket.emit('foo', 'BAR');
+        }.bind(this));
+
+        this.socket.on('/c/notice', function(notice) {
+            console.log(notice);
         }.bind(this));
     },
 

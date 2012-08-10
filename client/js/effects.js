@@ -166,10 +166,10 @@ Effects.prototype = {
     },
 
     /**
-     * @param {Array} pixels
+     * @param {Array.<Array>} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
-     * @return {Array}
+     * @return {Array.<Array>}
      */
     zoomX2: function(pixels, shiftX, shiftY) {
         var pixelsZoomed = [], x, y;
@@ -189,13 +189,21 @@ Effects.prototype = {
     },
 
     /**
-     * @param {Array} pixels
+     * @param {Array.<Array>} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
-     * @return {Array}
+     * @return {Array.<Array>}
      */
     zoomX4: function(pixels, shiftX, shiftY) {
         return this.zoomX2(this.zoomX2(pixels, 0, 0), shiftX || 0, shiftY || 0);
+    },
+
+    /**
+     * @param {Array.<Array>} pixels
+     * @return {Array.<Array>}
+     */
+    zoomGame: function(pixels) {
+        return XSS.effects.zoomX4(pixels, XSS.GAME_LEFT, XSS.GAME_TOP);
     }
 
 };

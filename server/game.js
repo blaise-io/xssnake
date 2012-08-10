@@ -3,7 +3,7 @@
 var config, Server;
 
 config = {
-    pathToHTML: __dirname + '/../client/index.html'
+    pathToHTML: __dirname + '/../index.html'
 };
 
 Server = require('./lib/server.js');

@@ -4,6 +4,9 @@
 var fs = require('fs'),
     http = require('http'),
     io = require('socket.io'),
+
+    RoomManager = require('./room_manager.js'),
+    Room = require('./room.js'),
     State = require('./state.js');
 
 /**
@@ -12,53 +15,78 @@ var fs = require('fs'),
 function Server(config) {
     this.config = config;
     this.state = new State();
-    this.start();
+    this.roomManager = new RoomManager();
+    this._listen();
 }
+
+module.exports = Server;
 
 Server.prototype = {
 
-    start: function() {
-        var app, listener;
+    _listen: function() {
+        var app;
 
-        app = http.createServer(this.httpRequestHandler.bind(this));
-        listener = io.listen(app, { log: false });
+        app = http.createServer(this._httpRequestHandler.bind(this));
+        this.io = io.listen(app, {log: false});
 
         app.listen(80);
 
-        listener.sockets.on('connection', function(socket) {
-            var client = this.state.addClient(socket);
-            this.addSocketEventHandlers(client, socket);
+        this.io.sockets.on('connection', function(socket) {
+            var client = this.state.addClient(socket.id);
+            socket.emit('/c/connect', client.id);
+            this._addSocketEventHandlers(client, socket);
         }.bind(this));
     },
 
     /**
-     * @param {EventEmitter} socket
+     * @param {Client} client
      */
-    addSocketEventHandlers: function(client, socket) {
+    _addSocketEventHandlers: function(client, socket) {
+        this._handleDisconnect(client, socket);
+        this._handleRoomget(client, socket);
+        this._handleChat(client, socket);
+    },
 
+    _handleDisconnect: function(client, socket) {
         socket.on('disconnect', function() {
+            var room = this.roomManager.rooms[client.roomid];
+            room.removeClient(client);
+            room.emit('/c/notice', client.name + ' has left the room!');
             this.state.removeClient(client);
         }.bind(this));
+    },
 
-        socket.on('/server/name', function(name) {
-            client.data('name', name);
+    _handleRoomget: function(client, socket) {
+        socket.on('/s/room/get', function(data) {
+            var room;
+
+            room = this.roomManager.getPreferredRoom(data);
+            room.join(client);
+
+            client.data.name = data.name;
+            client.roomid = room.id;
+
+            socket.join(room.id);
+
+            if (room.isFull()) {
+                room.emit(this.io, '/c/notice', 'room is full');
+            }
+
+            room.emit(this.io, '/c/notice', room.clients);
         }.bind(this));
+    },
 
-        socket.on('/server/chat', function(message) {
-            // TODO: validation
-            this.sendOthers(client, '/client/chat', {
-                name: client.name,
-                message: message
-            });
+    _handleChat: function(client, socket) {
+        socket.on('/s/chat', function() {
+            // todo
         }.bind(this));
-
     },
 
     /**
      * @param {Server} request
      * @param {ServerResponse} response
      */
-    httpRequestHandler: function(request, response) {
+    _httpRequestHandler: function(request, response) {
         var file, onIndexFileRead;
 
         file = this.config.pathToHTML;
@@ -72,42 +100,6 @@ Server.prototype = {
         };
 
         fs.readFile(file, onIndexFileRead);
-    },
-
-    /**
-     * @param {Client} client
-     * @param {string} action
-     * @param {*} data
-     */
-    send: function(client, action, data) {
-        client.socket.emit(action, data);
-    },
-
-    /**
-     * @param {string} action
-     * @param {*} data
-     */
-    sendAll: function(action, data) {
-        for (var client in global.state.clients) {
-            if (global.state.clients.hasOwnProperty(client)) {
-                this.send(client, action, data);
-            }
-        }
-    },
-
-    /**
-     * @param {Client} exclude
-     * @param {string} action
-     * @param {*} data
-     */
-    sendOthers: function(exclude, action, data) {
-        for (var client in global.state.clients) {
-            if (global.state.clients.hasOwnProperty(client) && exclude.id !== client) {
-                this.send(client, action, data);
-            }
-        }
     }
 
 };
-
-module.exports = Server;

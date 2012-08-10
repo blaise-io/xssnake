@@ -140,7 +140,7 @@ World.prototype = {
             xy = this._seqToXY(wall[i]);
             pixels.push(xy);
         }
-        return new PixelEntity(XSS.game.zoom(pixels));
+        return new PixelEntity(XSS.utils.zoomGame(pixels));
     },
 
     /**

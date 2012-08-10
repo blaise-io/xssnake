@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, PixelEntity*/
+/*globals XSS, PixelEntity, Socket*/
 
 'use strict';
 
@@ -17,22 +17,22 @@ function SelectMenu(name) {
 SelectMenu.prototype = {
 
     /**
-     * @param {string} value
+     * @param {?(boolean|string)} value
+     * @param {string} next
      * @param {string} title
      * @param {string} description
-     * @param {Object=} settings
      */
-    addOption: function(value, title, description, settings) {
+    addOption: function(value, next, title, description) {
         this.opts.push({
             value      : value,
+            next       : next,
             title      : title,
-            description: description,
-            settings   : settings || {}
+            description: description
         });
     },
 
     getNextStage: function(index) {
-        return this.opts[index].settings.nextStage || this.opts[index].value;
+        return this.opts[index].next;
     },
 
     getEntity: function() {
@@ -339,6 +339,43 @@ SelectStage.prototype = {
     }
 
 };
+
+
+/**
+ * Game Stage
+ * @param {string} name
+ * @constructor
+ * @implements {Stage}
+ */
+function GameStage(name) {
+    this.name = name;
+}
+
+GameStage.prototype = {
+
+    getInstruction: function() {
+        return '';
+    },
+
+    getEntity: function() {
+        return new PixelEntity();
+    },
+
+    createStage: function() {
+        var choices;
+        delete XSS.ents.header;
+
+        choices = XSS.stages.getNamedChoices();
+
+        XSS.socket = new Socket(function() {
+            XSS.socket.emit('/s/room/get', choices);
+        });
+    },
+
+    destroyStage: function() {
+    }
+};
+
 
 /**
  * Menu instantiation, stage switching

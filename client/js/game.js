@@ -8,37 +8,19 @@
  * @constructor
  */
 function Game() {
+    XSS.ents.border = XSS.drawables.getOuterBorder();
+    XSS.ents.levelborder = XSS.drawables.getLevelBorder();
+
+    this.world = new World(2);
+    this.world.addToEntities();
+
+    this.snakes = [this.spawnLocalSnake()];
+    this.apples = [this.spawnApple()];
+
+    this._addEventListeners();
 }
 
 Game.prototype = {
-
-    init: function() {
-
-        XSS.ents.border = XSS.drawables.getOuterBorder();
-        XSS.ents.levelborder = XSS.drawables.getLevelBorder();
-
-        this.world = new World(2);
-        this.world.addToEntities();
-
-        this.snakes = [this.spawnLocalSnake()];
-        this.apples = [this.spawnApple()];
-
-//        XSS.socket.init(function(socket) {
-//            socket.emit('/xss/name', 'Blaise');
-//            socket.emit('/xss/game', {'mode': 'XSS', 'room': 'public'});
-//            this.addEventHandlers();
-//        }.bind(this));
-
-        this._addEventListeners();
-    },
-
-    /**
-     * @param pixels {Array.<Array>}
-     * @return {Array.<Array>}
-     */
-    zoom: function(pixels) {
-        return XSS.effects.zoomX4(pixels, XSS.GAME_LEFT, XSS.GAME_TOP);
-    },
 
     /**
      * @return {Snake}
@@ -86,7 +68,7 @@ Game.prototype = {
 
     /**
      * @param {Snake} snake
-     * @param {Array.<Array>} position
+     * @param {Array.<number>} position
      * @return {boolean}
      * @private
      */
