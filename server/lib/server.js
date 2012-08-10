@@ -1,97 +1,113 @@
-/*jshint globalstrict:true */
-
+/*jshint globalstrict:true*/
 'use strict';
 
 var fs = require('fs'),
     http = require('http'),
-    socketio = require('socket.io'),
-    xss = global.xss;
+    io = require('socket.io'),
+    State = require('./state.js');
 
-var start = function() {
-    var app = http.createServer(httpRequestHandler),
-        io = socketio.listen(app, { log: false });
+/**
+ * @constructor
+ */
+function Server(config) {
+    this.config = config;
+    this.state = new State();
+    this.start();
+}
 
-    app.listen(80);
+Server.prototype = {
 
-    io.sockets.on('connection', function(socket) {
-        addSocketEventHandlers(socket);
-    });
-};
+    start: function() {
+        var app, listener;
 
-var addSocketEventHandlers = function(socket) {
-    var clientID;
+        app = http.createServer(this.httpRequestHandler.bind(this));
+        listener = io.listen(app, { log: false });
 
-    // Emit connect
-    clientID = registerClient(socket);
-    socket.emit('/xss/connect', {id: clientID});
+        app.listen(80);
 
-    // Handle disconnect
-    socket.on('disconnect', function() {
-        unRegisterClient(clientID);
-    });
+        listener.sockets.on('connection', function(socket) {
+            var client = this.state.addClient(socket);
+            this.addSocketEventHandlers(client, socket);
+        }.bind(this));
+    },
 
-    socket.on('/xss/name', function(data) {
-        console.log(data);
-    });
+    /**
+     * @param {EventEmitter} socket
+     */
+    addSocketEventHandlers: function(client, socket) {
 
-    socket.on('/xss/game', function(data) {
-        console.log(data);
-    });
-};
+        socket.on('disconnect', function() {
+            this.state.removeClient(client);
+        }.bind(this));
 
-var registerClient = function(socket) {
-    var clientID = ++xss.clientPK;
-    xss.clients[clientID] = socket;
-    return clientID;
-};
+        socket.on('/server/name', function(name) {
+            client.data('name', name);
+        }.bind(this));
 
-var unRegisterClient = function(clientID) {
-    delete xss.clients[clientID];
-};
+        socket.on('/server/chat', function(message) {
+            // TODO: validation
+            this.sendOthers(client, '/client/chat', {
+                name: client.name,
+                message: message
+            });
+        }.bind(this));
 
-var httpRequestHandler = function(req, res) {
-    var file, onIndexFileRead;
+    },
 
-    file = __dirname + '/../index2.html';
-    onIndexFileRead = function(err, data) {
-        if (err) {
-            res.writeHead(500);
-            return res.end('Error loading ' + file);
+    /**
+     * @param {Server} request
+     * @param {ServerResponse} response
+     */
+    httpRequestHandler: function(request, response) {
+        var file, onIndexFileRead;
+
+        file = this.config.pathToHTML;
+        onIndexFileRead = function(err, data) {
+            if (err) {
+                response.writeHead(500);
+                return response.end('Error loading ' + file);
+            }
+            response.writeHead(200);
+            response.end(data);
+        };
+
+        fs.readFile(file, onIndexFileRead);
+    },
+
+    /**
+     * @param {Client} client
+     * @param {string} action
+     * @param {*} data
+     */
+    send: function(client, action, data) {
+        client.socket.emit(action, data);
+    },
+
+    /**
+     * @param {string} action
+     * @param {*} data
+     */
+    sendAll: function(action, data) {
+        for (var client in global.state.clients) {
+            if (global.state.clients.hasOwnProperty(client)) {
+                this.send(client, action, data);
+            }
         }
-        res.writeHead(200);
-        res.end(data);
-    };
+    },
 
-    fs.readFile(file, onIndexFileRead);
-};
-
-var send = function(client, action, data) {
-    if (!xss.clients[client]) {
-        console.warn('Attempting to send data to a disconnected client:', client);
-    } else {
-        xss.clients[client].emit(action, data);
-    }
-};
-
-var sendAll = function(action, data) {
-    for (var client in xss.clients) {
-        if (xss.clients.hasOwnProperty(client)) {
-            send(client, action, data);
+    /**
+     * @param {Client} exclude
+     * @param {string} action
+     * @param {*} data
+     */
+    sendOthers: function(exclude, action, data) {
+        for (var client in global.state.clients) {
+            if (global.state.clients.hasOwnProperty(client) && exclude.id !== client) {
+                this.send(client, action, data);
+            }
         }
     }
+
 };
 
-var sendOthers = function(action, data, exclude) {
-    for (var client in xss.clients) {
-        if (xss.clients.hasOwnProperty(client) && exclude !== client) {
-            send(client, action, data);
-        }
-    }
-};
-
-module.exports = {
-    start: start,
-    send: send,
-    sendAll: sendAll,
-    sendOthers: sendOthers
-};
+module.exports = Server;
