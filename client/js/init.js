@@ -56,6 +56,15 @@ window.onload = function() {
     XSS.off       = XSS.utils.removeListener;
 
     // Init
-    XSS.stages.init();
+    // XSS.stages.init();
+
+    XSS.socket = new Socket(function() {
+        var data = {
+            name    : window.location.search.substring(1),
+            friendly: true,
+            publik  : true
+        };
+        XSS.socket.emit('/s/room', data);
+    });
 
 };

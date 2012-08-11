@@ -6,7 +6,8 @@ var Room = require('./room.js');
 /**
  * @constructor
  */
-function RoomManager() {
+function RoomManager(server) {
+    this.server = server;
     this.curid = 0;
     this.rooms = {};
 }
@@ -32,8 +33,9 @@ RoomManager.prototype = {
      * @return {Room}
      */
     createRoom: function(filter) {
-        this.curid++;
-        var room = new Room('R' + this.curid, filter.publik, filter.friendly);
+        var id, room;
+        id = 'R' + this.curid++;
+        room = new Room(this.server, id, filter.publik, filter.friendly);
         this.rooms[room.id] = room;
         return room;
     },

@@ -9,15 +9,8 @@
 function Client (id, socketid) {
     this.id = id;
     this.socketid = socketid;
-    this.data = {};
 }
 
-Client.prototype = {
-
-    getSocket: function() {
-
-    }
-
-};
+Client.prototype = {};
 
 module.exports = Client;
