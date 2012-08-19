@@ -1,19 +1,19 @@
-/*jshint globalstrict:true*/
+/*jshint globalstrict:true,es5:true*/
 'use strict';
 
 
 /**
  * @param {Server} server
  * @param {string} id
- * @param {boolean} publik
+ * @param {boolean} pub
  * @param {boolean} friendly
  * @constructor
  */
-function Room(server, id, publik, friendly) {
+function Room(server, id, pub, friendly) {
     this.server = server;
 
     this.id = id;
-    this.publik = publik;
+    this.pub = pub;
     this.friendly = friendly;
 
     this.capacity = 4;
@@ -56,14 +56,18 @@ Room.prototype = {
     },
 
     /**
+     * Shortcut for emitting to a room,
+     * sends data to everyone.
      * @param {string} name
      * @param {*} data
      */
     emit: function(name, data) {
-        this.server.io.sockets['in'](this.id).emit(name, data);
+        this.server.io.sockets.in(this.id).emit(name, data);
     },
 
     /**
+     * Shortcut for broadcasting to a room,
+     * sends data to everyone but exclude.
      * @param {string} name
      * @param {*} data
      * @param {Client} exclude

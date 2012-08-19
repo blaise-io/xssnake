@@ -1,4 +1,4 @@
-/*jshint globalstrict:true*/
+/*jshint globalstrict:true,es5:true*/
 'use strict';
 
 var fs = require('fs'),
@@ -36,6 +36,10 @@ Server.prototype = {
         }.bind(this));
     },
 
+    /**
+     * @param {Client} client
+     * @return {Socket}
+     */
     getSocket: function(client) {
         return this.io.sockets.sockets[client.socketid];
     },

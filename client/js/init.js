@@ -62,7 +62,7 @@ window.onload = function() {
         var data = {
             name    : window.location.search.substring(1),
             friendly: true,
-            publik  : true
+            pub  : true
         };
         XSS.socket.emit('/s/room', data);
     });

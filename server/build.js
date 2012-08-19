@@ -1,11 +1,10 @@
+/*jshint globalstrict:true,es5:true*/
+'use strict';
+
 /**
  * Compiles XSSNAKE's client files to compiled.js
  * Usage: # node ./server/build.js
  */
-
-/*jshint globalstrict:true */
-'use strict';
-
 
 var header,
     util = require('util'),

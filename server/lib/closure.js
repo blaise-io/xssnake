@@ -1,9 +1,9 @@
+/*jshint globalstrict:true,es5:true*/
+'use strict';
+
 /**
  * Compile code using Google Closure Compiler's REST API
  */
-
-/*jshint globalstrict:true */
-'use strict';
 
 var fs = require('fs'),
     http = require('http'),

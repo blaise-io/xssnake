@@ -35,7 +35,7 @@ RoomManager.prototype = {
     createRoom: function(filter) {
         var id, room;
         id = 'R' + this.curid++;
-        room = new Room(this.server, id, filter.publik, filter.friendly);
+        room = new Room(this.server, id, filter.pub, filter.friendly);
         this.rooms[room.id] = room;
         return room;
     },
@@ -69,7 +69,7 @@ RoomManager.prototype = {
         friendlyMatch = room.friendly === filter.friendly;
         full = room.isFull();
 
-        return (room.publik && friendlyMatch && !full);
+        return (room.pub && friendlyMatch && !full);
     }
 
 };

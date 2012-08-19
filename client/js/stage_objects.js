@@ -112,7 +112,7 @@ XSS.HelpStage = function(name) {
 XSS.NameStage = function(name) {
     var stage;
 
-    stage = new InputStage(name, 'publik');
+    stage = new InputStage(name, 'pub');
     stage.setLabel('Hello, my name is');
     stage.minlength = 2;
     stage.maxlength = 10;
@@ -141,7 +141,7 @@ function Stages() {
     XSS.menu.setStages({
         'main'    : XSS.MainStage('main'),
         'name'    : XSS.NameStage('name'),
-        'publik'  : XSS.AskPublicStage('publik'), // public is reserved word
+        'pub'     : XSS.AskPublicStage('pub'),
         'friendly': XSS.AskFriendlyStage('friendly'),
         'mpgame'  : XSS.GameStage('mpgame'),
         'help'    : XSS.HelpStage('help'),
