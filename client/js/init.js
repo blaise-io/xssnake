@@ -55,16 +55,18 @@ window.onload = function() {
     XSS.on        = XSS.utils.addListener;
     XSS.off       = XSS.utils.removeListener;
 
-    // Init
-    // XSS.stages.init();
+//    // Init stages
+//    // XSS.stages.init();
 
-    XSS.socket = new Socket(function() {
-        var data = {
-            name    : window.location.search.substring(1),
-            friendly: true,
-            pub  : true
-        };
-        XSS.socket.emit('/s/room', data);
-    });
+    XSS.game = new Game();
+
+//    XSS.socket = new Socket(function() {
+//        var data = {
+//            name    : window.location.search.substring(1),
+//            friendly: true,
+//            pub  : true
+//        };
+//        XSS.socket.emit('/s/room', data);
+//    });
 
 };

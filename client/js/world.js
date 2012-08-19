@@ -82,7 +82,7 @@ World.prototype = {
      * @private
      */
     _isInnerWall: function(varArgs) {
-        var seq, wall = this.level.wall;
+        var seq, wall = this.level.walls;
 
         seq = (arguments.length === 2) ?
             this._xyToSeq(arguments[0], arguments[1]) :
@@ -142,7 +142,7 @@ World.prototype = {
      * @private
      */
     _worldToEntity: function() {
-        var xy, pixels = [], wall = this.level.wall;
+        var xy, pixels = [], wall = this.level.walls;
 
         for (var i = 0, m = wall.length; i < m; i++) {
             xy = this._seqToXY(wall[i]);
