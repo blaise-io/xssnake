@@ -12,18 +12,118 @@
     leveldata = [];
 
     canvas = document.createElement('canvas');
-    canvas.width = 64;
-    canvas.height = 40;
+    canvas.width = 100;
+    canvas.height = 100;
 
     context = canvas.getContext('2d');
 
-    map = {
-        _0_0_0    : 0, // Wall
-        _255_0_0  : 1, // Spawn 1
-        _0_255_0  : 2, // Spawn 2
-        _0_0_255  : 3, // Spawn 3
-        _255_255_0: 4  // Spawn 4
-    };
+    function seqToXY(seq, width) {
+        return [
+            seq % width,
+            Math.floor(seq / width)
+        ];
+    }
+
+    function postProcessDirections(level) {
+        var directions = [], spawnAt, nextAt;
+
+        for (var i = 0, m = level.spawns.length; i < m; i++) {
+            for (var ii = 0, mm = level.directions.length; ii < mm; ii++) {
+                spawnAt = seqToXY(level.spawns[i], level.width);
+                nextAt = seqToXY(level.directions[ii], level.width);
+                if (1 ===
+                        Math.abs(spawnAt[0] - nextAt[0]) +
+                        Math.abs(spawnAt[1] - nextAt[1])) {
+                    if (spawnAt[1] === nextAt[1]) {
+                        directions[i] = (nextAt[0] < spawnAt[0]) ? 0 : 2;
+                    } else {
+                        directions[i] = (nextAt[1] < spawnAt[1]) ? 3 : 1;
+                    }
+                    break;
+                }
+            }
+        }
+        level.directions = directions;
+        return level;
+    }
+
+    function onload(index) {
+        var r, g, b, i, m, key, imageData, level, handleColor;
+
+        context.drawImage(image, 0, 0);
+        imageData = context.getImageData(0, 0, image.width, image.height).data;
+
+        level = {
+            width     : image.width,
+            height    : image.height,
+            spawns    : new Array(4),
+            directions: [],
+            wall      : []
+        };
+
+        handleColor = function(r, g, b, i) {
+            var key = r + ',' + g + ',' + b;
+            switch (key) {
+                case '255,255,255':
+                    return true;
+                case '0,0,0':
+                    level.wall.push(i);
+                    return true;
+                case '255,0,0':
+                    level.spawns[0] = i;
+                    return true;
+                case '0,255,0':
+                    level.spawns[1] = i;
+                    return true;
+                case '0,0,255':
+                    level.spawns[2] = i;
+                    return true;
+                case '255,255,0':
+                    level.spawns[3] = i;
+                    return true;
+                case '99,99,99':
+                    level.directions.push(i);
+                    return true;
+                default:
+                    return false;
+            }
+        };
+
+        for (i = 0, m = imageData.length / 4; i < m; i++) {
+            r = imageData[i * 4];
+            g = imageData[i * 4 + 1];
+            b = imageData[i * 4 + 2];
+            if (!handleColor(r, g, b, i)) {
+                throw new Error(
+                    'Unknown pixel ' + [r, g, b] + ' in image ' + index +
+                    ' at pixel ' + i
+                );
+            }
+        }
+
+        // Missing spawn
+        for (i = 0, m = level.spawns.length; i < m; i++) {
+            if (typeof level.spawns[i] === 'undefined') {
+                throw new Error(
+                    'Spawn for Player ' + (i+1) + ' not found in image ' +
+                    index
+                );
+            }
+        }
+
+        // Wrong direction count
+        if (level.directions.length !== 4) {
+            throw new Error(
+                'Need exactly 4 direction pixels, found ' +
+                level.directions.length + ' in image ' + index
+            );
+        }
+
+        level = postProcessDirections(level);
+
+        leveldata.push(level);
+        loadData(++index);
+    }
 
     function loadData(index) {
 
@@ -32,41 +132,7 @@
 
         // Level image exists
         image.onload = function() {
-            var r, g, b, a, imageData, level, mapped;
-
-            level = {
-                width : image.width,
-                height: image.height,
-                player: {},
-                wall  : []
-            };
-
-            context.drawImage(image, 0, 0);
-            imageData = context.getImageData(0, 0, image.width, image.height).data;
-
-            for (var i = 0, m = imageData.length / 4; i < m; ++i) {
-                r = imageData[i * 4];
-                g = imageData[i * 4 + 1];
-                b = imageData[i * 4 + 2];
-                a = imageData[i * 4 + 3];
-
-                if (r * g * b * a !== Math.pow(255, 4)) {
-                    mapped = map['_' + r + '_' + g + '_' + b];
-                    if (typeof mapped === 'undefined') {
-                        throw new Error('Uknown pixel color: ' +
-                                        [r, g, b, a] + ' in image ' + index);
-                    }
-                    if (mapped === 0) {
-                        level.wall.push(i);
-                    } else {
-                        level.player[mapped] = i;
-                    }
-
-                }
-            }
-
-            leveldata.push(level);
-            loadData(++index);
+            onload(index);
         };
 
         // Level image does not exist, or image is corrupt
@@ -79,7 +145,7 @@
             console.info('Levels:', index);
             console.info('Size:', Math.round(data.length / 10.24) / 100, 'KB');
             console.info('Took:', new Date() - start, 'ms');
-            console.info('Replace line 9 of shared/levels.js with:');
+            console.info('Replace line 10 of shared/levels.js with:');
             console.log(output);
 
             document.body.innerHTML += '<pre>'+output+'<br><br></pre>'

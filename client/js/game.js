@@ -26,9 +26,12 @@ Game.prototype = {
      * @return {Snake}
      */
     spawnLocalSnake: function() {
-        var snake, player = this.world.getPlayer(1);
+        var snake, player, direction, playerID = 0;
 
-        snake = new Snake(player[0], player[1], XSS.DIRECTION_RIGHT);
+        player = this.world.getSpawn(playerID);
+        direction = this.world.getSpawnDirection(playerID);
+
+        snake = new Snake(player[0], player[1], direction);
         snake.addControls();
         snake.addToEntities();
 

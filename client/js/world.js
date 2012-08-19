@@ -37,12 +37,20 @@ World.prototype = {
     },
 
     /**
-     * @param {number} player
+     * @param {number} playerID
      * @return {Array.<number>}
      */
-    getPlayer: function(player) {
-        var pos = this.level.player[player];
+    getSpawn: function(playerID) {
+        var pos = this.level.spawns[playerID];
         return this._seqToXY(pos);
+    },
+
+    /**
+     * @param {number} playerID
+     * @return {number}
+     */
+    getSpawnDirection: function(playerID) {
+        return this.level.directions[playerID];
     },
 
     /**
@@ -140,7 +148,7 @@ World.prototype = {
             xy = this._seqToXY(wall[i]);
             pixels.push(xy);
         }
-        return new PixelEntity(XSS.utils.zoomGame(pixels));
+        return new PixelEntity(XSS.effects.zoomGame(pixels));
     },
 
     /**

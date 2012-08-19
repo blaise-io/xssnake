@@ -56,8 +56,7 @@ Room.prototype = {
     },
 
     /**
-     * Shortcut for emitting to a room,
-     * sends data to everyone.
+     * Send data to everyone in the room.
      * @param {string} name
      * @param {*} data
      */
@@ -66,8 +65,7 @@ Room.prototype = {
     },
 
     /**
-     * Shortcut for broadcasting to a room,
-     * sends data to everyone but exclude.
+     * Send data to everyone else in the room.
      * @param {string} name
      * @param {*} data
      * @param {Client} exclude
