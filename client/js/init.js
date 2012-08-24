@@ -58,15 +58,16 @@ window.onload = function() {
 //    // Init stages
 //    // XSS.stages.init();
 
-    XSS.game = new Game();
+//    XSS.game = new Game();
 
-//    XSS.socket = new Socket(function() {
-//        var data = {
-//            name    : window.location.search.substring(1),
-//            friendly: true,
-//            pub  : true
-//        };
-//        XSS.socket.emit('/s/room', data);
-//    });
+    XSS.socket = new Socket(function() {
+        var data = {
+            'name'    : window.location.search.substring(1),
+            'friendly': true,
+            'pub'     : true,
+            'capacity': 2
+        };
+        XSS.socket.emit('/s/room', data);
+    });
 
 };

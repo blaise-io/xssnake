@@ -12,7 +12,7 @@ function EventHandler(server, client, socket) {
     this.client = client;
     this.socket = socket;
 
-    socket.emit('/c/connect', client.id);
+    client.emit('/c/connect', client.id);
 
     socket.on('disconnect', this.disconnect.bind(this));
     socket.on('/s/room', this.getRoom.bind(this));
@@ -28,7 +28,7 @@ EventHandler.prototype = {
 
         room = server.roomManager.rooms[client.roomid];
         if (room) {
-            room.removeClient(client);
+            room.leave(client);
             room.emit('/c/notice', client.name + ' left');
         }
 
@@ -46,12 +46,16 @@ EventHandler.prototype = {
 
         this.socket.join(room.id);
 
-        if (room.isFull()) {
+        if (room.full()) {
             room.emit('/c/notice', 'room is full');
+            room.index();
         }
 
-        room.emit('/c/notice', 'room++');
-        room.broadcast('/c/notice', data.name + ' joined', client);
+        room.emit('/c/notice', client.name + ' joined the room');
+        room.emit('/c/notice', [room.capacity]);
+        client.emit('/c/notice', 'your name is: ' + client.name);
+
+        room.broadcast('/c/notice', client.name + ' joined', client);
     },
 
     chat: function() {

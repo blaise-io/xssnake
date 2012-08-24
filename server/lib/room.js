@@ -5,20 +5,25 @@
 /**
  * @param {Server} server
  * @param {string} id
- * @param {boolean} pub
- * @param {boolean} friendly
+ * @param {Object} filter
  * @constructor
  */
-function Room(server, id, pub, friendly) {
+function Room(server, id, filter) {
+    var capacity;
+
     this.server = server;
-
     this.id = id;
-    this.pub = pub;
-    this.friendly = friendly;
-
-    this.capacity = 4;
     this.clients = [];
     this.inprogress = false;
+
+    // Sanitize user input
+    capacity = parseInt(filter.capacity, 10);
+    capacity = (typeof capacity === 'number') ? capacity : 4;
+    capacity = (capacity >= 1 && capacity <= 4) ? capacity : 4;
+
+    this.pub      = !!filter.pub;
+    this.friendly = !!filter.friendly;
+    this.capacity = capacity;
 }
 
 module.exports = Room;
@@ -38,7 +43,7 @@ Room.prototype = {
      * @param {Client} client
      * @return {boolean}
      */
-    removeClient: function(client) {
+    leave: function(client) {
         for (var i = 0, m = this.clients.length; i < m; i++) {
             if (this.clients[i] === client) {
                 this.clients.splice(i, 1);
@@ -51,7 +56,7 @@ Room.prototype = {
     /**
      * @return {boolean}
      */
-    isFull: function() {
+    full: function() {
         return (this.clients.length === this.capacity);
     },
 
@@ -71,7 +76,12 @@ Room.prototype = {
      * @param {Client} exclude
      */
     broadcast: function(name, data, exclude) {
-        var socket = this.server.getSocket(exclude);
-        socket.broadcast.to(this.id).emit(name, data);
+        exclude.socket.broadcast.to(this.id).emit(name, data);
+    },
+
+    index: function() {
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            this.clients[i].emit('/c/player/index', i);
+        }
     }
 };

@@ -31,17 +31,9 @@ Server.prototype = {
         app.listen(8080);
 
         this.io.sockets.on('connection', function(socket) {
-            var client = this.state.addClient(socket.id);
+            var client = this.state.addClient(socket);
             void(new EventHandler(this, client, socket));
         }.bind(this));
-    },
-
-    /**
-     * @param {Client} client
-     * @return {Socket}
-     */
-    getSocket: function(client) {
-        return this.io.sockets.sockets[client.socketid];
     },
 
     /**

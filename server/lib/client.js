@@ -4,13 +4,25 @@
 /**
  * @constructor
  * @param {number} id
- * @param {number} socketid
+ * @param {EventEmitter} socket
  */
-function Client (id, socketid) {
+function Client (id, socket) {
     this.id = id;
-    this.socketid = socketid;
+    this.socket = socket;
 }
 
-Client.prototype = {};
-
 module.exports = Client;
+
+Client.prototype = {
+
+    /**
+     * Send data to client
+     * @param {string} name
+     * @param {*} data
+     */
+    emit: function(name, data) {
+        this.socket.emit(name, data);
+    }
+
+};
+

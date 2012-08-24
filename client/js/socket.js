@@ -40,6 +40,10 @@ Socket.prototype = {
         this.socket.on('/c/notice', function(notice) {
             console.log(notice);
         }.bind(this));
+
+        this.socket.on('/c/player/index', function(index) {
+            console.log('Player index', index);
+        }.bind(this));
     },
 
     emit: function(action, data) {
