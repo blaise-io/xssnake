@@ -3,9 +3,9 @@
 
 'use strict';
 
-// Generated on Sun, 19 Aug 2012 16:09:03 GMT
-// Generate this file using `node server/levels.js`
-// Shared object wrapper
+// Generated on Fri, 24 Aug 2012 12:03:18 GMT
+// Generate file: `node server/levels.js`
+// Template file: levels.tpl
 (function ClientServerSharedObject() {
 
     var levels = [

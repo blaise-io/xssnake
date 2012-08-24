@@ -11,13 +11,12 @@ Socket.IO for cross-browser client–server communication, and Google Closure
 Compiler with Advanced compilation to compile to compacter and faster code.
 
 
-Initial Setup
+Initial Setup / Dependencies
 ---
 
  * Download and install [Node.js](http://nodejs.org/)
- * `npm install` these packages: 
+ * `npm install` these packages:
    [`socket.io`](https://npmjs.org/package/socket.io),
-   [`toSrc`](https://github.com/jhnns/toSrc),
    [`png-js`](https://npmjs.org/package/png-js).
 
 Run
@@ -36,5 +35,5 @@ Run
 
 Generating level data
 ---
-If you adjusted one of the level images, you will have to re-build 
+If you adjusted one of the level images, you will have to re-build
 `./shared/levels.js`. See this readme: `./data/level_images/README.md`

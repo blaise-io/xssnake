@@ -4,8 +4,8 @@
 'use strict';
 
 // Generated on %DATE%
-// Generate this file using `node server/levels.js`
-// Shared object wrapper
+// Generate file: `node server/levels.js`
+// Template file: levels.tpl
 (function ClientServerSharedObject() {
 
     var levels = %LEVELS%;

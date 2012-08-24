@@ -1,20 +1,35 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-var levelTplFile, jsOutputFile, levelImagesDir, levels, files, done, total,
-    fs = require('fs'),
-    toSrc = require("toSrc"),
+var fs = require('fs'),
+    util = require('util'),
     LevelImage = require('./levels/level_image.js');
 
-levelTplFile = __dirname + '/../shared/levels.tpl';
-jsOutputFile = __dirname + '/../shared/levels.js';
-levelImagesDir = __dirname + '/../data/level_images/';
+var levelTplFile = __dirname + '/../shared/levels.tpl';
+var jsOutputFile = __dirname + '/../shared/levels.js';
+var levelImagesDir = __dirname + '/../data/level_images/';
 
-files = fs.readdirSync(levelImagesDir);
+var files = fs.readdirSync(levelImagesDir);
 
-levels = [];
-done = 0;
-total = 0;
+var levels = [];
+var done = 0;
+var total = 0;
+
+for (var i = 0, m = files.length; i < m; i++) {
+    if (/\.png$/.test(files[i])) {
+        setlevel(levelImagesDir + files[i], i);
+        total++;
+    }
+}
+
+function whiteSpaceOCD(str) {
+    str = str.replace(/\s+/g, ' '); // Normalize whitespace
+    str = str.replace(/([\[\{]) /g, '$1'); // No spaces following opening bracket
+    str = str.replace(/ ([\]\}])/g, '$1'); // No spaces before closing bracket
+    str = str.replace(/\{/g, '\n        ' + '{'); // Start each level on a new line
+    str = str.replace(/\]$/g, '\n    ' + ']'); // Closing bracket on new line
+    return str;
+}
 
 function setlevel(file, index) {
     void(new LevelImage(file, function(data) {
@@ -24,10 +39,9 @@ function setlevel(file, index) {
         // Got all levels, write to file
         if (++done === total) {
 
-            levelsStr = toSrc(levels, 99);
-            levelsStr = levelsStr.replace(/"/g, '');
-            levelsStr = levelsStr.replace(/\{/g, '\n        ' + '{'); // OCD
-            levelsStr = levelsStr.replace(/\]$/g, '\n    ' + ']');
+            // levelsStr = toSrc(levels, 99);
+            levelsStr = util.inspect(levels, false, 99, false);
+            levelsStr = whiteSpaceOCD(levelsStr);
 
             template = fs.readFileSync(levelTplFile, 'utf-8');
             template = template.replace('%LEVELS%', levelsStr);
@@ -36,11 +50,4 @@ function setlevel(file, index) {
             fs.writeFile(jsOutputFile, template);
         }
     }));
-}
-
-for (var i = 0, m = files.length; i < m; i++) {
-    if (/\.png$/.test(files[i])) {
-        setlevel(levelImagesDir + files[i], i);
-        total++;
-    }
 }
