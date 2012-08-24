@@ -38,9 +38,7 @@ function setlevel(file, index) {
 
         // Got all levels, write to file
         if (++done === total) {
-
-            // levelsStr = toSrc(levels, 99);
-            levelsStr = util.inspect(levels, false, 99, false);
+            levelsStr = util.inspect(levels);
             levelsStr = whiteSpaceOCD(levelsStr);
 
             template = fs.readFileSync(levelTplFile, 'utf-8');
