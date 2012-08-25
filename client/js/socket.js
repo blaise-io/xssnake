@@ -41,11 +41,17 @@ Socket.prototype = {
             console.log(notice);
         }.bind(this));
 
-        this.socket.on('/c/start', function(data) {
-            console.log('You are player:', data.index);
-            console.log('Names:', data.names);
-            console.log('Capacity:', data.capacity);
-        }.bind(this));
+        this.socket.on('/c/start', this._start.bind(this));
+    },
+
+    /**
+     * @param data {Object}
+     * @private
+     */
+    _start: function(data) {
+        console.log('You are player:', data['index']);
+        console.log('Names:', data['names']);
+        console.log('Capacity:', data['capacity']);
     },
 
     emit: function(action, data) {
