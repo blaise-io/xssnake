@@ -41,8 +41,10 @@ Socket.prototype = {
             console.log(notice);
         }.bind(this));
 
-        this.socket.on('/c/player/index', function(index) {
-            console.log('Player index', index);
+        this.socket.on('/c/start', function(data) {
+            console.log('You are player:', data.index);
+            console.log('Names:', data.names);
+            console.log('Capacity:', data.capacity);
         }.bind(this));
     },
 

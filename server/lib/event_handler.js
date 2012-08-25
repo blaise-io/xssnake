@@ -29,7 +29,6 @@ EventHandler.prototype = {
         room = server.roomManager.rooms[client.roomid];
         if (room) {
             room.leave(client);
-            room.emit('/c/notice', client.name + ' left');
         }
 
         server.state.removeClient(client);
@@ -42,20 +41,10 @@ EventHandler.prototype = {
         room.join(client);
 
         client.name = data.name;
-        client.roomid = room.id;
-
-        this.socket.join(room.id);
 
         if (room.full()) {
-            room.emit('/c/notice', 'room is full');
-            room.index();
+            room.start();
         }
-
-        room.emit('/c/notice', client.name + ' joined the room');
-        room.emit('/c/notice', [room.capacity]);
-        client.emit('/c/notice', 'your name is: ' + client.name);
-
-        room.broadcast('/c/notice', client.name + ' joined', client);
     },
 
     chat: function() {

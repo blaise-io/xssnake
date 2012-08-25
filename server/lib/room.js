@@ -36,6 +36,8 @@ Room.prototype = {
      */
     join: function(client) {
         this.clients.push(client);
+        client.socket.join(this.id);
+        client.roomid = this.id;
         return this;
     },
 
@@ -44,12 +46,14 @@ Room.prototype = {
      * @return {boolean}
      */
     leave: function(client) {
-        for (var i = 0, m = this.clients.length; i < m; i++) {
-            if (this.clients[i] === client) {
-                this.clients.splice(i, 1);
-                return true;
-            }
+        var index = this.index(client);
+
+        if (-1 !== index) {
+            this.clients.splice(index, 1);
+            this.emit('/c/notice', client.name + ' left');
+            return true;
         }
+
         return false;
     },
 
@@ -79,9 +83,39 @@ Room.prototype = {
         exclude.socket.broadcast.to(this.id).emit(name, data);
     },
 
-    index: function() {
+    /**
+     * @param {Client} client
+     * @return {number}
+     */
+    index: function(client) {
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            this.clients[i].emit('/c/player/index', i);
+            if (client === this.clients[i]) {
+                return i;
+            }
         }
+        return -1;
+    },
+
+    /**
+     * @return {Array.<string>}
+     */
+    names: function() {
+        var names = [];
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            names.push(this.clients[i].name);
+        }
+        return names;
+    },
+
+    start: function() {
+        var names = this.names();
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            this.clients[i].emit('/c/start', {
+                index   : i,
+                names   : names,
+                capacity: this.capacity
+            });
+        }
+        this.inprogress = true;
     }
 };

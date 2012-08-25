@@ -64,12 +64,8 @@ RoomManager.prototype = {
      * @private
      */
     _isFilterMatch: function(filter, room) {
-        var friendlyMatch, full;
-
-        friendlyMatch = room.friendly === filter.friendly;
-        full = room.full();
-
-        return (room.pub && friendlyMatch && !full);
+        return room.pub && room.friendly === filter.friendly && !room.full() &&
+            !room.inprogress;
     }
 
 };

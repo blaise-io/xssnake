@@ -9,6 +9,7 @@
 function Client (id, socket) {
     this.id = id;
     this.socket = socket;
+    this.name = 'Anonymous';
 }
 
 module.exports = Client;
