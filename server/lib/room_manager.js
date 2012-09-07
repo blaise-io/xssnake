@@ -17,6 +17,14 @@ module.exports = RoomManager;
 RoomManager.prototype = {
 
     /**
+     * @param {number} id
+     * @return {Room}
+     */
+    get: function(id) {
+        return this.rooms[id];
+    },
+
+    /**
      * @param {Object.<string, boolean>} filter
      * @return {Room}
      */
@@ -34,7 +42,7 @@ RoomManager.prototype = {
      */
     createRoom: function(filter) {
         var id, room;
-        id = 'R' + this.curid++;
+        id = this.curid++;
         room = new Room(this.server, id, filter);
         this.rooms[room.id] = room;
         return room;

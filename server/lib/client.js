@@ -8,6 +8,7 @@
  */
 function Client (id, socket) {
     this.id = id;
+    this.roomid = null;
     this.socket = socket;
     this.name = 'Anonymous';
 }

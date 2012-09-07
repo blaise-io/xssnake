@@ -1,10 +1,11 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Client, io*/
+/*globals XSS, Client, Game, io*/
 
 'use strict';
 
 /**
  * Client-Server communication
+ * @param callback {function(Socket)}
  * @constructor
  */
 function Socket(callback) {
@@ -23,12 +24,16 @@ Socket.prototype = {
 
     /**
      * @param {string} host
-     * @return {{on: function(string, function(Object)) }}
+     * @return {{on: function(string, function(*)) }}
      */
     getSocket: function(host) {
         return io.connect(host);
     },
 
+    /**
+     * @param callback {function(Socket)}
+     * @private
+     */
     _addEventListeners: function(callback) {
         this.socket.on('/c/connect', function(id) {
             XSS.me = new Client(id);
@@ -41,19 +46,21 @@ Socket.prototype = {
             console.log(notice);
         }.bind(this));
 
-        this.socket.on('/c/start', this._start.bind(this));
+        this.socket.on('/c/start', function(data) {
+            XSS.game = new Game(data);
+        }.bind(this));
+
+        this.socket.on('/c/up', function(data) {
+            var snake = XSS.game.snakes[data['index']];
+            snake.direction = data['data'][2];
+            snake.move([data['data'][0], data['data'][1]]);
+        }.bind(this));
     },
 
     /**
-     * @param data {Object}
-     * @private
+     * @param {string} action
+     * @param {*} data
      */
-    _start: function(data) {
-        console.log('You are player:', data['index']);
-        console.log('Names:', data['names']);
-        console.log('Capacity:', data['capacity']);
-    },
-
     emit: function(action, data) {
         this.socket.emit(action, data);
     }

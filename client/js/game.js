@@ -1,5 +1,5 @@
-/*jshint globalstrict:true*/
-/*globals XSS,PixelEntity,Snake,World,Apple*/
+/*jshint globalstrict:true, sub:true*/
+/*globals XSS, PixelEntity, Snake, World, Apple*/
 
 'use strict';
 
@@ -7,35 +7,43 @@
  * Game
  * @constructor
  */
-function Game() {
+function Game(data) {
     XSS.ents.border = XSS.drawables.getOuterBorder();
     XSS.ents.levelborder = XSS.drawables.getLevelBorder();
 
-    this.world = new World(2);
+    this.world = new World(data['level']);
     this.world.addToEntities();
 
-    this.snakes = [this.spawnLocalSnake()];
-    this.apples = [this.spawnApple()];
+    this.snakeInc = 0;
+
+    this.snakes = this.spawnSnakes(data);
+
+    this.apples = [];
 
     this._addEventListeners();
 }
 
 Game.prototype = {
 
-    /**
-     * @return {Snake}
-     */
-    spawnLocalSnake: function() {
-        var snake, player, direction, playerID = 0;
+    spawnSnakes: function(data) {
+        var snakes = [], player, direction, snake;
 
-        player = this.world.getSpawn(playerID);
-        direction = this.world.getSpawnDirection(playerID);
+        for (var i = 0, m = data['names'].length; i < m; i++) {
+            player = this.world.getSpawn(i);
+            direction = this.world.getSpawnDirection(i);
 
-        snake = new Snake(player[0], player[1], direction);
-        snake.addControls();
-        snake.addToEntities();
+            snake = new Snake(++this.snakeInc, player[0], player[1], direction);
+            snake.addToEntities();
 
-        return snake;
+            if (i === data['index']) {
+                snake.local = true;
+                snake.addControls();
+            }
+
+            snakes.push(snake);
+        }
+
+        return snakes;
     },
 
     /**

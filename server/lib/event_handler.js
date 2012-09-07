@@ -17,6 +17,7 @@ function EventHandler(server, client, socket) {
     socket.on('disconnect', this.disconnect.bind(this));
     socket.on('/s/room', this.getRoom.bind(this));
     socket.on('/s/chat', this.chat.bind(this));
+    socket.on('/s/up', this.update.bind(this));
 }
 
 module.exports = EventHandler;
@@ -48,6 +49,16 @@ EventHandler.prototype = {
     },
 
     chat: function() {
+    },
+
+    update: function(data) {
+        if (this.client.roomid) {
+            var room = this.server.roomManager.get(this.client.roomid);
+            room.broadcast('/c/up', {
+                index: room.index(this.client),
+                data: data
+            }, this.client);
+        }
     }
 
 };

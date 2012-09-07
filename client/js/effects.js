@@ -12,6 +12,7 @@
  */
 function Effects() {
     this.topic = '/canvas/update';
+    this.nsInc = 0;
 }
 
 Effects.prototype = {
@@ -38,7 +39,7 @@ Effects.prototype = {
     },
 
     delay: function(callback, delay) {
-        var updater, progress = 0, ns = XSS.utils.uuid();
+        var updater, progress = 0, ns = ++this.nsInc;
 
         updater = function(diff) {
             progress += diff;

@@ -5,24 +5,30 @@
 
 /**
  * Snake
+ * @param {number} id
  * @param {number} x
  * @param {number} y
  * @param {number} direction
  * @constructor
  */
-function Snake(x, y, direction){
+function Snake(id, x, y, direction){
+    this.id = id;
     this.head = [x, y];
     this.snake = [this.head]; // [0] = tail, [n-1] = head
     this.direction = direction;
+    this.emittedDirection = direction;
 
+    this.local = false;
     this.crashed = false;
     this.parts = 4;
     this.speed = 100; // ms between moves
 
     this.snakeProgress = 0;
 
-    this.entity = new PixelEntity().dynamic(true);
-    this.entityName = 'snake_' + XSS.utils.uuid();
+    this.entity = new PixelEntity();
+    this.entity.dynamic(true);
+
+    this.entityName = 'snake_' + this.id;
 
     this._snakeTurnRequests = [];
 }
@@ -59,20 +65,6 @@ Snake.prototype = {
 
     /**
      * @param {Array.<number>} part
-     * @return {number}
-     */
-    _getPart: function(part) {
-        var snake = this.snake;
-        for (var i = 0, m = snake.length; i < m; i++) {
-            if (snake[i][0] === part[0] && snake[i][1] === part[1]) {
-                return i;
-            }
-        }
-        return -1;
-    },
-
-    /**
-     * @param {Array.<number>} part
      * @return {boolean}
      */
     hasPartPredict: function(part) {
@@ -88,6 +80,29 @@ Snake.prototype = {
         this._handleChangeRequests();
         shift = this._directionToShift(this.direction);
         return [this.head[0] + shift[0], this.head[1] + shift[1]];
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    emitPosition: function(x, y) {
+        XSS.socket.emit('/s/up', [x, y, this.direction]);
+        this.emittedDirection = this.direction;
+    },
+
+    /**
+     * @param {Array.<number>} part
+     * @return {number}
+     */
+    _getPart: function(part) {
+        var snake = this.snake;
+        for (var i = 0, m = snake.length; i < m; i++) {
+            if (snake[i][0] === part[0] && snake[i][1] === part[1]) {
+                return i;
+            }
+        }
+        return -1;
     },
 
     /**
@@ -109,9 +124,16 @@ Snake.prototype = {
         }
         this.head = [x, y];
         this.snake.push(this.head);
+
+        if (this.local && this.emittedDirection !== this.direction) {
+            this.emitPosition(x, y);
+        }
     },
 
-    /** @private */
+    /**
+     * @param {Event} e
+     * @private
+     */
     _handleKeys: function(e) {
         switch (e.which) {
             case XSS.KEY_LEFT:

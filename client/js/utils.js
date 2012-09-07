@@ -23,6 +23,9 @@ Utils.prototype = {
         script.async = 'async';
         script.src = url;
         script.onload = callback;
+        script.onerror = function() {
+            throw new Error('Could not load ' + url);
+        };
         head = document.querySelector('head');
         head.insertBefore(script, head.firstChild);
     },
@@ -39,14 +42,6 @@ Utils.prototype = {
             }
         }
         return destination;
-    },
-
-    /** @return {string} UUID */
-    uuid: function() {
-        return 'XX-X-X-X-XXX'.replace(/X/g, function() {
-            var segment = Math.floor(((1 + Math.random()) * 0x10000));
-            return segment.toString(16).substr(1);
-        });
     },
 
     addListener: {
