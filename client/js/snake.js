@@ -21,7 +21,7 @@ function Snake(id, x, y, direction){
     this.local = false;
     this.crashed = false;
     this.size = 4;
-    this.speed = 500; // ms between moves
+    this.speed = XSS.config.game.speed; // ms between moves
 
     this.snakeProgress = 0;
 

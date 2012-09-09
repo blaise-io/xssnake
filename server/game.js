@@ -5,10 +5,7 @@
 
 var config, Server;
 
-config = {
-    pathToHTML: __dirname + '/../index.html'
-};
-
+config = require('../shared/config.js');
 Server = require('./lib/server.js');
 void(new Server(config));
 

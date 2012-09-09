@@ -14,7 +14,7 @@ function Snake(server) {
 
     this.crashed = false;
     this.size = 4;
-    this.speed = 500;
+    this.speed = this.server.config.game.speed;
 
     this.elapsed = 0;
 

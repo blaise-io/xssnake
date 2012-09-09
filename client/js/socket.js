@@ -9,14 +9,15 @@
  * @constructor
  */
 function Socket(callback) {
-    this.host = 'http://localhost:8080';
+    this.host = XSS.config.server.host;
+    this.script = XSS.config.server.socketIOScript;
     this.connect(callback);
 }
 
 Socket.prototype = {
 
     connect: function(callback) {
-        XSS.utils.loadScript('http://localhost:8080/socket.io/socket.io.js', function() {
+        XSS.utils.loadScript(this.script, function() {
             this.socket = this.getSocket(this.host);
             this._addEventListeners(callback);
         }.bind(this));

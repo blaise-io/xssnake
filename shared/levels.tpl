@@ -10,7 +10,7 @@
 
     var levels = %LEVELS%;
 
-    if (XSS) {
+    if (typeof XSS !== 'undefined') {
         XSS.levels = levels; // Client-side
     } else {
         module.exports = levels; // Server-side

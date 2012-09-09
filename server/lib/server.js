@@ -45,7 +45,7 @@ Server.prototype = {
     _httpRequestHandler: function(request, response) {
         var file, onIndexFileRead;
 
-        file = this.config.pathToHTML;
+        file = this.config.server.indexFile;
         onIndexFileRead = function(err, data) {
             if (err) {
                 response.writeHead(500);

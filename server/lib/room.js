@@ -47,7 +47,7 @@ Room.prototype = {
      * @return {boolean}
      */
     leave: function(client) {
-        var index = this.index(client);
+        var index = this.indexOf(client);
 
         if (-1 !== index) {
             this.clients.splice(index, 1);
@@ -88,7 +88,7 @@ Room.prototype = {
      * @param {Client} client
      * @return {number}
      */
-    index: function(client) {
+    indexOf: function(client) {
         for (var i = 0, m = this.clients.length; i < m; i++) {
             if (client === this.clients[i]) {
                 return i;

@@ -65,7 +65,7 @@ EventHandler.prototype = {
             snake.update.apply(snake, data);
 
             room.broadcast('/c/up', {
-                index: room.index(this.client),
+                index: room.indexOf(this.client),
                 snake: snake.get()
             }, this.client);
         }

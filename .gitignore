@@ -5,6 +5,7 @@
 Thumbs.db
 desktop.ini
 
-# Install/build these files yourself. See readme.
+# Build, install or configure these files yourself. See README.md
 node_modules
 compiled.js
+config.js

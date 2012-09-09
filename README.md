@@ -24,11 +24,14 @@ Run
 
 **Development**
 
+ * Create a configuration file at `shared/config.js` (an example can be found at
+   `shared/config.example.js`)
  * Run the game server: `node server/game.js`
  * Open index.html to test
 
 **Production (compiled source)**
 
+ * Create a configuration file at `shared/config.js`.
  * Compile the source: `node server/build.js`
  * Run the game server: `node server/game.js`
  * Open compiled.html to play
@@ -36,4 +39,4 @@ Run
 Generating level data
 ---
 If you adjusted one of the level images, you will have to re-build
-`./shared/levels.js`. See this readme: `./data/level_images/README.md`
+`shared/levels.js`. See the readme at `data/level_images/README.md`.
