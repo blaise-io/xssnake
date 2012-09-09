@@ -14,14 +14,14 @@
 function Snake(id, x, y, direction){
     this.id = id;
     this.head = [x, y];
-    this.snake = [this.head]; // [0] = tail, [n-1] = head
+    this.parts = [this.head]; // [0] = tail, [n-1] = head
     this.direction = direction;
     this.emittedDirection = direction;
 
     this.local = false;
     this.crashed = false;
-    this.parts = 4;
-    this.speed = 100; // ms between moves
+    this.size = 4;
+    this.speed = 500; // ms between moves
 
     this.snakeProgress = 0;
 
@@ -48,7 +48,7 @@ Snake.prototype = {
      */
     move: function(move) {
         this._updateSnakePos(move[0], move[1]);
-        this.entity.pixels(XSS.effects.zoomGame(this.snake));
+        this.entity.pixels(XSS.effects.zoomGame(this.parts));
     },
 
     crash: function() {
@@ -96,9 +96,9 @@ Snake.prototype = {
      * @return {number}
      */
     _getPart: function(part) {
-        var snake = this.snake;
-        for (var i = 0, m = snake.length; i < m; i++) {
-            if (snake[i][0] === part[0] && snake[i][1] === part[1]) {
+        var parts = this.parts;
+        for (var i = 0, m = parts.length; i < m; i++) {
+            if (parts[i][0] === part[0] && parts[i][1] === part[1]) {
                 return i;
             }
         }
@@ -119,11 +119,11 @@ Snake.prototype = {
      * @param {number} y
      */
     _updateSnakePos: function(x, y) {
-        while (this.parts <= this.snake.length) {
-            this.snake.shift();
+        while (this.size <= this.parts.length) {
+            this.parts.shift();
         }
         this.head = [x, y];
-        this.snake.push(this.head);
+        this.parts.push(this.head);
 
         if (this.local && this.emittedDirection !== this.direction) {
             this.emitPosition(x, y);

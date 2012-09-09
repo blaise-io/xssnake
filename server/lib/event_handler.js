@@ -51,12 +51,22 @@ EventHandler.prototype = {
     chat: function() {
     },
 
+    /**
+     * @param data [x:<number>,y:<number>,direction:<number>]
+     */
     update: function(data) {
         if (this.client.roomid) {
-            var room = this.server.roomManager.get(this.client.roomid);
+            var room, snake;
+
+            room = this.server.roomManager.get(this.client.roomid);
+            snake = this.client.snake;
+
+            // TODO Game loop, internal move in between direction changes
+            snake.update.apply(snake, data);
+
             room.broadcast('/c/up', {
                 index: room.index(this.client),
-                data: data
+                snake: snake.get()
             }, this.client);
         }
     }

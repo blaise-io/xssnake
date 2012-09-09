@@ -51,9 +51,15 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on('/c/up', function(data) {
-            var snake = XSS.game.snakes[data['index']];
-            snake.direction = data['data'][2];
-            snake.move([data['data'][0], data['data'][1]]);
+            var snake, parts, direction;
+
+            snake = XSS.game.snakes[data['index']];
+            parts = data['snake'][0];
+            direction = data['snake'][1];
+
+            snake.parts = parts;
+            snake.head = parts[parts.length - 1];
+            snake.direction = direction;
         }.bind(this));
     },
 

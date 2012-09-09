@@ -1,6 +1,8 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
+var Snake = require('./snake.js');
+
 /**
  * @constructor
  * @param {number} id
@@ -11,6 +13,7 @@ function Client (id, socket) {
     this.roomid = null;
     this.socket = socket;
     this.name = 'Anonymous';
+    this.snake = new Snake();
 }
 
 module.exports = Client;

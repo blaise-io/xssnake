@@ -151,7 +151,7 @@ Game.prototype = {
             if (-1 !== index) {
                 this.apples[index].eat();
                 this.respawnApple(index);
-                snake.parts += 1;
+                snake.size += 1;
             }
         }
     }
