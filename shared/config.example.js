@@ -3,9 +3,7 @@
 
 'use strict';
 
-// Generated on Fri, 24 Aug 2012 12:18:37 GMT
-// Generate file: `node server/levels.js`
-// Template file: levels.tpl
+// Copy or rename me to config.js
 (function ClientServerSharedObject() {
 
     var config = {
