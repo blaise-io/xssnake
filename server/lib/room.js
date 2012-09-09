@@ -109,10 +109,13 @@ Room.prototype = {
     },
 
     start: function() {
-        var names = this.names();
+        var names = this.names(),
+            level = 0;
         for (var i = 0, m = this.clients.length; i < m; i++) {
+
+            this.clients[i].start(i, level);
             this.clients[i].emit('/c/start', {
-                level   : 0,
+                level   : level,
                 index   : i,
                 names   : names,
                 capacity: this.capacity

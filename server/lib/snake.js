@@ -1,20 +1,24 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
+var Level = require('./level.js');
+
 /**
  * Snake
- * TODO Crash detection
+ * TODO: Crash detection
+ * TODO: Remove tick listener on client disconnect
  * @constructor
  */
-function Snake(server) {
-    this.server = server;
+function Snake(server, index, levelID) {
+    var level = new Level(server, levelID);
 
-    this.parts = []; // [0] = tail, [n-1] = head
-    this.direction = 0;
+    this.server = server;
+    this.parts = [level.getSpawn(index)];
+    this.direction = level.getSpawnDirection(index);
 
     this.crashed = false;
-    this.size = 4;
-    this.speed = this.server.config.game.speed;
+    this.size = server.config.snake.size;
+    this.speed = server.config.snake.speed;
 
     this.elapsed = 0;
 
@@ -27,24 +31,33 @@ module.exports = Snake;
 Snake.prototype = {
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * TODO: Validate user input
+     * @param {Array.<number>} head
      * @param {number} direction
-     * @return {boolean}
+     * @return {boolean} Valid move
      */
-    update: function(x, y, direction) {
-        // TODO Validate user input
-        while (this.size <= this.parts.length) {
-            this.parts.shift();
-        }
-        this.parts.push([x, y]);
+    update: function(head, direction) {
+        // TODO: Fill gaps caused by server prediction + client lag
+        this.parts[this.parts.length - 1] = head;
         this.direction = direction;
-
-        return true; // Move was valid
+        return true;
     },
 
-    get: function() {
+    trim: function() {
+        while (this.parts.length > this.size) {
+            this.parts.shift();
+        }
+    },
+
+    serialize: function() {
         return [this.parts, this.direction];
+    },
+
+    /**
+     * @return {Array.<number>}
+     */
+    getHead: function() {
+        return this.parts[this.parts.length - 1];
     },
 
     crash: function() {
@@ -69,10 +82,10 @@ Snake.prototype = {
     },
 
     _continueInDirection: function() {
-        var shift, head;
+        var shift, head = this.getHead();
         shift = [[-1, 0], [0, -1], [1, 0], [0, 1]][this.direction];
-        head = this.parts[this.parts.length - 1];
-        this.update(head[0] + shift[0], head[1] + shift[1], this.direction);
+        this.parts.push([head[0] + shift[0], head[1] + shift[1]]);
+        this.trim();
     }
 
 };

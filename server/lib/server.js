@@ -18,7 +18,7 @@ function Server(config) {
     this.config = config;
     this.state = new State(this);
     this.roomManager = new RoomManager(this);
-    this.ticker = new Ticker();
+    this.ticker = new Ticker(config.server.tick);
     this.listen();
 }
 

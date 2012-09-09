@@ -8,11 +8,15 @@
 
     var config = {
         server: {
-            address: 'localhost:8080'
+            host          : 'http://localhost:8080',
+            socketIOScript: 'http://localhost:8080/socket.io/socket.io.js',
+            indexFile     : '../index.html',
+            sharedDir     : '../../shared/',
+            tick          : 50
         },
-        game: {
-            tick : 50,
-            speed: 200
+        snake: {
+            speed: 250,
+            size : 10
         }
     };
 

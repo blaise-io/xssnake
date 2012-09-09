@@ -52,21 +52,19 @@ EventHandler.prototype = {
     },
 
     /**
-     * @param data [x:<number>,y:<number>,direction:<number>]
+     * @param data [<array>,<number>]
      */
     update: function(data) {
         if (this.client.roomid) {
-            var room, snake;
+            var snake, room;
+
+            snake = this.client.snake;
+            snake.update(data[0], data[1]);
 
             room = this.server.roomManager.get(this.client.roomid);
-            snake = this.client.snake;
-
-            // TODO Game loop, internal move in between direction changes
-            snake.update.apply(snake, data);
-
             room.broadcast('/c/up', {
                 index: room.indexOf(this.client),
-                snake: snake.get()
+                snake: snake.serialize()
             }, this.client);
         }
     }

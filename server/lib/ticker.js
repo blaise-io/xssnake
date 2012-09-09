@@ -5,11 +5,12 @@ var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 
 /**
+ * @param {Server} server
  * @constructor
  */
-function Ticker() {
+function Ticker(tick) {
     this.lasttick = +new Date();
-    setInterval(this.tick.bind(this), 50);
+    setInterval(this.tick.bind(this), tick);
 }
 
 util.inherits(Ticker, EventEmitter);

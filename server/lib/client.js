@@ -15,7 +15,6 @@ function Client (server, id, socket) {
     this.roomid = null;
     this.socket = socket;
     this.name = 'Anonymous';
-    this.snake = new Snake(this.server);
 }
 
 module.exports = Client;
@@ -29,6 +28,10 @@ Client.prototype = {
      */
     emit: function(name, data) {
         this.socket.emit(name, data);
+    },
+
+    start: function(index, level) {
+        this.snake = new Snake(this.server, index, level);
     }
 
 };

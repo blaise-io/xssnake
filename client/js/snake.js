@@ -13,15 +13,14 @@
  */
 function Snake(id, x, y, direction){
     this.id = id;
-    this.head = [x, y];
-    this.parts = [this.head]; // [0] = tail, [n-1] = head
+    this.parts = [[x, y]]; // [0] = tail, [n-1] = head
     this.direction = direction;
-    this.emittedDirection = direction;
 
     this.local = false;
     this.crashed = false;
-    this.size = 4;
-    this.speed = XSS.config.game.speed; // ms between moves
+
+    this.size =  XSS.config.snake.size;
+    this.speed = XSS.config.snake.speed; // ms between moves
 
     this.snakeProgress = 0;
 
@@ -47,7 +46,7 @@ Snake.prototype = {
      * @param {Array.<number>} move
      */
     move: function(move) {
-        this._updateSnakePos(move[0], move[1]);
+        this._updateSnakePos(move);
         this.entity.pixels(XSS.effects.zoomGame(this.parts));
     },
 
@@ -56,11 +55,19 @@ Snake.prototype = {
     },
 
     /**
+     * @return {Array.<number>}
+     */
+    getHead: function() {
+        return this.parts[this.parts.length - 1];
+    },
+
+    /**
      * @param {Array.<number>} head
      * @return {boolean}
      */
     isHead: function(head) {
-        return (head[0] === this.head[0] && head[1] === this.head[1]);
+        var thisHead = this.getHead();
+        return (thisHead[0] === head[0] && thisHead[1] === head[1]);
     },
 
     /**
@@ -76,19 +83,20 @@ Snake.prototype = {
      * @return {Array.<number>}
      */
     getNextPosition: function() {
-        var shift;
+        var shift, head = this.getHead();
         this._handleChangeRequests();
         shift = this._directionToShift(this.direction);
-        return [this.head[0] + shift[0], this.head[1] + shift[1]];
+        return [head[0] + shift[0], head[1] + shift[1]];
     },
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    emitPosition: function(x, y) {
-        XSS.socket.emit('/s/up', [x, y, this.direction]);
-        this.emittedDirection = this.direction;
+    emitState: function(direction) {
+        XSS.socket.emit('/s/up', [this.getHead(), direction]);
+    },
+
+    trim: function() {
+        while (this.parts.length > this.size) {
+            this.parts.shift();
+        }
     },
 
     /**
@@ -115,19 +123,11 @@ Snake.prototype = {
     },
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {Array.<number>} position
      */
-    _updateSnakePos: function(x, y) {
-        while (this.size <= this.parts.length) {
-            this.parts.shift();
-        }
-        this.head = [x, y];
-        this.parts.push(this.head);
-
-        if (this.local && this.emittedDirection !== this.direction) {
-            this.emitPosition(x, y);
-        }
+    _updateSnakePos: function(position) {
+        this.parts.push(position);
+        this.trim();
     },
 
     /**
@@ -171,6 +171,16 @@ Snake.prototype = {
             turns = Math.abs(direction - lastDirection);
             if (direction !== lastDirection && this._isNumTurnAllowed(turns)) {
                 this._snakeTurnRequests.push(direction);
+
+                // Send to server
+                if (this._snakeTurnRequests.length ===  1) {
+                    this.emitState(direction);
+                } else {
+                    // Wait a bit before sending this
+                    window.setTimeout(function() {
+                        this.emitState(direction);
+                    }.bind(this), this.speed - 20);
+                }
             }
         }
     },
