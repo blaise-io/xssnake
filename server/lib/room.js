@@ -12,6 +12,7 @@ function Room(server, id, filter) {
     var capacity;
 
     this.server = server;
+
     this.id = id;
     this.clients = [];
     this.inprogress = false;

@@ -5,15 +5,17 @@ var Snake = require('./snake.js');
 
 /**
  * @constructor
+ * @param {Server} server
  * @param {number} id
  * @param {EventEmitter} socket
  */
-function Client (id, socket) {
+function Client (server, id, socket) {
+    this.server = server;
     this.id = id;
     this.roomid = null;
     this.socket = socket;
     this.name = 'Anonymous';
-    this.snake = new Snake();
+    this.snake = new Snake(this.server);
 }
 
 module.exports = Client;

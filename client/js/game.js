@@ -65,7 +65,7 @@ Game.prototype = {
 
     /** @private */
     _addEventListeners: function() {
-        var tick = this._tick.bind(this);
+        var tick = this._onTick.bind(this);
         XSS.utils.subscribe('/canvas/update', 'tick', tick);
     },
 
@@ -73,7 +73,7 @@ Game.prototype = {
      * @param {number} diff
      * @private
      */
-    _tick: function(diff) {
+    _onTick: function(diff) {
         this._moveSnakes(diff);
     },
 

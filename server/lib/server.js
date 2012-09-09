@@ -8,15 +8,17 @@ var fs = require('fs'),
     EventHandler = require('./event_handler.js'),
     RoomManager = require('./room_manager.js'),
     Room = require('./room.js'),
-    State = require('./state.js');
+    State = require('./state.js'),
+    Ticker = require('./ticker.js');
 
 /**
  * @constructor
  */
 function Server(config) {
     this.config = config;
-    this.state = new State();
+    this.state = new State(this);
     this.roomManager = new RoomManager(this);
+    this.ticker = new Ticker();
     this.listen();
 }
 
@@ -50,7 +52,7 @@ Server.prototype = {
                 return response.end('Error loading ' + file);
             }
             response.writeHead(200);
-            response.end(data);
+            return response.end(data);
         };
 
         fs.readFile(file, onIndexFileRead);

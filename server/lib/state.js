@@ -4,14 +4,18 @@
 var Client = require('./client.js');
 
 /**
+ * @param {Server} server
  * @constructor
  */
-function State() {
-    /* @typedef {number} */
+function State(server) {
+    this.server = server;
+    /** @typedef {number} */
     this.curid = 0;
-    /* @typedef {Object.<number, {Client}>} */
+    /** @typedef {Object.<number, {Client}>} */
     this.clients = {};
 }
+
+module.exports = State;
 
 State.prototype = {
 
@@ -21,7 +25,7 @@ State.prototype = {
      */
     addClient: function(socket) {
         var id = ++this.curid;
-        this.clients[id] = new Client(id, socket);
+        this.clients[id] = new Client(this.server, id, socket);
         return this.clients[id];
     },
 
@@ -33,5 +37,3 @@ State.prototype = {
     }
 
 };
-
-module.exports = State;
