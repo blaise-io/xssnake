@@ -30,7 +30,7 @@ Snake.prototype = {
      * @param {number} x
      * @param {number} y
      * @param {number} direction
-     * @return {Boolean}
+     * @return {boolean}
      */
     update: function(x, y, direction) {
         // TODO Validate user input
