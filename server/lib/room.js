@@ -1,6 +1,8 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
+var Level = require('./level.js'),
+    Snake = require('./snake.js');
 
 /**
  * @param {Server} server
@@ -16,6 +18,8 @@ function Room(server, id, filter) {
     this.id = id;
     this.clients = [];
     this.inprogress = false;
+
+    this.apples = [];
 
     // Sanitize user input
     capacity = parseInt(filter.capacity, 10);
@@ -109,18 +113,41 @@ Room.prototype = {
     },
 
     start: function() {
-        var names = this.names(),
-            level = 0;
-        for (var i = 0, m = this.clients.length; i < m; i++) {
-
-            this.clients[i].start(i, level);
-            this.clients[i].emit('/c/start', {
-                level   : level,
-                index   : i,
-                names   : names,
-                capacity: this.capacity
-            });
-        }
+        this.levelID = 2;
+        this.level = new Level(this.server, this.levelID);
+        this._setupClients();
         this.inprogress = true;
+    },
+
+    respawnApple: function() {
+        this.apple = this.level.getRandomOpenTile();
+        this.emit('/c/apple', [0, this.apple]);
+    },
+
+    _setupClients: function() {
+        var names = this.names();
+        this.apple = this.level.getRandomOpenTile();
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            this._spawnClientSnake(i);
+            this._emitGameStart(i, names);
+        }
+    },
+
+    _spawnClientSnake: function(index) {
+        var spawn, direction, level = this.level;
+        spawn = level.getSpawn(index);
+        direction = level.getSpawnDirection(index);
+        this.clients[index].snake = new Snake(this, index, spawn, direction);
+    },
+
+    _emitGameStart: function(index, names) {
+        this.clients[index].emit('/c/start', {
+            level   : this.levelID,
+            apple   : this.apple,
+            capacity: this.capacity,
+            index   : index,
+            names   : names
+        });
     }
+
 };

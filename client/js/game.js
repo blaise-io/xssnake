@@ -14,11 +14,10 @@ function Game(data) {
     this.world = new World(data['level']);
     this.world.addToEntities();
 
-    this.snakeInc = 0;
+    this.curid = 0;
 
     this.snakes = this.spawnSnakes(data);
-
-    this.apples = [];
+    this.apples = [new Apple(data['apple'][0], data['apple'][1])];
 
     this._addEventListeners();
 }
@@ -32,7 +31,7 @@ Game.prototype = {
             player = this.world.getSpawn(i);
             direction = this.world.getSpawnDirection(i);
 
-            snake = new Snake(++this.snakeInc, player[0], player[1], direction);
+            snake = new Snake(++this.curid, player[0], player[1], direction);
             snake.addToEntities();
 
             if (i === data['index']) {
@@ -44,23 +43,6 @@ Game.prototype = {
         }
 
         return snakes;
-    },
-
-    /**
-     * @return {Apple}
-     */
-    spawnApple: function() {
-        var apple, tile = this.world.getRandomOpenTile();
-        apple = new Apple(tile[0], tile[1]);
-        apple.addToEntities();
-        return apple;
-    },
-
-    /**
-     * @param {number} index
-     */
-    respawnApple: function(index) {
-        this.apples[index] = this.spawnApple();
     },
 
     /** @private */
@@ -148,11 +130,10 @@ Game.prototype = {
         else {
             snake.move(position);
             index = this._getAppleAtPosition(position);
-            if (-1 !== index) {
-                this.apples[index].eat();
-                this.respawnApple(index);
-                snake.size += 1;
-            }
+//            if (-1 !== index) {
+//                this.apples[index].eat();
+//                snake.size += 1;
+//            }
         }
     }
 

@@ -18,13 +18,10 @@ function Apple(x, y) {
     };
 
     this.entity = XSS.drawables.getApple(this.px.x, this.px.y);
+    XSS.effects.blink('apple', this.entity, 240);
 }
 
 Apple.prototype = {
-
-    addToEntities: function() {
-        XSS.effects.blink('apple', this.entity, 240);
-    },
 
     showNom: function() {
         var text, entity, random, nom,

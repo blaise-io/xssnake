@@ -55,8 +55,8 @@ window.onload = function() {
     XSS.on        = XSS.utils.addListener;
     XSS.off       = XSS.utils.removeListener;
 
-//    // Init stages
-//    // XSS.stages.init();
+//    Init stages
+//    XSS.stages.init();
 
 //    XSS.game = new Game();
 

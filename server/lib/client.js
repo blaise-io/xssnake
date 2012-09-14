@@ -1,8 +1,6 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-var Snake = require('./snake.js');
-
 /**
  * @constructor
  * @param {Server} server
@@ -15,6 +13,7 @@ function Client (server, id, socket) {
     this.roomid = null;
     this.socket = socket;
     this.name = 'Anonymous';
+    this.snake = null;
 }
 
 module.exports = Client;
@@ -28,10 +27,6 @@ Client.prototype = {
      */
     emit: function(name, data) {
         this.socket.emit(name, data);
-    },
-
-    start: function(index, level) {
-        this.snake = new Snake(this.server, index, level);
     }
 
 };

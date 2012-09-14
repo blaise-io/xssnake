@@ -57,7 +57,7 @@ Snake.prototype = {
     /**
      * @return {Array.<number>}
      */
-    getHead: function() {
+    head: function() {
         return this.parts[this.parts.length - 1];
     },
 
@@ -66,7 +66,7 @@ Snake.prototype = {
      * @return {boolean}
      */
     isHead: function(head) {
-        var thisHead = this.getHead();
+        var thisHead = this.head();
         return (thisHead[0] === head[0] && thisHead[1] === head[1]);
     },
 
@@ -83,14 +83,14 @@ Snake.prototype = {
      * @return {Array.<number>}
      */
     getNextPosition: function() {
-        var shift, head = this.getHead();
+        var shift, head = this.head();
         this._handleChangeRequests();
         shift = this._directionToShift(this.direction);
         return [head[0] + shift[0], head[1] + shift[1]];
     },
 
     emitState: function(direction) {
-        XSS.socket.emit('/s/up', [this.getHead(), direction]);
+        XSS.socket.emit('/s/up', [this.parts, direction]);
     },
 
     trim: function() {

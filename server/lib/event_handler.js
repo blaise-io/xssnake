@@ -59,7 +59,7 @@ EventHandler.prototype = {
             var snake, room;
 
             snake = this.client.snake;
-            snake.update(data[0], data[1]);
+            snake.update(room, data[0], data[1]);
 
             room = this.server.roomManager.get(this.client.roomid);
             room.broadcast('/c/up', {

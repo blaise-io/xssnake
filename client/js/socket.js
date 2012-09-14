@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Client, Game, io*/
+/*globals XSS, Client, Game, Apple, io*/
 
 'use strict';
 
@@ -56,6 +56,17 @@ Socket.prototype = {
             snake = XSS.game.snakes[data['index']];
             snake.parts = data['snake'][0];
             snake.direction =  data['snake'][1];
+        }.bind(this));
+
+        this.socket.on('/c/nom', function(data) {
+            var snake, index = data[0], size = data[1];
+            snake = XSS.game.snakes[index];
+            snake.size = size;
+        }.bind(this));
+
+        this.socket.on('/c/apple', function(data) {
+            var index = data[0], location = data[1];
+            XSS.game.apples[index] = new Apple(location[0], location[1]);
         }.bind(this));
     },
 
