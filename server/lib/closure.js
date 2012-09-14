@@ -11,6 +11,7 @@ var fs = require('fs'),
 
 var _header = '';
 var _code = '';
+var _externs = '';
 
 var addFiles = function() {
     for (var i = 0, m = arguments.length; i < m; i++) {
@@ -22,10 +23,15 @@ var replace = function(string, haycourse) {
     _code = _code.replace(string, haycourse);
 };
 
+var externs = function(externs) {
+    _externs = externs;
+};
+
 // https://developers.google.com/closure/compiler/docs/api-ref
 var getCompilerConfigDefaults = function() {
     return {
         js_code          : _code,
+        js_externs       : _externs,
         warning_level    : 'VERBOSE',
         language         : 'ECMASCRIPT5_STRICT',
         compilation_level: 'ADVANCED_OPTIMIZATIONS',
@@ -154,6 +160,7 @@ var writeOutputTofile = function(file, code) {
 
 module.exports = {
     replace : replace,
+    externs : externs,
     header  : header,
     addFiles: addFiles,
     compile : compile

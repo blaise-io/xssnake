@@ -5,31 +5,17 @@
 
 /**
  * Client-Server communication
- * @param callback {function(Socket)}
+ * @param callback {function({Socket})}
  * @constructor
  */
 function Socket(callback) {
-    this.host = XSS.config.server.host;
-    this.script = XSS.config.server.socketIOScript;
-    this.connect(callback);
+    XSS.utils.loadScript(XSS.config.server.socketIOScript, function() {
+        this.socket = io.connect(XSS.config.server.host);
+        this._addEventListeners(callback);
+    }.bind(this));
 }
 
 Socket.prototype = {
-
-    connect: function(callback) {
-        XSS.utils.loadScript(this.script, function() {
-            this.socket = this.getSocket(this.host);
-            this._addEventListeners(callback);
-        }.bind(this));
-    },
-
-    /**
-     * @param {string} host
-     * @return {{on: function(string, function(*)) }}
-     */
-    getSocket: function(host) {
-        return io.connect(host);
-    },
 
     /**
      * @param callback {function(Socket)}

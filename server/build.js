@@ -39,6 +39,10 @@ closure.addFiles(
     home + 'client/js/game.js'
 );
 
+closure.externs('var io={' +
+    '"connect":function(){},' +
+    '"emit":function(){},' +
+    '"on":function(){}};');
 closure.replace(/'use strict';/g, '');
 closure.header(header);
 closure.compile(file);
