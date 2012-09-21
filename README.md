@@ -15,7 +15,7 @@ Internet Explorer 9 and up.
 
 Initial Setup
 ---
- * Download XSSNAKE
+ * Clone or download XSSNAKE from https://github.com/BlaiseKal/XSSNAKE.git
  * Create a configuration file by renaming `server/shared/config.example.js` to
    `server/shared/config.js`
  * Adjust the contents of `server/shared/config.js` to match your environment
@@ -54,4 +54,4 @@ If you adjusted one of the level images, you have to rebuild
   `npm install png-js` in the build dir
  * Run `node build/parse_levels.js`
 
-More info on level images can be found in `source/level_images/README.md`
+More info on level images can be found in `source/levels/README.md`.
