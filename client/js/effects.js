@@ -41,8 +41,8 @@ Effects.prototype = {
     delay: function(callback, delay) {
         var updater, progress = 0, ns = ++this.nsInc;
 
-        updater = function(diff) {
-            progress += diff;
+        updater = function(delta) {
+            progress += delta;
             if (progress >= delay) {
                 callback();
                 XSS.utils.unsubscribe(this.topic, ns);
@@ -70,11 +70,8 @@ Effects.prototype = {
 
         XSS.ents[ns] = entity.clone().dynamic(true);
 
-        updater = function(diff) {
-            if (diff > 100) {
-                return;
-            }
-            progress += diff;
+        updater = function(delta) {
+            progress += delta;
             if (progress > speed) {
                 progress -= speed;
                 show = !show;
@@ -107,8 +104,8 @@ Effects.prototype = {
 
         XSS.ents[ns] = entity.clone().dynamic(true);
 
-        updater = function(diff) {
-            progress += diff;
+        updater = function(delta) {
+            progress += delta;
             if (progress > time) {
                 XSS.utils.unsubscribe(this.topic, ns);
                 delete XSS.ents[ns];
@@ -144,11 +141,8 @@ Effects.prototype = {
 
         XSS.ents[ns] = entity.clone().dynamic(true);
 
-        updater = function(diff) {
-            if (diff > 100) {
-                return;
-            }
-            progress += diff;
+        updater = function(delta) {
+            progress += delta;
             if (progress < duration) {
                 distance = start - ((start - end) * (progress / duration));
                 distance = Math.round(distance);

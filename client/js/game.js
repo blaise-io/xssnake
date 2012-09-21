@@ -52,11 +52,11 @@ Game.prototype = {
     },
 
     /**
-     * @param {number} diff
+     * @param {number} delta
      * @private
      */
-    _onTick: function(diff) {
-        this._moveSnakes(diff);
+    _onTick: function(delta) {
+        this._moveSnakes(delta);
     },
 
     /**
@@ -104,17 +104,17 @@ Game.prototype = {
     },
 
     /**
-     * @param {number} diff
+     * @param {number} delta
      * @private
      */
-    _moveSnakes: function(diff) {
+    _moveSnakes: function(delta) {
         for (var i = 0, m = this.snakes.length; i < m; ++i) {
             var snake = this.snakes[i];
             if (snake.snakeProgress >= snake.speed && !snake.crashed) {
                 this._moveSnake(snake);
                 snake.snakeProgress -= snake.speed;
             }
-            snake.snakeProgress += diff;
+            snake.snakeProgress += delta;
         }
     },
 

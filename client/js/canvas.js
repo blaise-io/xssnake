@@ -167,10 +167,10 @@ Canvas.prototype = {
 
     /** @private */
     _paint: function() {
-        var fps, now, diff;
+        var fps, now, delta;
 
         now = +new Date();
-        diff = now - this.time;
+        delta = now - this.time;
 
         if (!XSS.error) {
             // Make appointment for next paint
@@ -178,12 +178,12 @@ Canvas.prototype = {
         }
 
         // FPS
-        fps = Math.round(1000 / diff);
+        fps = Math.round(1000 / delta);
         this.time = now;
         document.title = 'XXSNAKE ' + fps;
 
         // Last call for animations
-        XSS.utils.publish('/canvas/update', diff);
+        XSS.utils.publish('/canvas/update', delta);
 
         // Clear the canvas
         this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
