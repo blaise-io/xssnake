@@ -2,18 +2,22 @@ XSSNAKE
 ===
 **Note: XSSNAKE is in an early stage of development.**
 
-XSSNAKE is an online multiplayer HTML5 game where the winner of the game is
+XSSNAKE is an HTML5 online multiplayer game where the winner of the game is
 allowed to execute a JavaScript file in the opponent's browser.
 
 XSSNAKE is written in JavaScript. It uses Node.js for the server, Socket.IO for
 client–server communication, and Google Closure Compiler with Advanced
 compilation to compile to compacter and faster code.
 
+XSSNAKE does not require browser plugins to work, but HTML5's Canvas must be
+supported in order to work. Works in all modern browsers, including
+Internet Explorer 9 and up.
+
 Initial Setup
 ---
  * Download and install [node.js](http://nodejs.org/)
- * Create a configuration file at `shared/config.js` (rename and adjust
-   `shared/config.example.js` to match your environment)
+ * Create a configuration file by renaming `shared/config.example.js` to
+   `shared/config.js` and editing its contents to match your environment
  * Install [socket.io](https://npmjs.org/package/socket.io) by running
    `npm install socket.io` in the server dir
 
@@ -23,12 +27,12 @@ Production
  * Make sure the `www` dir is accessible by browsers
  * Make sure the `server` and `shared` dirs are accessible by node.js
  * Run the game server: `node server/start.js`
- * Access the game by opening the `www` dir at its public address
+ * Access the game by navigating your browser to the `www` dir's public address
 
 Developing and Testing
 ---
  * Run the game server: `node server/start.js`
- * Access the game by opening `source/source.html`
+ * Access the game by opening `source/source.html` in your browser
 
 While testing, it can be useful to automatically reload the server when you
 change something. You can do this by installing supervisor: `npm install
@@ -41,9 +45,10 @@ browser will not connect to the back-end due to an Access-Control restriction.
 
 Creating/Updating Levels
 ---
-If you adjusted one of the level images, you have to re-build
-`shared/parse_levels.js`.
+If you adjusted one of the level images, you have to rebuild `shared/levels.js`:
 
- * [`npm install png-js`](https://npmjs.org/package/png-js) in the build dir
+ * Install [png-js](https://npmjs.org/package/png-js) by running
+  `npm install png-js` in the build dir
  * Run `node build/parse_levels.js`
- * More info on level images can be found in `source/level_images/README.md`
+
+More info on level images can be found in `source/level_images/README.md`
