@@ -10,8 +10,8 @@
         server: {
             host          : 'http://localhost:8080',
             socketIOScript: 'http://localhost:8080/socket.io/socket.io.js',
-            indexFile     : '../index.html',
-            sharedDir     : '../../shared/',
+            indexFile     : '../source.html',
+            sharedDir     : 'shared/',
             tick          : 50
         },
         snake: {

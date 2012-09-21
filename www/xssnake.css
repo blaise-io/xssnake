@@ -20,7 +20,7 @@ html {
 }
 
 body {
-    background: url('../source/img/pattern.png') repeat 0 0;
+    background: url('img/pattern.png') repeat 0 0;
     box-shadow: inset 0 2px 2px rgba(0, 0, 0, .15);
 }
 

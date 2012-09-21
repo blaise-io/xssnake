@@ -7,7 +7,7 @@ var fs = require('fs'),
 
 var levelTplFile = __dirname + '/../source/templates/levels.js.tpl';
 var levelImagesDir = __dirname + '/../source/levels/';
-var jsOutputFile = __dirname + '/../shared/levels.js';
+var jsOutputFile = __dirname + '/../server/shared/levels.js';
 
 var files = fs.readdirSync(levelImagesDir);
 

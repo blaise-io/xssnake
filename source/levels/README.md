@@ -2,8 +2,8 @@ Creating/modifying level images
 ===
 
 These images contain the XSSNAKE's levels. Generate level data from these images
-by running `node build/parse_levels.js`, which will update `shared/levels.js`.
-The level data is used by both client and server.
+by running `node build/parse_levels.js`, which will update
+`server/shared/levels.js`.
 
 Because of compatibility with the [png-js](https://npmjs.org/package/png-js)
 library, PNGs must have **24bit RGB+Alpha** as the Color Type.

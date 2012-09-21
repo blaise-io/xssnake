@@ -21,8 +21,8 @@ header = util.format(
 
 closure.addFiles(
     home + 'source/js/init.js',
-    home + 'shared/config.js',
-    home + 'shared/levels.js',
+    home + 'server/shared/config.js',
+    home + 'server/shared/levels.js',
     home + 'source/js/utils.js',
     home + 'source/js/pixelentity.js',
     home + 'source/js/canvas.js',
