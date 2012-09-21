@@ -20,7 +20,7 @@
         }
     };
 
-    if (XSS) {
+    if (typeof XSS !== 'undefined') {
         XSS.config = config; // Client-side
     } else {
         module.exports = config; // Server-side

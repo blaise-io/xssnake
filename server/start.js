@@ -1,7 +1,7 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-// XSSNAKE# supervisor -w server/ -n exit server/game.js
+// XSSNAKE# supervisor -w server/ -n exit server/start.js
 
 var config, Server;
 

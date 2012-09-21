@@ -4,7 +4,7 @@
 'use strict';
 
 // Generated on %DATE%
-// Generate file: `node server/levels.js`
+// Generate file: `node server/parse_levels.js`
 // Template file: levels.tpl
 (function ClientServerSharedObject() {
 

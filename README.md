@@ -1,42 +1,49 @@
 XSSNAKE
 ===
+**Note: XSSNAKE is in an early stage of development.**
 
-*In an early stage of development, does not work yet.*
+XSSNAKE is an online multiplayer HTML5 game where the winner of the game is
+allowed to execute a JavaScript file in the opponent's browser.
 
-XSSNAKE will be an online multiplayer game where the winner of the game is
-allowed to execute Javascript in the opponent's browser.
+XSSNAKE is written in JavaScript. It uses Node.js for the server, Socket.IO for
+client–server communication, and Google Closure Compiler with Advanced
+compilation to compile to compacter and faster code.
 
-XSSNAKE is written entirely in Javascript. It uses Node.js for the server,
-Socket.IO for cross-browser client–server communication, and Google Closure
-Compiler with Advanced compilation to compile to compacter and faster code.
-
-
-Initial Setup / Dependencies
+Initial Setup
 ---
+ * Download and install [node.js](http://nodejs.org/)
+ * Create a configuration file at `shared/config.js` (rename and adjust
+   `shared/config.example.js` to match your environment)
+ * Install [socket.io](https://npmjs.org/package/socket.io) by running
+   `npm install socket.io` in the server dir
 
- * Download and install [Node.js](http://nodejs.org/)
- * `npm install` these packages:
-   [`socket.io`](https://npmjs.org/package/socket.io),
-   [`png-js`](https://npmjs.org/package/png-js).
-
-Run
+Production
 ---
+ * Compile the source: `node build/compile_source.js`
+ * Make sure the `www` dir is accessible by browsers
+ * Make sure the `server` and `shared` dirs are accessible by node.js
+ * Run the game server: `node server/start.js`
+ * Access the game by opening the `www` dir at its public address
 
-**Development**
-
- * Create a configuration file at `shared/config.js` (an example can be found at
-   `shared/config.example.js`)
- * Run the game server: `node server/game.js`
- * Open index.html to test
-
-**Production (compiled source)**
-
- * Create a configuration file at `shared/config.js`.
- * Compile the source: `node server/build.js`
- * Run the game server: `node server/game.js`
- * Open compiled.html to play
-
-Generating level data
+Developing and Testing
 ---
-If you adjusted one of the level images, you will have to re-build
-`shared/levels.js`. See the readme at `data/level_images/README.md`.
+ * Run the game server: `node server/start.js`
+ * Access the game by opening `source/source.html`
+
+While testing, it can be useful to automatically reload the server when you
+change something. You can do this by installing supervisor: `npm install
+supervisor` in the server dir. Run it using:
+ `supervisor --watch server,shared -n exit server/start.js`.
+
+If you open `source.html` from a local disk in Chrome (`file://...`), you
+have to start the browser with the `--disable-web-security` parameter, or the
+browser will not connect to the back-end due to an Access-Control restriction.
+
+Creating/Updating Levels
+---
+If you adjusted one of the level images, you have to re-build
+`shared/parse_levels.js`.
+
+ * [`npm install png-js`](https://npmjs.org/package/png-js) in the build dir
+ * Run `node build/parse_levels.js`
+ * More info on level images can be found in `source/level_images/README.md`

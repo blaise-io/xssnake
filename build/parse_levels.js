@@ -3,11 +3,11 @@
 
 var fs = require('fs'),
     util = require('util'),
-    LevelImage = require('./levels/level_image.js');
+    LevelImage = require('./lib/level_image.js');
 
-var levelTplFile = __dirname + '/../shared/levels.tpl';
+var levelTplFile = __dirname + '/../source/templates/levels.js.tpl';
+var levelImagesDir = __dirname + '/../source/levels/';
 var jsOutputFile = __dirname + '/../shared/levels.js';
-var levelImagesDir = __dirname + '/../data/level_images/';
 
 var files = fs.readdirSync(levelImagesDir);
 
@@ -46,6 +46,9 @@ function setlevel(file, index) {
             template = template.replace('%DATE%', new Date().toUTCString());
 
             fs.writeFile(jsOutputFile, template);
+
+            jsOutputFile = fs.realpathSync(jsOutputFile);
+            console.log('\n' + (1+index) + ' levels saved to ' + jsOutputFile);
         }
     }));
 }

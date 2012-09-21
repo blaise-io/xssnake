@@ -11,6 +11,7 @@ html, body {
 }
 
 html {
+    background: #3a8296;
     background: -moz-linear-gradient(top, #3a8296, #5d9bba);
     background: -webkit-linear-gradient(top, #3a8296, #5d9bba);
     background: -o-linear-gradient(top, #3a8296, #5d9bba);
@@ -19,7 +20,7 @@ html {
 }
 
 body {
-    background: url('../img/pattern.png') repeat 0 0;
+    background: url('../source/img/pattern.png') repeat 0 0;
     box-shadow: inset 0 2px 2px rgba(0, 0, 0, .15);
 }
 
@@ -32,7 +33,6 @@ input {
     height: 100%;
     opacity: 0;
     z-index: 1;
-    cursor: default;
-    /*cursor: none;*/
     border: none;
+    cursor: none;
 }

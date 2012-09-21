@@ -7,5 +7,5 @@ desktop.ini
 
 # Build, install or configure these files yourself. See README.md
 node_modules
-compiled.js
+xssnake.js
 config.js

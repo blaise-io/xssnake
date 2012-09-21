@@ -56,8 +56,6 @@ var compile = function(file, compilerConfigUser) {
         compilerConfig = getCompilerConfigDefaults(),
         compilerEndpoint = getCompilerEndpoint();
 
-    file = fs.realpathSync(file);
-
     for (var k in compilerConfigUser) {
         if (compilerConfigUser.hasOwnProperty(k)) {
             compilerConfig[k] = compilerConfigUser[k];
@@ -139,7 +137,7 @@ var showCompilerMessages = function(json) {
         console.info('      Original', kb(stats.originalSize));
         console.info('    Compressed', kb(stats.compressedSize));
         console.info('     + GZipped', kb(stats.compressedGzipSize));
-        console.info('        Shaved', shaved + '%');
+        console.info('       Reduced', shaved + '%');
         console.info();
     }
 };
@@ -148,6 +146,7 @@ var writeOutputTofile = function(file, code) {
     if (!code) {
         console.error('No code to save.');
     } else {
+        file = fs.realpathSync(file);
         fs.writeFile(file, _header + code, function(err) {
             if (!err) {
                 console.info('Compiled code saved to', file);
