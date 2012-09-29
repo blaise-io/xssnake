@@ -56,12 +56,13 @@ EventHandler.prototype = {
      */
     update: function(data) {
         if (this.client.roomid) {
-            var snake, room;
+            var room, snake;
+
+            room = this.server.roomManager.get(this.client.roomid);
 
             snake = this.client.snake;
             snake.update(room, data[0], data[1]);
 
-            room = this.server.roomManager.get(this.client.roomid);
             room.broadcast('/c/up', {
                 index: room.indexOf(this.client),
                 snake: snake.serialize()

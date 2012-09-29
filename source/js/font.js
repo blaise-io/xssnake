@@ -57,7 +57,11 @@ Font.prototype = {
         return pixels;
     },
 
-    getLength: function(str) {
+    /**
+     * @param {string} str
+     * @return {number}
+     */
+    width: function(str) {
         var len = 0;
         str = this.replaceMissingCharacters(str);
         for (var i = 0, m = str.length; i < m; i++) {

@@ -8,31 +8,38 @@
  * @constructor
  */
 function Game(data) {
-    XSS.ents.border = XSS.drawables.getOuterBorder();
-    XSS.ents.levelborder = XSS.drawables.getLevelBorder();
+    XSS.ents.border = XSS.drawables.outerBorder();
+    XSS.ents.levelborder = XSS.drawables.levelBorder();
 
     this.world = new World(data['level']);
     this.world.addToEntities();
 
     this.curid = 0;
 
+    /** @type {Array.<Snake>} */
     this.snakes = this.spawnSnakes(data);
+
+    /** @type {Array.<Apple>} */
     this.apples = [new Apple(data['apple'][0], data['apple'][1])];
 
-    this._addEventListeners();
+    this._countDown();
 }
 
 Game.prototype = {
 
     spawnSnakes: function(data) {
-        var snakes = [], player, direction, snake;
+        var snakes = [];
 
         for (var i = 0, m = data['names'].length; i < m; i++) {
-            player = this.world.getSpawn(i);
-            direction = this.world.getSpawnDirection(i);
+            var loc, direction, name, snake;
 
-            snake = new Snake(++this.curid, player[0], player[1], direction);
+            loc = this.world.getSpawn(i);
+            direction = this.world.getSpawnDirection(i);
+            name = data['names'][i];
+
+            snake = new Snake(++this.curid, loc[0], loc[1], direction, name);
             snake.addToEntities();
+            snake.showName();
 
             if (i === data['index']) {
                 snake.local = true;
@@ -45,8 +52,17 @@ Game.prototype = {
         return snakes;
     },
 
+    snakeSize: function(index, size) {
+        XSS.game.snakes[index].size = size;
+    },
+
+    _countDown: function() {
+        // TODO: Move to back-end
+        this._startGame();
+    },
+
     /** @private */
-    _addEventListeners: function() {
+    _startGame: function() {
         var tick = this._onTick.bind(this);
         XSS.utils.subscribe('/canvas/update', 'tick', tick);
     },
@@ -119,22 +135,25 @@ Game.prototype = {
     },
 
     _moveSnake: function(snake) {
-        var index, position;
+        var position = snake.getNextPosition();
+        snake.move(position); // Multiplayer
 
-        position = snake.getNextPosition();
-
-        if (this._isCrash(snake, position)) {
-            snake.crash();
-        }
-
-        else {
-            snake.move(position);
-            index = this._getAppleAtPosition(position);
+//        var index, position;
+//
+//        position = snake.getNextPosition();
+//
+//        if (this._isCrash(snake, position)) {
+//            snake.crash();
+//        }
+//
+//        else {
+//            snake.move(position);
+//            index = this._getAppleAtPosition(position);
 //            if (-1 !== index) {
 //                this.apples[index].eat();
 //                snake.size += 1;
 //            }
-        }
+//        }
     }
 
 };

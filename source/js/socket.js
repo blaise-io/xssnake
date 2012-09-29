@@ -10,6 +10,7 @@
  */
 function Socket(callback) {
     XSS.utils.loadScript(XSS.config.server.socketIOScript, function() {
+        /** @type {EventEmitter} */
         this.socket = io.connect(XSS.config.server.host);
         this._addEventListeners(callback);
     }.bind(this));
@@ -45,9 +46,15 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on('/c/nom', function(data) {
-            var snake, index = data[0], size = data[1];
-            snake = XSS.game.snakes[index];
-            snake.size = size;
+            XSS.game.snakeSize(data[0], data[1]);
+            XSS.game.apples[data[2]].eat();
+        }.bind(this));
+
+        this.socket.on('/c/crash', function(data) {
+            var snake;
+            snake = XSS.game.snakes[data[0]];
+            snake.parts = data[1];
+            snake.crash();
         }.bind(this));
 
         this.socket.on('/c/apple', function(data) {

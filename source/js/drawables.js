@@ -13,13 +13,13 @@ function Drawables() {
 
 Drawables.prototype = {
 
-    getLine: function() {
+    line: function() {
         return new PixelEntity(
             this._line.apply(this, arguments)
         );
     },
 
-    getApple: function(x, y) {
+    apple: function(x, y) {
         return new PixelEntity(
             this._line(x + 1, y + 0, x + 2, y + 0),
             this._line(x + 0, y + 1, x + 3, y + 1),
@@ -28,8 +28,40 @@ Drawables.prototype = {
         );
     },
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} side
+     * @param {string} text
+     * @param {number=} padding
+     */
+    textAt: function(x, y, side, text, padding) {
+        var width, pixels;
+        padding = padding || 2;
+        switch (side) {
+            case 0:
+                text = '← ' + text;
+                width = XSS.font.width(text) + padding;
+                pixels = XSS.font.draw(x - width, y, text);
+                break;
+            case 1:
+                text = '↑ ' + text;
+                pixels = XSS.font.draw(x, y - 6 - padding, text);
+                break;
+            case 2:
+                text = text + ' →';
+                pixels = XSS.font.draw(x + padding, y, text);
+                break;
+            case 3:
+                text = text + ' ↓';
+                pixels = XSS.font.draw(x, y + padding, text);
+                break;
+        }
+        return new PixelEntity(pixels);
+    },
+
     // Background before game starts
-    getOuterBorder: function() {
+    outerBorder: function() {
         var w = XSS.PIXELS_H - 1,
             h = XSS.PIXELS_V - 1;
 
@@ -49,7 +81,7 @@ Drawables.prototype = {
         );
     },
 
-    getLevelBorder: function() {
+    levelBorder: function() {
         var w = XSS.PIXELS_H - 1,
             h = XSS.PIXELS_V - 1;
 
@@ -75,7 +107,7 @@ Drawables.prototype = {
         );
     },
 
-    getHeader: function(x, y) {
+    header: function(x, y) {
         y = y || 18;
         var welcome = XSS.font.draw(0, 0, '<XSSNAKE>');
         return new PixelEntity(

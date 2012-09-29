@@ -132,7 +132,7 @@ InputStage.prototype = {
 
     setLabel: function(label) {
         this.label = label;
-        this.labelWidth = XSS.font.getLength(label) + this.labelWsp;
+        this.labelWidth = XSS.font.width(label) + this.labelWsp;
     },
 
     getInstruction: function() {
@@ -226,10 +226,10 @@ InputStage.prototype = {
         value = this.getInputvalue();
         valuePixelWidth = value.substr(0, XSS.input.selectionStart);
 
-        crateText = XSS.font.getLength(valuePixelWidth) || -1;
+        crateText = XSS.font.width(valuePixelWidth) || -1;
         caretLeft = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + crateText;
 
-        caret = XSS.drawables.getLine(
+        caret = XSS.drawables.line(
             caretLeft, XSS.MENU_TOP - 1,
             caretLeft, XSS.MENU_TOP + 6
         );
@@ -442,8 +442,8 @@ Menu.prototype = {
     },
 
     setupMenuSkeletton: function() {
-        XSS.ents.border = XSS.drawables.getOuterBorder();
-        XSS.ents.header = XSS.drawables.getHeader(XSS.MENU_LEFT);
+        XSS.ents.border = XSS.drawables.outerBorder();
+        XSS.ents.header = XSS.drawables.header(XSS.MENU_LEFT);
     },
 
     /** @private */

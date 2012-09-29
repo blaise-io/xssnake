@@ -17,7 +17,7 @@ function Apple(x, y) {
         y: this.y * XSS.GAME_TILE + XSS.GAME_TOP
     };
 
-    this.entity = XSS.drawables.getApple(this.px.x, this.px.y);
+    this.entity = XSS.drawables.apple(this.px.x, this.px.y);
     XSS.effects.blink('apple', this.entity, 240);
 }
 
