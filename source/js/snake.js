@@ -9,12 +9,14 @@
  * @param {number} x
  * @param {number} y
  * @param {number} direction
+ * @param {string} name
  * @constructor
  */
-function Snake(id, x, y, direction){
+function Snake(id, x, y, direction, name) {
     this.id = id;
     this.parts = [[x, y]]; // [0] = tail, [n-1] = head
     this.direction = direction;
+    this.name = name;
 
     this.local = false;
     this.crashed = false;
@@ -28,11 +30,25 @@ function Snake(id, x, y, direction){
     this.entity.dynamic(true);
 
     this.entityName = 'snake_' + this.id;
+    this.entityNameName = 'snake_name_' + this.id;
 
     this._snakeTurnRequests = [];
 }
 
 Snake.prototype = {
+
+    showName: function() {
+        var x, y, entity;
+        x = this.parts[0][0] * 4;
+        y = this.parts[0][1] * 4;
+        entity = XSS.drawables.textAt(x, y, this.direction, this.name);
+        XSS.ents[this.entityNameName] = entity;
+
+        // TODO: Add decay to entity
+        window.setTimeout(function() {
+            delete XSS.ents[this.entityNameName];
+        }.bind(this), 2000);
+    },
 
     addControls: function() {
         XSS.on.keydown(this._handleKeys.bind(this));

@@ -1,7 +1,9 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-// TODO: Make a ClientServerSharedObject
+// TODO: Make a ClientServerSharedObject?
+
+var levels = require('../shared/levels.js');
 
 /**
  * Collisions and levels
@@ -9,7 +11,7 @@
  * @param {number} levelID
  */
 function Level(server, levelID) {
-    var levels = require(server.config.server.sharedDir + 'levels.js');
+    this.server = server; // TODO: remove?
     this.level = levels[levelID];
 }
 

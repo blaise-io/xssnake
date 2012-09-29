@@ -38,7 +38,7 @@ Developing and Testing
 
 While testing, it can be useful to automatically reload the server when you
 change something. You can do this by installing supervisor: `npm install
-supervisor` in the server dir. Run it using:
+supervisor -g` in the server dir. Run it using:
  `supervisor --watch server -n exit server/start.js`.
 
 If you open `source.html` from a local disk in Chrome (`file://...`), you

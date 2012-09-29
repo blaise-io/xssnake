@@ -3,7 +3,6 @@
 
 'use strict';
 
-// Copy or rename me to config.js
 (function ClientServerSharedObject() {
 
     var config = {
@@ -11,12 +10,11 @@
             host          : 'http://localhost:8080',
             socketIOScript: 'http://localhost:8080/socket.io/socket.io.js',
             indexFile     : '../source.html',
-            sharedDir     : 'shared/',
             tick          : 50
         },
         snake: {
-            speed: 250,
-            size : 10
+            speed: 150,
+            size : 3
         }
     };
 

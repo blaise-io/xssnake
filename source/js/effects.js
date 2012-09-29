@@ -3,7 +3,10 @@
 
 'use strict';
 
-// TODO: Separate animation - and static effects
+// TODO: Simple animations in PixelEntity (blink, decay)
+// TODO: Swipe as a PixelEntity manipulator function
+// TODO: new PixelManipulation class
+
 
 /**
  * Effects

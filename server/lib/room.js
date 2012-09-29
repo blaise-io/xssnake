@@ -113,7 +113,7 @@ Room.prototype = {
     },
 
     start: function() {
-        this.levelID = 2;
+        this.levelID = 0;
         this.level = new Level(this.server, this.levelID);
         this._setupClients();
         this.inprogress = true;
