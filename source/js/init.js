@@ -65,7 +65,7 @@ window.onload = function() {
             'name'    : window.location.search.substring(1),
             'friendly': true,
             'pub'     : true,
-            'capacity': 2
+            'capacity': 3
         };
         XSS.socket.emit('/s/room', data);
     });

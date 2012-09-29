@@ -38,20 +38,19 @@ Developing and Testing
 
 While testing, it can be useful to automatically reload the server when you
 change something. You can do this by installing supervisor: `npm install
-supervisor` in the server dir. Run it using:
- `supervisor --watch server -n exit server/start.js`.
+supervisor` in the server dir. Run it using
+`supervisor --watch server -n exit server/start.js`.
 
-If you open `source.html` from a local disk in Chrome (`file://...`), you
-have to start the browser with the `--disable-web-security` parameter, or the
-browser will not connect to the back-end due to an Access-Control restriction.
+If you open `source/source.html` from a local disk in Chrome (`file://...`), you
+have to start the browser with the `--disable-web-security` parameter to
+work around an Access-Control restriction.
 
 Creating/Updating Levels
 ---
 If you adjusted one of the level images, you have to rebuild
-`server/shared/levels.js`:
+`server/shared/levels.js`. See instructions below. More info on level images
+can be found in `source/levels/README.md`.
 
- * Install [png-js](https://npmjs.org/package/png-js) by running
-  `npm install png-js` in the build dir
+ * Install [png-js](https://npmjs.org/package/png-js) by running `npm install
+   png-js` in the build dir
  * Run `node build/parse_levels.js`
-
-More info on level images can be found in `source/levels/README.md`.

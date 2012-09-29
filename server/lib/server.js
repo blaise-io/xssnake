@@ -27,10 +27,14 @@ module.exports = Server;
 Server.prototype = {
 
     listen: function() {
-        var app = http.createServer(this._httpRequestHandler.bind(this));
+        var server = http.createServer(this._httpRequestHandler.bind(this));
 
-        this.io = io.listen(app, {log: false});
-        app.listen(8080);
+        this.io = io.listen(server, {log: false});
+        this.io.set('browser client etag', true);
+        this.io.set('browser client gzip', true);
+        this.io.set('browser client minification', true);
+
+        server.listen(8080);
 
         this.io.sockets.on('connection', function(socket) {
             var client = this.state.addClient(socket);
