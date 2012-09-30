@@ -33,6 +33,7 @@ function Snake(id, x, y, direction, name) {
     this.entityNameName = 'snake_name_' + this.id;
 
     this._snakeTurnRequests = [];
+    this._handleKeysBind = this._handleKeys.bind(this);
 }
 
 Snake.prototype = {
@@ -41,7 +42,7 @@ Snake.prototype = {
         var x, y, entity;
         x = this.parts[0][0] * 4;
         y = this.parts[0][1] * 4;
-        entity = XSS.drawables.textAt(x, y, this.direction, this.name);
+        entity = XSS.drawables.textAt(x, y + 1, this.direction, this.name);
         XSS.ents[this.entityNameName] = entity;
 
         // TODO: Add decay to entity
@@ -51,7 +52,7 @@ Snake.prototype = {
     },
 
     addControls: function() {
-        XSS.on.keydown(this._handleKeys.bind(this));
+        XSS.on.keydown(this._handleKeysBind);
     },
 
     addToEntities: function() {
@@ -68,6 +69,9 @@ Snake.prototype = {
 
     crash: function() {
         this.crashed = true;
+        if (this.local) {
+            XSS.off.keydown(this._handleKeysBind);
+        }
     },
 
     /**
@@ -106,7 +110,7 @@ Snake.prototype = {
     },
 
     emitState: function(direction) {
-        XSS.socket.emit('/s/up', [this.parts, direction]);
+        XSS.socket.emit('/server/snake/update', [this.parts, direction]);
     },
 
     trim: function() {

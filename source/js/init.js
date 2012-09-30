@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals Utils, Canvas, Drawables, Effects, Font, Menu, Stages, Socket, Game*/
+/*globals Utils, PublishSubscribe, Canvas, Drawables, Effects, Font, Menu, Stages, Socket */
 
 'use strict';
 
@@ -42,7 +42,7 @@ window.onload = function() {
     XSS.input     = document.createElement('input');
                     XSS.doc.appendChild(XSS.input);
 
-    XSS.utils     = new Utils();
+    XSS.pubsub    = new PublishSubscribe();
     XSS.canvas    = new Canvas();
     XSS.drawables = new Drawables();
     XSS.effects   = new Effects();
@@ -52,22 +52,17 @@ window.onload = function() {
 
     // Shortcuts
     XSS.ents      = XSS.canvas.entities;
-    XSS.on        = XSS.utils.addListener;
-    XSS.off       = XSS.utils.removeListener;
-
-//    Init stages
-//    XSS.stages.init();
-
-//    XSS.game = new Game();
+    XSS.on        = Utils.addListener;
+    XSS.off       = Utils.removeListener;
 
     XSS.socket = new Socket(function() {
         var data = {
-            'name'    : window.location.search.substring(1),
+            'name'    : window.location.search.substring(1) || 'Anon',
             'friendly': true,
             'pub'     : true,
-            'capacity': 3
+            'capacity': 2
         };
-        XSS.socket.emit('/s/room', data);
+        XSS.socket.emit('/server/room/match', data);
     });
 
 };

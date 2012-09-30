@@ -7,10 +7,10 @@
  */
 
 var header,
-    util = require('util'),
+    util    = require('util'),
     closure = require('./lib/closure.js'),
-    home = __dirname + '/../',
-    file = home + 'www/xssnake.js';
+    home    = __dirname + '/../',
+    file    = home + 'www/xssnake.js';
 
 header = util.format(
     '// © %d Blaise Kal\n' +
@@ -21,12 +21,15 @@ header = util.format(
 
 closure.addFiles(
     home + 'source/js/init.js',
-    home + 'server/shared/config.js',
-    home + 'server/shared/levels.js',
     home + 'source/js/utils.js',
+    home + 'server/shared/config.js',
+    home + 'server/shared/sugar.js',
+    home + 'server/shared/levels.js',
+    home + 'server/shared/level.js',
     home + 'source/js/pixelentity.js',
-    home + 'source/js/canvas.js',
+    home + 'source/js/pubsub.js',
     home + 'source/js/drawables.js',
+    home + 'source/js/canvas.js',
     home + 'source/js/effects.js',
     home + 'source/js/font.js',
     home + 'source/js/stage_classes.js',
@@ -35,7 +38,7 @@ closure.addFiles(
     home + 'source/js/client.js',
     home + 'source/js/snake.js',
     home + 'source/js/apple.js',
-    home + 'source/js/world.js',
+    home + 'source/js/client_level.js',
     home + 'source/js/game.js'
 );
 

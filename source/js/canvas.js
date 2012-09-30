@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, PixelEntity*/
+/*globals XSS, PixelEntity, Utils*/
 
 'use strict';
 
@@ -183,7 +183,7 @@ Canvas.prototype = {
         document.title = 'XXSNAKE ' + fps;
 
         // Last call for animations
-        XSS.utils.publish('/canvas/update', delta);
+        XSS.pubsub.publish('/canvas/update', delta);
 
         // Clear the canvas
         this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);

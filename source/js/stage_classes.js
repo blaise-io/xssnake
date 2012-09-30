@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, PixelEntity, Socket*/
+/*globals XSS, PixelEntity, Socket, Utils*/
 
 'use strict';
 
@@ -236,7 +236,7 @@ InputStage.prototype = {
 
         XSS.effects.blinkStop('caret');
         XSS.effects.blink('caret', caret);
-        XSS.menu._refreshStage();
+        XSS.menu.refreshStage();
     }
 
 };
@@ -325,11 +325,11 @@ SelectStage.prototype = {
                 break;
             case XSS.KEY_UP:
                 XSS.stages.choices[this.name] -= 1;
-                XSS.menu._refreshStage();
+                XSS.menu.refreshStage();
                 break;
             case XSS.KEY_DOWN:
                 XSS.stages.choices[this.name] += 1;
-                XSS.menu._refreshStage();
+                XSS.menu.refreshStage();
         }
     },
 
@@ -368,7 +368,7 @@ GameStage.prototype = {
         choices = XSS.stages.getNamedChoices();
 
         XSS.socket = new Socket(function() {
-            XSS.socket.emit('/s/room/get', choices);
+            XSS.socket.emit('/server/room/match/get', choices);
         });
     },
 
@@ -446,12 +446,11 @@ Menu.prototype = {
         XSS.ents.header = XSS.drawables.header(XSS.MENU_LEFT);
     },
 
-    /** @private */
     updateStage: function(stage) {
         XSS.ents.stage = stage.getEntity();
     },
-    /** @private */
-    _refreshStage: function() {
+
+    refreshStage: function() {
         this.updateStage(this.stages[XSS.stages.current]);
     },
 
@@ -468,7 +467,7 @@ Menu.prototype = {
             newStagePixelsAnim = {start: width, end: 0};
         }
 
-        XSS.utils.extend(newStagePixelsAnim, {callback: callback});
+        Utils.extend(newStagePixelsAnim, {callback: callback});
 
         XSS.effects.swipe('oldstage', oldStagePixels, oldStagePixelsAnim);
         XSS.effects.swipe('newstage', newStagePixels, newStagePixelsAnim);

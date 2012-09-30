@@ -12,12 +12,12 @@ function EventHandler(server, client, socket) {
     this.client = client;
     this.socket = socket;
 
-    client.emit('/c/connect', client.id);
+    client.emit('/client/connect', client.id);
 
     socket.on('disconnect', this.disconnect.bind(this));
-    socket.on('/s/room', this.getRoom.bind(this));
-    socket.on('/s/chat', this.chat.bind(this));
-    socket.on('/s/up', this.update.bind(this));
+    socket.on('/server/room/match', this.getRoom.bind(this));
+    socket.on('/server/chat/message', this.chat.bind(this));
+    socket.on('/server/snake/update', this.update.bind(this));
 }
 
 module.exports = EventHandler;
@@ -37,15 +37,9 @@ EventHandler.prototype = {
 
     getRoom: function(data) {
         var room, client = this.client, server = this.server;
-
+        client.name = data.name;
         room = server.roomManager.getPreferredRoom(data);
         room.join(client);
-
-        client.name = data.name;
-
-        if (room.full()) {
-            room.start();
-        }
     },
 
     chat: function() {
@@ -56,17 +50,16 @@ EventHandler.prototype = {
      */
     update: function(data) {
         if (this.client.roomid) {
-            var room, snake;
+            var room, snake, index, send;
 
             room = this.server.roomManager.get(this.client.roomid);
 
             snake = this.client.snake;
             snake.update(room, data[0], data[1]);
 
-            room.broadcast('/c/up', {
-                index: room.indexOf(this.client),
-                snake: snake.serialize()
-            }, this.client);
+            index = room.clients.indexOf(this.client);
+            send = [index, snake.parts, snake.direction];
+            room.broadcast('/client/snake/update', send, this.client);
         }
     }
 

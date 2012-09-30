@@ -1,21 +1,22 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true*/
+/*globals XSS, PixelEntity*/
 'use strict';
 
-// TODO: Make a ClientServerSharedObject?
-
-var levels = require('../shared/levels.js');
 
 /**
  * Collisions and levels
  * @constructor
  * @param {number} levelID
+ * @param {Object} levelData
  */
-function Level(server, levelID) {
-    this.server = server; // TODO: remove?
-    this.level = levels[levelID];
+function Level(levelID, levelData) {
+    this.levelID = levelID;
+    this.level = levelData[levelID];
 }
 
-module.exports = Level;
+if (typeof module !== 'undefined') {
+    module.exports = Level;
+}
 
 Level.prototype = {
 
@@ -25,12 +26,9 @@ Level.prototype = {
      * @return {boolean}
      */
     isWall: function(x, y) {
-        var level = this.level;
-        if (x < 0 || y < 0) {
+        if (this.outOfBounds(x, y)) {
             return true;
-        } else if ( x >= level.width || y >= level.height) {
-            return true;
-        } else if (this._isInnerWall(x, y)) {
+        } else if (this.innerWall(x, y)) {
             return true;
         }
         return false;
@@ -42,7 +40,7 @@ Level.prototype = {
      */
     getSpawn: function(playerID) {
         var pos = this.level.spawns[playerID];
-        return this._seqToXY(pos);
+        return this.seqToXY(pos);
     },
 
     /**
@@ -66,7 +64,7 @@ Level.prototype = {
         while (samplesPerIteration-- && minOpenEdges) {
             random = Math.floor(Math.random() * possibities);
             if (this._getSpawnPreferability(random) >= minOpenEdges) {
-                return this._seqToXY(random);
+                return this.seqToXY(random);
             }
             if (samplesPerIteration === 0) {
                 minOpenEdges--;
@@ -78,22 +76,39 @@ Level.prototype = {
     },
 
     /**
-     * @param {...number} varArgs
-     * @private
+     * @param {number} x
+     * @param {number} y
+     * @return {boolean}
      */
-    _isInnerWall: function(varArgs) {
-        var seq, wall = this.level.walls;
+    outOfBounds: function(x, y) {
+        if (x < 0 || y < 0) {
+            return true;
+        } else {
+            return x >= this.level.width || y >= this.level.height;
+        }
+    },
 
-        seq = (arguments.length === 2) ?
-            this._xyToSeq(arguments[0], arguments[1]) :
-            arguments[0];
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {boolean}
+     */
+    innerWall: function(x, y) {
+        var seq = this.xyToSeq(x, y);
+        return this.innerWallSeq(seq);
+    },
 
+    /**
+     * @param {number} seq
+     * @return {boolean}
+     */
+    innerWallSeq: function(seq) {
+        var wall = this.level.walls;
         for (var i = 0, m = wall.length; i < m; i++) {
             if (seq === wall[i]) {
                 return true;
             }
         }
-
         return false;
     },
 
@@ -104,15 +119,15 @@ Level.prototype = {
      */
     _getSpawnPreferability: function(seq) {
         var free = 0,
-            xy = this._seqToXY(seq);
+            xy = this.seqToXY(seq);
 
-        if (!this._isOpenSpace(xy[0], xy[1])) {
+        if (!this.isOpenSpace(xy[0], xy[1])) {
             return 0;
         }
 
         for (var x = -1; x <= 1; x++) {
             for (var y = -1; y <= 1; y++) {
-                if (this._isOpenSpace(xy[0] + x, xy[1] + y)) {
+                if (this.isOpenSpace(xy[0] + x, xy[1] + y)) {
                     free++;
                 }
             }
@@ -125,15 +140,13 @@ Level.prototype = {
      * @param {number} x
      * @param {number} y
      * @return {boolean}
-     * @private
      */
-    _isOpenSpace: function(x, y) {
+    isOpenSpace: function(x, y) {
         if (this.isWall(x, y)) {
             return false;
         }
 
         // TODO: Snakes occupying spaces
-
         return true;
     },
 
@@ -141,18 +154,16 @@ Level.prototype = {
      * @param {number} x
      * @param {number} y
      * @return {number}
-     * @private
      */
-    _xyToSeq: function(x, y) {
+    xyToSeq: function(x, y) {
         return x + this.level.width * y;
     },
 
     /**
      * @param {number} seq
      * @return {Array.<number>}
-     * @private
      */
-    _seqToXY: function(seq) {
+    seqToXY: function(seq) {
         return [
             seq % this.level.width,
             Math.floor(seq / this.level.width)

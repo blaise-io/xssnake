@@ -1,8 +1,7 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-var Level = require('./level.js'),
-    Snake = require('./snake.js');
+var Game = require('./game.js');
 
 /**
  * @param {Server} server
@@ -18,8 +17,6 @@ function Room(server, id, filter) {
     this.id = id;
     this.clients = [];
     this.inprogress = false;
-
-    this.apples = [];
 
     // Sanitize user input
     capacity = parseInt(filter.capacity, 10);
@@ -43,6 +40,11 @@ Room.prototype = {
         this.clients.push(client);
         client.socket.join(this.id);
         client.roomid = this.id;
+
+        if (this.full()) {
+            this.game = new Game(this, 2);
+        }
+
         return this;
     },
 
@@ -51,14 +53,12 @@ Room.prototype = {
      * @return {boolean}
      */
     leave: function(client) {
-        var index = this.indexOf(client);
-
+        var index = this.clients.indexOf(client);
         if (-1 !== index) {
             this.clients.splice(index, 1);
-            this.emit('/c/notice', client.name + ' left');
+            this.emit('/client/notice', client.name + ' left');
             return true;
         }
-
         return false;
     },
 
@@ -89,19 +89,6 @@ Room.prototype = {
     },
 
     /**
-     * @param {Client} client
-     * @return {number}
-     */
-    indexOf: function(client) {
-        for (var i = 0, m = this.clients.length; i < m; i++) {
-            if (client === this.clients[i]) {
-                return i;
-            }
-        }
-        return -1;
-    },
-
-    /**
      * @return {Array.<string>}
      */
     names: function() {
@@ -110,44 +97,44 @@ Room.prototype = {
             names.push(this.clients[i].name);
         }
         return names;
-    },
-
-    start: function() {
-        this.levelID = 0;
-        this.level = new Level(this.server, this.levelID);
-        this._setupClients();
-        this.inprogress = true;
-    },
-
-    respawnApple: function() {
-        this.apple = this.level.getRandomOpenTile();
-        this.emit('/c/apple', [0, this.apple]);
-    },
-
-    _setupClients: function() {
-        var names = this.names();
-        this.apple = this.level.getRandomOpenTile();
-        for (var i = 0, m = this.clients.length; i < m; i++) {
-            this._spawnClientSnake(i);
-            this._emitGameStart(i, names);
-        }
-    },
-
-    _spawnClientSnake: function(index) {
-        var spawn, direction, level = this.level;
-        spawn = level.getSpawn(index);
-        direction = level.getSpawnDirection(index);
-        this.clients[index].snake = new Snake(this, index, spawn, direction);
-    },
-
-    _emitGameStart: function(index, names) {
-        this.clients[index].emit('/c/start', {
-            level   : this.levelID,
-            apple   : this.apple,
-            capacity: this.capacity,
-            index   : index,
-            names   : names
-        });
     }
+
+//    start: function() {
+//        this.levelID = 0;
+//        this.level = new Level(this.server, this.levelID);
+//        this._setupClients();
+//        this.inprogress = true;
+//    },
+//
+//    respawnApple: function() {
+//        this.apple = this.level.getRandomOpenTile();
+//        this.emit('/client/apple/spawn', [0, this.apple]);
+//    },
+//
+//    _setupClients: function() {
+//        var names = this.names();
+//        this.apple = this.level.getRandomOpenTile();
+//        for (var i = 0, m = this.clients.length; i < m; i++) {
+//            this._spawnClientSnake(i);
+//            this._emitGameStart(i, names);
+//        }
+//    },
+//
+//    _spawnClientSnake: function(index) {
+//        var spawn, direction, level = this.level;
+//        spawn = level.getSpawn(index);
+//        direction = level.getSpawnDirection(index);
+//        this.clients[index].snake = new Snake(this, index, spawn, direction);
+//    },
+//
+//    _emitGameStart: function(index, names) {
+//        this.clients[index].emit('/c/start', {
+//            level   : this.levelID,
+//            apple   : this.apple,
+//            capacity: this.capacity,
+//            index   : index,
+//            names   : names
+//        });
+//    }
 
 };

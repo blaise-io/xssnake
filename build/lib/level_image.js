@@ -96,8 +96,8 @@ LevelImage.prototype = {
 
         for (var i = 0, m = this.spawns.length; i < m; i++) {
             for (var ii = 0, mm = this.directions.length; ii < mm; ii++) {
-                spawnAt = this._seqToXY(this.spawns[i], this.width);
-                nextAt = this._seqToXY(this.directions[ii], this.width);
+                spawnAt = this.seqToXY(this.spawns[i], this.width);
+                nextAt = this.seqToXY(this.directions[ii], this.width);
                 if (1 ===
                         Math.abs(spawnAt[0] - nextAt[0]) +
                         Math.abs(spawnAt[1] - nextAt[1])) {
@@ -113,7 +113,7 @@ LevelImage.prototype = {
         this.directions = directions;
     },
 
-    _seqToXY: function(seq, width) {
+    seqToXY: function(seq, width) {
         return [seq % width, Math.floor(seq / width)];
     }
 

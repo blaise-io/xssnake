@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Client, Game, Apple, io*/
+/*globals XSS, Client, Game, Apple, Utils, io*/
 
 'use strict';
 
@@ -9,8 +9,7 @@
  * @constructor
  */
 function Socket(callback) {
-    XSS.utils.loadScript(XSS.config.server.socketIOScript, function() {
-        /** @type {EventEmitter} */
+    Utils.loadScript(XSS.config.server.socketIOScript, function() {
         this.socket = io.connect(XSS.config.server.host);
         this._addEventListeners(callback);
     }.bind(this));
@@ -23,41 +22,46 @@ Socket.prototype = {
      * @private
      */
     _addEventListeners: function(callback) {
-        this.socket.on('/c/connect', function(id) {
+        this.socket.on('/client/connect', function(id) {
             XSS.me = new Client(id);
             if (callback) {
                 callback(this);
             }
         }.bind(this));
 
-        this.socket.on('/c/notice', function(notice) {
+        this.socket.on('/client/notice', function(notice) {
             console.log(notice);
         }.bind(this));
 
-        this.socket.on('/c/start', function(data) {
-            XSS.game = new Game(data);
+        this.socket.on('/client/game/setup', function(data) {
+            XSS.game = new Game(data[0], data[1], data[2]);
         }.bind(this));
 
-        this.socket.on('/c/up', function(data) {
+        this.socket.on('/client/game/start', function() {
+            XSS.game.start();
+        }.bind(this));
+
+        this.socket.on('/client/snake/update', function(data) {
             var snake;
-            snake = XSS.game.snakes[data['index']];
-            snake.parts = data['snake'][0];
-            snake.direction =  data['snake'][1];
+            snake = XSS.game.snakes[data[0]];
+            snake.parts = data[1];
+            snake.direction = data[2];
         }.bind(this));
 
-        this.socket.on('/c/nom', function(data) {
-            XSS.game.snakeSize(data[0], data[1]);
-            XSS.game.apples[data[2]].eat();
-        }.bind(this));
-
-        this.socket.on('/c/crash', function(data) {
+        this.socket.on('/client/snake/crash', function(data) {
             var snake;
             snake = XSS.game.snakes[data[0]];
             snake.parts = data[1];
             snake.crash();
+            console.log(snake.name + ' crashed');
         }.bind(this));
 
-        this.socket.on('/c/apple', function(data) {
+        this.socket.on('/client/apple/eat', function(data) {
+            XSS.game.snakeSize(data[0], data[1]);
+            XSS.game.apples[data[2]].eat();
+        }.bind(this));
+
+        this.socket.on('/client/apple/spawn', function(data) {
             var index = data[0], location = data[1];
             XSS.game.apples[index] = new Apple(location[0], location[1]);
         }.bind(this));

@@ -177,6 +177,27 @@ Font.prototype = {
             ' XX  ' +
             '  X  ');
 
+        glyph['↑'] = this.parseGlyph(Font.MIN, '' +
+            '  X  ' +
+            ' XXX ' +
+            'XXXXX' +
+            '  X  ' +
+            '  X  ');
+
+        glyph['→'] = this.parseGlyph(Font.MIN, '' +
+            '  X  ' +
+            '  XX ' +
+            'XXXXX' +
+            '  XX ' +
+            '  X  ');
+
+        glyph['↓'] = this.parseGlyph(Font.MIN, '' +
+            '  X  ' +
+            '  X  ' +
+            'XXXXX' +
+            ' XXX ' +
+            '  X  ');
+
         glyph['•'] = this.parseGlyph(Font.MIN, '' +
             '  ' +
             '  ' +

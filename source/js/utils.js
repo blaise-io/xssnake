@@ -3,15 +3,7 @@
 
 'use strict';
 
-/**
- * Utils
- * @constructor
- */
-function Utils() {
-    this.subscriptions = {};
-}
-
-Utils.prototype = {
+var Utils = {
 
     /**
      * @param {string} url
@@ -30,20 +22,6 @@ Utils.prototype = {
         head.insertBefore(script, head.firstChild);
     },
 
-    /**
-     * @param {!Object} destination
-     * @param {!Object} source
-     * @return {!Object}
-     */
-    extend: function(destination, source) {
-        for (var k in source) {
-            if (source.hasOwnProperty(k)) {
-                destination[k] = source[k];
-            }
-        }
-        return destination;
-    },
-
     addListener: {
         keydown: function(listener) {
             return XSS.doc.addEventListener('keydown', listener, false);
@@ -60,54 +38,6 @@ Utils.prototype = {
         keyup  : function(listener) {
             return XSS.doc.removeEventListener('keyup', listener, false);
         }
-    },
-
-    /**
-     * @param {string} topic
-     */
-    publish: function(topic) {
-        var args = Array.prototype.slice.call(arguments).splice(1),
-            pubsubsTopic = this.subscriptions[topic];
-        if (pubsubsTopic) {
-            for (var key in pubsubsTopic) {
-                if (pubsubsTopic.hasOwnProperty(key)) {
-                    this._exec(pubsubsTopic[key], args);
-                }
-            }
-        }
-    },
-
-    /**
-     * @param {string} topic
-     * @param {string} key
-     * @param {Object} callback
-     */
-    subscribe: function(topic, key, callback) {
-        if (!this.subscriptions[topic]) {
-            this.subscriptions[topic] = [];
-        }
-        this.subscriptions[topic][key] = callback;
-    },
-
-    /**
-     * @param {string} topic
-     * @param {string=} key
-     */
-    unsubscribe: function(topic, key) {
-        if (typeof key !== 'undefined') {
-            delete this.subscriptions[topic][key];
-        } else {
-            delete this.subscriptions[topic];
-        }
-    },
-
-    /**
-     * @param {Object} func
-     * @param {Array} args
-     * @private
-     */
-    _exec: function(func, args) {
-        func.apply(func, args);
     }
 
 };

@@ -2,16 +2,18 @@
 'use strict';
 
 /**
- * @param {Room} room
+ * @param {Game} game
  * @param {number} index
- * @param {array} parts
+ * @param {Array} parts
  * @param {number} direction
  * @constructor
  */
-function Snake(room, index, parts, direction) {
-    this.room = room;
+function Snake(game, index, parts, direction) {
+    this.game = game;
+    this.room = game.room;
+    this.server = game.room.server;
+
     this.index = index;
-    this.server = room.server;
     this.parts = parts;
     this.direction = direction;
 
@@ -23,7 +25,6 @@ function Snake(room, index, parts, direction) {
     this.elapsed = 0;
 
     this._tickHandler = this._onTick.bind(this);
-    this._bindEvents();
 }
 
 module.exports = Snake;
@@ -43,7 +44,7 @@ Snake.prototype = {
 
         // TODO: Move game logic to new Game Class
         // Game: Apples, Snakes, Crashes, Levels
-        // Room: Communication entry point, chatting, joining, leaving
+        // Room: Communication entry point, chatting?, joining, leaving
         // TODO: Detect validity of parts. Invalid = ignore+reset.
         // TODO: Detect crashes in between turns.
 
@@ -64,6 +65,7 @@ Snake.prototype = {
         return true;
     },
 
+    // TODO: Move to Game
     isCrash: function(room, parts) {
         var level = room.level;
 
@@ -73,7 +75,7 @@ Snake.prototype = {
         // Level walls
         for (var i = 0, m = parts.length; i < m; i++) {
             var part = parts[i];
-            if (level.isWall(part[0], part[1])) {
+            if (this.game.level.isWall(part[0], part[1])) {
                 return true;
             }
         }
@@ -83,29 +85,27 @@ Snake.prototype = {
 
     handleCrash: function(parts) {
         this.crashed = true;
-        this.room.emit('/c/crash', [this.index, parts]);
+        this.room.emit('/client/snake/crash', [this.index, parts]);
     },
 
+    // TODO: Move to Game
     isNom: function(head) {
-        var apple = this.room.apple;
-        return (head[0] === apple[0] && head[1] === apple[1]);
+//        var apple = this.room.apple;
+//        return (head[0] === apple[0] && head[1] === apple[1]);
+        return false;
     },
 
     // TODO Implement possibility of multiple apples
     handleAppleHit: function() {
         this.size++;
-        this.room.emit('/c/nom', [this.index, this.size, 0]);
-        this.room.respawnApple();
+        this.room.emit('/client/apple/eat', [this.index, this.size, 0]);
+        this.room.game.respawnApple();
     },
 
     trim: function() {
         while (this.parts.length > this.size) {
             this.parts.shift();
         }
-    },
-
-    serialize: function() {
-        return [this.parts, this.direction];
     },
 
     /**
@@ -120,7 +120,7 @@ Snake.prototype = {
         this.server.ticker.removeListener('tick', this._tickHandler);
     },
 
-    _bindEvents: function() {
+    startSnake: function() {
         this.server.ticker.on('tick', this._tickHandler);
     },
 
@@ -140,7 +140,7 @@ Snake.prototype = {
      */
     _onTick: function(elapsed) {
         this.elapsed += elapsed;
-        if (this.elapsed >= this.speed && this.parts.length) {
+        if (this.elapsed >= this.speed && this.parts.length && this.game.inprogress) {
             this.elapsed -= this.speed;
             this._continueInDirection();
             this.trim();

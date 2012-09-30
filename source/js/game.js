@@ -1,47 +1,56 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, PixelEntity, Snake, World, Apple*/
+/*globals XSS, PixelEntity, Snake, ClientLevel, Apple, Utils*/
 
 'use strict';
 
-/**
+/***
  * Game
+ * @param {number} levelID
+ * @param {Array.<string>} names
+ * @param {number} index
  * @constructor
  */
-function Game(data) {
+function Game(levelID, names, index) {
     XSS.ents.border = XSS.drawables.outerBorder();
     XSS.ents.levelborder = XSS.drawables.levelBorder();
 
-    this.world = new World(data['level']);
-    this.world.addToEntities();
-
     this.curid = 0;
 
+    /** @type {ClientLevel} */
+    this.level = this.setupLevel(levelID);
+
     /** @type {Array.<Snake>} */
-    this.snakes = this.spawnSnakes(data);
+    this.snakes = this.spawnSnakes(names, index);
 
     /** @type {Array.<Apple>} */
-    this.apples = [new Apple(data['apple'][0], data['apple'][1])];
+    this.apples = [];
 
     this._countDown();
 }
 
 Game.prototype = {
 
-    spawnSnakes: function(data) {
+    setupLevel: function(levelID) {
+        var level = new ClientLevel(levelID);
+        XSS.ents.world = level.getEntity();
+        return level;
+    },
+
+    spawnSnakes: function(names, index) {
         var snakes = [];
 
-        for (var i = 0, m = data['names'].length; i < m; i++) {
+        for (var i = 0, m = names.length; i < m; i++) {
             var loc, direction, name, snake;
 
-            loc = this.world.getSpawn(i);
-            direction = this.world.getSpawnDirection(i);
-            name = data['names'][i];
+            loc = this.level.getSpawn(i);
+            direction = this.level.getSpawnDirection(i);
+            name = names[i];
 
             snake = new Snake(++this.curid, loc[0], loc[1], direction, name);
             snake.addToEntities();
             snake.showName();
 
-            if (i === data['index']) {
+            if (i === index) {
                 snake.local = true;
                 snake.addControls();
             }
@@ -57,14 +66,11 @@ Game.prototype = {
     },
 
     _countDown: function() {
-        // TODO: Move to back-end
-        this._startGame();
     },
 
-    /** @private */
-    _startGame: function() {
+    start: function() {
         var tick = this._onTick.bind(this);
-        XSS.utils.subscribe('/canvas/update', 'tick', tick);
+        XSS.pubsub.subscribe('/canvas/update', 'tick', tick);
     },
 
     /**
@@ -83,8 +89,8 @@ Game.prototype = {
      */
     _isCrash: function(snake, position) {
 
-        if (this.world.isWall(position[0], position[1])) {
-            console.log('world');
+        if (this.level.isWall(position[0], position[1])) {
+            console.log('level');
             return true;
         }
 

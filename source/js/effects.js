@@ -1,5 +1,5 @@
 /*jshint globalstrict:true */
-/*globals XSS, PixelEntity*/
+/*globals XSS, PixelEntity, Utils*/
 
 'use strict';
 
@@ -48,16 +48,16 @@ Effects.prototype = {
             progress += delta;
             if (progress >= delay) {
                 callback();
-                XSS.utils.unsubscribe(this.topic, ns);
+                XSS.pubsub.unsubscribe(this.topic, ns);
             }
         }.bind(this);
 
-        XSS.utils.subscribe(this.topic, ns, updater);
+        XSS.pubsub.subscribe(this.topic, ns, updater);
         return ns;
     },
 
     delayStop: function(ns) {
-        XSS.utils.unsubscribe(this.topic, ns);
+        XSS.pubsub.unsubscribe(this.topic, ns);
     },
 
     /**
@@ -82,7 +82,7 @@ Effects.prototype = {
             }
         }.bind(this);
 
-        XSS.utils.subscribe(this.topic, ns, updater);
+        XSS.pubsub.subscribe(this.topic, ns, updater);
     },
 
     /**
@@ -90,7 +90,7 @@ Effects.prototype = {
      */
     blinkStop: function(name) {
         var ns = 'blink_' + name;
-        XSS.utils.unsubscribe(this.topic, ns);
+        XSS.pubsub.unsubscribe(this.topic, ns);
         delete XSS.ents[ns];
     },
 
@@ -110,12 +110,12 @@ Effects.prototype = {
         updater = function(delta) {
             progress += delta;
             if (progress > time) {
-                XSS.utils.unsubscribe(this.topic, ns);
+                XSS.pubsub.unsubscribe(this.topic, ns);
                 delete XSS.ents[ns];
             }
         }.bind(this);
 
-        XSS.utils.subscribe(this.topic, ns, updater);
+        XSS.pubsub.subscribe(this.topic, ns, updater);
     },
 
     /**
@@ -124,7 +124,7 @@ Effects.prototype = {
     decayStop: function(name) {
         var ns = 'decay_' + name;
         delete XSS.ents[ns];
-        XSS.utils.unsubscribe(this.topic, ns);
+        XSS.pubsub.unsubscribe(this.topic, ns);
     },
 
     /**
@@ -152,7 +152,7 @@ Effects.prototype = {
                 shifted = this.shift(entity.pixels(), distance, 0);
                 XSS.ents[ns].pixels(shifted);
             } else {
-                XSS.utils.unsubscribe(this.topic, ns);
+                XSS.pubsub.unsubscribe(this.topic, ns);
                 delete XSS.ents[ns];
                 if (options.callback) {
                     options.callback();
@@ -160,7 +160,7 @@ Effects.prototype = {
             }
         }.bind(this);
 
-        XSS.utils.subscribe(this.topic, ns, updater);
+        XSS.pubsub.subscribe(this.topic, ns, updater);
     },
 
     /**
