@@ -146,8 +146,8 @@ var writeOutputTofile = function(file, code) {
     if (!code) {
         console.error('No code to save.');
     } else {
-        file = fs.realpathSync(file);
         fs.writeFile(file, _header + code, function(err) {
+            file = fs.realpathSync(file);
             if (!err) {
                 console.info('Compiled code saved to', file);
             } else {
