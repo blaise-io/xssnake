@@ -1,25 +1,36 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-/**
- * Compiles XSSNAKE's source files to compiled.js
- * Usage: # node ./build/compile_source.js
- */
+var util = require('util');
+var gcc  = require('gcc-rest');
 
-var header,
-    util    = require('util'),
-    closure = require('./lib/closure.js'),
-    home    = __dirname + '/../',
-    file    = home + 'www/xssnake.js';
+var home = __dirname + '/../';
 
-header = util.format(
+var header = util.format(
     '// © %d Blaise Kal\n' +
     '// Compiled using Google Closure Compiler on %s\n' +
     '// Source available at https://github.com/blaisekal/xssnake\n',
     new Date().getFullYear(), new Date().toUTCString()
 );
 
-closure.addFiles(
+var js_externs = ['',
+     'var io={',
+        '"connect":function(){},',
+        '"emit":function(){},',
+        '"on":function(){}',
+    '};'].join('');
+
+gcc.params({
+    js_externs       : js_externs,
+    output_info      : ['compiled_code', 'errors', 'warnings', 'statistics'],
+    language         : 'ECMASCRIPT5_STRICT',
+    compilation_level: 'ADVANCED_OPTIMIZATIONS',
+    warning_level    : 'VERBOSE'
+});
+
+gcc.header(header);
+
+gcc.addFiles(
     home + 'source/js/init.js',
     home + 'source/js/utils.js',
     home + 'server/shared/config.js',
@@ -41,11 +52,5 @@ closure.addFiles(
     home + 'source/js/client_level.js',
     home + 'source/js/game.js'
 );
-
-closure.externs('var io={' +
-    '"connect":function(){},' +
-    '"emit":function(){},' +
-    '"on":function(){}};');
-closure.replace(/'use strict';/g, '');
-closure.header(header);
-closure.compile(file);
+gcc.replace(/'use strict';/g, '');
+gcc.output(home + 'www/xssnake.js');

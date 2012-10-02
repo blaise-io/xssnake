@@ -21,7 +21,9 @@ Initial Setup
  * Adjust the contents of `server/shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)
  * Install [socket.io](https://npmjs.org/package/socket.io) by running
-   `npm install socket.io` in the server dir
+   `npm install socket.io`
+ * Install [GccRest](https://github.com/BlaiseKal/GccRest) by running
+   `npm install gcc-rest`
 
 Production
 ---
@@ -38,8 +40,7 @@ Developing and Testing
 
 While testing, it can be useful to automatically reload the server when you
 change something. You can do this by installing supervisor: `npm install
-supervisor -g` in the server dir. Run it using `supervisor --watch server
--n exit server/start.js`.
+supervisor -g`. Run it using `supervisor -w server -n exit server/start.js`.
 
 If you open `source/source.html` from a local disk in Chrome (`file://...`), you
 have to start the browser with the `--disable-web-security` parameter to
@@ -51,6 +52,6 @@ If you adjusted one of the level images, you have to rebuild
 `server/shared/levels.js`. See instructions below. More info on level images
 can be found in `source/levels/README.md`.
 
- * Install [png-js](https://npmjs.org/package/png-js) by running `npm install
-   png-js` in the build dir
+ * Install [png-js](https://npmjs.org/package/png-js) by running
+   `npm install png-js`
  * Run `node build/parse_levels.js`
