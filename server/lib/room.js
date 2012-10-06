@@ -99,42 +99,4 @@ Room.prototype = {
         return names;
     }
 
-//    start: function() {
-//        this.levelID = 0;
-//        this.level = new Level(this.server, this.levelID);
-//        this._setupClients();
-//        this.inprogress = true;
-//    },
-//
-//    respawnApple: function() {
-//        this.apple = this.level.getRandomOpenTile();
-//        this.emit('/client/apple/spawn', [0, this.apple]);
-//    },
-//
-//    _setupClients: function() {
-//        var names = this.names();
-//        this.apple = this.level.getRandomOpenTile();
-//        for (var i = 0, m = this.clients.length; i < m; i++) {
-//            this._spawnClientSnake(i);
-//            this._emitGameStart(i, names);
-//        }
-//    },
-//
-//    _spawnClientSnake: function(index) {
-//        var spawn, direction, level = this.level;
-//        spawn = level.getSpawn(index);
-//        direction = level.getSpawnDirection(index);
-//        this.clients[index].snake = new Snake(this, index, spawn, direction);
-//    },
-//
-//    _emitGameStart: function(index, names) {
-//        this.clients[index].emit('/c/start', {
-//            level   : this.levelID,
-//            apple   : this.apple,
-//            capacity: this.capacity,
-//            index   : index,
-//            names   : names
-//        });
-//    }
-
 };

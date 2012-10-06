@@ -14,17 +14,17 @@ function EventHandler(server, client, socket) {
 
     client.emit('/client/connect', client.id);
 
-    socket.on('disconnect', this.disconnect.bind(this));
-    socket.on('/server/room/match', this.getRoom.bind(this));
-    socket.on('/server/chat/message', this.chat.bind(this));
-    socket.on('/server/snake/update', this.update.bind(this));
+    socket.on('disconnect', this._disconnect.bind(this));
+    socket.on('/server/room/match', this._matchRoom.bind(this));
+    socket.on('/server/chat/message', this._chat.bind(this));
+    socket.on('/server/snake/update', this._update.bind(this));
 }
 
 module.exports = EventHandler;
 
 EventHandler.prototype = {
 
-    disconnect: function() {
+    _disconnect: function() {
         var room, client = this.client, server = this.server;
 
         room = server.roomManager.rooms[client.roomid];
@@ -35,32 +35,32 @@ EventHandler.prototype = {
         server.state.removeClient(client);
     },
 
-    getRoom: function(data) {
+    _matchRoom: function(data) {
         var room, client = this.client, server = this.server;
         client.name = data.name;
         room = server.roomManager.getPreferredRoom(data);
         room.join(client);
     },
 
-    chat: function() {
+    _chat: function() {
     },
 
     /**
-     * @param data [<array>,<number>]
+     * @param data [<Array>,<number>] 0: parts, 1: direction
      */
-    update: function(data) {
+    _update: function(data) {
         if (this.client.roomid) {
-            var room, snake, index, send;
-
-            room = this.server.roomManager.get(this.client.roomid);
-
-            snake = this.client.snake;
-            snake.update(room, data[0], data[1]);
-
-            index = room.clients.indexOf(this.client);
-            send = [index, snake.parts, snake.direction];
-            room.broadcast('/client/snake/update', send, this.client);
+            var game = this._clientGame(this.client);
+            game.updateSnake(this.client, data[0], data[1]);
         }
+    },
+
+    _clientRoom: function(client) {
+        return this.server.roomManager.room(client.roomid);
+    },
+
+    _clientGame: function(client) {
+        return this._clientRoom(client).game;
     }
 
 };

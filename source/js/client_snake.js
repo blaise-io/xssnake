@@ -1,69 +1,63 @@
-/*jshint globalstrict:true*/
-/*globals XSS,PixelEntity*/
+/*jshint globalstrict:true, es5:true*/
+/*globals XSS, PixelEntity, Snake, Utils*/
 
 'use strict';
 
 /**
- * Snake
- * @param {number} id
- * @param {number} x
- * @param {number} y
+ *
+ * @param {number} index
+ * @param {Array.<number>} location
  * @param {number} direction
- * @param {string} name
+ * @param {number} size
+ * @param {number} speed
+ * @extends {Snake}
  * @constructor
  */
-function Snake(id, x, y, direction, name) {
-    this.id = id;
-    this.parts = [[x, y]]; // [0] = tail, [n-1] = head
+function ClientSnake(index, location, direction, size, speed) {
+    this.index = index;
+    this.parts = [location];
     this.direction = direction;
-    this.name = name;
+    this.size = size;
+    this.speed = speed;
 
-    this.local = false;
     this.crashed = false;
 
-    this.size =  XSS.config.snake.size;
-    this.speed = XSS.config.snake.speed; // ms between moves
+    this.elapsed = 0;
+    this.entity = new PixelEntity().dynamic(true);
 
-    this.snakeProgress = 0;
-
-    this.entity = new PixelEntity();
-    this.entity.dynamic(true);
-
-    this.entityName = 'snake_' + this.id;
-    this.entityNameName = 'snake_name_' + this.id;
-
+    this._entityName = 'S' + index;
     this._snakeTurnRequests = [];
-    this._handleKeysBind = this._handleKeys.bind(this);
 }
 
-Snake.prototype = {
+ClientSnake.prototype = Utils.extend(new Snake(), {
 
     showName: function() {
-        var x, y, entity;
+        var x, y, entity, entityname;
+
         x = this.parts[0][0] * 4;
         y = this.parts[0][1] * 4;
-        entity = XSS.drawables.textAt(x, y + 1, this.direction, this.name);
-        XSS.ents[this.entityNameName] = entity;
 
-        // TODO: Add decay to entity
+        entity = XSS.drawables.textAt(x, y + 1, this.direction, this.name);
+        entityname = this._entityName + '_name';
+
+        XSS.ents[entityname] = entity;
+
         window.setTimeout(function() {
-            delete XSS.ents[this.entityNameName];
+            delete XSS.ents[entityname];
         }.bind(this), 2000);
     },
 
     addControls: function() {
+        this._handleKeysBind = this._handleKeys.bind(this);
         XSS.on.keydown(this._handleKeysBind);
     },
 
     addToEntities: function() {
-        XSS.ents[this.entityName] = this.entity;
+        this.updateEntity();
+        XSS.ents[this._entityName] = this.entity;
     },
 
-    /**
-     * @param {Array.<number>} move
-     */
-    move: function(move) {
-        this._updateSnakePos(move);
+    updateEntity: function() {
         this.entity.pixels(XSS.effects.zoomGame(this.parts));
     },
 
@@ -74,80 +68,8 @@ Snake.prototype = {
         }
     },
 
-    /**
-     * @return {Array.<number>}
-     */
-    head: function() {
-        return this.parts[this.parts.length - 1];
-    },
-
-    /**
-     * @param {Array.<number>} head
-     * @return {boolean}
-     */
-    isHead: function(head) {
-        var thisHead = this.head();
-        return (thisHead[0] === head[0] && thisHead[1] === head[1]);
-    },
-
-    /**
-     * @param {Array.<number>} part
-     * @return {boolean}
-     */
-    hasPartPredict: function(part) {
-        var treshold = this.crashed ? -1 : 0;
-        return (this._getPart(part) > treshold);
-    },
-
-    /**
-     * @return {Array.<number>}
-     */
-    getNextPosition: function() {
-        var shift, head = this.head();
-        this._handleChangeRequests();
-        shift = this._directionToShift(this.direction);
-        return [head[0] + shift[0], head[1] + shift[1]];
-    },
-
     emitState: function(direction) {
         XSS.socket.emit('/server/snake/update', [this.parts, direction]);
-    },
-
-    trim: function() {
-        while (this.parts.length > this.size) {
-            this.parts.shift();
-        }
-    },
-
-    /**
-     * @param {Array.<number>} part
-     * @return {number}
-     */
-    _getPart: function(part) {
-        var parts = this.parts;
-        for (var i = 0, m = parts.length; i < m; i++) {
-            if (parts[i][0] === part[0] && parts[i][1] === part[1]) {
-                return i;
-            }
-        }
-        return -1;
-    },
-
-    /**
-     * @param {number} direction
-     * @return {Array.<Array>}
-     * @private
-     */
-    _directionToShift: function(direction) {
-        return [[-1, 0], [0, -1], [1, 0], [0, 1]][direction];
-    },
-
-    /**
-     * @param {Array.<number>} position
-     */
-    _updateSnakePos: function(position) {
-        this.parts.push(position);
-        this.trim();
     },
 
     /**
@@ -172,10 +94,20 @@ Snake.prototype = {
     },
 
     /** @private */
-    _handleChangeRequests: function() {
+    applyCachedDirection: function() {
         if (this._snakeTurnRequests.length) {
             this.direction = this._snakeTurnRequests.shift();
         }
+    },
+
+    /**
+     * @return {Array.<number>}
+     */
+    getNextPosition: function() {
+        var shift, head = this.head();
+        this.applyCachedDirection();
+        shift = this.directionToShift(this.direction);
+        return [head[0] + shift[0], head[1] + shift[1]];
     },
 
     /**
@@ -224,4 +156,4 @@ Snake.prototype = {
         return turns === 1 || turns === 3;
     }
 
-};
+});

@@ -34,7 +34,7 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on('/client/game/setup', function(data) {
-            XSS.game = new Game(data[0], data[1], data[2]);
+            XSS.game = new Game(data[0], data[1], data[2], data[3]);
         }.bind(this));
 
         this.socket.on('/client/game/start', function() {
@@ -53,7 +53,6 @@ Socket.prototype = {
             snake = XSS.game.snakes[data[0]];
             snake.parts = data[1];
             snake.crash();
-            console.log(snake.name + ' crashed');
         }.bind(this));
 
         this.socket.on('/client/apple/eat', function(data) {

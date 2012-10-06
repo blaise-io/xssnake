@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, PixelEntity, Snake, ClientLevel, Apple, Utils*/
+/*globals XSS, PixelEntity, ClientSnake, ClientLevel, Apple, Utils*/
 
 'use strict';
 
@@ -10,7 +10,7 @@
  * @param {number} index
  * @constructor
  */
-function Game(levelID, names, index) {
+function Game(levelID, names, index, apples) {
     XSS.ents.border = XSS.drawables.outerBorder();
     XSS.ents.levelborder = XSS.drawables.levelBorder();
 
@@ -19,11 +19,11 @@ function Game(levelID, names, index) {
     /** @type {ClientLevel} */
     this.level = this.setupLevel(levelID);
 
-    /** @type {Array.<Snake>} */
+    /** @type {Array.<ClientSnake>} */
     this.snakes = this.spawnSnakes(names, index);
 
     /** @type {Array.<Apple>} */
-    this.apples = [];
+    this.apples = this.spawnApples(apples);
 
     this._countDown();
 }
@@ -37,16 +37,19 @@ Game.prototype = {
     },
 
     spawnSnakes: function(names, index) {
-        var snakes = [];
+        var snakes = [], size, speed;
+
+        size = XSS.config.snake.size;
+        speed = XSS.config.snake.speed;
 
         for (var i = 0, m = names.length; i < m; i++) {
-            var loc, direction, name, snake;
+            var location, direction, snake;
 
-            loc = this.level.getSpawn(i);
+            location = this.level.getSpawn(i);
             direction = this.level.getSpawnDirection(i);
-            name = names[i];
 
-            snake = new Snake(++this.curid, loc[0], loc[1], direction, name);
+            snake = new ClientSnake(i, location, direction, size, speed);
+            snake.name = names[i];
             snake.addToEntities();
             snake.showName();
 
@@ -61,6 +64,14 @@ Game.prototype = {
         return snakes;
     },
 
+    spawnApples: function(locations) {
+        var apples = [];
+        for (var i = 0, m = locations.length; i < m; i++) {
+            apples.push(new Apple(locations[i][0], locations[i][1]));
+        }
+        return apples;
+    },
+
     snakeSize: function(index, size) {
         XSS.game.snakes[index].size = size;
     },
@@ -69,7 +80,7 @@ Game.prototype = {
     },
 
     start: function() {
-        var tick = this._onTick.bind(this);
+        var tick = this._tick.bind(this);
         XSS.pubsub.subscribe('/canvas/update', 'tick', tick);
     },
 
@@ -77,53 +88,38 @@ Game.prototype = {
      * @param {number} delta
      * @private
      */
-    _onTick: function(delta) {
+    _tick: function(delta) {
         this._moveSnakes(delta);
     },
 
-    /**
-     * @param {Snake} snake
-     * @param {Array.<number>} position
-     * @return {boolean}
-     * @private
-     */
-    _isCrash: function(snake, position) {
-
-        if (this.level.isWall(position[0], position[1])) {
-            console.log('level');
-            return true;
-        }
-
-        if (!snake.isHead(position) && snake.hasPartPredict(position)) {
-            console.log('self');
-            return true;
-        }
-
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            var matchSnake = this.snakes[i];
-            if (matchSnake !== snake && matchSnake.hasPartPredict(position)) {
-                console.log('opponent');
-                return true;
-            }
-        }
-
-        return false;
-    },
-
-    /**
-     * @param {Array.<number>} move
-     * @return {number}
-     * @private
-     */
-    _getAppleAtPosition: function(move) {
-        for (var i = 0, m = this.apples.length; i < m; ++i) {
-            var apple = this.apples[i];
-            if (move[0] === apple.x && move[1] === apple.y) {
-                return i;
-            }
-        }
-        return -1;
-    },
+//    /**
+//     * @param {ClientSnake} snake
+//     * @param {Array.<number>} position
+//     * @return {boolean}
+//     * @private
+//     */
+//    _isCrash: function(snake, position) {
+//
+//        if (this.level.isWall(position[0], position[1])) {
+//            console.log('level');
+//            return true;
+//        }
+//
+//        if (!snake.isHead(position) && snake.hasPartPredict(position)) {
+//            console.log('self');
+//            return true;
+//        }
+//
+//        for (var i = 0, m = this.snakes.length; i < m; i++) {
+//            var matchSnake = this.snakes[i];
+//            if (matchSnake !== snake && matchSnake.hasPartPredict(position)) {
+//                console.log('opponent');
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    },
 
     /**
      * @param {number} delta
@@ -132,34 +128,22 @@ Game.prototype = {
     _moveSnakes: function(delta) {
         for (var i = 0, m = this.snakes.length; i < m; ++i) {
             var snake = this.snakes[i];
-            if (snake.snakeProgress >= snake.speed && !snake.crashed) {
+            if (snake.elapsed >= snake.speed && !snake.crashed) {
                 this._moveSnake(snake);
-                snake.snakeProgress -= snake.speed;
+                snake.elapsed -= snake.speed;
             }
-            snake.snakeProgress += delta;
+            snake.elapsed += delta;
         }
     },
 
+    /**
+     * @param {ClientSnake} snake
+     * @private
+     */
     _moveSnake: function(snake) {
         var position = snake.getNextPosition();
-        snake.move(position); // Multiplayer
-
-//        var index, position;
-//
-//        position = snake.getNextPosition();
-//
-//        if (this._isCrash(snake, position)) {
-//            snake.crash();
-//        }
-//
-//        else {
-//            snake.move(position);
-//            index = this._getAppleAtPosition(position);
-//            if (-1 !== index) {
-//                this.apples[index].eat();
-//                snake.size += 1;
-//            }
-//        }
+        snake.move(position);
+        snake.updateEntity();
     }
 
 };

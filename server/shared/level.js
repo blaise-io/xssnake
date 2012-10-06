@@ -1,5 +1,4 @@
-/*jshint globalstrict:true*/
-/*globals XSS, PixelEntity*/
+/*jshint globalstrict:true, es5:true */
 'use strict';
 
 
@@ -110,6 +109,15 @@ Level.prototype = {
             }
         }
         return false;
+    },
+
+    /**
+     * @param {Array.<number>} a
+     * @param {Array.<number>} b
+     * @return {number}
+     */
+    gap: function(a, b) {
+        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
     },
 
     /**

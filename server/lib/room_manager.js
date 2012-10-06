@@ -20,7 +20,7 @@ RoomManager.prototype = {
      * @param {number} id
      * @return {Room}
      */
-    get: function(id) {
+    room: function(id) {
         return this.rooms[id];
     },
 

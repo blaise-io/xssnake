@@ -37,6 +37,7 @@ gcc.addFiles(
     home + 'server/shared/sugar.js',
     home + 'server/shared/levels.js',
     home + 'server/shared/level.js',
+    home + 'server/shared/snake.js',
     home + 'source/js/pixelentity.js',
     home + 'source/js/pubsub.js',
     home + 'source/js/drawables.js',
@@ -47,7 +48,7 @@ gcc.addFiles(
     home + 'source/js/stage_objects.js',
     home + 'source/js/socket.js',
     home + 'source/js/client.js',
-    home + 'source/js/snake.js',
+    home + 'source/js/client_snake.js',
     home + 'source/js/apple.js',
     home + 'source/js/client_level.js',
     home + 'source/js/game.js'
