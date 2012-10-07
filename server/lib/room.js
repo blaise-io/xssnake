@@ -26,6 +26,8 @@ function Room(server, id, filter) {
     this.pub      = !!filter.pub;
     this.friendly = !!filter.friendly;
     this.capacity = capacity;
+
+    this.level = 2;
 }
 
 module.exports = Room;
@@ -42,10 +44,19 @@ Room.prototype = {
         client.roomid = this.id;
 
         if (this.full()) {
-            this.game = new Game(this, 2);
+            this.game = new Game(this, this.level);
+            this.inprogress = true;
         }
 
         return this;
+    },
+
+    newRound: function() {
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            this.game = null;
+            this.clients.snake = null;
+        }
+        this.game = new Game(this, this.level);
     },
 
     /**

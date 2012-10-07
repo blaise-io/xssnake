@@ -467,7 +467,7 @@ Menu.prototype = {
             newStagePixelsAnim = {start: width, end: 0};
         }
 
-        Utils.extend(newStagePixelsAnim, {callback: callback});
+        newStagePixelsAnim.callback = callback;
 
         XSS.effects.swipe('oldstage', oldStagePixels, oldStagePixelsAnim);
         XSS.effects.swipe('newstage', newStagePixels, newStagePixelsAnim);

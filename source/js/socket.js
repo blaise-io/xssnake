@@ -34,6 +34,9 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on('/client/game/setup', function(data) {
+            if (XSS.game) {
+                XSS.game.destruct();
+            }
             XSS.game = new Game(data[0], data[1], data[2], data[3]);
         }.bind(this));
 
@@ -41,9 +44,13 @@ Socket.prototype = {
             XSS.game.start();
         }.bind(this));
 
+        this.socket.on('/client/game/winner', function(data) {
+            console.log(data[0] + ' wins this round!');
+            console.log(data[0] + ' total wins: ' + data[1]);
+        }.bind(this));
+
         this.socket.on('/client/snake/update', function(data) {
-            var snake;
-            snake = XSS.game.snakes[data[0]];
+            var snake = XSS.game.snakes[data[0]];
             snake.parts = data[1];
             snake.direction = data[2];
         }.bind(this));
@@ -56,7 +63,7 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on('/client/apple/eat', function(data) {
-            XSS.game.snakeSize(data[0], data[1]);
+            XSS.game._snakeSize(data[0], data[1]);
             XSS.game.apples[data[2]].eat();
         }.bind(this));
 

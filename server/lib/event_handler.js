@@ -51,7 +51,9 @@ EventHandler.prototype = {
     _update: function(data) {
         if (this.client.roomid) {
             var game = this._clientGame(this.client);
-            game.updateSnake(this.client, data[0], data[1]);
+            if (game.room.inprogress) {
+                game.updateSnake(this.client, data[0], data[1]);
+            }
         }
     },
 

@@ -17,26 +17,50 @@ function Game(levelID, names, index, apples) {
     this.curid = 0;
 
     /** @type {ClientLevel} */
-    this.level = this.setupLevel(levelID);
+    this.level = this._setupLevel(levelID);
 
     /** @type {Array.<ClientSnake>} */
-    this.snakes = this.spawnSnakes(names, index);
+    this.snakes = this._spawnSnakes(names, index);
 
     /** @type {Array.<Apple>} */
-    this.apples = this.spawnApples(apples);
+    this.apples = this._spawnApples(apples);
 
     this._countDown();
 }
 
 Game.prototype = {
 
-    setupLevel: function(levelID) {
+    start: function() {
+        var tick = this._tick.bind(this);
+        XSS.pubsub.subscribe('/canvas/update', 'tick', tick);
+    },
+
+    destruct: function() {
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            this.snakes[i].removeControls();
+        }
+    },
+
+    /**
+     * @param {number} delta
+     * @private
+     */
+    _tick: function(delta) {
+        this._moveSnakes(delta);
+    },
+
+    /**
+     * @param {number} levelID
+     * @return {ClientLevel}
+     * @private
+     */
+    _setupLevel: function(levelID) {
         var level = new ClientLevel(levelID);
         XSS.ents.world = level.getEntity();
         return level;
     },
 
-    spawnSnakes: function(names, index) {
+    _spawnSnakes: function(names, index) {
         var snakes = [], size, speed;
 
         size = XSS.config.snake.size;
@@ -64,7 +88,7 @@ Game.prototype = {
         return snakes;
     },
 
-    spawnApples: function(locations) {
+    _spawnApples: function(locations) {
         var apples = [];
         for (var i = 0, m = locations.length; i < m; i++) {
             apples.push(new Apple(locations[i][0], locations[i][1]));
@@ -72,25 +96,37 @@ Game.prototype = {
         return apples;
     },
 
-    snakeSize: function(index, size) {
+    _snakeSize: function(index, size) {
         XSS.game.snakes[index].size = size;
     },
 
     _countDown: function() {
     },
 
-    start: function() {
-        var tick = this._tick.bind(this);
-        XSS.pubsub.subscribe('/canvas/update', 'tick', tick);
-    },
-
     /**
      * @param {number} delta
      * @private
      */
-    _tick: function(delta) {
-        this._moveSnakes(delta);
+    _moveSnakes: function(delta) {
+        for (var i = 0, m = this.snakes.length; i < m; ++i) {
+            var snake = this.snakes[i];
+            if (snake.elapsed >= snake.speed && !snake.crashed) {
+                snake.elapsed -= snake.speed;
+                this._moveSnake(snake);
+            }
+            snake.elapsed += delta;
+        }
     },
+
+    /**
+     * @param {ClientSnake} snake
+     * @private
+     */
+    _moveSnake: function(snake) {
+        var position = snake.getNextPosition();
+        snake.move(position);
+        snake.updateEntity();
+    }
 
 //    /**
 //     * @param {ClientSnake} snake
@@ -119,31 +155,6 @@ Game.prototype = {
 //        }
 //
 //        return false;
-//    },
-
-    /**
-     * @param {number} delta
-     * @private
-     */
-    _moveSnakes: function(delta) {
-        for (var i = 0, m = this.snakes.length; i < m; ++i) {
-            var snake = this.snakes[i];
-            if (snake.elapsed >= snake.speed && !snake.crashed) {
-                this._moveSnake(snake);
-                snake.elapsed -= snake.speed;
-            }
-            snake.elapsed += delta;
-        }
-    },
-
-    /**
-     * @param {ClientSnake} snake
-     * @private
-     */
-    _moveSnake: function(snake) {
-        var position = snake.getNextPosition();
-        snake.move(position);
-        snake.updateEntity();
-    }
+//    }
 
 };

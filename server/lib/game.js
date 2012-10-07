@@ -13,10 +13,15 @@ var Level = require('../shared/level.js'),
 function Game(room, levelID) {
     this.room = room;
     this.server = room.server;
+
     this.level = new Level(levelID, levels);
     this.levelID = levelID;
+
     this.apples = [this.level.getRandomOpenTile()];
     this.snakes = new Array(this.room.clients.length);
+
+    this._roundEnded = false;
+    this._tickListener = this._tick.bind(this);
     this._setupClients();
 }
 
@@ -25,14 +30,14 @@ module.exports = Game;
 Game.prototype = {
 
     start: function() {
-        this.inprogress = true;
-        this.server.ticker.on('tick', this._tick.bind(this));
+        console.log('___[NEW ROUND]___');
+        this.server.ticker.on('tick', this._tickListener);
         this.room.emit('/client/game/start', []);
     },
 
     /**
      * @param {Client} client
-     * @param {Array.Array} parts
+     * @param {Array.<Array>} parts
      * @param {number} direction
      */
     updateSnake: function(client, parts, direction) {
@@ -40,24 +45,48 @@ Game.prototype = {
 
         head = parts[parts.length - 1];
 
-        if (this.isCrash(parts)) {
-            this.setSnakeCrashed(client, parts);
+        if (this._isCrash(client, parts)) {
+            this._setSnakeCrashed(client, parts);
         }
 
-        appleIndex = this.appleAtPosition(head);
+        appleIndex = this._appleAtPosition(head);
         if (-1 !== appleIndex) {
-            this.eatApple(client, appleIndex);
+            this._eatApple(client, appleIndex);
         }
 
-        if (this.level.gap(head, client.snake.head()) !== 0) {
-            this.parts = parts;
-        }
-        this.direction = direction;
+        client.snake.direction = direction;
 
-        this.broadCastSnake(client);
+        if (this.level.gap(head, client.snake.head()) <= 1) {
+            client.snake.parts = parts;
+            this._broadCastSnake(client);
+        } else {
+            console.log(client.name);
+            console.log(head);
+            console.log(client.snake.head());
+            this._rejectClientState(client);
+        }
+
+        return true;
     },
 
-    broadCastSnake: function(client) {
+    /**
+     * @param {Client} client
+     * @private
+     */
+    _rejectClientState: function(client) {
+        var send = [
+            this.room.clients.indexOf(client),
+            client.snake.parts,
+            client.snake.direction
+        ];
+        this.room.emit('/client/snake/update', send);
+    },
+
+    /**
+     * @param {Client} client
+     * @private
+     */
+    _broadCastSnake: function(client) {
         var send = [
             this.room.clients.indexOf(client),
             client.snake.parts,
@@ -66,29 +95,109 @@ Game.prototype = {
         this.room.broadcast('/client/snake/update', send, client);
     },
 
-    isCrash: function(parts) {
-        // Wall
-        var checkParts = Math.max(parts.length - 5, 0); // TODO: config
-        for (var i = checkParts, m = parts.length; i < m; i++) {
-            if (this.level.isWall(parts[i][0], parts[i][1])) {
-                return true;
+    /**
+     * @param {Client} client
+     * @param {Array.<Array>} parts
+     * @return {string=}
+     * @private
+     */
+    _isCrash: function(client, parts) {
+        var clients = this.room.clients;
+
+        for (var i = 0, m = parts.length; i < m; i++) {
+            var part = parts[i];
+
+            // Wall
+            if (this.level.isWall(part[0], part[1])) {
+                console.log(client.name + ' crashed into wall with part', i);
+                return 'wall';
+            }
+
+            // Self
+            if (i !== 0 && !this.level.gap(part, parts[0])) {
+                console.log(part, parts[0], !this.level.gap(part, parts[0]));
+                console.log(client.name + ' crashed into self', i);
+                return 'self';
+            }
+
+            // Opponent
+            for (var ii = 0, mm = clients.length; ii < mm; ii++) {
+                if (clients[ii] !== client) {
+                    if (-1 !== clients[ii].snake.partIndex(part)) {
+                        console.log(client.name + ' crashed into ' +
+                            'opponent ' + clients[ii].name + ' with part', i);
+                        return 'opponent';
+                    }
+                }
             }
         }
 
-        // Todo: Self
-
-        // Todo: Player
-
-        return false;
+        return null;
     },
 
-    setSnakeCrashed: function(client, parts) {
+    /**
+     * @param {Client} client
+     * @param {Array.<Array>} parts
+     * @private
+     */
+    _setSnakeCrashed: function(client, parts) {
         client.snake.crashed = true;
         var clientIndex = this.room.clients.indexOf(client);
         this.room.emit('/client/snake/crash', [clientIndex, parts]);
+        this._checkRoundEnded();
     },
 
-    appleAtPosition: function(position) {
+    /**
+     * @private
+     */
+    _checkRoundEnded: function() {
+        var clients, numcrashed, alive;
+
+        clients = this.room.clients;
+        numcrashed = 0;
+
+        for (var i = 0, m = clients.length; i < m; i++) {
+            if (clients[i].snake.crashed) {
+                numcrashed++;
+            } else {
+                alive = clients[i];
+            }
+        }
+
+        if (numcrashed >= clients.length -1 && !this._roundEnded) {
+            this._endRound(alive);
+        }
+    },
+
+    /**
+     * @param {Client=} winner
+     * @private
+     */
+    _endRound: function(winner) {
+        this._roundEnded = true;
+
+        console.log(winner.name + ' won');
+        if (winner) {
+            this.room.emit('/client/game/winner', [winner.name, ++winner.wins]);
+        }
+
+        setTimeout(this._startNewRound.bind(this), 4000);
+    },
+
+    /**
+     * @private
+     */
+    _startNewRound: function() {
+        this.server.ticker.removeListener('tick', this._tickListener);
+        this.room.newRound();
+    },
+
+    /**
+     * @param {Array.<number>} position
+     * @return {number}
+     * @private
+     */
+    _appleAtPosition: function(position) {
         for (var i = 0, m = this.apples.length; i < m; i++) {
             if (this.level.gap(this.apples[i], position) === 0) {
                 return i;
@@ -97,14 +206,23 @@ Game.prototype = {
         return -1;
     },
 
-    eatApple: function(client, appleIndex) {
+    /**
+     * @param {Client} client
+     * @param {number} appleIndex
+     * @private
+     */
+    _eatApple: function(client, appleIndex) {
         var size = ++client.snake.size;
         var clientIndex = this.room.clients.indexOf(client);
         this.room.emit('/client/apple/eat', [clientIndex, size, appleIndex]);
-        this.respawnApple(appleIndex);
+        this._respawnApple(appleIndex);
     },
 
-    respawnApple: function(appleIndex) {
+    /**
+     * @param {number} appleIndex
+     * @private
+     */
+    _respawnApple: function(appleIndex) {
         var location = this.level.getRandomOpenTile();
         this.apples[appleIndex] = location;
         this.room.emit('/client/apple/spawn', [appleIndex, location]);
@@ -115,53 +233,92 @@ Game.prototype = {
      * @private
      */
     _tick: function(delta) {
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            var snake = this.snakes[i];
-            if (!snake.crashed) {
-                snake.elapsed += delta;
-                if (snake.elapsed >= snake.speed) {
-                    snake.elapsed -= snake.speed;
-                    this._setSnakePredictPosition(snake);
-                    snake.trim();
-                }
-            }
+        var clients = this.room.clients;
+        for (var i = 0, m = clients.length; i < m; i++) {
+            this._tickClient(clients[i], delta);
         }
     },
 
-    _setSnakePredictPosition: function(snake) {
-        var head, shift, predict, appleIndex, client;
+    /**
+     * @param {Client} client
+     * @param {number} delta
+     * @private
+     */
+    _tickClient: function(client, delta) {
+        var snake = client.snake;
+        if (!snake.crashed) {
+            if (snake.elapsed >= snake.speed) {
+                snake.elapsed -= snake.speed;
+                this._applyPredictedPosition(client);
+                snake.trim();
+            }
+            snake.elapsed += delta;
+        }
+    },
 
+    /**
+     * @param {Snake} snake
+     * @return {Array.<number>}
+     * @private
+     */
+    _getPredictPosition: function(snake) {
+        var head, shift;
         head = snake.head();
         shift = [[-1, 0], [0, -1], [1, 0], [0, 1]][snake.direction];
-        predict = [head[0] + shift[0], head[1] + shift[1]];
-        snake.parts.push(predict);
+        return [head[0] + shift[0], head[1] + shift[1]];
+    },
 
-        client = this.room.clients[snake.index];
+    /**
+     * @param {Client} client
+     * @private
+     */
+    _applyPredictedPosition: function(client) {
+        var predict, appleIndex, snake, clone;
 
-        // Wall? TODO: Grace period
-        if (this.isCrash(snake.parts)) {
-            this.setSnakeCrashed(client, snake.parts);
+        snake = client.snake;
+        predict = this._getPredictPosition(snake);
+
+        // Crash?
+        clone = snake.parts.slice();
+        clone.shift();
+        clone.push(predict);
+        if (this._isCrash(client, clone)) {
+            this._setSnakeCrashed(client, snake.parts);
         }
 
         // Apple?
-        appleIndex = this.appleAtPosition(predict);
+        appleIndex = this._appleAtPosition(predict);
         if (-1 !== appleIndex) {
-            this.eatApple(appleIndex, client);
+            this._eatApple(client, appleIndex);
+        }
+
+        // Apply move
+        if (!snake.crashed) {
+            snake.move(predict);
         }
     },
 
+    /**
+     * @private
+     */
     _setupClients: function() {
+        var clients = this.room.clients;
         var names = this.room.names();
         this.apple = this.level.getRandomOpenTile();
-        for (var i = 0, m = this.room.clients.length; i < m; i++) {
+        for (var i = 0, m = clients.length; i < m; i++) {
             var snake = this._spawnClientSnake(i);
             this.snakes[i] = snake;
-            this.room.clients[i].snake = snake;
+            clients[i].snake = snake;
             this._emitGameSetup(i, names);
         }
         setTimeout(this.start.bind(this), 2000);
     },
 
+    /**
+     * @param {number} index
+     * @return {Snake}
+     * @private
+     */
     _spawnClientSnake: function(index) {
         var spawn, direction, snake, size, speed;
 
@@ -176,6 +333,11 @@ Game.prototype = {
         return snake;
     },
 
+    /**
+     * @param {number} index
+     * @param {Array.<string>} names
+     * @private
+     */
     _emitGameSetup: function(index, names) {
         var data = [this.levelID, names, index, this.apples];
         this.room.clients[index].emit('/client/game/setup', data);

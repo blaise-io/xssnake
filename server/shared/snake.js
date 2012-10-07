@@ -55,7 +55,7 @@ Snake.prototype = {
      */
     hasPartPredict: function(part) {
         var treshold = this.crashed ? -1 : 0;
-        return (this._getPart(part) > treshold);
+        return (this.partIndex(part) > treshold);
     },
 
     /**
@@ -77,7 +77,7 @@ Snake.prototype = {
      * @param {Array.<number>} part
      * @return {number}
      */
-    _getPart: function(part) {
+    partIndex: function(part) {
         var parts = this.parts;
         for (var i = 0, m = parts.length; i < m; i++) {
             if (parts[i][0] === part[0] && parts[i][1] === part[1]) {

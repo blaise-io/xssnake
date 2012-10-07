@@ -34,6 +34,8 @@ State.prototype = {
      */
     removeClient: function(client) {
         delete this.clients[client.id];
+        client.snake = null;
+        client = null;
     }
 
 };

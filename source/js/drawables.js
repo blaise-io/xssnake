@@ -33,28 +33,26 @@ Drawables.prototype = {
      * @param {number} y
      * @param {number} side
      * @param {string} text
-     * @param {number=} padding
      */
-    textAt: function(x, y, side, text, padding) {
+    textAt: function(x, y, side, text) {
         var width, pixels;
-        padding = padding || 2;
         switch (side) {
             case 0:
                 text = '← ' + text;
-                width = XSS.font.width(text) + padding;
+                width = XSS.font.width(text) + 2;
                 pixels = XSS.font.draw(x - width, y, text);
                 break;
             case 1:
                 text = '↑ ' + text;
-                pixels = XSS.font.draw(x, y - 6 - padding, text);
+                pixels = XSS.font.draw(x, y - 4, text);
                 break;
             case 2:
                 text = text + ' →';
-                pixels = XSS.font.draw(x + padding, y, text);
+                pixels = XSS.font.draw(x + 8, y, text);
                 break;
             case 3:
                 text = text + ' ↓';
-                pixels = XSS.font.draw(x, y + padding, text);
+                pixels = XSS.font.draw(x, y + 2, text);
                 break;
         }
         return new PixelEntity(pixels);
