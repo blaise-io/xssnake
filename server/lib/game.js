@@ -102,31 +102,35 @@ Game.prototype = {
      * @private
      */
     _isCrash: function(client, parts) {
-        var clients = this.room.clients;
+        var clients = this.room.clients,
+            level = this.level;
 
         for (var i = 0, m = parts.length; i < m; i++) {
             var part = parts[i];
 
             // Wall
-            if (this.level.isWall(part[0], part[1])) {
+            if (level.isWall(part[0], part[1])) {
                 console.log(client.name + ' crashed into wall with part', i);
                 return 'wall';
             }
 
             // Self
-            if (i !== 0 && !this.level.gap(part, parts[0])) {
+            else if (i !== 0 && !level.gap(part, parts[0])) {
                 console.log(part, parts[0], !this.level.gap(part, parts[0]));
                 console.log(client.name + ' crashed into self', i);
                 return 'self';
             }
 
             // Opponent
-            for (var ii = 0, mm = clients.length; ii < mm; ii++) {
-                if (clients[ii] !== client) {
-                    if (-1 !== clients[ii].snake.partIndex(part)) {
-                        console.log(client.name + ' crashed into ' +
-                            'opponent ' + clients[ii].name + ' with part', i);
-                        return 'opponent';
+            else {
+                for (var ii = 0, mm = clients.length; ii < mm; ii++) {
+                    var opponent = clients[ii];
+                    if (client !== opponent) {
+                        if (-1 !== opponent.snake.partIndex(part)) {
+                            console.log(client.name + ' crashed into ' +
+                                'opponent ' + opponent.name + ' with part', i);
+                            return 'opponent';
+                        }
                     }
                 }
             }
@@ -279,8 +283,7 @@ Game.prototype = {
         predict = this._getPredictPosition(snake);
 
         // Crash?
-        clone = snake.parts.slice();
-        clone.shift();
+        clone = snake.parts.slice(1);
         clone.push(predict);
         if (this._isCrash(client, clone)) {
             this._setSnakeCrashed(client, snake.parts);

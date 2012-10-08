@@ -17,12 +17,12 @@ PublishSubscribe.prototype = {
      * @param {string} topic
      */
     publish: function(topic) {
-        var args = Array.prototype.slice.call(arguments).splice(1),
-            pubsubsTopic = this.subscriptions[topic];
-        if (pubsubsTopic) {
-            for (var key in pubsubsTopic) {
-                if (pubsubsTopic.hasOwnProperty(key)) {
-                    this._exec(pubsubsTopic[key], args);
+        var args = Array.prototype.slice.call(arguments, 1),
+            subscriptions = this.subscriptions[topic];
+        if (subscriptions) {
+            for (var key in subscriptions) {
+                if (subscriptions.hasOwnProperty(key)) {
+                    this._exec(subscriptions[key], args);
                 }
             }
         }
