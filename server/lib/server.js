@@ -5,6 +5,8 @@ var fs = require('fs'),
     http = require('http'),
     io = require('socket.io'),
 
+    config = require('../shared/config.js'),
+
     EventHandler = require('./event_handler.js'),
     RoomManager = require('./room_manager.js'),
     Room = require('./room.js'),
@@ -14,11 +16,10 @@ var fs = require('fs'),
 /**
  * @constructor
  */
-function Server(config) {
-    this.config = config;
+function Server() {
     this.state = new State(this);
     this.roomManager = new RoomManager(this);
-    this.ticker = new Ticker(config.server.tick);
+    this.ticker = new Ticker(config.shared.game.tick);
     this.listen();
 }
 
@@ -49,7 +50,7 @@ Server.prototype = {
     _httpRequestHandler: function(request, response) {
         var file, onIndexFileRead;
 
-        file = this.config.server.indexFile;
+        file = __dirname + '/../../' + config.server.pathToIndexFile;
         onIndexFileRead = function(err, data) {
             if (err) {
                 response.writeHead(500);

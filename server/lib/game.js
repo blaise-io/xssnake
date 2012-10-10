@@ -4,7 +4,8 @@
 var Level = require('../shared/level.js'),
     levels = require('../shared/levels.js'),
     Snake = require('../shared/snake.js'),
-    config = require('../shared/config.js');
+    config = require('../shared/config.js'),
+    event = require('../shared/event.js');
 
 /**
  * @param {Room} room
@@ -32,7 +33,7 @@ Game.prototype = {
     start: function() {
         console.log('___[NEW ROUND]___');
         this.server.ticker.on('tick', this._tickListener);
-        this.room.emit('/client/game/start', []);
+        this.room.emit(event.CLIENT_GAME_START, []);
     },
 
     /**
@@ -79,7 +80,7 @@ Game.prototype = {
             client.snake.parts,
             client.snake.direction
         ];
-        this.room.emit('/client/snake/update', send);
+        this.room.emit(event.CLIENT_SNAKE_UPDATE, send);
     },
 
     /**
@@ -92,7 +93,7 @@ Game.prototype = {
             client.snake.parts,
             client.snake.direction
         ];
-        this.room.broadcast('/client/snake/update', send, client);
+        this.room.broadcast(event.CLIENT_SNAKE_UPDATE, send, client);
     },
 
     /**
@@ -147,7 +148,7 @@ Game.prototype = {
     _setSnakeCrashed: function(client, parts) {
         client.snake.crashed = true;
         var clientIndex = this.room.clients.indexOf(client);
-        this.room.emit('/client/snake/crash', [clientIndex, parts]);
+        this.room.emit(event.CLIENT_SNAKE_CRASH, [clientIndex, parts]);
         this._checkRoundEnded();
     },
 
@@ -182,7 +183,7 @@ Game.prototype = {
 
         console.log(winner.name + ' won');
         if (winner) {
-            this.room.emit('/client/game/winner', [winner.name, ++winner.wins]);
+            this.room.emit(event.CLIENT_GAME_WIN, [winner.name, ++winner.wins]);
         }
 
         setTimeout(this._startNewRound.bind(this), 4000);
@@ -218,7 +219,7 @@ Game.prototype = {
     _eatApple: function(client, appleIndex) {
         var size = ++client.snake.size;
         var clientIndex = this.room.clients.indexOf(client);
-        this.room.emit('/client/apple/eat', [clientIndex, size, appleIndex]);
+        this.room.emit(event.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
         this._respawnApple(appleIndex);
     },
 
@@ -229,7 +230,7 @@ Game.prototype = {
     _respawnApple: function(appleIndex) {
         var location = this.level.getRandomOpenTile();
         this.apples[appleIndex] = location;
-        this.room.emit('/client/apple/spawn', [appleIndex, location]);
+        this.room.emit(event.CLIENT_APPLE_SPAWN, [appleIndex, location]);
     },
 
     /**
@@ -327,8 +328,8 @@ Game.prototype = {
 
         spawn = this.level.getSpawn(index);
         direction = this.level.getSpawnDirection(index);
-        size = config.snake.size;
-        speed = config.snake.speed;
+        size = config.shared.snake.size;
+        speed = config.shared.snake.speed;
 
         snake = new Snake(index, spawn, direction, size, speed);
         snake.elapsed = 0;
@@ -343,7 +344,7 @@ Game.prototype = {
      */
     _emitGameSetup: function(index, names) {
         var data = [this.levelID, names, index, this.apples];
-        this.room.clients[index].emit('/client/game/setup', data);
+        this.room.clients[index].emit(event.CLIENT_GAME_SETUP, data);
     }
 
 };

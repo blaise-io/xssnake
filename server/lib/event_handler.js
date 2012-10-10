@@ -1,6 +1,8 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
+var event = require('../shared/event.js');
+
 /**
  * @param {Object} server
  * @param {Client} client
@@ -12,12 +14,12 @@ function EventHandler(server, client, socket) {
     this.client = client;
     this.socket = socket;
 
-    client.emit('/client/connect', client.id);
+    client.emit(event.CLIENT_CONNECT, client.id);
 
     socket.on('disconnect', this._disconnect.bind(this));
-    socket.on('/server/room/match', this._matchRoom.bind(this));
-    socket.on('/server/chat/message', this._chat.bind(this));
-    socket.on('/server/snake/update', this._update.bind(this));
+    socket.on(event.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
+    socket.on(event.SERVER_CHAT_MESSAGE, this._chat.bind(this));
+    socket.on(event.SERVER_SNAKE_UPDATE, this._update.bind(this));
 }
 
 module.exports = EventHandler;

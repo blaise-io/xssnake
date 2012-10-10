@@ -63,8 +63,8 @@ Game.prototype = {
     _spawnSnakes: function(names, index) {
         var snakes = [], size, speed;
 
-        size = XSS.config.snake.size;
-        speed = XSS.config.snake.speed;
+        size = XSS.config.shared.snake.size;
+        speed = XSS.config.shared.snake.speed;
 
         for (var i = 0, m = names.length; i < m; i++) {
             var location, direction, snake;

@@ -368,7 +368,7 @@ GameStage.prototype = {
         choices = XSS.stages.getNamedChoices();
 
         XSS.socket = new Socket(function() {
-            XSS.socket.emit('/server/room/match/get', choices);
+            XSS.socket.emit(XSS.event.SERVER_ROOM_MATCH, choices);
         });
     },
 

@@ -3,25 +3,33 @@
 
 'use strict';
 
-(function ClientServerSharedObject() {
+XSS = XSS || {};
+module = module || {};
 
-    var config = {
-        server: {
-            host          : 'http://localhost:8080',
-            socketIOScript: 'http://localhost:8080/socket.io/socket.io.js',
-            indexFile     : '../source.html',
-            tick          : 50
-        },
+XSS.config = module.exports = {
+
+    // Server-only config
+    server: {
+        pathToIndexFile: 'source/source.html' // From root
+    },
+
+    // Client-only config
+    client: {
+        socketio: {
+            host  : 'http://localhost:8080',
+            script: 'http://localhost:8080/socket.io/socket.io.js'
+        }
+    },
+
+    // Config used by both client and server
+    shared: {
         snake: {
             speed: 150,
             size : 3
+        },
+        game : {
+            tick: 50
         }
-    };
-
-    if (typeof XSS !== 'undefined') {
-        XSS.config = config; // Client-side
-    } else {
-        module.exports = config; // Server-side
     }
 
-})();
+};

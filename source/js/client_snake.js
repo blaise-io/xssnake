@@ -70,7 +70,7 @@ ClientSnake.prototype.crash = function() {
 };
 
 ClientSnake.prototype.emitState = function(direction) {
-    XSS.socket.emit('/server/snake/update', [this.parts, direction]);
+    XSS.socket.emit(XSS.event.SERVER_SNAKE_UPDATE, [this.parts, direction]);
 };
 
 /**

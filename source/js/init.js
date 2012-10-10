@@ -4,6 +4,7 @@
 'use strict';
 
 var XSS = {};
+var module = {}; // Dummy container for Requirejs client-server shared objects
 
 /** @const */ XSS.PIXELS_H = 256;
 /** @const */ XSS.PIXELS_V = 160;
@@ -38,6 +39,8 @@ window.onerror = function() {
 
 window.onload = function() {
 
+    delete window.module; // Clean up dummy container
+
     XSS.doc       = document.body;
     XSS.input     = document.createElement('input');
                     XSS.doc.appendChild(XSS.input);
@@ -62,7 +65,7 @@ window.onload = function() {
             'pub'     : true,
             'capacity': 2
         };
-        XSS.socket.emit('/server/room/match', data);
+        XSS.socket.emit(XSS.event.SERVER_ROOM_MATCH, data);
     });
 
 };

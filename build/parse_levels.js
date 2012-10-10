@@ -26,8 +26,8 @@ function whiteSpaceOCD(str) {
     str = str.replace(/\s+/g, ' '); // Normalize whitespace
     str = str.replace(/([\[\{]) /g, '$1'); // No spaces following opening bracket
     str = str.replace(/ ([\]\}])/g, '$1'); // No spaces before closing bracket
-    str = str.replace(/\{/g, '\n        ' + '{'); // Start each level on a new line
-    str = str.replace(/\]$/g, '\n    ' + ']'); // Closing bracket on new line
+    str = str.replace(/\{/g, '\n    ' + '{'); // Start each level on a new line
+    str = str.replace(/\]$/g, '\n' + ']'); // Closing bracket on new line
     return str;
 }
 

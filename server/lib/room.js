@@ -1,7 +1,8 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-var Game = require('./game.js');
+var Game = require('./game.js'),
+    event = require('../shared/event.js');
 
 /**
  * @param {Server} server
@@ -67,7 +68,7 @@ Room.prototype = {
         var index = this.clients.indexOf(client);
         if (-1 !== index) {
             this.clients.splice(index, 1);
-            this.emit('/client/notice', client.name + ' left');
+            this.emit(event.CLIENT_NOTICE, client.name + ' left');
             return true;
         }
         return false;
