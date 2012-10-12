@@ -22,5 +22,3 @@ module.exports = {
 if (typeof XSS !== 'undefined') {
     XSS.events = module.exports;
 }
-
-console.log(event)
