@@ -3,10 +3,7 @@
 
 'use strict';
 
-XSS = XSS || {};
-module = module || {};
-
-XSS.config = module.exports = {
+module.exports = {
 
     // Server-only config
     server: {
@@ -33,3 +30,7 @@ XSS.config = module.exports = {
     }
 
 };
+
+if (typeof XSS !== 'undefined') {
+    XSS.config = module.exports;
+}
