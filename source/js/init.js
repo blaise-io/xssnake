@@ -65,7 +65,7 @@ window.onload = function() {
             'pub'     : true,
             'capacity': 2
         };
-        XSS.socket.emit(XSS.event.SERVER_ROOM_MATCH, data);
+        XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
     });
 
 };

@@ -20,5 +20,7 @@ module.exports = {
 };
 
 if (typeof XSS !== 'undefined') {
-    XSS.event = module.exports;
+    XSS.events = module.exports;
 }
+
+console.log(event)

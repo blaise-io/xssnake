@@ -34,7 +34,7 @@ gcc.addFiles(
     home + 'source/js/init.js',
     home + 'source/js/utils.js',
     home + 'server/shared/config.js',
-    home + 'server/shared/event.js',
+    home + 'server/shared/events.js',
     home + 'server/shared/levels.js',
     home + 'server/shared/level.js',
     home + 'server/shared/snake.js',

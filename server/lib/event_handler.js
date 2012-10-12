@@ -1,7 +1,7 @@
 /*jshint globalstrict:true,es5:true*/
 'use strict';
 
-var event = require('../shared/event.js');
+var events = require('../shared/events.js');
 
 /**
  * @param {Object} server
@@ -14,12 +14,12 @@ function EventHandler(server, client, socket) {
     this.client = client;
     this.socket = socket;
 
-    client.emit(event.CLIENT_CONNECT, client.id);
+    client.emit(events.CLIENT_CONNECT, client.id);
 
     socket.on('disconnect', this._disconnect.bind(this));
-    socket.on(event.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
-    socket.on(event.SERVER_CHAT_MESSAGE, this._chat.bind(this));
-    socket.on(event.SERVER_SNAKE_UPDATE, this._update.bind(this));
+    socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
+    socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
+    socket.on(events.SERVER_SNAKE_UPDATE, this._update.bind(this));
 }
 
 module.exports = EventHandler;

@@ -2,7 +2,7 @@
 'use strict';
 
 var Game = require('./game.js'),
-    event = require('../shared/event.js');
+    events = require('../shared/events.js');
 
 /**
  * @param {Server} server
@@ -68,7 +68,7 @@ Room.prototype = {
         var index = this.clients.indexOf(client);
         if (-1 !== index) {
             this.clients.splice(index, 1);
-            this.emit(event.CLIENT_NOTICE, client.name + ' left');
+            this.emit(events.CLIENT_NOTICE, client.name + ' left');
             return true;
         }
         return false;

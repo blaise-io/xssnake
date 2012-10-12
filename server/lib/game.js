@@ -5,7 +5,7 @@ var Level = require('../shared/level.js'),
     levels = require('../shared/levels.js'),
     Snake = require('../shared/snake.js'),
     config = require('../shared/config.js'),
-    event = require('../shared/event.js');
+    events = require('../shared/events.js');
 
 /**
  * @param {Room} room
@@ -33,7 +33,7 @@ Game.prototype = {
     start: function() {
         console.log('___[NEW ROUND]___');
         this.server.ticker.on('tick', this._tickListener);
-        this.room.emit(event.CLIENT_GAME_START, []);
+        this.room.emit(events.CLIENT_GAME_START, []);
     },
 
     /**
@@ -80,7 +80,7 @@ Game.prototype = {
             client.snake.parts,
             client.snake.direction
         ];
-        this.room.emit(event.CLIENT_SNAKE_UPDATE, send);
+        this.room.emit(events.CLIENT_SNAKE_UPDATE, send);
     },
 
     /**
@@ -93,7 +93,7 @@ Game.prototype = {
             client.snake.parts,
             client.snake.direction
         ];
-        this.room.broadcast(event.CLIENT_SNAKE_UPDATE, send, client);
+        this.room.broadcast(events.CLIENT_SNAKE_UPDATE, send, client);
     },
 
     /**
@@ -148,7 +148,7 @@ Game.prototype = {
     _setSnakeCrashed: function(client, parts) {
         client.snake.crashed = true;
         var clientIndex = this.room.clients.indexOf(client);
-        this.room.emit(event.CLIENT_SNAKE_CRASH, [clientIndex, parts]);
+        this.room.emit(events.CLIENT_SNAKE_CRASH, [clientIndex, parts]);
         this._checkRoundEnded();
     },
 
@@ -183,7 +183,7 @@ Game.prototype = {
 
         console.log(winner.name + ' won');
         if (winner) {
-            this.room.emit(event.CLIENT_GAME_WIN, [winner.name, ++winner.wins]);
+            this.room.emit(events.CLIENT_GAME_WIN, [winner.name, ++winner.wins]);
         }
 
         setTimeout(this._startNewRound.bind(this), 4000);
@@ -219,7 +219,7 @@ Game.prototype = {
     _eatApple: function(client, appleIndex) {
         var size = ++client.snake.size;
         var clientIndex = this.room.clients.indexOf(client);
-        this.room.emit(event.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
+        this.room.emit(events.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
         this._respawnApple(appleIndex);
     },
 
@@ -230,7 +230,7 @@ Game.prototype = {
     _respawnApple: function(appleIndex) {
         var location = this.level.getRandomOpenTile();
         this.apples[appleIndex] = location;
-        this.room.emit(event.CLIENT_APPLE_SPAWN, [appleIndex, location]);
+        this.room.emit(events.CLIENT_APPLE_SPAWN, [appleIndex, location]);
     },
 
     /**
@@ -344,7 +344,7 @@ Game.prototype = {
      */
     _emitGameSetup: function(index, names) {
         var data = [this.levelID, names, index, this.apples];
-        this.room.clients[index].emit(event.CLIENT_GAME_SETUP, data);
+        this.room.clients[index].emit(events.CLIENT_GAME_SETUP, data);
     }
 
 };
