@@ -1,4 +1,5 @@
-/*jshint globalstrict:true*/
+/*jshint globalstrict:true, sub:true*/
+/*globals XSS*/
 
 'use strict';
 
@@ -14,10 +15,38 @@ function PixelEntity(varArgs) {
     /** @private */ this._enabled = true;
     /** @private */ this._dynamic = false;
 
+    this.effects = {};
     this.add.apply(this, arguments || []);
 }
 
 PixelEntity.prototype = {
+
+    /**
+     * @param {...} varArgs
+     * @return {PixelEntity}
+     */
+    flash: function(varArgs) {
+        this.effects.flash = this._effects.flash.apply(this, arguments);
+        return this;
+    },
+
+    /**
+     * @param {...} varArgs
+     * @return {PixelEntity}
+     */
+    lifetime: function(varArgs) {
+        this.effects.lifetime = this._effects.lifetime.apply(this, arguments);
+        return this;
+    },
+
+    /**
+     * @param {...} varArgs
+     * @return {PixelEntity}
+     */
+    swipe: function(varArgs) {
+        this.effects.swipe = this._effects.swipe.apply(this, arguments);
+        return this;
+    },
 
     /**
      * @return {PixelEntity}
@@ -35,7 +64,7 @@ PixelEntity.prototype = {
             return this._pixels; // Getter
         } else {
             this._pixels = [];  // Setter
-            this.add.apply(this, arguments || []);
+            this.add.apply(this, arguments);
             return this;
         }
     },

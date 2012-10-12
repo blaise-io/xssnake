@@ -142,13 +142,20 @@ Canvas.prototype = {
     /**
      * @param {string} name
      * @param {PixelEntity} entity
+     * @param {number} delta
      * @private
      */
-    _paintEntity: function(name, entity) {
+    _paintEntity: function(name, entity, delta) {
         var cache;
 
         if (false === entity instanceof PixelEntity) {
             throw new Error(name);
+        }
+
+        for (var k in entity.effects) {
+            if (entity.effects.hasOwnProperty(k)) {
+                entity.effects[k].call(entity, delta);
+            }
         }
 
         if (true === entity.enabled()) {
@@ -167,31 +174,36 @@ Canvas.prototype = {
 
     /** @private */
     _paint: function() {
-        var fps, now, delta;
+        var now, delta, fps;
 
+        // Time since last paint
         now = +new Date();
         delta = now - this.time;
+        this.time = now;
+
+        // Show FPS in title bar
+        fps = Math.round(1000 / delta);
+        document.title = 'XXSNAKE ' + fps;
+
+        // Abuse this loop to trigger the game tick
+        XSS.pubsub.publish(XSS.events.CLIENT_TICK, delta);
 
         if (!XSS.error) {
             // Make appointment for next paint
             window.requestAnimationFrame(this._paint.bind(this), this.canvas);
         }
 
-        // FPS
-        fps = Math.round(1000 / delta);
-        this.time = now;
-        document.title = 'XXSNAKE ' + fps;
+        // Handle requestAnimationFrame's variable frame rate when
+        // focussing and blurring windows. Don't do this for game tick.
+        if (delta <= 10 || delta >= 200) {
+            delta = 0;
+        }
 
-        // Last call for animations
-        XSS.pubsub.publish('/canvas/update', delta);
-
-        // Clear the canvas
         this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
 
-        // Paint!
         for (var k in this.entities) {
             if (this.entities.hasOwnProperty(k)) {
-                this._paintEntity(k, this.entities[k]);
+                this._paintEntity(k, this.entities[k], delta);
             }
         }
     }

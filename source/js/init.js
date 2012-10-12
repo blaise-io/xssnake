@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals Utils, PublishSubscribe, Canvas, Drawables, Effects, Font, Menu, Stages, Socket */
+/*globals Utils, PublishSubscribe, Canvas, Drawables, Transform, Font, Menu, Stages, Socket */
 
 'use strict';
 
@@ -48,7 +48,7 @@ window.onload = function() {
     XSS.pubsub    = new PublishSubscribe();
     XSS.canvas    = new Canvas();
     XSS.drawables = new Drawables();
-    XSS.effects   = new Effects();
+    XSS.transform = new Transform();
     XSS.font      = new Font();
     XSS.menu      = new Menu();
     XSS.stages    = new Stages();

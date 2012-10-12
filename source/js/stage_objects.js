@@ -67,7 +67,7 @@ XSS.CreditsStage = function(name) {
     top = XSS.MENU_TOP;
 
     screen = new PixelEntity(
-        XSS.effects.zoomX2(XSS.font.draw(0, 0, '<CREDITS>'), left, top),
+        XSS.transform.zoomX2(XSS.font.draw(0, 0, '<CREDITS>'), left, top),
         XSS.font.draw(left, top + 18, 'Blaise Kal:'),
         XSS.font.draw(left, top + 27, 'Placeholder:'),
         XSS.font.draw(left, top + 35, 'Placeholder:'),
@@ -92,7 +92,7 @@ XSS.HelpStage = function(name) {
     top = XSS.MENU_TOP;
 
     screen = new PixelEntity(
-        XSS.effects.zoomX2(XSS.font.draw(0, 0, '<HEEELP?!!>'), left, top),
+        XSS.transform.zoomX2(XSS.font.draw(0, 0, '<HEEELP?!!>'), left, top),
         XSS.font.draw(left, top + 18, '• Play using the arrow keys on your keyboard'),
         XSS.font.draw(left, top + 27, '• You can chat during the game by typing+enter'),
         XSS.font.draw(left, top + 35, '• Open Source at github.com/blaisekal/xssnake'),

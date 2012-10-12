@@ -71,7 +71,7 @@ Socket.prototype = {
 
         this.socket.on(events.CLIENT_APPLE_SPAWN, function(data) {
             var index = data[0], location = data[1];
-            XSS.game.apples[index] = new Apple(location[0], location[1]);
+            XSS.game.apples[index] = new Apple(index, location[0], location[1]);
         }.bind(this));
     },
 

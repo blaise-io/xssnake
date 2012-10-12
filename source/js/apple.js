@@ -4,11 +4,13 @@
 'use strict';
 
 /**
+ * @param {number} index
  * @param {number} x
  * @param {number} y
  * @constructor
  */
-function Apple(x, y) {
+function Apple(index, x, y) {
+    this.ns = 'A' + index;
     this.x = x;
     this.y = y;
 
@@ -17,37 +19,42 @@ function Apple(x, y) {
         y: this.y * XSS.GAME_TILE + XSS.GAME_TOP
     };
 
-    this.entity = XSS.drawables.apple(this.px.x, this.px.y);
-    XSS.effects.blink('apple', this.entity, 240);
+    XSS.ents[this.ns] = XSS.drawables.apple(this.px.x, this.px.y);
+    XSS.ents[this.ns].flash(240);
 }
 
 Apple.prototype = {
 
-    showNom: function() {
-        var text, entity, random, nom,
-            duration = 100,
-            x = this.px.x,
-            y = this.px.y;
+    destruct: function() {
+        XSS.ents[this.ns] = null;
+        delete XSS.ents[this.ns];
+    },
+
+    eat: function() {
+        this._showNomNomNom();
+        this.destruct();
+    },
+
+    _showNomNomNom: function() {
+        var random, x, y;
+
+        x = this.px.x;
+        y = this.px.y;
 
         random = function() {
             var max = 12;
             return -max + Math.floor(Math.random() * max * 2);
         };
 
-        nom = function() {
-            text = XSS.font.draw(x - 4 + random(), y + random(), 'nom');
-            entity = new PixelEntity(text);
-            XSS.effects.decay('nom', entity, duration);
-        };
-
         for (var i = 0; i <= 3; i++) {
-            XSS.effects.delay(nom, i * duration);
-        }
-    },
+            var text, entity;
 
-    eat: function() {
-        this.showNom();
-        XSS.effects.blinkStop('apple');
+            text = XSS.font.draw(x + random(), y + random(), 'nom');
+            entity = new PixelEntity(text);
+            entity.lifetime(i * 100, 100 + i * 100);
+
+            XSS.ents['nom' + i] = entity;
+        }
     }
 
 };

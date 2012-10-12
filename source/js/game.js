@@ -32,7 +32,7 @@ Game.prototype = {
 
     start: function() {
         var tick = this._tick.bind(this);
-        XSS.pubsub.subscribe('/canvas/update', 'tick', tick);
+        XSS.pubsub.subscribe(XSS.events.CLIENT_TICK, 'tick', tick);
     },
 
     destruct: function() {
@@ -91,7 +91,7 @@ Game.prototype = {
     _spawnApples: function(locations) {
         var apples = [];
         for (var i = 0, m = locations.length; i < m; i++) {
-            apples.push(new Apple(locations[i][0], locations[i][1]));
+            apples.push(new Apple(i, locations[i][0], locations[i][1]));
         }
         return apples;
     },

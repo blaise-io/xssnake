@@ -165,8 +165,8 @@ InputStage.prototype = {
         XSS.off.keydown(this.inputUpdate);
         XSS.off.keyup(this.inputUpdate);
 
-        XSS.effects.blinkStop('caret');
-        XSS.effects.decayStop('error');
+        delete XSS.ents.ermsg;
+        delete XSS.ents.caret;
     },
 
     handleKeys: function(e) {
@@ -196,7 +196,7 @@ InputStage.prototype = {
 
     /** @private */
     inputSubmit: function() {
-        var value, error, message;
+        var value, error, errfont;
 
         value = this.getInputvalue();
         error = this.getInputError(value);
@@ -205,10 +205,8 @@ InputStage.prototype = {
             XSS.menu.switchStage(this.name, this.nextStage);
             XSS.stages.choices[this.name] = value;
         } else {
-            message = new PixelEntity(
-                XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP + 9, error)
-            );
-            XSS.effects.decay('error', message);
+            errfont = XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP + 9, error);
+            XSS.ents.ermsg = new PixelEntity(errfont).lifetime(0, 500);
         }
 
         return false;
@@ -216,7 +214,7 @@ InputStage.prototype = {
 
     /** @private */
     inputUpdate: function() {
-        var crateText, caretLeft, caret, value, valuePixelWidth;
+        var fontWidth, caretLeft, caret, value, strTilCaret;
 
         // Selected text: too much hassle
         if (XSS.input.selectionStart !== XSS.input.selectionEnd) {
@@ -224,18 +222,17 @@ InputStage.prototype = {
         }
 
         value = this.getInputvalue();
-        valuePixelWidth = value.substr(0, XSS.input.selectionStart);
+        strTilCaret = value.substr(0, XSS.input.selectionStart);
 
-        crateText = XSS.font.width(valuePixelWidth) || -1;
-        caretLeft = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + crateText;
+        fontWidth = XSS.font.width(strTilCaret) || -1;
+        caretLeft = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + fontWidth;
 
         caret = XSS.drawables.line(
             caretLeft, XSS.MENU_TOP - 1,
             caretLeft, XSS.MENU_TOP + 6
         );
 
-        XSS.effects.blinkStop('caret');
-        XSS.effects.blink('caret', caret);
+        XSS.ents.caret = caret.flash();
         XSS.menu.refreshStage();
     }
 
@@ -402,6 +399,11 @@ Menu.prototype = {
 
     switchStage: function(currentStageName, newStageName, options) {
         var onAnimateDone = function() {
+
+            // Remove old stages
+            delete XSS.ents.oldstage;
+            delete XSS.ents.newstage;
+
             // Load new stage
             XSS.stages.current = newStageName;
             this.newStage(newStageName);
@@ -454,23 +456,29 @@ Menu.prototype = {
         this.updateStage(this.stages[XSS.stages.current]);
     },
 
-    /** @private */
-    _switchStageAnimate: function(oldStagePixels, newStagePixels, back, callback) {
-        var oldStagePixelsAnim, newStagePixelsAnim,
+    /**
+     * @param {PixelEntity} oldStage
+     * @param {PixelEntity} newStage
+     * @param {boolean} back
+     * @param {function()} callback
+     * @private
+     */
+    _switchStageAnimate: function(oldStage, newStage, back, callback) {
+        var oldStageAnim, newStageAnim,
             width = XSS.PIXELS_H;
 
         if (back) {
-            oldStagePixelsAnim = {start: 0, end: width};
-            newStagePixelsAnim = {start: -width, end: 0};
+            oldStageAnim = {start: 0, end: width};
+            newStageAnim = {start: -width, end: 0};
         } else {
-            oldStagePixelsAnim = {start: 0, end: -width};
-            newStagePixelsAnim = {start: width, end: 0};
+            oldStageAnim = {start: 0, end: -width};
+            newStageAnim = {start: width, end: 0};
         }
 
-        newStagePixelsAnim.callback = callback;
+        newStageAnim.callback = callback;
 
-        XSS.effects.swipe('oldstage', oldStagePixels, oldStagePixelsAnim);
-        XSS.effects.swipe('newstage', newStagePixels, newStagePixelsAnim);
+        XSS.ents.oldstage = oldStage.clone().dynamic(true).swipe(oldStageAnim);
+        XSS.ents.newstage = newStage.clone().dynamic(true).swipe(newStageAnim);
     }
 
 };

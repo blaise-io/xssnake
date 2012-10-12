@@ -109,7 +109,7 @@ Drawables.prototype = {
         y = y || 18;
         var welcome = XSS.font.draw(0, 0, '<XSSNAKE>');
         return new PixelEntity(
-            XSS.effects.zoomX4(welcome, x, y),
+            XSS.transform.zoomX4(welcome, x, y),
             XSS.font.draw(x, y + 20, (new Array(45)).join('+'))
         );
     },

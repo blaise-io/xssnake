@@ -61,7 +61,7 @@ ClientSnake.prototype.addToEntities = function() {
 };
 
 ClientSnake.prototype.updateEntity = function() {
-    this.entity.pixels(XSS.effects.zoomGame(this.parts));
+    this.entity.pixels(XSS.transform.zoomGame(this.parts));
 };
 
 ClientSnake.prototype.crash = function() {

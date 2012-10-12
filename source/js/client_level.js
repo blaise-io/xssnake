@@ -28,5 +28,5 @@ ClientLevel.prototype.getEntity = function() {
         xy = this.seqToXY(walls[i]);
         pixels.push(xy);
     }
-    return new PixelEntity(XSS.effects.zoomGame(pixels));
+    return new PixelEntity(XSS.transform.zoomGame(pixels));
 };

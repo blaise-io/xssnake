@@ -4,6 +4,8 @@
 'use strict';
 
 module.exports = {
+    CLIENT_TICK        : 'TICK',
+
     CLIENT_CONNECT     : 'CONN',
     CLIENT_NOTICE      : 'NOTICE',
     CLIENT_GAME_SETUP  : 'SETUP',
