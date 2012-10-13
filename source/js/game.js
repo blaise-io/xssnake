@@ -32,7 +32,7 @@ Game.prototype = {
 
     start: function() {
         var tick = this._tick.bind(this);
-        XSS.pubsub.subscribe(XSS.events.CLIENT_TICK, 'tick', tick);
+        XSS.pubsub.subscribe(XSS.GAME_TICK, 'tick', tick);
     },
 
     destruct: function() {

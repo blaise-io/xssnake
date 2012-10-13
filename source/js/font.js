@@ -9,7 +9,7 @@
  * @constructor
  */
 function Font() {
-    this.buildGlyphCache();
+    this._buildGlyphCache();
 }
 
 /**
@@ -28,30 +28,27 @@ Font.MAX = 6;
 
 Font.prototype = {
 
-    /** @private */
-    glyphs: {},
-
     draw: function(x, y, str, inverted) {
         var glyph, pixels = [];
 
-        str = this.replaceMissingCharacters(str);
+        str = this._replaceMissingCharacters(str);
 
         if (inverted) {
-            this.invertHorizontalWhitespace(pixels, x - 2, y);
+            this._invertHorizontalWhitespace(pixels, x - 2, y);
         }
 
         for (var i = 0, m = str.length; i < m; i++) {
-            glyph = this.glyphs[str[i]];
-            this.drawGlyph(pixels, x, y, glyph, inverted);
+            glyph = this._glyphs[str[i]];
+            this._drawGlyph(pixels, x, y, glyph, inverted);
             if (inverted) {
-                this.invertHorizontalWhitespace(pixels, x - 1, y);
+                this._invertHorizontalWhitespace(pixels, x - 1, y);
             }
             x = x + 1 + glyph[0].length;
         }
 
         if (inverted) {
-            this.invertHorizontalWhitespace(pixels, x - 1, y);
-            this.invertHorizontalWhitespace(pixels, x, y);
+            this._invertHorizontalWhitespace(pixels, x - 1, y);
+            this._invertHorizontalWhitespace(pixels, x, y);
         }
 
         return pixels;
@@ -63,9 +60,9 @@ Font.prototype = {
      */
     width: function(str) {
         var len = 0;
-        str = this.replaceMissingCharacters(str);
+        str = this._replaceMissingCharacters(str);
         for (var i = 0, m = str.length; i < m; i++) {
-            len += this.glyphs[str[i]][0].length;
+            len += this._glyphs[str[i]][0].length;
             if (i + 1 !== m) {
                 len += 1;
             }
@@ -74,26 +71,26 @@ Font.prototype = {
     },
 
     /** @private */
-    invertHorizontalWhitespace: function(pixels, x, y) {
+    _invertHorizontalWhitespace: function(pixels, x, y) {
         for (var i = -2; i < Font.MAX + 1; i++) {
             pixels.push([x, y + i]);
         }
     },
 
     /** @private */
-    invertVerticalWhitespace: function(pixels, x, y, width) {
+    _invertVerticalWhitespace: function(pixels, x, y, width) {
         for (var i = 0; i + 1 < width; i++) {
             pixels.push([x + i, y]);
         }
     },
 
     /** @private */
-    replaceMissingCharacters: function(str) {
+    _replaceMissingCharacters: function(str) {
         var strNew = [],
             strArr = str.split('');
 
         for (var i = 0, m = strArr.length; i < m; i++) {
-            if (this.glyphs[strArr[i]]) {
+            if (this._glyphs[strArr[i]]) {
                 strNew.push(strArr[i]);
             } else {
                 strNew.push('■');
@@ -104,8 +101,8 @@ Font.prototype = {
     },
 
     /** @private */
-    drawGlyph: function(pixels, x, y, glyph, inverted) {
-        var pixel;
+    _drawGlyph: function(pixels, x, y, glyph, inverted) {
+        var pixel, invertWidth;
         for (var xx = 0, m = glyph.length; xx < m; xx++) { // y
             for (var yy = 0, mm = glyph[0].length; yy < mm; yy++) { // x
                 pixel = glyph[xx] ? glyph[xx][yy] : false;
@@ -115,17 +112,18 @@ Font.prototype = {
             }
         }
         if (inverted) {
-            this.invertVerticalWhitespace(pixels, x, y - 1, glyph[0].length + 1); // Overline 1
-            this.invertVerticalWhitespace(pixels, x, y - 2, glyph[0].length + 1); // Overline 2
-            this.invertVerticalWhitespace(pixels, x, y + Font.MAX, glyph[0].length + 1); // Underline 2
+            invertWidth = glyph[0].length + 1;
+            this._invertVerticalWhitespace(pixels, x, y - 1, invertWidth); // Overline 1
+            this._invertVerticalWhitespace(pixels, x, y - 2, invertWidth); // Overline 2
+            this._invertVerticalWhitespace(pixels, x, y + Font.MAX, invertWidth); // Underline 2
             if (glyph.length === Font.MIN) {
-                this.invertVerticalWhitespace(pixels, x, y + Font.MIN, glyph[0].length + 1); // Underline 1 when uppercase
+                this._invertVerticalWhitespace(pixels, x, y + Font.MIN, invertWidth); // Underline 1 when uppercase
             }
         }
     },
 
     /** @private */
-    parseGlyph: function(height, glyph) {
+    _parseGlyph: function(height, glyph) {
         var row, glyphArr,
             glyphFinal = [];
 
@@ -143,18 +141,21 @@ Font.prototype = {
     },
 
     /** @private */
-    buildGlyphCache: function() {
-        var glyph = this.glyphs;
+    _glyphs: {},
+
+    /** @private */
+    _buildGlyphCache: function() {
+        var glyphs = this._glyphs;
 
         // Define glyphs
-        glyph['■'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['■'] = this._parseGlyph(Font.MIN, '' +
             'XXXX' +
             'XXXX' +
             'XXXX' +
             'XXXX' +
             'XXXX');
 
-        glyph['♥'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['♥'] = this._parseGlyph(Font.MAX, '' +
             '  XX XX  ' +
             ' XXXXXXX ' +
             ' XXXXXXX ' +
@@ -162,7 +163,7 @@ Font.prototype = {
             '   XXX   ' +
             '    X    ');
 
-        glyph['☠'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['☠'] = this._parseGlyph(Font.MAX, '' +
             ' XX XXXX XX ' +
             ' X XXXXXX X ' +
             '   X XX X   ' +
@@ -170,42 +171,42 @@ Font.prototype = {
             ' X  XXXX  X ' +
             ' XX XXXX XX ');
 
-        glyph['←'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['←'] = this._parseGlyph(Font.MIN, '' +
             '  X  ' +
             ' XX  ' +
             'XXXXX' +
             ' XX  ' +
             '  X  ');
 
-        glyph['↑'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['↑'] = this._parseGlyph(Font.MIN, '' +
             '  X  ' +
             ' XXX ' +
             'XXXXX' +
             '  X  ' +
             '  X  ');
 
-        glyph['→'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['→'] = this._parseGlyph(Font.MIN, '' +
             '  X  ' +
             '  XX ' +
             'XXXXX' +
             '  XX ' +
             '  X  ');
 
-        glyph['↓'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['↓'] = this._parseGlyph(Font.MIN, '' +
             '  X  ' +
             '  X  ' +
             'XXXXX' +
             ' XXX ' +
             '  X  ');
 
-        glyph['•'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['•'] = this._parseGlyph(Font.MIN, '' +
             '  ' +
             '  ' +
             'XX' +
             'XX' +
             '  ');
 
-        glyph['@'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['@'] = this._parseGlyph(Font.MAX, '' +
             ' XXXX ' +
             'X    X' +
             'X XX X' +
@@ -213,21 +214,21 @@ Font.prototype = {
             'X     ' +
             ' XXX  ');
 
-        glyph[' '] = this.parseGlyph(Font.MIN, '' +
+        glyphs[' '] = this._parseGlyph(Font.MIN, '' +
             '  ' +
             '  ' +
             '  ' +
             '  ' +
             '  ');
 
-        glyph['.'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['.'] = this._parseGlyph(Font.MIN, '' +
             ' ' +
             ' ' +
             ' ' +
             ' ' +
             'X');
 
-        glyph[','] = this.parseGlyph(Font.MAX, '' +
+        glyphs[','] = this._parseGlyph(Font.MAX, '' +
             ' ' +
             ' ' +
             ' ' +
@@ -235,14 +236,14 @@ Font.prototype = {
             'X' +
             'X');
 
-        glyph[':'] = this.parseGlyph(Font.MIN, '' +
+        glyphs[':'] = this._parseGlyph(Font.MIN, '' +
             ' ' +
             ' ' +
             'X' +
             ' ' +
             'X');
 
-        glyph[';'] = this.parseGlyph(Font.MAX, '' +
+        glyphs[';'] = this._parseGlyph(Font.MAX, '' +
             '  ' +
             '  ' +
             ' X' +
@@ -250,35 +251,35 @@ Font.prototype = {
             'XX' +
             ' X');
 
-        glyph['!'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['!'] = this._parseGlyph(Font.MIN, '' +
             'X' +
             'X' +
             'X' +
             ' ' +
             'X');
 
-        glyph['?'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['?'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X  X' +
             '  X ' +
             '    ' +
             '  X ');
 
-        glyph['&'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['&'] = this._parseGlyph(Font.MIN, '' +
             ' X  ' +
             'X X ' +
             ' X  ' +
             'X X ' +
             ' X X');
 
-        glyph['-'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['-'] = this._parseGlyph(Font.MIN, '' +
             '    ' +
             '    ' +
             'XXXX' +
             '    ' +
             '    ');
 
-        glyph['_'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['_'] = this._parseGlyph(Font.MAX, '' +
             '    ' +
             '    ' +
             '    ' +
@@ -286,34 +287,34 @@ Font.prototype = {
             '    ' +
             'XXXX');
 
-        glyph['+'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['+'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             '   ' +
             ' X ' +
             'XXX' +
             ' X ');
 
-        glyph['='] = this.parseGlyph(Font.MIN, '' +
+        glyphs['='] = this._parseGlyph(Font.MIN, '' +
             '    ' +
             'XXXX' +
             '    ' +
             'XXXX');
 
-        glyph['‘'] = glyph['’'] = glyph["'"] = this.parseGlyph(Font.MIN, '' +
+        glyphs['‘'] = glyphs['’'] = glyphs["'"] = this._parseGlyph(Font.MIN, '' +
             'X' +
             'X' +
             ' ' +
             ' ' +
             ' ');
 
-        glyph['“'] = glyph['”'] = glyph['"'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['“'] = glyphs['”'] = glyphs['"'] = this._parseGlyph(Font.MIN, '' +
             'X X' +
             'X X' +
             '   ' +
             '   ' +
             '   ');
 
-        glyph['('] = this.parseGlyph(Font.MAX, '' +
+        glyphs['('] = this._parseGlyph(Font.MAX, '' +
             '  X' +
             ' X ' +
             ' X ' +
@@ -321,7 +322,7 @@ Font.prototype = {
             ' X ' +
             '  X');
 
-        glyph[')'] = this.parseGlyph(Font.MAX, '' +
+        glyphs[')'] = this._parseGlyph(Font.MAX, '' +
             'X  ' +
             ' X ' +
             ' X ' +
@@ -329,7 +330,7 @@ Font.prototype = {
             ' X ' +
             'X  ');
 
-        glyph['['] = this.parseGlyph(Font.MAX, '' +
+        glyphs['['] = this._parseGlyph(Font.MAX, '' +
             ' XX' +
             ' X ' +
             ' X ' +
@@ -337,7 +338,7 @@ Font.prototype = {
             ' X ' +
             ' XX');
 
-        glyph[']'] = this.parseGlyph(Font.MAX, '' +
+        glyphs[']'] = this._parseGlyph(Font.MAX, '' +
             'XX ' +
             ' X ' +
             ' X ' +
@@ -345,7 +346,7 @@ Font.prototype = {
             ' X ' +
             'XX ');
 
-        glyph['{'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['{'] = this._parseGlyph(Font.MAX, '' +
             '   X' +
             '  X ' +
             ' X  ' +
@@ -353,7 +354,7 @@ Font.prototype = {
             '  X ' +
             '   X');
 
-        glyph['}'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['}'] = this._parseGlyph(Font.MAX, '' +
             'X   ' +
             ' X  ' +
             '  X ' +
@@ -361,216 +362,216 @@ Font.prototype = {
             ' X  ' +
             'X   ');
 
-        glyph['\\'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['\\'] = this._parseGlyph(Font.MIN, '' +
             'X    ' +
             ' X   ' +
             '  X  ' +
             '   X ' +
             '    X');
 
-        glyph['/'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['/'] = this._parseGlyph(Font.MIN, '' +
             '    X' +
             '   X ' +
             '  X  ' +
             ' X   ' +
             'X    ');
 
-        glyph['<'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['<'] = this._parseGlyph(Font.MIN, '' +
             '  X ' +
             ' X  ' +
             'X   ' +
             ' X  ' +
             '  X ');
 
-        glyph['>'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['>'] = this._parseGlyph(Font.MIN, '' +
             ' X  ' +
             '  X ' +
             '   X' +
             '  X ' +
             ' X  ');
 
-        glyph['0'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['0'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X XX' +
             'X  X' +
             'XX X' +
             ' XX ');
 
-        glyph['1'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['1'] = this._parseGlyph(Font.MIN, '' +
             '  X ' +
             ' XX ' +
             '  X ' +
             '  X ' +
             ' XXX');
 
-        glyph['2'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['2'] = this._parseGlyph(Font.MIN, '' +
             'XXX ' +
             '   X' +
             '  X ' +
             ' X  ' +
             'XXXX');
 
-        glyph['3'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['3'] = this._parseGlyph(Font.MIN, '' +
             'XXX ' +
             '   X' +
             ' XX ' +
             '   X' +
             'XXX ');
 
-        glyph['4'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['4'] = this._parseGlyph(Font.MIN, '' +
             'X  X' +
             'X  X' +
             'XXXX' +
             '   X' +
             '   X');
 
-        glyph['5'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['5'] = this._parseGlyph(Font.MIN, '' +
             'XXXX' +
             'X   ' +
             'XXX ' +
             '   X' +
             'XXX ');
 
-        glyph['6'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['6'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X   ' +
             'XXX ' +
             'X  X' +
             ' XX ');
 
-        glyph['7'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['7'] = this._parseGlyph(Font.MIN, '' +
             'XXXX' +
             '  X ' +
             ' X  ' +
             ' X  ' +
             ' X  ');
 
-        glyph['8'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['8'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X  X' +
             ' XX ' +
             'X  X' +
             ' XX ');
-        glyph['9'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['9'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X  X' +
             ' XXX' +
             '   X' +
             ' XX ');
 
-        glyph['A'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['A'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X  X' +
             'XXXX' +
             'X  X' +
             'X  X');
 
-        glyph['B'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['B'] = this._parseGlyph(Font.MIN, '' +
             'XXX ' +
             'X  X' +
             'XXX ' +
             'X  X' +
             'XXX ');
 
-        glyph['C'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['C'] = this._parseGlyph(Font.MIN, '' +
             ' XXX' +
             'X   ' +
             'X   ' +
             'X   ' +
             ' XXX');
 
-        glyph['D'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['D'] = this._parseGlyph(Font.MIN, '' +
             'XXX ' +
             'X  X' +
             'X  X' +
             'X  X' +
             'XXX ');
 
-        glyph['E'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['E'] = this._parseGlyph(Font.MIN, '' +
             'XXXX' +
             'X   ' +
             'XXX ' +
             'X   ' +
             'XXXX');
 
-        glyph['F'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['F'] = this._parseGlyph(Font.MIN, '' +
             'XXXX' +
             'X   ' +
             'XXX ' +
             'X   ' +
             'X   ');
 
-        glyph['G'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['G'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X   ' +
             'X XX' +
             'X  X' +
             ' XXX');
 
-        glyph['H'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['H'] = this._parseGlyph(Font.MIN, '' +
             'X  X' +
             'X  X' +
             'XXXX' +
             'X  X' +
             'X  X');
 
-        glyph['I'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['I'] = this._parseGlyph(Font.MIN, '' +
             'X' +
             'X' +
             'X' +
             'X' +
             'X');
 
-        glyph['J'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['J'] = this._parseGlyph(Font.MIN, '' +
             'XXX' +
             '  X' +
             '  X' +
             '  X' +
             'XX ');
 
-        glyph['K'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['K'] = this._parseGlyph(Font.MIN, '' +
             'X  X' +
             'X X ' +
             'XX  ' +
             'X X ' +
             'X  X');
 
-        glyph['L'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['L'] = this._parseGlyph(Font.MIN, '' +
             'X  ' +
             'X  ' +
             'X  ' +
             'X  ' +
             'XXX');
 
-        glyph['M'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['M'] = this._parseGlyph(Font.MIN, '' +
             'X   X' +
             'XX XX' +
             'X X X' +
             'X   X' +
             'X   X');
 
-        glyph['N'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['N'] = this._parseGlyph(Font.MIN, '' +
             'X  X' +
             'XX X' +
             'X XX' +
             'X  X' +
             'X  X');
 
-        glyph['O'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['O'] = this._parseGlyph(Font.MIN, '' +
             ' XX ' +
             'X  X' +
             'X  X' +
             'X  X' +
             ' XX ');
 
-        glyph['P'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['P'] = this._parseGlyph(Font.MIN, '' +
             'XXX ' +
             'X  X' +
             'XXX ' +
             'X   ' +
             'X   ');
 
-        glyph['Q'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['Q'] = this._parseGlyph(Font.MAX, '' +
             ' XX ' +
             'X  X' +
             'X  X' +
@@ -578,112 +579,112 @@ Font.prototype = {
             ' XX ' +
             '   X');
 
-        glyph['R'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['R'] = this._parseGlyph(Font.MIN, '' +
             'XXX ' +
             'X  X' +
             'XXX ' +
             'X  X' +
             'X  X');
 
-        glyph['S'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['S'] = this._parseGlyph(Font.MIN, '' +
             ' XXX' +
             'X   ' +
             ' XX ' +
             '   X' +
             'XXX ');
 
-        glyph['T'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['T'] = this._parseGlyph(Font.MIN, '' +
             'XXXXX' +
             '  X  ' +
             '  X  ' +
             '  X  ' +
             '  X  ');
 
-        glyph['U'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['U'] = this._parseGlyph(Font.MIN, '' +
             'X  X' +
             'X  X' +
             'X  X' +
             'X  X' +
             ' XX ');
 
-        glyph['V'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['V'] = this._parseGlyph(Font.MIN, '' +
             'X   X' +
             'X   X' +
             'X   X' +
             ' X X ' +
             '  X  ');
 
-        glyph['W'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['W'] = this._parseGlyph(Font.MIN, '' +
             'X   X' +
             'X   X' +
             'X X X' +
             'X X X' +
             ' X X ');
 
-        glyph['X'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['X'] = this._parseGlyph(Font.MIN, '' +
             'X  X' +
             'X  X' +
             ' XX ' +
             'X  X' +
             'X  X');
 
-        glyph['Y'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['Y'] = this._parseGlyph(Font.MIN, '' +
             'X   X' +
             ' X X ' +
             '  X  ' +
             '  X  ' +
             '  X  ');
 
-        glyph['Z'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['Z'] = this._parseGlyph(Font.MIN, '' +
             'XXXXX' +
             '   X ' +
             '  X  ' +
             ' X   ' +
             'XXXXX');
 
-        glyph['a'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['a'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             ' XX' +
             'X X' +
             'X X' +
             ' XX');
 
-        glyph['b'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['b'] = this._parseGlyph(Font.MIN, '' +
             'X  ' +
             'XX ' +
             'X X' +
             'X X' +
             'XX ');
 
-        glyph['c'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['c'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             ' XX' +
             'X  ' +
             'X  ' +
             ' XX');
 
-        glyph['d'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['d'] = this._parseGlyph(Font.MIN, '' +
             '  X' +
             ' XX' +
             'X X' +
             'X X' +
             ' XX');
 
-        glyph['e'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['e'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             ' XX' +
             'X X' +
             'XX ' +
             ' XX');
 
-        glyph['f'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['f'] = this._parseGlyph(Font.MIN, '' +
             ' XX' +
             'X  ' +
             'XX ' +
             'X  ' +
             'X  ');
 
-        glyph['g'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['g'] = this._parseGlyph(Font.MAX, '' +
             '   ' +
             ' XX' +
             'X X' +
@@ -691,21 +692,21 @@ Font.prototype = {
             '  X' +
             'XX ');
 
-        glyph['h'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['h'] = this._parseGlyph(Font.MIN, '' +
             'X  ' +
             'X  ' +
             'XX ' +
             'X X' +
             'X X');
 
-        glyph['i'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['i'] = this._parseGlyph(Font.MIN, '' +
             'X' +
             ' ' +
             'X' +
             'X' +
             'X');
 
-        glyph['j'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['j'] = this._parseGlyph(Font.MAX, '' +
             ' X' +
             '  ' +
             ' X' +
@@ -713,42 +714,42 @@ Font.prototype = {
             ' X' +
             'X ');
 
-        glyph['k'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['k'] = this._parseGlyph(Font.MIN, '' +
             'X  ' +
             'X X' +
             'XX ' +
             'X X' +
             'X X');
 
-        glyph['l'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['l'] = this._parseGlyph(Font.MIN, '' +
             'X ' +
             'X ' +
             'X ' +
             'X ' +
             ' X');
 
-        glyph['m'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['m'] = this._parseGlyph(Font.MIN, '' +
             '     ' +
             ' X X ' +
             'X X X' +
             'X X X' +
             'X X X');
 
-        glyph['n'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['n'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             'XX ' +
             'X X' +
             'X X' +
             'X X');
 
-        glyph['o'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['o'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             ' X ' +
             'X X' +
             'X X' +
             ' X ');
 
-        glyph['p'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['p'] = this._parseGlyph(Font.MAX, '' +
             '   ' +
             'XX ' +
             'X X' +
@@ -756,7 +757,7 @@ Font.prototype = {
             'XX ' +
             'X  ');
 
-        glyph['q'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['q'] = this._parseGlyph(Font.MAX, '' +
             '   ' +
             ' XX' +
             'X X' +
@@ -764,56 +765,56 @@ Font.prototype = {
             '  X' +
             '  X');
 
-        glyph['r'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['r'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             ' XX' +
             'X  ' +
             'X  ' +
             'X  ');
 
-        glyph['s'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['s'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             ' XX' +
             'XX ' +
             '  X' +
             'XX ');
 
-        glyph['t'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['t'] = this._parseGlyph(Font.MIN, '' +
             'X ' +
             'X ' +
             'XX' +
             'X ' +
             ' X');
 
-        glyph['u'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['u'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             'X X' +
             'X X' +
             'X X' +
             ' XX');
 
-        glyph['v'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['v'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             'X X' +
             'X X' +
             'X X' +
             ' X ');
 
-        glyph['w'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['w'] = this._parseGlyph(Font.MIN, '' +
             '     ' +
             'X   X' +
             'X X X' +
             'X X X' +
             ' X X ');
 
-        glyph['x'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['x'] = this._parseGlyph(Font.MIN, '' +
             '    ' +
             'X  X' +
             ' XX ' +
             ' XX ' +
             'X  X');
 
-        glyph['y'] = this.parseGlyph(Font.MAX, '' +
+        glyphs['y'] = this._parseGlyph(Font.MAX, '' +
             '   ' +
             'X X' +
             'X X' +
@@ -821,7 +822,7 @@ Font.prototype = {
             '  X' +
             'XX ');
 
-        glyph['z'] = this.parseGlyph(Font.MIN, '' +
+        glyphs['z'] = this._parseGlyph(Font.MIN, '' +
             '   ' +
             'XXX' +
             '  X' +

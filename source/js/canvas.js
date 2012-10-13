@@ -186,7 +186,7 @@ Canvas.prototype = {
         document.title = 'XXSNAKE ' + fps;
 
         // Abuse this loop to trigger the game tick
-        XSS.pubsub.publish(XSS.events.CLIENT_TICK, delta);
+        XSS.pubsub.publish(XSS.GAME_TICK, delta);
 
         if (!XSS.error) {
             // Make appointment for next paint

@@ -116,7 +116,7 @@ function InputStage(name, nextStage) {
     this.name = name;
     this.nextStage = nextStage;
 
-    this.defaultValue = '';
+    this.defaultVal = '';
 
     this.minlength = 0;
     this.maxlength = 150;
@@ -180,7 +180,7 @@ InputStage.prototype = {
     },
 
     getInputvalue: function() {
-        return XSS.input.value || XSS.stages.choices[this.name] || this.defaultValue;
+        return XSS.input.value || XSS.stages.choices[this.name] || this.defaultVal;
     },
 
     /** @private */

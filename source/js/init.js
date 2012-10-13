@@ -32,6 +32,7 @@ var module = {}; // Dummy container for Requirejs client-server shared objects
 /** @const */ XSS.GAME_LEFT = 2;
 /** @const */ XSS.GAME_TOP = 2;
 /** @const */ XSS.GAME_TILE = 4;
+/** @const */ XSS.GAME_TICK = 'TICK';
 
 window.onerror = function() {
     XSS.error = true; // Stops draw loop

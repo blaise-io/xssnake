@@ -57,7 +57,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {...Array} varArgs
-     * @return {(Array|PixelEntity)}
+     * @return {(Array.<Array>|PixelEntity)}
      */
     pixels: function(varArgs) {
         if (arguments.length === 0) {

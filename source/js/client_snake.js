@@ -61,6 +61,7 @@ ClientSnake.prototype.addToEntities = function() {
 
 /**
  * @return {PixelEntity}
+ * @suppress {checkTypes} // Closure compiler is being silly here
  */
 ClientSnake.prototype.updateEntity = function() {
     return this.entity.pixels(XSS.transform.zoomGame(this.parts));
