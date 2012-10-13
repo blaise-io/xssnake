@@ -22,7 +22,7 @@ module.exports = {
     shared: {
         snake: {
             speed: 150,
-            size : 3
+            size : 4
         },
         game : {
             tick: 50

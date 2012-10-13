@@ -56,17 +56,20 @@ ClientSnake.prototype.removeControls = function() {
 };
 
 ClientSnake.prototype.addToEntities = function() {
-    this.updateEntity();
-    XSS.ents[this._entityName] = this.entity;
+    XSS.ents[this._entityName] = this.updateEntity();
 };
 
+/**
+ * @return {PixelEntity}
+ */
 ClientSnake.prototype.updateEntity = function() {
-    this.entity.pixels(XSS.transform.zoomGame(this.parts));
+    return this.entity.pixels(XSS.transform.zoomGame(this.parts));
 };
 
 ClientSnake.prototype.crash = function() {
     this.crashed = true;
     this.removeControls();
+    this.updateEntity();
 };
 
 ClientSnake.prototype.emitState = function(direction) {

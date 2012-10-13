@@ -124,37 +124,42 @@ Game.prototype = {
      */
     _moveSnake: function(snake) {
         var position = snake.getNextPosition();
-        snake.move(position);
-        snake.updateEntity();
-    }
 
-//    /**
-//     * @param {ClientSnake} snake
-//     * @param {Array.<number>} position
-//     * @return {boolean}
-//     * @private
-//     */
-//    _isCrash: function(snake, position) {
-//
-//        if (this.level.isWall(position[0], position[1])) {
-//            console.log('level');
-//            return true;
-//        }
-//
-//        if (!snake.isHead(position) && snake.hasPartPredict(position)) {
-//            console.log('self');
-//            return true;
-//        }
-//
-//        for (var i = 0, m = this.snakes.length; i < m; i++) {
-//            var matchSnake = this.snakes[i];
-//            if (matchSnake !== snake && matchSnake.hasPartPredict(position)) {
-//                console.log('opponent');
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
+        // Don't show a snake moving inside a wall, which is caused by latency.
+        // Server wil update snake on whether it crashed or made a turn in time.
+        if (!this._isCrash(snake, position)) {
+            snake.move(position);
+            snake.updateEntity();
+        }
+    },
+
+    /**
+     * @param {ClientSnake} snake
+     * @param {Array.<number>} position
+     * @return {boolean}
+     * @private
+     */
+    _isCrash: function(snake, position) {
+
+        if (this.level.isWall(position[0], position[1])) {
+            console.log('wall');
+            return true;
+        }
+
+        if (!snake.isHead(position) && snake.hasPartPredict(position)) {
+            console.log('self');
+            return true;
+        }
+
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            var opponent = this.snakes[i];
+            if (opponent !== snake && opponent.hasPartPredict(position)) {
+                console.log('opponent');
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 };

@@ -181,8 +181,8 @@ Game.prototype = {
     _endRound: function(winner) {
         this._roundEnded = true;
 
-        console.log(winner.name + ' won');
-        if (winner) {
+        if (winner && winner.name) {
+            console.log(winner.name + ' won');
             this.room.emit(events.CLIENT_GAME_WIN, [winner.name, ++winner.wins]);
         }
 
