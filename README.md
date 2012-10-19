@@ -1,7 +1,7 @@
 # XSSNAKE
 
-An online multiplayer implementation of Snake where the winner of a 
-game is allowed to execute JavaScript in other player's browsers.
+Online multiplayer Snake where the winner of a game is allowed to execute 
+JavaScript in other player's browsers.
 
 XSSNAKE is written in HTML5 and JavaScript. It works in all browsers that 
 support HTML5's Canvas and Websocket. XSSNAKE uses Node.js for the server,
