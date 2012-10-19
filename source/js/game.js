@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, PixelEntity, ClientSnake, ClientLevel, Apple, Utils*/
+/*globals XSS, Shape, ClientSnake, ClientLevel, Apple, Utils*/
 
 'use strict';
 
@@ -11,8 +11,8 @@
  * @constructor
  */
 function Game(levelID, names, index, apples) {
-    XSS.ents.border = XSS.drawables.outerBorder();
-    XSS.ents.levelborder = XSS.drawables.levelBorder();
+    XSS.shapes.border = XSS.shapes.outerBorder();
+    XSS.shapes.levelborder = XSS.shapes.levelBorder();
 
     this.curid = 0;
 
@@ -56,7 +56,7 @@ Game.prototype = {
      */
     _setupLevel: function(levelID) {
         var level = new ClientLevel(levelID);
-        XSS.ents.world = level.getEntity();
+        XSS.shapes.world = level.getShape();
         return level;
     },
 
@@ -129,7 +129,7 @@ Game.prototype = {
         // Server wil update snake on whether it crashed or made a turn in time.
         if (!this._isCrash(snake, position)) {
             snake.move(position);
-            snake.updateEntity();
+            snake.updateShape();
         }
     },
 

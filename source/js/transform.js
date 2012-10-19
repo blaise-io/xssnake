@@ -1,5 +1,5 @@
 /*jshint globalstrict:true */
-/*globals XSS, PixelEntity, Utils*/
+/*globals XSS, Shape, Utils*/
 
 'use strict';
 
@@ -19,17 +19,17 @@ Transform.prototype = {
      * @return {Array}
      */
     shift: function(pixels, x, y) {
-        var sx, sy, shifted = [];
+        var sx, sy, ret = [];
 
         for (var i = 0, m = pixels.length; i < m; ++i) {
             sx = pixels[i][0] + x;
             sy = pixels[i][1] + y;
             if (sx >= 0 && sy >= 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
-                shifted.push([sx, sy]);
+                ret.push([sx, sy]);
             }
         }
 
-        return shifted;
+        return ret;
     },
 
     /**
@@ -39,20 +39,20 @@ Transform.prototype = {
      * @return {Array.<Array>}
      */
     zoomX2: function(pixels, shiftX, shiftY) {
-        var pixelsZoomed = [], x, y;
+        var ret = [], x, y;
         shiftX = shiftX || 0;
         shiftY = shiftY || 0;
         for (var i = 0, m = pixels.length; i < m; ++i) {
             x = pixels[i][0] * 2;
             y = pixels[i][1] * 2;
-            pixelsZoomed.push(
-                [shiftX + 0 + x, shiftY + 0 + y],
-                [shiftX + 0 + x, shiftY + 1 + y],
-                [shiftX + 1 + x, shiftY + 0 + y],
+            ret.push(
+                [shiftX +     x, shiftY +     y],
+                [shiftX +     x, shiftY + 1 + y],
+                [shiftX + 1 + x, shiftY +     y],
                 [shiftX + 1 + x, shiftY + 1 + y]
             );
         }
-        return pixelsZoomed;
+        return ret;
     },
 
     /**

@@ -1,9 +1,9 @@
 /*jshint globalstrict:true */
-/*globals XSS, PixelEntity*/
+/*globals XSS, Shape*/
 
 'use strict';
 
-PixelEntity.prototype._effects = {
+Shape.prototype._effects = {
 
     /**
      * @param {number} speed
@@ -29,7 +29,7 @@ PixelEntity.prototype._effects = {
     lifetime: function(start, stop) {
         var progress = 0;
         return function(delta) {
-            // Enable/disable entity only once, allows combination
+            // Enable/disable shape only once, allows combination
             // with other enabling/disabling effects
             progress += delta;
             if (progress === delta) {

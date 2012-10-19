@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals Utils, PublishSubscribe, Canvas, Drawables, Transform, Font, Menu, Stages, Socket */
+/*globals Utils, PublishSubscribe, Canvas, Shapes, Transform, Font, Menu, Stages, Socket */
 
 'use strict';
 
@@ -42,20 +42,21 @@ window.onload = function() {
 
     delete window.module; // Clean up dummy container
 
+    XSS.shapes    = {};
+
     XSS.doc       = document.body;
     XSS.input     = document.createElement('input');
                     XSS.doc.appendChild(XSS.input);
 
     XSS.pubsub    = new PublishSubscribe();
     XSS.canvas    = new Canvas();
-    XSS.drawables = new Drawables();
+    XSS.shapes    = new Shapes();
     XSS.transform = new Transform();
     XSS.font      = new Font();
     XSS.menu      = new Menu();
     XSS.stages    = new Stages();
 
     // Shortcuts
-    XSS.ents      = XSS.canvas.entities;
     XSS.on        = Utils.addListener;
     XSS.off       = Utils.removeListener;
 

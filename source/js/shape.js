@@ -4,11 +4,11 @@
 'use strict';
 
 /**
- * PixelEntity
+ * Shape
  * @constructor
  * @param {...Array} varArgs
  */
-function PixelEntity(varArgs) {
+function Shape(varArgs) {
     /** @private */ this._pixels = [];
     /** @private */ this._bbox = null;
     /** @private */ this._cache = null;
@@ -19,11 +19,11 @@ function PixelEntity(varArgs) {
     this.add.apply(this, arguments || []);
 }
 
-PixelEntity.prototype = {
+Shape.prototype = {
 
     /**
      * @param {...} varArgs
-     * @return {PixelEntity}
+     * @return {Shape}
      */
     flash: function(varArgs) {
         this.effects.flash = this._effects.flash.apply(this, arguments);
@@ -32,7 +32,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {...} varArgs
-     * @return {PixelEntity}
+     * @return {Shape}
      */
     lifetime: function(varArgs) {
         this.effects.lifetime = this._effects.lifetime.apply(this, arguments);
@@ -41,7 +41,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {...} varArgs
-     * @return {PixelEntity}
+     * @return {Shape}
      */
     swipe: function(varArgs) {
         this.effects.swipe = this._effects.swipe.apply(this, arguments);
@@ -49,15 +49,35 @@ PixelEntity.prototype = {
     },
 
     /**
-     * @return {PixelEntity}
+     * @return {Shape}
+     * @suppress {checkTypes}
      */
     clone: function() {
-        return new PixelEntity(this._pixels);
+        return new Shape(this._pixels);
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {Shape}
+     */
+    shift: function(x, y) {
+        this.pixels(XSS.transform.shift(this._pixels, x, y));
+        return this;
+    },
+
+    /**
+     * @param {Array} pixelStr
+     * @return {Shape}
+     */
+    str: function(pixelStr) {
+        this.pixels(XSS.shapes.strToXYArr(pixelStr[0], pixelStr[1]));
+        return this;
     },
 
     /**
      * @param {...Array} varArgs
-     * @return {(Array.<Array>|PixelEntity)}
+     * @return {(Array.<Array>|Shape)}
      */
     pixels: function(varArgs) {
         if (arguments.length === 0) {
@@ -71,7 +91,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {...Array} varArgs
-     * @return {PixelEntity}
+     * @return {Shape}
      */
     add: function(varArgs) {
         for (var i = 0, m = arguments.length; i < m; ++i) {
@@ -87,7 +107,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {boolean=} enabled
-     * @return {(boolean|PixelEntity)}
+     * @return {(boolean|Shape)}
      */
     enabled: function(enabled) {
         if (arguments.length === 0) {
@@ -100,7 +120,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {boolean=} dynamic
-     * @return {(boolean|PixelEntity)}
+     * @return {(boolean|Shape)}
      */
     dynamic: function(dynamic) {
         if (arguments.length === 0) {
@@ -113,7 +133,7 @@ PixelEntity.prototype = {
 
     /**
      * @param {Object=} cache
-     * @return {(Object|PixelEntity)}
+     * @return {(Object|Shape)}
      */
     cache: function(cache) {
         if (arguments.length === 0) {
@@ -127,14 +147,17 @@ PixelEntity.prototype = {
     /**
      * @return {Object}
      */
-    getBBox: function() {
+    bbox: function() {
         if (!this._bbox) {
             this._bbox = this._getBBox();
         }
         return this._bbox;
     },
 
-    /** @private */
+    /**
+     * @return {Object}
+     * @private
+     */
     _getBBox: function() {
         var x, y,
             pixels = this._pixels,

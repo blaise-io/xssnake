@@ -24,8 +24,8 @@ Socket.prototype = {
     _addEventListeners: function(callback) {
         var events = XSS.events;
 
-        this.socket.on(events.CLIENT_CONNECT, function(id) {
-            XSS.me = new Client(id);
+        this.socket.on(events.CLIENT_CONNECT, function() {
+            console.log('connected');
             if (callback) {
                 callback(this);
             }

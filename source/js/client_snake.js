@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true*/
-/*globals XSS, PixelEntity, Snake, Utils*/
+/*globals XSS, Shape, Snake, Utils*/
 
 'use strict';
 
@@ -20,9 +20,9 @@ function ClientSnake(index, location, direction, size, speed) {
     this.crashed = false;
 
     this.elapsed = 0;
-    this.entity = new PixelEntity().dynamic(true);
+    this._shape = new Shape().dynamic(true);
 
-    this._entityName = 'S' + index;
+    this._shapeName = 'S' + index;
     this._snakeTurnRequests = [];
     this._handleKeysBind = this._handleKeys.bind(this);
 }
@@ -30,18 +30,18 @@ function ClientSnake(index, location, direction, size, speed) {
 ClientSnake.prototype = Object.create(Snake.prototype);
 
 ClientSnake.prototype.showName = function() {
-    var x, y, entity, entityname;
+    var x, y, shape, name;
 
     x = this.parts[0][0] * 4;
     y = this.parts[0][1] * 4;
 
-    entity = XSS.drawables.textAt(x, y + 1, this.direction, this.name);
-    entityname = this._entityName + '_name';
+    shape = XSS.shapes.label(x, y + 1, this.direction, this.name);
+    name = this._shapeName + '_n';
 
-    XSS.ents[entityname] = entity;
+    XSS.shapes[name] = shape;
 
     window.setTimeout(function() {
-        delete XSS.ents[entityname];
+        delete XSS.shapes[name];
     }.bind(this), 2000);
 };
 
@@ -56,21 +56,21 @@ ClientSnake.prototype.removeControls = function() {
 };
 
 ClientSnake.prototype.addToEntities = function() {
-    XSS.ents[this._entityName] = this.updateEntity();
+    XSS.shapes[this._shapeName] = this.updateShape();
 };
 
 /**
- * @return {PixelEntity}
+ * @return {Shape}
  * @suppress {checkTypes} // Closure compiler is being silly here
  */
-ClientSnake.prototype.updateEntity = function() {
-    return this.entity.pixels(XSS.transform.zoomGame(this.parts));
+ClientSnake.prototype.updateShape = function() {
+    return this._shape.pixels(XSS.transform.zoomGame(this.parts));
 };
 
 ClientSnake.prototype.crash = function() {
     this.crashed = true;
     this.removeControls();
-    this.updateEntity();
+    this.updateShape();
 };
 
 ClientSnake.prototype.emitState = function(direction) {

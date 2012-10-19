@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, PixelEntity, Utils*/
+/*globals XSS, Shape, Utils*/
 
 'use strict';
 
@@ -8,8 +8,6 @@
  * @constructor
  */
 function Canvas() {
-    this.entities = {};
-
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
@@ -69,12 +67,12 @@ Canvas.prototype = {
     },
 
     /**
-     * @param {PixelEntity} entity
+     * @param {Shape} shape
      * @return {Object}
      * @private
      */
-    _getBBoxRealPixels: function(entity) {
-        var bbox = entity.getBBox();
+    _getBBoxRealPixels: function(shape) {
+        var bbox = shape.bbox();
         for (var k in bbox) {
             if (bbox.hasOwnProperty(k)) {
                 bbox[k] *= XSS.PIXEL_SIZE;
@@ -93,20 +91,20 @@ Canvas.prototype = {
     },
 
     /**
-     * @param {PixelEntity} entity
+     * @param {Shape} shape
      * @return {Object}
      * @private
      */
-    _paintEntityOffscreen: function(entity) {
+    _cacheShapePaint: function(shape) {
         var bbox, canvas;
 
-        bbox = this._getBBoxRealPixels(entity);
+        bbox = this._getBBoxRealPixels(shape);
 
         canvas = document.createElement('canvas');
         canvas.setAttribute('width', bbox.width);
         canvas.setAttribute('height', bbox.height);
 
-        this._paintEntityPixels(canvas.getContext('2d'), entity, bbox);
+        this._paintShape(canvas.getContext('2d'), shape, bbox);
 
         return {
             canvas: canvas,
@@ -116,12 +114,12 @@ Canvas.prototype = {
 
     /**
      * @param {Object} context
-     * @param {PixelEntity} entity
+     * @param {Shape} shape
      * @param {Object} offset
      * @private
      */
-    _paintEntityPixels: function(context, entity, offset) {
-        var pixels = entity.pixels();
+    _paintShape: function(context, shape, offset) {
+        var pixels = shape.pixels();
 
         offset.x = offset.x || 0;
         offset.y = offset.y || 0;
@@ -141,31 +139,31 @@ Canvas.prototype = {
 
     /**
      * @param {string} name
-     * @param {PixelEntity} entity
+     * @param {Shape} shape
      * @param {number} delta
      * @private
      */
-    _paintEntity: function(name, entity, delta) {
+    _paintShapeDispatch: function(name, shape, delta) {
         var cache;
 
-        if (false === entity instanceof PixelEntity) {
+        if (false === shape instanceof Shape) {
             throw new Error(name);
         }
 
-        for (var k in entity.effects) {
-            if (entity.effects.hasOwnProperty(k)) {
-                entity.effects[k].call(entity, delta);
+        for (var k in shape.effects) {
+            if (shape.effects.hasOwnProperty(k)) {
+                shape.effects[k].call(shape, delta);
             }
         }
 
-        if (true === entity.enabled()) {
-            if (entity.dynamic()) {
-                this._paintEntityPixels(this.ctx, entity, {});
+        if (true === shape.enabled()) {
+            if (shape.dynamic()) {
+                this._paintShape(this.ctx, shape, {});
             } else {
-                cache = entity.cache();
+                cache = shape.cache();
                 if (!cache) {
-                    cache = this._paintEntityOffscreen(entity);
-                    entity.cache(cache);
+                    cache = this._cacheShapePaint(shape);
+                    shape.cache(cache);
                 }
                 this.ctx.drawImage(cache.canvas, cache.bbox.x, cache.bbox.y);
             }
@@ -201,9 +199,9 @@ Canvas.prototype = {
 
         this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
 
-        for (var k in this.entities) {
-            if (this.entities.hasOwnProperty(k)) {
-                this._paintEntity(k, this.entities[k], delta);
+        for (var k in XSS.shapes) {
+            if (XSS.shapes.hasOwnProperty(k)) {
+                this._paintShapeDispatch(k, XSS.shapes[k], delta);
             }
         }
     }

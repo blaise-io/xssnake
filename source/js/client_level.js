@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Level, PixelEntity*/
+/*globals XSS, Level, Shape*/
 'use strict';
 
 
@@ -19,14 +19,14 @@ ClientLevel.prototype = Object.create(Level.prototype);
 // http://code.google.com/p/closure-compiler/issues/detail?id=455
 
 /**
- * @return {PixelEntity}
+ * @return {Shape}
  * @this {ClientLevel}
  */
-ClientLevel.prototype.getEntity = function() {
+ClientLevel.prototype.getShape = function() {
     var xy, pixels = [], walls = this.level.walls;
     for (var i = 0, m = walls.length; i < m; i++) {
         xy = this.seqToXY(walls[i]);
         pixels.push(xy);
     }
-    return new PixelEntity(XSS.transform.zoomGame(pixels));
+    return new Shape(XSS.transform.zoomGame(pixels));
 };

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, GameStage, PixelEntity*/
+/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, GameStage, Shape*/
 
 'use strict';
 
@@ -66,7 +66,7 @@ XSS.CreditsStage = function(name) {
     left = XSS.MENU_LEFT;
     top = XSS.MENU_TOP;
 
-    screen = new PixelEntity(
+    screen = new Shape(
         XSS.transform.zoomX2(XSS.font.draw(0, 0, '<CREDITS>'), left, top),
         XSS.font.draw(left, top + 18, 'Blaise Kal:'),
         XSS.font.draw(left, top + 27, 'Placeholder:'),
@@ -91,7 +91,7 @@ XSS.HelpStage = function(name) {
     left = XSS.MENU_LEFT;
     top = XSS.MENU_TOP;
 
-    screen = new PixelEntity(
+    screen = new Shape(
         XSS.transform.zoomX2(XSS.font.draw(0, 0, '<HEEELP?!!>'), left, top),
         XSS.font.draw(left, top + 18, '• Play using the arrow keys on your keyboard'),
         XSS.font.draw(left, top + 27, '• You can chat during the game by typing+enter'),

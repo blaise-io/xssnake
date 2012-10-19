@@ -1,30 +1,43 @@
 /*jshint globalstrict:true*/
-/*globals XSS, PixelEntity*/
+/*globals XSS, Shape*/
 
 'use strict';
 
 /**
- * Drawables
- * Pixel object definitions
- * @constructor
- */
-function Drawables() {
+* Shapes
+* Generates shapes
+* @constructor
+*/
+function Shapes() {
+    /** @private */
+    this._cache = {};
 }
 
-Drawables.prototype = {
+Shapes.prototype = {
 
-    line: function() {
-        return new PixelEntity(
-            this._line.apply(this, arguments)
-        );
+    /**
+     * @param {string} key
+     * @return {Array.<Array>}
+     */
+    raw: function(key) {
+        var raw;
+        if (!this._cache[key]) {
+            raw = XSS.PIXELS[key];
+            this._cache[key] = this.strToBoolArr(raw[0], raw[1]);
+        }
+        return this._cache[key];
     },
 
-    apple: function(x, y) {
-        return new PixelEntity(
-            this._line(x + 1, y + 0, x + 2, y + 0),
-            this._line(x + 0, y + 1, x + 3, y + 1),
-            this._line(x + 0, y + 2, x + 3, y + 2),
-            this._line(x + 1, y + 3, x + 2, y + 3)
+    /**
+     * @param {number} x0
+     * @param {number} y0
+     * @param {number} x1
+     * @param {number} y1
+     * @return {Shape}
+     */
+    line: function(x0, y0, x1, y1) {
+        return new Shape(
+            this._line.apply(this, arguments)
         );
     },
 
@@ -34,7 +47,7 @@ Drawables.prototype = {
      * @param {number} side
      * @param {string} text
      */
-    textAt: function(x, y, side, text) {
+    label: function(x, y, side, text) {
         var width, pixels;
         switch (side) {
             case 0:
@@ -55,15 +68,17 @@ Drawables.prototype = {
                 pixels = XSS.font.draw(x, y + 2, text);
                 break;
         }
-        return new PixelEntity(pixels);
+        return new Shape(pixels);
     },
 
-    // Background before game starts
+    /**
+     * @return {Shape}
+     */
     outerBorder: function() {
         var w = XSS.PIXELS_H - 1,
             h = XSS.PIXELS_V - 1;
 
-        return new PixelEntity(
+        return new Shape(
             // Top
             this._line(1, 0, w - 1, 0),
             this._line(0, 1, w, 1),
@@ -79,11 +94,14 @@ Drawables.prototype = {
         );
     },
 
+    /**
+     * @return {Shape}
+     */
     levelBorder: function() {
         var w = XSS.PIXELS_H - 1,
             h = XSS.PIXELS_V - 1;
 
-        return new PixelEntity(
+        return new Shape(
             this._line(0, h - 24, w, h - 24),
             this._line(0, h - 25, w, h - 25),
 
@@ -105,15 +123,63 @@ Drawables.prototype = {
         );
     },
 
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {Shape}
+     */
     header: function(x, y) {
         y = y || 18;
         var welcome = XSS.font.draw(0, 0, '<XSSNAKE>');
-        return new PixelEntity(
+        return new Shape(
             XSS.transform.zoomX4(welcome, x, y),
             XSS.font.draw(x, y + 20, (new Array(45)).join('+'))
         );
     },
 
+    /**
+     * @param {number} height
+     * @param {string} str
+     * @return {Array.<Array>}
+     */
+    strToBoolArr: function(height, str) {
+        var arr, ret = [];
+        arr = str.split('');
+        for (var i = 0, m = arr.length; i < m; i++) {
+            var row = Math.floor(i / (m / height));
+            if (!ret[row]) {
+                ret[row] = [];
+            }
+            ret[row].push(arr[i] === 'X');
+        }
+        return ret;
+    },
+
+    /**
+     * @param {number} height
+     * @param {string} str
+     * @return {Array.<Array>}
+     */
+    strToXYArr: function(height, str) {
+        var width, arr, ret = [];
+        arr = str.split('');
+        width = arr.length / height;
+        for (var i = 0, m = arr.length; i < m; i++) {
+            if (arr[i] === 'X') {
+                ret.push([i % width, Math.floor(i / width)]);
+            }
+        }
+        return ret;
+    },
+
+    /**
+     * @param {number} x0
+     * @param {number} y0
+     * @param {number} x1
+     * @param {number} y1
+     * @return {Array.<Array>}
+     * @private
+     */
     _line: function(x0, y0, x1, y1) {
         var pixels, dx, dy, sx, sy, err, errTmp;
 

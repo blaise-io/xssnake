@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, PixelEntity, Socket, Utils*/
+/*globals XSS, Shape, Socket, Utils*/
 
 'use strict';
 
@@ -35,9 +35,9 @@ SelectMenu.prototype = {
         return this.opts[index].next;
     },
 
-    getEntity: function() {
+    getShape: function() {
         this._normalizeSelectedOption();
-        return this._generateEntity();
+        return this._generateShape();
     },
 
     _normalizeSelectedOption: function() {
@@ -53,19 +53,20 @@ SelectMenu.prototype = {
         }
     },
 
-    _generateEntity: function() {
-        var x, y, entity, options, selected, description;
+    _generateShape: function() {
+        var x, y, shape, options, selected, description;
 
         x = XSS.MENU_LEFT;
         y = XSS.MENU_TOP;
-        entity = new PixelEntity();
+
+        shape = new Shape();
         options = this.opts;
         selected = XSS.stages.choices[this.name] || 0;
         description = options[selected] ? options[selected].description : '';
 
         // Option
         for (var i = 0, m = options.length; i < m; i++) {
-            entity.add(
+            shape.add(
                 XSS.font.draw(x, y + (i * 9), options[i].title, (selected === i))
             );
         }
@@ -76,13 +77,13 @@ SelectMenu.prototype = {
                 description = [description];
             }
             for (var j = 0, n = description.length; j < n; j++) {
-                entity.add(
+                shape.add(
                     XSS.font.draw(x, y + ((i + 1 + j) * 9), description[j])
                 );
             }
         }
 
-        return entity;
+        return shape;
     }
 
 };
@@ -98,7 +99,7 @@ function Stage(name) {
 Stage.prototype = {
 
     getInstruction: function() {},
-    getEntity     : function() {},
+    getShape      : function() {},
     createStage   : function() {},
     destroyStage  : function() {}
 
@@ -139,9 +140,9 @@ InputStage.prototype = {
         return 'Start typing and press Enter when you’re done';
     },
 
-    getEntity: function() {
+    getShape: function() {
         var left = XSS.MENU_LEFT + this.labelWidth + this.labelWsp;
-        return new PixelEntity(
+        return new Shape(
             XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP, this.label),
             XSS.font.draw(left, XSS.MENU_TOP, this.getInputvalue())
         );
@@ -165,8 +166,8 @@ InputStage.prototype = {
         XSS.off.keydown(this.inputUpdate);
         XSS.off.keyup(this.inputUpdate);
 
-        delete XSS.ents.ermsg;
-        delete XSS.ents.caret;
+        delete XSS.shapes.ermsg;
+        delete XSS.shapes.caret;
     },
 
     handleKeys: function(e) {
@@ -206,7 +207,7 @@ InputStage.prototype = {
             XSS.stages.choices[this.name] = value;
         } else {
             errfont = XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP + 9, error);
-            XSS.ents.ermsg = new PixelEntity(errfont).lifetime(0, 500);
+            XSS.shapes.ermsg = new Shape(errfont).lifetime(0, 500);
         }
 
         return false;
@@ -227,12 +228,12 @@ InputStage.prototype = {
         fontWidth = XSS.font.width(strTilCaret) || -1;
         caretLeft = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + fontWidth;
 
-        caret = XSS.drawables.line(
+        caret = XSS.shapes.line(
             caretLeft, XSS.MENU_TOP - 1,
             caretLeft, XSS.MENU_TOP + 6
         );
 
-        XSS.ents.caret = caret.flash();
+        XSS.shapes.caret = caret.flash();
         XSS.menu.refreshStage();
     }
 
@@ -248,7 +249,7 @@ InputStage.prototype = {
  */
 function ScreenStage(name, screen) {
     this.name = name;
-    this.entity = screen || [];
+    this._shape = screen || [];
 }
 
 ScreenStage.prototype = {
@@ -257,8 +258,8 @@ ScreenStage.prototype = {
         return 'Press Esc to go back to the futuuuuuuuuuuuuure';
     },
 
-    getEntity: function() {
-        return this.entity;
+    getShape: function() {
+        return this._shape;
     },
 
     createStage: function() {
@@ -275,7 +276,7 @@ ScreenStage.prototype = {
 
     destroyStage: function() {
         XSS.off.keydown(this.handleKeys);
-        delete XSS.ents.stage;
+        delete XSS.shapes.stage;
     }
 
 };
@@ -301,8 +302,8 @@ SelectStage.prototype = {
         return 'Use arrow keys to navigate and Enter to select.';
     },
 
-    getEntity: function() {
-        return this.menu.getEntity();
+    getShape: function() {
+        return this.menu.getShape();
     },
 
     createStage: function() {
@@ -332,7 +333,7 @@ SelectStage.prototype = {
 
     destroyStage: function() {
         XSS.off.keydown(this.handleKeys);
-        delete XSS.ents.stage;
+        delete XSS.shapes.stage;
     }
 
 };
@@ -354,13 +355,13 @@ GameStage.prototype = {
         return '';
     },
 
-    getEntity: function() {
-        return new PixelEntity();
+    getShape: function() {
+        return new Shape();
     },
 
     createStage: function() {
         var choices;
-        delete XSS.ents.header;
+        delete XSS.shapes.header;
 
         choices = XSS.stages.getNamedChoices();
 
@@ -389,7 +390,7 @@ Menu.prototype = {
     newStage: function(name) {
         var stage = this.stages[name];
 
-        XSS.ents.instruction = new PixelEntity(
+        XSS.shapes.instruction = new Shape(
             XSS.font.draw(XSS.MENU_LEFT, 45, stage.getInstruction())
         );
 
@@ -401,8 +402,8 @@ Menu.prototype = {
         var onAnimateDone = function() {
 
             // Remove old stages
-            delete XSS.ents.oldstage;
-            delete XSS.ents.newstage;
+            delete XSS.shapes.oldstage;
+            delete XSS.shapes.newstage;
 
             // Load new stage
             XSS.stages.current = newStageName;
@@ -423,12 +424,12 @@ Menu.prototype = {
         // Unload old stage
         this.stages[currentStageName].destroyStage();
 
-        delete XSS.ents.instruction;
-        delete XSS.ents.stage;
+        delete XSS.shapes.instruction;
+        delete XSS.shapes.stage;
 
         this._switchStageAnimate(
-            this.stages[currentStageName].getEntity(),
-            this.stages[newStageName].getEntity(),
+            this.stages[currentStageName].getShape(),
+            this.stages[newStageName].getShape(),
             (options && options.back),
             onAnimateDone.bind(this)
         );
@@ -444,12 +445,12 @@ Menu.prototype = {
     },
 
     setupMenuSkeletton: function() {
-        XSS.ents.border = XSS.drawables.outerBorder();
-        XSS.ents.header = XSS.drawables.header(XSS.MENU_LEFT);
+        XSS.shapes.border = XSS.shapes.outerBorder();
+        XSS.shapes.header = XSS.shapes.header(XSS.MENU_LEFT);
     },
 
     updateStage: function(stage) {
-        XSS.ents.stage = stage.getEntity();
+        XSS.shapes.stage = stage.getShape();
     },
 
     refreshStage: function() {
@@ -457,8 +458,8 @@ Menu.prototype = {
     },
 
     /**
-     * @param {PixelEntity} oldStage
-     * @param {PixelEntity} newStage
+     * @param {Shape} oldStage
+     * @param {Shape} newStage
      * @param {boolean} back
      * @param {function()} callback
      * @private
@@ -477,8 +478,8 @@ Menu.prototype = {
 
         newStageAnim.callback = callback;
 
-        XSS.ents.oldstage = oldStage.clone().dynamic(true).swipe(oldStageAnim);
-        XSS.ents.newstage = newStage.clone().dynamic(true).swipe(newStageAnim);
+        XSS.shapes.oldstage = oldStage.clone().dynamic(true).swipe(oldStageAnim);
+        XSS.shapes.newstage = newStage.clone().dynamic(true).swipe(newStageAnim);
     }
 
 };
