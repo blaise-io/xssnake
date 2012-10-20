@@ -58,13 +58,13 @@ XSS.stages = {
         top = XSS.MENU_TOP;
 
         screen = new Shape(
-            XSS.transform.zoomX2(XSS.font.draw(0, 0, '<CREDITS>'), left, top),
-            XSS.font.draw(left, top + 18, 'Blaise Kal:'),
-            XSS.font.draw(left, top + 27, 'Placeholder:'),
-            XSS.font.draw(left, top + 35, 'Placeholder:'),
-            XSS.font.draw(left + 52, top + 18, 'Code, Pixels, Concept'),
-            XSS.font.draw(left + 52, top + 27, 'Testing, Hosting'),
-            XSS.font.draw(left + 52, top + 35, 'Testing, Snoek')
+            XSS.transform.zoomX2(XSS.font.pixels(0, 0, '<CREDITS>'), left, top),
+            XSS.font.pixels(left, top + 18, 'Blaise Kal:'),
+            XSS.font.pixels(left, top + 27, 'Placeholder:'),
+            XSS.font.pixels(left, top + 35, 'Placeholder:'),
+            XSS.font.pixels(left + 52, top + 18, 'Code, Pixels, Concept'),
+            XSS.font.pixels(left + 52, top + 27, 'Testing, Hosting'),
+            XSS.font.pixels(left + 52, top + 35, 'Testing, Snoek')
         );
 
         return new ScreenStage(screen);
@@ -80,12 +80,12 @@ XSS.stages = {
         top = XSS.MENU_TOP;
 
         screen = new Shape(
-            XSS.transform.zoomX2(XSS.font.draw(0, 0, '<HEEELP?!!>'), left, top),
-            XSS.font.draw(left, top + 18, '• Play using the arrow keys on your keyboard'),
-            XSS.font.draw(left, top + 27, '• You can chat during the game by typing+enter'),
-            XSS.font.draw(left, top + 35, '• Open Source at github.com/blaisekal/xssnake'),
-            XSS.font.draw(left, top + 45, '• Github is also for bugs and feature requests'),
-            XSS.font.draw(left, top + 54, '• Other questions or issues: blaisekal@gmail.com')
+            XSS.transform.zoomX2(XSS.font.pixels(0, 0, '<HEEELP?!!>'), left, top),
+            XSS.font.pixels(left, top + 18, '• Play using the arrow keys on your keyboard'),
+            XSS.font.pixels(left, top + 27, '• You can chat during the game by typing+enter'),
+            XSS.font.pixels(left, top + 35, '• Open Source at github.com/blaisekal/xssnake'),
+            XSS.font.pixels(left, top + 45, '• Github is also for bugs and feature requests'),
+            XSS.font.pixels(left, top + 54, '• Other questions or issues: blaisekal@gmail.com')
         );
 
         return new ScreenStage(screen);

@@ -52,10 +52,10 @@ Apple.prototype = {
         };
 
         for (var i = 0; i <= 3; i++) {
-            var text, shape;
+            var shape;
 
-            text = XSS.font.draw(x + random(), y + random(), 'nom');
-            shape = new Shape(text).lifetime(i * 100, 100 + i * 100);
+            shape = XSS.font.shape(x + random(), y + random(), 'nom');
+            shape.lifetime(i * 100, 100 + i * 100);
 
             XSS.shapes['nom' + i] = shape;
         }

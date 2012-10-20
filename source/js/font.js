@@ -26,17 +26,23 @@ Font.MAX = 6;
 
 Font.prototype = {
 
-    draw: function(x, y, str, inverted) {
-        var glyph, pixels = [];
-
-        str = this._replaceMissingCharacters(str);
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {string} str
+     * @param {boolean} inverted
+     * @return {Array.<Array>}
+     */
+    pixels: function(x, y, str, inverted) {
+        var glyph, pixels = [],
+            split = this._splitAndReplaceMissingChars(str);
 
         if (inverted) {
             this._invertHorWhitespace(pixels, x - 2, y);
         }
 
-        for (var i = 0, m = str.length; i < m; i++) {
-            glyph = XSS.shapegen.raw(str[i]);
+        for (var i = 0, m = split.length; i < m; i++) {
+            glyph = XSS.shapegen.raw(split[i]);
             this._drawGlyph(pixels, x, y, glyph, inverted);
             if (inverted) {
                 this._invertHorWhitespace(pixels, x - 1, y);
@@ -53,14 +59,24 @@ Font.prototype = {
     },
 
     /**
+     * @param {number} x
+     * @param {number} y
+     * @param {string} str
+     * @param {boolean} inverted
+     * @return {Shape}
+     */
+    shape: function(x, y, str, inverted) {
+        return new Shape(this.pixels.apply(this, arguments));
+    },
+
+    /**
      * @param {string} str
      * @return {number}
      */
     width: function(str) {
-        var len = 0;
-        str = this._replaceMissingCharacters(str);
-        for (var i = 0, m = str.length; i < m; i++) {
-            len += XSS.shapegen.raw(str[i])[0].length;
+        var len = 0, split = this._splitAndReplaceMissingChars(str);
+        for (var i = 0, m = split.length; i < m; i++) {
+            len += XSS.shapegen.raw(split[i])[0].length;
             if (i + 1 !== m) {
                 len += 1;
             }
@@ -68,22 +84,37 @@ Font.prototype = {
         return len;
     },
 
-    /** @private */
+    /**
+     * @param {Array.<Array>} pixels
+     * @param {number} x
+     * @param {number} y
+     * @private
+     */
     _invertHorWhitespace: function(pixels, x, y) {
         for (var i = -2; i < Font.MAX + 1; i++) {
             pixels.push([x, y + i]);
         }
     },
 
-    /** @private */
+    /**
+     * @param {Array.<Array>} pixels
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @private
+     */
     _invertVertWhitespace: function(pixels, x, y, width) {
         for (var i = 0; i + 1 < width; i++) {
             pixels.push([x + i, y]);
         }
     },
 
-    /** @private */
-    _replaceMissingCharacters: function(str) {
+    /**
+     * @param {string} str
+     * @return {Array.<string>}
+     * @private
+     */
+    _splitAndReplaceMissingChars: function(str) {
         var ret = [], arr = str.split('');
         for (var i = 0, m = arr.length; i < m; i++) {
             if (XSS.PIXELS[arr[i]]) {
@@ -95,7 +126,14 @@ Font.prototype = {
         return ret;
     },
 
-    /** @private */
+    /**
+     * @param {Array.<Array>} pixels
+     * @param {number} x
+     * @param {number} y
+     * @param {Array.<Array>} glyph
+     * @param {boolean} inverted
+     * @private
+     */
     _drawGlyph: function(pixels, x, y, glyph, inverted) {
         var glyphWidth;
         for (var xx = 0, m = glyph.length; xx < m; xx++) { // y

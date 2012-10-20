@@ -53,19 +53,19 @@ Shapes.prototype = {
             case 0:
                 text = '← ' + text;
                 width = XSS.font.width(text) + 2;
-                pixels = XSS.font.draw(x - width, y, text);
+                pixels = XSS.font.pixels(x - width, y, text);
                 break;
             case 1:
                 text = '↑ ' + text;
-                pixels = XSS.font.draw(x, y - 4, text);
+                pixels = XSS.font.pixels(x, y - 4, text);
                 break;
             case 2:
                 text = text + ' →';
-                pixels = XSS.font.draw(x + 8, y, text);
+                pixels = XSS.font.pixels(x + 8, y, text);
                 break;
             case 3:
                 text = text + ' ↓';
-                pixels = XSS.font.draw(x, y + 2, text);
+                pixels = XSS.font.pixels(x, y + 2, text);
                 break;
         }
         return new Shape(pixels);
@@ -105,21 +105,21 @@ Shapes.prototype = {
             this._line(0, h - 24, w, h - 24),
             this._line(0, h - 25, w, h - 25),
 
-            XSS.font.draw(5, h - 22, 'Imaginary crashed into Imaginary'),
+            XSS.font.pixels(5, h - 22, 'Imaginary crashed into Imaginary'),
 
-            XSS.font.draw(5, h - 15, 'Blaise'),
-            XSS.font.draw(51, h - 15, '33'),
-            XSS.font.draw(5, h - 8, 'Imaginary'),
-            XSS.font.draw(56, h - 8, '7'),
+            XSS.font.pixels(5, h - 15, 'Blaise'),
+            XSS.font.pixels(51, h - 15, '33'),
+            XSS.font.pixels(5, h - 8, 'Imaginary'),
+            XSS.font.pixels(56, h - 8, '7'),
 
-            XSS.font.draw(65, h - 15, 'Foo'),
-            XSS.font.draw(113, h - 15, '52'),
-            XSS.font.draw(65, h - 8, 'Blabla'),
-            XSS.font.draw(118, h - 8, '2'),
+            XSS.font.pixels(65, h - 15, 'Foo'),
+            XSS.font.pixels(113, h - 15, '52'),
+            XSS.font.pixels(65, h - 8, 'Blabla'),
+            XSS.font.pixels(118, h - 8, '2'),
 
-            XSS.font.draw(126, h - 22, 'Foo: :,('),
-            XSS.font.draw(126, h - 15, 'Blaise: LOL OWNED'),
-            XSS.font.draw(126, h - 8, 'Imaginary: Fuck you for cutting me!')
+            XSS.font.pixels(126, h - 22, 'Foo: :,('),
+            XSS.font.pixels(126, h - 15, 'Blaise: LOL OWNED'),
+            XSS.font.pixels(126, h - 8, 'Imaginary: Fuck you for cutting me!')
         );
     },
 
@@ -130,10 +130,10 @@ Shapes.prototype = {
      */
     header: function(x, y) {
         y = y || 18;
-        var welcome = XSS.font.draw(0, 0, '<XSSNAKE>');
+        var welcome = XSS.font.pixels(0, 0, '<XSSNAKE>');
         return new Shape(
             XSS.transform.zoomX4(welcome, x, y),
-            XSS.font.draw(x, y + 20, (new Array(45)).join('+'))
+            XSS.font.pixels(x, y + 20, (new Array(45)).join('+'))
         );
     },
 

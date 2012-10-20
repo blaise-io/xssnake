@@ -89,10 +89,9 @@ StageFlow.prototype = {
     },
 
     setStageShapes: function() {
+        var instruction = this.stage.getInstruction();
         XSS.shapes.stage = this.stage.getShape();
-        XSS.shapes.instruction = new Shape(
-            XSS.font.draw(XSS.MENU_LEFT, 45, this.stage.getInstruction())
-        );
+        XSS.shapes.instruction = XSS.font.shape(XSS.MENU_LEFT, 45, instruction);
     },
 
     /**

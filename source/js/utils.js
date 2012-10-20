@@ -16,7 +16,9 @@ var Utils = {
         script.src = url;
         script.onload = callback;
         script.onerror = function() {
-            throw new Error(url);
+            XSS.shapes = {
+                err: XSS.font.shape(0, 70, 'Cannot connect to ' + url)
+            };
         };
         head = document.querySelector('head');
         head.insertBefore(script, head.firstChild);

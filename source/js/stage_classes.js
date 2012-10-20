@@ -79,14 +79,14 @@ SelectMenu.prototype = {
         for (var i = 0, m = this.opts.length; i < m; i++) {
             var active, font;
             active = (this.selected === i);
-            font = XSS.font.draw(x, y + (i * 9), this.opts[i].title, active);
+            font = XSS.font.pixels(x, y + (i * 9), this.opts[i].title, active);
             this.shape.add(font);
         }
 
         // Help text line(s)
         for (var j = 0, n = description.length; j < n; j++) {
             this.shape.add(
-                XSS.font.draw(x, y + ((i + 1 + j) * 9), description[j])
+                XSS.font.pixels(x, y + ((i + 1 + j) * 9), description[j])
             );
         }
     }
@@ -158,8 +158,8 @@ InputStage.prototype = {
     getShape: function() {
         var left = XSS.MENU_LEFT + this.labelWidth + this.labelWsp;
         return new Shape(
-            XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP, this.label),
-            XSS.font.draw(left, XSS.MENU_TOP, this.value)
+            XSS.font.pixels(XSS.MENU_LEFT, XSS.MENU_TOP, this.label),
+            XSS.font.pixels(left, XSS.MENU_TOP, this.value)
         );
     },
 
@@ -210,7 +210,7 @@ InputStage.prototype = {
 
     /** @private */
     inputSubmit: function() {
-        var error, draw, text, duration = 500;
+        var error, shape, text, duration = 500;
 
         error = this.getInputError(this.value.trim());
 
@@ -225,8 +225,9 @@ InputStage.prototype = {
             text = error;
         }
 
-        draw = XSS.font.draw(XSS.MENU_LEFT, XSS.MENU_TOP + 9, text);
-        XSS.shapes.message = new Shape(draw).lifetime(0, duration);
+        shape = XSS.font.shape(XSS.MENU_LEFT, XSS.MENU_TOP + 9, text);
+        shape.lifetime(0, duration);
+        XSS.shapes.message = shape;
 
         return false;
     },
