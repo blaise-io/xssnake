@@ -35,7 +35,7 @@ ClientSnake.prototype.showName = function() {
     x = this.parts[0][0] * 4;
     y = this.parts[0][1] * 4;
 
-    shape = XSS.shapes.label(x, y + 1, this.direction, this.name);
+    shape = XSS.shapegen.label(x, y + 1, this.direction, this.name);
     name = this._shapeName + '_n';
 
     XSS.shapes[name] = shape;

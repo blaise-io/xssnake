@@ -36,7 +36,7 @@ Font.prototype = {
         }
 
         for (var i = 0, m = str.length; i < m; i++) {
-            glyph = XSS.shapes.raw(str[i]);
+            glyph = XSS.shapegen.raw(str[i]);
             this._drawGlyph(pixels, x, y, glyph, inverted);
             if (inverted) {
                 this._invertHorWhitespace(pixels, x - 1, y);
@@ -60,7 +60,7 @@ Font.prototype = {
         var len = 0;
         str = this._replaceMissingCharacters(str);
         for (var i = 0, m = str.length; i < m; i++) {
-            len += XSS.shapes.raw(str[i])[0].length;
+            len += XSS.shapegen.raw(str[i])[0].length;
             if (i + 1 !== m) {
                 len += 1;
             }

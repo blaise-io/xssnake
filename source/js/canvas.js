@@ -11,7 +11,10 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this._setRequestAnimationFrame();
+    if (!window.requestAnimationFrame) {
+        this._vendorRequestAnimationFrame();
+    }
+
     this._positionCanvas();
     this._addEventListeners();
     this._paint();
@@ -20,17 +23,15 @@ function Canvas() {
 Canvas.prototype = {
 
     /** @private */
-    _setRequestAnimationFrame: function() {
-        window['requestAnimationFrame'] = (function() {
-            return window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                function(callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-        })();
+    _vendorRequestAnimationFrame: function() {
+        window['requestAnimationFrame'] =
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function(callback) {
+                window.setTimeout(callback, 1000 / 60);
+            };
     },
 
     /** @private */
@@ -147,7 +148,7 @@ Canvas.prototype = {
         var cache;
 
         if (false === shape instanceof Shape) {
-            throw new Error(name);
+            throw new Error();
         }
 
         for (var k in shape.effects) {

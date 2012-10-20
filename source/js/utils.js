@@ -16,7 +16,7 @@ var Utils = {
         script.src = url;
         script.onload = callback;
         script.onerror = function() {
-            throw new Error('Could not load ' + url);
+            throw new Error(url);
         };
         head = document.querySelector('head');
         head.insertBefore(script, head.firstChild);

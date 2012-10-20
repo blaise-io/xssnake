@@ -71,7 +71,7 @@ Shape.prototype = {
      * @return {Shape}
      */
     str: function(pixelStr) {
-        this.pixels(XSS.shapes.strToXYArr(pixelStr[0], pixelStr[1]));
+        this.pixels(XSS.shapegen.strToXYArr(pixelStr[0], pixelStr[1]));
         return this;
     },
 
@@ -95,13 +95,13 @@ Shape.prototype = {
      */
     add: function(varArgs) {
         for (var i = 0, m = arguments.length; i < m; ++i) {
-            // Avoiding concat() for performance reasons
+            // Avoid concat() for performance reasons
             for (var ii = 0, mm = arguments[i].length; ii < mm; ii++) {
                 this._pixels.push(arguments[i][ii]);
             }
         }
-        delete this._cache;
-        delete this._bbox;
+        this._cache = null;
+        this._bbox = null;
         return this;
     },
 
@@ -159,22 +159,22 @@ Shape.prototype = {
      * @private
      */
     _getBBox: function() {
-        var x, y,
-            pixels = this._pixels,
+        var pixels = this._pixels,
             minX = false,
             minY = false,
             maxX = false,
             maxY = false;
 
         for (var i = 0, m = pixels.length; i < m; i++) {
-            x = pixels[i][0];
+            var x = pixels[i][0],
+                y = pixels[i][1];
+
             if (minX === false || minX > x) {
                 minX = x;
             }
             if (maxX === false || maxX < x) {
                 maxX = x;
             }
-            y = pixels[i][1];
             if (minY === false || minY > y) {
                 minY = y;
             }

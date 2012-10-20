@@ -1,5 +1,5 @@
 /*jshint globalstrict:true */
-/*globals XSS, Shape, Utils*/
+/*globals XSS*/
 
 'use strict';
 

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals Utils, PublishSubscribe, Canvas, Shapes, Transform, Font, Menu, Stages, Socket */
+/*globals Utils, PublishSubscribe, Canvas, Shapes, Transform, Font, StageFlow, Socket */
 
 'use strict';
 
@@ -44,29 +44,35 @@ window.onload = function() {
 
     XSS.shapes    = {};
 
+    // DOM
     XSS.doc       = document.body;
     XSS.input     = document.createElement('input');
                     XSS.doc.appendChild(XSS.input);
-
-    XSS.pubsub    = new PublishSubscribe();
-    XSS.canvas    = new Canvas();
-    XSS.shapes    = new Shapes();
-    XSS.transform = new Transform();
-    XSS.font      = new Font();
-    XSS.menu      = new Menu();
-    XSS.stages    = new Stages();
 
     // Shortcuts
     XSS.on        = Utils.addListener;
     XSS.off       = Utils.removeListener;
 
+    // Singletons
+    XSS.pubsub    = new PublishSubscribe();
+    XSS.canvas    = new Canvas();
+    XSS.shapegen  = new Shapes();
+    XSS.transform = new Transform();
+    XSS.font      = new Font();
+
+    // Start flow
+    XSS.stageflow = new StageFlow();
+
+    console.log(1);
     XSS.socket = new Socket(function() {
+        console.log(2);
         var data = {
             'name'    : window.location.search.substring(1) || 'Anon',
             'friendly': true,
             'pub'     : true,
             'capacity': 2
         };
+        console.log(3);
         XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
     });
 

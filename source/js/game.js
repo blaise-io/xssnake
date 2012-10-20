@@ -11,8 +11,8 @@
  * @constructor
  */
 function Game(levelID, names, index, apples) {
-    XSS.shapes.border = XSS.shapes.outerBorder();
-    XSS.shapes.levelborder = XSS.shapes.levelBorder();
+    XSS.shapes.border = XSS.shapegen.outerBorder();
+    XSS.shapes.levelborder = XSS.shapegen.levelBorder();
 
     this.curid = 0;
 

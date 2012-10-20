@@ -36,6 +36,7 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on(events.CLIENT_GAME_SETUP, function(data) {
+            XSS.stageflow.switchStage(XSS.stages.startGame);
             if (XSS.game) {
                 XSS.game.destruct();
             }
