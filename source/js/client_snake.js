@@ -13,11 +13,12 @@
  * @extends {Snake}
  * @constructor
  */
-function ClientSnake(index, location, direction, size, speed) {
+function ClientSnake(index, location, direction, size, speed, local) {
 
     Snake.apply(this, arguments);
 
     this.crashed = false;
+    this.local = local;
 
     this.elapsed = 0;
     this._shape = new Shape().dynamic(true);
@@ -25,24 +26,30 @@ function ClientSnake(index, location, direction, size, speed) {
     this._shapeName = 'S' + index;
     this._snakeTurnRequests = [];
     this._handleKeysBind = this._handleKeys.bind(this);
+
+    if (local) {
+        this.addControls();
+    }
 }
 
 ClientSnake.prototype = Object.create(Snake.prototype);
 
 ClientSnake.prototype.showName = function() {
-    var x, y, shape, name;
+    var x, y, shape;
 
     x = this.parts[0][0] * 4;
     y = this.parts[0][1] * 4;
 
     shape = XSS.shapegen.label(x, y + 1, this.direction, this.name);
-    name = this._shapeName + '_n';
+    XSS.shapes[this._shapeName + 'N'] = shape;
 
-    XSS.shapes[name] = shape;
+    if (this.local) {
+        shape.flash(260);
+    }
 
     window.setTimeout(function() {
-        delete XSS.shapes[name];
-    }.bind(this), 2000);
+        delete XSS.shapes[this._shapeName + 'N'];
+    }.bind(this), 1800);
 };
 
 ClientSnake.prototype.addControls = function() {

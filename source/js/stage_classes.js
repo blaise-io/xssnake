@@ -190,7 +190,6 @@ InputStage.prototype = {
         switch (e.which) {
             case XSS.KEY_ESCAPE:
                 XSS.stageflow.previousStage();
-                e.preventDefault();
                 break;
             case XSS.KEY_ENTER:
                 this.inputSubmit();
@@ -319,7 +318,6 @@ ScreenStage.prototype = {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
                 XSS.stageflow.previousStage();
-                e.preventDefault();
         }
     },
 
@@ -367,7 +365,6 @@ SelectStage.prototype = {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
                 XSS.stageflow.previousStage();
-                e.preventDefault();
                 break;
             case XSS.KEY_ENTER:
                 XSS.stageflow.switchStage(this.menu.getNextStage());

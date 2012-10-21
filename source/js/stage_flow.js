@@ -12,6 +12,8 @@ function StageFlow(stageRef) {
     stageRef = stageRef || XSS.stages.main;
 
     this._prevStages.push(stageRef);
+
+    this._disableEscKeyDefault();
     this.setupMenuSkeletton();
     this.newStage(stageRef);
 }
@@ -32,7 +34,7 @@ StageFlow.prototype = {
      * @return {StageInterface}
      */
     getStage: function(stage) {
-        var key = this._getReferenceKey(stage);
+        var key = this._getStageObjectName(stage);
         if (!this._stageInits[key]) {
             this._stageInits[key] = stage();
         }
@@ -95,11 +97,23 @@ StageFlow.prototype = {
     },
 
     /**
+     * Firefox disconnects websocket on Esc O___O
+     * @private
+     */
+    _disableEscKeyDefault: function() {
+        XSS.on.keydown(function(e) {
+            if (e.keyCode === XSS.KEY_ESCAPE) {
+                e.preventDefault();
+            }
+        });
+    },
+
+    /**
      * @param {function()} func
      * @return {string|null}
      * @private
      */
-    _getReferenceKey: function(func) {
+    _getStageObjectName: function(func) {
         for (var k in XSS.stages) {
             if (XSS.stages.hasOwnProperty(k) && func === XSS.stages[k]) {
                 return k;

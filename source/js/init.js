@@ -63,16 +63,13 @@ window.onload = function() {
     // Start flow
     XSS.stageflow = new StageFlow();
 
-    console.log(1);
     XSS.socket = new Socket(function() {
-        console.log(2);
         var data = {
             'name'    : window.location.search.substring(1) || 'Anon',
             'friendly': true,
             'pub'     : true,
             'capacity': 2
         };
-        console.log(3);
         XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
     });
 

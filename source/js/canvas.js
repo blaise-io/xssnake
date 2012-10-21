@@ -184,6 +184,12 @@ Canvas.prototype = {
         fps = Math.round(1000 / delta);
         document.title = 'XXSNAKE ' + fps;
 
+        // Handle requestAnimationFrame's variable frame rate when
+        // focussing and blurring windows. Don't do this for game tick.
+        if (delta <= 10 || delta >= 200) {
+            delta = 0;
+        }
+
         // Abuse this loop to trigger the game tick
         XSS.pubsub.publish(XSS.GAME_TICK, delta);
 
@@ -192,14 +198,7 @@ Canvas.prototype = {
             window.requestAnimationFrame(this._paint.bind(this), this.canvas);
         }
 
-        // Handle requestAnimationFrame's variable frame rate when
-        // focussing and blurring windows. Don't do this for game tick.
-        if (delta <= 10 || delta >= 200) {
-            delta = 0;
-        }
-
         this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
-
         for (var k in XSS.shapes) {
             if (XSS.shapes.hasOwnProperty(k)) {
                 this._paintShapeDispatch(k, XSS.shapes[k], delta);

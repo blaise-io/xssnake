@@ -64,7 +64,7 @@ Game.prototype = {
             console.log(client.name);
             console.log(head);
             console.log(client.snake.head());
-            this._rejectClientState(client);
+            this._sendServerSnakeState(client);
         }
 
         return true;
@@ -74,13 +74,13 @@ Game.prototype = {
      * @param {Client} client
      * @private
      */
-    _rejectClientState: function(client) {
-        var send = [
+    _sendServerSnakeState: function(client) {
+        var data = [
             this.room.clients.indexOf(client),
             client.snake.parts,
             client.snake.direction
         ];
-        this.room.emit(events.CLIENT_SNAKE_UPDATE, send);
+        this.room.emit(events.CLIENT_SNAKE_UPDATE, data);
     },
 
     /**
@@ -308,7 +308,6 @@ Game.prototype = {
     _setupClients: function() {
         var clients = this.room.clients;
         var names = this.room.names();
-        this.apple = this.level.getRandomOpenTile();
         for (var i = 0, m = clients.length; i < m; i++) {
             var snake = this._spawnClientSnake(i);
             this.snakes[i] = snake;

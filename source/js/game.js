@@ -11,8 +11,13 @@
  * @constructor
  */
 function Game(levelID, names, index, apples) {
-    XSS.shapes.border = XSS.shapegen.outerBorder();
-    XSS.shapes.levelborder = XSS.shapegen.levelBorder();
+
+    XSS.stageflow.stage.destroyStage();
+
+    XSS.shapes = {
+        border: XSS.shapegen.outerBorder(),
+        levelborder: XSS.shapegen.levelBorder()
+    };
 
     this.curid = 0;
 
@@ -31,11 +36,11 @@ function Game(levelID, names, index, apples) {
 Game.prototype = {
 
     start: function() {
-        var tick = this._tick.bind(this);
-        XSS.pubsub.subscribe(XSS.GAME_TICK, 'tick', tick);
+        XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._tick.bind(this));
     },
 
     destruct: function() {
+        XSS.pubsub.unsubscribe(XSS.GAME_TICK, '');
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeControls();
         }
@@ -67,20 +72,16 @@ Game.prototype = {
         speed = XSS.config.shared.snake.speed;
 
         for (var i = 0, m = names.length; i < m; i++) {
-            var location, direction, snake;
+            var location, direction, snake, local;
 
             location = this.level.getSpawn(i);
             direction = this.level.getSpawnDirection(i);
+            local = i === index;
 
-            snake = new ClientSnake(i, location, direction, size, speed);
+            snake = new ClientSnake(i, location, direction, size, speed, local);
             snake.name = names[i];
             snake.addToEntities();
             snake.showName();
-
-            if (i === index) {
-                snake.local = true;
-                snake.addControls();
-            }
 
             snakes.push(snake);
         }

@@ -6,6 +6,7 @@
 module.exports = {
     CLIENT_CONNECT     : 'CONN',
     CLIENT_NOTICE      : 'NOTICE',
+
     CLIENT_GAME_SETUP  : 'SETUP',
     CLIENT_GAME_START  : 'START',
     CLIENT_GAME_WIN    : 'WIN',
@@ -15,7 +16,7 @@ module.exports = {
     CLIENT_APPLE_SPAWN : 'GROW',
 
     SERVER_ROOM_MATCH  : 'ROOM',
-    SERVER_CHAT_MESSAGE: 'CHAT',
+    SERVER_CHAT_MESSAGE: 'SCHT',
     SERVER_SNAKE_UPDATE: 'SSN'
 };
 
