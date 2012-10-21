@@ -5,7 +5,7 @@ var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 
 /**
- * @param {Server} server
+ * @param {number} tick
  * @constructor
  */
 function Ticker(tick) {

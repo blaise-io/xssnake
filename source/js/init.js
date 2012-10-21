@@ -40,8 +40,6 @@ window.onerror = function() {
 
 window.onload = function() {
 
-    delete window.module; // Clean up dummy container
-
     XSS.shapes    = {};
 
     // DOM

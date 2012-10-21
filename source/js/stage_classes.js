@@ -401,11 +401,12 @@ GameStage.prototype = {
     },
 
     createStage: function() {
-//        var choices;
+        var choices;
         delete XSS.shapes.header;
 
-//        choices = XSS.stageflow.getNamedChoices();
-//
+        choices = XSS.stageflow.getNamedChoices();
+        console.log(choices);
+
 //        XSS.socket = new Socket(function() {
 //            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, choices);
 //        });

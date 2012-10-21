@@ -17,10 +17,136 @@ function Canvas() {
 
     this._positionCanvas();
     this._addEventListeners();
-    this._paint();
+
+    this._lastPaint = new Date() - 20;
+    this._bindFrame = this._frame.bind(this);
+    this._bindFrame();
 }
 
 Canvas.prototype = {
+
+    /**
+     * @param {number} delta
+     */
+    paint: function(delta) {
+        // Show FPS in title bar
+        var fps = Math.round(1000 / delta);
+        document.title = 'XXSNAKE ' + fps;
+
+        // Abuse this loop to trigger game tick
+        XSS.pubsub.publish(XSS.GAME_TICK, delta);
+
+        // Clear canvas
+        this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
+
+        // Paint registered shapes
+        for (var k in XSS.shapes) {
+            if (XSS.shapes.hasOwnProperty(k)) {
+                this._paintShapeDispatch(k, XSS.shapes[k], delta);
+            }
+        }
+    },
+
+    /** @private */
+    _frame: function() {
+        var now, delta;
+
+        // Time since last paint
+        now = +new Date();
+        delta = now - this._lastPaint;
+        this._lastPaint = now;
+
+        // Do not paint when requestAnimationFrame is
+        // catching up or heavily delayed.
+        if (delta >= 10 && delta <= 200) {
+            this.paint(delta);
+        }
+
+        // Make appointment for next paint. Quit on error.
+        if (!XSS.error) {
+            window.requestAnimationFrame(this._bindFrame, this.canvas);
+        }
+    },
+
+    /**
+     * @param {Object} context
+     * @param {Shape} shape
+     * @param {Object} offset
+     * @private
+     */
+    _paintShape: function(context, shape, offset) {
+        var pixels = shape.pixels();
+
+        offset.x = offset.x || 0;
+        offset.y = offset.y || 0;
+
+        // Dip paint brush
+        context.fillStyle = 'rgb(0,0,0)';
+
+        for (var i = 0, m = pixels.length; i < m; ++i) {
+            context.fillRect(
+                pixels[i][0] * XSS.PIXEL_SIZE - offset.x,
+                pixels[i][1] * XSS.PIXEL_SIZE - offset.y,
+                XSS.PIXEL_SIZE - 1,
+                XSS.PIXEL_SIZE - 1
+            );
+        }
+    },
+
+    /**
+     * @param {string} name
+     * @param {Shape} shape
+     * @param {number} delta
+     * @private
+     */
+    _paintShapeDispatch: function(name, shape, delta) {
+        var cache;
+
+        if (false === shape instanceof Shape) {
+            throw new Error();
+        }
+
+        for (var k in shape.effects) {
+            if (shape.effects.hasOwnProperty(k)) {
+                shape.effects[k].call(shape, delta);
+            }
+        }
+
+        if (true === shape.enabled()) {
+            if (shape.dynamic()) {
+                this._paintShape(this.ctx, shape, {});
+            } else {
+                cache = shape.cache();
+                if (!cache) {
+                    cache = this._cacheShapePaint(shape);
+                    shape.cache(cache);
+                }
+                this.ctx.drawImage(cache.canvas, cache.bbox.x, cache.bbox.y);
+            }
+        }
+    },
+
+    /**
+     * @param {Shape} shape
+     * @return {Object}
+     * @private
+     */
+    _cacheShapePaint: function(shape) {
+        var bbox, canvas;
+
+        bbox = this._getBBoxRealPixels(shape);
+
+        canvas = document.createElement('canvas');
+        canvas.setAttribute('width', bbox.width);
+        canvas.setAttribute('height', bbox.height);
+
+        this._paintShape(canvas.getContext('2d'), shape, bbox);
+
+        return {
+            canvas: canvas,
+            bbox  : bbox
+        };
+    },
 
     /** @private */
     _vendorRequestAnimationFrame: function() {
@@ -88,122 +214,7 @@ Canvas.prototype = {
      * @private
      */
     _snapToFatPixels: function(number) {
-        return Math.round(number / XSS.PIXEL_SIZE) * XSS.PIXEL_SIZE;
-    },
-
-    /**
-     * @param {Shape} shape
-     * @return {Object}
-     * @private
-     */
-    _cacheShapePaint: function(shape) {
-        var bbox, canvas;
-
-        bbox = this._getBBoxRealPixels(shape);
-
-        canvas = document.createElement('canvas');
-        canvas.setAttribute('width', bbox.width);
-        canvas.setAttribute('height', bbox.height);
-
-        this._paintShape(canvas.getContext('2d'), shape, bbox);
-
-        return {
-            canvas: canvas,
-            bbox  : bbox
-        };
-    },
-
-    /**
-     * @param {Object} context
-     * @param {Shape} shape
-     * @param {Object} offset
-     * @private
-     */
-    _paintShape: function(context, shape, offset) {
-        var pixels = shape.pixels();
-
-        offset.x = offset.x || 0;
-        offset.y = offset.y || 0;
-
-        // Dip paint brush
-        context.fillStyle = 'rgb(0,0,0)';
-
-        for (var i = 0, m = pixels.length; i < m; ++i) {
-            context.fillRect(
-                pixels[i][0] * XSS.PIXEL_SIZE - offset.x,
-                pixels[i][1] * XSS.PIXEL_SIZE - offset.y,
-                XSS.PIXEL_SIZE - 1,
-                XSS.PIXEL_SIZE - 1
-            );
-        }
-    },
-
-    /**
-     * @param {string} name
-     * @param {Shape} shape
-     * @param {number} delta
-     * @private
-     */
-    _paintShapeDispatch: function(name, shape, delta) {
-        var cache;
-
-        if (false === shape instanceof Shape) {
-            throw new Error();
-        }
-
-        for (var k in shape.effects) {
-            if (shape.effects.hasOwnProperty(k)) {
-                shape.effects[k].call(shape, delta);
-            }
-        }
-
-        if (true === shape.enabled()) {
-            if (shape.dynamic()) {
-                this._paintShape(this.ctx, shape, {});
-            } else {
-                cache = shape.cache();
-                if (!cache) {
-                    cache = this._cacheShapePaint(shape);
-                    shape.cache(cache);
-                }
-                this.ctx.drawImage(cache.canvas, cache.bbox.x, cache.bbox.y);
-            }
-        }
-    },
-
-    /** @private */
-    _paint: function() {
-        var now, delta, fps;
-
-        // Time since last paint
-        now = +new Date();
-        delta = now - this.time;
-        this.time = now;
-
-        // Show FPS in title bar
-        fps = Math.round(1000 / delta);
-        document.title = 'XXSNAKE ' + fps;
-
-        // Handle requestAnimationFrame's variable frame rate when
-        // focussing and blurring windows. Don't do this for game tick.
-        if (delta <= 10 || delta >= 200) {
-            delta = 0;
-        }
-
-        // Abuse this loop to trigger the game tick
-        XSS.pubsub.publish(XSS.GAME_TICK, delta);
-
-        if (!XSS.error) {
-            // Make appointment for next paint
-            window.requestAnimationFrame(this._paint.bind(this), this.canvas);
-        }
-
-        this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
-        for (var k in XSS.shapes) {
-            if (XSS.shapes.hasOwnProperty(k)) {
-                this._paintShapeDispatch(k, XSS.shapes[k], delta);
-            }
-        }
+        return Math.floor(number / XSS.PIXEL_SIZE) * XSS.PIXEL_SIZE;
     }
 
 };

@@ -36,6 +36,9 @@ function Game(levelID, names, index, apples) {
 Game.prototype = {
 
     start: function() {
+        window.onfocus = function() {
+            XSS.socket.emit(XSS.events.SERVER_GAME_REINDEX);
+        }.bind(this);
         XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._tick.bind(this));
     },
 

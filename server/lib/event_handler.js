@@ -20,12 +20,16 @@ function EventHandler(server, client, socket) {
     socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
     socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
     socket.on(events.SERVER_SNAKE_UPDATE, this._update.bind(this));
+    socket.on(events.SERVER_GAME_REINDEX, this._reIndex.bind(this));
 }
 
 module.exports = EventHandler;
 
 EventHandler.prototype = {
 
+    /**
+     * @private
+     */
     _disconnect: function() {
         var room, client = this.client, server = this.server;
 
@@ -37,6 +41,10 @@ EventHandler.prototype = {
         server.state.removeClient(client);
     },
 
+    /**
+     * @param {Object} data Object with keys name, pub, friendly
+     * @private
+     */
     _matchRoom: function(data) {
         var room, client = this.client, server = this.server;
         client.name = data.name;
@@ -44,6 +52,9 @@ EventHandler.prototype = {
         room.join(client);
     },
 
+    /**
+     * @private
+     */
     _chat: function() {
     },
 
@@ -59,10 +70,32 @@ EventHandler.prototype = {
         }
     },
 
+    /**
+     * @private
+     */
+    _reIndex: function() {
+        if (this.client.roomid) {
+            var game = this._clientGame(this.client);
+            if (game.room.inprogress) {
+                game.reIndex(this.client);
+            }
+        }
+    },
+
+    /**
+     * @param {Client} client
+     * @return {Room}
+     * @private
+     */
     _clientRoom: function(client) {
         return this.server.roomManager.room(client.roomid);
     },
 
+    /**
+     * @param {Client} client
+     * @return {Game}
+     * @private
+     */
     _clientGame: function(client) {
         return this._clientRoom(client).game;
     }

@@ -52,12 +52,16 @@ Room.prototype = {
         return this;
     },
 
+    /**
+     * @return {Game}
+     */
     newRound: function() {
         for (var i = 0, m = this.clients.length; i < m; i++) {
             this.game = null;
             this.clients.snake = null;
         }
         this.game = new Game(this, this.level);
+        return this.game;
     },
 
     /**
