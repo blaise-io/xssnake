@@ -3,15 +3,13 @@
 
 /**
  * Snake
- * @param {number} index
  * @param {Array.<number>} location
  * @param {number} direction
  * @param {number} size
  * @param {number} speed
  * @constructor
  */
-function Snake(index, location, direction, size, speed) {
-    this.index = index;
+function Snake(location, direction, size, speed) {
     this.parts = [location];
     this.direction = direction;
     this.size = size;
@@ -64,7 +62,7 @@ Snake.prototype = {
     getNextPosition: function() {
         var shift, head = this.head();
         shift = this.directionToShift(this.direction);
-        return [head[0] + shift[0], head[1] + shift[1]];
+        return [head[0] + shift[0], head[1] + shift[1], 'x'];
     },
 
     trim: function() {
@@ -89,7 +87,7 @@ Snake.prototype = {
 
     /**
      * @param {number} direction
-     * @return {Array.<Array>}
+     * @return {ShapePixels}
      */
     directionToShift: function(direction) {
         return [[-1, 0], [0, -1], [1, 0], [0, 1]][direction];

@@ -19,7 +19,7 @@ function Game(room, levelID) {
     this.levelID = levelID;
 
     this.apples = [this.level.getRandomOpenTile()];
-    this.snakes = new Array(this.room.clients.length);
+    this.snakes = [];
 
     this._roundEnded = false;
     this._tickListener = this._tick.bind(this);
@@ -110,7 +110,7 @@ Game.prototype = {
     /**
      * @param {Client} client
      * @param {Array.<Array>} parts
-     * @return {string=}
+     * @return {?string}
      * @private
      */
     _isCrash: function(client, parts) {
@@ -341,7 +341,7 @@ Game.prototype = {
         size = config.shared.snake.size;
         speed = config.shared.snake.speed;
 
-        snake = new Snake(index, spawn, direction, size, speed);
+        snake = new Snake(spawn, direction, size, speed);
         snake.elapsed = 0;
 
         return snake;

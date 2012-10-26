@@ -55,7 +55,7 @@ Apple.prototype = {
             var shape;
 
             shape = XSS.font.shape(x + random(), y + random(), 'nom');
-            shape.lifetime(i * 100, 100 + i * 100);
+            shape.lifetime(i * 100, 100 + i * 100, true);
 
             XSS.shapes['nom' + i] = shape;
         }

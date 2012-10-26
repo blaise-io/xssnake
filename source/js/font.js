@@ -24,6 +24,9 @@ Font.MIN = 5;
  */
 Font.MAX = 6;
 
+/** @typedef {Array.<Array.<boolean>>} */
+var BoolPixels;
+
 Font.prototype = {
 
     /**
@@ -31,7 +34,7 @@ Font.prototype = {
      * @param {number} y
      * @param {string} str
      * @param {boolean} inverted
-     * @return {Array.<Array>}
+     * @return {ShapePixels}
      */
     pixels: function(x, y, str, inverted) {
         var glyph, pixels = [],
@@ -85,7 +88,7 @@ Font.prototype = {
     },
 
     /**
-     * @param {Array.<Array>} pixels
+     * @param {ShapePixels} pixels
      * @param {number} x
      * @param {number} y
      * @private
@@ -97,7 +100,7 @@ Font.prototype = {
     },
 
     /**
-     * @param {Array.<Array>} pixels
+     * @param {ShapePixels} pixels
      * @param {number} x
      * @param {number} y
      * @param {number} width
@@ -127,10 +130,10 @@ Font.prototype = {
     },
 
     /**
-     * @param {Array.<Array>} pixels
+     * @param {ShapePixels} pixels
      * @param {number} x
      * @param {number} y
-     * @param {Array.<Array>} glyph
+     * @param {BoolPixels} glyph
      * @param {boolean} inverted
      * @private
      */

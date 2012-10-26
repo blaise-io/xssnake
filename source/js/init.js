@@ -40,7 +40,11 @@ window.onerror = function() {
 
 window.onload = function() {
 
+    /** @type {Object.<string,Shape>} */
     XSS.shapes    = {};
+
+    /** @type {Object.<string,Shape>} */
+    XSS.overlays  = {};
 
     // DOM
     XSS.doc       = document.body;

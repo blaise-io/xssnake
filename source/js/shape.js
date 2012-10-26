@@ -3,19 +3,44 @@
 
 'use strict';
 
+/** @typedef {Array.<Array>} */
+var ShapePixels;
+
+/** @typedef {{
+ *      x: number,
+ *      y: number,
+ *      x2: number,
+ *      y2: number,
+ *      width: number,
+ *      height: number
+ *   }}
+ */
+var BBox;
+
 /**
  * Shape
  * @constructor
  * @param {...Array} varArgs
  */
 function Shape(varArgs) {
-    /** @private */ this._pixels = [];
-    /** @private */ this._bbox = null;
-    /** @private */ this._cache = null;
-    /** @private */ this._enabled = true;
-    /** @private */ this._dynamic = false;
+    /** @type {ShapePixels} */
+    this.pixels = [];
 
+    /** @type {?Object} */
+    this.cache = null;
+
+    /** @type {boolean} */
+    this.enabled = true;
+
+    /** @type {boolean} */
+    this.dynamic = false;
+
+    /** @type {boolean} */
+    this.clear = false;
+
+    /** @type {Object.<string,*>} */
     this.effects = {};
+
     this.add.apply(this, arguments || []);
 }
 
@@ -50,10 +75,9 @@ Shape.prototype = {
 
     /**
      * @return {Shape}
-     * @suppress {checkTypes}
      */
     clone: function() {
-        return new Shape(this._pixels);
+        return new Shape(this.pixels);
     },
 
     /**
@@ -62,7 +86,7 @@ Shape.prototype = {
      * @return {Shape}
      */
     shift: function(x, y) {
-        this.pixels(XSS.transform.shift(this._pixels, x, y));
+        this.pixels = XSS.transform.shift(this.pixels, x, y);
         return this;
     },
 
@@ -71,22 +95,8 @@ Shape.prototype = {
      * @return {Shape}
      */
     str: function(pixelStr) {
-        this.pixels(XSS.shapegen.strToXYArr(pixelStr[0], pixelStr[1]));
+        this.pixels = XSS.shapegen.strToXYArr(pixelStr[0], pixelStr[1]);
         return this;
-    },
-
-    /**
-     * @param {...Array} varArgs
-     * @return {(Array.<Array>|Shape)}
-     */
-    pixels: function(varArgs) {
-        if (arguments.length === 0) {
-            return this._pixels; // Getter
-        } else {
-            this._pixels = [];  // Setter
-            this.add.apply(this, arguments);
-            return this;
-        }
     },
 
     /**
@@ -97,7 +107,7 @@ Shape.prototype = {
         for (var i = 0, m = arguments.length; i < m; ++i) {
             // Avoid concat() for performance reasons
             for (var ii = 0, mm = arguments[i].length; ii < mm; ii++) {
-                this._pixels.push(arguments[i][ii]);
+                this.pixels.push(arguments[i][ii]);
             }
         }
         this._cache = null;
@@ -106,46 +116,7 @@ Shape.prototype = {
     },
 
     /**
-     * @param {boolean=} enabled
-     * @return {(boolean|Shape)}
-     */
-    enabled: function(enabled) {
-        if (arguments.length === 0) {
-            return this._enabled; // Getter
-        } else {
-            this._enabled = enabled; // Setter
-            return this;
-        }
-    },
-
-    /**
-     * @param {boolean=} dynamic
-     * @return {(boolean|Shape)}
-     */
-    dynamic: function(dynamic) {
-        if (arguments.length === 0) {
-            return this._dynamic; // Getter
-        } else {
-            this._dynamic = dynamic; // Setter
-            return this;
-        }
-    },
-
-    /**
-     * @param {Object=} cache
-     * @return {(Object|Shape)}
-     */
-    cache: function(cache) {
-        if (arguments.length === 0) {
-            return this._cache; // Getter
-        } else {
-            this._cache = cache; // Setter
-            return this;
-        }
-    },
-
-    /**
-     * @return {Object}
+     * @return {BBox}
      */
     bbox: function() {
         if (!this._bbox) {
@@ -155,11 +126,11 @@ Shape.prototype = {
     },
 
     /**
-     * @return {Object}
+     * @return {BBox}
      * @private
      */
     _getBBox: function() {
-        var pixels = this._pixels,
+        var pixels = this.pixels,
             minX = false,
             minY = false,
             maxX = false,

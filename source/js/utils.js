@@ -7,7 +7,7 @@ var Utils = {
 
     /**
      * @param {string} url
-     * @param {function()} callback
+     * @param {Function} callback
      */
     loadScript: function(url, callback) {
         var script, head;
@@ -25,21 +25,53 @@ var Utils = {
     },
 
     addListener: {
+        /**
+         * @param {Function} listener
+         * @return {*}
+         */
         keydown: function(listener) {
             return XSS.doc.addEventListener('keydown', listener, false);
         },
-        keyup  : function(listener) {
+
+        /**
+         * @param {Function} listener
+         * @return {*}
+         */
+        keyup: function(listener) {
             return XSS.doc.addEventListener('keyup', listener, false);
         }
     },
 
     removeListener: {
+        /**
+         * @param {Function} listener
+         * @return {*}
+         */
         keydown: function(listener) {
             return XSS.doc.removeEventListener('keydown', listener, false);
         },
-        keyup  : function(listener) {
+
+        /**
+         * @param {Function} listener
+         * @return {*}
+         */
+        keyup: function(listener) {
             return XSS.doc.removeEventListener('keyup', listener, false);
         }
+    },
+
+    /**
+     * @param {Object} obj
+     * @param {*} val
+     * @return {?string}
+     */
+    getKey: function(obj, val) {
+        for (var k in obj) {
+            if (obj.hasOwnProperty(k) && val === obj[k]) {
+                return k;
+            }
+        }
+        return null;
     }
 
 };

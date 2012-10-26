@@ -4,7 +4,6 @@
 'use strict';
 
 /**
- *
  * @param {number} index
  * @param {Array.<number>} location
  * @param {number} direction
@@ -15,13 +14,14 @@
  */
 function ClientSnake(index, location, direction, size, speed, local) {
 
-    Snake.apply(this, arguments);
+    Snake.call(this, location, direction, size, speed);
 
     this.crashed = false;
     this.local = local;
 
     this.elapsed = 0;
-    this._shape = new Shape().dynamic(true);
+    this._shape = new Shape();
+    this._shape.dynamic = true;
 
     this._shapeName = 'S' + index;
     this._snakeTurnRequests = [];
@@ -40,16 +40,15 @@ ClientSnake.prototype.showName = function() {
     x = this.parts[0][0] * 4;
     y = this.parts[0][1] * 4;
 
-    shape = XSS.shapegen.label(x, y + 1, this.direction, this.name);
-    XSS.shapes[this._shapeName + 'N'] = shape;
+    shape = XSS.shapegen.tooltip(x, y, this.direction, this.name);
+    shape.lifetime(0, 2800, true);
+    shape.overlay = true;
 
     if (this.local) {
         shape.flash(260);
     }
 
-    window.setTimeout(function() {
-        delete XSS.shapes[this._shapeName + 'N'];
-    }.bind(this), 1800);
+    XSS.shapes[this._shapeName + 'N'] = shape;
 };
 
 ClientSnake.prototype.addControls = function() {
@@ -68,10 +67,10 @@ ClientSnake.prototype.addToEntities = function() {
 
 /**
  * @return {Shape}
- * @suppress {checkTypes} // Closure compiler is being silly here
  */
 ClientSnake.prototype.updateShape = function() {
-    return this._shape.pixels(XSS.transform.zoomGame(this.parts));
+    this._shape.pixels = XSS.transform.zoomGame(this.parts);
+    return this._shape;
 };
 
 ClientSnake.prototype.crash = function() {

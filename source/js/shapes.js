@@ -17,7 +17,7 @@ Shapes.prototype = {
 
     /**
      * @param {string} key
-     * @return {Array.<Array>}
+     * @return {BoolPixels}
      */
     raw: function(key) {
         var raw;
@@ -47,7 +47,7 @@ Shapes.prototype = {
      * @param {number} side
      * @param {string} text
      */
-    label: function(x, y, side, text) {
+    tooltip: function(x, y, side, text) {
         var width, pixels;
         switch (side) {
             case 0:
@@ -140,7 +140,7 @@ Shapes.prototype = {
     /**
      * @param {number} height
      * @param {string} str
-     * @return {Array.<Array>}
+     * @return {BoolPixels}
      */
     strToBoolArr: function(height, str) {
         var arr, ret = [];
@@ -158,7 +158,7 @@ Shapes.prototype = {
     /**
      * @param {number} height
      * @param {string} str
-     * @return {Array.<Array>}
+     * @return {ShapePixels}
      */
     strToXYArr: function(height, str) {
         var width, arr, ret = [];
@@ -177,7 +177,7 @@ Shapes.prototype = {
      * @param {number} y0
      * @param {number} x1
      * @param {number} y1
-     * @return {Array.<Array>}
+     * @return {ShapePixels}
      * @private
      */
     _line: function(x0, y0, x1, y1) {

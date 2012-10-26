@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Shape, ClientSnake, ClientLevel, Apple, Utils*/
+/*globals XSS, ClientSnake, ClientLevel, Apple*/
 
 'use strict';
 
@@ -21,13 +21,8 @@ function Game(levelID, names, index, apples) {
 
     this.curid = 0;
 
-    /** @type {ClientLevel} */
-    this.level = this._setupLevel(levelID);
-
-    /** @type {Array.<ClientSnake>} */
+    this.level  = this._setupLevel(levelID);
     this.snakes = this._spawnSnakes(names, index);
-
-    /** @type {Array.<Apple>} */
     this.apples = this._spawnApples(apples);
 
     this._countDown();
@@ -68,6 +63,12 @@ Game.prototype = {
         return level;
     },
 
+    /**
+     * @param {Array.<string>} names
+     * @param {number} index
+     * @return {Array.<ClientSnake>}
+     * @private
+     */
     _spawnSnakes: function(names, index) {
         var snakes = [], size, speed;
 
@@ -92,6 +93,11 @@ Game.prototype = {
         return snakes;
     },
 
+    /**
+     * @param {Array.<Array.<number>>} locations
+     * @return {Array.<Apple>}
+     * @private
+     */
     _spawnApples: function(locations) {
         var apples = [];
         for (var i = 0, m = locations.length; i < m; i++) {
@@ -100,6 +106,11 @@ Game.prototype = {
         return apples;
     },
 
+    /**
+     * @param {number} index
+     * @param {number} size
+     * @private
+     */
     _snakeSize: function(index, size) {
         XSS.game.snakes[index].size = size;
     },

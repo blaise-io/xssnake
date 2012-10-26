@@ -20,7 +20,7 @@ LevelImage.prototype = {
         buffer = fs.readFileSync(this.file);
         png = new Png(buffer);
 
-        this.spawns = new Array(4);
+        this.spawns = [];
         this.directions = [];
         this.walls = [];
 

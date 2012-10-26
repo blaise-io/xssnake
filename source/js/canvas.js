@@ -39,10 +39,22 @@ Canvas.prototype = {
         // Clear canvas
         this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
 
-        // Paint registered shapes
-        for (var k in XSS.shapes) {
-            if (XSS.shapes.hasOwnProperty(k)) {
-                this._paintShapeDispatch(k, XSS.shapes[k], delta);
+        // Paint all layers
+        this._paint(delta, XSS.shapes, XSS.overlays);
+    },
+
+    /**
+     * @param {number} delta
+     * @param {...} varArgs
+     * @private
+     */
+    _paint: function(delta, varArgs) {
+        for (var i = 1, m = arguments.length; i < m; i++) {
+            var arg = arguments[i];
+            for (var k in arg) {
+                if (arg.hasOwnProperty(k)) {
+                    this._paintShapeDispatch(k, arg[k], delta);
+                }
             }
         }
     },
@@ -71,11 +83,11 @@ Canvas.prototype = {
     /**
      * @param {Object} context
      * @param {Shape} shape
-     * @param {Object} offset
+     * @param {BBox|Object} offset
      * @private
      */
     _paintShape: function(context, shape, offset) {
-        var pixels = shape.pixels();
+        var pixels = shape.pixels;
 
         offset.x = offset.x || 0;
         offset.y = offset.y || 0;
@@ -100,26 +112,30 @@ Canvas.prototype = {
      * @private
      */
     _paintShapeDispatch: function(name, shape, delta) {
-        var cache;
+        var cache, bbox;
 
-        if (false === shape instanceof Shape) {
-            throw new Error();
-        }
-
+        // Apply effects
         for (var k in shape.effects) {
             if (shape.effects.hasOwnProperty(k)) {
                 shape.effects[k].call(shape, delta);
             }
         }
 
-        if (true === shape.enabled()) {
-            if (shape.dynamic()) {
+        // Clear surface below shape
+        if (shape.clear) {
+            bbox = shape.bbox();
+            this.ctx.clearRect(bbox.x, bbox.y, bbox.width, bbox.height);
+        }
+
+        // Draw on canvas
+        if (true === shape.enabled) {
+            if (shape.dynamic) {
                 this._paintShape(this.ctx, shape, {});
             } else {
-                cache = shape.cache();
+                cache = shape.cache;
                 if (!cache) {
                     cache = this._cacheShapePaint(shape);
-                    shape.cache(cache);
+                    shape.cache = cache;
                 }
                 this.ctx.drawImage(cache.canvas, cache.bbox.x, cache.bbox.y);
             }
@@ -137,8 +153,8 @@ Canvas.prototype = {
         bbox = this._getBBoxRealPixels(shape);
 
         canvas = document.createElement('canvas');
-        canvas.setAttribute('width', bbox.width);
-        canvas.setAttribute('height', bbox.height);
+        canvas.width  = bbox.width;
+        canvas.height = bbox.height;
 
         this._paintShape(canvas.getContext('2d'), shape, bbox);
 
@@ -195,7 +211,7 @@ Canvas.prototype = {
 
     /**
      * @param {Shape} shape
-     * @return {Object}
+     * @return {BBox}
      * @private
      */
     _getBBoxRealPixels: function(shape) {

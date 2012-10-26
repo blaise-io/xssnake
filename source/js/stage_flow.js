@@ -1,11 +1,11 @@
 /*jshint globalstrict:true */
-/*globals XSS, Shape*/
+/*globals XSS, Shape, Utils*/
 
 'use strict';
 
 /**
  * StageFlow instantiation, stage switching
- * @param {function()=} stageRef
+ * @param {Function=} stageRef
  * @constructor
  */
 function StageFlow(stageRef) {
@@ -34,7 +34,7 @@ StageFlow.prototype = {
      * @return {StageInterface}
      */
     getStage: function(stage) {
-        var key = this._getStageObjectName(stage);
+        var key = Utils.getKey(XSS.stages, stage);
         if (!this._stageInits[key]) {
             this._stageInits[key] = stage();
         }
@@ -109,20 +109,6 @@ StageFlow.prototype = {
     },
 
     /**
-     * @param {function()} func
-     * @return {string|null}
-     * @private
-     */
-    _getStageObjectName: function(func) {
-        for (var k in XSS.stages) {
-            if (XSS.stages.hasOwnProperty(k) && func === XSS.stages[k]) {
-                return k;
-            }
-        }
-        return null;
-    },
-
-    /**
      * @param {Shape} oldStage
      * @param {Shape} newStage
      * @param {boolean} back
@@ -130,7 +116,7 @@ StageFlow.prototype = {
      * @private
      */
     _switchStageAnimate: function(oldStage, newStage, back, callback) {
-        var oldStageAnim, newStageAnim,
+        var oldStageAnim, newStageAnim, oldstage, newstage,
             width = XSS.PIXELS_H;
 
         if (back) {
@@ -143,8 +129,13 @@ StageFlow.prototype = {
 
         newStageAnim.callback = callback;
 
-        XSS.shapes.oldstage = oldStage.clone().dynamic(true).swipe(oldStageAnim);
-        XSS.shapes.newstage = newStage.clone().dynamic(true).swipe(newStageAnim);
+        oldstage = XSS.shapes.oldstage = oldStage.clone();
+        oldstage.swipe(oldStageAnim);
+        oldstage.dynamic = true;
+
+        newstage = XSS.shapes.newstage = newStage.clone();
+        newstage.swipe(newStageAnim);
+        newstage.dynamic = true;
     },
 
     /**

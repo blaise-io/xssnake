@@ -1,5 +1,5 @@
 /*jshint globalstrict:true */
-/*globals XSS, Shape*/
+/*globals XSS, Shape, Utils*/
 
 'use strict';
 
@@ -16,7 +16,7 @@ Shape.prototype._effects = {
             progress += delta;
             if (progress > speed) {
                 progress -= speed;
-                this.enabled(!this.enabled());
+                this.enabled = !this.enabled;
             }
         };
     },
@@ -24,23 +24,38 @@ Shape.prototype._effects = {
     /**
      * @param {number} start
      * @param {number} stop
+     * @param {boolean=} deleteShape
      * @return {function({number})}
      */
-    lifetime: function(start, stop) {
-        var progress = 0;
+    lifetime: function(start, stop, deleteShape) {
+        var key, progress = 0;
         return function(delta) {
             // Enable/disable shape only once, allows combination
             // with other enabling/disabling effects
+
+            // Init
             progress += delta;
             if (progress === delta) {
-                this.enabled(false);
+                this.enabled = false;
             }
+
+            // Stop time reached
             if (stop && progress >= stop) {
-                this.enabled(false);
-                delete this.effects.lifetime;
-            } else if (progress >= start) {
+                if (deleteShape) {
+                    key = Utils.getKey(XSS.shapes, this);
+                    if (key) {
+                        delete XSS.shapes[key];
+                    }
+                } else {
+                    delete this.effects.lifetime;
+                    this.enabled = false;
+                }
+            }
+
+            // Start time reached
+            else if (progress >= start) {
                 start = stop;
-                this.enabled(true);
+                this.enabled = true;
             }
         };
     },
@@ -65,9 +80,9 @@ Shape.prototype._effects = {
             if (progress < duration) {
                 distance = start - ((start - end) * progress / duration);
                 distance = Math.round(distance);
-                this.pixels(XSS.transform.shift(clone.pixels(), distance, 0));
+                this.pixels = XSS.transform.shift(clone.pixels, distance, 0);
             } else {
-                delete this.effects.swipe;
+                delete this._effects.swipe;
                 if (options.callback) {
                     options.callback();
                 }

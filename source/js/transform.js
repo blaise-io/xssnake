@@ -33,10 +33,10 @@ Transform.prototype = {
     },
 
     /**
-     * @param {Array.<Array>} pixels
+     * @param {ShapePixels} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
-     * @return {Array.<Array>}
+     * @return {ShapePixels}
      */
     zoomX2: function(pixels, shiftX, shiftY) {
         var ret = [], x, y;
@@ -56,18 +56,18 @@ Transform.prototype = {
     },
 
     /**
-     * @param {Array.<Array>} pixels
+     * @param {ShapePixels} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
-     * @return {Array.<Array>}
+     * @return {ShapePixels}
      */
     zoomX4: function(pixels, shiftX, shiftY) {
         return this.zoomX2(this.zoomX2(pixels, 0, 0), shiftX || 0, shiftY || 0);
     },
 
     /**
-     * @param {Array.<Array>} pixels
-     * @return {Array.<Array>}
+     * @param {ShapePixels} pixels
+     * @return {ShapePixels}
      */
     zoomGame: function(pixels) {
         return this.zoomX4(pixels, XSS.GAME_LEFT, XSS.GAME_TOP);

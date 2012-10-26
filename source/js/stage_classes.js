@@ -68,7 +68,7 @@ SelectMenu.prototype = {
 
     _updateShape: function() {
         var x, y, description;
-        this.shape.pixels([]);
+        this.shape.pixels = [];
 
         x = XSS.MENU_LEFT;
         y = XSS.MENU_TOP;
