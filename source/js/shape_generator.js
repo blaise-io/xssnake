@@ -4,16 +4,15 @@
 'use strict';
 
 /**
-* Shapes
 * Generates shapes
 * @constructor
 */
-function Shapes() {
+function ShapeGenerator() {
     /** @private */
     this._cache = {};
 }
 
-Shapes.prototype = {
+ShapeGenerator.prototype = {
 
     /**
      * @param {string} key

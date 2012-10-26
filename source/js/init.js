@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals Utils, PublishSubscribe, Canvas, Shapes, Transform, Font, StageFlow, Socket */
+/*globals Utils, PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, Socket */
 
 'use strict';
 
@@ -58,7 +58,7 @@ window.onload = function() {
     // Singletons
     XSS.pubsub    = new PublishSubscribe();
     XSS.canvas    = new Canvas();
-    XSS.shapegen  = new Shapes();
+    XSS.shapegen  = new ShapeGenerator();
     XSS.transform = new Transform();
     XSS.font      = new Font();
 
