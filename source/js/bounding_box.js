@@ -26,18 +26,18 @@ BoundingBox.prototype = {
      */
     ofShape: function(shape) {
         var pixels = shape.pixels,
-            x1 = 0,
-            x2 = 0,
-            y1 = 0,
-            y2 = 0;
+            x1 = null,
+            x2 = null,
+            y1 = null,
+            y2 = null;
 
         for (var i = 0, m = pixels.length; i < m; i++) {
             var x = pixels[i][0],
                 y = pixels[i][1];
-            x1 = Math.min(x1, x);
-            x2 = Math.max(x2, x);
-            y1 = Math.min(y1, y);
-            y2 = Math.max(y2, y);
+            x1 = typeof x1 === 'number' ? Math.min(x1, x) : x;
+            x2 = typeof x2 === 'number' ? Math.max(x2, x) : x;
+            y1 = typeof y1 === 'number' ? Math.min(y1, y) : y;
+            y2 = typeof y2 === 'number' ? Math.max(y2, y) : y;
         }
 
         this.x1 = x1;

@@ -28,7 +28,7 @@ function Shape(varArgs) {
     this.dynamic = false;
 
     /** @type {boolean} */
-    this.clear = false;
+    this.clip = false;
 
     /** @type {Object.<string,*>} */
     this.effects = {};
@@ -99,6 +99,25 @@ Shape.prototype = {
         for (var i = 0, m = arguments.length; i < m; ++i) {
             for (var ii = 0, mm = arguments[i].length; ii < mm; ii++) {
                 this.pixels.push(arguments[i][ii]);
+            }
+        }
+        this._cache = null;
+        this._bbox = null;
+        return this;
+    },
+
+    /**
+     * @param {ShapePixels} pixels
+     * @return {Shape}
+     */
+    remove: function(pixels) {
+        for (var i = 0, m = pixels.length; i < m; i++) {
+            for (var ii = 0, mm = this.pixels.length; ii < mm; ii++) {
+                if (pixels[i][0] === this.pixels[ii][0] &&
+                    pixels[i][1] === this.pixels[ii][1]) {
+                    this.pixels.splice(ii, 1);
+                    break;
+                }
             }
         }
         this._cache = null;

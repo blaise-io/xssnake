@@ -246,7 +246,7 @@ InputStage.prototype = {
         fontWidth = XSS.font.width(strTilCaret) || -1;
         caretLeft = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + fontWidth;
 
-        caret = XSS.shapegen.line(
+        caret = XSS.shapegen.lineShape(
             caretLeft, XSS.MENU_TOP - 1,
             caretLeft, XSS.MENU_TOP + 6
         );

@@ -118,17 +118,20 @@ Canvas.prototype = {
             }
         }
 
-        // Clear surface below shape
-        if (shape.clear) {
-            bbox = shape.bbox();
-            this.ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
-        }
-
         // Draw on canvas
         if (true === shape.enabled) {
+
+            // Clear surface below shape
+            if (shape.clip) {
+                bbox = shape.bbox();
+                this.ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
+            }
+
             if (shape.dynamic) {
+                // Paint shape without caching
                 this._paintShape(this.ctx, shape, new BoundingBox());
             } else {
+                // Create cache and paint
                 cache = shape.cache;
                 if (!cache) {
                     cache = this._cacheShapePaint(shape);

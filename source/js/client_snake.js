@@ -40,10 +40,15 @@ ClientSnake.prototype.showName = function() {
     x = this.parts[0][0] * 4;
     y = this.parts[0][1] * 4;
 
+    switch (this.direction) {
+        case 0: y +=  4; x -=  4; break;
+        case 1: y -=  4; x +=  4; break;
+        case 2: y +=  4; x += 10; break;
+        case 3: y += 10; x +=  4; break;
+    }
+
     shape = XSS.shapegen.tooltip(x, y, this.direction, this.name);
-    shape.lifetime(0, 2800, true);
-    shape.bbox.expand(1);
-    shape.overlay = true;
+    shape.lifetime(0, 1500, true);
 
     if (this.local) {
         shape.flash(260);
