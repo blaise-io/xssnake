@@ -22,7 +22,7 @@ ShapeGenerator.prototype = {
         var raw;
         if (!this._cache[key]) {
             raw = XSS.PIXELS[key];
-            this._cache[key] = this.strToBoolArr(raw[0], raw[1]);
+            this._cache[key] = this.strToBoolPixels(raw[0], raw[1]);
         }
         return this._cache[key];
     },
@@ -141,7 +141,7 @@ ShapeGenerator.prototype = {
      * @param {string} str
      * @return {BoolPixels}
      */
-    strToBoolArr: function(height, str) {
+    strToBoolPixels: function(height, str) {
         var arr, ret = [];
         arr = str.split('');
         for (var i = 0, m = arr.length; i < m; i++) {
@@ -159,7 +159,7 @@ ShapeGenerator.prototype = {
      * @param {string} str
      * @return {ShapePixels}
      */
-    strToXYArr: function(height, str) {
+    strToShapePixels: function(height, str) {
         var width, arr, ret = [];
         arr = str.split('');
         width = arr.length / height;

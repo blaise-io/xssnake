@@ -1,21 +1,13 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS*/
+/*globals XSS, BoundingBox*/
 
 'use strict';
 
 /** @typedef {Array.<Array>} */
 var ShapePixels;
 
-/** @typedef {{
- *      x: number,
- *      y: number,
- *      x2: number,
- *      y2: number,
- *      width: number,
- *      height: number
- *   }}
- */
-var BBox;
+/** @typedef {{canvas: Object, bbox: BoundingBox}} */
+var ShapeCache;
 
 /**
  * Shape
@@ -26,7 +18,7 @@ function Shape(varArgs) {
     /** @type {ShapePixels} */
     this.pixels = [];
 
-    /** @type {?Object} */
+    /** @type {?ShapeCache} */
     this.cache = null;
 
     /** @type {boolean} */
@@ -41,7 +33,7 @@ function Shape(varArgs) {
     /** @type {Object.<string,*>} */
     this.effects = {};
 
-    this.add.apply(this, arguments || []);
+    this.add.apply(this, arguments);
 }
 
 Shape.prototype = {
@@ -95,7 +87,7 @@ Shape.prototype = {
      * @return {Shape}
      */
     str: function(pixelStr) {
-        this.pixels = XSS.shapegen.strToXYArr(pixelStr[0], pixelStr[1]);
+        this.pixels = XSS.shapegen.strToShapePixels(pixelStr[0], pixelStr[1]);
         return this;
     },
 
@@ -105,7 +97,6 @@ Shape.prototype = {
      */
     add: function(varArgs) {
         for (var i = 0, m = arguments.length; i < m; ++i) {
-            // Avoid concat() for performance reasons
             for (var ii = 0, mm = arguments[i].length; ii < mm; ii++) {
                 this.pixels.push(arguments[i][ii]);
             }
@@ -116,52 +107,13 @@ Shape.prototype = {
     },
 
     /**
-     * @return {BBox}
+     * @return {BoundingBox}
      */
     bbox: function() {
         if (!this._bbox) {
-            this._bbox = this._getBBox();
+            this._bbox = new BoundingBox().ofShape(this);
         }
         return this._bbox;
-    },
-
-    /**
-     * @return {BBox}
-     * @private
-     */
-    _getBBox: function() {
-        var pixels = this.pixels,
-            minX = false,
-            minY = false,
-            maxX = false,
-            maxY = false;
-
-        for (var i = 0, m = pixels.length; i < m; i++) {
-            var x = pixels[i][0],
-                y = pixels[i][1];
-
-            if (minX === false || minX > x) {
-                minX = x;
-            }
-            if (maxX === false || maxX < x) {
-                maxX = x;
-            }
-            if (minY === false || minY > y) {
-                minY = y;
-            }
-            if (maxY === false || maxY < y) {
-                maxY = y;
-            }
-        }
-
-        return {
-            x     : minX,
-            y     : minY,
-            x2    : maxX ? maxX + 1 : 0,
-            y2    : maxY ? maxY + 1 : 0,
-            width : 1 + maxX - minX,
-            height: 1 + maxY - minY
-        };
     }
 
 };

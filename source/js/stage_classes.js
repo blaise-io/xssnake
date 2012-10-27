@@ -12,8 +12,7 @@
 function SelectMenu(name) {
     this.name = name;
     this.selected = 0;
-    this.opts = [];
-    this.shape = new Shape();
+    this._options = [];
 }
 
 SelectMenu.prototype = {
@@ -25,7 +24,7 @@ SelectMenu.prototype = {
      * @param {string} description
      */
     addOption: function(value, next, title, description) {
-        this.opts.push({
+        this._options.push({
             value      : value,
             next       : next,
             title      : title,
@@ -37,7 +36,8 @@ SelectMenu.prototype = {
      * @return {Object}
      */
     getSelectedOption: function() {
-        return this.opts[this.selected];
+        var selected = this.getSelected();
+        return this._options[selected];
     },
 
     /**
@@ -51,44 +51,44 @@ SelectMenu.prototype = {
      * @return {Shape}
      */
     getShape: function() {
-        this._cleanSelected();
-        this._updateShape();
-        return this.shape;
-    },
-
-    _cleanSelected: function() {
-        if (typeof this.selected === 'undefined') {
-            this.selected = 0;
-        } else if (this.selected < 0) {
-            this.selected = this.opts.length - 1;
-        } else if (this.selected > this.opts.length - 1) {
-            this.selected = 0;
-        }
-    },
-
-    _updateShape: function() {
-        var x, y, description;
-        this.shape.pixels = [];
+        var x, y, description, font, shape;
 
         x = XSS.MENU_LEFT;
         y = XSS.MENU_TOP;
 
-        description = this.getSelectedOption().description.split('\n');
+        shape = new Shape();
 
-        // Option
-        for (var i = 0, m = this.opts.length; i < m; i++) {
-            var active, font;
-            active = (this.selected === i);
-            font = XSS.font.pixels(x, y + (i * 9), this.opts[i].title, active);
-            this.shape.add(font);
+        // Draw options
+        for (var i = 0, m = this._options.length; i < m; i++) {
+            var active, title;
+            active = (this.getSelected() === i);
+            title = this._options[i].title;
+            font = XSS.font.pixels(x, y + (i * 9), title, active);
+            shape.add(font);
         }
 
         // Help text line(s)
+        description = this.getSelectedOption().description.split('\n');
         for (var j = 0, n = description.length; j < n; j++) {
-            this.shape.add(
-                XSS.font.pixels(x, y + ((i + 1 + j) * 9), description[j])
-            );
+            font = XSS.font.pixels(x, y + ((i + 1 + j) * 9), description[j]);
+            shape.add(font);
         }
+
+        return shape;
+    },
+
+    /**
+     * @return {number}
+     */
+    getSelected: function() {
+        if (typeof this.selected === 'undefined') {
+            this.selected = 0;
+        } else if (this.selected < 0) {
+            this.selected = this._options.length - 1;
+        } else if (this.selected > this._options.length - 1) {
+            this.selected = 0;
+        }
+        return this.selected;
     }
 
 };
@@ -255,6 +255,7 @@ InputStage.prototype = {
         XSS.stageflow.setStageShapes();
     },
 
+    // TODO: Remove from this generic class
     _getRandomRemarkOnNameROFL: function(name) {
         var remark, collection = [
             '%s%s%s',

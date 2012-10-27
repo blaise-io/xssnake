@@ -65,15 +65,13 @@ Shape.prototype._effects = {
      * @return {function({number})}
      */
     swipe: function(options) {
-        var start, duration, distance,
-            clone = this.clone(),
-            progress = 0,
-            end = -XSS.PIXELS_H;
+        var start, duration, end, distance, clone, progress = 0;
 
         options  = options || {};
-        start    = options.start ? options.start : 0;
-        end      = typeof options.end === 'number' ? options.end : end;
+        start    = typeof options.start === 'number' ? options.start : 0;
+        end      = typeof options.end === 'number' ? options.end : -XSS.PIXELS_H;
         duration = options.duration || 200;
+        clone    = this.clone();
 
         return function(delta) {
             progress += delta;
@@ -82,7 +80,7 @@ Shape.prototype._effects = {
                 distance = Math.round(distance);
                 this.pixels = XSS.transform.shift(clone.pixels, distance, 0);
             } else {
-                delete this._effects.swipe;
+                delete this.effects.swipe;
                 if (options.callback) {
                     options.callback();
                 }

@@ -39,6 +39,7 @@ gcc.addFiles(
     home + 'server/shared/level.js',
     home + 'server/shared/snake.js',
     home + 'source/js/shape.js',
+    home + 'source/js/bounding_box.js',
     home + 'source/js/shape_generator.js',
     home + 'source/js/shape_effects.js',
     home + 'source/js/pubsub.js',

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, Shape, Utils*/
+/*globals XSS, Shape, Utils, BoundingBox*/
 
 'use strict';
 
@@ -83,22 +83,19 @@ Canvas.prototype = {
     /**
      * @param {Object} context
      * @param {Shape} shape
-     * @param {BBox|Object} offset
+     * @param {BoundingBox} bbox
      * @private
      */
-    _paintShape: function(context, shape, offset) {
+    _paintShape: function(context, shape, bbox) {
         var pixels = shape.pixels;
-
-        offset.x = offset.x || 0;
-        offset.y = offset.y || 0;
 
         // Dip paint brush
         context.fillStyle = 'rgb(0,0,0)';
 
         for (var i = 0, m = pixels.length; i < m; ++i) {
             context.fillRect(
-                pixels[i][0] * XSS.PIXEL_SIZE - offset.x,
-                pixels[i][1] * XSS.PIXEL_SIZE - offset.y,
+                pixels[i][0] * XSS.PIXEL_SIZE - bbox.x1,
+                pixels[i][1] * XSS.PIXEL_SIZE - bbox.y1,
                 XSS.PIXEL_SIZE - 1,
                 XSS.PIXEL_SIZE - 1
             );
@@ -124,27 +121,27 @@ Canvas.prototype = {
         // Clear surface below shape
         if (shape.clear) {
             bbox = shape.bbox();
-            this.ctx.clearRect(bbox.x, bbox.y, bbox.width, bbox.height);
+            this.ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
         }
 
         // Draw on canvas
         if (true === shape.enabled) {
             if (shape.dynamic) {
-                this._paintShape(this.ctx, shape, {});
+                this._paintShape(this.ctx, shape, new BoundingBox());
             } else {
                 cache = shape.cache;
                 if (!cache) {
                     cache = this._cacheShapePaint(shape);
                     shape.cache = cache;
                 }
-                this.ctx.drawImage(cache.canvas, cache.bbox.x, cache.bbox.y);
+                this.ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
             }
         }
     },
 
     /**
      * @param {Shape} shape
-     * @return {Object}
+     * @return {ShapeCache}
      * @private
      */
     _cacheShapePaint: function(shape) {
@@ -211,7 +208,7 @@ Canvas.prototype = {
 
     /**
      * @param {Shape} shape
-     * @return {BBox}
+     * @return {BoundingBox}
      * @private
      */
     _getBBoxRealPixels: function(shape) {

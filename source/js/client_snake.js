@@ -42,6 +42,7 @@ ClientSnake.prototype.showName = function() {
 
     shape = XSS.shapegen.tooltip(x, y, this.direction, this.name);
     shape.lifetime(0, 2800, true);
+    shape.bbox.expand(1);
     shape.overlay = true;
 
     if (this.local) {
