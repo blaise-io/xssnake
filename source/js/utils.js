@@ -61,7 +61,7 @@ var Utils = {
     },
 
     /**
-     * @param {Object} obj
+     * @param {*} obj
      * @param {*} val
      * @return {?string}
      */

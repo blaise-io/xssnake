@@ -65,7 +65,7 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on(events.CLIENT_APPLE_NOM, function(data) {
-            XSS.game._snakeSize(data[0], data[1]);
+            XSS.game.snakes[data[0]].size = data[1];
             XSS.game.apples[data[2]].eat();
         }.bind(this));
 

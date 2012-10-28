@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Apple*/
+/*globals XSS, ClientSnake, ClientLevel, Apple, Shape */
 
 'use strict';
 
@@ -31,7 +31,7 @@ function Game(levelID, names, index, apples) {
 Game.prototype = {
 
     start: function() {
-        window.onfocus = this._reindex.bind(this);
+        window.onfocus = this._reIndexClient.bind(this);
         XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._tick.bind(this));
         this.addControls();
     },
@@ -43,19 +43,19 @@ Game.prototype = {
 
     addControls: function() {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            if (this.snake[i].local) {
-                this[i].addControls();
+            if (this.snakes[i].local) {
+                this.snakes[i].addControls();
             }
         }
     },
 
     removeControls: function() {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            this[i].removeControls();
+            this.snakes[i].removeControls();
         }
     },
 
-    _reindex: function() {
+    _reIndexClient: function() {
         XSS.socket.emit(XSS.events.SERVER_GAME_REINDEX);
     },
 
@@ -121,16 +121,28 @@ Game.prototype = {
         return apples;
     },
 
-    /**
-     * @param {number} index
-     * @param {number} size
-     * @private
-     */
-    _snakeSize: function(index, size) {
-        XSS.game.snakes[index].size = size;
-    },
-
     _countDown: function() {
+        var count, total,  x, y;
+
+        count = XSS.config.shared.game.countdown;
+        total = count;
+        x = -8 + XSS.PIXELS_H / 2;
+        y = -22 + XSS.PIXELS_V / 2;
+
+        do {
+            var pixels, shape, start, stop;
+            start = (total - count) * 1000;
+            stop = start + 1000;
+
+            pixels = XSS.font.pixels(0, 0, String(count));
+
+            shape = new Shape(XSS.transform.zoomX4(pixels, x, y));
+            shape.lifetime(start, stop, true);
+            shape.bbox().expand(4);
+            shape.clip = true;
+
+            XSS.overlays['GC' + count] = shape;
+        } while (--count);
     },
 
     /**

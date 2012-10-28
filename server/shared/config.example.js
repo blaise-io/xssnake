@@ -24,8 +24,10 @@ module.exports = {
             speed: 150,
             size : 4
         },
-        game : {
-            tick: 50
+        game: {
+            tick     : 50,
+            countdown: 3,
+            gloat    : 3
         }
     }
 

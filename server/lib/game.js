@@ -197,7 +197,7 @@ Game.prototype = {
             this.room.emit(events.CLIENT_GAME_WIN, [winner.name, ++winner.wins]);
         }
 
-        setTimeout(this._startNewRound.bind(this), 4000);
+        setTimeout(this._startNewRound.bind(this), config.shared.game.gloat * 1000);
     },
 
     /**
@@ -325,7 +325,7 @@ Game.prototype = {
             clients[i].snake = snake;
             this._emitGameSetup(i, names);
         }
-        setTimeout(this.start.bind(this), 2000);
+        setTimeout(this.start.bind(this), config.shared.game.countdown * 1000);
     },
 
     /**

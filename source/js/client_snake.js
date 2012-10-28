@@ -31,7 +31,7 @@ function ClientSnake(index, location, direction, size, speed, local) {
 ClientSnake.prototype = Object.create(Snake.prototype);
 
 ClientSnake.prototype.showName = function() {
-    var x, y, shape;
+    var x, y, shape, lifetime;
 
     x = this.parts[0][0] * 4;
     y = this.parts[0][1] * 4;
@@ -43,8 +43,9 @@ ClientSnake.prototype.showName = function() {
         case 3: y += 10; x +=  4; break;
     }
 
+    lifetime = (XSS.config.shared.game.countdown - 1) * 1000;
     shape = XSS.shapegen.tooltip(x, y, this.direction, this.name);
-    shape.lifetime(0, 1500, true);
+    shape.lifetime(0, lifetime, true);
 
     if (this.local) {
         shape.flash(260);

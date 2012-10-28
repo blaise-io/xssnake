@@ -43,9 +43,9 @@ Shape.prototype._effects = {
             if (stop && progress >= stop) {
                 if (deleteShape) {
                     key = Utils.getKey(XSS.shapes, this);
-                    if (key) {
-                        delete XSS.shapes[key];
-                    }
+                    if (key) { delete XSS.shapes[key]; }
+                    key = Utils.getKey(XSS.overlays, this);
+                    if (key) { delete XSS.overlays[key]; }
                 } else {
                     delete this.effects.lifetime;
                     this.enabled = false;
