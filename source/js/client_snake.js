@@ -26,10 +26,6 @@ function ClientSnake(index, location, direction, size, speed, local) {
     this._shapeName = 'S' + index;
     this._snakeTurnRequests = [];
     this._handleKeysBind = this._handleKeys.bind(this);
-
-    if (local) {
-        this.addControls();
-    }
 }
 
 ClientSnake.prototype = Object.create(Snake.prototype);

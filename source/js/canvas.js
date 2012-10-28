@@ -92,7 +92,7 @@ Canvas.prototype = {
         // Dip paint brush
         context.fillStyle = 'rgb(0,0,0)';
 
-        for (var i = 0, m = pixels.length; i < m; ++i) {
+        for (var i = 0, m = pixels.length; i < m; i++) {
             context.fillRect(
                 pixels[i][0] * XSS.PIXEL_SIZE - bbox.x1,
                 pixels[i][1] * XSS.PIXEL_SIZE - bbox.y1,

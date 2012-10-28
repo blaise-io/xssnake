@@ -96,7 +96,7 @@ Shape.prototype = {
      * @return {Shape}
      */
     add: function(varArgs) {
-        for (var i = 0, m = arguments.length; i < m; ++i) {
+        for (var i = 0, m = arguments.length; i < m; i++) {
             for (var ii = 0, mm = arguments[i].length; ii < mm; ii++) {
                 this.pixels.push(arguments[i][ii]);
             }

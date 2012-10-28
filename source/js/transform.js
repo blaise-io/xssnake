@@ -21,7 +21,7 @@ Transform.prototype = {
     shift: function(pixels, x, y) {
         var sx, sy, ret = [];
 
-        for (var i = 0, m = pixels.length; i < m; ++i) {
+        for (var i = 0, m = pixels.length; i < m; i++) {
             sx = pixels[i][0] + x;
             sy = pixels[i][1] + y;
             if (sx >= 0 && sy >= 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
@@ -42,7 +42,7 @@ Transform.prototype = {
         var ret = [], x, y;
         shiftX = shiftX || 0;
         shiftY = shiftY || 0;
-        for (var i = 0, m = pixels.length; i < m; ++i) {
+        for (var i = 0, m = pixels.length; i < m; i++) {
             x = pixels[i][0] * 2;
             y = pixels[i][1] * 2;
             ret.push(

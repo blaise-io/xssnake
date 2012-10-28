@@ -31,17 +31,32 @@ function Game(levelID, names, index, apples) {
 Game.prototype = {
 
     start: function() {
-        window.onfocus = function() {
-            XSS.socket.emit(XSS.events.SERVER_GAME_REINDEX);
-        }.bind(this);
+        window.onfocus = this._reindex.bind(this);
         XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._tick.bind(this));
+        this.addControls();
     },
 
     destruct: function() {
         XSS.pubsub.unsubscribe(XSS.GAME_TICK, '');
+        this.removeControls();
+    },
+
+    addControls: function() {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].removeControls();
+            if (this.snake[i].local) {
+                this[i].addControls();
+            }
         }
+    },
+
+    removeControls: function() {
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            this[i].removeControls();
+        }
+    },
+
+    _reindex: function() {
+        XSS.socket.emit(XSS.events.SERVER_GAME_REINDEX);
     },
 
     /**
@@ -123,7 +138,7 @@ Game.prototype = {
      * @private
      */
     _moveSnakes: function(delta) {
-        for (var i = 0, m = this.snakes.length; i < m; ++i) {
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
             var snake = this.snakes[i];
             if (snake.elapsed >= snake.speed && !snake.crashed) {
                 snake.elapsed -= snake.speed;

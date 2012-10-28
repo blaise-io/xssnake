@@ -149,11 +149,15 @@ Font.prototype = {
         }
         if (inverted) {
             glyphWidth = glyph[0].length + 1;
-            this._invertVertWhitespace(pixels, x, y - 1, glyphWidth); // Overline 1
-            this._invertVertWhitespace(pixels, x, y - 2, glyphWidth); // Overline 2
-            this._invertVertWhitespace(pixels, x, y + Font.MAX, glyphWidth); // Underline 2
+            // Overline 1
+            this._invertVertWhitespace(pixels, x, y - 1, glyphWidth);
+            // Overline 2
+            this._invertVertWhitespace(pixels, x, y - 2, glyphWidth);
+            // Underline 2
+            this._invertVertWhitespace(pixels, x, y + Font.MAX, glyphWidth);
             if (glyph.length === Font.MIN) {
-                this._invertVertWhitespace(pixels, x, y + Font.MIN, glyphWidth); // Underline 1 when uppercase
+                // Underline 1 when all caps
+                this._invertVertWhitespace(pixels, x, y + Font.MIN, glyphWidth);
             }
         }
     }
