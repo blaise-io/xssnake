@@ -122,7 +122,7 @@ Game.prototype = {
     },
 
     _countDown: function() {
-        var count, total, border;
+        var count, total, border, line = XSS.shapegen.line;
 
         count = XSS.config.shared.game.countdown;
         total = count;
@@ -149,14 +149,14 @@ Game.prototype = {
 
             if (!border) {
                 border = [
-                    XSS.shapegen.line(bbox.x1 + 1, bbox.y1, bbox.x2 - 1, bbox.y1),
-                    XSS.shapegen.line(bbox.x1 + 1, bbox.y2, bbox.x2 - 1, bbox.y2),
-                    XSS.shapegen.line(bbox.x1 + 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y1 + 1),
-                    XSS.shapegen.line(bbox.x1 + 1, bbox.y2 - 1, bbox.x2 - 1, bbox.y2 - 1),
-                    XSS.shapegen.line(bbox.x1, bbox.y1 + 1, bbox.x1, bbox.y2 - 1),
-                    XSS.shapegen.line(bbox.x2, bbox.y1 + 1, bbox.x2, bbox.y2 - 1),
-                    XSS.shapegen.line(bbox.x1 + 1, bbox.y1 + 1, bbox.x1 + 1, bbox.y2 - 1),
-                    XSS.shapegen.line(bbox.x2 - 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y2 - 1)
+                    line(bbox.x1 + 1, bbox.y1, bbox.x2 - 1, bbox.y1),
+                    line(bbox.x1 + 1, bbox.y2, bbox.x2 - 1, bbox.y2),
+                    line(bbox.x1 + 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y1 + 1),
+                    line(bbox.x1 + 1, bbox.y2 - 1, bbox.x2 - 1, bbox.y2 - 1),
+                    line(bbox.x1, bbox.y1 + 1, bbox.x1, bbox.y2 - 1),
+                    line(bbox.x2, bbox.y1 + 1, bbox.x2, bbox.y2 - 1),
+                    line(bbox.x1 + 1, bbox.y1 + 1, bbox.x1 + 1, bbox.y2 - 1),
+                    line(bbox.x2 - 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y2 - 1)
                 ];
             }
 
