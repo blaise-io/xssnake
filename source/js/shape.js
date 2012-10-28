@@ -78,17 +78,24 @@ Shape.prototype = {
      * @return {Shape}
      */
     shift: function(x, y) {
-        this.pixels = XSS.transform.shift(this.pixels, x, y);
-        return this;
+        return this.set(XSS.transform.shift(this.pixels, x, y));
     },
 
     /**
-     * @param {Array} pixelStr
+     * @param {Array} str
      * @return {Shape}
      */
-    str: function(pixelStr) {
-        this.pixels = XSS.shapegen.strToShapePixels(pixelStr[0], pixelStr[1]);
-        return this;
+    str: function(str) {
+        return this.set(XSS.shapegen.strToShapePixels(str[0], str[1]));
+    },
+
+    /**
+     * @param {...Array} varArgs
+     * @return {Shape}
+     */
+    set: function(varArgs) {
+        this.pixels = [];
+        return this.add.apply(this, arguments);
     },
 
     /**

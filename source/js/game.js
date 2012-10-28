@@ -12,15 +12,6 @@
  */
 function Game(levelID, names, index, apples) {
 
-    XSS.stageflow.stage.destroyStage();
-
-    XSS.shapes = {
-        border: XSS.shapegen.outerBorder(),
-        levelborder: XSS.shapegen.levelBorder()
-    };
-
-    this.curid = 0;
-
     this.level  = this._setupLevel(levelID);
     this.snakes = this._spawnSnakes(names, index);
     this.apples = this._spawnApples(apples);
@@ -74,7 +65,12 @@ Game.prototype = {
      */
     _setupLevel: function(levelID) {
         var level = new ClientLevel(levelID);
-        XSS.shapes.world = level.getShape();
+        XSS.stageflow.stage.destroyStage();
+        XSS.shapes = {
+            border     : XSS.shapegen.outerBorder(),
+            levelborder: XSS.shapegen.levelBorder(),
+            world      : level.getShape()
+        };
         return level;
     },
 
@@ -85,27 +81,31 @@ Game.prototype = {
      * @private
      */
     _spawnSnakes: function(names, index) {
-        var snakes = [], size, speed;
-
-        size = XSS.config.shared.snake.size;
-        speed = XSS.config.shared.snake.speed;
+        var snakes = [];
 
         for (var i = 0, m = names.length; i < m; i++) {
-            var location, direction, snake, local;
-
-            location = this.level.getSpawn(i);
-            direction = this.level.getSpawnDirection(i);
-            local = i === index;
-
-            snake = new ClientSnake(i, location, direction, size, speed, local);
-            snake.name = names[i];
-            snake.addToEntities();
-            snake.showName();
-
+            var snake = this._spawnSnake(i, names[i], index);
             snakes.push(snake);
         }
 
         return snakes;
+    },
+
+    _spawnSnake: function(i, name, index) {
+        var location, direction, snake;
+
+        location = this.level.getSpawn(i);
+        direction = this.level.getSpawnDirection(i);
+
+        snake = new ClientSnake(i, i === index, name, location, direction);
+        snake.addToEntities();
+        snake.showName();
+
+        if (i === index) {
+            snake.flashDirection();
+        }
+
+        return snake;
     },
 
     /**
@@ -122,27 +122,50 @@ Game.prototype = {
     },
 
     _countDown: function() {
-        var count, total,  x, y;
+        var count, total, border;
 
         count = XSS.config.shared.game.countdown;
         total = count;
-        x = -8 + XSS.PIXELS_H / 2;
-        y = -22 + XSS.PIXELS_V / 2;
 
         do {
-            var pixels, shape, start, stop;
+            var pixels, shape, bbox, start;
             start = (total - count) * 1000;
-            stop = start + 1000;
 
-            pixels = XSS.font.pixels(0, 0, String(count));
+            pixels = XSS.font.pixels(0, 0, String(count).replace(/^0$/,'Go!'));
 
-            shape = new Shape(XSS.transform.zoomX4(pixels, x, y));
-            shape.lifetime(start, stop, true);
-            shape.bbox().expand(4);
+            shape = new Shape(XSS.transform.zoomX2(pixels));
+            bbox = shape.bbox();
+
+            shape.shift(
+                Math.floor(XSS.PIXELS_H / 2 - bbox.width / 2),
+                Math.floor(XSS.PIXELS_V / 2 - bbox.height / 2) - 12
+            );
+
+            // Make "Go" fit
+            bbox = shape.bbox().expand(4);
+            bbox.y1 -= 1;
+            bbox.x1 -= 9;
+            bbox.x2 += 9;
+
+            if (!border) {
+                border = [
+                    XSS.shapegen.line(bbox.x1 + 1, bbox.y1, bbox.x2 - 1, bbox.y1),
+                    XSS.shapegen.line(bbox.x1 + 1, bbox.y2, bbox.x2 - 1, bbox.y2),
+                    XSS.shapegen.line(bbox.x1 + 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y1 + 1),
+                    XSS.shapegen.line(bbox.x1 + 1, bbox.y2 - 1, bbox.x2 - 1, bbox.y2 - 1),
+                    XSS.shapegen.line(bbox.x1, bbox.y1 + 1, bbox.x1, bbox.y2 - 1),
+                    XSS.shapegen.line(bbox.x2, bbox.y1 + 1, bbox.x2, bbox.y2 - 1),
+                    XSS.shapegen.line(bbox.x1 + 1, bbox.y1 + 1, bbox.x1 + 1, bbox.y2 - 1),
+                    XSS.shapegen.line(bbox.x2 - 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y2 - 1)
+                ];
+            }
+
+            shape.add.apply(shape, border);
+            shape.lifetime(start, start + 1000, true);
             shape.clip = true;
 
             XSS.overlays['GC' + count] = shape;
-        } while (--count);
+        } while (count--);
     },
 
     /**

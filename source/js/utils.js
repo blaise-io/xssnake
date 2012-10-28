@@ -5,6 +5,15 @@
 
 var Utils = {
 
+    extend: function(destination, source) {
+        for (var property in source) {
+            if (source.hasOwnProperty(property)) {
+                destination[property] = source[property];
+            }
+        }
+        return destination;
+    },
+
     /**
      * @param {string} url
      * @param {Function} callback

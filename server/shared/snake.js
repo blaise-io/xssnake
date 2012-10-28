@@ -87,7 +87,7 @@ Snake.prototype = {
 
     /**
      * @param {number} direction
-     * @return {ShapePixels}
+     * @return {Array.<number>}
      */
     directionToShift: function(direction) {
         return [[-1, 0], [0, -1], [1, 0], [0, 1]][direction];

@@ -22,7 +22,7 @@ function Apple(index, x, y) {
     };
 
     shape = new Shape();
-    shape.str(XSS.PIXELS.APPLE).flash(240);
+    shape.str(XSS.PIXELS.APPLE).flash();
     shape.shift(this.px.x, this.px.y);
 
     XSS.shapes[this.ns] = shape;

@@ -11,7 +11,7 @@ Shape.prototype._effects = {
      */
     flash: function(speed) {
         var progress = 0;
-        speed = speed || 500;
+        speed = speed || 250;
         return function(delta) {
             progress += delta;
             if (progress > speed) {
