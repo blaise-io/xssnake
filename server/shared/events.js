@@ -7,6 +7,7 @@ module.exports = {
     CLIENT_CONNECT     : 'CCO',
     CLIENT_NOTICE      : 'NNO',
 
+    CLIENT_CHAT_MESSAGE: 'CCM',
     CLIENT_GAME_SETUP  : 'CGS',
     CLIENT_GAME_START  : 'CG2',
     CLIENT_GAME_WIN    : 'CGW',

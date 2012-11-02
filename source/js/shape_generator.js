@@ -190,7 +190,7 @@ ShapeGenerator.prototype = {
     /**
      * @return {Shape}
      */
-    levelBorder: function() {
+    scoreBoard: function() {
         var w = XSS.PIXELS_H - 1,
             h = XSS.PIXELS_V - 1;
 
@@ -198,21 +198,19 @@ ShapeGenerator.prototype = {
             this.line(0, h - 24, w, h - 24),
             this.line(0, h - 25, w, h - 25),
 
-            XSS.font.pixels(5, h - 22, 'Imaginary crashed into Imaginary'),
+            XSS.font.pixels(5, h - 22, 'Blaise'),
+            XSS.font.pixels(51, h - 22, '33'),
+            XSS.font.pixels(5, h - 15, 'Imaginary'),
+            XSS.font.pixels(56, h - 15, '7'),
+            XSS.font.pixels(5, h - 8, '-'),
+            XSS.font.pixels(56, h - 8, '0'),
 
-            XSS.font.pixels(5, h - 15, 'Blaise'),
-            XSS.font.pixels(51, h - 15, '33'),
-            XSS.font.pixels(5, h - 8, 'Imaginary'),
-            XSS.font.pixels(56, h - 8, '7'),
-
-            XSS.font.pixels(65, h - 15, 'Foo'),
-            XSS.font.pixels(113, h - 15, '52'),
-            XSS.font.pixels(65, h - 8, 'Blabla'),
-            XSS.font.pixels(118, h - 8, '2'),
-
-            XSS.font.pixels(126, h - 22, 'Foo: :,('),
-            XSS.font.pixels(126, h - 15, 'Blaise: LOL OWNED'),
-            XSS.font.pixels(126, h - 8, 'Imaginary: Fuck you for cutting me!')
+            XSS.font.pixels(65, h - 22, 'Foo'),
+            XSS.font.pixels(109, h - 22, '52'),
+            XSS.font.pixels(65, h - 15, 'Blabla'),
+            XSS.font.pixels(114, h - 15, '2'),
+            XSS.font.pixels(65, h - 8, '-'),
+            XSS.font.pixels(114, h - 8, '0')
         );
     },
 

@@ -53,9 +53,16 @@ EventHandler.prototype = {
     },
 
     /**
+     * @param {string} message
      * @private
      */
-    _chat: function() {
+    _chat: function(message) {
+        if (this.client.roomid) {
+            var game, data;
+            game = this._clientGame(this.client);
+            data = [this.client.name, message.substr(0, 30)];
+            game.room.emit(events.CLIENT_CHAT_MESSAGE, data);
+        }
     },
 
     /**

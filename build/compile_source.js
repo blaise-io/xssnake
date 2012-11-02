@@ -54,7 +54,8 @@ gcc.addFiles(
     home + 'source/js/client_snake.js',
     home + 'source/js/client_level.js',
     home + 'source/js/apple.js',
-    home + 'source/js/game.js'
+    home + 'source/js/game.js',
+    home + 'source/js/chat.js'
 );
 gcc.replace(/'use strict';/g, '');
 gcc.output(home + 'www/xssnake.js');

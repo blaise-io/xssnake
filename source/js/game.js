@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Apple, Shape */
+/*globals XSS, ClientSnake, ClientLevel, Apple, Chat, Shape */
 
 'use strict';
 
@@ -15,6 +15,7 @@ function Game(levelID, names, index, apples) {
     this.level  = this._setupLevel(levelID);
     this.snakes = this._spawnSnakes(names, index);
     this.apples = this._spawnApples(apples);
+    this.chat   = new Chat();
 
     this._countDown();
 }
@@ -68,7 +69,7 @@ Game.prototype = {
         XSS.stageflow.stage.destroyStage();
         XSS.shapes = {
             border     : XSS.shapegen.outerBorder(),
-            levelborder: XSS.shapegen.levelBorder(),
+            levelborder: XSS.shapegen.scoreBoard(),
             world      : level.getShape()
         };
         return level;
