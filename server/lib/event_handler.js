@@ -61,7 +61,7 @@ EventHandler.prototype = {
             var game, data;
             game = this._clientGame(this.client);
             data = [this.client.name, message.substr(0, 30)];
-            game.room.emit(events.CLIENT_CHAT_MESSAGE, data);
+            game.room.broadcast(events.CLIENT_CHAT_MESSAGE, data, this.client);
         }
     },
 

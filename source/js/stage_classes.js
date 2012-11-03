@@ -1,5 +1,5 @@
 /*jshint globalstrict:true*/
-/*globals XSS, Shape, Socket, Utils*/
+/*globals XSS, Shape, Socket, Utils, InputField*/
 
 'use strict';
 
@@ -124,66 +124,47 @@ StageInterface.prototype = {
  * BaseInputStage
  * Stage with a form input
  * @param {string} name
+ * @param {Function} nextStage
+ * @param {string} label
  * @constructor
  * @implements {StageInterface}
  */
-function InputStage(name, nextStage) {
+function InputStage(name, nextStage, label) {
     this.name = name;
     this.nextStage = nextStage;
+    this.label = label || '';
 
     this.value = '';
-    this.defaultValue = '';
-
     this.minlength = 0;
-    this.maxlength = 150;
-
-    this.label = '';
-    this.labelWsp = 2;
+    this.maxWidth = 999;
 
     this.handleKeys = this.handleKeys.bind(this);
-    this.inputUpdate = this.inputUpdate.bind(this);
 }
 
 InputStage.prototype = {
-
-    setLabel: function(label) {
-        this.label = label;
-        this.labelWidth = XSS.font.width(label) + this.labelWsp;
-    },
 
     getInstruction: function() {
         return 'Start typing and press Enter when you’re done';
     },
 
     getShape: function() {
-        var left = XSS.MENU_LEFT + this.labelWidth + this.labelWsp;
-        return new Shape(
-            XSS.font.pixels(XSS.MENU_LEFT, XSS.MENU_TOP, this.label),
-            XSS.font.pixels(left, XSS.MENU_TOP, this.value)
-        );
+        var str = this.label + this.value;
+        return XSS.font.shape(XSS.MENU_LEFT, XSS.MENU_TOP, str);
     },
 
     createStage: function() {
         XSS.on.keydown(this.handleKeys);
-        XSS.on.keydown(this.inputUpdate);
-        XSS.on.keyup(this.inputUpdate);
-        XSS.input.focus();
-
-        XSS.input.value = ''; // Emptying first places caret at end
-        XSS.input.value = this.value || this.defaultValue;
-
-        XSS.input.setAttribute('maxlength', '' + this.maxlength);
-
-        this.inputUpdate();
+        this.input = new InputField(XSS.MENU_LEFT, XSS.MENU_TOP, this.label, 30);
+        this.input.setValue(this.value);
+        this.input.callback = function(value) {
+            delete XSS.shapes.stage; // We already show the dynamic stage
+            this.value = value;
+        }.bind(this);
     },
 
     destroyStage: function() {
         XSS.off.keydown(this.handleKeys);
-        XSS.off.keydown(this.inputUpdate);
-        XSS.off.keyup(this.inputUpdate);
-
-        delete XSS.shapes.message;
-        delete XSS.shapes.caret;
+        this.input.destruct();
     },
 
     handleKeys: function(e) {
@@ -231,30 +212,6 @@ InputStage.prototype = {
         return false;
     },
 
-    /** @private */
-    inputUpdate: function() {
-        var fontWidth, caretLeft, caret, strTilCaret;
-
-        // Selected text: too much hassle
-        if (XSS.input.selectionStart !== XSS.input.selectionEnd) {
-            XSS.input.selectionStart = XSS.input.selectionEnd;
-        }
-
-        this.value = XSS.input.value;
-        strTilCaret = this.value.substr(0, XSS.input.selectionStart);
-
-        fontWidth = XSS.font.width(strTilCaret) || -1;
-        caretLeft = XSS.MENU_LEFT + this.labelWidth + this.labelWsp + fontWidth;
-
-        caret = XSS.shapegen.lineShape(
-            caretLeft, XSS.MENU_TOP - 1,
-            caretLeft, XSS.MENU_TOP + 6
-        );
-
-        XSS.shapes.caret = caret.flash();
-        XSS.stageflow.setStageShapes();
-    },
-
     // TODO: Remove from this generic class
     _getRandomRemarkOnNameROFL: function(name) {
         var remark, collection = [
@@ -262,7 +219,7 @@ InputStage.prototype = {
             'You have the same name as my mom',
             'LOVELY ♥♥♥',
             '☠',
-            'Sorry, but that is the lamest name EVER',
+            'Lamest name EVER',
             'Clever name!',
             'I ♥ the way you touch your keyboard',
             'asdasdasdasd',
@@ -272,7 +229,7 @@ InputStage.prototype = {
             'You dont look like a %s...',
             'Are you new here?',
             'I remember you',
-            'You smell NICE! ;-)',
+            'You smell NICE',
             'Can I have your number?',
             'My name is NaN',
             'I thought I banned you?',

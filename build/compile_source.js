@@ -47,6 +47,7 @@ gcc.addFiles(
     home + 'source/js/canvas.js',
     home + 'source/js/transform.js',
     home + 'source/js/font.js',
+    home + 'source/js/input_field.js',
     home + 'source/js/stage_classes.js',
     home + 'source/js/stage_defs.js',
     home + 'source/js/stage_flow.js',

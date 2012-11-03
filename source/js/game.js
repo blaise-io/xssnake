@@ -15,7 +15,7 @@ function Game(levelID, names, index, apples) {
     this.level  = this._setupLevel(levelID);
     this.snakes = this._spawnSnakes(names, index);
     this.apples = this._spawnApples(apples);
-    this.chat   = new Chat();
+    this.chat   = new Chat(this.snakes[index].name);
 
     this._countDown();
 }
@@ -30,6 +30,7 @@ Game.prototype = {
 
     destruct: function() {
         XSS.pubsub.unsubscribe(XSS.GAME_TICK, '');
+        this.chat.destruct();
         this.removeControls();
     },
 

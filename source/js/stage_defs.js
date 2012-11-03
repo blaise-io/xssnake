@@ -95,12 +95,11 @@ XSS.stages = {
      * @return {InputStage}
      */
     inputName: function() {
-        var stage;
+        var stage, nextstage = XSS.stages.askIsPublic;
 
-        stage = new InputStage('name', XSS.stages.askIsPublic);
-        stage.setLabel('Hello, my name is');
+        stage = new InputStage('name', nextstage, 'Hello, my name is ');
         stage.minlength = 2;
-        stage.maxlength = 10;
+        stage.maxWidth = 30;
 
         return stage;
     },

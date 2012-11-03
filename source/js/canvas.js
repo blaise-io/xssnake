@@ -19,8 +19,8 @@ function Canvas() {
     this._addEventListeners();
 
     this._lastPaint = new Date() - 20;
-    this._bindFrame = this._frame.bind(this);
-    this._bindFrame();
+    XSS.bound.canvasFrame = this._frame.bind(this);
+    XSS.bound.canvasFrame();
 }
 
 Canvas.prototype = {
@@ -29,10 +29,6 @@ Canvas.prototype = {
      * @param {number} delta
      */
     paint: function(delta) {
-        // Show FPS in title bar
-        var fps = Math.round(1000 / delta);
-        document.title = 'XXSNAKE ' + fps;
-
         // Abuse this loop to trigger game tick
         XSS.pubsub.publish(XSS.GAME_TICK, delta);
 
@@ -63,20 +59,24 @@ Canvas.prototype = {
     _frame: function() {
         var now, delta;
 
+        // Make appointment for next paint. Quit on error.
+        if (!XSS.error) {
+            window.requestAnimationFrame(XSS.bound.canvasFrame);
+        }
+
         // Time since last paint
         now = +new Date();
         delta = now - this._lastPaint;
         this._lastPaint = now;
 
+        // Show FPS in title bar
+        var fps = Math.round(1000 / delta);
+        document.title = 'XXSNAKE ' + fps;
+
         // Do not paint when requestAnimationFrame is
         // catching up or heavily delayed.
-        if (delta >= 10 && delta <= 200) {
+        if (delta >= 10 && delta <= 300) {
             this.paint(delta);
-        }
-
-        // Make appointment for next paint. Quit on error.
-        if (!XSS.error) {
-            window.requestAnimationFrame(this._bindFrame, this.canvas);
         }
     },
 
@@ -134,8 +134,7 @@ Canvas.prototype = {
                 // Create cache and paint
                 cache = shape.cache;
                 if (!cache) {
-                    cache = this._cacheShapePaint(shape);
-                    shape.cache = cache;
+                    shape.cache = cache = this._cacheShapePaint(shape);
                 }
                 this.ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
             }

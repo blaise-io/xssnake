@@ -14,6 +14,7 @@ var module = {}; // Dummy container for Requirejs client-server shared objects
 /** @const */ XSS.CANVAS_HEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
 
 /** @const */ XSS.KEY_BACKSPACE = 8;
+/** @const */ XSS.KEY_TAB = 9;
 /** @const */ XSS.KEY_ENTER = 13;
 /** @const */ XSS.KEY_ESCAPE = 27;
 /** @const */ XSS.KEY_LEFT = 37;
@@ -50,10 +51,14 @@ window.onload = function() {
     /** @type {Object.<string,Shape>} */
     XSS.overlays  = {};
 
+    /**
+     * Events holder
+     * @type {Object.<string,function({Object})>}
+     */
+    XSS.bound     = {};
+
     // DOM
     XSS.doc       = document.body;
-    XSS.input     = document.createElement('input');
-                    XSS.doc.appendChild(XSS.input);
 
     // Shortcuts
     XSS.on        = Utils.addListener;
@@ -66,7 +71,6 @@ window.onload = function() {
     XSS.transform = new Transform();
     XSS.font      = new Font();
 
-    // Start flow
     XSS.stageflow = new StageFlow();
 
     XSS.socket = new Socket(function() {

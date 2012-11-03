@@ -1,0 +1,108 @@
+/*jshint globalstrict:true*/
+/*globals XSS, Shape*/
+'use strict';
+
+function InputField(x, y, prefix, maxWidth) {
+    this.x = x;
+    this.y = y;
+    this.prefix = prefix || '';
+    this.maxWidth = maxWidth || XSS.PIXELS_H - x;
+
+    this.callback = function(x) {
+        void(x);
+    };
+
+    this.input = this._getInput();
+    this.input.focus();
+    this.updateShapes();
+
+    XSS.bound.inputFieldUpd = this.updateShapes.bind(this);
+    XSS.on.keydown(XSS.bound.inputFieldUpd);
+    XSS.on.keyup(XSS.bound.inputFieldUpd);
+}
+
+InputField.prototype = {
+
+    updateShapes: function() {
+        this._applyMaxWidth();
+        this.value = this.input.value;
+        this.callback(this.input.value);
+        XSS.shapes.caret = this._caretShape();
+        XSS.shapes.inputval = this._valueShape();
+    },
+
+    setValue: function(value) {
+        this.input.value = ''; // Empty first puts caret at end
+        this.input.value = value;
+    },
+
+    destruct: function() {
+        if (this.input && this.input.parentNode) {
+            this.input.parentNode.removeChild(this.input);
+        }
+        XSS.off.keydown(XSS.bound.inputFieldUpd);
+        XSS.off.keyup(XSS.bound.inputFieldUpd);
+        delete XSS.shapes.caret;
+        delete XSS.shapes.inputval;
+    },
+
+    _getInput: function() {
+        var input = document.getElementsByTagName('input')[0];
+        if (!input) {
+            input = document.createElement('input');
+            XSS.doc.appendChild(input);
+        }
+        return input;
+    },
+
+    _caretShape: function() {
+        var untilCaretStr, untilCaretWidth, caretX, caretShape,
+            segments = this._getValueSegments();
+
+        untilCaretStr = segments[0] + segments[1];
+        untilCaretWidth = XSS.font.width(this.prefix + untilCaretStr) || -1;
+        caretX = this.x + untilCaretWidth;
+
+        caretShape = XSS.shapegen.lineShape(
+            caretX, this.y - 2,
+            caretX, this.y + 6
+        );
+
+        caretShape.flash();
+
+        return caretShape;
+    },
+
+    _valueShape: function() {
+        var x, shape, values = this._getValueSegments();
+
+        shape = new Shape();
+        shape.add(XSS.font.pixels(this.x, this.y, this.prefix + values[0]));
+
+        if (values[1]) { // Selection
+            x = 1 + this.x + XSS.font.width(this.prefix + values[0]);
+            shape.add(XSS.font.pixels(x, this.y, values[1], true));
+        }
+
+        x = 1 + this.x + XSS.font.width(this.prefix + values[0] + values[1]);
+        shape.add(XSS.font.pixels(x, this.y, values[2]));
+
+        return shape;
+    },
+
+    _getValueSegments: function() {
+        var input = this.input, value = input.value;
+        return [
+            value.substring(0, input.selectionStart),
+            value.substring(input.selectionStart, input.selectionEnd),
+            value.substring(input.selectionEnd)
+        ];
+    },
+
+    _applyMaxWidth: function() {
+        while (XSS.font.width(this.input.value) > this.maxWidth) {
+            this.input.value = this.input.value.slice(0, -1);
+        }
+    }
+
+};

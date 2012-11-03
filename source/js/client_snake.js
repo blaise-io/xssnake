@@ -33,7 +33,8 @@ function ClientSnake(index, local, name, location, direction) {
 
     this._shapeName = 'S' + index;
     this._snakeTurnRequests = [];
-    this._handleKeysBind = this._handleKeys.bind(this);
+
+    XSS.bound.snakeKeys = this._snakeKeys.bind(this);
 }
 
 ClientSnake.prototype = Object.create(Snake.prototype);
@@ -76,12 +77,12 @@ Utils.extend(ClientSnake.prototype, {
     },
 
     addControls: function() {
-        XSS.on.keydown(this._handleKeysBind);
+        XSS.on.keydown(XSS.bound.snakeKeys);
     },
 
     removeControls: function() {
         if (this.local) {
-            XSS.off.keydown(this._handleKeysBind);
+            XSS.off.keydown(XSS.bound.snakeKeys);
         }
     },
 
@@ -111,7 +112,7 @@ Utils.extend(ClientSnake.prototype, {
      * @param {Event} e
      * @private
      */
-    _handleKeys: function(e) {
+    _snakeKeys: function(e) {
         switch (e.which) {
             case XSS.KEY_LEFT:
                 this._changeDirection(XSS.DIRECTION_LEFT);

@@ -37,15 +37,10 @@ Font.prototype = {
      * @return {ShapePixels}
      */
     pixels: function(x, y, str, inverted) {
-        var glyph, pixels = [],
-            split = this._splitAndReplaceMissingChars(str);
+        var pixels = [], chars = this._replaceMissingChars(str.split(''));
 
-        if (inverted) {
-            this._invertHorWhitespace(pixels, x - 2, y);
-        }
-
-        for (var i = 0, m = split.length; i < m; i++) {
-            glyph = XSS.shapegen.raw(split[i]);
+        for (var i = 0, m = chars.length; i < m; i++) {
+            var glyph = XSS.shapegen.raw(chars[i]);
             this._drawGlyph(pixels, x, y, glyph, inverted);
             if (inverted) {
                 this._invertHorWhitespace(pixels, x - 1, y);
@@ -55,7 +50,6 @@ Font.prototype = {
 
         if (inverted) {
             this._invertHorWhitespace(pixels, x - 1, y);
-            this._invertHorWhitespace(pixels, x, y);
         }
 
         return pixels;
@@ -77,9 +71,9 @@ Font.prototype = {
      * @return {number}
      */
     width: function(str) {
-        var len = 0, split = this._splitAndReplaceMissingChars(str);
-        for (var i = 0, m = split.length; i < m; i++) {
-            len += XSS.shapegen.raw(split[i])[0].length;
+        var len = 0, chars = this._replaceMissingChars(str.split(''));
+        for (var i = 0, m = chars.length; i < m; i++) {
+            len += XSS.shapegen.raw(chars[i])[0].length;
             if (i + 1 !== m) {
                 len += 1;
             }
@@ -113,12 +107,12 @@ Font.prototype = {
     },
 
     /**
-     * @param {string} str
+     * @param {Array.<string>} arr
      * @return {Array.<string>}
      * @private
      */
-    _splitAndReplaceMissingChars: function(str) {
-        var ret = [], arr = str.split('');
+    _replaceMissingChars: function(arr) {
+        var ret = [];
         for (var i = 0, m = arr.length; i < m; i++) {
             if (XSS.PIXELS[arr[i]]) {
                 ret.push(arr[i]);
