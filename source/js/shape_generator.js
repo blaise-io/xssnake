@@ -168,7 +168,8 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     outerBorder: function() {
-        var w = XSS.PIXELS_H - 1,
+        var shape,
+            w = XSS.PIXELS_H - 1,
             h = XSS.PIXELS_V - 1;
 
         return new Shape(

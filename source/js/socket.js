@@ -32,15 +32,11 @@ Socket.prototype = {
         }.bind(this));
 
         this.socket.on(events.CLIENT_CHAT_MESSAGE, function(data) {
-            if (XSS.game) {
-                XSS.game.chat.message({author: data[0], body: data[1]});
-            }
+            XSS.chat.message({author: data[0], body: data[1]});
         }.bind(this));
 
         this.socket.on(events.CLIENT_NOTICE, function(notice) {
-            if (XSS.game) {
-                XSS.game.chat.message({body: notice});
-            }
+            XSS.chat.message({body: notice});
             console.log(notice);
         }.bind(this));
 

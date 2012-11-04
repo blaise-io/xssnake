@@ -118,18 +118,22 @@ Game.prototype = {
             level = this.level;
 
         for (var i = 0, m = parts.length; i < m; i++) {
-            var part = parts[i];
+            var part = parts[i], name = client.name;
 
             // Wall
             if (level.isWall(part[0], part[1])) {
-                console.log(client.name + ' crashed into wall with part', i);
+                this.room.emit(
+                    events.CLIENT_NOTICE,
+                    name + ' crashed into a wall'
+                );
                 return 'wall';
             }
 
             // Self
             else if (i !== 0 && !level.gap(part, parts[0])) {
-                console.log(part, parts[0], !this.level.gap(part, parts[0]));
-                console.log(client.name + ' crashed into self', i);
+                this.room.emit(
+                    events.CLIENT_NOTICE,
+                    name + ' crashed into own tail');
                 return 'self';
             }
 
@@ -139,8 +143,10 @@ Game.prototype = {
                     var opponent = clients[ii];
                     if (client !== opponent) {
                         if (-1 !== opponent.snake.partIndex(part)) {
-                            console.log(client.name + ' crashed into ' +
-                                'opponent ' + opponent.name + ' with part', i);
+                            this.room.emit(
+                                events.CLIENT_NOTICE,
+                                name + ' crashed into ' + opponent.name
+                            );
                             return 'opponent';
                         }
                     }

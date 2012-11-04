@@ -35,6 +35,14 @@ XSS.PIXELS = {
         ' X  XXXX  X ' +
         ' XX XXXX XX '],
 
+    '↵': [5, '' +
+        '  X X' +
+        ' XX X' +
+        'XXXXX' +
+        ' XX  ' +
+        '  X  '],
+
+
     '←': [5, '' +
         '  X  ' +
         ' XX  ' +

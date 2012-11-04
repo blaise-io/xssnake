@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Apple, Chat, Shape */
+/*globals XSS, ClientSnake, ClientLevel, Apple, Chat, Shape, Utils */
 
 'use strict';
 
@@ -12,10 +12,15 @@
  */
 function Game(levelID, names, index, apples) {
 
+    delete XSS.shapes.stage;
+    delete XSS.shapes.header;
+    delete XSS.shapes.instruction;
+
     this.level  = this._setupLevel(levelID);
     this.snakes = this._spawnSnakes(names, index);
     this.apples = this._spawnApples(apples);
-    this.chat   = new Chat(this.snakes[index].name);
+
+    XSS.chat = XSS.chat || new Chat(this.snakes[index].name);
 
     this._countDown();
 }
@@ -30,7 +35,6 @@ Game.prototype = {
 
     destruct: function() {
         XSS.pubsub.unsubscribe(XSS.GAME_TICK, '');
-        this.chat.destruct();
         this.removeControls();
     },
 
@@ -68,11 +72,11 @@ Game.prototype = {
     _setupLevel: function(levelID) {
         var level = new ClientLevel(levelID);
         XSS.stageflow.stage.destroyStage();
-        XSS.shapes = {
+        XSS.shapes = Utils.extend(XSS.shapes, {
             border     : XSS.shapegen.outerBorder(),
             levelborder: XSS.shapegen.scoreBoard(),
             world      : level.getShape()
-        };
+        });
         return level;
     },
 
@@ -93,6 +97,13 @@ Game.prototype = {
         return snakes;
     },
 
+    /**
+     * @param {number} i
+     * @param {string} name
+     * @param {number} index
+     * @return {ClientSnake}
+     * @private
+     */
     _spawnSnake: function(i, name, index) {
         var location, direction, snake;
 

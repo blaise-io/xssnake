@@ -61,7 +61,7 @@ Canvas.prototype = {
 
         // Make appointment for next paint. Quit on error.
         if (!XSS.error) {
-            window.requestAnimationFrame(XSS.bound.canvasFrame);
+            window.requestAnimationFrame(XSS.bound.canvasFrame, this.canvas);
         }
 
         // Time since last paint
@@ -70,12 +70,12 @@ Canvas.prototype = {
         this._lastPaint = now;
 
         // Show FPS in title bar
-        var fps = Math.round(1000 / delta);
-        document.title = 'XXSNAKE ' + fps;
+        // var fps = Math.round(1000 / delta);
+        // document.title = 'XXSNAKE ' + fps;
 
         // Do not paint when requestAnimationFrame is
         // catching up or heavily delayed.
-        if (delta >= 10 && delta <= 300) {
+        if (delta >= 7 && delta <= 250) {
             this.paint(delta);
         }
     },

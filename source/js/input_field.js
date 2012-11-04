@@ -2,15 +2,19 @@
 /*globals XSS, Shape*/
 'use strict';
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {string=} prefix
+ * @param {number=} maxWidth
+ * @constructor
+ */
 function InputField(x, y, prefix, maxWidth) {
     this.x = x;
     this.y = y;
     this.prefix = prefix || '';
     this.maxWidth = maxWidth || XSS.PIXELS_H - x;
-
-    this.callback = function(x) {
-        void(x);
-    };
+    this.callback = null;
 
     this.input = this._getInput();
     this.input.focus();
@@ -26,14 +30,20 @@ InputField.prototype = {
     updateShapes: function() {
         this._applyMaxWidth();
         this.value = this.input.value;
-        this.callback(this.input.value);
+        if (this.callback) {
+            this.callback(this.input.value);
+        }
         XSS.shapes.caret = this._caretShape();
         XSS.shapes.inputval = this._valueShape();
     },
 
+    /**
+     * @param {string} value
+     */
     setValue: function(value) {
         this.input.value = ''; // Empty first puts caret at end
         this.input.value = value;
+        this.updateShapes();
     },
 
     destruct: function() {
@@ -46,6 +56,10 @@ InputField.prototype = {
         delete XSS.shapes.inputval;
     },
 
+    /**
+     * @return {Element}
+     * @private
+     */
     _getInput: function() {
         var input = document.getElementsByTagName('input')[0];
         if (!input) {
@@ -55,6 +69,10 @@ InputField.prototype = {
         return input;
     },
 
+    /**
+     * @return {Shape}
+     * @private
+     */
     _caretShape: function() {
         var untilCaretStr, untilCaretWidth, caretX, caretShape,
             segments = this._getValueSegments();
@@ -73,6 +91,10 @@ InputField.prototype = {
         return caretShape;
     },
 
+    /**
+     * @return {Shape}
+     * @private
+     */
     _valueShape: function() {
         var x, shape, values = this._getValueSegments();
 
@@ -90,6 +112,10 @@ InputField.prototype = {
         return shape;
     },
 
+    /**
+     * @return {Array.<number>}
+     * @private
+     */
     _getValueSegments: function() {
         var input = this.input, value = input.value;
         return [

@@ -28,7 +28,7 @@ function Room(server, id, filter) {
     this.friendly = !!filter.friendly;
     this.capacity = capacity;
 
-    this.level = 2;
+    this.level = 0;
 }
 
 module.exports = Room;

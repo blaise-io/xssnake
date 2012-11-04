@@ -134,7 +134,7 @@ function InputStage(name, nextStage, label) {
     this.nextStage = nextStage;
     this.label = label || '';
 
-    this.value = '';
+    this.value = window.localStorage.getItem(this.name) || '';
     this.minlength = 0;
     this.maxWidth = 999;
 
@@ -159,6 +159,7 @@ InputStage.prototype = {
         this.input.callback = function(value) {
             delete XSS.shapes.stage; // We already show the dynamic stage
             this.value = value;
+            window.localStorage.setItem(this.name, value);
         }.bind(this);
     },
 
@@ -181,8 +182,6 @@ InputStage.prototype = {
     getInputError: function(val) {
         if (val.length < this.minlength) {
             return 'Too short!!!';
-        } else if (val.length > this.maxlength) {
-            return 'Too long!!!';
         } else {
             return false;
         }

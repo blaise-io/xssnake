@@ -75,7 +75,9 @@ window.onload = function() {
 
     XSS.socket = new Socket(function() {
         var data = {
-            'name'    : window.location.search.substring(1) || 'Anon',
+            'name'    : window.location.search.substring(1) ||
+                        window.localStorage.getItem('name') ||
+                        'Anon',
             'friendly': true,
             'pub'     : true,
             'capacity': 2

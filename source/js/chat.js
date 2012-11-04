@@ -11,8 +11,12 @@ var ChatMessage;
  * @constructor
  */
 function Chat(name, messages) {
-    /** @type {Array.<ChatMessage>} */
-    this.messages = messages || [{body: 'Press Tab to chat'}];
+
+    /**
+     * @type {Array.<ChatMessage>}
+     * @private
+     */
+    this._messages = messages || [{body: 'Press Enter to chat'}];
     this.name = name;
 
     XSS.bound.chatFocus = this._chatFocus.bind(this);
@@ -20,7 +24,7 @@ function Chat(name, messages) {
     this.shapes = {};
 
     this._bindEvents();
-    this._updateShapes();
+    this.updateShapes();
 }
 
 Chat.prototype = {
@@ -30,10 +34,14 @@ Chat.prototype = {
      * @return {Chat}
      */
     message: function(message) {
-        this.messages = this.messages.slice(-2);
-        this.messages.push(message);
-        this._updateShapes();
+        this._messages = this._messages.slice(-2);
+        this._messages.push(message);
+        this.updateShapes();
         return this;
+    },
+
+    updateShapes: function() {
+        this.shapes = this._getShapes(this._messages.slice());
     },
 
     destruct: function() {
@@ -51,25 +59,19 @@ Chat.prototype = {
         XSS.on.keydown(XSS.bound.chatFocus);
     },
 
+    /**
+     * @param {Event} e
+     * @private
+     */
     _chatFocus: function(e) {
         switch (e.which) {
-            case XSS.KEY_TAB:
-                this._focusInput(true);
-                e.preventDefault();
-                break;
             case XSS.KEY_ESCAPE:
                 this._focusInput(false);
                 e.preventDefault();
                 break;
             case XSS.KEY_ENTER:
                 if (this._chatHasFocus) {
-                    if (this.field && this.field.value.trim()) {
-                        this.send(this.field.value);
-                        this.message({
-                            author: this.name,
-                            body: this.field.value
-                        });
-                    }
+                    this._sendMessage(this.field.value.trim());
                     this._focusInput(false);
                 } else {
                     this._focusInput(true);
@@ -79,12 +81,18 @@ Chat.prototype = {
         }
     },
 
+    /**
+     * @param {boolean} focus
+     * @private
+     */
     _focusInput: function(focus) {
-        var prefix = this.name + ': ';
+        var left = 126,
+            prefix = this.name + ': ',
+            maxWidth = XSS.PIXELS_H - XSS.font.width(prefix) - left - 8;
         this._chatHasFocus = focus;
-        this._updateShapes();
+        this.updateShapes();
         if (focus) {
-            this.field = new InputField(126, XSS.PIXELS_V - 9, prefix);
+            this.field = new InputField(left, XSS.PIXELS_V - 9, prefix, maxWidth);
         } else if (this.field) {
             this.field.destruct();
             delete this.field;
@@ -92,10 +100,21 @@ Chat.prototype = {
     },
 
     /**
+     * @param {string} value
      * @private
      */
-    _updateShapes: function() {
-        this.shapes = this._getShapes(this.messages.slice());
+    _sendMessage: function(value) {
+        var shape;
+        if (value) {
+            this.send(value);
+            this.message({
+                author: this.name,
+                body  : value
+            });
+            shape = XSS.font.shape(XSS.PIXELS_H - 8, XSS.PIXELS_V - 9, '↵');
+            shape.flash(XSS.FLASH_FAST).lifetime(0, XSS.FLASH_FAST * 3, true);
+            XSS.shapes.msgsent = shape;
+        }
     },
 
     _deleteShapes: function() {
