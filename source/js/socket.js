@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, sub:true*/
-/*globals XSS, Client, Game, Apple, Utils, io*/
+/*jshint globalstrict:true, es5:true, sub:true*/
+/*globals XSS, Client, Room, Game, Apple, Utils, io*/
 
 'use strict';
 
@@ -18,6 +18,14 @@ function Socket(callback) {
 Socket.prototype = {
 
     /**
+     * @param {string} action
+     * @param {*} data
+     */
+    emit: function(action, data) {
+        this.socket.emit(action, data);
+    },
+
+    /**
      * @param callback {function(Socket)}
      * @private
      */
@@ -25,67 +33,62 @@ Socket.prototype = {
         var events = XSS.events;
 
         this.socket.on(events.CLIENT_CONNECT, function() {
-            console.log('connected');
             if (callback) {
                 callback(this);
             }
         }.bind(this));
 
-        this.socket.on(events.CLIENT_CHAT_MESSAGE, function(data) {
-            XSS.chat.message({author: data[0], body: data[1]});
-        }.bind(this));
-
-        this.socket.on(events.CLIENT_NOTICE, function(notice) {
-            XSS.chat.message({body: notice});
-            console.log(notice);
-        }.bind(this));
-
-        this.socket.on(events.CLIENT_GAME_SETUP, function(data) {
-            if (XSS.game) {
-                XSS.game.destruct();
+        this.socket.on(events.CLIENT_ROOM_INDEX, function(data) {
+            if (!XSS.room) {
+                XSS.room = new Room(data[0], data[1], data[2]);
+            } else {
+                XSS.room.update.apply(XSS.room, data);
             }
-            XSS.game = new Game(data[0], data[1], data[2], data[3]);
-        }.bind(this));
+        });
+
+        this.socket.on(events.CLIENT_CHAT_MESSAGE, function(data) {
+            XSS.room.chat.message({author: data[0], body: data[1]});
+        });
+
+        this.socket.on(events.CLIENT_CHAT_NOTICE, function(notice) {
+            XSS.room.chat.message({body: notice});
+        });
+
+        this.socket.on(events.CLIENT_GAME_COUNTDOWN, function() {
+            XSS.room.game.countdown();
+        });
 
         this.socket.on(events.CLIENT_GAME_START, function() {
-            XSS.game.start();
-        }.bind(this));
+            XSS.room.game.start();
+        });
 
         this.socket.on(events.CLIENT_GAME_WIN, function(data) {
             console.log(data[0] + ' wins this round!');
             console.log(data[0] + ' total wins: ' + data[1]);
-        }.bind(this));
+        });
 
         this.socket.on(events.CLIENT_SNAKE_UPDATE, function(data) {
-            var snake = XSS.game.snakes[data[0]];
+            var snake = XSS.room.game.snakes[data[0]];
             snake.parts = data[1];
             snake.direction = data[2];
-        }.bind(this));
+        });
 
         this.socket.on(events.CLIENT_SNAKE_CRASH, function(data) {
             var snake;
-            snake = XSS.game.snakes[data[0]];
+            snake = XSS.room.game.snakes[data[0]];
             snake.parts = data[1];
             snake.crash();
-        }.bind(this));
+        });
 
         this.socket.on(events.CLIENT_APPLE_NOM, function(data) {
-            XSS.game.snakes[data[0]].size = data[1];
-            XSS.game.apples[data[2]].eat();
-        }.bind(this));
+            XSS.room.game.snakes[data[0]].size = data[1];
+            XSS.room.game.apples[data[2]].eat();
+        });
 
         this.socket.on(events.CLIENT_APPLE_SPAWN, function(data) {
             var index = data[0], location = data[1];
-            XSS.game.apples[index] = new Apple(index, location[0], location[1]);
-        }.bind(this));
-    },
-
-    /**
-     * @param {string} action
-     * @param {*} data
-     */
-    emit: function(action, data) {
-        this.socket.emit(action, data);
+            XSS.room.game.apples[index] = new Apple(index, location[0], location[1]);
+        });
     }
 
 };

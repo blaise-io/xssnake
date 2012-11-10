@@ -1,4 +1,4 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
 var util = require('util');
@@ -42,7 +42,7 @@ gcc.addFiles(
     home + 'source/js/bounding_box.js',
     home + 'source/js/shape_generator.js',
     home + 'source/js/shape_effects.js',
-    home + 'source/js/pubsub.js',
+    home + 'source/js/publish_subscribe.js',
     home + 'source/js/pixels.js',
     home + 'source/js/canvas.js',
     home + 'source/js/transform.js',
@@ -55,6 +55,7 @@ gcc.addFiles(
     home + 'source/js/client_snake.js',
     home + 'source/js/client_level.js',
     home + 'source/js/apple.js',
+    home + 'source/js/room.js',
     home + 'source/js/game.js',
     home + 'source/js/chat.js'
 );

@@ -1,6 +1,5 @@
-/*jshint globalstrict:true*/
-/*globals XSS,Shape*/
-
+/*jshint globalstrict:true, es5:true, sub:true*/
+/*globals XSS, Shape, Utils*/
 'use strict';
 
 /**
@@ -31,7 +30,6 @@ function Apple(index, x, y) {
 Apple.prototype = {
 
     destruct: function() {
-        XSS.shapes[this.ns] = null;
         delete XSS.shapes[this.ns];
     },
 
@@ -47,17 +45,12 @@ Apple.prototype = {
         y = this.px.y;
 
         random = function() {
-            var max = 12;
-            return -max + Math.floor(Math.random() * max * 2);
+            return Utils.randomBetween(-12, 12);
         };
 
-        for (var i = 0; i <= 3; i++) {
-            var shape;
-
-            shape = XSS.font.shape(x + random(), y + random(), 'nom');
-            shape.lifetime(i * 100, 100 + i * 100, true);
-
-            XSS.shapes['nom' + i] = shape;
+        for (var i = 0; i <= 300; i += 100) {
+            var shape = XSS.font.shape(x + random(), y + random(), 'nom');
+            XSS.shapes['nom' + i] = shape.lifetime(i, 100 + i, true);
         }
     }
 

@@ -1,6 +1,5 @@
-/*jshint globalstrict:true, es5:true*/
+/*jshint globalstrict:true, es5:true, sub:true*/
 /*globals XSS, Shape, Snake, Utils*/
-
 'use strict';
 
 /**
@@ -20,21 +19,23 @@ function ClientSnake(index, local, name, location, direction) {
 
     Snake.call(this, location, direction, size, speed);
 
-    this.index   = index;
     this.local   = local;
     this.name    = name;
     this.crashed = false;
     this.elapsed = 0;
 
-    this._spawnDuration = XSS.config.shared.game.countdown * 1000;
-
     this._shape = new Shape();
     this._shape.dynamic = true;
 
-    this._shapeName = 'S' + index;
     this._snakeTurnRequests = [];
 
     XSS.bound.snakeKeys = this._snakeKeys.bind(this);
+
+    this.shapes = {
+        snake    : '_S' + index, // Snake
+        name     : 'SN' + index, // Snake name tag
+        direction: 'SD' + index  // Snake direction
+    };
 }
 
 ClientSnake.prototype = Object.create(Snake.prototype);
@@ -44,8 +45,17 @@ ClientSnake.prototype = Object.create(Snake.prototype);
  */
 Utils.extend(ClientSnake.prototype, {
 
+    destruct: function() {
+        this.removeControls();
+        for (var k in this.shapes) {
+            if (this.shapes.hasOwnProperty(k) && k in XSS.shapes) {
+                delete XSS.shapes[k];
+            }
+        }
+    },
+
     showName: function() {
-        var x, y, shape, lifetime;
+        var x, y, shape;
 
         x = this.parts[0][0] * 4;
         y = this.parts[0][1] * 4;
@@ -57,14 +67,11 @@ Utils.extend(ClientSnake.prototype, {
             case 3: y += 10; x +=  4; break;
         }
 
-        lifetime = this._spawnDuration;
         shape = XSS.shapegen.tooltip(x, y, this.direction, this.name);
-        shape.lifetime(0, lifetime - 1000, true);
-
-        XSS.shapes[this._shapeName + 'N'] = shape;
+        XSS.shapes[this.shapes.name] = shape;
     },
 
-    flashDirection: function() {
+    showDirection: function() {
         var shift, head, pixels, shape;
         shift = this.directionToShift(this.direction);
         head = this.head();
@@ -72,8 +79,13 @@ Utils.extend(ClientSnake.prototype, {
             [head[0] + shift[0], head[1] + shift[1]]
         ];
         shape = new Shape(XSS.transform.zoomGame(pixels));
-        shape.lifetime(0, this._spawnDuration, true).flash(XSS.FLASH_FAST);
-        XSS.shapes['CSF' + this.index] = shape;
+        shape.flash(XSS.FLASH_FAST);
+        XSS.shapes[this.shapes.direction] = shape;
+    },
+
+    removeNameAndDirection: function() {
+        delete XSS.shapes[this.shapes.name];
+        delete XSS.shapes[this.shapes.direction];
     },
 
     addControls: function() {
@@ -87,7 +99,7 @@ Utils.extend(ClientSnake.prototype, {
     },
 
     addToEntities: function() {
-        XSS.shapes[this._shapeName] = this.updateShape();
+        XSS.shapes[this.shapes.snake] = this.updateShape();
     },
 
     /**

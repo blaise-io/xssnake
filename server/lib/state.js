@@ -1,4 +1,4 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
 var Client = require('./client.js');
@@ -33,9 +33,8 @@ State.prototype = {
      * @param {Client} client
      */
     removeClient: function(client) {
+        client.destruct();
         delete this.clients[client.id];
-        client.snake = null;
-        client = null;
     }
 
 };

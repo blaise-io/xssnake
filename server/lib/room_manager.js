@@ -1,4 +1,4 @@
-/*jshint globalstrict:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
 var Room = require('./room.js');
@@ -72,8 +72,8 @@ RoomManager.prototype = {
      * @private
      */
     _isFilterMatch: function(filter, room) {
-        return room.pub && room.friendly === filter.friendly && !room.full() &&
-            !room.inprogress;
+        var eqFriendly = room.friendly === filter.friendly;
+        return (room.pub && eqFriendly && !room.isFull() && !room.inProgress);
     }
 
 };

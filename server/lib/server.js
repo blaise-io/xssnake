@@ -1,4 +1,4 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
 var fs = require('fs'),
@@ -35,7 +35,7 @@ Server.prototype = {
         this.io.set('browser client gzip', true);
         this.io.set('browser client minification', true);
 
-        server.listen(8080);
+        server.listen(8080); // TODO in config
 
         this.io.sockets.on('connection', function(socket) {
             var client = this.state.addClient(socket);
@@ -50,6 +50,7 @@ Server.prototype = {
     _httpRequestHandler: function(request, response) {
         var file, onIndexFileRead;
 
+        // TODO make path to file more solid
         file = __dirname + '/../../' + config.server.pathToIndexFile;
         onIndexFileRead = function(err, data) {
             if (err) {

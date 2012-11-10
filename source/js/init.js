@@ -1,10 +1,11 @@
-/*jshint globalstrict:true*/
+/*jshint globalstrict:true, es5:true, sub:true*/
 /*globals Utils, PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, Socket */
-
 'use strict';
 
+// Dummy container for Requirejs client-server shared objects
+var module = {};
+
 var XSS = {};
-var module = {}; // Dummy container for Requirejs client-server shared objects
 
 /** @const */ XSS.PIXELS_H = 256;
 /** @const */ XSS.PIXELS_V = 160;
@@ -70,6 +71,9 @@ window.onload = function() {
     XSS.shapegen  = new ShapeGenerator();
     XSS.transform = new Transform();
     XSS.font      = new Font();
+
+    // Lazy Singletons
+    /** @type {Room} */ XSS.room = null;
 
     XSS.stageflow = new StageFlow();
 

@@ -1,41 +1,51 @@
-/*jshint globalstrict:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Apple, Chat, Shape, Utils */
-
+/*jshint globalstrict:true, es5:true, sub:true*/
+/*globals XSS, ClientSnake, ClientLevel, Shape, Utils */
 'use strict';
 
 /***
  * Game
  * @param {number} levelID
- * @param {Array.<string>} names
  * @param {number} index
+ * @param {Array.<string>} names
  * @constructor
  */
-function Game(levelID, names, index, apples) {
+function Game(index, levelID, names) {
 
     delete XSS.shapes.stage;
     delete XSS.shapes.header;
     delete XSS.shapes.instruction;
 
+    /** @type {Level} */
     this.level  = this._setupLevel(levelID);
+    /** @type {Array.<ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
-    this.apples = this._spawnApples(apples);
-
-    XSS.chat = XSS.chat || new Chat(this.snakes[index].name);
-
-    this._countDown();
+    /** @type {Array.<Apple>} */
+    this.apples = [];
 }
 
 Game.prototype = {
 
     start: function() {
-        window.onfocus = this._reIndexClient.bind(this);
+        window.onfocus = this._getGameState.bind(this);
         XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._tick.bind(this));
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            this.snakes[i].removeNameAndDirection();
+        }
         this.addControls();
     },
 
     destruct: function() {
+        var i, m;
         XSS.pubsub.unsubscribe(XSS.GAME_TICK, '');
-        this.removeControls();
+        for (i = 0, m = this.snakes.length; i < m; i++) {
+            this.snakes[i].destruct();
+        }
+        for (i = 0, m = this.apples.length; i < m; i++) {
+            this.apples[i].destruct();
+        }
+        delete XSS.shapes.border;
+        delete XSS.shapes.levelborder;
+        delete XSS.shapes.world;
     },
 
     addControls: function() {
@@ -46,14 +56,8 @@ Game.prototype = {
         }
     },
 
-    removeControls: function() {
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].removeControls();
-        }
-    },
-
-    _reIndexClient: function() {
-        XSS.socket.emit(XSS.events.SERVER_GAME_REINDEX);
+    _getGameState: function() {
+        XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
     },
 
     /**
@@ -88,12 +92,10 @@ Game.prototype = {
      */
     _spawnSnakes: function(names, index) {
         var snakes = [];
-
         for (var i = 0, m = names.length; i < m; i++) {
             var snake = this._spawnSnake(i, names[i], index);
             snakes.push(snake);
         }
-
         return snakes;
     },
 
@@ -115,26 +117,13 @@ Game.prototype = {
         snake.showName();
 
         if (i === index) {
-            snake.flashDirection();
+            snake.showDirection();
         }
 
         return snake;
     },
 
-    /**
-     * @param {Array.<Array.<number>>} locations
-     * @return {Array.<Apple>}
-     * @private
-     */
-    _spawnApples: function(locations) {
-        var apples = [];
-        for (var i = 0, m = locations.length; i < m; i++) {
-            apples.push(new Apple(i, locations[i][0], locations[i][1]));
-        }
-        return apples;
-    },
-
-    _countDown: function() {
+    countdown: function() {
         var count, total, border, line = XSS.shapegen.line;
 
         count = XSS.config.shared.game.countdown;
@@ -220,19 +209,16 @@ Game.prototype = {
     _isCrash: function(snake, position) {
 
         if (this.level.isWall(position[0], position[1])) {
-            console.log('wall');
             return true;
         }
 
         if (!snake.isHead(position) && snake.hasPartPredict(position)) {
-            console.log('self');
             return true;
         }
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var opponent = this.snakes[i];
             if (opponent !== snake && opponent.hasPartPredict(position)) {
-                console.log('opponent');
                 return true;
             }
         }

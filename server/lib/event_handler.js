@@ -1,4 +1,4 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
 var events = require('../shared/events.js');
@@ -19,8 +19,8 @@ function EventHandler(server, client, socket) {
     socket.on('disconnect', this._disconnect.bind(this));
     socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
     socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
-    socket.on(events.SERVER_SNAKE_UPDATE, this._update.bind(this));
-    socket.on(events.SERVER_GAME_REINDEX, this._reIndex.bind(this));
+    socket.on(events.SERVER_SNAKE_UPDATE, this._snakeUpdate.bind(this));
+    socket.on(events.SERVER_GAME_STATE, this._gameState.bind(this));
 }
 
 module.exports = EventHandler;
@@ -57,9 +57,9 @@ EventHandler.prototype = {
      * @private
      */
     _chat: function(message) {
-        if (this.client.roomid) {
-            var game, data;
-            game = this._clientGame(this.client);
+        var game, data;
+        game = this._clientGame(this.client);
+        if (game) {
             data = [this.client.name, message.substr(0, 30)];
             game.room.broadcast(events.CLIENT_CHAT_MESSAGE, data, this.client);
         }
@@ -68,24 +68,20 @@ EventHandler.prototype = {
     /**
      * @param data [<Array>,<number>] 0: parts, 1: direction
      */
-    _update: function(data) {
-        if (this.client.roomid) {
-            var game = this._clientGame(this.client);
-            if (game.room.inprogress) {
-                game.updateSnake(this.client, data[0], data[1]);
-            }
+    _snakeUpdate: function(data) {
+        var game = this._clientGame(this.client);
+        if (game && game.room.inProgress) {
+            game.updateSnake(this.client, data[0], data[1]);
         }
     },
 
     /**
      * @private
      */
-    _reIndex: function() {
-        if (this.client.roomid) {
-            var game = this._clientGame(this.client);
-            if (game.room.inprogress) {
-                game.reIndex(this.client);
-            }
+    _gameState: function() {
+        var game = this._clientGame(this.client);
+        if (game && game.room.inProgress) {
+            game.emitState(this.client);
         }
     },
 
@@ -104,7 +100,7 @@ EventHandler.prototype = {
      * @private
      */
     _clientGame: function(client) {
-        return this._clientRoom(client).game;
+        return (client.roomid) ? this._clientRoom(client).game : null;
     }
 
 };

@@ -1,5 +1,5 @@
-/*jshint globalstrict:true*/
-/*globals XSS, Shape, Utils, InputField*/
+/*jshint globalstrict:true, es5:true, sub:true*/
+/*globals XSS, Utils, InputField*/
 'use strict';
 
 /** @typedef {{author:?string,body:string}} */

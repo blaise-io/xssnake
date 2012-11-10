@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true */
+/*jshint globalstrict:true, es5:true, node:true */
 'use strict';
 
 
@@ -9,7 +9,6 @@
  * @param {Object} levelData
  */
 function Level(levelID, levelData) {
-    this.levelID = levelID;
     this.level = levelData[levelID];
 }
 
@@ -129,33 +128,19 @@ Level.prototype = {
         var free = 0,
             xy = this.seqToXY(seq);
 
-        if (!this.isOpenSpace(xy[0], xy[1])) {
+        if (this.isWall(xy[0], xy[1])) {
             return 0;
         }
 
         for (var x = -1; x <= 1; x++) {
             for (var y = -1; y <= 1; y++) {
-                if (this.isOpenSpace(xy[0] + x, xy[1] + y)) {
+                if (!this.isWall(xy[0] + x, xy[1] + y)) {
                     free++;
                 }
             }
         }
 
         return free;
-    },
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
-     */
-    isOpenSpace: function(x, y) {
-        if (this.isWall(x, y)) {
-            return false;
-        }
-
-        // TODO: Snakes occupying spaces
-        return true;
     },
 
     /**

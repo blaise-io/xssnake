@@ -1,4 +1,4 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
 var Level = require('../shared/level.js'),
@@ -16,24 +16,38 @@ function Game(room, levelID) {
     this.server = room.server;
 
     this.level = new Level(levelID, levels);
-    this.levelID = levelID;
 
     this.apples = [this.level.getRandomOpenTile()];
     this.snakes = [];
 
     this._roundEnded = false;
     this._tickListener = this._tick.bind(this);
-    this._setupClients();
 }
 
 module.exports = Game;
 
 Game.prototype = {
 
+    countdown: function() {
+        setTimeout(this.start.bind(this), config.shared.game.countdown * 1000);
+        this.room.emit(events.CLIENT_GAME_COUNTDOWN, null);
+        this._setupClients();
+    },
+
     start: function() {
-        console.log('___[NEW ROUND]___');
-        this.server.ticker.on('tick', this._tickListener);
+        console.log('___ NEW ROUND ___');
         this.room.emit(events.CLIENT_GAME_START, []);
+        this.room.emit(events.CLIENT_APPLE_SPAWN, [0, this.apples[0]]);
+        this.room.inProgress = true;
+        this.server.ticker.addListener('tick', this._tickListener);
+    },
+
+    destruct: function() {
+        if (this.server.ticker.listeners('tick')) {
+            this.server.ticker.removeListener('tick', this._tickListener);
+        }
+        this.room = null;
+        this.server = null;
     },
 
     /**
@@ -61,9 +75,6 @@ Game.prototype = {
             client.snake.parts = parts;
             this._broadCastSnake(client);
         } else {
-            console.log(client.name);
-            console.log(head);
-            console.log(client.snake.head());
             this._sendServerSnakeState(client);
         }
 
@@ -71,10 +82,9 @@ Game.prototype = {
     },
 
     /**
-     * Client lost snake state
      * @param client
      */
-    reIndex: function(client) {
+    emitState: function(client) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var data = [i, this.snakes[i].parts, this.snakes[i].direction];
             client.emit(events.CLIENT_SNAKE_UPDATE, data);
@@ -123,7 +133,7 @@ Game.prototype = {
             // Wall
             if (level.isWall(part[0], part[1])) {
                 this.room.emit(
-                    events.CLIENT_NOTICE,
+                    events.CLIENT_CHAT_NOTICE,
                     name + ' crashed into a wall'
                 );
                 return 'wall';
@@ -132,7 +142,7 @@ Game.prototype = {
             // Self
             else if (i !== 0 && !level.gap(part, parts[0])) {
                 this.room.emit(
-                    events.CLIENT_NOTICE,
+                    events.CLIENT_CHAT_NOTICE,
                     name + ' crashed into own tail');
                 return 'self';
             }
@@ -144,7 +154,7 @@ Game.prototype = {
                     if (client !== opponent) {
                         if (-1 !== opponent.snake.partIndex(part)) {
                             this.room.emit(
-                                events.CLIENT_NOTICE,
+                                events.CLIENT_CHAT_NOTICE,
                                 name + ' crashed into ' + opponent.name
                             );
                             return 'opponent';
@@ -237,14 +247,14 @@ Game.prototype = {
         var size = ++client.snake.size;
         var clientIndex = this.room.clients.indexOf(client);
         this.room.emit(events.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
-        this._respawnApple(appleIndex);
+        this._spawnApple(appleIndex);
     },
 
     /**
      * @param {number} appleIndex
      * @private
      */
-    _respawnApple: function(appleIndex) {
+    _spawnApple: function(appleIndex) {
         var location = this.level.getRandomOpenTile();
         this.apples[appleIndex] = location;
         this.room.emit(events.CLIENT_APPLE_SPAWN, [appleIndex, location]);
@@ -324,14 +334,11 @@ Game.prototype = {
      */
     _setupClients: function() {
         var clients = this.room.clients;
-        var names = this.room.names();
         for (var i = 0, m = clients.length; i < m; i++) {
             var snake = this._spawnClientSnake(i);
             this.snakes[i] = snake;
             clients[i].snake = snake;
-            this._emitGameSetup(i, names);
         }
-        setTimeout(this.start.bind(this), config.shared.game.countdown * 1000);
     },
 
     /**
@@ -351,16 +358,6 @@ Game.prototype = {
         snake.elapsed = 0;
 
         return snake;
-    },
-
-    /**
-     * @param {number} index
-     * @param {Array.<string>} names
-     * @private
-     */
-    _emitGameSetup: function(index, names) {
-        var data = [this.levelID, names, index, this.apples];
-        this.room.clients[index].emit(events.CLIENT_GAME_SETUP, data);
     }
 
 };

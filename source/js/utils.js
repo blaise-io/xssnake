@@ -1,6 +1,5 @@
-/*jshint globalstrict:true */
+/*jshint globalstrict:true, es5:true, sub:true*/
 /*globals XSS*/
-
 'use strict';
 
 var Utils = {
@@ -12,6 +11,10 @@ var Utils = {
             }
         }
         return destination;
+    },
+
+    randomBetween: function(min, max) {
+        return min + Math.floor(Math.random() * (max - min + 1));
     },
 
     /**

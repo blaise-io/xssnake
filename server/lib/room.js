@@ -1,4 +1,4 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
 var Game = require('./game.js'),
@@ -17,7 +17,7 @@ function Room(server, id, filter) {
 
     this.id = id;
     this.clients = [];
-    this.inprogress = false;
+    this.inProgress = false;
 
     // Sanitize user input
     capacity = parseInt(filter.capacity, 10);
@@ -29,11 +29,20 @@ function Room(server, id, filter) {
     this.capacity = capacity;
 
     this.level = 0;
+    this.game = new Game(this, this.level);
 }
 
 module.exports = Room;
 
 Room.prototype = {
+
+    emitState: function() {
+        var names = this.names();
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            var data = [i, this.level, names];
+            this.clients[i].emit(events.CLIENT_ROOM_INDEX, data);
+        }
+    },
 
     /**
      * @param {Client} client
@@ -43,25 +52,14 @@ Room.prototype = {
         this.clients.push(client);
         client.socket.join(this.id);
         client.roomid = this.id;
+        this.emitState();
+        this.broadcast(events.CLIENT_CHAT_NOTICE, client.name + ' joined', client);
 
-        if (this.full()) {
-            this.game = new Game(this, this.level);
-            this.inprogress = true;
+        if (this.isFull()) {
+            this.game.countdown();
         }
 
         return this;
-    },
-
-    /**
-     * @return {Game}
-     */
-    newRound: function() {
-        for (var i = 0, m = this.clients.length; i < m; i++) {
-            this.game = null;
-            this.clients.snake = null;
-        }
-        this.game = new Game(this, this.level);
-        return this.game;
     },
 
     /**
@@ -72,17 +70,42 @@ Room.prototype = {
         var index = this.clients.indexOf(client);
         if (-1 !== index) {
             this.clients.splice(index, 1);
-            this.emit(events.CLIENT_NOTICE, client.name + ' left');
+            this.emit(events.CLIENT_CHAT_NOTICE, client.name + ' left');
+            this.emitState();
             return true;
         }
+        this.emitState();
         return false;
+    },
+
+    /**
+     * @return {Game}
+     */
+    newRound: function() {
+        this.game.destruct();
+
+        this.game = new Game(this, this.level);
+        this.emitState();
+        this.game.countdown();
+        return this.game;
     },
 
     /**
      * @return {boolean}
      */
-    full: function() {
+    isFull: function() {
         return (this.clients.length === this.capacity);
+    },
+
+    /**
+     * @return {Array.<string>}
+     */
+    names: function() {
+        var names = [];
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            names.push(this.clients[i].name);
+        }
+        return names;
     },
 
     /**
@@ -102,17 +125,6 @@ Room.prototype = {
      */
     broadcast: function(name, data, exclude) {
         exclude.socket.broadcast.to(this.id).emit(name, data);
-    },
-
-    /**
-     * @return {Array.<string>}
-     */
-    names: function() {
-        var names = [];
-        for (var i = 0, m = this.clients.length; i < m; i++) {
-            names.push(this.clients[i].name);
-        }
-        return names;
     }
 
 };

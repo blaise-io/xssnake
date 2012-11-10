@@ -1,5 +1,5 @@
-/*jshint globalstrict:true*/
-/*globals XSS, Shape, Socket, Utils, InputField*/
+/*jshint globalstrict:true, es5:true, sub:true*/
+/*globals XSS, Shape, Socket, InputField, Utils*/
 
 'use strict';
 
@@ -132,9 +132,10 @@ StageInterface.prototype = {
 function InputStage(name, nextStage, label) {
     this.name = name;
     this.nextStage = nextStage;
+
     this.label = label || '';
 
-    this.value = window.localStorage.getItem(this.name) || '';
+    this.val = window.localStorage.getItem(this.name) || '';
     this.minlength = 0;
     this.maxWidth = 999;
 
@@ -148,17 +149,20 @@ InputStage.prototype = {
     },
 
     getShape: function() {
-        var str = this.label + this.value;
+        var str = this.label + this.val;
         return XSS.font.shape(XSS.MENU_LEFT, XSS.MENU_TOP, str);
     },
 
+    /**
+     * @suppress {checkTypes} GCC expects this.val to be of another type
+     */
     createStage: function() {
         XSS.on.keydown(this.handleKeys);
         this.input = new InputField(XSS.MENU_LEFT, XSS.MENU_TOP, this.label, 30);
-        this.input.setValue(this.value);
+        this.input.setValue(this.val);
         this.input.callback = function(value) {
             delete XSS.shapes.stage; // We already show the dynamic stage
-            this.value = value;
+            this.val = value;
             window.localStorage.setItem(this.name, value);
         }.bind(this);
     },
@@ -191,11 +195,11 @@ InputStage.prototype = {
     inputSubmit: function() {
         var error, shape, text, duration = 500;
 
-        error = this.getInputError(this.value.trim());
+        error = this.getInputError(this.val.trim());
 
         if (error === false) {
-            this.value = this.value.trim();
-            text = this._getRandomRemarkOnNameROFL(this.value);
+            this.val = this.val.trim();
+            text = this._getRandomRemarkOnNameROFL(this.val);
             duration = Math.max(text.length * 40, 500);
             window.setTimeout(function() {
                 XSS.stageflow.switchStage(this.nextStage);
@@ -213,7 +217,7 @@ InputStage.prototype = {
 
     // TODO: Remove from this generic class
     _getRandomRemarkOnNameROFL: function(name) {
-        var remark, collection = [
+        var remark, wits = [
             '%s%s%s',
             'You have the same name as my mom',
             'LOVELY ♥♥♥',
@@ -235,11 +239,8 @@ InputStage.prototype = {
             'RECYCLING SAVES THE EARTH!!!',
             'OMGOMG'
         ];
-        remark = collection[Math.floor(Math.random() * (collection.length))];
-        while (remark.match('%s')) {
-            remark = remark.replace('%s', name);
-        }
-        return remark;
+        remark = wits[Utils.randomBetween(0, wits.length - 1)];
+        return remark.replace(/%s/g, name);
     }
 
 };
@@ -362,11 +363,9 @@ GameStage.prototype = {
         delete XSS.shapes.header;
 
         choices = XSS.stageflow.getNamedChoices();
-        console.log(choices);
-
-//        XSS.socket = new Socket(function() {
-//            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, choices);
-//        });
+        XSS.socket = new Socket(function() {
+            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, choices);
+        });
     },
 
     destroyStage: function() {

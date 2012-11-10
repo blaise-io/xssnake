@@ -1,7 +1,6 @@
-/*jshint globalstrict:true, sub:true*/
+/*jshint globalstrict:true, es5:true, sub:true*/
 /*globals XSS, Level, Shape*/
 'use strict';
-
 
 /**
  * @param {number} levelID
@@ -9,7 +8,6 @@
  * @constructor
  */
 function ClientLevel(levelID) {
-    this.levelID = levelID;
     this.level = XSS.levels[levelID];
 }
 
