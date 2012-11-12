@@ -8,11 +8,11 @@ module.exports = {
 
     CLIENT_ROOM_JOIN     : 'CRJ',
     CLIENT_ROOM_INDEX    : 'CRI',
+    CLIENT_ROOM_SCORE    : 'CRS',
     CLIENT_CHAT_NOTICE   : 'CCN',
     CLIENT_CHAT_MESSAGE  : 'CCM',
     CLIENT_GAME_COUNTDOWN: 'CGS',
     CLIENT_GAME_START    : 'CG2',
-    CLIENT_GAME_WIN      : 'CGW',
     CLIENT_SNAKE_UPDATE  : 'CSU',
     CLIENT_SNAKE_CRASH   : 'CSN',
     CLIENT_APPLE_NOM     : 'CAN',

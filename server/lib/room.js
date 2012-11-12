@@ -2,7 +2,8 @@
 'use strict';
 
 var Game = require('./game.js'),
-    events = require('../shared/events.js');
+    events = require('../shared/events.js'),
+    config = require('../shared/config.js');
 
 /**
  * @param {Server} server
@@ -11,24 +12,18 @@ var Game = require('./game.js'),
  * @constructor
  */
 function Room(server, id, filter) {
-    var capacity;
-
     this.server = server;
 
     this.id = id;
     this.clients = [];
+    this.score = [];
     this.inProgress = false;
-
-    // Sanitize user input
-    capacity = parseInt(filter.capacity, 10);
-    capacity = (typeof capacity === 'number') ? capacity : 4;
-    capacity = (capacity >= 1 && capacity <= 4) ? capacity : 4;
 
     this.pub      = !!filter.pub;
     this.friendly = !!filter.friendly;
-    this.capacity = capacity;
+    this.capacity = config.shared.game.capacity;
 
-    this.level = 0;
+    this.level = 1;
     this.game = new Game(this, this.level);
 }
 
@@ -41,6 +36,7 @@ Room.prototype = {
         for (var i = 0, m = this.clients.length; i < m; i++) {
             var data = [i, this.level, names];
             this.clients[i].emit(events.CLIENT_ROOM_INDEX, data);
+            this.score[i] = 0;
         }
     },
 

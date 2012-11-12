@@ -119,22 +119,20 @@ StageFlow.prototype = {
             width = XSS.PIXELS_H;
 
         if (back) {
-            oldStageAnim = {start: 0, end: width};
-            newStageAnim = {start: -width, end: 0};
+            oldStageAnim = {to: [width, 0]};
+            newStageAnim = {from: [-width, 0]};
         } else {
-            oldStageAnim = {start: 0, end: -width};
-            newStageAnim = {start: width, end: 0};
+            oldStageAnim = {to: [-width, 0]};
+            newStageAnim = {from: [width, 0]};
         }
 
         newStageAnim.callback = callback;
 
         oldstage = XSS.shapes.oldstage = oldStage.clone();
         oldstage.swipe(oldStageAnim);
-        oldstage.dynamic = true;
 
         newstage = XSS.shapes.newstage = newStage.clone();
         newstage.swipe(newStageAnim);
-        newstage.dynamic = true;
     },
 
     /**

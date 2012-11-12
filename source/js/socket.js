@@ -46,12 +46,16 @@ Socket.prototype = {
             }
         });
 
+        this.socket.on(events.CLIENT_ROOM_SCORE, function(data) {
+            XSS.room.score.updateScore(data[0], data[1]);
+        });
+
         this.socket.on(events.CLIENT_CHAT_MESSAGE, function(data) {
-            XSS.room.chat.message({author: data[0], body: data[1]});
+            XSS.room.chat.add({author: data[0], body: data[1]});
         });
 
         this.socket.on(events.CLIENT_CHAT_NOTICE, function(notice) {
-            XSS.room.chat.message({body: notice});
+            XSS.room.chat.add({body: notice});
         });
 
         this.socket.on(events.CLIENT_GAME_COUNTDOWN, function() {

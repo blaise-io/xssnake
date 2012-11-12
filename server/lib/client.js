@@ -13,7 +13,6 @@ function Client (server, id, socket) {
     this.socket = socket;
     this.roomid = null;
     this.name = 'Anonymous';
-    this.wins = 0;
     /** @type {Snake} */
     this.snake = null;
 }

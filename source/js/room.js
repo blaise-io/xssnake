@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Game, Chat*/
+/*globals XSS, Game, Chat, ScoreBoard*/
 'use strict';
 
 /**
@@ -10,6 +10,8 @@
  */
 function Room(index, level, names) {
     this.update.apply(this, arguments);
+
+    this.score = new ScoreBoard(names);
     this.chat = new Chat(names[index]);
 }
 

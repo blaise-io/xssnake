@@ -11,12 +11,13 @@
  */
 function Game(index, levelID, names) {
 
+    XSS.stageflow.stage.destroyStage();
     delete XSS.shapes.stage;
     delete XSS.shapes.header;
     delete XSS.shapes.instruction;
 
     /** @type {Level} */
-    this.level  = this._setupLevel(levelID);
+    this.level = this._setupLevel(levelID);
     /** @type {Array.<ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
     /** @type {Array.<Apple>} */
@@ -44,8 +45,7 @@ Game.prototype = {
             this.apples[i].destruct();
         }
         delete XSS.shapes.border;
-        delete XSS.shapes.levelborder;
-        delete XSS.shapes.world;
+        delete XSS.shapes.level;
     },
 
     addControls: function() {
@@ -75,12 +75,7 @@ Game.prototype = {
      */
     _setupLevel: function(levelID) {
         var level = new ClientLevel(levelID);
-        XSS.stageflow.stage.destroyStage();
-        XSS.shapes = Utils.extend(XSS.shapes, {
-            border     : XSS.shapegen.outerBorder(),
-            levelborder: XSS.shapegen.scoreBoard(),
-            world      : level.getShape()
-        });
+        XSS.shapes.level = level.getShape();
         return level;
     },
 

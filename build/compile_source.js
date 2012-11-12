@@ -57,6 +57,7 @@ gcc.addFiles(
     home + 'source/js/apple.js',
     home + 'source/js/room.js',
     home + 'source/js/game.js',
+    home + 'source/js/scoreboard.js',
     home + 'source/js/chat.js'
 );
 gcc.replace(/'use strict';/g, '');

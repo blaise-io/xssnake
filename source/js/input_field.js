@@ -18,16 +18,16 @@ function InputField(x, y, prefix, maxWidth) {
 
     this.input = this._getInput();
     this.input.focus();
-    this.updateShapes();
+    this._updateShapes();
 
-    XSS.bound.inputFieldUpd = this.updateShapes.bind(this);
+    XSS.bound.inputFieldUpd = this._updateShapes.bind(this);
     XSS.on.keydown(XSS.bound.inputFieldUpd);
     XSS.on.keyup(XSS.bound.inputFieldUpd);
 }
 
 InputField.prototype = {
 
-    updateShapes: function() {
+    _updateShapes: function() {
         this._applyMaxWidth();
         this.value = this.input.value;
         if (this.callback) {
@@ -43,7 +43,7 @@ InputField.prototype = {
     setValue: function(value) {
         this.input.value = ''; // Empty first puts caret at end
         this.input.value = value;
-        this.updateShapes();
+        this._updateShapes();
     },
 
     destruct: function() {

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Level, Shape*/
+/*globals XSS, Level, Shape, Utils*/
 'use strict';
 
 /**
@@ -13,18 +13,22 @@ function ClientLevel(levelID) {
 
 ClientLevel.prototype = Object.create(Level.prototype);
 
-// Cannot use Object.create to extend properties using an object, see
-// http://code.google.com/p/closure-compiler/issues/detail?id=455
+/** @lends {ClientLevel.prototype} */
+Utils.extend(ClientLevel.prototype, {
 
-/**
- * @return {Shape}
- * @this {ClientLevel}
- */
-ClientLevel.prototype.getShape = function() {
-    var xy, pixels = [], walls = this.level.walls;
-    for (var i = 0, m = walls.length; i < m; i++) {
-        xy = this.seqToXY(walls[i]);
-        pixels.push(xy);
+    /**
+     * @return {Shape}
+     */
+    getShape: function() {
+        var xy, pixels = [], shape, walls = this.level.walls;
+        for (var i = 0, m = walls.length; i < m; i++) {
+            xy = this.seqToXY(walls[i]);
+            pixels.push(xy);
+        }
+        shape = new Shape(XSS.transform.zoomGame(pixels));
+        shape.add(XSS.shapegen.outerBorder().pixels);
+        shape.add(XSS.shapegen.innerBorder().pixels);
+        return shape;
     }
-    return new Shape(XSS.transform.zoomGame(pixels));
-};
+
+});

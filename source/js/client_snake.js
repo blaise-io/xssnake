@@ -40,9 +40,7 @@ function ClientSnake(index, local, name, location, direction) {
 
 ClientSnake.prototype = Object.create(Snake.prototype);
 
-/**
- * @lends {ClientSnake.prototype}
- */
+/** @lends {ClientSnake.prototype} */
 Utils.extend(ClientSnake.prototype, {
 
     destruct: function() {

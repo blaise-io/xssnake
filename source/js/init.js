@@ -73,7 +73,8 @@ window.onload = function() {
     XSS.font      = new Font();
 
     // Lazy Singletons
-    /** @type {Room} */ XSS.room = null;
+    /** @type {Room} */
+    XSS.room = null;
 
     XSS.stageflow = new StageFlow();
 
@@ -83,8 +84,7 @@ window.onload = function() {
                         window.localStorage.getItem('name') ||
                         'Anon',
             'friendly': true,
-            'pub'     : true,
-            'capacity': 2
+            'pub'     : true
         };
         XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
     });

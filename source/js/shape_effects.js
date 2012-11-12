@@ -65,22 +65,29 @@ Shape.prototype._effects = {
      * @return {function({number})}
      */
     swipe: function(options) {
-        var start, duration, end, distance, clone, progress = 0;
+        var from, duration, to, x, y, clone, dynamic, progress = 0;
 
         options  = options || {};
-        start    = typeof options.start === 'number' ? options.start : 0;
-        end      = typeof options.end === 'number' ? options.end : -XSS.PIXELS_H;
+        from    = options.from || [0, 0];
+        to      = options.to || [0, 0];
         duration = options.duration || 200;
         clone    = this.clone();
+        dynamic  = this.dynamic;
+
+        this.dynamic = true;
 
         return function(delta) {
             progress += delta;
             if (progress < duration) {
-                distance = start - ((start - end) * progress / duration);
-                distance = Math.round(distance);
-                this.pixels = XSS.transform.shift(clone.pixels, distance, 0);
+                x = from[0] - ((from[0] - to[0]) * progress / duration);
+                x = Math.round(x);
+                y = from[1] - ((from[1] - to[1]) * progress / duration);
+                y = Math.round(y);
+                this.pixels = XSS.transform.shift(clone.pixels, x, y);
             } else {
                 delete this.effects.swipe;
+                this.pixels = XSS.transform.shift(clone.pixels, to[0], to[1]);
+                this.dynamic = dynamic;
                 if (options.callback) {
                     options.callback();
                 }

@@ -207,12 +207,11 @@ Game.prototype = {
      */
     _endRound: function(winner) {
         this._roundEnded = true;
-
-        if (winner && winner.name) {
-            console.log(winner.name + ' won');
-            this.room.emit(events.CLIENT_GAME_WIN, [winner.name, ++winner.wins]);
-        }
-
+        this.room.emit(
+            events.CLIENT_CHAT_NOTICE,
+            'New round starting in ' + config.shared.game.gloat + ' seconds'
+        );
+        void(winner);
         setTimeout(this._startNewRound.bind(this), config.shared.game.gloat * 1000);
     },
 
@@ -244,9 +243,12 @@ Game.prototype = {
      * @private
      */
     _eatApple: function(client, appleIndex) {
-        var size = ++client.snake.size;
-        var clientIndex = this.room.clients.indexOf(client);
+        var size, clientIndex, score;
+        size = ++client.snake.size;
+        clientIndex = this.room.clients.indexOf(client);
+        score = ++this.room.score[clientIndex];
         this.room.emit(events.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
+        this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
         this._spawnApple(appleIndex);
     },
 

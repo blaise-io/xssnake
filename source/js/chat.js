@@ -16,7 +16,7 @@ function Chat(name, messages) {
      * @type {Array.<ChatMessage>}
      * @private
      */
-    this._messages = messages || [{body: 'Press Enter to chat'}];
+    this._messages = messages || [{body: 'Press Enter key to chat'}];
     this.name = name;
 
     XSS.bound.chatFocus = this._chatFocus.bind(this);
@@ -24,7 +24,7 @@ function Chat(name, messages) {
     this.shapes = {};
 
     this._bindEvents();
-    this.updateShapes();
+    this._updateShapes();
 }
 
 Chat.prototype = {
@@ -33,14 +33,14 @@ Chat.prototype = {
      * @param {ChatMessage} message
      * @return {Chat}
      */
-    message: function(message) {
+    add: function(message) {
         this._messages = this._messages.slice(-2);
         this._messages.push(message);
-        this.updateShapes();
+        this._updateShapes();
         return this;
     },
 
-    updateShapes: function() {
+    _updateShapes: function() {
         this.shapes = this._getShapes(this._messages.slice());
     },
 
@@ -90,7 +90,7 @@ Chat.prototype = {
             prefix = this.name + ': ',
             maxWidth = XSS.PIXELS_H - XSS.font.width(prefix) - left - 8;
         this._chatHasFocus = focus;
-        this.updateShapes();
+        this._updateShapes();
         if (focus) {
             this.field = new InputField(left, XSS.PIXELS_V - 9, prefix, maxWidth);
         } else if (this.field) {
@@ -107,7 +107,7 @@ Chat.prototype = {
         var shape;
         if (value) {
             this.send(value);
-            this.message({
+            this.add({
                 author: this.name,
                 body  : value
             });
