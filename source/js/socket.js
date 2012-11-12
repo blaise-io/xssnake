@@ -66,11 +66,6 @@ Socket.prototype = {
             XSS.room.game.start();
         });
 
-        this.socket.on(events.CLIENT_GAME_WIN, function(data) {
-            console.log(data[0] + ' wins this round!');
-            console.log(data[0] + ' total wins: ' + data[1]);
-        });
-
         this.socket.on(events.CLIENT_SNAKE_UPDATE, function(data) {
             var snake = XSS.room.game.snakes[data[0]];
             snake.parts = data[1];
