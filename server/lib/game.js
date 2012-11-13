@@ -128,13 +128,13 @@ Game.prototype = {
             level = this.level;
 
         for (var i = 0, m = parts.length; i < m; i++) {
-            var part = parts[i], name = client.name;
+            var part = parts[i], id = '{' + clients.indexOf(client) + '}';
 
             // Wall
             if (level.isWall(part[0], part[1])) {
                 this.room.emit(
                     events.CLIENT_CHAT_NOTICE,
-                    name + ' crashed into a wall'
+                    id + ' crashed into a wall'
                 );
                 return 'wall';
             }
@@ -143,7 +143,7 @@ Game.prototype = {
             else if (i !== 0 && !level.gap(part, parts[0])) {
                 this.room.emit(
                     events.CLIENT_CHAT_NOTICE,
-                    name + ' crashed into own tail');
+                    id + ' crashed into own tail');
                 return 'self';
             }
 
@@ -155,7 +155,7 @@ Game.prototype = {
                         if (-1 !== opponent.snake.partIndex(part)) {
                             this.room.emit(
                                 events.CLIENT_CHAT_NOTICE,
-                                name + ' crashed into ' + opponent.name
+                                id + ' crashed into ' + opponent.name
                             );
                             return 'opponent';
                         }
@@ -243,10 +243,9 @@ Game.prototype = {
      * @private
      */
     _eatApple: function(client, appleIndex) {
-        var size, clientIndex, score;
-        size = ++client.snake.size;
-        clientIndex = this.room.clients.indexOf(client);
-        score = ++this.room.score[clientIndex];
+        var size = ++client.snake.size;
+        var clientIndex = this.room.clients.indexOf(client);
+        var score = ++this.room.score[clientIndex];
         this.room.emit(events.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
         this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
         this._spawnApple(appleIndex);

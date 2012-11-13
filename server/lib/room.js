@@ -34,9 +34,8 @@ Room.prototype = {
     emitState: function() {
         var names = this.names();
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            var data = [i, this.level, names];
+            var data = [i, this.level, names, this.score];
             this.clients[i].emit(events.CLIENT_ROOM_INDEX, data);
-            this.score[i] = 0;
         }
     },
 
@@ -45,11 +44,13 @@ Room.prototype = {
      * @return {Room}
      */
     join: function(client) {
-        this.clients.push(client);
+        var index = this.clients.push(client) - 1;
         client.socket.join(this.id);
         client.roomid = this.id;
+        this.score[index] = 0;
+
         this.emitState();
-        this.broadcast(events.CLIENT_CHAT_NOTICE, client.name + ' joined', client);
+        this.broadcast(events.CLIENT_CHAT_NOTICE, '{' + index + '} joined', client);
 
         if (this.isFull()) {
             this.game.countdown();
@@ -66,7 +67,7 @@ Room.prototype = {
         var index = this.clients.indexOf(client);
         if (-1 !== index) {
             this.clients.splice(index, 1);
-            this.emit(events.CLIENT_CHAT_NOTICE, client.name + ' left');
+            this.emit(events.CLIENT_CHAT_NOTICE, '{' + index + '} left');
             this.emitState();
             return true;
         }

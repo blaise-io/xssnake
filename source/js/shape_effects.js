@@ -64,7 +64,7 @@ Shape.prototype._effects = {
      * @param {Object=} options
      * @return {function({number})}
      */
-    swipe: function(options) {
+    animate: function(options) {
         var from, duration, to, x, y, clone, dynamic, progress = 0;
 
         options  = options || {};
@@ -76,6 +76,7 @@ Shape.prototype._effects = {
 
         this.dynamic = true;
 
+        /** @this {Shape} */
         return function(delta) {
             progress += delta;
             if (progress < duration) {
@@ -85,14 +86,14 @@ Shape.prototype._effects = {
                 y = Math.round(y);
                 this.pixels = XSS.transform.shift(clone.pixels, x, y);
             } else {
-                delete this.effects.swipe;
-                this.pixels = XSS.transform.shift(clone.pixels, to[0], to[1]);
+                delete this.effects.animate;
                 this.dynamic = dynamic;
+                this.set(clone.shift(to[0], to[1]).pixels);
                 if (options.callback) {
                     options.callback();
                 }
             }
-        };
+        }.bind(this);
     }
 
 };

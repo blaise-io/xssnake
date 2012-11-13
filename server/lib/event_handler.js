@@ -57,11 +57,11 @@ EventHandler.prototype = {
      * @private
      */
     _chat: function(message) {
-        var game, data;
-        game = this._clientGame(this.client);
-        if (game) {
-            data = [this.client.name, message.substr(0, 30)];
-            game.room.broadcast(events.CLIENT_CHAT_MESSAGE, data, this.client);
+        var room, data;
+        room = this._clientRoom(this.client);
+        if (room) {
+            data = [room.clients.indexOf(this.client), message.substr(0, 30)];
+            room.broadcast(events.CLIENT_CHAT_MESSAGE, data, this.client);
         }
     },
 

@@ -40,7 +40,7 @@ Socket.prototype = {
 
         this.socket.on(events.CLIENT_ROOM_INDEX, function(data) {
             if (!XSS.room) {
-                XSS.room = new Room(data[0], data[1], data[2]);
+                XSS.room = new Room(data[0], data[1], data[2], data[3]);
             } else {
                 XSS.room.update.apply(XSS.room, data);
             }

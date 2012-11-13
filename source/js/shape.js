@@ -60,8 +60,8 @@ Shape.prototype = {
      * @param {...} varArgs
      * @return {Shape}
      */
-    swipe: function(varArgs) {
-        this.effects.swipe = this._effects.swipe.apply(this, arguments);
+    animate: function(varArgs) {
+        this.effects.animate = this._effects.animate.apply(this, arguments);
         return this;
     },
 
@@ -108,7 +108,7 @@ Shape.prototype = {
                 this.pixels.push(arguments[i][ii]);
             }
         }
-        this._cache = null;
+        this.cache = null;
         this._bbox = null;
         return this;
     },
@@ -127,7 +127,7 @@ Shape.prototype = {
                 }
             }
         }
-        this._cache = null;
+        this.cache = null;
         this._bbox = null;
         return this;
     },

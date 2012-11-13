@@ -7,13 +7,14 @@ var Score;
 
 /**
  * @param {Array.<string>} names
+ * @param {?Array.<number>} existingScore
  * @constructor
  */
-function ScoreBoard(names) {
+function ScoreBoard(names, existingScore) {
     this.names = names;
     this.podiumSize = 6;
-    this.score = this.initScore(names);
-    this.shapes = this._updateShapes();
+    this.score = this.initScore(names, existingScore);
+    this.shapes = this._updateShapes(1);
 }
 
 ScoreBoard.prototype = {
@@ -28,15 +29,16 @@ ScoreBoard.prototype = {
 
     /**
      * @param {Array.<string>} names
+     * @param {Array.<number>} existingScore
      * @return {Score}
      */
-    initScore: function(names) {
+    initScore: function(names, existingScore) {
         var score = [];
         for (var i = 0, m = this.podiumSize; i < m; i++) {
             score.push({
                 id   : i,
                 name : names[i] || '-',
-                score: 0
+                score: existingScore ? existingScore[i] || 0 : 0
             });
         }
         return score;
@@ -84,7 +86,7 @@ ScoreBoard.prototype = {
      * @private
      */
     _podiumIndexToXY: function(index) {
-        var top = XSS.PIXELS_V - 22,
+        var top = XSS.PIXELS_V - 23,
             lefts = [5, 64];
         return [
             (index % 2) ? lefts[1] : lefts[0],
@@ -93,10 +95,11 @@ ScoreBoard.prototype = {
     },
 
     /**
+     * @param {number=} animSpeed
      * @return {Object.<Shape>}
      * @private
      */
-    _updateShapes: function() {
+    _updateShapes: function(animSpeed) {
         var shapes = {},
             oldScore = this.score.slice(),
             newScore = this._orderScore();
@@ -116,15 +119,15 @@ ScoreBoard.prototype = {
             shape = new Shape();
             shape.add(
                 XSS.font.pixels(oldPos[0], oldPos[1], newScore[newPodium].name),
-                XSS.font.pixels(oldPos[0] - width + 54, oldPos[1], score)
+                XSS.font.pixels(oldPos[0] - width + 55, oldPos[1], score)
             );
 
             if (oldPodium !== newPodium) {
                 newPos = this._podiumIndexToXY(newPodium);
-                shape.swipe({
-                    to: [newPos[0] - oldPos[0], newPos[1] - oldPos[1]]
+                shape.animate({
+                    to: [newPos[0] - oldPos[0], newPos[1] - oldPos[1]],
+                    duration: animSpeed || 200
                 });
-                shape.dynamic = true;
             }
 
             shapes['SB' + i] = shape;

@@ -115,8 +115,7 @@ StageFlow.prototype = {
      * @private
      */
     _switchStageAnimate: function(oldStage, newStage, back, callback) {
-        var oldStageAnim, newStageAnim, oldstage, newstage,
-            width = XSS.PIXELS_H;
+        var oldStageAnim, newStageAnim, width = XSS.PIXELS_H;
 
         if (back) {
             oldStageAnim = {to: [width, 0]};
@@ -128,11 +127,8 @@ StageFlow.prototype = {
 
         newStageAnim.callback = callback;
 
-        oldstage = XSS.shapes.oldstage = oldStage.clone();
-        oldstage.swipe(oldStageAnim);
-
-        newstage = XSS.shapes.newstage = newStage.clone();
-        newstage.swipe(newStageAnim);
+        XSS.shapes.oldstage = oldStage.clone().animate(oldStageAnim);
+        XSS.shapes.newstage = newStage.clone().animate(newStageAnim);
     },
 
     /**

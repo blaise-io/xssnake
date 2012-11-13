@@ -99,7 +99,7 @@ XSS.stages = {
 
         stage = new InputStage('name', nextstage, 'Hello, my name is ');
         stage.minlength = 2;
-        stage.maxWidth = 30;
+        stage.maxWidth = XSS.config.client.ui.maxNameWidth;
 
         return stage;
     },
