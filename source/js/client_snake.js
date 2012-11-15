@@ -46,8 +46,8 @@ Utils.extend(ClientSnake.prototype, {
     destruct: function() {
         this.removeControls();
         for (var k in this.shapes) {
-            if (this.shapes.hasOwnProperty(k) && k in XSS.shapes) {
-                delete XSS.shapes[k];
+            if (this.shapes.hasOwnProperty(k)) {
+                delete XSS.shapes[this.shapes[k]];
             }
         }
     },

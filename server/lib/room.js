@@ -23,7 +23,7 @@ function Room(server, id, filter) {
     this.friendly = !!filter.friendly;
     this.capacity = config.shared.game.capacity;
 
-    this.level = 1;
+    this.level = 0;
     this.game = new Game(this, this.level);
 }
 
@@ -61,26 +61,35 @@ Room.prototype = {
 
     /**
      * @param {Client} client
-     * @return {boolean}
      */
     leave: function(client) {
         var index = this.clients.indexOf(client);
-        if (-1 !== index) {
-            this.clients.splice(index, 1);
-            this.emit(events.CLIENT_CHAT_NOTICE, '{' + index + '} left');
-            this.emitState();
-            return true;
+
+        // Leave during game, clean up after round ends
+        if (this.inProgress) {
+            this.game.clientQuit(client);
+            this._leftClients = this._leftClients || [];
+            this._leftClients.push(client);
         }
-        this.emitState();
-        return false;
+
+        // Leave before game, clean up immediately
+        else {
+            this.clients.splice(index, 1);
+            this.emitState();
+        }
+
+        this.emit(events.CLIENT_CHAT_NOTICE, '{' + index + '} left');
     },
 
     /**
      * @return {Game}
      */
     newRound: function() {
+        // Before round starts
         this.game.destruct();
+        this._removeLeftClients(this._leftClients);
 
+        // Round start
         this.game = new Game(this, this.level);
         this.emitState();
         this.game.countdown();
@@ -111,7 +120,7 @@ Room.prototype = {
      * @param {*} data
      */
     emit: function(name, data) {
-        this.server.io.sockets.in(this.id).emit(name, data);
+        this.server.io.sockets['in'](this.id).emit(name, data);
     },
 
     /**
@@ -122,6 +131,19 @@ Room.prototype = {
      */
     broadcast: function(name, data, exclude) {
         exclude.socket.broadcast.to(this.id).emit(name, data);
+    },
+
+    /**
+     * @param {Array.<Client>} clients
+     * @private
+     */
+    _removeLeftClients: function(clients) {
+        if (clients) {
+            for (var i = 0, m = clients.length; i < m; i++) {
+                this.clients.splice(this.clients.indexOf(clients[i]), 1);
+                this.server.state.removeClient(clients[i]);
+            }
+        }
     }
 
 };

@@ -35,7 +35,7 @@ Game.prototype = {
     },
 
     start: function() {
-        console.log('___ NEW ROUND ___');
+        console.log('___ NEW ROUND IN ROOM ' + this.room.id + ' ___');
         this.room.emit(events.CLIENT_GAME_START, []);
         this.room.emit(events.CLIENT_APPLE_SPAWN, [0, this.apples[0]]);
         this.room.inProgress = true;
@@ -79,6 +79,10 @@ Game.prototype = {
         }
 
         return true;
+    },
+
+    clientQuit: function(client) {
+        this._setSnakeCrashed(client, client.snake.parts);
     },
 
     /**
@@ -193,6 +197,12 @@ Game.prototype = {
                 numcrashed++;
             } else {
                 alive = clients[i];
+
+                // Knockout points
+                this.room.emit(
+                    events.CLIENT_ROOM_SCORE,
+                    [i, this.room.score[i] += 2]
+                );
             }
         }
 
@@ -243,7 +253,7 @@ Game.prototype = {
      * @private
      */
     _eatApple: function(client, appleIndex) {
-        var size = ++client.snake.size;
+        var size = client.snake.size += 3;
         var clientIndex = this.room.clients.indexOf(client);
         var score = ++this.room.score[clientIndex];
         this.room.emit(events.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);

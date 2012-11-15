@@ -7,13 +7,13 @@ var Score;
 
 /**
  * @param {Array.<string>} names
- * @param {?Array.<number>} existingScore
+ * @param {?Array.<number>} points
  * @constructor
  */
-function ScoreBoard(names, existingScore) {
+function ScoreBoard(names, points) {
     this.names = names;
     this.podiumSize = 6;
-    this.score = this.initScore(names, existingScore);
+    this.score = this.initScore(names, points);
     this.shapes = this._updateShapes(1);
 }
 
@@ -29,16 +29,16 @@ ScoreBoard.prototype = {
 
     /**
      * @param {Array.<string>} names
-     * @param {Array.<number>} existingScore
+     * @param {Array.<number>} points
      * @return {Score}
      */
-    initScore: function(names, existingScore) {
+    initScore: function(names, points) {
         var score = [];
         for (var i = 0, m = this.podiumSize; i < m; i++) {
             score.push({
                 id   : i,
                 name : names[i] || '-',
-                score: existingScore ? existingScore[i] || 0 : 0
+                score: points && names[i] ? points[i] || 0 : 0
             });
         }
         return score;

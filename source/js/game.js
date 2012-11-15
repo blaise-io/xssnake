@@ -18,7 +18,6 @@ function Game(index, levelID, names) {
 
     /** @type {Level} */
     this.level = this._setupLevel(levelID);
-    /** @type {Array.<ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
     /** @type {Array.<Apple>} */
     this.apples = [];

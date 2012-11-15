@@ -31,14 +31,15 @@ EventHandler.prototype = {
      * @private
      */
     _disconnect: function() {
-        var room, client = this.client, server = this.server;
-
-        room = server.roomManager.rooms[client.roomid];
+        var room, client = this.client;
+        room = this.server.roomManager.rooms[client.roomid];
         if (room) {
             room.leave(client);
+            // Room takes care of removing client data. It needs client data
+            // to finish the round gracefully.
+        } else {
+            this.server.state.removeClient(client);
         }
-
-        server.state.removeClient(client);
     },
 
     /**
