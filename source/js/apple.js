@@ -9,33 +9,35 @@
  * @constructor
  */
 function Apple(index, x, y) {
-    var shape;
-
-    this.ns = 'A' + index;
-    this.x = x;
-    this.y = y;
-
     this.px = {
-        x: this.x * XSS.GAME_TILE + -1 + XSS.GAME_LEFT,
-        y: this.y * XSS.GAME_TILE + -2 + XSS.GAME_TOP
+        x: x * XSS.GAME_TILE + -1 + XSS.GAME_LEFT,
+        y: y * XSS.GAME_TILE + -2 + XSS.GAME_TOP
     };
 
-    shape = new Shape();
-    shape.str(XSS.PIXELS.APPLE).flash();
-    shape.shift(this.px.x, this.px.y);
-
-    XSS.shapes[this.ns] = shape;
+    this._shapeName = 'A' + index;
+    XSS.shapes[this._shapeName] = this._getShape();
 }
 
 Apple.prototype = {
 
     destruct: function() {
-        delete XSS.shapes[this.ns];
+        delete XSS.shapes[this._shapeName];
     },
 
     eat: function() {
         this._showNomNomNom();
         this.destruct();
+    },
+
+    /**
+     * @return {Shape}
+     * @private
+     */
+    _getShape: function() {
+        var shape = new Shape();
+        shape.str(XSS.PIXELS.APPLE).flash();
+        shape.shift(this.px.x, this.px.y);
+        return shape;
     },
 
     _showNomNomNom: function() {

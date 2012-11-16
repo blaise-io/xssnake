@@ -31,7 +31,7 @@ function ClientSnake(index, local, name, location, direction) {
     this._snakeTurnRequests = [];
 
     this.shapes = {
-        snake    : '_S' + index, // Snake
+        snake    : 'S'  + index, // Snake
         name     : 'SN' + index, // Snake name tag
         direction: 'SD' + index  // Snake direction
     };

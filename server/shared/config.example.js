@@ -12,6 +12,9 @@ module.exports = {
 
     // Client-only config
     client: {
+        ui: {
+            maxNameWidth: 30
+        },
         socketio: {
             host  : 'http://localhost:8080',
             script: 'http://localhost:8080/socket.io/socket.io.js'
