@@ -23,8 +23,6 @@ function ClientSnake(index, local, name, location, direction) {
     this.name    = name;
     this.elapsed = 0;
 
-    this.index = index;
-
     this._shape = new Shape();
     this._shape.dynamic = true;
 
