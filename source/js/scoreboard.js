@@ -11,13 +11,16 @@ var Score;
  * @constructor
  */
 function ScoreBoard(names, points) {
-    this.names = names;
-    this.podiumSize = 6;
     this.score = this.initScore(names, points);
-    this.shapes = this._updateShapes(1);
+    this._sortScore();
+    this.shapes = this._updateShapes();
 }
 
 ScoreBoard.prototype = {
+
+    podiumSize: 6,
+
+    switchDuration: 200,
 
     destruct: function() {
         for (var k in this.shapes) {
@@ -73,7 +76,7 @@ ScoreBoard.prototype = {
      * @return {Score}
      * @private
      */
-    _orderScore: function() {
+    _sortScore: function() {
         this.score.sort(function(a, b) {
             return b.score - a.score;
         });
@@ -95,14 +98,13 @@ ScoreBoard.prototype = {
     },
 
     /**
-     * @param {number=} animSpeed
      * @return {Object.<Shape>}
      * @private
      */
-    _updateShapes: function(animSpeed) {
+    _updateShapes: function() {
         var shapes = {},
             oldScore = this.score.slice(),
-            newScore = this._orderScore();
+            newScore = this._sortScore();
 
         this.score = newScore;
 
@@ -126,7 +128,7 @@ ScoreBoard.prototype = {
                 newPos = this._podiumIndexToXY(newPodium);
                 shape.animate({
                     to: [newPos[0] - oldPos[0], newPos[1] - oldPos[1]],
-                    duration: animSpeed || 200
+                    duration: this.switchDuration
                 });
             }
 

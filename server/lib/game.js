@@ -56,29 +56,29 @@ Game.prototype = {
      * @param {number} direction
      */
     updateSnake: function(client, parts, direction) {
-        var head, appleIndex;
+        var apple, head = parts[parts.length - 1];
 
-        head = parts[parts.length - 1];
+        client.snake.direction = direction;
+
+        // Check if server-client delta is similar enough,
+        // We tolerate a small difference because of lag.
+        if (this.level.gap(head, client.snake.head()) <= 1) {
+            client.snake.parts = parts;
+            this._broadCastSnake(client);
+        } else {
+            head = client.snake.head();
+            parts = client.snake.parts;
+            this._sendServerSnakeState(client);
+        }
 
         if (this._isCrash(client, parts)) {
             this._setSnakeCrashed(client, parts);
         }
 
-        appleIndex = this._appleAtPosition(head);
-        if (-1 !== appleIndex) {
-            this._eatApple(client, appleIndex);
+        apple = this._appleAtPosition(head);
+        if (-1 !== apple) {
+            this._eatApple(client, apple);
         }
-
-        client.snake.direction = direction;
-
-        if (this.level.gap(head, client.snake.head()) <= 1) {
-            client.snake.parts = parts;
-            this._broadCastSnake(client);
-        } else {
-            this._sendServerSnakeState(client);
-        }
-
-        return true;
     },
 
     clientQuit: function(client) {
@@ -201,7 +201,7 @@ Game.prototype = {
                 // Knockout points
                 this.room.emit(
                     events.CLIENT_ROOM_SCORE,
-                    [i, this.room.score[i] += 2]
+                    [i, this.room.points[i] += 2]
                 );
             }
         }
@@ -255,7 +255,7 @@ Game.prototype = {
     _eatApple: function(client, appleIndex) {
         var size = client.snake.size += 3;
         var clientIndex = this.room.clients.indexOf(client);
-        var score = ++this.room.score[clientIndex];
+        var score = ++this.room.points[clientIndex];
         this.room.emit(events.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
         this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
         this._spawnApple(appleIndex);

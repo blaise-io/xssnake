@@ -16,7 +16,7 @@ function Room(server, id, filter) {
 
     this.id = id;
     this.clients = [];
-    this.score = [];
+    this.points = [];
     this.inProgress = false;
 
     this.pub      = !!filter.pub;
@@ -34,7 +34,7 @@ Room.prototype = {
     emitState: function() {
         var names = this.names();
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            var data = [i, this.level, names, this.score];
+            var data = [i, this.level, names, this.points];
             this.clients[i].emit(events.CLIENT_ROOM_INDEX, data);
         }
     },
@@ -47,7 +47,7 @@ Room.prototype = {
         var index = this.clients.push(client) - 1;
         client.socket.join(this.id);
         client.roomid = this.id;
-        this.score[index] = 0;
+        this.points[index] = 0;
 
         this.emitState();
         this.broadcast(events.CLIENT_CHAT_NOTICE, '{' + index + '} joined', client);

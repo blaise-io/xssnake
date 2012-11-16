@@ -18,8 +18,8 @@ function Canvas() {
     this._addEventListeners();
 
     this._lastPaint = new Date() - 20;
-    XSS.bound.canvasFrame = this._frame.bind(this);
-    XSS.bound.canvasFrame();
+    this._frameBound = this._frame.bind(this);
+    this._frameBound();
 }
 
 Canvas.prototype = {
@@ -60,7 +60,7 @@ Canvas.prototype = {
 
         // Make appointment for next paint. Quit on error.
         if (!XSS.error) {
-            window.requestAnimationFrame(XSS.bound.canvasFrame, this.canvas);
+            window.requestAnimationFrame(this._frameBound, this.canvas);
         }
 
         // Time since last paint

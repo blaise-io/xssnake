@@ -21,7 +21,7 @@ function Chat(index, names) {
      */
     this._messages = [{body: 'Press Enter key to chat'}];
 
-    XSS.bound.chatFocus = this._chatFocus.bind(this);
+    this._chatFocusBound = this._chatFocus.bind(this);
     this._hasFocus = false;
 
     this.shapes = {};
@@ -93,7 +93,7 @@ Chat.prototype = {
     },
 
     _bindEvents: function() {
-        XSS.on.keydown(XSS.bound.chatFocus);
+        XSS.on.keydown(this._chatFocusBound);
     },
 
     /**

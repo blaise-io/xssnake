@@ -14,22 +14,21 @@
 function ClientSnake(index, local, name, location, direction) {
     var size, speed;
 
-    size = XSS.config.shared.snake.size;
+    size  = XSS.config.shared.snake.size;
     speed = XSS.config.shared.snake.speed;
 
     Snake.call(this, location, direction, size, speed);
 
     this.local   = local;
     this.name    = name;
-    this.crashed = false;
     this.elapsed = 0;
+
+    this.index = index;
 
     this._shape = new Shape();
     this._shape.dynamic = true;
 
     this._snakeTurnRequests = [];
-
-    XSS.bound.snakeKeys = this._snakeKeys.bind(this);
 
     this.shapes = {
         snake    : '_S' + index, // Snake
@@ -87,12 +86,13 @@ Utils.extend(ClientSnake.prototype, {
     },
 
     addControls: function() {
-        XSS.on.keydown(XSS.bound.snakeKeys);
+        this._SnakeKeysBound = this._snakeKeys.bind(this);
+        XSS.on.keydown(this._SnakeKeysBound);
     },
 
     removeControls: function() {
-        if (this.local) {
-            XSS.off.keydown(XSS.bound.snakeKeys);
+        if (this.local && this._SnakeKeysBound) {
+            XSS.off.keydown(this._SnakeKeysBound);
         }
     },
 

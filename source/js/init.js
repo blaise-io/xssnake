@@ -52,12 +52,6 @@ window.onload = function() {
     /** @type {Object.<string,Shape>} */
     XSS.overlays  = {};
 
-    /**
-     * Events holder
-     * @type {Object.<string,function({Object})>}
-     */
-    XSS.bound     = {};
-
     // DOM
     XSS.doc       = document.body;
 

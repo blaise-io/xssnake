@@ -20,9 +20,9 @@ function InputField(x, y, prefix, maxWidth) {
     this.input.focus();
     this._updateShapes();
 
-    XSS.bound.inputFieldUpd = this._updateShapes.bind(this);
-    XSS.on.keydown(XSS.bound.inputFieldUpd);
-    XSS.on.keyup(XSS.bound.inputFieldUpd);
+    this._updateShapesBound = this._updateShapes.bind(this);
+    XSS.on.keydown(this._updateShapesBound);
+    XSS.on.keyup(this._updateShapesBound);
 }
 
 InputField.prototype = {
@@ -50,8 +50,8 @@ InputField.prototype = {
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        XSS.off.keydown(XSS.bound.inputFieldUpd);
-        XSS.off.keyup(XSS.bound.inputFieldUpd);
+        XSS.off.keydown(this._updateShapesBound);
+        XSS.off.keyup(this._updateShapesBound);
         delete XSS.shapes.caret;
         delete XSS.shapes.inputval;
     },
