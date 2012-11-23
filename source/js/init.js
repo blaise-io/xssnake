@@ -9,10 +9,6 @@ var XSS = {};
 
 /** @const */ XSS.PIXELS_H = 256;
 /** @const */ XSS.PIXELS_V = 160;
-/** @const */ XSS.PIXEL_SIZE = 4;
-
-/** @const */ XSS.CANVAS_WIDTH = XSS.PIXELS_H * XSS.PIXEL_SIZE;
-/** @const */ XSS.CANVAS_HEIGHT = XSS.PIXELS_V * XSS.PIXEL_SIZE;
 
 /** @const */ XSS.KEY_BACKSPACE = 8;
 /** @const */ XSS.KEY_TAB = 9;

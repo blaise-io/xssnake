@@ -13,7 +13,7 @@ module.exports = {
     // Client-only config
     client: {
         ui: {
-            maxNameWidth: 30
+            maxNameWidth: 40
         },
         socketio: {
             host  : 'http://localhost:8080',

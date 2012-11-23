@@ -3,7 +3,7 @@
     padding: 0;
 }
 
-html, body {
+html, body, input {
     overflow: hidden;
     position: relative;
     width: 100%;
@@ -20,7 +20,6 @@ html {
 }
 
 body {
-    background: url('img/pattern.png') repeat 0 0;
     box-shadow: inset 0 2px 2px rgba(0, 0, 0, .15);
 }
 
@@ -29,8 +28,6 @@ input {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
     opacity: 0;
     z-index: 1;
     border: none;

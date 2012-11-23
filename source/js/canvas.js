@@ -10,6 +10,8 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
+    this._setCanvasDimensions();
+
     if (!window.requestAnimationFrame) {
         this._vendorRequestAnimationFrame();
     }
@@ -32,7 +34,7 @@ Canvas.prototype = {
         XSS.pubsub.publish(XSS.GAME_TICK, delta);
 
         // Clear canvas
-        this.ctx.clearRect(0, 0, XSS.CANVAS_WIDTH, XSS.CANVAS_HEIGHT);
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
         // Paint all layers
         this._paint(delta, XSS.shapes, XSS.overlays);
@@ -93,10 +95,10 @@ Canvas.prototype = {
 
         for (var i = 0, m = pixels.length; i < m; i++) {
             context.fillRect(
-                pixels[i][0] * XSS.PIXEL_SIZE - bbox.x1,
-                pixels[i][1] * XSS.PIXEL_SIZE - bbox.y1,
-                XSS.PIXEL_SIZE - 1,
-                XSS.PIXEL_SIZE - 1
+                pixels[i][0] * this.tileSize - bbox.x1,
+                pixels[i][1] * this.tileSize - bbox.y1,
+                this.pixelSize,
+                this.pixelSize
             );
         }
     },
@@ -162,6 +164,17 @@ Canvas.prototype = {
         };
     },
 
+    /**
+     * @return {number}
+     * @private
+     */
+    _getTileSize: function() {
+        return Math.floor(Math.min(
+            window.innerWidth / XSS.PIXELS_H,
+            window.innerHeight / XSS.PIXELS_V
+        )) || 1;
+    },
+
     /** @private */
     _vendorRequestAnimationFrame: function() {
         window['requestAnimationFrame'] =
@@ -179,20 +192,73 @@ Canvas.prototype = {
         window.onresize = this._positionCanvas.bind(this);
     },
 
+    _clearShapeCache: function() {
+        var objs = [XSS.shapes, XSS.overlays];
+        for (var i = 0, m = objs.length; i < m; i++) {
+            var arg = objs[i];
+            for (var k in arg) {
+                if (arg.hasOwnProperty(k)) {
+                    arg[k].add([]); // Flushes cache
+                }
+            }
+        }
+    },
+
+    /** @private */
+    _setCanvasDimensions: function() {
+        this.tileSize = this._getTileSize();
+
+        // Attempt to make fat pixels pleasing at all sizes
+        if (this.tileSize >= 4) {
+            this.pixelSize = this.tileSize-1;
+        } else if (this.tileSize >= 3) {
+            this.pixelSize = this.tileSize * 0.8;
+        } else {
+            this.pixelSize = this.tileSize;
+        }
+
+        this.canvasWidth = this.tileSize * XSS.PIXELS_H;
+        this.canvasHeight = this.tileSize * XSS.PIXELS_V;
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
+        this._setbackgroundPattern();
+    },
+
     /** @private */
     _positionCanvas: function() {
         var windowCenter, windowMiddle, left, top, style;
 
+        this._setCanvasDimensions();
+        this._clearShapeCache();
+
         windowCenter = window.innerWidth / 2;
         windowMiddle = window.innerHeight / 2;
 
-        left = this._snapToFatPixels(windowCenter - (XSS.CANVAS_WIDTH / 2));
-        top = this._snapToFatPixels(windowMiddle - (XSS.CANVAS_HEIGHT / 2));
+        left = this._snapToFatPixels(windowCenter - (this.canvasWidth / 2));
+        top = this._snapToFatPixels(windowMiddle - (this.canvasHeight / 2));
 
         style = this.canvas.style;
         style.position = 'absolute';
         style.left = Math.max(0, left) + 'px';
         style.top = Math.max(0, top) + 'px';
+    },
+
+    /** @private */
+    _setbackgroundPattern: function() {
+        var canvas, context, pixelSize, rectSize;
+
+        pixelSize = Math.max(this.tileSize, 2);
+        rectSize = pixelSize - 1;
+
+        canvas = document.createElement('canvas');
+        canvas.width  = pixelSize;
+        canvas.height = pixelSize;
+
+        context = canvas.getContext('2d');
+        context.fillStyle = 'rgba(0,0,0,.1)';
+        context.fillRect(0, 0, rectSize, rectSize);
+
+        XSS.doc.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
     },
 
     /**
@@ -201,8 +267,6 @@ Canvas.prototype = {
      */
     _setupCanvas: function() {
         var canvas = document.createElement('canvas');
-        canvas.setAttribute('width', XSS.CANVAS_WIDTH);
-        canvas.setAttribute('height', XSS.CANVAS_HEIGHT);
         XSS.doc.appendChild(canvas);
         return canvas;
     },
@@ -216,19 +280,19 @@ Canvas.prototype = {
         var bbox = shape.bbox();
         for (var k in bbox) {
             if (bbox.hasOwnProperty(k)) {
-                bbox[k] *= XSS.PIXEL_SIZE;
+                bbox[k] *= this.tileSize;
             }
         }
         return bbox;
     },
 
     /**
-     * @param {number} number
+     * @param {number} num
      * @return {number}
      * @private
      */
-    _snapToFatPixels: function(number) {
-        return Math.floor(number / XSS.PIXEL_SIZE) * XSS.PIXEL_SIZE;
+    _snapToFatPixels: function(num) {
+        return Math.floor(num / this.tileSize) * this.tileSize;
     }
 
 };
