@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Utils*/
+/*globals XSS, Shape, Util*/
 'use strict';
 
 /**
@@ -47,7 +47,7 @@ Apple.prototype = {
         y = this.px.y;
 
         random = function() {
-            return Utils.randomBetween(-12, 12);
+            return Util.randomBetween(-12, 12);
         };
 
         for (var i = 0; i <= 300; i += 100) {

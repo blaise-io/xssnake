@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Socket, InputField, Utils*/
+/*globals XSS, Shape, Socket, InputField, Util*/
 
 'use strict';
 
@@ -239,7 +239,7 @@ InputStage.prototype = {
             'RECYCLING SAVES THE EARTH!!!',
             'OMGOMG'
         ];
-        remark = wits[Utils.randomBetween(0, wits.length - 1)];
+        remark = Util.randomItem(wits);
         return remark.replace(/%s/g, name);
     }
 

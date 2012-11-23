@@ -1,12 +1,12 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Utils*/
+/*globals XSS, Shape, Util*/
 
 'use strict';
 
 Shape.prototype._effects = {
 
     /**
-     * @param {number} speed
+     * @param {number=} speed
      * @return {function({number})}
      */
     flash: function(speed) {
@@ -42,9 +42,9 @@ Shape.prototype._effects = {
             // Stop time reached
             if (stop && progress >= stop) {
                 if (deleteShape) {
-                    key = Utils.getKey(XSS.shapes, this);
+                    key = Util.getKey(XSS.shapes, this);
                     if (key) { delete XSS.shapes[key]; }
-                    key = Utils.getKey(XSS.overlays, this);
+                    key = Util.getKey(XSS.overlays, this);
                     if (key) { delete XSS.overlays[key]; }
                 } else {
                     delete this.effects.lifetime;
@@ -65,12 +65,13 @@ Shape.prototype._effects = {
      * @return {function({number})}
      */
     animate: function(options) {
-        var from, duration, to, x, y, clone, dynamic, progress = 0;
+        var from, to, duration, clone, dynamic, progress = 0;
 
         options  = options || {};
-        from    = options.from || [0, 0];
-        to      = options.to || [0, 0];
+        from     = options.from || [0, 0];
+        to       = options.to || [0, 0];
         duration = options.duration || 200;
+
         clone    = this.clone();
         dynamic  = this.dynamic;
 
@@ -78,6 +79,7 @@ Shape.prototype._effects = {
 
         /** @this {Shape} */
         return function(delta) {
+            var x, y;
             progress += delta;
             if (progress < duration) {
                 x = from[0] - ((from[0] - to[0]) * progress / duration);

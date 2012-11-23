@@ -39,28 +39,30 @@ function Shape(varArgs) {
 Shape.prototype = {
 
     /**
-     * @param {...} varArgs
+     * @param {number=} speed
      * @return {Shape}
      */
-    flash: function(varArgs) {
+    flash: function(speed) {
         this.effects.flash = this._effects.flash.apply(this, arguments);
         return this;
     },
 
     /**
-     * @param {...} varArgs
+     * @param {number} start
+     * @param {number} stop
+     * @param {boolean=} deleteShape
      * @return {Shape}
      */
-    lifetime: function(varArgs) {
+    lifetime: function(start, stop, deleteShape) {
         this.effects.lifetime = this._effects.lifetime.apply(this, arguments);
         return this;
     },
 
     /**
-     * @param {...} varArgs
+     * @param {Object=} options
      * @return {Shape}
      */
-    animate: function(varArgs) {
+    animate: function(options) {
         this.effects.animate = this._effects.animate.apply(this, arguments);
         return this;
     },

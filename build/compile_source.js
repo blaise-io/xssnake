@@ -32,7 +32,7 @@ gcc.header(header);
 
 gcc.addFiles(
     home + 'source/js/init.js',
-    home + 'source/js/utils.js',
+    home + 'source/js/util.js',
     home + 'server/shared/config.js',
     home + 'server/shared/events.js',
     home + 'server/shared/levels.js',
@@ -49,7 +49,7 @@ gcc.addFiles(
     home + 'source/js/font.js',
     home + 'source/js/input_field.js',
     home + 'source/js/stage_classes.js',
-    home + 'source/js/stage_defs.js',
+    home + 'source/js/stages.js',
     home + 'source/js/stage_flow.js',
     home + 'source/js/socket.js',
     home + 'source/js/client_snake.js',

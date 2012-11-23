@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Snake, Utils*/
+/*globals XSS, Shape, Snake, Util*/
 'use strict';
 
 /**
@@ -38,7 +38,7 @@ function ClientSnake(index, local, name, location, direction) {
 ClientSnake.prototype = Object.create(Snake.prototype);
 
 /** @lends {ClientSnake.prototype} */
-Utils.extend(ClientSnake.prototype, {
+Util.extend(ClientSnake.prototype, {
 
     destruct: function() {
         this.removeControls();

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Client, Room, Game, Apple, Utils, io*/
+/*globals XSS, Client, Room, Game, Apple, Util, io*/
 
 'use strict';
 
@@ -9,7 +9,7 @@
  * @constructor
  */
 function Socket(callback) {
-    Utils.loadScript(XSS.config.client.socketio.script, function() {
+    Util.loadScript(XSS.config.client.socketio.script, function() {
         this.socket = io.connect(XSS.config.client.socketio.host);
         this._addEventListeners(callback);
     }.bind(this));

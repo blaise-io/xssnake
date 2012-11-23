@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Utils*/
+/*globals XSS, Util*/
 'use strict';
 
 /**
@@ -33,7 +33,7 @@ StageFlow.prototype = {
      * @return {StageInterface}
      */
     getStage: function(stage) {
-        var key = Utils.getKey(XSS.stages, stage);
+        var key = Util.getKey(XSS.stages, stage);
         if (!this._stageInits[key]) {
             this._stageInits[key] = stage();
         }

@@ -2,8 +2,13 @@
 /*globals XSS*/
 'use strict';
 
-var Utils = {
+var Util = {
 
+    /**
+     * @param {Object} destination
+     * @param {Object} source
+     * @return {Object}
+     */
     extend: function(destination, source) {
         for (var property in source) {
             if (source.hasOwnProperty(property)) {
@@ -13,8 +18,21 @@ var Utils = {
         return destination;
     },
 
+    /**
+     * @param {number} min
+     * @param {number} max
+     * @return {number}
+     */
     randomBetween: function(min, max) {
         return min + Math.floor(Math.random() * (max - min + 1));
+    },
+
+    /**
+     * @param {Array} arr
+     * @return {*}
+     */
+    randomItem: function(arr) {
+        return arr[Util.randomBetween(0, arr.length - 1)];
     },
 
     /**

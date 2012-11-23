@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Utils*/
+/*globals XSS, Shape, Util*/
 'use strict';
 
 /** @typedef {Array.<Object>} */
@@ -135,7 +135,7 @@ ScoreBoard.prototype = {
             shapes['SB' + i] = shape;
         }
 
-        Utils.extend(XSS.shapes, shapes);
+        Util.extend(XSS.shapes, shapes);
 
         return shapes;
     }

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals Utils, PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, Socket */
+/*globals Util, PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, Socket */
 'use strict';
 
 // Dummy container for Requirejs client-server shared objects
@@ -56,8 +56,8 @@ window.onload = function() {
     XSS.doc       = document.body;
 
     // Shortcuts
-    XSS.on        = Utils.addListener;
-    XSS.off       = Utils.removeListener;
+    XSS.on        = Util.addListener;
+    XSS.off       = Util.removeListener;
 
     // Singletons
     XSS.pubsub    = new PublishSubscribe();
