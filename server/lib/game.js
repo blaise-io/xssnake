@@ -1,7 +1,8 @@
 /*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
-var Level = require('../shared/level.js'),
+var util = require('util'),
+    Level = require('../shared/level.js'),
     levels = require('../shared/levels.js'),
     Snake = require('../shared/snake.js'),
     config = require('../shared/config.js'),
@@ -27,6 +28,10 @@ function Game(room, levelID) {
 module.exports = Game;
 
 Game.prototype = {
+
+    CRASH_WALL    : 0,
+    CRASH_SELF    : 1,
+    CRASH_OPPONENT: 2,
 
     countdown: function() {
         setTimeout(this.start.bind(this), config.shared.game.countdown * 1000);
@@ -73,6 +78,8 @@ Game.prototype = {
 
         if (this._isCrash(client, parts)) {
             this._setSnakeCrashed(client, parts);
+        } else {
+            delete client.snake.limbo;
         }
 
         apple = this._appleAtPosition(head);
@@ -124,45 +131,37 @@ Game.prototype = {
     /**
      * @param {Client} client
      * @param {Array.<Array>} parts
-     * @return {?string}
+     * @return {?Array.<number>}
      * @private
      */
     _isCrash: function(client, parts) {
         var clients = this.room.clients,
+            limbo = client.snake.limbo,
             level = this.level;
 
         for (var i = 0, m = parts.length; i < m; i++) {
-            var part = parts[i], id = '{' + clients.indexOf(client) + '}';
+            var part = parts[i];
 
             // Wall
             if (level.isWall(part[0], part[1])) {
-                this.room.emit(
-                    events.CLIENT_CHAT_NOTICE,
-                    id + ' crashed into a wall'
-                );
-                return 'wall';
+                return [this.CRASH_WALL, clients.indexOf(client)];
             }
 
             // Self
-            else if (i !== 0 && !level.gap(part, parts[0])) {
-                this.room.emit(
-                    events.CLIENT_CHAT_NOTICE,
-                    id + ' crashed into own tail');
-                return 'self';
+            if (m - 1 !== i && !level.gap(part, parts[m - 1])) {
+                return [this.CRASH_SELF, clients.indexOf(client)];
+            }
+
+            // Self (limbo)
+            else if (limbo && m - 2 !== i && !level.gap(part, parts[m - 2])) {
+                return [this.CRASH_SELF, clients.indexOf(client)];
             }
 
             // Opponent
-            else {
-                for (var ii = 0, mm = clients.length; ii < mm; ii++) {
-                    var opponent = clients[ii];
-                    if (client !== opponent) {
-                        if (-1 !== opponent.snake.partIndex(part)) {
-                            this.room.emit(
-                                events.CLIENT_CHAT_NOTICE,
-                                id + ' crashed into ' + opponent.name
-                            );
-                            return 'opponent';
-                        }
+            for (var ii = 0, mm = clients.length; ii < mm; ii++) {
+                if (client !== clients[ii]) {
+                    if (-1 !== clients[ii].snake.partIndex(part)) {
+                        return [this.CRASH_OPPONENT, clients.indexOf(client), ii];
                     }
                 }
             }
@@ -316,16 +315,28 @@ Game.prototype = {
      * @private
      */
     _applyPredictedPosition: function(client) {
-        var predict, appleIndex, snake, clone;
+        var predict, appleIndex, snake, clone, crash;
 
         snake = client.snake;
         predict = this._getPredictPosition(snake);
 
-        // Crash?
         clone = snake.parts.slice(1);
         clone.push(predict);
-        if (this._isCrash(client, clone)) {
-            this._setSnakeCrashed(client, snake.parts);
+        crash = this._isCrash(client, clone);
+
+        if (crash) {
+            // A snake is in limbo when the server predicts that a snake has
+            // crashed. The prediction is wrong when the client made a turn
+            // just in time but that message was received too late by the server
+            // because of network delay. When the turn message is received by
+            // the server, and it seems like the server made a wrong prediction,
+            // the snake returns from limbo.
+            if (snake.limbo) {
+                this._emitCrashMessage(crash);
+                this._setSnakeCrashed(client, snake.limbo);
+            } else {
+                snake.limbo = snake.parts.slice();
+            }
         }
 
         // Apple?
@@ -338,6 +349,22 @@ Game.prototype = {
         if (!snake.crashed) {
             snake.move(predict);
         }
+    },
+
+    /**
+     * @param {Array.<number>} crash
+     * @private
+     */
+    _emitCrashMessage: function(crash) {
+        var message;
+        if (crash[0] === this.CRASH_WALL) {
+            message = util.format('{%d} crashed into a wall', crash[1]);
+        } else if (crash[0] === this.CRASH_SELF) {
+            message = util.format('{%d} crashed into own tail', crash[1]);
+        } else if (crash[0] === this.CRASH_OPPONENT) {
+            message = util.format('{%d} crashed into {%d}', crash[1], crash[2]);
+        }
+        this.room.emit(events.CLIENT_CHAT_NOTICE, message);
     },
 
     /**

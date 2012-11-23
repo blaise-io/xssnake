@@ -186,10 +186,11 @@ Game.prototype = {
     _moveSnake: function(snake) {
         var position = snake.getNextPosition();
 
+        snake.move(position);
+
         // Don't show a snake moving inside a wall, which is caused by latency.
         // Server wil update snake on whether it crashed or made a turn in time.
         if (!this._isCrash(snake, position)) {
-            snake.move(position);
             snake.updateShape();
         }
     },

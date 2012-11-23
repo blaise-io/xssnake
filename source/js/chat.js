@@ -29,7 +29,10 @@ function Chat(index, names) {
     this.top = XSS.PIXELS_V - (7 * 3) - 2;
     this.left = 126;
     this.max = 3;
-    this.animSpeed = 100;
+    this.animSpeed = 200;
+
+    this._adding = false;
+    this._queue = [];
 
     this._bindEvents();
     this._updateShapes();
@@ -45,7 +48,7 @@ Chat.prototype = {
         var anim, callback;
 
         if (this._adding) {
-            this._messages.push(message);
+            this._queue.push(message);
             return this;
         }
 
@@ -53,8 +56,11 @@ Chat.prototype = {
 
         callback = function() {
             this._messages.push(message);
-            this._updateShapes();
             this._adding = false;
+            this._updateShapes();
+            if (this._queue.length) {
+                this.add(this._queue.shift());
+            }
         }.bind(this);
 
         // Space left, just pop it in
