@@ -39,15 +39,6 @@ Snake.prototype = {
     },
 
     /**
-     * @param {Array.<number>} head
-     * @return {boolean}
-     */
-    isHead: function(head) {
-        var thisHead = this.head();
-        return (thisHead[0] === head[0] && thisHead[1] === head[1]);
-    },
-
-    /**
      * @param {Array.<number>} part
      * @return {boolean}
      */

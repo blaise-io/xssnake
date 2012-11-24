@@ -148,12 +148,12 @@ Game.prototype = {
             }
 
             // Self
-            if (m - 1 !== i && !level.gap(part, parts[m - 1])) {
+            if (m >= 5 && m - 1 !== i && !level.gap(part, parts[m - 1])) {
                 return [this.CRASH_SELF, clients.indexOf(client)];
             }
 
             // Self (limbo)
-            else if (limbo && m - 2 !== i && !level.gap(part, parts[m - 2])) {
+            else if (limbo && m >= 5 && m - 2 !== i && !level.gap(part, parts[m - 2])) {
                 return [this.CRASH_SELF, clients.indexOf(client)];
             }
 

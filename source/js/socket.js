@@ -68,6 +68,7 @@ Socket.prototype = {
 
         this.socket.on(events.CLIENT_SNAKE_UPDATE, function(data) {
             var snake = XSS.room.game.snakes[data[0]];
+            snake.limbo = false;
             snake.parts = data[1];
             snake.direction = data[2];
         });
