@@ -18,8 +18,8 @@ function Game(room, levelID) {
 
     this.level = new Level(levelID, levels);
 
-    this.apples = [this.level.getRandomOpenTile()];
     this.snakes = [];
+    this.apples = [this.level.getRandomOpenTile(this.snakes)];
 
     this._roundEnded = false;
     this._tickListener = this._tick.bind(this);
@@ -160,7 +160,7 @@ Game.prototype = {
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii]) {
-                    if (-1 !== clients[ii].snake.partIndex(part)) {
+                    if (clients[ii].snake.hasPart(part)) {
                         return [this.CRASH_OPPONENT, clients.indexOf(client), ii];
                     }
                 }
@@ -265,7 +265,7 @@ Game.prototype = {
      * @private
      */
     _spawnApple: function(appleIndex) {
-        var location = this.level.getRandomOpenTile();
+        var location = this.level.getRandomOpenTile(this.snakes);
         this.apples[appleIndex] = location;
         this.room.emit(events.CLIENT_APPLE_SPAWN, [appleIndex, location]);
     },

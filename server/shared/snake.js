@@ -73,6 +73,14 @@ Snake.prototype = {
 
     /**
      * @param {Array.<number>} part
+     * @return {boolean}
+     */
+    hasPart: function(part) {
+        return (-1 !== this.partIndex(part));
+    },
+
+    /**
+     * @param {Array.<number>} part
      * @return {number}
      */
     partIndex: function(part) {

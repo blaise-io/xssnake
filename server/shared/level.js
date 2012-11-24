@@ -50,27 +50,36 @@ Level.prototype = {
     },
 
     /**
+     * @param {Array.<Snake>} snakes
      * @return {Array.<number>}
      */
-    getRandomOpenTile: function() {
-        var possibities, random, minOpenEdges, samplesPerIteration;
-
-        possibities = this.level.width * this.level.height;
-        minOpenEdges = 4;
-        samplesPerIteration = 200;
-
-        while (samplesPerIteration-- && minOpenEdges) {
-            random = Math.floor(Math.random() * possibities);
-            if (this._getSpawnPreferability(random) >= minOpenEdges) {
-                return this.seqToXY(random);
-            }
-            if (samplesPerIteration === 0) {
-                minOpenEdges--;
-                samplesPerIteration = 50;
+    getRandomOpenTile: function(snakes) {
+        var randomSeq, randomXY, max = this.level.width * this.level.height;
+        while (true) {
+            randomSeq = Math.floor(Math.random() * max);
+            randomXY = this.seqToXY(randomSeq);
+            if (this.clearOfWallsAndSnakes(randomXY, snakes)) {
+                break;
             }
         }
+        return randomXY;
+    },
 
-        return [-1, -1];
+    /**
+     * @param {Array.<number>} randomXY
+     * @param {Array.<Snake>} snakes
+     * @return {boolean}
+     */
+    clearOfWallsAndSnakes: function(randomXY, snakes) {
+        if (this.isWall(randomXY[0], randomXY[1])) {
+            return false;
+        }
+        for (var i = 0, m = snakes.length; i < m; i++) {
+            if (snakes[i].hasPart(randomXY)) {
+                return false;
+            }
+        }
+        return true;
     },
 
     /**
@@ -117,30 +126,6 @@ Level.prototype = {
      */
     gap: function(a, b) {
         return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
-    },
-
-    /**
-     * @param {number} seq
-     * @return {number}
-     * @private
-     */
-    _getSpawnPreferability: function(seq) {
-        var free = 0,
-            xy = this.seqToXY(seq);
-
-        if (this.isWall(xy[0], xy[1])) {
-            return 0;
-        }
-
-        for (var x = -1; x <= 1; x++) {
-            for (var y = -1; y <= 1; y++) {
-                if (!this.isWall(xy[0] + x, xy[1] + y)) {
-                    free++;
-                }
-            }
-        }
-
-        return free;
     },
 
     /**
