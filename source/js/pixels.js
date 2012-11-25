@@ -1,6 +1,10 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
 /*globals XSS, Shape*/
 
+/** @typedef {Array} */
+var xxxShape;
+
+/** @type {Object.<string, xxxShape>} */
 XSS.PIXELS = {
 
     APPLE: [7, '' +

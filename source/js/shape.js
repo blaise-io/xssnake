@@ -3,10 +3,13 @@
 
 'use strict';
 
-/** @typedef {Array.<Array>} */
+/** @typedef {Array.<number>} */
+var ShapePixel;
+
+/** @typedef {Array.<ShapePixel>} */
 var ShapePixels;
 
-/** @typedef {{canvas: Object, bbox: BoundingBox}} */
+/** @typedef {{canvas: Element, bbox: BoundingBox}} */
 var ShapeCache;
 
 /**
@@ -17,9 +20,6 @@ var ShapeCache;
 function Shape(varArgs) {
     /** @type {ShapePixels} */
     this.pixels = [];
-
-    /** @type {?ShapeCache} */
-    this.cache = null;
 
     /** @type {boolean} */
     this.enabled = true;
@@ -32,6 +32,12 @@ function Shape(varArgs) {
 
     /** @type {Object.<string,*>} */
     this.effects = {};
+
+    /** @type {?ShapeCache} */
+    this.cache = null;
+
+    /** @type {?BoundingBox} */
+    this._bbox = null;
 
     this.add.apply(this, arguments);
 }
@@ -84,11 +90,21 @@ Shape.prototype = {
     },
 
     /**
-     * @param {Array} str
      * @return {Shape}
      */
-    str: function(str) {
-        return this.set(XSS.shapegen.strToShapePixels(str[0], str[1]));
+    uncache: function() {
+        this.cache = null;
+        this._bbox = null;
+        return this;
+    },
+
+    /**
+     * @param {xxxShape} xxx
+     * @return {Shape}
+     */
+    str: function(xxx) {
+        var pixels = XSS.shapegen.strToShapePixels(xxx[0], xxx[1]);
+        return this.set(pixels);
     },
 
     /**
@@ -110,9 +126,7 @@ Shape.prototype = {
                 this.pixels.push(arguments[i][ii]);
             }
         }
-        this.cache = null;
-        this._bbox = null;
-        return this;
+        return this.uncache();
     },
 
     /**
@@ -129,9 +143,7 @@ Shape.prototype = {
                 }
             }
         }
-        this.cache = null;
-        this._bbox = null;
-        return this;
+        return this.uncache();
     },
 
     /**

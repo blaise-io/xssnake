@@ -198,7 +198,7 @@ Canvas.prototype = {
             var arg = objs[i];
             for (var k in arg) {
                 if (arg.hasOwnProperty(k)) {
-                    arg[k].add([]); // Flushes cache
+                    arg[k].uncache();
                 }
             }
         }
