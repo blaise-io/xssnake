@@ -39,15 +39,6 @@ Snake.prototype = {
     },
 
     /**
-     * @param {Array.<number>} head
-     * @return {boolean}
-     */
-    isHead: function(head) {
-        var thisHead = this.head();
-        return (thisHead[0] === head[0] && thisHead[1] === head[1]);
-    },
-
-    /**
      * @param {Array.<number>} part
      * @return {boolean}
      */
@@ -69,6 +60,14 @@ Snake.prototype = {
         while (this.parts.length > this.size) {
             this.parts.shift();
         }
+    },
+
+    /**
+     * @param {Array.<number>} part
+     * @return {boolean}
+     */
+    hasPart: function(part) {
+        return (-1 !== this.partIndex(part));
     },
 
     /**

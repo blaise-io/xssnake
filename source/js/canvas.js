@@ -211,8 +211,6 @@ Canvas.prototype = {
         // Attempt to make fat pixels pleasing at all sizes
         if (this.tileSize >= 4) {
             this.pixelSize = this.tileSize-1;
-        } else if (this.tileSize >= 3) {
-            this.pixelSize = this.tileSize * 0.8;
         } else {
             this.pixelSize = this.tileSize;
         }

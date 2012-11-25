@@ -190,7 +190,9 @@ Game.prototype = {
 
         // Don't show a snake moving inside a wall, which is caused by latency.
         // Server wil update snake on whether it crashed or made a turn in time.
-        if (!this._isCrash(snake, position)) {
+        if (this._isCrash(snake, position)) {
+            snake.limbo = true;
+        } else if (!snake.limbo) {
             snake.updateShape();
         }
     },
@@ -207,8 +209,10 @@ Game.prototype = {
             return true;
         }
 
-        if (!snake.isHead(position) && snake.hasPartPredict(position)) {
-            return true;
+        if (snake.parts.length >= 5 && snake.hasPartPredict(position)) {
+            if (snake.partIndex(position) !== snake.parts.length - 1) {
+                return true;
+            }
         }
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
