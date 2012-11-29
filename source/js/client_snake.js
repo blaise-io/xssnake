@@ -63,7 +63,7 @@ Util.extend(ClientSnake.prototype, {
             case 3: y += 10; x +=  4; break;
         }
 
-        shape = XSS.shapegen.tooltip(x, y, this.direction, this.name);
+        shape = XSS.shapegen.tooltip(this.name, x, y, this.direction);
         XSS.shapes[this.shapes.name] = shape;
     },
 

@@ -26,7 +26,7 @@ function Chat(index, names) {
 
     this.shapes = {};
 
-    this.top = XSS.PIXELS_V - (7 * 3) - 2;
+    this.top = XSS.PIXELS_V - (7 * 3) - 3;
     this.left = 126;
     this.max = 3;
     this.animSpeed = 200;
@@ -135,7 +135,7 @@ Chat.prototype = {
         this._hasFocus = focus;
         this._updateShapes();
         if (focus) {
-            this.field = new InputField(left, XSS.PIXELS_V - 9, prefix, maxWidth);
+            this.field = new InputField(left, XSS.PIXELS_V - 10, prefix, maxWidth);
         } else if (this.field) {
             this.field.destruct();
             delete this.field;
@@ -159,7 +159,7 @@ Chat.prototype = {
     },
 
     _sentIndication: function() {
-        var shape = XSS.font.shape(XSS.PIXELS_H - 8, XSS.PIXELS_V - 9, '↵');
+        var shape = XSS.font.shape('\u23ce', XSS.PIXELS_H - 8, XSS.PIXELS_V - 9);
         shape.flash(XSS.FLASH_FAST).lifetime(0, XSS.FLASH_FAST * 3, true);
         XSS.shapes.msgsent = shape;
     },
@@ -184,7 +184,7 @@ Chat.prototype = {
             messageStr = '[' + message.body + ']';
             left -= XSS.font.width('[') + 1;
         }
-        return XSS.font.shape(left, top, messageStr);
+        return XSS.font.shape(messageStr, left, top);
     },
 
     /**

@@ -89,7 +89,7 @@ ScoreBoard.prototype = {
      * @private
      */
     _podiumIndexToXY: function(index) {
-        var top = XSS.PIXELS_V - 23,
+        var top = XSS.PIXELS_V - 24,
             lefts = [5, 64];
         return [
             (index % 2) ? lefts[1] : lefts[0],
@@ -120,8 +120,8 @@ ScoreBoard.prototype = {
 
             shape = new Shape();
             shape.add(
-                XSS.font.pixels(oldPos[0], oldPos[1], newScore[newPodium].name),
-                XSS.font.pixels(oldPos[0] - width + 55, oldPos[1], score)
+                XSS.font.pixels(newScore[newPodium].name, oldPos[0], oldPos[1]),
+                XSS.font.pixels(score, oldPos[0] - width + 55, oldPos[1])
             );
 
             if (oldPodium !== newPodium) {

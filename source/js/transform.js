@@ -13,42 +13,40 @@ Transform.prototype = {
 
     /**
      * @param {Array} pixels
-     * @param {number} x
-     * @param {number} y
+     * @param {number=} x
+     * @param {number=} y
      * @return {Array}
      */
     shift: function(pixels, x, y) {
-        var sx, sy, ret = [];
-
-        for (var i = 0, m = pixels.length; i < m; i++) {
-            sx = pixels[i][0] + x;
-            sy = pixels[i][1] + y;
-            if (sx >= 0 && sy >= 0 && sx <= XSS.PIXELS_H && sy <= XSS.PIXELS_V) {
-                ret.push([sx, sy]);
+        var ret = [];
+        if (x === 0 && y === 0) {
+            ret = pixels;
+        } else {
+            for (var i = 0, m = pixels.length; i < m; i++) {
+                ret.push([pixels[i][0] + x, pixels[i][1] + y]);
             }
         }
-
         return ret;
     },
 
     /**
      * @param {ShapePixels} pixels
-     * @param {number=} shiftX
-     * @param {number=} shiftY
+     * @param {number=} horShift
+     * @param {number=} verShift
      * @return {ShapePixels}
      */
-    zoomX2: function(pixels, shiftX, shiftY) {
+    zoomX2: function(pixels, horShift, verShift) {
         var ret = [], x, y;
-        shiftX = shiftX || 0;
-        shiftY = shiftY || 0;
+        horShift = horShift || 0;
+        verShift = verShift || 0;
         for (var i = 0, m = pixels.length; i < m; i++) {
             x = pixels[i][0] * 2;
             y = pixels[i][1] * 2;
             ret.push(
-                [shiftX +     x, shiftY +     y],
-                [shiftX +     x, shiftY + 1 + y],
-                [shiftX + 1 + x, shiftY +     y],
-                [shiftX + 1 + x, shiftY + 1 + y]
+                [horShift +     x, verShift +     y],
+                [horShift +     x, verShift + 1 + y],
+                [horShift + 1 + x, verShift +     y],
+                [horShift + 1 + x, verShift + 1 + y]
             );
         }
         return ret;

@@ -43,7 +43,6 @@ gcc.addFiles(
     home + 'source/js/shape_generator.js',
     home + 'source/js/shape_effects.js',
     home + 'source/js/publish_subscribe.js',
-    home + 'source/js/pixels.js',
     home + 'source/js/canvas.js',
     home + 'source/js/transform.js',
     home + 'source/js/font.js',

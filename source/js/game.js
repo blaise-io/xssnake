@@ -127,7 +127,7 @@ Game.prototype = {
             var pixels, shape, bbox, start;
             start = (total - count) * 1000;
 
-            pixels = XSS.font.pixels(0, 0, String(count).replace(/^0$/,'Go!'));
+            pixels = XSS.font.pixels(String(count).replace(/^0$/, 'Go!'), 0, 0);
 
             shape = new Shape(XSS.transform.zoomX2(pixels));
             bbox = shape.bbox();

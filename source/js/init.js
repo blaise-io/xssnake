@@ -8,7 +8,7 @@ var module = {};
 var XSS = {};
 
 /** @const */ XSS.PIXELS_H = 256;
-/** @const */ XSS.PIXELS_V = 160;
+/** @const */ XSS.PIXELS_V = 161;
 
 /** @const */ XSS.KEY_BACKSPACE = 8;
 /** @const */ XSS.KEY_TAB = 9;
@@ -25,7 +25,7 @@ var XSS = {};
 /** @const */ XSS.DIRECTION_DOWN = 3;
 
 /** @const */ XSS.MENU_LEFT = 40;
-/** @const */ XSS.MENU_TOP = 64;
+/** @const */ XSS.MENU_TOP = 62;
 
 /** @const */ XSS.GAME_LEFT = 2;
 /** @const */ XSS.GAME_TOP = 2;
@@ -40,7 +40,7 @@ window.onerror = function() {
     XSS.error = true; // Stops draw loop
 };
 
-window.onload = function() {
+XSS.main = function() {
 
     /** @type {Object.<string,Shape>} */
     XSS.shapes    = {};
@@ -62,16 +62,12 @@ window.onload = function() {
     XSS.transform = new Transform();
     XSS.font      = new Font();
 
-    // Lazy Singletons
-    /** @type {Room} */
-    XSS.room = null;
-
     XSS.stageflow = new StageFlow();
 
     XSS.socket = new Socket(function() {
         var data = {
-            'name'    : window.location.search.substring(1) ||
-                        window.localStorage.getItem('name') ||
+            'name'    : decodeURIComponent(location.search).substring(1) ||
+                        localStorage && localStorage.getItem('name') ||
                         'Anon',
             'friendly': true,
             'pub'     : true
@@ -79,4 +75,9 @@ window.onload = function() {
         XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
     });
 
+};
+
+// Give Chrome a chance to initialize @font-face
+window.onload = function() {
+    window.setTimeout(XSS.main, 100);
 };

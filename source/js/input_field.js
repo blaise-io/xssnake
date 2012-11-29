@@ -78,12 +78,12 @@ InputField.prototype = {
             segments = this._getValueSegments();
 
         untilCaretStr = segments[0] + segments[1];
-        untilCaretWidth = XSS.font.width(this.prefix + untilCaretStr) || -1;
+        untilCaretWidth = XSS.font.width(this.prefix + untilCaretStr) -1;
         caretX = this.x + untilCaretWidth;
 
         caretShape = XSS.shapegen.lineShape(
-            caretX, this.y - 2,
-            caretX, this.y + 6
+            caretX, this.y - 1,
+            caretX, this.y + 7
         );
 
         caretShape.flash();
@@ -99,15 +99,15 @@ InputField.prototype = {
         var x, shape, values = this._getValueSegments();
 
         shape = new Shape();
-        shape.add(XSS.font.pixels(this.x, this.y, this.prefix + values[0]));
+        shape.add(XSS.font.pixels(this.prefix + values[0], this.x, this.y));
 
         if (values[1]) { // Selection
-            x = 1 + this.x + XSS.font.width(this.prefix + values[0]);
-            shape.add(XSS.font.pixels(x, this.y, values[1], true));
+            x = this.x + XSS.font.width(this.prefix + values[0]);
+            shape.add(XSS.font.pixels(values[1], x, this.y, true));
         }
 
-        x = 1 + this.x + XSS.font.width(this.prefix + values[0] + values[1]);
-        shape.add(XSS.font.pixels(x, this.y, values[2]));
+        x = this.x + XSS.font.width(this.prefix + values[0] + values[1]);
+        shape.add(XSS.font.pixels(values[2], x, this.y));
 
         return shape;
     },

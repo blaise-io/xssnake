@@ -89,6 +89,20 @@ Shape.prototype = {
         return this.set(XSS.transform.shift(this.pixels, x, y));
     },
 
+    invert: function(bbox) {
+        var pixels = this.pixels.slice(), inverted = [];
+        bbox = bbox || this.bbox();
+        for (var x = bbox.x1; x < bbox.x2; x++) {
+            for (var y = bbox.y1; y < bbox.y2; y++) {
+                inverted.push([x, y]);
+            }
+        }
+        this.pixels = inverted;
+        this.remove(pixels);
+        this.uncache();
+        return this;
+    },
+
     /**
      * @return {Shape}
      */
@@ -96,15 +110,6 @@ Shape.prototype = {
         this.cache = null;
         this._bbox = null;
         return this;
-    },
-
-    /**
-     * @param {xxxShape} xxx
-     * @return {Shape}
-     */
-    str: function(xxx) {
-        var pixels = XSS.shapegen.strToShapePixels(xxx[0], xxx[1]);
-        return this.set(pixels);
     },
 
     /**

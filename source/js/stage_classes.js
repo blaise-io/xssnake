@@ -63,14 +63,14 @@ SelectMenu.prototype = {
             var active, title;
             active = (this.getSelected() === i);
             title = this._options[i].title;
-            font = XSS.font.pixels(x, y + (i * 9), title, active);
+            font = XSS.font.pixels(title, x, y + (i * 9), active);
             shape.add(font);
         }
 
         // Help text line(s)
         description = this.getSelectedOption().description.split('\n');
         for (var j = 0, n = description.length; j < n; j++) {
-            font = XSS.font.pixels(x, y + ((i + 1 + j) * 9), description[j]);
+            font = XSS.font.pixels(description[j], x, y + ((i + 1 + j) * 9));
             shape.add(font);
         }
 
@@ -150,7 +150,7 @@ InputStage.prototype = {
 
     getShape: function() {
         var str = this.label + this.val;
-        return XSS.font.shape(XSS.MENU_LEFT, XSS.MENU_TOP, str);
+        return XSS.font.shape(str, XSS.MENU_LEFT, XSS.MENU_TOP);
     },
 
     /**
@@ -158,7 +158,12 @@ InputStage.prototype = {
      */
     createStage: function() {
         XSS.on.keydown(this.handleKeys);
-        this.input = new InputField(XSS.MENU_LEFT, XSS.MENU_TOP, this.label, 30);
+        this.input = new InputField(
+            XSS.MENU_LEFT,
+            XSS.MENU_TOP,
+            this.label,
+            XSS.config.client.ui.maxNameWidth
+        );
         this.input.setValue(this.val);
         this.input.callback = function(value) {
             delete XSS.shapes.stage; // We already show the dynamic stage
@@ -208,7 +213,7 @@ InputStage.prototype = {
             text = error;
         }
 
-        shape = XSS.font.shape(XSS.MENU_LEFT, XSS.MENU_TOP + 9, text);
+        shape = XSS.font.shape(text, XSS.MENU_LEFT, XSS.MENU_TOP + 9);
         shape.lifetime(0, duration);
         XSS.shapes.message = shape;
 

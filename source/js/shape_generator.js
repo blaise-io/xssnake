@@ -14,19 +14,6 @@ function ShapeGenerator() {
 ShapeGenerator.prototype = {
 
     /**
-     * @param {string} key
-     * @return {BoolPixels}
-     */
-    raw: function(key) {
-        var raw;
-        if (!this._cache[key]) {
-            raw = XSS.PIXELS[key];
-            this._cache[key] = this.strToBoolPixels(raw[0], raw[1]);
-        }
-        return this._cache[key];
-    },
-
-    /**
      * @param {number} x0
      * @param {number} y0
      * @param {number} x1
@@ -76,26 +63,27 @@ ShapeGenerator.prototype = {
     },
 
     /**
+     * @param {string} text
      * @param {number} x
      * @param {number} y
      * @param {number} side
-     * @param {string} text
+     * @return {Shape}
      */
-    tooltip: function(x, y, side, text) {
+    tooltip: function(text, x, y, side) {
         var width, shape, hw, line = XSS.shapegen.line;
 
         width = XSS.font.width(text);
 
         switch (side) {
             case 0:
-                shape = XSS.font.shape(x - width - 7, y - 3, text);
+                shape = XSS.font.shape(text, x - width - 6, y - 4);
                 // Left
-                shape.add(line(x - width - 10, y - 5, x - width - 10, y + 3));
+                shape.add(line(x - width - 9, y - 5, x - width - 9, y + 3));
                 // Top
-                shape.add(line(x - width - 9, y - 6, x - 6, y - 6));
+                shape.add(line(x - width - 8, y - 6, x - 6, y - 6));
                 // Bottoms
-                shape.add(line(x - width - 10, y + 4, x - 5, y + 4));
-                shape.add(line(x - width - 9, y + 5, x - 6, y + 5));
+                shape.add(line(x - width - 9, y + 4, x - 5, y + 4));
+                shape.add(line(x - width - 8, y + 5, x - 6, y + 5));
                 // Top 1px
                 shape.add(line(x - 5, y - 5, x - 5, y - 5));
                 // Pointer
@@ -105,8 +93,8 @@ ShapeGenerator.prototype = {
                 break;
             //
             case 1:
-                hw = Math.round(width / 2);
-                shape = XSS.font.shape(x - hw, y - 12, text);
+                hw = Math.ceil(width / 2);
+                shape = XSS.font.shape(text, x - hw, y - 13);
                 // Top
                 shape.add(line(x - hw - 2, y - 15, x + hw + 1, y - 15));
                 // Left
@@ -125,14 +113,14 @@ ShapeGenerator.prototype = {
                 shape.remove(line(x - 3, y - 5, x + 3, y - 5));
                 break;
             case 2:
-                shape = XSS.font.shape(x + 8, y - 3, text);
+                shape = XSS.font.shape(text, x + 8, y - 4);
                 // Right
-                shape.add(line(x + width + 10, y - 5, x + width + 10, y + 3));
+                shape.add(line(x + width + 9, y - 5, x + width + 9, y + 3));
                 // Top
-                shape.add(line(x + width + 9, y - 6, x + 6, y - 6));
+                shape.add(line(x + width + 8, y - 6, x + 6, y - 6));
                 // Bottom
-                shape.add(line(x + width + 10, y + 4, x + 5, y + 4));
-                shape.add(line(x + width + 9, y + 5, x + 6, y + 5));
+                shape.add(line(x + width + 9, y + 4, x + 5, y + 4));
+                shape.add(line(x + width + 8, y + 5, x + 6, y + 5));
                 // Top 1px
                 shape.add(line(x + 5, y - 5, x + 5, y - 5));
                 // Pointer
@@ -142,7 +130,7 @@ ShapeGenerator.prototype = {
                 break;
             case 3:
                 hw = Math.ceil(width / 2);
-                shape = XSS.font.shape(x - hw, y + 7, text);
+                shape = XSS.font.shape(text, x - hw, y + 6);
                 // Top
                 shape.add(line(x + -hw - 2, y + 4, x + hw + 1, y + 4));
                 // Left
@@ -159,7 +147,7 @@ ShapeGenerator.prototype = {
                 break;
         }
         shape.clip = true;
-        shape.bbox().expand(0);
+        shape.bbox();
         return shape;
     },
 
@@ -171,7 +159,7 @@ ShapeGenerator.prototype = {
             h = XSS.PIXELS_V - 1;
         return new Shape(
             this.line(2, h - 25, w - 2, h - 25),
-            this.line(2, h - 24, w - 2, h - 24)
+            this.line(2, h - 26, w - 2, h - 26)
         );
     },
 
@@ -204,47 +192,12 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     header: function(x, y) {
-        y = y || 18;
-        var welcome = XSS.font.pixels(0, 0, '<XSSNAKE>');
+        y = y || 16;
+        var welcome = XSS.font.pixels('<XSSNAKE>', 0, 0);
         return new Shape(
             XSS.transform.zoomX4(welcome, x, y),
-            XSS.font.pixels(x, y + 20, (new Array(45)).join('+'))
+            XSS.font.pixels((new Array(45)).join('+'), x, y + 24)
         );
-    },
-
-    /**
-     * @param {number} height
-     * @param {string} str
-     * @return {BoolPixels}
-     */
-    strToBoolPixels: function(height, str) {
-        var arr, ret = [];
-        arr = str.split('');
-        for (var i = 0, m = arr.length; i < m; i++) {
-            var row = Math.floor(i / (m / height));
-            if (!ret[row]) {
-                ret[row] = [];
-            }
-            ret[row].push(arr[i] === 'X');
-        }
-        return ret;
-    },
-
-    /**
-     * @param {number} height
-     * @param {string} str
-     * @return {ShapePixels}
-     */
-    strToShapePixels: function(height, str) {
-        var width, arr, ret = [];
-        arr = str.split('');
-        width = arr.length / height;
-        for (var i = 0, m = arr.length; i < m; i++) {
-            if (arr[i] === 'X') {
-                ret.push([i % width, Math.floor(i / width)]);
-            }
-        }
-        return ret;
     }
 
 };

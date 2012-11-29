@@ -52,6 +52,7 @@ Level.prototype = {
     /**
      * @param {Array.<Snake>} snakes
      * @return {Array.<number>}
+     * @suppress {checkTypes} GCC being weird
      */
     getRandomOpenTile: function(snakes) {
         var randomSeq, randomXY, max = this.level.width * this.level.height;

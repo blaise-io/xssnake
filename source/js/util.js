@@ -47,7 +47,7 @@ var Util = {
         script.onload = callback;
         script.onerror = function() {
             XSS.shapes = {
-                err: XSS.font.shape(0, 70, 'Cannot connect to ' + url)
+                err: XSS.font.shape('Cannot connect to ' + url, 0, 70)
             };
         };
         head = document.querySelector('head');

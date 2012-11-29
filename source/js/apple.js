@@ -34,10 +34,7 @@ Apple.prototype = {
      * @private
      */
     _getShape: function() {
-        var shape = new Shape();
-        shape.str(XSS.PIXELS.APPLE).flash();
-        shape.shift(this.px.x, this.px.y);
-        return shape;
+        return XSS.font.shape('\u25ce', this.px.x,  this.px.y);
     },
 
     _showNomNomNom: function() {
@@ -51,7 +48,7 @@ Apple.prototype = {
         };
 
         for (var i = 0; i <= 300; i += 100) {
-            var shape = XSS.font.shape(x + random(), y + random(), 'nom');
+            var shape = XSS.font.shape('nom', x + random(), y + random());
             XSS.shapes['nom' + i] = shape.lifetime(i, 100 + i, true);
         }
     }

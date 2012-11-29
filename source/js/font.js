@@ -3,66 +3,56 @@
 'use strict';
 
 /**
- * Font
- * Pixel font definition and writing texts
  * @constructor
  */
-function Font() {}
+function Font() {
+    this._ctx = this._getCanvas();
+    this._cache = {};
+}
 
-/**
- * No descenders height
- * @const
- * @type {number}
- */
-Font.MIN = 5;
-
-/**
- * Descenders height
- * @const
- * @type {number}
- */
-Font.MAX = 6;
-
-/** @typedef {Array.<Array.<boolean>>} */
-var BoolPixels;
+/** @const */ Font.MAX_WIDTH = 9;
+/** @const */ Font.MAX_HEIGHT = 7;
 
 Font.prototype = {
 
     /**
-     * @param {number} x
-     * @param {number} y
      * @param {string} str
-     * @param {boolean} inverted
-     * @return {ShapePixels}
+     * @param {number=} x
+     * @param {number=} y
+     * @param {boolean=} invert
+     * @return {Shape}
      */
-    pixels: function(x, y, str, inverted) {
-        var pixels = [], chars = this._replaceMissingChars(str.split(''));
+    shape: function(str, x, y, invert) {
+        var x2,
+            arr = str.split(''),
+            shape = new Shape();
 
-        for (var i = 0, m = chars.length; i < m; i++) {
-            var glyph = XSS.shapegen.raw(chars[i]);
-            this._drawGlyph(pixels, x, y, glyph, inverted);
-            if (inverted) {
-                this._invertHorWhitespace(pixels, x - 1, y);
-            }
-            x = x + 1 + glyph[0].length;
+        x = x2 = x || 0;
+        y = y || 0;
+
+        for (var i = 0, m = arr.length; i < m; i++) {
+            var chrPixels = this.chrPixels(arr[i]),
+                shifted = XSS.transform.shift(chrPixels.pixels, x2, y);
+            shape.add(shifted);
+            x2 += chrPixels.width + 2;
         }
 
-        if (inverted) {
-            this._invertHorWhitespace(pixels, x - 1, y);
+        if (invert) {
+            this._invert(shape, x, x2, y);
         }
 
-        return pixels;
+        return shape;
     },
 
     /**
-     * @param {number} x
-     * @param {number} y
      * @param {string} str
-     * @param {boolean} inverted
-     * @return {Shape}
+     * @param {number=} x
+     * @param {number=} y
+     * @param {boolean=} invert
+     * @return {ShapePixels}
      */
-    shape: function(x, y, str, inverted) {
-        return new Shape(this.pixels.apply(this, arguments));
+    pixels: function(str, x, y, invert) {
+        return this.shape.apply(this, arguments).pixels;
     },
 
     /**
@@ -70,89 +60,95 @@ Font.prototype = {
      * @return {number}
      */
     width: function(str) {
-        var len = 0, chars = this._replaceMissingChars(str.split(''));
-        for (var i = 0, m = chars.length; i < m; i++) {
-            len += XSS.shapegen.raw(chars[i])[0].length;
-            if (i + 1 !== m) {
-                len += 1;
-            }
-        }
-        return len;
-    },
-
-    /**
-     * @param {ShapePixels} pixels
-     * @param {number} x
-     * @param {number} y
-     * @private
-     */
-    _invertHorWhitespace: function(pixels, x, y) {
-        for (var i = -2; i < Font.MAX + 1; i++) {
-            pixels.push([x, y + i]);
-        }
-    },
-
-    /**
-     * @param {ShapePixels} pixels
-     * @param {number} x
-     * @param {number} y
-     * @param {number} width
-     * @private
-     */
-    _invertVertWhitespace: function(pixels, x, y, width) {
-        for (var i = 0; i + 1 < width; i++) {
-            pixels.push([x + i, y]);
-        }
-    },
-
-    /**
-     * @param {Array.<string>} arr
-     * @return {Array.<string>}
-     * @private
-     */
-    _replaceMissingChars: function(arr) {
-        var ret = [];
+        var arr = str.split(''), width = 0;
         for (var i = 0, m = arr.length; i < m; i++) {
-            if (XSS.PIXELS[arr[i]]) {
-                ret.push(arr[i]);
-            } else {
-                ret.push('■');
-            }
+            width += this._getChrProps(arr[i]).width;
+            width += 2;
         }
-        return ret;
+        return width;
     },
 
     /**
-     * @param {ShapePixels} pixels
+     * @param chr
+     * @return {Object}
+     */
+    chrPixels: function(chr) {
+        if (!this._cache[chr]) {
+            var chrProps = this._getChrProps(chr);
+            this._cache[chr] = chrProps || this.chrPixels('\u25a0');
+        }
+        return this._cache[chr];
+    },
+
+    /**
+     * @param {Shape} shape
      * @param {number} x
+     * @param {number} x2
      * @param {number} y
-     * @param {BoolPixels} glyph
-     * @param {boolean} inverted
      * @private
      */
-    _drawGlyph: function(pixels, x, y, glyph, inverted) {
-        var glyphWidth;
-        for (var xx = 0, m = glyph.length; xx < m; xx++) { // y
-            for (var yy = 0, mm = glyph[0].length; yy < mm; yy++) { // x
-                var pixel = glyph[xx] ? glyph[xx][yy] : false;
-                if ((pixel && !inverted) || (!pixel && inverted)) {
-                    pixels.push([yy + x, xx + y]);
-                }
+    _invert: function(shape, x, x2, y) {
+        var bbox = shape.bbox();
+        bbox.x1 = x - 1;
+        bbox.x2 = x2;
+        bbox.y1 = y - 1;
+        bbox.y2 = y + 1 + Font.MAX_HEIGHT;
+        shape.invert(bbox);
+    },
+
+    /**
+     * @return {CanvasRenderingContext2D}
+     * @private
+     */
+    _getCanvas: function() {
+        var canvas, context;
+
+        canvas = document.createElement('canvas');
+        canvas.width = Font.MAX_WIDTH;
+        canvas.height = Font.MAX_HEIGHT;
+
+        context = canvas.getContext('2d');
+        context.font = '8px xssnake';
+
+        return context;
+    },
+
+    /**
+     * @param {string} chr
+     * @return {Object}
+     * @private
+     */
+    _getChrProps: function(chr) {
+        var data, pixels = [], mw = 0, mh = 0, blurry = 0,
+            w = Font.MAX_WIDTH,
+            h = Font.MAX_HEIGHT;
+
+        this._ctx.fillStyle = '#000';
+        this._ctx.fillRect(0, 0, w, h);
+
+        this._ctx.fillStyle = '#fff';
+        this._ctx.fillText(chr, 0, 6);
+
+        data = this._ctx.getImageData(0, 0, w, h).data;
+        for (var i = 0, m = data.length; i < m; i += 4) {
+            if (data[i] > 200) {
+                var ri = i / 4,
+                    x = ri % w,
+                    y = Math.floor(ri / w);
+                if (x > mw) { mw = x; }
+                if (y > mh) { mh = y; }
+                pixels.push([x, y]);
+            } else if (data[i] > 100) {
+                return null; // Blurry pixel = unsupported chr
             }
         }
-        if (inverted) {
-            glyphWidth = glyph[0].length + 1;
-            // Overline 1
-            this._invertVertWhitespace(pixels, x, y - 1, glyphWidth);
-            // Overline 2
-            this._invertVertWhitespace(pixels, x, y - 2, glyphWidth);
-            // Underline 2
-            this._invertVertWhitespace(pixels, x, y + Font.MAX, glyphWidth);
-            if (glyph.length === Font.MIN) {
-                // Underline 1 when all caps
-                this._invertVertWhitespace(pixels, x, y + Font.MIN, glyphWidth);
-            }
-        }
+
+        return {
+            width : mw,
+            height: mh,
+            pixels: pixels,
+            blurry: blurry
+        };
     }
 
 };
