@@ -8,12 +8,21 @@
 function Font() {
     this._ctx = this._getCanvas();
     this._cache = {};
+    this.detectFontSupport();
 }
 
 /** @const */ Font.MAX_WIDTH = 9;
 /** @const */ Font.MAX_HEIGHT = 7;
+/** @const */ Font.BASELINE = 6;
+/** @const */ Font.NO_CHAR = '\u25a0';
 
 Font.prototype = {
+
+    detectFontSupport: function() {
+        if (!this._getChrProps(Font.NO_CHAR)) {
+            throw new Error('Cannot render xssnake font');
+        }
+    },
 
     /**
      * @param {string} str
@@ -62,7 +71,7 @@ Font.prototype = {
     width: function(str) {
         var arr = str.split(''), width = 0;
         for (var i = 0, m = arr.length; i < m; i++) {
-            width += this._getChrProps(arr[i]).width;
+            width += this.chrPixels(arr[i]).width;
             width += 2;
         }
         return width;
@@ -75,7 +84,7 @@ Font.prototype = {
     chrPixels: function(chr) {
         if (!this._cache[chr]) {
             var chrProps = this._getChrProps(chr);
-            this._cache[chr] = chrProps || this.chrPixels('\u25a0');
+            this._cache[chr] = chrProps || this.chrPixels(Font.NO_CHAR);
         }
         return this._cache[chr];
     },
@@ -119,36 +128,36 @@ Font.prototype = {
      * @private
      */
     _getChrProps: function(chr) {
-        var data, pixels = [], mw = 0, mh = 0, blurry = 0,
+        var data, pixels = [], width = 0, blurry = 0, valid,
             w = Font.MAX_WIDTH,
             h = Font.MAX_HEIGHT;
+
+        // Handle whitespace characters
+        if (chr.match(/\s/)) {
+            return {width: 1, pixels: []};
+        }
 
         this._ctx.fillStyle = '#000';
         this._ctx.fillRect(0, 0, w, h);
 
         this._ctx.fillStyle = '#fff';
-        this._ctx.fillText(chr, 0, 6);
+        this._ctx.fillText(chr, 0, Font.BASELINE);
 
         data = this._ctx.getImageData(0, 0, w, h).data;
         for (var i = 0, m = data.length; i < m; i += 4) {
-            if (data[i] > 200) {
-                var ri = i / 4,
-                    x = ri % w,
-                    y = Math.floor(ri / w);
-                if (x > mw) { mw = x; }
-                if (y > mh) { mh = y; }
+            if (data[i] === 255 || data[i + 1] === 255 || data[i + 2] === 255) {
+                var seq = i / 4,
+                    x = seq % w,
+                    y = Math.floor(seq / w);
                 pixels.push([x, y]);
-            } else if (data[i] > 100) {
-                return null; // Blurry pixel = unsupported chr
+                width = Math.max(x, width);
+            } else if (data[i]) {
+                blurry++;
             }
         }
 
-        return {
-            width : mw,
-            height: mh,
-            pixels: pixels,
-            blurry: blurry
-        };
+        valid = pixels.length && blurry / pixels.length < 3.1;
+        return (valid) ? {width: width, pixels: pixels} : null;
     }
 
 };

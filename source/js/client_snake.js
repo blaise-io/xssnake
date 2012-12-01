@@ -174,7 +174,7 @@ Util.extend(ClientSnake.prototype, {
                     this.emitState(direction);
                 } else {
                     // Wait a bit before sending this
-                    window.setTimeout(function() {
+                    setTimeout(function() {
                         this.emitState(direction);
                     }.bind(this), this.speed - 20);
                 }

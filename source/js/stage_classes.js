@@ -135,7 +135,7 @@ function InputStage(name, nextStage, label) {
 
     this.label = label || '';
 
-    this.val = window.localStorage.getItem(this.name) || '';
+    this.val = localStorage && localStorage.getItem(this.name) || '';
     this.minlength = 0;
     this.maxWidth = 999;
 
@@ -168,7 +168,9 @@ InputStage.prototype = {
         this.input.callback = function(value) {
             delete XSS.shapes.stage; // We already show the dynamic stage
             this.val = value;
-            window.localStorage.setItem(this.name, value);
+            if (localStorage) {
+                localStorage.setItem(this.name, value);
+            }
         }.bind(this);
     },
 
@@ -206,7 +208,7 @@ InputStage.prototype = {
             this.val = this.val.trim();
             text = this._getRandomRemarkOnNameROFL(this.val);
             duration = Math.max(text.length * 40, 500);
-            window.setTimeout(function() {
+            setTimeout(function() {
                 XSS.stageflow.switchStage(this.nextStage);
             }.bind(this), duration + 50);
         } else {

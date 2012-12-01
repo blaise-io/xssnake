@@ -61,7 +61,7 @@ PublishSubscribe.prototype = {
      */
     _exec: function(func, args) {
         // Wrapped in setTimeout to prevent locks
-        window.setTimeout(function() {
+        setTimeout(function() {
             func.apply(func, args);
         }, 0);
     }

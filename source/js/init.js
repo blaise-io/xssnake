@@ -61,10 +61,8 @@ XSS.main = function() {
     XSS.shapegen  = new ShapeGenerator();
     XSS.transform = new Transform();
     XSS.font      = new Font();
-
     XSS.stageflow = new StageFlow();
-
-    XSS.socket = new Socket(function() {
+    XSS.socket    = new Socket(function() {
         var data = {
             'name'    : decodeURIComponent(location.search).substring(1) ||
                         localStorage && localStorage.getItem('name') ||
@@ -77,7 +75,7 @@ XSS.main = function() {
 
 };
 
-// Give Chrome a chance to initialize @font-face
+// Give Webkit time to initialize @font-face
 window.onload = function() {
-    window.setTimeout(XSS.main, 100);
+    setTimeout(XSS.main, 200);
 };
