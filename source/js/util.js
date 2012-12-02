@@ -5,7 +5,7 @@
 var Util = {
 
     /**
-     * @param {Object} destination
+     * @param {*} destination
      * @param {Object} source
      * @return {Object}
      */
@@ -46,9 +46,8 @@ var Util = {
         script.src = url;
         script.onload = callback;
         script.onerror = function() {
-            XSS.shapes = {
-                err: XSS.font.shape('Cannot connect to ' + url, 0, 70)
-            };
+            var err = 'Error loading ' + url;
+            XSS.shapes.err = XSS.font.shape(err, 4, XSS.PIXELS_V - 10);
         };
         head = document.querySelector('head');
         head.insertBefore(script, head.firstChild);

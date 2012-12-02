@@ -49,6 +49,11 @@ Chat.prototype = {
 
         if (this._adding) {
             this._queue.push(message);
+            if (this._queue.length > 3) {
+                this._messages = this._queue.slice();
+                this._updateShapes();
+                this._queue = [];
+            }
             return this;
         }
 
@@ -115,10 +120,8 @@ Chat.prototype = {
             case XSS.KEY_ENTER:
                 if (this._hasFocus) {
                     this._sendMessage(this.field.value.trim());
-                    this._focusInput(false);
-                } else {
-                    this._focusInput(true);
                 }
+                this._focusInput(!this._hasFocus);
                 e.preventDefault();
                 break;
         }
@@ -181,8 +184,8 @@ Chat.prototype = {
                 var re = new RegExp('\\{' + i + '\\}', 'g');
                 message.body = message.body.replace(re, this.names[i]);
             }
-            messageStr = '[' + message.body + ']';
-            left -= XSS.font.width('[') + 1;
+            messageStr = '>' + message.body;
+            left -= XSS.font.width('>');
         }
         return XSS.font.shape(messageStr, left, top);
     },
