@@ -50,7 +50,7 @@ Chat.prototype = {
         if (this._adding) {
             this._queue.push(message);
             if (this._queue.length > 3) {
-                this._messages = this._queue.slice();
+                this._messages = this._queue.slice(-3);
                 this._updateShapes();
                 this._queue = [];
             }
