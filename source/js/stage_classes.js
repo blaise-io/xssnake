@@ -207,7 +207,7 @@ InputStage.prototype = {
         if (error === false) {
             this.val = this.val.trim();
             text = this._getRandomRemarkOnNameROFL(this.val);
-            duration = Math.max(text.length * 40, 500);
+            duration = Math.max(text.length * 30, 500);
             setTimeout(function() {
                 XSS.stageflow.switchStage(this.nextStage);
             }.bind(this), duration + 50);
@@ -227,24 +227,27 @@ InputStage.prototype = {
         var remark, wits = [
             '%s%s%s',
             'You have the same name as my mom',
-            'LOVELY ♥♥♥',
-            '☠',
+            'LOVELY ' + new Array(4).join(XSS.UNICODE_HEART),
+            XSS.UNICODE_SKULL,
             'Lamest name EVER',
             'Clever name!',
-            'I ♥ the way you touch your keyboard',
+            'Mmm I love the way you handled that keyboard',
             'asdasdasdasd',
             'Please dont touch anything',
             'Hello %s',
             'Is that your real name?',
-            'You dont look like a %s...',
+            'You dont look like a %s…',
             'Are you new here?',
             'I remember you',
-            'You smell NICE',
+            'I dont believe that\'s your name, but continue anyway',
             'Can I have your number?',
             'My name is NaN',
+            '#$%^&*())',
             'I thought I banned you?',
-            'RECYCLING SAVES THE EARTH!!!',
-            'OMGOMG'
+            'Jesus saves',
+            'Is this your first time online?',
+            'Are you from the internet?',
+            '%s? OMGOMG'
         ];
         remark = Util.randomItem(wits);
         return remark.replace(/%s/g, name);

@@ -31,7 +31,8 @@ gcc.params({
 gcc.header(header);
 
 gcc.addFiles(
-    home + 'source/js/init.js',
+    home + 'source/js/main.js',
+    home + 'source/js/consts.js',
     home + 'source/js/util.js',
     home + 'server/shared/config.js',
     home + 'server/shared/events.js',

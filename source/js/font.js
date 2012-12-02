@@ -14,12 +14,11 @@ function Font() {
 /** @const */ Font.MAX_WIDTH = 9;
 /** @const */ Font.MAX_HEIGHT = 7;
 /** @const */ Font.BASELINE = 6;
-/** @const */ Font.NO_CHAR = '\u25a0';
 
 Font.prototype = {
 
     detectFontSupport: function() {
-        if (!this._getChrProps(Font.NO_CHAR)) {
+        if (!this._getChrProps(XSS.UNICODE_SQUARE)) {
             throw new Error('Cannot render xssnake font');
         }
     },
@@ -84,7 +83,7 @@ Font.prototype = {
     chrPixels: function(chr) {
         if (!this._cache[chr]) {
             var chrProps = this._getChrProps(chr);
-            this._cache[chr] = chrProps || this.chrPixels(Font.NO_CHAR);
+            this._cache[chr] = chrProps || this.chrPixels(XSS.UNICODE_SQUARE);
         }
         return this._cache[chr];
     },

@@ -40,10 +40,11 @@ XSS.stages = {
         var menu;
 
         menu = new SelectMenu('friendly');
-        menu.addOption(true, XSS.stages.startGame, 'FRIENDLY MODE', 'May slightly dent your ego ♥');
+        menu.addOption(true, XSS.stages.startGame, 'FRIENDLY MODE',
+            'May slightly dent your ego ' + XSS.UNICODE_HEART);
         menu.addOption(false, XSS.stages.startGame, 'XSS MODE',
-            'The winner of the game is able to execute Java-\n' +
-                'script in the browser of the loser...  alert(’☠’)');
+            'The winner of the game is allowed to execute Java-\n' +
+            'script in loser\'s browser…  alert(\'' + XSS.UNICODE_SKULL + '\')');
 
         return new SelectStage(menu);
     },
@@ -92,7 +93,7 @@ XSS.stages = {
     inputName: function() {
         var stage, nextstage = XSS.stages.askIsPublic;
 
-        stage = new InputStage('name', nextstage, 'Hello, my name is ');
+        stage = new InputStage('name', nextstage, 'Ohi! My name is ');
         stage.minlength = 2;
         stage.maxWidth = XSS.config.client.ui.maxNameWidth;
 

@@ -34,7 +34,7 @@ Apple.prototype = {
      * @private
      */
     _getShape: function() {
-        return XSS.font.shape('\u25ce', this.px.x,  this.px.y);
+        return XSS.font.shape(XSS.UNICODE_BULLSEYE, this.px.x,  this.px.y);
     },
 
     _showNomNomNom: function() {
