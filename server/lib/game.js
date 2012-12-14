@@ -5,6 +5,7 @@ var util = require('util'),
     Level = require('../shared/level.js'),
     levels = require('../shared/levels.js'),
     Snake = require('../shared/snake.js'),
+    Powerup = require('../shared/powerup.js'),
     config = require('../shared/config.js'),
     events = require('../shared/events.js');
 
@@ -20,6 +21,7 @@ function Game(room, levelID) {
 
     this.snakes = [];
     this.apples = [this.level.getRandomOpenTile(this.snakes)];
+    this.powerups = [];
 
     this._roundEnded = false;
     this._tickListener = this._tick.bind(this);
@@ -34,7 +36,8 @@ Game.prototype = {
     CRASH_OPPONENT: 2,
 
     countdown: function() {
-        setTimeout(this.start.bind(this), config.shared.game.countdown * 1000);
+        var delay = config.shared.game.countdown * 1000;
+        this._gameStartTimer = setTimeout(this.start.bind(this), delay);
         this.room.emit(events.CLIENT_GAME_COUNTDOWN, null);
         this._setupClients();
     },
@@ -45,12 +48,15 @@ Game.prototype = {
         this.room.emit(events.CLIENT_APPLE_SPAWN, [0, this.apples[0]]);
         this.room.inProgress = true;
         this.server.ticker.addListener('tick', this._tickListener);
+        this._delaySpawnPowerup();
     },
 
     destruct: function() {
         if (this.server.ticker.listeners('tick')) {
             this.server.ticker.removeListener('tick', this._tickListener);
         }
+        clearTimeout(this._gameStartTimer);
+        clearTimeout(this._powerUpTimer);
         this.room = null;
         this.server = null;
     },
@@ -100,6 +106,14 @@ Game.prototype = {
             var data = [i, this.snakes[i].parts, this.snakes[i].direction];
             client.emit(events.CLIENT_SNAKE_UPDATE, data);
         }
+    },
+
+    /**
+     * @private
+     */
+    _delaySpawnPowerup: function() {
+        var delay = Math.random() * 4000;
+        this._powerUpTimer = setTimeout(this._spawnPowerup.bind(this), delay);
     },
 
     /**
@@ -258,6 +272,19 @@ Game.prototype = {
         this.room.emit(events.CLIENT_APPLE_NOM, [clientIndex, size, appleIndex]);
         this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
         this._spawnApple(appleIndex);
+    },
+
+    /**
+     * @param {number} powerupIndex
+     * @private
+     */
+    _spawnPowerup: function(powerupIndex) {
+        var location, powerup;
+        powerupIndex = powerupIndex || 0;
+        location = this.level.getRandomOpenTile(this.snakes);
+        powerup = new Powerup(location);
+        this.powerups[powerupIndex] = powerup;
+        this.room.emit(events.CLIENT_POWERUP_SPAWN, [powerupIndex, powerup.data()]);
     },
 
     /**
