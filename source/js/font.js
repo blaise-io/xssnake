@@ -31,9 +31,10 @@ Font.prototype = {
      * @return {Shape}
      */
     shape: function(str, x, y, invert) {
-        var x2,
-            arr = str.split(''),
-            shape = new Shape();
+        var x2, arr, shape;
+
+        arr = str.split('');
+        shape = new Shape();
 
         x = x2 = x || 0;
         y = y || 0;

@@ -21,6 +21,8 @@ function Game(index, levelID, names) {
     this.snakes = this._spawnSnakes(names, index);
     /** @type {Array.<Apple>} */
     this.apples = [];
+    /** @type {Array.<Powerup>} */
+    this.powerups = [];
 }
 
 Game.prototype = {
@@ -37,12 +39,29 @@ Game.prototype = {
     destruct: function() {
         var i, m;
         XSS.pubsub.unsubscribe(XSS.GAME_TICK, '');
+
         for (i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].destruct();
+            if (this.snakes[i]) {
+                this.snakes[i].destruct();
+            }
         }
+
         for (i = 0, m = this.apples.length; i < m; i++) {
-            this.apples[i].destruct();
+            if (this.apples[i]) {
+                this.apples[i].destruct();
+            }
+
         }
+
+        for (i = 0, m = this.powerups.length; i < m; i++) {
+            if (this.powerups[i]) {
+                this.powerups[i].destruct();
+            }
+        }
+
+        delete this.apples;
+        delete this.powerups;
+
         delete XSS.shapes.border;
         delete XSS.shapes.level;
     },

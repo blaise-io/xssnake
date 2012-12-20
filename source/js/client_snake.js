@@ -67,6 +67,27 @@ Util.extend(ClientSnake.prototype, {
         XSS.shapes[this.shapes.name] = shape;
     },
 
+    /**
+     * @param {string} label
+     * @param {number=} duration
+     * @param {number=} amount
+     */
+    showAction: function(label, duration, amount) {
+        duration = duration || 100;
+        amount = amount || 3;
+
+        var rand = function() {
+            return Util.randomBetween(-12, 12);
+        };
+
+        for (var i = 0; i <= duration * amount; i += duration) {
+            var shape, name, h = this.head();
+            shape = XSS.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
+            name = 'AL_' + Util.randomStr();
+            XSS.shapes[name] = shape.lifetime(i, duration + i, true);
+        }
+    },
+
     showDirection: function() {
         var shift, head, pixels, shape;
         shift = this.directionToShift(this.direction);

@@ -43,9 +43,8 @@ Room.prototype = {
      * @private
      */
     _sanitizeNames: function(names) {
-        var max = XSS.config.client.ui.maxNameWidth;
         for (var i = 0, m = names.length; i < m; i++) {
-            while (XSS.font.width(names[i]) > max) {
+            while (XSS.font.width(names[i]) > XSS.UI_MAX_NAME_WIDTH) {
                 names[i] = names[i].slice(0, -1);
             }
         }

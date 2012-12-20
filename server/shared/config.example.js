@@ -7,14 +7,12 @@ module.exports = {
 
     // Server-only config
     server: {
-        pathToIndexFile: 'source/source.html' // From root
+        port: 1337,
+        spawnInterval: [5, 30]
     },
 
     // Client-only config
     client: {
-        ui: {
-            maxNameWidth: 40
-        },
         socketio: {
             host  : 'http://localhost:8080',
             script: 'http://localhost:8080/socket.io/socket.io.js'

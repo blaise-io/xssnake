@@ -31,6 +31,12 @@ module.exports = Room;
 
 Room.prototype = {
 
+    destruct: function() {
+        this.game.destruct();
+        delete this.game;
+        delete this.clients;
+    },
+
     emitState: function() {
         var names = this.names();
         for (var i = 0, m = this.clients.length; i < m; i++) {
@@ -76,6 +82,7 @@ Room.prototype = {
         else {
             this.clients.splice(index, 1);
             this.emitState();
+            this._removeIfEmpty();
         }
 
         this.emit(events.CLIENT_CHAT_NOTICE, '{' + index + '} left');
@@ -88,6 +95,10 @@ Room.prototype = {
         // Before round starts
         this.game.destruct();
         this._removeLeftClients(this._leftClients);
+
+        if (!this.clients) {
+            return null; // Room was destroyed
+        }
 
         // Round start
         this.game = new Game(this, this.level);
@@ -143,6 +154,16 @@ Room.prototype = {
                 this.clients.splice(this.clients.indexOf(clients[i]), 1);
                 this.server.state.removeClient(clients[i]);
             }
+        }
+        this._removeIfEmpty();
+    },
+
+    /**
+     * @private
+     */
+    _removeIfEmpty: function() {
+        if (!this.clients.length) {
+            this.server.roomManager.remove(this);
         }
     }
 

@@ -58,11 +58,13 @@ EventHandler.prototype = {
      * @private
      */
     _chat: function(message) {
-        var room, data;
+        var room, data, index;
         room = this._clientRoom(this.client);
         if (room) {
-            data = [room.clients.indexOf(this.client), message.substr(0, 30)];
+            index = room.clients.indexOf(this.client);
+            data = [index, message.substr(0, 30)];
             room.broadcast(events.CLIENT_CHAT_MESSAGE, data, this.client);
+            room.emit(events.CLIENT_SNAKE_ACTION, [index, 'blah']);
         }
     },
 

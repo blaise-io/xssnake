@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
+/*jshint globalstrict:true, es5:true, node:true*/
 /*globals XSS*/
 'use strict';
 
@@ -6,8 +6,8 @@ var Util = {
 
     /**
      * @param {*} destination
-     * @param {Object} source
-     * @return {Object}
+     * @param {*} source
+     * @return {*}
      */
     extend: function(destination, source) {
         for (var property in source) {
@@ -33,6 +33,13 @@ var Util = {
      */
     randomItem: function(arr) {
         return arr[Util.randomBetween(0, arr.length - 1)];
+    },
+
+    /**
+     * @return {string}
+     */
+    randomStr: function() {
+        return Math.random().toString(36).substring(2, 5);
     },
 
     /**
@@ -104,3 +111,5 @@ var Util = {
     }
 
 };
+
+module.exports = Util;

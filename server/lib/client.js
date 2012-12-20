@@ -31,9 +31,8 @@ Client.prototype = {
     },
 
     destruct: function() {
-        this.snake = null;
-        this.socket = null;
-        this.server = null;
+        delete this.snake;
+        delete this.socket;
     }
 
 };

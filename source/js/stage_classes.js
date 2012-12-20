@@ -162,7 +162,7 @@ InputStage.prototype = {
             XSS.MENU_LEFT,
             XSS.MENU_TOP,
             this.label,
-            XSS.config.client.ui.maxNameWidth
+            XSS.UI_MAX_NAME_WIDTH
         );
         this.input.setValue(this.val);
         this.input.callback = function(value) {

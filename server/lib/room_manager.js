@@ -25,6 +25,14 @@ RoomManager.prototype = {
     },
 
     /**
+     * @param {Room} room
+     */
+    remove: function(room) {
+        delete this.rooms[room.id];
+        room.destruct();
+    },
+
+    /**
      * @param {Object.<string, boolean>} filter
      * @return {Room}
      */

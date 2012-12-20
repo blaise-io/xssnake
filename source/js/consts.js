@@ -5,6 +5,8 @@
 /** @const */ XSS.PIXELS_H = 256;
 /** @const */ XSS.PIXELS_V = 161;
 
+/** @const */ XSS.UI_MAX_NAME_WIDTH = 40;
+
 /** @const */ XSS.KEY_BACKSPACE = 8;
 /** @const */ XSS.KEY_TAB = 9;
 /** @const */ XSS.KEY_ENTER = 13;
@@ -35,6 +37,7 @@
 /** @const */ XSS.UNICODE_SKULL = '\u2620';
 /** @const */ XSS.UNICODE_SQUARE = '\u25a0';
 /** @const */ XSS.UNICODE_BULLSEYE = '\u25ce';
+/** @const */ XSS.UNICODE_ELECTRIC = '\u2301';
 /** @const */ XSS.UNICODE_ENTER_KEY = '\u23ce';
 /** @const */ XSS.UNICODE_HAPPY_FACE = '\u263A';
 /** @const */ XSS.UNICODE_FROWNY_FACE = '\u2639';

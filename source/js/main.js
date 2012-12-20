@@ -48,5 +48,5 @@ XSS.main = function() {
 
 // Give Webkit time to initialize @font-face
 window.onload = function() {
-    setTimeout(XSS.main, 200);
+    setTimeout(XSS.main, 500);
 };

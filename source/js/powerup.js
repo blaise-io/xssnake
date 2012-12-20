@@ -3,20 +3,21 @@
 'use strict';
 
 /**
+ * Powerup
  * @param {number} index
  * @param {number} x
  * @param {number} y
  * @constructor
  */
-function Apple(index, x, y) {
+function Powerup(index, x, y) {
+    this.index = index;
     this.x = x * XSS.GAME_TILE + -1 + XSS.GAME_LEFT;
-    this.y = y * XSS.GAME_TILE + -2 + XSS.GAME_TOP;
-
-    this._shapeName = 'A' + index;
+    this.y = y * XSS.GAME_TILE + -1 + XSS.GAME_TOP;
+    this._shapeName = 'P' + index;
     XSS.shapes[this._shapeName] = this._getShape();
 }
 
-Apple.prototype = {
+Powerup.prototype = {
 
     destruct: function() {
         delete XSS.shapes[this._shapeName];
@@ -27,7 +28,7 @@ Apple.prototype = {
      * @private
      */
     _getShape: function() {
-        return XSS.font.shape(XSS.UNICODE_BULLSEYE, this.x,  this.y);
+        return XSS.font.shape(XSS.UNICODE_ELECTRIC, this.x, this.y);
     }
 
 };
