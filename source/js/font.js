@@ -145,7 +145,7 @@ Font.prototype = {
 
         data = this._ctx.getImageData(0, 0, w, h).data;
         for (var i = 0, m = data.length; i < m; i += 4) {
-            if (data[i] === 255 || data[i + 1] === 255 || data[i + 2] === 255) {
+            if (data[i] + data[i + 1] + data[i + 2] > 720) {
                 var seq = i / 4,
                     x = seq % w,
                     y = Math.floor(seq / w);
@@ -156,7 +156,7 @@ Font.prototype = {
             }
         }
 
-        valid = pixels.length && blurry / pixels.length < 3.1;
+        valid = pixels.length && blurry / pixels.length < 2;
         return (valid) ? {width: width, pixels: pixels} : null;
     }
 
