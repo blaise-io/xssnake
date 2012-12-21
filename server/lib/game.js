@@ -2,7 +2,7 @@
 'use strict';
 
 var util = require('util'),
-    randomBetween = require('../shared/util.js').randomBetween,
+    myutil = require('../shared/util.js'),
     levels = require('../shared/levels.js'),
     config = require('../shared/config.js'),
     events = require('../shared/events.js'),
@@ -130,7 +130,7 @@ Game.prototype = {
         this._powerUpTimer = setTimeout(function() {
             this.spawnPowerup(this.powerups.length);
             this._delaySpawnPowerup();
-        }.bind(this), randomBetween(i[0] * 1000, i[1]* 1000));
+        }.bind(this), myutil.randomBetween(i[0] * 1000, i[1]* 1000));
     },
 
     /**

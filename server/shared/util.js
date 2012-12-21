@@ -2,7 +2,7 @@
 /*globals XSS*/
 'use strict';
 
-var Util = {
+var Util = module.exports = {
 
     /**
      * @param {*} destination
@@ -111,5 +111,3 @@ var Util = {
     }
 
 };
-
-module.exports = Util;

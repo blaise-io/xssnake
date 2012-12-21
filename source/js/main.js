@@ -2,7 +2,7 @@
 /*globals Util, PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, Socket */
 'use strict';
 
-// Dummy container for Requirejs client-server shared objects
+// Dummy object for Requirejs client+server shared objects
 var module = {};
 
 var XSS = {};

@@ -17,9 +17,7 @@ function Snake(location, direction, size, speed) {
     this.crashed = false;
 }
 
-if (typeof module !== 'undefined') {
-    module.exports = Snake;
-}
+module.exports = Snake;
 
 Snake.prototype = {
 

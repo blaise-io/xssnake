@@ -6,6 +6,7 @@ var EventEmitter = require('events').EventEmitter;
 
 /**
  * @param {number} tick
+ * @lends {EventEmitter}
  * @constructor
  */
 function Ticker(tick) {
@@ -14,7 +15,6 @@ function Ticker(tick) {
 }
 
 util.inherits(Ticker, EventEmitter);
-
 module.exports = Ticker;
 
 Ticker.prototype.tick = function() {

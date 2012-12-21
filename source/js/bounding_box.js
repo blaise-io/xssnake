@@ -33,10 +33,10 @@ BoundingBox.prototype = {
         for (var i = 0, m = pixels.length; i < m; i++) {
             var x = pixels[i][0],
                 y = pixels[i][1];
-            x1 = typeof x1 === 'number' ? Math.min(x1, x) : x;
-            x2 = typeof x2 === 'number' ? Math.max(x2, x) : x;
-            y1 = typeof y1 === 'number' ? Math.min(y1, y) : y;
-            y2 = typeof y2 === 'number' ? Math.max(y2, y) : y;
+            x1 = x1 !== null ? Math.min(x1, x) : x;
+            x2 = x2 !== null ? Math.max(x2, x) : x;
+            y1 = y1 !== null ? Math.min(y1, y) : y;
+            y2 = y2 !== null ? Math.max(y2, y) : y;
         }
 
         this.x1 = x1;

@@ -12,9 +12,7 @@ function Level(levelID, levelData) {
     this.level = levelData[levelID];
 }
 
-if (typeof module !== 'undefined') {
-    module.exports = Level;
-}
+module.exports = Level;
 
 Level.prototype = {
 

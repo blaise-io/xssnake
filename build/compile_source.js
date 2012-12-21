@@ -2,8 +2,8 @@
 'use strict';
 
 var util = require('util');
+/** @type {GccRest} */
 var gcc  = require('gcc-rest');
-
 var home = __dirname + '/../';
 
 var header = util.format(

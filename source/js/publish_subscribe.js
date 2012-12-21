@@ -1,7 +1,5 @@
 /*jshint globalstrict:true */
-
 'use strict';
-
 
 /**
  * Pubsub
