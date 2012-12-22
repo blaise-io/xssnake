@@ -3,6 +3,8 @@
 'use strict';
 
 /**
+ * Font
+ * Write texts and draw icons
  * @constructor
  */
 function Font() {
@@ -14,6 +16,7 @@ function Font() {
 /** @const */ Font.MAX_WIDTH = 9;
 /** @const */ Font.MAX_HEIGHT = 7;
 /** @const */ Font.BASELINE = 6;
+/** @const */ Font.BLURRY_TRESHOLD = 3;
 
 Font.prototype = {
 
@@ -117,7 +120,13 @@ Font.prototype = {
         canvas.height = Font.MAX_HEIGHT;
 
         context = canvas.getContext('2d');
+
+        // "xssnake" is a special font that was crafted for this game.
         context.font = '8px xssnake';
+
+        // Specify blurry fonts in the fallback, to make it easier to detect
+        // glyphs that are (un)supported by our font.
+        context.font += ', "Courier New", "Times New Roman", serif';
 
         return context;
     },
@@ -156,7 +165,7 @@ Font.prototype = {
             }
         }
 
-        valid = pixels.length && blurry / pixels.length < 2;
+        valid = pixels.length && blurry / pixels.length <= Font.BLURRY_TRESHOLD;
         return (valid) ? {width: width, pixels: pixels} : null;
     }
 

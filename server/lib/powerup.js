@@ -103,7 +103,7 @@ Powerup.prototype = {
      */
     _powerups: function(client, game) {
         var index = game.room.clients.indexOf(client);
-        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Powerups+']);
+        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Power-ups+']);
         for (var i = 0, m = Util.randomBetween(2, 4); i < m; i++) {
             setTimeout(game.spawnPowerup.bind(game), i * 100);
         }
