@@ -1,7 +1,8 @@
 /*jshint globalstrict:true, es5:true, node:true*/
 'use strict';
 
-var events = require('../shared/events.js');
+var events = require('../shared/events.js'),
+    Util = require('../shared/util.js');
 
 /**
  * Powerup
@@ -21,34 +22,106 @@ module.exports = Powerup;
 
 Powerup.prototype = {
 
+    /**
+     * @param {Client} client
+     * @param {Game} game
+     */
     hit: function(client, game) {
-        var x = Math.random() * 100;
-        if (x < 10) {
-            return this._speedIncrease(client, game);
-        } else {
-            return this._spawnApples(client, game);
-        }
+        var powerup = this._getPowerUp();
+        powerup(client, game);
     },
 
-    _speedIncrease: function(client, game) {
+    /**
+     * @return {Array}
+     * @private
+     */
+    _getPowerups: function() {
+        return [
+            // [Weight, Powerup]
+            [1, this._speed],
+            [1, this._apples],
+            [1, this._powerups],
+            [1, this._reverse]
+        ];
+    },
+
+    /**
+     * @return {Function}
+     * @private
+     */
+    _getPowerUp: function() {
+        var i, m, random, powerups, cumulative = 0;
+
+        powerups = this._getPowerups();
+        for (i = 0, m = powerups.length; i < m; i++) {
+            cumulative += powerups[i][0];
+            powerups[i][0] = cumulative;
+        }
+
+        random = cumulative * Math.random();
+
+        for (i = 0, m = powerups.length; i < m; i++) {
+            if (powerups[i][0] > random) {
+                return powerups[i][1];
+            }
+        }
+        return powerups[0][1];
+    },
+
+    /**
+     * Change snake speed
+     * @param {Client} client
+     * @param {Game} game
+     * @private
+     */
+    _speed: function(client, game) {
         var index = game.room.clients.indexOf(client);
         client.snake.speed -= 5;
         game.room.emit(events.CLIENT_SNAKE_SPEED, [index, client.snake.speed]);
-        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'speedup']);
+        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Speed+']);
     },
 
-    _spawnApples: function(client, game) {
-        var index, spawnApple;
+    /**
+     * Spawn multiple apples
+     * @param {Client} client
+     * @param {Game} game
+     * @private
+     */
+    _apples: function(client, game) {
+        var index = game.room.clients.indexOf(client);
+        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Apples+']);
+        for (var i = 0, m = Util.randomBetween(2, 6); i < m; i++) {
+            setTimeout(game.spawnApple.bind(game), i * 100);
+        }
+    },
 
-        index = game.room.clients.indexOf(client);
-        spawnApple = function() {
-            game.spawnApple(game.apples.length);
-        };
+    /**
+     * Spawn multiple powerups
+     * @param {Client} client
+     * @param {Game} game
+     * @private
+     */
+    _powerups: function(client, game) {
+        var index = game.room.clients.indexOf(client);
+        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Powerups+']);
+        for (var i = 0, m = Util.randomBetween(2, 4); i < m; i++) {
+            setTimeout(game.spawnPowerup.bind(game), i * 100);
+        }
+    },
 
-        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'apple rain']);
-
-        for (var i = 0, m = 2 + Math.random() * 4; i < m; i++) {
-            setTimeout(spawnApple.bind(i), i * 50);
+    /**
+     * Reverse Snake direction
+     * @param {Client} client
+     * @param {Game} game
+     * @private
+     */
+    _reverse: function(client, game) {
+        var snakes = game.snakes, index = game.room.clients.indexOf(client);
+        for (var i = 0, m = snakes.length; i < m; i++) {
+            if (i !== index) {
+                game.room.emit(events.CLIENT_SNAKE_ACTION, [i, 'Reverse']);
+                game.reverseSnake(i);
+            }
         }
     }
 

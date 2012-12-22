@@ -2,10 +2,10 @@
 'use strict';
 
 var util = require('util'),
-    myutil = require('../shared/util.js'),
     levels = require('../shared/levels.js'),
     config = require('../shared/config.js'),
     events = require('../shared/events.js'),
+    Util = require('../shared/util.js'),
     Level = require('../shared/level.js'),
     Snake = require('../shared/snake.js'),
     Powerup = require('./powerup.js');
@@ -107,6 +107,27 @@ Game.prototype = {
         }
     },
 
+    /**
+     * Reverse Snake (powerup)
+     * @param {number} i
+     */
+    reverseSnake: function(i) {
+        var data, dx, dy, snake = this.snakes[i];
+
+        dx = snake.parts[0][0] - snake.parts[1][0];
+        dy = snake.parts[0][1] - snake.parts[1][1];
+
+        if (dx !== 0) {
+            snake.direction = (dx === -1) ? 0 : 2;
+        } else if (dy !== 0) {
+            snake.direction = (dy === -1) ? 1 : 3;
+        }
+
+        snake.parts.reverse();
+        data = [i, snake.parts, snake.direction];
+        this.room.emit(events.CLIENT_SNAKE_UPDATE, data);
+    },
+
     clientQuit: function(client) {
         this._setSnakeCrashed(client, client.snake.parts);
     },
@@ -128,9 +149,9 @@ Game.prototype = {
         var i = config.server.spawnInterval;
         clearTimeout(this._powerUpTimer);
         this._powerUpTimer = setTimeout(function() {
-            this.spawnPowerup(this.powerups.length);
+            this.spawnPowerup();
             this._delaySpawnPowerup();
-        }.bind(this), myutil.randomBetween(i[0] * 1000, i[1]* 1000));
+        }.bind(this), Util.randomBetween(i[0] * 1000, i[1]* 1000));
     },
 
     /**
@@ -290,7 +311,7 @@ Game.prototype = {
             score = ++this.room.points[clientIndex];
 
         this.room.emit(events.CLIENT_APPLE_HIT, [clientIndex, size, appleIndex]);
-        this.room.emit(events.CLIENT_SNAKE_ACTION, [clientIndex, 'nom']);
+        this.room.emit(events.CLIENT_SNAKE_ACTION, [clientIndex, 'Nom']);
         this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
 
         if (appleIndex === 0) {
@@ -330,21 +351,27 @@ Game.prototype = {
     },
 
     /**
-     * @param {number} index
+     * @param {number=} index
      */
     spawnPowerup: function(index) {
         var location, powerup;
         location = this.level.getRandomOpenTile(this.snakes);
+        if (typeof index !== 'number') {
+            index = this.powerups.length;
+        }
         powerup = new Powerup(location);
         this.powerups[index] = powerup;
         this.room.emit(events.CLIENT_POWERUP_SPAWN, [index, location]);
     },
 
     /**
-     * @param {number} index
+     * @param {number=} index
      */
     spawnApple: function(index) {
         var location = this.level.getRandomOpenTile(this.snakes);
+        if (typeof index !== 'number') {
+            index = this.apples.length;
+        }
         this.apples[index] = location;
         this.room.emit(events.CLIENT_APPLE_SPAWN, [index, location]);
     },
@@ -424,15 +451,16 @@ Game.prototype = {
             this._hitApple(client, apple);
         }
 
-        // Powerup?
-        powerup = this._powerupAtPosition(predict);
-        if (-1 !== powerup) {
-            this._hitPowerup(client, powerup);
-        }
-
         // Apply move
         if (!snake.crashed) {
             snake.move(predict);
+        }
+
+        // Powerup?
+        // After move, powerup may modify move
+        powerup = this._powerupAtPosition(predict);
+        if (-1 !== powerup) {
+            this._hitPowerup(client, powerup);
         }
     },
 
