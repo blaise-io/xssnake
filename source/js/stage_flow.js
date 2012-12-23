@@ -45,8 +45,8 @@ StageFlow.prototype = {
      */
     newStage: function(stageRef) {
         this.stage = this.getStage(stageRef);
-        this.stage.createStage();
         this.setStageShapes();
+        this.stage.createStage();
     },
 
     /**

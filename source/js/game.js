@@ -15,6 +15,7 @@ function Game(index, levelID, names) {
     delete XSS.shapes.stage;
     delete XSS.shapes.header;
     delete XSS.shapes.instruction;
+    delete XSS.shapes.border;
 
     /** @type {Level} */
     this.level = this._setupLevel(levelID);
@@ -177,9 +178,9 @@ Game.prototype = {
 
             shape.add.apply(shape, border);
             shape.lifetime(start, start + 1000, true);
-            shape.clip = true;
+            shape.overlay = true;
 
-            XSS.overlays['GC' + count] = shape;
+            XSS.shapes['GC' + count] = shape;
         } while (count--);
     },
 

@@ -164,7 +164,6 @@ InputStage.prototype = {
             this.label,
             XSS.UI_MAX_NAME_WIDTH
         );
-        this.input.setValue(this.val);
         this.input.callback = function(value) {
             delete XSS.shapes.stage; // We already show the dynamic stage
             this.val = value;
@@ -172,6 +171,7 @@ InputStage.prototype = {
                 localStorage.setItem(this.name, value);
             }
         }.bind(this);
+        this.input.setValue(this.val);
     },
 
     destroyStage: function() {

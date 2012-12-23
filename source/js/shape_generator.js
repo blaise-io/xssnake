@@ -146,7 +146,7 @@ ShapeGenerator.prototype = {
                 shape.remove(line(x - 3, y + 4, x + 3, y + 4));
                 break;
         }
-        shape.clip = true;
+        shape.overlay = true;
         shape.bbox();
         return shape;
     },

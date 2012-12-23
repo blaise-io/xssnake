@@ -11,13 +11,9 @@ window.onerror = function() {
     XSS.error = true; // Stops draw loop
 };
 
-XSS.main = function() {
-
+XSS.load = function() {
     /** @type {Object.<string,Shape>} */
     XSS.shapes    = {};
-
-    /** @type {Object.<string,Shape>} */
-    XSS.overlays  = {};
 
     // DOM
     XSS.doc       = document.body;
@@ -31,6 +27,11 @@ XSS.main = function() {
     XSS.canvas    = new Canvas();
     XSS.shapegen  = new ShapeGenerator();
     XSS.transform = new Transform();
+};
+
+// Load this part when font has loaded
+XSS.fontLoad = function() {
+
     XSS.font      = new Font();
     XSS.stageflow = new StageFlow();
     XSS.socket    = new Socket(function() {
@@ -47,6 +48,7 @@ XSS.main = function() {
 };
 
 // Give Webkit time to initialize @font-face
-window.onload = function() {
-    setTimeout(XSS.main, 500);
+document.body.onload = function() {
+    XSS.load();
+    setTimeout(XSS.fontLoad, 500);
 };

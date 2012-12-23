@@ -27,7 +27,9 @@ Apple.prototype = {
      * @private
      */
     _getShape: function() {
-        return XSS.font.shape(XSS.UNICODE_BULLSEYE, this.x,  this.y);
+        var shape = XSS.font.shape(XSS.UNICODE_BULLSEYE, this.x,  this.y);
+        shape.clear = true;
+        return shape;
     }
 
 };

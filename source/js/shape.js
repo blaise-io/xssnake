@@ -27,8 +27,17 @@ function Shape(varArgs) {
     /** @type {boolean} */
     this.dynamic = false;
 
-    /** @type {boolean} */
-    this.clip = false;
+    /**
+     * Put at end of painting queue and clear bbox coverage before painting.
+     * @type {boolean}
+     */
+    this.overlay = false;
+
+    /**
+     * Clear pixels before painting. Useful for lazy overlays.
+     * @type {boolean}
+     */
+    this.clear = false;
 
     /** @type {Object.<string,*>} */
     this.effects = {};
@@ -202,8 +211,6 @@ Shape.prototype = {
                 if (deleteShape) {
                     key = Util.getKey(XSS.shapes, this);
                     if (key) { delete XSS.shapes[key]; }
-                    key = Util.getKey(XSS.overlays, this);
-                    if (key) { delete XSS.overlays[key]; }
                 } else {
                     delete this.effects.lifetime;
                     this.enabled = false;

@@ -18,9 +18,10 @@ function InputField(x, y, prefix, maxWidth) {
 
     this.input = this._getInput();
     this.input.focus();
-    this._updateShapes();
 
     this._updateShapesBound = this._updateShapes.bind(this);
+    this._updateShapes();
+
     XSS.on.keydown(this._updateShapesBound);
     XSS.on.keyup(this._updateShapesBound);
 }

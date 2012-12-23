@@ -10,6 +10,7 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
+    this.setTheme(XSS.themes[0]);
     this._setCanvasDimensions();
 
     if (!window.requestAnimationFrame) {
@@ -26,6 +27,12 @@ function Canvas() {
 
 Canvas.prototype = {
 
+    setTheme: function(theme) {
+        this.theme = theme;
+        this._clearShapeCache(XSS.shapes);
+        this._setBackgroundPattern();
+    },
+
     /**
      * @param {number} delta
      */
@@ -37,21 +44,30 @@ Canvas.prototype = {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
         // Paint all layers
-        this._paint(delta, XSS.shapes, XSS.overlays);
+        this._paint(delta, XSS.shapes);
     },
 
     /**
      * @param {number} delta
-     * @param {...} varArgs
+     * @param {*} shapes
      * @private
      */
-    _paint: function(delta, varArgs) {
-        for (var i = 1, m = arguments.length; i < m; i++) {
-            var arg = arguments[i];
-            for (var k in arg) {
-                if (arg.hasOwnProperty(k)) {
-                    this._paintShapeDispatch(k, arg[k], delta);
+    _paint: function(delta, shapes) {
+        var k, overlays = {};
+        for (k in shapes) {
+            if (shapes.hasOwnProperty(k)) {
+                if (shapes[k].overlay) {
+                    this._paintShapeDispatch(k, shapes[k], delta);
+                } else {
+                    overlays[k] = shapes[k];
                 }
+            }
+        }
+
+        // Overlays are painted at a later time
+        for (k in overlays) {
+            if (overlays.hasOwnProperty(k)) {
+                this._paintShapeDispatch(k, overlays[k], delta);
             }
         }
     },
@@ -85,21 +101,22 @@ Canvas.prototype = {
      * @param {Object} context
      * @param {Shape} shape
      * @param {BoundingBox} bbox
-     * @private
      */
     _paintShape: function(context, shape, bbox) {
         var pixels = shape.pixels;
 
-        // Dip paint brush
-        context.fillStyle = 'rgb(0,0,0)';
+        context.fillStyle = this.theme.pixelOn;
 
         for (var i = 0, m = pixels.length; i < m; i++) {
-            context.fillRect(
-                pixels[i][0] * this.tileSize - bbox.x1,
-                pixels[i][1] * this.tileSize - bbox.y1,
-                this.pixelSize,
-                this.pixelSize
-            );
+            var x = pixels[i][0] * this.tileSize - bbox.x1,
+                y = pixels[i][1] * this.tileSize - bbox.y1,
+                w = this.pixelSize,
+                h = this.pixelSize;
+            if (shape.clear) {
+                context.clearRect(x, y, w, h);
+            }
+            // context.fillRect(x, y, w, h);
+            context.fillRect(x, y, w, h);
         }
     },
 
@@ -110,7 +127,7 @@ Canvas.prototype = {
      * @private
      */
     _paintShapeDispatch: function(name, shape, delta) {
-        var cache, bbox;
+        var bbox, cache;
 
         // Apply effects
         for (var k in shape.effects) {
@@ -120,25 +137,25 @@ Canvas.prototype = {
         }
 
         // Draw on canvas
-        if (true === shape.enabled) {
+        if (false === shape.enabled) {
+            return;
+        }
 
-            // Clear surface below shape
-            if (shape.clip) {
-                bbox = shape.bbox();
-                this.ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
-            }
+        // Clear surface below shape
+        if (shape.overlay) {
+            bbox = shape.bbox();
+            this.ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
+        }
 
-            if (shape.dynamic) {
-                // Paint shape without caching
-                this._paintShape(this.ctx, shape, new BoundingBox());
-            } else {
-                // Create cache and paint
-                cache = shape.cache;
-                if (!cache) {
-                    shape.cache = cache = this._cacheShapePaint(shape);
-                }
-                this.ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
-            }
+        // Paint shape without caching
+        if (shape.dynamic || shape.clear) {
+            this._paintShape(this.ctx, shape, new BoundingBox());
+        }
+
+        // Create cache and paint
+        else {
+            cache = shape.cache || (shape.cache = this._cacheShapePaint(shape));
+            this.ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
         }
     },
 
@@ -192,14 +209,14 @@ Canvas.prototype = {
         window.onresize = this._positionCanvas.bind(this);
     },
 
-    _clearShapeCache: function() {
-        var objs = [XSS.shapes, XSS.overlays];
-        for (var i = 0, m = objs.length; i < m; i++) {
-            var arg = objs[i];
-            for (var k in arg) {
-                if (arg.hasOwnProperty(k)) {
-                    arg[k].uncache();
-                }
+    /**
+     * @param shapes
+     * @private
+     */
+    _clearShapeCache: function(shapes) {
+        for (var k in shapes) {
+            if (shapes.hasOwnProperty(k)) {
+                shapes[k].uncache();
             }
         }
     },
@@ -209,17 +226,20 @@ Canvas.prototype = {
         this.tileSize = this._getTileSize();
 
         // Attempt to make fat pixels pleasing at all sizes
-        if (this.tileSize >= 4) {
-            this.pixelSize = this.tileSize-1;
+        if (this.tileSize >= 5) {
+            this.pixelSize = this.tileSize - 1;
+        } else if (this.tileSize === 1) {
+            this.pixelSize = 1;
         } else {
-            this.pixelSize = this.tileSize;
+            this.pixelSize = this.tileSize - 0.5;
         }
 
         this.canvasWidth = this.tileSize * XSS.PIXELS_H;
         this.canvasHeight = this.tileSize * XSS.PIXELS_V;
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
-        this._setbackgroundPattern();
+
+        this._setBackgroundPattern();
     },
 
     /** @private */
@@ -227,7 +247,7 @@ Canvas.prototype = {
         var windowCenter, windowMiddle, left, top, style;
 
         this._setCanvasDimensions();
-        this._clearShapeCache();
+        this._clearShapeCache(XSS.shapes);
 
         windowCenter = window.innerWidth / 2;
         windowMiddle = window.innerHeight / 2;
@@ -242,8 +262,8 @@ Canvas.prototype = {
     },
 
     /** @private */
-    _setbackgroundPattern: function() {
-        var canvas, context, pixelSize, rectSize;
+    _setBackgroundPattern: function() {
+        var canvas, context, pixelSize, rectSize, bgImage;
 
         pixelSize = Math.max(this.tileSize, 2);
         rectSize = pixelSize - 1;
@@ -253,10 +273,11 @@ Canvas.prototype = {
         canvas.height = pixelSize;
 
         context = canvas.getContext('2d');
-        context.fillStyle = 'rgba(0,0,0,.1)';
+        context.fillStyle = this.theme.pixelOff;
         context.fillRect(0, 0, rectSize, rectSize);
 
-        XSS.doc.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
+        bgImage = ' url(' + canvas.toDataURL('image/png') + ')';
+        XSS.doc.style.background = this.theme.background + bgImage;
     },
 
     /**
