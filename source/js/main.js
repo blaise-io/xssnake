@@ -12,6 +12,7 @@ window.onerror = function() {
 };
 
 XSS.load = function() {
+
     /** @type {Object.<string,Shape>} */
     XSS.shapes    = {};
 
@@ -50,5 +51,5 @@ XSS.fontLoad = function() {
 // Give Webkit time to initialize @font-face
 document.body.onload = function() {
     XSS.load();
-    setTimeout(XSS.fontLoad, 500);
+    setTimeout(XSS.fontLoad, 250);
 };

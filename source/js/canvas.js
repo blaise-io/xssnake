@@ -105,7 +105,7 @@ Canvas.prototype = {
     _paintShape: function(context, shape, bbox) {
         var pixels = shape.pixels;
 
-        context.fillStyle = this.theme.pixelOn;
+        context.fillStyle = this.theme.on;
 
         for (var i = 0, m = pixels.length; i < m; i++) {
             var x = pixels[i][0] * this.tileSize - bbox.x1,
@@ -231,7 +231,7 @@ Canvas.prototype = {
         } else if (this.tileSize === 1) {
             this.pixelSize = 1;
         } else {
-            this.pixelSize = this.tileSize - 0.5;
+            this.pixelSize = this.tileSize - 0.6;
         }
 
         this.canvasWidth = this.tileSize * XSS.PIXELS_H;
@@ -273,11 +273,11 @@ Canvas.prototype = {
         canvas.height = pixelSize;
 
         context = canvas.getContext('2d');
-        context.fillStyle = this.theme.pixelOff;
+        context.fillStyle = this.theme.off;
         context.fillRect(0, 0, rectSize, rectSize);
 
         bgImage = ' url(' + canvas.toDataURL('image/png') + ')';
-        XSS.doc.style.background = this.theme.background + bgImage;
+        XSS.doc.style.background = this.theme.bg + bgImage;
     },
 
     /**

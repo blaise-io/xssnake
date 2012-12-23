@@ -14,6 +14,7 @@ XSS.stages = {
         menu = new SelectMenu('main');
         menu.addOption(null, XSS.stages.inputName, 'MULTIPLAYER', 'Play with a friend or (un)friendly stranger.');
         menu.addOption(null, XSS.stages.startGame, 'SINGLE PLAYER', 'Play with yourself, get some practise.');
+        menu.addOption(null, XSS.stages.themesScreen, 'THEEEMES', 'Change the color scheme YAY!');
         menu.addOption(null, XSS.stages.helpScreen, 'HEEELP?!!', 'How do I use this computer electronic device?');
         menu.addOption(null, XSS.stages.creditsScreen, 'CREDITS', 'Made by Blaise Kal, 2012.');
 
@@ -45,6 +46,23 @@ XSS.stages = {
         menu.addOption(false, XSS.stages.startGame, 'XSS MODE',
             'The winner of the game is allowed to execute Java-\n' +
             'script in loser\'s browser…  alert(\'' + XSS.UNICODE_SKULL + '\')');
+
+        return new SelectStage(menu);
+    },
+
+    themesScreen: function() {
+        var menu, setTheme;
+
+        setTheme = function(index) {
+            XSS.canvas.setTheme(XSS.themes[index]);
+        };
+
+        menu = new SelectMenu('theme');
+        for (var i = 0, m = XSS.themes.length; i < m; i++) {
+            var title = XSS.themes[i].title,
+                desc = XSS.themes[i].desc;
+            menu.addOption(true, null, title, desc, setTheme);
+        }
 
         return new SelectStage(menu);
     },

@@ -19,17 +19,32 @@ SelectMenu.prototype = {
 
     /**
      * @param {?(boolean|string)} value
-     * @param {function()} next
+     * @param {function()|null} next
      * @param {string} title
-     * @param {string} description
+     * @param {string|null} description
+     * @param {function(number)=} callback
      */
-    addOption: function(value, next, title, description) {
+    addOption: function(value, next, title, description, callback) {
         this._options.push({
             value      : value,
             next       : next,
             title      : title,
-            description: description
+            description: description || '',
+            callback   : callback
         });
+    },
+
+    /**
+     * @param {number} delta
+     */
+    select: function(delta) {
+        var index, option;
+        this.selected += delta;
+        index = this.getSelected();
+        option = this.getSelectedOption();
+        if (option.callback) {
+            option.callback(index);
+        }
     },
 
     /**
@@ -335,14 +350,19 @@ SelectStage.prototype = {
                 XSS.stageflow.previousStage();
                 break;
             case XSS.KEY_ENTER:
-                XSS.stageflow.switchStage(this.menu.getNextStage());
+                var nextStage = this.menu.getNextStage();
+                if (nextStage) {
+                    XSS.stageflow.switchStage(nextStage);
+                } else {
+                    XSS.stageflow.previousStage();
+                }
                 break;
             case XSS.KEY_UP:
-                this.menu.selected--;
+                this.menu.select(-1);
                 XSS.stageflow.setStageShapes();
                 break;
             case XSS.KEY_DOWN:
-                this.menu.selected++;
+                this.menu.select(1);
                 XSS.stageflow.setStageShapes();
         }
     }
