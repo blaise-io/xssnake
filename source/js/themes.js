@@ -11,6 +11,13 @@ XSS.themes = [
         on   : '#f00'
     },
     {
+        title: 'Public Transport',
+        desc : 'Like the display on a bus!!',
+        bg   : '#111',
+        off  : '#222',
+        on   : '#dd0'
+    },
+    {
         title: 'Fail Green',
         desc : 'My First LED Screen.',
         bg   : '#798',
@@ -19,14 +26,14 @@ XSS.themes = [
     },
     {
         title: '1337',
-        desc : 'H4x0r style...',
+        desc : 'Please dont hack my website.',
         bg   : '#010',
         off  : '#000',
         on   : '#0f0'
     },
     {
-        title: 'High Castrate',
-        desc : '*High Contrast.',
+        title: 'Panda',
+        desc : 'Zebras can go F themselves.',
         bg   : '#eee',
         off  : '#fff',
         on   : '#000'
@@ -34,8 +41,8 @@ XSS.themes = [
     {
         title: 'Gaymer',
         desc : 'Rainbows and unicorns not included.',
-        bg   : '#000',
-        off  : '#203',
-        on   : '#e3f'
+        bg   : '#808',
+        off  : '#a0a',
+        on   : '#ff2'
     }
 ];
