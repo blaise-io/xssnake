@@ -103,20 +103,17 @@ Canvas.prototype = {
      * @param {BoundingBox} bbox
      */
     _paintShape: function(context, shape, bbox) {
-        var pixels = shape.pixels;
+        var pixels = shape.pixels, s = this.pixelSize;
 
         context.fillStyle = this.theme.on;
 
         for (var i = 0, m = pixels.length; i < m; i++) {
             var x = pixels[i][0] * this.tileSize - bbox.x1,
-                y = pixels[i][1] * this.tileSize - bbox.y1,
-                w = this.pixelSize,
-                h = this.pixelSize;
+                y = pixels[i][1] * this.tileSize - bbox.y1;
             if (shape.clear) {
-                context.clearRect(x, y, w, h);
+                context.clearRect(x, y, s, s);
             }
-            // context.fillRect(x, y, w, h);
-            context.fillRect(x, y, w, h);
+            context.fillRect(x, y, s, s);
         }
     },
 
