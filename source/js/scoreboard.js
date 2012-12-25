@@ -3,7 +3,7 @@
 'use strict';
 
 /** @typedef {Array.<Object>} */
-var Score;
+XSS.Score = null;
 
 /**
  * @param {Array.<string>} names
@@ -33,7 +33,7 @@ ScoreBoard.prototype = {
     /**
      * @param {Array.<string>} names
      * @param {Array.<number>} points
-     * @return {Score}
+     * @return {XSS.Score}
      */
     initScore: function(names, points) {
         var score = [];
@@ -58,7 +58,7 @@ ScoreBoard.prototype = {
     },
 
     /**
-     * @param {Score} score
+     * @param {XSS.Score} score
      * @param {number} id
      * @return {number}
      * @private
@@ -73,7 +73,7 @@ ScoreBoard.prototype = {
     },
 
     /**
-     * @return {Score}
+     * @return {XSS.Score}
      * @private
      */
     _sortScore: function() {

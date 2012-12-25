@@ -3,7 +3,7 @@
 'use strict';
 
 /** @typedef {{author:?string,body:string}} */
-var ChatMessage;
+XSS.ChatMessage = null;
 
 /**
  * @param {number} index
@@ -16,7 +16,7 @@ function Chat(index, names) {
     this.names = names;
 
     /**
-     * @type {Array.<ChatMessage>}
+     * @type {Array.<XSS.ChatMessage>}
      * @private
      */
     this._messages = [{body: 'Press Enter key to chat'}];
@@ -41,7 +41,7 @@ function Chat(index, names) {
 Chat.prototype = {
 
     /**
-     * @param {ChatMessage} message
+     * @param {XSS.ChatMessage} message
      * @return {Chat}
      */
     add: function(message) {

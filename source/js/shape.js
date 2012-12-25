@@ -4,13 +4,13 @@
 'use strict';
 
 /** @typedef {Array.<number>} */
-var ShapePixel;
+XSS.ShapePixel = null;
 
-/** @typedef {Array.<ShapePixel>} */
-var ShapePixels;
+/** @typedef {Array.<XSS.ShapePixel>} */
+XSS.ShapePixels = null;
 
 /** @typedef {{canvas: Element, bbox: BoundingBox}} */
-var ShapeCache;
+XSS.ShapeCache = null;
 
 /**
  * Shape
@@ -18,7 +18,7 @@ var ShapeCache;
  * @param {...Array} varArgs
  */
 function Shape(varArgs) {
-    /** @type {ShapePixels} */
+    /** @type {XSS.ShapePixels} */
     this.pixels = [];
 
     /** @type {boolean} */
@@ -42,7 +42,7 @@ function Shape(varArgs) {
     /** @type {Object.<string,*>} */
     this.effects = {};
 
-    /** @type {?ShapeCache} */
+    /** @type {?XSS.ShapeCache} */
     this.cache = null;
 
     /** @type {?BoundingBox} */
@@ -144,7 +144,7 @@ Shape.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
+     * @param {XSS.ShapePixels} pixels
      * @return {Shape}
      */
     remove: function(pixels) {

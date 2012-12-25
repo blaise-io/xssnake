@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Socket, InputField, Util*/
+/*globals XSS, Shape, Socket, InputField, Util, Font*/
 
 'use strict';
 
@@ -66,7 +66,7 @@ SelectMenu.prototype = {
      * @return {Shape}
      */
     getShape: function() {
-        var x, y, description, font, shape;
+        var x, y, font, shape, desc;
 
         x = XSS.MENU_LEFT;
         y = XSS.MENU_TOP;
@@ -83,11 +83,9 @@ SelectMenu.prototype = {
         }
 
         // Help text line(s)
-        description = this.getSelectedOption().description.split('\n');
-        for (var j = 0, n = description.length; j < n; j++) {
-            font = XSS.font.pixels(description[j], x, y + ((i + 1 + j) * 9));
-            shape.add(font);
-        }
+        desc = this.getSelectedOption().description;
+        font = XSS.font.pixels(desc, x, y + ((m + 2) * Font.LINE_HEIGHT));
+        shape.add(font);
 
         return shape;
     },
@@ -141,18 +139,19 @@ StageInterface.prototype = {
  * @param {string} name
  * @param {Function} nextStage
  * @param {string} label
+ * @param {number=} maxWidth
  * @constructor
  * @implements {StageInterface}
  */
-function InputStage(name, nextStage, label) {
+function InputStage(name, nextStage, label, maxWidth) {
     this.name = name;
     this.nextStage = nextStage;
 
     this.label = label || '';
 
-    this.val = localStorage && localStorage.getItem(this.name) || '';
+    this.val = (name && localStorage && localStorage.getItem(name)) || '';
     this.minlength = 0;
-    this.maxWidth = 999;
+    this.maxWidth = maxWidth || 999;
 
     this.handleKeys = this.handleKeys.bind(this);
 }
@@ -177,7 +176,7 @@ InputStage.prototype = {
             XSS.MENU_LEFT,
             XSS.MENU_TOP,
             this.label,
-            XSS.UI_MAX_NAME_WIDTH
+            this.maxWidth
         );
         this.input.callback = function(value) {
             delete XSS.shapes.stage; // We already show the dynamic stage
@@ -200,72 +199,32 @@ InputStage.prototype = {
                 XSS.stageflow.previousStage();
                 break;
             case XSS.KEY_ENTER:
-                this.inputSubmit();
+                var val = this.val.trim();
+                this.inputSubmit(this._getInputError(val), val);
         }
     },
 
-    /** @private */
-    getInputError: function(val) {
+    /**
+     * @param {string} val
+     * @return {string}
+     * @private
+     */
+    _getInputError: function(val) {
         if (val.length < this.minlength) {
             return 'Too short!!!';
         } else {
-            return false;
+            return '';
         }
     },
 
-    /** @private */
-    inputSubmit: function() {
-        var error, shape, text, duration = 500;
-
-        error = this.getInputError(this.val.trim());
-
-        if (error === false) {
-            this.val = this.val.trim();
-            text = this._getRandomRemarkOnNameROFL(this.val);
-            duration = Math.max(text.length * 30, 500);
-            setTimeout(function() {
-                XSS.stageflow.switchStage(this.nextStage);
-            }.bind(this), duration + 50);
-        } else {
-            text = error;
+    /**
+     * @param {string} error
+     * @param {string} value
+     */
+    inputSubmit: function(error, value) {
+        if (!error && value) {
+            XSS.stageflow.switchStage(this.nextStage);
         }
-
-        shape = XSS.font.shape(text, XSS.MENU_LEFT, XSS.MENU_TOP + 9);
-        shape.lifetime(0, duration);
-        XSS.shapes.message = shape;
-
-        return false;
-    },
-
-    // TODO: Remove from this generic class
-    _getRandomRemarkOnNameROFL: function(name) {
-        var remark, wits = [
-            '%s%s%s',
-            'You have the same name as my mom',
-            'LOVELY ' + new Array(4).join(XSS.UNICODE_HEART),
-            XSS.UNICODE_SKULL,
-            'Lamest name EVER',
-            'Clever name!',
-            'Mmm I love the way you handled that keyboard',
-            'asdasdasdasd',
-            'Please dont touch anything',
-            'Hello %s',
-            'Is that your real name?',
-            'You dont look like a %s…',
-            'Are you new here?',
-            'I remember you',
-            'I dont believe that\'s your name, but continue anyway',
-            'Can I have your number?',
-            'My name is NaN',
-            '#$%^&*())',
-            'I thought I banned you?',
-            'Jesus saves',
-            'Is this your first time online?',
-            'Are you from the internet?',
-            '%s? OMGOMG'
-        ];
-        remark = Util.randomItem(wits);
-        return remark.replace(/%s/g, name);
     }
 
 };

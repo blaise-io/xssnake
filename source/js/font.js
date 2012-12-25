@@ -16,6 +16,7 @@ function Font() {
 /** @const */ Font.MAX_WIDTH = 9;
 /** @const */ Font.MAX_HEIGHT = 7;
 /** @const */ Font.BASELINE = 6;
+/** @const */ Font.LINE_HEIGHT = 8;
 /** @const */ Font.BLURRY_TRESHOLD = 3;
 
 Font.prototype = {
@@ -43,8 +44,14 @@ Font.prototype = {
         y = y || 0;
 
         for (var i = 0, m = arr.length; i < m; i++) {
-            var chrPixels = this.chrPixels(arr[i]),
-                shifted = XSS.transform.shift(chrPixels.pixels, x2, y);
+            var chr, chrPixels, shifted;
+            chr = arr[i];
+            if (chr === '\n') {
+                x2 = x - 3;
+                y += Font.LINE_HEIGHT;
+            }
+            chrPixels = this.chrPixels(chr);
+            shifted = XSS.transform.shift(chrPixels.pixels, x2, y);
             shape.add(shifted);
             x2 += chrPixels.width + 2;
         }
@@ -61,10 +68,14 @@ Font.prototype = {
      * @param {number=} x
      * @param {number=} y
      * @param {boolean=} invert
-     * @return {ShapePixels}
+     * @return {XSS.ShapePixels}
      */
     pixels: function(str, x, y, invert) {
         return this.shape.apply(this, arguments).pixels;
+    },
+
+    height: function(str) {
+        return str.split(/\n/g).length * Font.LINE_HEIGHT;
     },
 
     /**
@@ -72,12 +83,22 @@ Font.prototype = {
      * @return {number}
      */
     width: function(str) {
-        var arr = str.split(''), width = 0;
+        var arr, width = 0;
+        arr = str.split('\n');
+        arr = arr[arr.length - 1].split('');
         for (var i = 0, m = arr.length; i < m; i++) {
             width += this.chrPixels(arr[i]).width;
             width += 2;
         }
         return width;
+    },
+
+    /**
+     * @param str
+     * @return {Array}
+     */
+    endPos: function(str) {
+        return [this.width(str), this.height(str) - Font.LINE_HEIGHT];
     },
 
     /**

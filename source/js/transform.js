@@ -30,10 +30,10 @@ Transform.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
+     * @param {XSS.ShapePixels} pixels
      * @param {number=} horShift
      * @param {number=} verShift
-     * @return {ShapePixels}
+     * @return {XSS.ShapePixels}
      */
     zoomX2: function(pixels, horShift, verShift) {
         var ret = [], x, y;
@@ -53,18 +53,18 @@ Transform.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
+     * @param {XSS.ShapePixels} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
-     * @return {ShapePixels}
+     * @return {XSS.ShapePixels}
      */
     zoomX4: function(pixels, shiftX, shiftY) {
         return this.zoomX2(this.zoomX2(pixels, 0, 0), shiftX || 0, shiftY || 0);
     },
 
     /**
-     * @param {ShapePixels} pixels
-     * @return {ShapePixels}
+     * @param {XSS.ShapePixels} pixels
+     * @return {XSS.ShapePixels}
      */
     zoomGame: function(pixels) {
         return this.zoomX4(pixels, XSS.GAME_LEFT, XSS.GAME_TOP);

@@ -31,7 +31,7 @@ ShapeGenerator.prototype = {
      * @param {number} y0
      * @param {number} x1
      * @param {number} y1
-     * @return {ShapePixels}
+     * @return {XSS.ShapePixels}
      */
     line: function(x0, y0, x1, y1) {
         var pixels, dx, dy, sx, sy, err, errTmp;

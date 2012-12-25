@@ -151,17 +151,17 @@ Canvas.prototype = {
 
         // Create cache and paint
         else {
-            cache = shape.cache || (shape.cache = this._cacheShapePaint(shape));
+            cache = shape.cache || (shape.cache = this._getPaintedShape(shape));
             this.ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
         }
     },
 
     /**
      * @param {Shape} shape
-     * @return {ShapeCache}
+     * @return {XSS.ShapeCache}
      * @private
      */
-    _cacheShapePaint: function(shape) {
+    _getPaintedShape: function(shape) {
         var bbox, canvas;
 
         bbox = this._getBBoxRealPixels(shape);
