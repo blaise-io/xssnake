@@ -14,14 +14,14 @@ optimized code.
 
 ## Initial Setup
 
- * Clone or download XSSNAKE from https://github.com/BlaiseKal/XSSNAKE.git
+ * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
  * Create a configuration file by renaming `server/shared/config.example.js` to
    `server/shared/config.js`
  * Adjust the contents of `server/shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)
  * Install [socket.io](https://npmjs.org/package/socket.io) by running
    `npm install socket.io`
- * Install [GccRest](https://github.com/BlaiseKal/GccRest) by running
+ * Install [GccRest](https://github.com/blaise-io/gcc-rest) by running
    `npm install gcc-rest`
 
 ## Production
