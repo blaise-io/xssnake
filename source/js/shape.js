@@ -9,7 +9,7 @@ XSS.ShapePixel = null;
 /** @typedef {Array.<XSS.ShapePixel>} */
 XSS.ShapePixels = null;
 
-/** @typedef {{canvas: HTMLElement, bbox: BoundingBox}} */
+/** @typedef {{canvas: Element, bbox: BoundingBox}} */
 XSS.ShapeCache = null;
 
 /**
