@@ -98,8 +98,12 @@ Transform.prototype = {
         }.bind(this);
 
         push = function(p, x, y) {
-            zoomedPixels.push([p[0] * 2 + x + shiftX, p[1] * 2 + y + shiftY]);
-        };
+            x = p[0] * 2 + x + shiftX;
+            y = p[1] * 2 + y + shiftY;
+            if (!this._hasPixel(zoomedPixels, x, y)) {
+                zoomedPixels.push([x, y]);
+            }
+        }.bind(this);
 
         for (var i = 0, m = origPixels.length; i < m; i++) {
             var p = origPixels[i];
@@ -131,8 +135,9 @@ Transform.prototype = {
             // x\
             // ##\
             // # #
-            if (has(p, 0, 1) &&
+            else if (has(p, 0, 1) &&
                 has(p, 1, 1) &&
+                has(p, 0, 2) &&
                 has(p, 0, 2) &&
                 has(p, 2, 2) &&
                 !has(p, 1, 0) &&
@@ -145,7 +150,7 @@ Transform.prototype = {
             //  /x
             // /##
             // # #
-            if (has(p, 0, 1) &&
+            else if (has(p, 0, 1) &&
                 has(p, -1, 1) &&
                 has(p, 0, 2) &&
                 has(p, -2, 2) &&
@@ -159,7 +164,7 @@ Transform.prototype = {
             // # #
             // \##
             //  \x
-            if (has(p, -2, -2) &&
+            else if (has(p, -2, -2) &&
                 has(p, 0, -2) &&
                 has(p, -1, -1) &&
                 has(p, 0, -1) &&
@@ -173,7 +178,7 @@ Transform.prototype = {
             // # #
             // ##/
             // x/
-            if (has(p, 2, -2) &&
+            else if (has(p, 2, -2) &&
                 has(p, 0, -2) &&
                 has(p, 1, -1) &&
                 has(p, 0, -1) &&
