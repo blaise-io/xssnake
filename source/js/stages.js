@@ -156,7 +156,7 @@ XSS.stages = {
         top = XSS.MENU_TOP;
 
         screen = new Shape(
-            XSS.transform.zoomX2(XSS.font.pixels('<CREDITS>', 0, 0), left, top),
+            XSS.transform.zoomX2(XSS.font.pixels('<CREDITS>'), left, top, true),
             XSS.font.pixels('' +
                 'Concept, code, pixels, font by Blaise Kal;\n' +
                 'www.blaise.io / blaisekal@gmail.com\n' +
@@ -173,7 +173,7 @@ XSS.stages = {
         var screen, left = XSS.MENU_LEFT, top = XSS.MENU_TOP;
 
         screen = new Shape(
-            XSS.transform.zoomX2(XSS.font.pixels('<HEEELP?!!>'), left, top),
+            XSS.transform.zoomX2(XSS.font.pixels('<HEEELP?!!>'), left, top, true),
             XSS.font.pixels('Play using the arrow keys on your keyboard. ' +
                 'Chat during the game by pressing '+XSS.UNICODE_ENTER_KEY+'. ' +
                 'Supported: IE9 and up, Webkit, Gecko, Opera. Source code ' +
