@@ -26,10 +26,11 @@ module.exports = {
             size : 4
         },
         game: {
-            capacity : 4,
-            tick     : 50,
-            countdown: 3,
-            gloat    : 3
+            capacity    : 4,
+            tick        : 50,
+            countdown   : 3,
+            gloat       : 5,
+            respawnApple: 30
         }
     }
 

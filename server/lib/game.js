@@ -62,6 +62,7 @@ Game.prototype = {
 
         clearTimeout(this._gameStartTimer);
         clearTimeout(this._powerUpTimer);
+        clearTimeout(this._respawnAppleTimer);
 
         delete this.snakes;
         delete this.apples;
@@ -152,6 +153,18 @@ Game.prototype = {
             this.spawnPowerup();
             this._delaySpawnPowerup();
         }.bind(this), Util.randomBetween(i[0] * 1000, i[1]* 1000));
+    },
+
+    /**
+     * @param {number} index
+     * @param {number} delay
+     * @private
+     */
+    _respawnAppleAfter: function(index, delay) {
+        clearTimeout(this._respawnAppleTimer);
+        this._respawnAppleTimer = setTimeout(function() {
+            this.spawnApple(0);
+        }.bind(this), delay);
     },
 
     /**
@@ -371,6 +384,8 @@ Game.prototype = {
         var location = this.level.getRandomOpenTile(this.snakes);
         if (typeof index !== 'number') {
             index = this.apples.length;
+        } else if (index === 0 && config.shared.game.respawnApple) {
+            this._respawnAppleAfter(0, config.shared.game.respawnApple * 1000);
         }
         this.apples[index] = location;
         this.room.emit(events.CLIENT_APPLE_SPAWN, [index, location]);
