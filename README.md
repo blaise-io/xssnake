@@ -21,7 +21,7 @@ optimized code.
  * Download and install [node.js](http://nodejs.org/)
  * Install [socket.io](https://npmjs.org/package/socket.io) by running
    `npm install socket.io`
- * Install [GccRest](https://github.com/blaise-io/gcc-rest) by running
+ * Install [gcc-rest](https://github.com/blaise-io/gcc-rest) by running
    `npm install gcc-rest`
 
 ## Production
