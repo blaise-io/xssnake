@@ -196,7 +196,7 @@ ShapeGenerator.prototype = {
         var welcome = XSS.font.pixels('<XSSNAKE>', 0, 0);
         return new Shape(
             XSS.transform.zoomX4(welcome, x, y),
-            XSS.font.pixels((new Array(45)).join('+'), x, y + 24)
+            XSS.font.pixels((new Array(43)).join('*'), x, y + 28)
         );
     }
 

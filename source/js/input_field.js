@@ -109,7 +109,7 @@ InputField.prototype = {
         if (values[1]) { // Selection
             endpos = XSS.font.endPos(this.prefix + values[0]);
             pos = [this.x + endpos[0], this.y + endpos[1]];
-            shape.add(XSS.font.pixels(values[1], pos[0], pos[1], true));
+            shape.add(XSS.font.pixels(values[1], pos[0], pos[1], {invert: true}));
         }
 
         endpos = XSS.font.endPos(this.prefix + values[0] + values[1]);

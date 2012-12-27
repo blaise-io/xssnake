@@ -19,7 +19,9 @@ function Chat(index, names) {
      * @type {Array.<XSS.ChatMessage>}
      * @private
      */
-    this._messages = [{body: 'Press Enter key to chat'}];
+    this._messages = [
+        {body: 'Press ' + XSS.UNICODE_ENTER_KEY + ' to chat'}
+    ];
 
     this._chatFocusBound = this._chatFocus.bind(this);
     this._hasFocus = false;

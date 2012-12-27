@@ -9,7 +9,6 @@
  */
 function Font() {
     this._ctx = this._getCanvas();
-    this._cache = {};
     this.detectFontSupport();
 }
 
@@ -21,8 +20,10 @@ function Font() {
 
 Font.prototype = {
 
+    _cache: {},
+
     detectFontSupport: function() {
-        if (!this._getChrProps(XSS.UNICODE_SQUARE)) {
+        if (!this._getChrProperties(XSS.UNICODE_SQUARE)) {
             throw new Error('Cannot render xssnake font');
         }
     },
@@ -31,33 +32,38 @@ Font.prototype = {
      * @param {string} str
      * @param {number=} x
      * @param {number=} y
-     * @param {boolean=} invert
+     * @param {Object=} options
      * @return {Shape}
      */
-    shape: function(str, x, y, invert) {
-        var x2, arr, shape;
+    shape: function(str, x, y, options) {
+        var chrs, pointer, shape = new Shape();
 
-        arr = str.split('');
-        shape = new Shape();
-
-        x = x2 = x || 0;
+        x = x || 0;
         y = y || 0;
+        pointer = {x: 0, y: 0};
 
-        for (var i = 0, m = arr.length; i < m; i++) {
-            var chr, chrPixels, shifted;
-            chr = arr[i];
-            if (chr === '\n') {
-                x2 = x - 3;
-                y += Font.LINE_HEIGHT;
+        options = options || {};
+        chrs = str.split('');
+
+        for (var i = 0, m = chrs.length; i < m; i++) {
+            var width, nextWordFit = true, chr = chrs[i];
+
+            width = this._appendChr(x, y, shape, chrs[i], pointer);
+
+            if (options.wrap && chr.match(/[\s\-]/)) {
+                nextWordFit = this._nextWordFit(str, i, pointer, options.wrap);
             }
-            chrPixels = this.chrPixels(chr);
-            shifted = XSS.transform.shift(chrPixels.pixels, x2, y);
-            shape.add(shifted);
-            x2 += chrPixels.width + 2;
+
+            if (chr === '\n' || !nextWordFit) {
+                pointer.x = 0;
+                pointer.y += Font.LINE_HEIGHT;
+            } else {
+                pointer.x += width + 2;
+            }
         }
 
-        if (invert) {
-            this._invert(shape, x, x2, y);
+        if (options.invert) {
+            this._invert(shape, y);
         }
 
         return shape;
@@ -67,10 +73,10 @@ Font.prototype = {
      * @param {string} str
      * @param {number=} x
      * @param {number=} y
-     * @param {boolean=} invert
+     * @param {Object=} options
      * @return {XSS.ShapePixels}
      */
-    pixels: function(str, x, y, invert) {
+    pixels: function(str, x, y, options) {
         return this.shape.apply(this, arguments).pixels;
     },
 
@@ -83,11 +89,11 @@ Font.prototype = {
      * @return {number}
      */
     width: function(str) {
-        var arr, width = 0;
-        arr = str.split('\n');
-        arr = arr[arr.length - 1].split('');
-        for (var i = 0, m = arr.length; i < m; i++) {
-            width += this.chrPixels(arr[i]).width;
+        var chrs, width = 0;
+        chrs = str.split('\n');
+        chrs = chrs[chrs.length - 1].split('');
+        for (var i = 0, m = chrs.length; i < m; i++) {
+            width += this._chrProperties(chrs[i]).width;
             width += 2;
         }
         return width;
@@ -104,28 +110,64 @@ Font.prototype = {
     /**
      * @param chr
      * @return {Object}
+     * @private
      */
-    chrPixels: function(chr) {
+    _chrProperties: function(chr) {
         if (!this._cache[chr]) {
-            var chrProps = this._getChrProps(chr);
-            this._cache[chr] = chrProps || this.chrPixels(XSS.UNICODE_SQUARE);
+            var chrProperties = this._getChrProperties(chr);
+            this._cache[chr] = chrProperties || this._chrProperties(XSS.UNICODE_SQUARE);
         }
         return this._cache[chr];
     },
 
     /**
-     * @param {Shape} shape
      * @param {number} x
-     * @param {number} x2
+     * @param {number} y
+     * @param {Shape} shape
+     * @param {string} chr
+     * @param {Object.<string,number>} pointer
+     * @return {number}
+     * @private
+     */
+    _appendChr: function(x, y, shape, chr, pointer) {
+        var chrProperties, shiftedPixels;
+
+        chrProperties = this._chrProperties(chr);
+
+        shiftedPixels = XSS.transform.shift(
+            chrProperties.pixels,
+            pointer.x + x,
+            pointer.y + y
+        );
+
+        shape.add(shiftedPixels);
+        return chrProperties.width;
+    },
+
+    /**
+     * Determine whether the next word will fit on the same line or not.
+     * @param {string} str
+     * @param {number} i
+     * @param {Object.<string,number>} pointer
+     * @param {number} wrap
+     * @return {boolean}
+     * @private
+     */
+    _nextWordFit: function(str, i, pointer, wrap) {
+        var nextWord = str.substr(i + 1).split(/[\s\-]/)[0];
+        return (pointer.x + this.width(nextWord) <= wrap);
+    },
+
+    /**
+     * @param {Shape} shape
      * @param {number} y
      * @private
      */
-    _invert: function(shape, x, x2, y) {
+    _invert: function(shape, y) {
         var bbox = shape.bbox();
-        bbox.x1 = x - 1;
-        bbox.x2 = x2;
+        bbox.expand(1);
         bbox.y1 = y - 1;
-        bbox.y2 = y + 1 + Font.MAX_HEIGHT;
+        bbox.y2 = y + Font.LINE_HEIGHT;
         shape.invert(bbox);
     },
 
@@ -157,7 +199,7 @@ Font.prototype = {
      * @return {Object}
      * @private
      */
-    _getChrProps: function(chr) {
+    _getChrProperties: function(chr) {
         var data, pixels = [], width = 0, blurry = 0, valid,
             w = Font.MAX_WIDTH,
             h = Font.MAX_HEIGHT;

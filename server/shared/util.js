@@ -54,7 +54,9 @@ var Util = module.exports = {
         script.onload = callback;
         script.onerror = function() {
             var err = 'Error loading ' + url;
-            XSS.shapes.err = XSS.font.shape(err, 4, XSS.PIXELS_V - 10);
+            XSS.shapes.instruction = XSS.font.shape(
+                err, XSS.PIXELS_H - XSS.font.width(err + ' '), XSS.PIXELS_V - 10
+            );
         };
         head = document.querySelector('head');
         head.insertBefore(script, head.firstChild);

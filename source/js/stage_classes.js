@@ -75,16 +75,17 @@ SelectMenu.prototype = {
 
         // Draw options
         for (var i = 0, m = this._options.length; i < m; i++) {
-            var active, title;
-            active = (this.getSelected() === i);
+            var title, active = (this.getSelected() === i);
             title = this._options[i].title;
-            font = XSS.font.pixels(title, x, y + (i * 9), active);
+            font = XSS.font.pixels(title, x, y, {invert: active});
+            y += Font.LINE_HEIGHT + 1;
             shape.add(font);
         }
 
         // Help text line(s)
         desc = this.getSelectedOption().description;
-        font = XSS.font.pixels(desc, x, y + ((m + 2) * Font.LINE_HEIGHT));
+        y += Font.LINE_HEIGHT;
+        font = XSS.font.pixels(desc, x, y, {wrap: XSS.MENU_WRAP});
         shape.add(font);
 
         return shape;
@@ -159,7 +160,7 @@ function InputStage(name, nextStage, label, maxWidth) {
 InputStage.prototype = {
 
     getInstruction: function() {
-        return 'Start typing and press Enter when you’re done';
+        return 'Start typing and submit with ' + XSS.UNICODE_ENTER_KEY + '.';
     },
 
     getShape: function() {
@@ -244,7 +245,7 @@ function ScreenStage(screen) {
 ScreenStage.prototype = {
 
     getInstruction: function() {
-        return 'Press Esc to go back to the futuuuuuuuuuuuuure';
+        return 'Press Esc to go back.';
     },
 
     getShape: function() {
@@ -286,7 +287,7 @@ function SelectStage(menu) {
 SelectStage.prototype = {
 
     getInstruction: function() {
-        return 'Use arrow keys to navigate and Enter to select.';
+        return 'Navigate with arrow keys and select with ' + XSS.UNICODE_ENTER_KEY + '.';
     },
 
     getShape: function() {

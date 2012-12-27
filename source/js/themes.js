@@ -18,25 +18,25 @@ XSS.themes = [
         on   : '#dd0'
     },
     {
-        title: 'Fail Green',
-        desc : 'My First LED Screen.',
+        title: 'My First LED Screen',
+        desc : 'Without backlight.',
         bg   : '#798',
         off  : '#687',
         on   : '#232'
     },
     {
         title: '1337',
-        desc : 'Please dont hack my website.',
+        desc : 'OWNeD N00b!!!1',
         bg   : '#010',
         off  : '#000',
         on   : '#0f0'
     },
     {
         title: 'Panda',
-        desc : 'Zebras can go F themselves.',
-        bg   : '#eee',
-        off  : '#fff',
-        on   : '#000'
+        desc : '(o)____(o)',
+        bg   : '#000',
+        off  : '#111',
+        on   : '#fff'
     },
     {
         title: 'Gaymer',

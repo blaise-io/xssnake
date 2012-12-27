@@ -12,11 +12,21 @@ XSS.stages = {
         var menu;
 
         menu = new SelectMenu('main');
-        menu.addOption(null, XSS.stages.inputName, 'MULTIPLAYER', 'Play with a friend or (un)friendly stranger.');
-        menu.addOption(null, XSS.stages.startGame, 'SINGLE PLAYER', 'Play with yourself, get some practise.');
-        menu.addOption(null, XSS.stages.themesScreen, 'THEEEMES', 'Change the color scheme YAY!');
-        menu.addOption(null, XSS.stages.helpScreen, 'HEEELP?!!', 'How do I use this computer electronic device?');
-        menu.addOption(null, XSS.stages.creditsScreen, 'CREDITS', 'Made by Blaise Kal, 2012.');
+        menu.addOption(null, XSS.stages.inputName,
+            'MULTIPLAYER',
+            'Play with a friend or (un)friendly stranger.');
+        menu.addOption(null, XSS.stages.startGame,
+            'SINGLE PLAYER',
+            'Play with yourself, get some practise.');
+        menu.addOption(null, XSS.stages.themesScreen,
+            'THEEEMES',
+            'Change the color scheme YAY!');
+        menu.addOption(null, XSS.stages.helpScreen,
+            'HEEELP?!!',
+            'How do I use this computer electronic device?');
+        menu.addOption(null, XSS.stages.creditsScreen,
+            'CREDITS',
+            'Who spent all this blood & tears?');
 
         return new SelectStage(menu);
     },
@@ -28,8 +38,12 @@ XSS.stages = {
         var menu;
 
         menu = new SelectMenu('public');
-        menu.addOption(true, XSS.stages.askIsFriendly, 'QUICK MATCH WITH A STRANGER', 'Quickly play a game using matchmaking.');
-        menu.addOption(false, XSS.stages.askIsFriendly, 'HOST A PRIVATE GAME', 'Generates a secret game URL to give to a friend.');
+        menu.addOption(true, XSS.stages.askIsFriendly,
+            'QUICK MATCH',
+            'Join or create a game using matchmaking.');
+        menu.addOption(false, XSS.stages.askIsFriendly,
+            'PRIVATE GAME',
+            'Create a private game for friends.');
 
         return new SelectStage(menu);
     },
@@ -41,12 +55,13 @@ XSS.stages = {
         var menu;
 
         menu = new SelectMenu('friendly');
-        menu.addOption(true, XSS.stages.startGame, 'FRIENDLY MODE',
-            'May slightly dent your ego ' + XSS.UNICODE_HEART);
-        menu.addOption(false, XSS.stages.captcha, 'XSS MODE',
-            'The winner of a game is allowed to execute\n' +
-            'JavaScript in the browsers of all losers…\n' +
-            'while(true) alert(\'' + XSS.UNICODE_SKULL + '\');');
+        menu.addOption(true, XSS.stages.startGame,
+            'FRIENDLY MODE', 'May slightly dent your ego ' + XSS.UNICODE_HEART);
+        menu.addOption(false, XSS.stages.captcha,
+            'XSS MODE',
+            'The winner of a game is allowed to execute JavaScript in the ' +
+            'browsers of every loser… ' +
+            'while(true){alert(\'' + XSS.UNICODE_SKULL + '\');}');
 
         return new SelectStage(menu);
     },
@@ -72,7 +87,7 @@ XSS.stages = {
             'String(typeof []).charAt(%d);',
             'String(typeof (5%2)).charAt(%d);',
             'String(/%s/.test(\'%s\'));',
-            '\'1234512345\'.split(\'\').lastIndexOf(%d);'
+            '\'1234512345kip\'.lastIndexOf(\'%d\');'
         ];
 
         challenge = Util.randomItem(challenges);
@@ -80,7 +95,7 @@ XSS.stages = {
         challenge = challenge.replace(/%d/g, digit);
 
         intro = 'XSS mode allows the winner of a game to execute\n' +
-                'JavaScript in the browsers of all losers. This may\n' +
+                'JavaScript in the browsers of every loser. This may\n' +
                 'damage you and/or your computer. If you accept\n' +
                 'this risk, please enter the result of this statement:\n\n> ' +
                 challenge + '\n> ';
@@ -142,7 +157,10 @@ XSS.stages = {
 
         screen = new Shape(
             XSS.transform.zoomX2(XSS.font.pixels('<CREDITS>', 0, 0), left, top),
-            XSS.font.pixels('Blaise Kal: Code, Pixels, Font, Concept.', left, top + 18)
+            XSS.font.pixels('' +
+                'Concept, code, pixels, font by Blaise Kal;\n' +
+                'www.blaise.io / blaisekal@gmail.com\n' +
+                'Thank you for playing!', left, top + 14)
         );
 
         return new ScreenStage(screen);
@@ -152,18 +170,17 @@ XSS.stages = {
      * @return {ScreenStage}
      */
     helpScreen: function() {
-        var screen, left, top;
-
-        left = XSS.MENU_LEFT;
-        top = XSS.MENU_TOP;
+        var screen, left = XSS.MENU_LEFT, top = XSS.MENU_TOP;
 
         screen = new Shape(
-            XSS.transform.zoomX2(XSS.font.pixels('<HEEELP?!!>', 0, 0), left, top),
-            XSS.font.pixels('• Play using the arrow keys on your keyboard', left, top + 18),
-            XSS.font.pixels('• You can chat during the game by pressing Enter', left, top + 27),
-            XSS.font.pixels('• Open Source at github.com/blaisekal/xssnake', left, top + 36),
-            XSS.font.pixels('• Github is also for bugs and feature requests', left, top + 45),
-            XSS.font.pixels('• Other questions or issues: blaisekal@gmail.com', left, top + 54)
+            XSS.transform.zoomX2(XSS.font.pixels('<HEEELP?!!>'), left, top),
+            XSS.font.pixels('Play using the arrow keys on your keyboard. ' +
+                'Chat during the game by pressing '+XSS.UNICODE_ENTER_KEY+'. ' +
+                'Supported: IE9 and up, Webkit, Gecko, Opera. Source code ' +
+                'available at Github (Google: "github xssnake"). Bugs and ' +
+                'feature request through GitHub. Other questions or issues: ' +
+                'blaisekal@gmail.com.',
+                left, top + 14, {wrap: XSS.MENU_WRAP})
         );
 
         return new ScreenStage(screen);

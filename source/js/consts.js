@@ -22,7 +22,8 @@
 /** @const */ XSS.DIRECTION_DOWN = 3;
 
 /** @const */ XSS.MENU_LEFT = 40;
-/** @const */ XSS.MENU_TOP = 62;
+/** @const */ XSS.MENU_TOP = 56;
+/** @const */ XSS.MENU_WRAP = 176;
 
 /** @const */ XSS.GAME_LEFT = 2;
 /** @const */ XSS.GAME_TOP = 2;
