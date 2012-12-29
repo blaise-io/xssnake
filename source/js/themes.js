@@ -26,14 +26,14 @@ XSS.themes = [
     },
     {
         title: '1337',
-        desc : 'OWNeD N00b!!!1',
+        desc : '0wN3d N00b!!!1',
         bg   : '#010',
         off  : '#000',
         on   : '#0f0'
     },
     {
         title: 'Panda',
-        desc : '(o)____(o)',
+        desc : '(o)__(o)',
         bg   : '#000',
         off  : '#111',
         on   : '#fff'
