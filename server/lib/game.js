@@ -2,6 +2,7 @@
 'use strict';
 
 var util = require('util'),
+    Spawner = require('./spawner.js'),
     levels = require('../shared/levels.js'),
     config = require('../shared/config.js'),
     events = require('../shared/events.js'),
@@ -20,10 +21,9 @@ function Game(room, levelID) {
     this.server = room.server;
 
     this.level = new Level(levelID, levels);
+    this.spawner = new Spawner(this);
 
     this.snakes = [];
-    this.apples = [this.level.getRandomOpenTile(this.snakes)];
-    this.powerups = [];
 
     this._roundEnded = false;
     this._tickBound = this._tick.bind(this);
@@ -47,9 +47,12 @@ Game.prototype = {
     start: function() {
         console.log('___ NEW ROUND IN ROOM ' + this.room.id + ' ___');
         this.room.emit(events.CLIENT_GAME_START, []);
-        this.room.emit(events.CLIENT_APPLE_SPAWN, [0, this.apples[0]]);
+
         this.room.inProgress = true;
         this.server.ticker.addListener('tick', this._tickBound);
+
+        var respawnAfter = config.shared.game.respawnApple * 1000;
+        this.spawner.spawn(this.spawner.APPLE, null, true, respawnAfter);
         this._delaySpawnPowerup();
     },
 
@@ -62,11 +65,13 @@ Game.prototype = {
 
         clearTimeout(this._gameStartTimer);
         clearTimeout(this._powerUpTimer);
-        clearTimeout(this._respawnAppleTimer);
+
+        if (this.spawner) {
+            this.spawner.destroy();
+            delete this.spawner;
+        }
 
         delete this.snakes;
-        delete this.apples;
-        delete this.powerups;
         delete this.level;
     },
 
@@ -76,13 +81,14 @@ Game.prototype = {
      * @param {number} direction
      */
     updateSnake: function(client, parts, direction) {
-        var apple, powerup, head = parts[parts.length - 1];
+        var head = parts[parts.length - 1];
 
         client.snake.direction = direction;
 
         // Check if server-client delta is similar enough,
         // We tolerate a small difference because of lag.
-        if (this.level.gap(head, client.snake.head()) <= 1) {
+        // TODO: Latency defines allowed gap size
+        if (Util.gap(head, client.snake.head()) <= 1) {
             client.snake.parts = parts;
             this._broadCastSnake(client);
         } else {
@@ -97,15 +103,7 @@ Game.prototype = {
             delete client.snake.limbo;
         }
 
-        apple = this._appleAtPosition(head);
-        if (-1 !== apple) {
-            this._hitApple(client, apple);
-        }
-
-        powerup = this._powerupAtPosition(head);
-        if (-1 !== powerup) {
-            this._hitPowerup(client, powerup);
-        }
+        this.spawner.handleHits(client, head);
     },
 
     /**
@@ -129,6 +127,9 @@ Game.prototype = {
         this.room.emit(events.CLIENT_SNAKE_UPDATE, data);
     },
 
+    /**
+     * @param client
+     */
     clientQuit: function(client) {
         this._setSnakeCrashed(client, client.snake.parts);
     },
@@ -144,27 +145,52 @@ Game.prototype = {
     },
 
     /**
+     * @param {Client} client
+     * @param {number} index
+     */
+    hitApple: function(client, index) {
+        var clientIndex = this.room.clients.indexOf(client),
+            size = client.snake.size += 3,
+            score = ++this.room.points[clientIndex];
+        this.room.emit(events.CLIENT_APPLE_HIT, [clientIndex, size, index]);
+        this.room.emit(events.CLIENT_SNAKE_ACTION, [clientIndex, 'Nom']);
+        this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
+    },
+
+    /**
+     * @param {Client} client
+     * @param {number} index
+     */
+    hitPowerup: function(client, index) {
+        var clientIndex = this.room.clients.indexOf(client);
+        this.room.emit(events.CLIENT_POWERUP_HIT, [clientIndex, index]);
+        void(new Powerup(this, client));
+    },
+
+    /**
+     * @return {Array.<number>}
+     */
+    getEmptyLocation: function() {
+        var locations = this.spawner.locations.slice();
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            var parts = this.snakes[i].parts;
+            for (var ii = 0, mm = parts.length; ii < mm; ii++) {
+                locations.push(parts[ii]);
+            }
+        }
+        return this.level.getEmptyLocation(locations);
+    },
+
+    /**
      * @private
      */
     _delaySpawnPowerup: function() {
         var i = config.server.spawnInterval;
         clearTimeout(this._powerUpTimer);
         this._powerUpTimer = setTimeout(function() {
-            this.spawnPowerup();
+            this.spawner.spawn(this.spawner.POWERUP);
             this._delaySpawnPowerup();
         }.bind(this), Util.randomBetween(i[0] * 1000, i[1]* 1000));
-    },
-
-    /**
-     * @param {number} index
-     * @param {number} delay
-     * @private
-     */
-    _respawnAppleAfter: function(index, delay) {
-        clearTimeout(this._respawnAppleTimer);
-        this._respawnAppleTimer = setTimeout(function() {
-            this.spawnApple(0);
-        }.bind(this), delay);
     },
 
     /**
@@ -213,12 +239,12 @@ Game.prototype = {
             }
 
             // Self
-            if (m >= 5 && m - 1 !== i && !level.gap(part, parts[m - 1])) {
+            if (m >= 5 && m - 1 !== i && Util.eq(part, parts[m - 1])) {
                 return [this.CRASH_SELF, clients.indexOf(client)];
             }
 
             // Self (limbo)
-            else if (limbo && m >= 5 && m - 2 !== i && !level.gap(part, parts[m - 2])) {
+            else if (limbo && m >= 5 && m - 2 !== i && Util.eq(part, parts[m - 2])) {
                 return [this.CRASH_SELF, clients.indexOf(client)];
             }
 
@@ -262,7 +288,7 @@ Game.prototype = {
             } else {
                 alive = clients[i];
 
-                // Knockout points
+                // Knockout system points
                 this.room.emit(
                     events.CLIENT_ROOM_SCORE,
                     [i, this.room.points[i] += 2]
@@ -295,100 +321,6 @@ Game.prototype = {
     _startNewRound: function() {
         this.server.ticker.removeListener('tick', this._tickBound);
         this.room.newRound();
-    },
-
-    /**
-     * @param {Array.<number>} position
-     * @return {number}
-     * @private
-     */
-    _appleAtPosition: function(position) {
-        for (var i = 0, m = this.apples.length; i < m; i++) {
-            if (this.apples[i]) {
-                if (this.level.gap(this.apples[i], position) === 0) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    },
-
-    /**
-     * @param {Client} client
-     * @param {number} appleIndex
-     * @private
-     */
-    _hitApple: function(client, appleIndex) {
-        var size = client.snake.size += 3,
-            clientIndex = this.room.clients.indexOf(client),
-            score = ++this.room.points[clientIndex];
-
-        this.room.emit(events.CLIENT_APPLE_HIT, [clientIndex, size, appleIndex]);
-        this.room.emit(events.CLIENT_SNAKE_ACTION, [clientIndex, 'Nom']);
-        this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
-
-        if (appleIndex === 0) {
-            this.spawnApple(0);
-        } else {
-            this.apples[appleIndex] = null;
-        }
-    },
-
-    /**
-     * @param {Array.<number>} position
-     * @return {number}
-     * @private
-     */
-    _powerupAtPosition: function(position) {
-        for (var i = 0, m = this.powerups.length; i < m; i++) {
-            if (this.powerups[i]) {
-                if (this.level.gap(this.powerups[i].location, position) === 0) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    },
-
-    /**
-     * @param {Client} client
-     * @param {number} powerupIndex
-     * @private
-     */
-    _hitPowerup: function(client, powerupIndex) {
-        var clientIndex = this.room.clients.indexOf(client),
-            powerup = this.powerups[powerupIndex];
-        powerup.hit(client, this);
-        this.room.emit(events.CLIENT_POWERUP_HIT, [clientIndex, powerupIndex]);
-        this.powerups[powerupIndex] = null;
-    },
-
-    /**
-     * @param {number=} index
-     */
-    spawnPowerup: function(index) {
-        var location, powerup;
-        location = this.level.getRandomOpenTile(this.snakes);
-        if (typeof index !== 'number') {
-            index = this.powerups.length;
-        }
-        powerup = new Powerup(location);
-        this.powerups[index] = powerup;
-        this.room.emit(events.CLIENT_POWERUP_SPAWN, [index, location]);
-    },
-
-    /**
-     * @param {number=} index
-     */
-    spawnApple: function(index) {
-        var location = this.level.getRandomOpenTile(this.snakes);
-        if (typeof index !== 'number') {
-            index = this.apples.length;
-        } else if (index === 0 && config.shared.game.respawnApple) {
-            this._respawnAppleAfter(0, config.shared.game.respawnApple * 1000);
-        }
-        this.apples[index] = location;
-        this.room.emit(events.CLIENT_APPLE_SPAWN, [index, location]);
     },
 
     /**
@@ -436,14 +368,14 @@ Game.prototype = {
      * @private
      */
     _applyPredictedPosition: function(client) {
-        var predict, apple, powerup, snake, clone, crash;
+        var predict, predictParts, snake, crash;
 
         snake = client.snake;
         predict = this._getPredictPosition(snake);
 
-        clone = snake.parts.slice(1);
-        clone.push(predict);
-        crash = this._isCrash(client, clone);
+        predictParts = snake.parts.slice(1);
+        predictParts.push(predict);
+        crash = this._isCrash(client, predictParts);
 
         if (crash) {
             // A snake is in limbo when the server predicts that a snake has
@@ -460,22 +392,15 @@ Game.prototype = {
             }
         }
 
-        // Apple?
-        apple = this._appleAtPosition(predict);
-        if (-1 !== apple) {
-            this._hitApple(client, apple);
-        }
-
         // Apply move
         if (!snake.crashed) {
             snake.move(predict);
         }
 
-        // Powerup?
-        // After move, powerup may modify move
-        powerup = this._powerupAtPosition(predict);
-        if (-1 !== powerup) {
-            this._hitPowerup(client, powerup);
+        // Cannot hit apples and powerups when in limbo;
+        // Snake is either dead or made a turn to prevent death.
+        if (!snake.limbo) {
+            this.spawner.handleHits(client, predict);
         }
     },
 

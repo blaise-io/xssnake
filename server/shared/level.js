@@ -1,7 +1,6 @@
 /*jshint globalstrict:true, es5:true, node:true */
 'use strict';
 
-
 /**
  * Collisions and levels
  * @constructor
@@ -48,33 +47,31 @@ Level.prototype = {
     },
 
     /**
-     * @param {Array.<Snake>} snakes
+     * @param {Array.<Array>} locations
      * @return {Array.<number>}
-     * @suppress {checkTypes} GCC being weird
      */
-    getRandomOpenTile: function(snakes) {
-        var randomSeq, randomXY, max = this.level.width * this.level.height;
+    getEmptyLocation: function(locations) {
+        var m = this.level.width * this.level.height;
         while (true) {
-            randomSeq = Math.floor(Math.random() * max);
-            randomXY = this.seqToXY(randomSeq);
-            if (this.clearOfWallsAndSnakes(randomXY, snakes)) {
-                break;
+            var location = this.seqToXY(Math.floor(Math.random() * m));
+            if (this.isEmpty(locations, location)) {
+                return location;
             }
         }
-        return randomXY;
     },
 
     /**
-     * @param {Array.<number>} randomXY
-     * @param {Array.<Snake>} snakes
+     * @param {Array.<Array>} locations
+     * @param {Array.<number>} location
      * @return {boolean}
      */
-    clearOfWallsAndSnakes: function(randomXY, snakes) {
-        if (this.isWall(randomXY[0], randomXY[1])) {
+    isEmpty: function(locations, location) {
+        if (this.isWall(location[0], location[1])) {
             return false;
         }
-        for (var i = 0, m = snakes.length; i < m; i++) {
-            if (snakes[i].hasPart(randomXY)) {
+        for (var i = 0, m = locations.length; i < m; i++) {
+            var iloc = locations[i];
+            if (iloc && iloc[0] === location[0] && iloc[1] === location[1]) {
                 return false;
             }
         }
@@ -116,15 +113,6 @@ Level.prototype = {
             }
         }
         return false;
-    },
-
-    /**
-     * @param {Array.<number>} a
-     * @param {Array.<number>} b
-     * @return {number}
-     */
-    gap: function(a, b) {
-        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
     },
 
     /**

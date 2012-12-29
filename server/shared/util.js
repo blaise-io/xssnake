@@ -42,6 +42,33 @@ var Util = module.exports = {
     },
 
     /**
+     * @param {Array.<number>} a
+     * @param {Array.<number>} b
+     * @return {number}
+     */
+    gap: function(a, b) {
+        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
+    },
+
+    /**
+     * @param {Array.<number>} a
+     * @param {Array.<number>} b
+     * @return {boolean}
+     */
+    eq: function(a, b) {
+        return a[0] === b[0] && a[1] === b[1];
+    },
+
+    /**
+     * @param {Array.<number>} locations
+     * @param {Array.<number>} location
+     * @return {boolean}
+     */
+    has: function(locations, location) {
+        return locations[0] === location[0] && locations[1] === location[1];
+    },
+
+    /**
      * @param {*} obj
      * @param {*} val
      * @return {?string}

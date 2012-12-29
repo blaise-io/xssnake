@@ -149,7 +149,7 @@ Game.prototype = {
 
             pixels = XSS.font.pixels(String(count).replace(/^0$/, 'Go!'), 0, 0);
 
-            shape = new Shape(XSS.transform.zoomX2(pixels));
+            shape = new Shape(XSS.transform.zoomX2(pixels, 0, 0, true));
             bbox = shape.bbox();
 
             shape.shift(

@@ -64,7 +64,7 @@ EventHandler.prototype = {
             index = room.clients.indexOf(this.client);
             data = [index, message.substr(0, 30)];
             room.broadcast(events.CLIENT_CHAT_MESSAGE, data, this.client);
-            room.emit(events.CLIENT_SNAKE_ACTION, [index, 'blah']);
+            room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Blah']);
         }
     },
 

@@ -6,11 +6,13 @@ var events = require('../shared/events.js'),
 
 /**
  * Powerup
- * @param {Array.<number>} location
+ * @param {Client} client
+ * @param {Game} game
  * @constructor
  */
-function Powerup(location) {
-    this.location = location;
+function Powerup(game, client) {
+    var powerup = this._getPowerUp().bind(this);
+    powerup(client, game);
 }
 
 module.exports = Powerup;
@@ -21,15 +23,6 @@ module.exports = Powerup;
 /** @const */ Powerup.APPLY_ALL = 3;
 
 Powerup.prototype = {
-
-    /**
-     * @param {Client} client
-     * @param {Game} game
-     */
-    hit: function(client, game) {
-        var powerup = this._getPowerUp();
-        powerup(client, game);
-    },
 
     /**
      * @return {Array}
@@ -88,11 +81,8 @@ Powerup.prototype = {
      * @private
      */
     _apples: function(client, game) {
-        var index = game.room.clients.indexOf(client);
-        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Apples+']);
-        for (var i = 0, m = Util.randomBetween(2, 6); i < m; i++) {
-            setTimeout(game.spawnApple.bind(game), i * 100);
-        }
+        var r = Util.randomBetween(2, 6);
+        this._spawn(client, game, game.spawner.APPLE, r, 'Apples+');
     },
 
     /**
@@ -102,10 +92,30 @@ Powerup.prototype = {
      * @private
      */
     _powerups: function(client, game) {
-        var index = game.room.clients.indexOf(client);
-        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Power-ups+']);
-        for (var i = 0, m = Util.randomBetween(2, 4); i < m; i++) {
-            setTimeout(game.spawnPowerup.bind(game), i * 100);
+        var r = Util.randomBetween(2, 4);
+        this._spawn(client, game, game.spawner.POWERUP, r, 'Power-ups+');
+    },
+
+    /**
+     * @param {Client} client
+     * @param {Game} game
+     * @param {number} type
+     * @param {number} amount
+     * @param {string} message
+     * @private
+     */
+    _spawn: function(client, game, type, amount, message) {
+        var index, spawn;
+
+        index = game.room.clients.indexOf(client);
+        spawn = function() {
+            game.spawner.spawn(type);
+        };
+
+        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, message]);
+
+        for (var i = 0; i < amount; i++) {
+            setTimeout(spawn, i * 100);
         }
     },
 
