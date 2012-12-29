@@ -1,5 +1,4 @@
 /*jshint globalstrict:true, es5:true, node:true*/
-/*globals XSS*/
 'use strict';
 
 var Util = module.exports = {
@@ -40,62 +39,6 @@ var Util = module.exports = {
      */
     randomStr: function() {
         return Math.random().toString(36).substring(2, 5);
-    },
-
-    /**
-     * @param {string} url
-     * @param {Function} callback
-     */
-    loadScript: function(url, callback) {
-        var script, head;
-        script = document.createElement('script');
-        script.async = 'async';
-        script.src = url;
-        script.onload = callback;
-        script.onerror = function() {
-            var err = 'Error loading ' + url;
-            XSS.shapes.instruction = XSS.font.shape(
-                err, XSS.PIXELS_H - XSS.font.width(err + ' '), XSS.PIXELS_V - 10
-            );
-        };
-        head = document.querySelector('head');
-        head.insertBefore(script, head.firstChild);
-    },
-
-    addListener: {
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keydown: function(listener) {
-            return XSS.doc.addEventListener('keydown', listener, false);
-        },
-
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keyup: function(listener) {
-            return XSS.doc.addEventListener('keyup', listener, false);
-        }
-    },
-
-    removeListener: {
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keydown: function(listener) {
-            return XSS.doc.removeEventListener('keydown', listener, false);
-        },
-
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keyup: function(listener) {
-            return XSS.doc.removeEventListener('keyup', listener, false);
-        }
     },
 
     /**
