@@ -38,7 +38,7 @@ XSS.fontLoad = function() {
     XSS.socket    = new Socket(function() {
         var data = {
             'name'    : decodeURIComponent(location.search).substring(1) ||
-                        Util.dataStore('name') ||
+                        Util.storage('name') ||
                         'Anon',
             'friendly': true,
             'pub'     : true

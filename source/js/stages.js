@@ -135,6 +135,7 @@ XSS.stages = {
 
         setTheme = function(index) {
             XSS.canvas.setTheme(XSS.themes[index]);
+            Util.storage('theme', index);
         };
 
         for (var i = 0, m = XSS.themes.length; i < m; i++) {

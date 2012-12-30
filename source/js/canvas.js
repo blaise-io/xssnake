@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, BoundingBox*/
+/*globals XSS, BoundingBox, Util*/
 'use strict';
 
 /**
@@ -10,7 +10,7 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setTheme(XSS.themes[0]);
+    this.setTheme(XSS.themes[Util.storage('theme') || 0]);
     this._setCanvasDimensions();
 
     if (!window.requestAnimationFrame) {
@@ -172,10 +172,7 @@ Canvas.prototype = {
 
         this._paintShape(canvas.getContext('2d'), shape, bbox);
 
-        return {
-            canvas: canvas,
-            bbox  : bbox
-        };
+        return {canvas: canvas, bbox: bbox};
     },
 
     /**

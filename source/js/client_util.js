@@ -67,8 +67,8 @@ Util.extend(Util, {
      * @param {?} value
      * @return {*}
      */
-    dataStore: function(key, value) {
-        if (!key) {
+    storage: function(key, value) {
+        if (!key || !localStorage) {
             return '';
         } else if (value === null) {
             localStorage.removeItem(key);

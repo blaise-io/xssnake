@@ -148,10 +148,10 @@ function InputStage(name, nextStage, label) {
     this.nextStage = nextStage;
     this.label = label;
 
-    this.val = Util.dataStore(name);
+    this.val = Util.storage(name);
     this.minChars = 0;
 
-    this.handleKeys = this.handleKeys.bind(this);
+    this._handleKeysBound = this.handleKeys.bind(this);
 }
 
 InputStage.prototype = {
@@ -166,13 +166,13 @@ InputStage.prototype = {
     },
 
     createStage: function() {
-        XSS.on.keydown(this.handleKeys);
+        XSS.on.keydown(this._handleKeysBound);
         this.input = new InputField(XSS.MENU_LEFT, XSS.MENU_TOP, this.label);
         this.input.setValue(this.val);
         this.input.maxWidth = this.maxWidth || this.input.maxWidth;
         this.input.callback = function(value) {
             this.val = value;
-            Util.dataStore(this.name, value);
+            Util.storage(this.name, value);
         }.bind(this);
 
         // Handled by InputField
@@ -180,7 +180,7 @@ InputStage.prototype = {
     },
 
     destroyStage: function() {
-        XSS.off.keydown(this.handleKeys);
+        XSS.off.keydown(this._handleKeysBound);
         this.input.destruct();
     },
 
