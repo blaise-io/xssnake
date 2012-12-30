@@ -137,22 +137,19 @@ StageInterface.prototype = {
 /**
  * BaseInputStage
  * Stage with a form input
- * @param {string} name
+ * @param {string|null} name
  * @param {Function} nextStage
  * @param {string} label
- * @param {number=} maxWidth
  * @constructor
  * @implements {StageInterface}
  */
-function InputStage(name, nextStage, label, maxWidth) {
+function InputStage(name, nextStage, label) {
     this.name = name;
     this.nextStage = nextStage;
+    this.label = label;
 
-    this.label = label || '';
-
-    this.val = (name && localStorage && localStorage.getItem(name)) || '';
-    this.minlength = 0;
-    this.maxWidth = maxWidth || 999;
+    this.val = Util.dataStore(name);
+    this.minChars = 0;
 
     this.handleKeys = this.handleKeys.bind(this);
 }
@@ -168,25 +165,18 @@ InputStage.prototype = {
         return XSS.font.shape(str, XSS.MENU_LEFT, XSS.MENU_TOP);
     },
 
-    /**
-     * @suppress {checkTypes} GCC expects this.val to be of another type
-     */
     createStage: function() {
         XSS.on.keydown(this.handleKeys);
-        this.input = new InputField(
-            XSS.MENU_LEFT,
-            XSS.MENU_TOP,
-            this.label,
-            this.maxWidth
-        );
-        this.input.callback = function(value) {
-            delete XSS.shapes.stage; // We already show the dynamic stage
-            this.val = value;
-            if (localStorage) {
-                localStorage.setItem(this.name, value);
-            }
-        }.bind(this);
+        this.input = new InputField(XSS.MENU_LEFT, XSS.MENU_TOP, this.label);
         this.input.setValue(this.val);
+        this.input.maxWidth = this.maxWidth || this.input.maxWidth;
+        this.input.callback = function(value) {
+            this.val = value;
+            Util.dataStore(this.name, value);
+        }.bind(this);
+
+        // Handled by InputField
+        delete XSS.shapes.stage;
     },
 
     destroyStage: function() {
@@ -211,11 +201,7 @@ InputStage.prototype = {
      * @private
      */
     _getInputError: function(val) {
-        if (val.length < this.minlength) {
-            return 'Too short!!!';
-        } else {
-            return '';
-        }
+        return (val.length < this.minChars) ? 'Too short!!' : '';
     },
 
     /**

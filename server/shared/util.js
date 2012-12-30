@@ -60,15 +60,6 @@ var Util = module.exports = {
     },
 
     /**
-     * @param {Array.<number>} locations
-     * @param {Array.<number>} location
-     * @return {boolean}
-     */
-    has: function(locations, location) {
-        return locations[0] === location[0] && locations[1] === location[1];
-    },
-
-    /**
      * @param {*} obj
      * @param {*} val
      * @return {?string}

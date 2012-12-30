@@ -6,42 +6,28 @@
  * @param {number} x
  * @param {number} y
  * @param {string=} prefix
- * @param {number=} maxWidth
  * @constructor
  */
-function InputField(x, y, prefix, maxWidth) {
+function InputField(x, y, prefix) {
     this.x = x;
     this.y = y;
     this.prefix = prefix || '';
-    this.maxWidth = maxWidth || XSS.PIXELS_H - x;
-    this.callback = null;
+    this.maxWidth = XSS.PIXELS_H - x - 4;
 
     this.input = this._getInput();
     this.input.focus();
 
-    this._updateShapesBound = this._updateShapes.bind(this);
-    this._updateShapes();
-
-    XSS.on.keydown(this._updateShapesBound);
-    XSS.on.keyup(this._updateShapesBound);
 }
 
 InputField.prototype = {
-
-    _updateShapes: function() {
-        this._applyMaxWidth();
-        this.value = this.input.value;
-        if (this.callback) {
-            this.callback(this.input.value);
-        }
-        XSS.shapes.caret = this._caretShape();
-        XSS.shapes.inputval = this._valueShape();
-    },
 
     /**
      * @param {string} value
      */
     setValue: function(value) {
+        if (!this._updateShapesBound) {
+            this._bindEvents();
+        }
         this.input.value = ''; // Empty first puts caret at end
         this.input.value = value;
         this._updateShapes();
@@ -55,6 +41,22 @@ InputField.prototype = {
         XSS.off.keyup(this._updateShapesBound);
         delete XSS.shapes.caret;
         delete XSS.shapes.inputval;
+    },
+
+    _bindEvents: function() {
+        this._updateShapesBound = this._updateShapes.bind(this);
+        XSS.on.keydown(this._updateShapesBound);
+        XSS.on.keyup(this._updateShapesBound);
+    },
+
+    _updateShapes: function() {
+        this._applyMaxWidth();
+        this.value = this.input.value;
+        if (this.callback) {
+            this.callback(this.input.value);
+        }
+        XSS.shapes.caret = this._caretShape();
+        XSS.shapes.inputval = this._valueShape();
     },
 
     /**

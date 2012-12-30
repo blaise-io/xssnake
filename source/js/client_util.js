@@ -59,6 +59,25 @@ Util.extend(Util, {
         keyup: function(listener) {
             return XSS.doc.removeEventListener('keyup', listener, false);
         }
+    },
+
+    /**
+     * Simple wrapper for localStorage
+     * @param {string} key
+     * @param {?} value
+     * @return {*}
+     */
+    dataStore: function(key, value) {
+        if (!key) {
+            return '';
+        } else if (value === null) {
+            localStorage.removeItem(key);
+            return '';
+        } else if (value) {
+            return localStorage.setItem(key, value);
+        } else {
+            return localStorage.getItem(key) || '';
+        }
     }
 
 });

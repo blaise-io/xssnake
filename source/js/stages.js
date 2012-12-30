@@ -100,7 +100,7 @@ XSS.stages = {
                 'this risk, please enter the result of this statement:\n\n> ' +
                 challenge + '\n> ';
 
-        stage = new InputStage('', nextstage, intro);
+        stage = new InputStage(null, nextstage, intro);
         stage.inputSubmit = function(error, value) {
             var top = XSS.font.height(intro);
             XSS.stages._captchaSubmit.call(stage, value, challenge, top);
@@ -195,7 +195,9 @@ XSS.stages = {
         label = 'Ohi! My name is ';
         nextstage = XSS.stages.askIsPublic;
 
-        stage = new InputStage('name', nextstage, label, XSS.UI_MAX_NAME_WIDTH);
+        stage = new InputStage('name', nextstage, label);
+        stage.minChars = 2;
+        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
         stage.inputSubmit = XSS.stages._inputNameSubmit;
 
         return stage;
