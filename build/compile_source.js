@@ -21,11 +21,12 @@ var js_externs = ['',
     '};'].join('');
 
 gcc.params({
-    js_externs       : js_externs,
-    output_info      : ['compiled_code', 'errors', 'warnings', 'statistics'],
-    language         : 'ECMASCRIPT5_STRICT',
-    compilation_level: 'ADVANCED_OPTIMIZATIONS',
-    warning_level    : 'VERBOSE'
+    js_externs                : js_externs,
+    output_info               : ['compiled_code', 'errors', 'warnings', 'statistics'],
+    use_types_for_optimization: 'true',
+    language                  : 'ECMASCRIPT5_STRICT',
+    compilation_level         : 'ADVANCED_OPTIMIZATIONS',
+    warning_level             : 'VERBOSE'
 });
 
 gcc.header(header);
