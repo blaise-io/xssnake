@@ -55,7 +55,9 @@ Socket.prototype = {
         });
 
         socket.on(events.CLIENT_CHAT_NOTICE, function(notice) {
-            XSS.room.chat.add({body: notice});
+            if (XSS.room) {
+                XSS.room.chat.add({body: notice});
+            }
         });
 
         socket.on(events.CLIENT_GAME_COUNTDOWN, function() {
