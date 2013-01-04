@@ -18,6 +18,7 @@ function Server() {
     this.state = new State(this);
     this.roomManager = new RoomManager(this);
     this.ticker = new Ticker(config.shared.game.tick);
+    this.ticker.setMaxListeners(0);
     this.listen();
 }
 
