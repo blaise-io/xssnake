@@ -91,25 +91,37 @@ Transform.prototype = {
      * @private
      */
     _antiAlias: function(x1Pixels, x2Pixels, shiftX, shiftY) {
-        var index, has, push, cache = [];
+        var index, cache = [];
 
-        has = function(p, x, y) {
+        /**
+         * @param {Array.<number>} p
+         * @param {number} x
+         * @param {number} y
+         * @return {boolean}
+         */
+        function has(p, x, y) {
             x = p[0] + x;
             y = p[1] + y;
             index = x + y * XSS.PIXELS_V;
             if (typeof cache[index] === 'undefined') {
-                cache[index] = this._hasPixel(x1Pixels, x, y);
+                cache[index] = XSS.transform.has(x1Pixels, x, y);
             }
             return cache[index];
-        }.bind(this);
+        }
 
-        push = function(p, x, y) {
+        /**
+         * @param {Array.<number>} p
+         * @param {number} x
+         * @param {number} y
+         * @return {undefined}
+         */
+        function push(p, x, y) {
             x = p[0] * 2 + x + shiftX;
             y = p[1] * 2 + y + shiftY;
-            if (!this._hasPixel(x2Pixels, x, y)) {
+            if (!XSS.transform.has(x2Pixels, x, y)) {
                 x2Pixels.push([x, y]);
             }
-        }.bind(this);
+        }
 
         // Walk through pixels, see if neighbour pixels match a pattern where
         // pixels are visually missing, and fill those gaps.
@@ -182,9 +194,8 @@ Transform.prototype = {
      * @param {number} x
      * @param {number} y
      * @return {boolean}
-     * @private
      */
-    _hasPixel: function(pixels, x, y) {
+    has: function(pixels, x, y) {
         for (var i = 0, m = pixels.length; i < m; i++) {
             if (pixels[i][0] === x && pixels[i][1] === y) {
                 return true;

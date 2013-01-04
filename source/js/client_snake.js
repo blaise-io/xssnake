@@ -27,8 +27,13 @@ function ClientSnake(index, local, name, location, direction) {
     this._shape = new Shape();
     this._shape.dynamic = true;
 
+    /**
+     * @type {Array}
+     * @private
+     */
     this._snakeTurnRequests = [];
 
+    /** @type {Object.<string,string>} */
     this.shapes = {
         snake    : 'S'  + index, // Snake
         name     : 'SN' + index, // Snake name tag
@@ -139,6 +144,23 @@ Util.extend(ClientSnake.prototype, {
         XSS.socket.emit(XSS.events.SERVER_SNAKE_UPDATE, [this.parts, direction]);
     },
 
+    /** @private */
+    applyCachedDirection: function() {
+        if (this._snakeTurnRequests.length) {
+            this.direction = this._snakeTurnRequests.shift();
+        }
+    },
+
+    /**
+     * @return {Array.<number>}
+     */
+    getNextPosition: function() {
+        var shift, head = this.head();
+        this.applyCachedDirection();
+        shift = this.directionToShift(this.direction);
+        return [head[0] + shift[0], head[1] + shift[1]];
+    },
+
     /**
      * @param {Event} e
      * @private
@@ -158,23 +180,6 @@ Util.extend(ClientSnake.prototype, {
                 this._changeDirection(XSS.DIRECTION_DOWN);
                 break;
         }
-    },
-
-    /** @private */
-    applyCachedDirection: function() {
-        if (this._snakeTurnRequests.length) {
-            this.direction = this._snakeTurnRequests.shift();
-        }
-    },
-
-    /**
-     * @return {Array.<number>}
-     */
-    getNextPosition: function() {
-        var shift, head = this.head();
-        this.applyCachedDirection();
-        shift = this.directionToShift(this.direction);
-        return [head[0] + shift[0], head[1] + shift[1]];
     },
 
     /**

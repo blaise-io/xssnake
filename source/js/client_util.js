@@ -64,7 +64,7 @@ Util.extend(Util, {
     /**
      * Simple wrapper for localStorage
      * @param {string} key
-     * @param {?} value
+     * @param {*?} value
      * @return {*}
      */
     storage: function(key, value) {

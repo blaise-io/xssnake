@@ -15,7 +15,7 @@ PublishSubscribe.prototype = {
      * @param {string} topic
      */
     publish: function(topic) {
-        var args = Array.prototype.slice.call(arguments, 1),
+        var args = [].slice.call(arguments, 1),
             subscriptions = this._subscriptions[topic];
         if (subscriptions) {
             for (var key in subscriptions) {

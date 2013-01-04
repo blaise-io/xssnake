@@ -20,7 +20,7 @@ ScoreBoard.prototype = {
 
     podiumSize: 6,
 
-    switchDuration: 200,
+    animDuration: 200,
 
     destruct: function() {
         for (var k in this.shapes) {
@@ -128,7 +128,7 @@ ScoreBoard.prototype = {
                 newPos = this._podiumIndexToXY(newPodium);
                 shape.animate({
                     to: [newPos[0] - oldPos[0], newPos[1] - oldPos[1]],
-                    duration: this.switchDuration
+                    duration: this.animDuration
                 });
             }
 

@@ -29,7 +29,7 @@ function Game(index, levelID, names) {
 Game.prototype = {
 
     start: function() {
-        window.onfocus = this._getGameState.bind(this);
+        window.onfocus = this._requestGameState.bind(this);
         XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._tick.bind(this));
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
@@ -75,7 +75,10 @@ Game.prototype = {
         }
     },
 
-    _getGameState: function() {
+    /**
+     * @private
+     */
+    _requestGameState: function() {
         XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
     },
 

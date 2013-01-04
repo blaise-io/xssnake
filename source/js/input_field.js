@@ -43,12 +43,18 @@ InputField.prototype = {
         this._isDestruct = true;
     },
 
+    /**
+     * @private
+     */
     _bindEvents: function() {
         this._updateShapesBound = this._updateShapes.bind(this);
         XSS.on.keydown(this._updateShapesBound);
         XSS.on.keyup(this._updateShapesBound);
     },
 
+    /**
+     * @private
+     */
     _updateShapes: function() {
         // _isDestruct: IE9 workaround for issue where _updateShapes executes
         // after event listeners are removed.

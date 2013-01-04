@@ -14,7 +14,7 @@ function Canvas() {
     this._setCanvasDimensions();
 
     if (!window.requestAnimationFrame) {
-        this._vendorRequestAnimationFrame();
+        this._useVendorRequestAnimationFrame();
     }
 
     this._positionCanvas();
@@ -187,7 +187,7 @@ Canvas.prototype = {
     },
 
     /** @private */
-    _vendorRequestAnimationFrame: function() {
+    _useVendorRequestAnimationFrame: function() {
         window['requestAnimationFrame'] =
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame ||

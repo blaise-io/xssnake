@@ -28,11 +28,6 @@ function Chat(index, names) {
 
     this.shapes = {};
 
-    this.top = XSS.PIXELS_V - (7 * 3) - 3;
-    this.left = 126;
-    this.max = 3;
-    this.animSpeed = 200;
-
     this._adding = false;
     this._queue = [];
 
@@ -41,6 +36,14 @@ function Chat(index, names) {
 }
 
 Chat.prototype = {
+
+    top: XSS.PIXELS_V - (7 * 3) - 3,
+
+    left: 126,
+
+    maxMessages: 3,
+
+    animDuration: 200,
 
     /**
      * @param {XSS.ChatMessage} message
@@ -71,13 +74,13 @@ Chat.prototype = {
         }.bind(this);
 
         // Space left, just pop it in
-        if (this._messages.length < this.max) {
+        if (this._messages.length < this.maxMessages) {
             callback();
         }
 
         // Animation
         else {
-            anim = {to: [0, -7], duration: this.animSpeed, callback: callback};
+            anim = {to: [0, -7], duration: this.animDuration, callback: callback};
             delete this.shapes['CM0'];
             delete XSS.shapes['CM0'];
             for (var k in this.shapes) {
@@ -199,7 +202,7 @@ Chat.prototype = {
      * @private
      */
     _getShapes: function(messages) {
-        var shapes = {}, slice = this.max;
+        var shapes = {}, slice = this.maxMessages;
 
         if (this._hasFocus) {
             slice -= 1;
