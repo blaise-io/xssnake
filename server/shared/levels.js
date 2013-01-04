@@ -1,6 +1,5 @@
 /*jshint globalstrict:true, es5:true, node:true*/
 /*globals XSS*/
-
 'use strict';
 
 // Generated on Wed, 10 Oct 2012 17:11:27 GMT

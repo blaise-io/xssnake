@@ -1,6 +1,5 @@
 /*jshint globalstrict:true*/
 /*globals XSS*/
-
 'use strict';
 
 // Generated on %DATE%
