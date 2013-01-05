@@ -3,7 +3,7 @@
 Online multiplayer Snake where the winner of a game is allowed to execute
 JavaScript in the browser of other players.
 
-XSSNAKE is written in HTML5 and JavaScript. It works in all browsers that 
+XSSNAKE is written in HTML5 and JavaScript. It works in all browsers that
 support HTML5's Canvas and Websocket. XSSNAKE uses Node.js for the server,
 Socket.IO for client–server communication, and Google Closure Compiler with
 Advanced Compilation to check for errors and to compile to minified and
@@ -15,7 +15,7 @@ optimized code.
 ## Initial Setup
 
  * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
- * Create a configuration file by renaming `server/shared/config.example.js` to
+ * Create a configuration file by copying `server/shared/config.example.js` to
    `server/shared/config.js`
  * Adjust the contents of `server/shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)

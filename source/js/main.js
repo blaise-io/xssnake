@@ -32,20 +32,18 @@ XSS.load = function() {
 
 // Load this part when font has loaded
 XSS.fontLoad = function() {
-
-    XSS.font      = new Font();
-    XSS.stageflow = new StageFlow();
-    XSS.socket    = new Socket(function() {
+    var callback = function() {
         var data = {
-            'name'    : decodeURIComponent(location.search).substring(1) ||
-                        Util.storage('name') ||
-                        'Anon',
+            'name'    : decodeURIComponent(location.search).substring(1) || Util.storage('name') || 'Anon',
             'friendly': true,
             'pub'     : true
         };
         XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
-    });
+    };
 
+    XSS.font      = new Font();
+    XSS.stageflow = new StageFlow();
+    XSS.socket    = new Socket(callback);
 };
 
 // Give Webkit time to initialize @font-face

@@ -21,10 +21,12 @@ function Room(server, id, filter) {
 
     this.pub      = !!filter.pub;
     this.friendly = !!filter.friendly;
-    this.capacity = config.shared.game.capacity;
+    this.capacity = config.ROOM_CAPACITY;
 
     this.level = 0;
     this.game = new Game(this, this.level);
+
+    this._disconnected = [];
 }
 
 module.exports = Room;
@@ -68,21 +70,22 @@ Room.prototype = {
     /**
      * @param {Client} client
      */
-    leave: function(client) {
+    disconnect: function(client) {
         var index = this.clients.indexOf(client);
 
         // Leave during game, clean up after round ends
         if (this.inProgress) {
-            this.game.clientQuit(client);
-            this._leftClients = this._leftClients || [];
-            this._leftClients.push(client);
+            this.game.clientDisconnect(client);
+            this._disconnected.push(client);
         }
 
         // Leave before game, clean up immediately
         else {
             this.clients.splice(index, 1);
             this.emitState();
-            this._removeIfEmpty();
+            if (!this.clients.length) {
+                this.server.roomManager.remove(this);
+            }
         }
 
         this.emit(events.CLIENT_CHAT_NOTICE, '{' + index + '} left');
@@ -92,12 +95,16 @@ Room.prototype = {
      * @return {Game}
      */
     newRound: function() {
+        var removed;
+
         // Before round starts
         this.game.destruct();
-        this._removeLeftClients(this._leftClients);
+        this._removeDisconnectedClients(this._disconnected);
 
-        if (!this.clients) {
-            return null; // Room was destroyed
+        // Check if Room was destroyed
+        if (!this.clients.length) {
+            this.server.roomManager.remove(this);
+            return null;
         }
 
         // Round start
@@ -148,23 +155,14 @@ Room.prototype = {
      * @param {Array.<Client>} clients
      * @private
      */
-    _removeLeftClients: function(clients) {
+    _removeDisconnectedClients: function(clients) {
         if (clients) {
             for (var i = 0, m = clients.length; i < m; i++) {
                 this.clients.splice(this.clients.indexOf(clients[i]), 1);
-                this.server.state.removeClient(clients[i]);
+                this.server.removeClient(clients[i]);
             }
         }
-        this._removeIfEmpty();
-    },
-
-    /**
-     * @private
-     */
-    _removeIfEmpty: function() {
-        if (!this.clients.length) {
-            this.server.roomManager.remove(this);
-        }
+        this._disconnected = [];
     }
 
 };

@@ -27,6 +27,13 @@ module.exports = EventHandler;
 
 EventHandler.prototype = {
 
+    destruct: function() {
+        // Event listeners will remove themselves.
+        delete this.server;
+        delete this.client;
+        delete this.socket;
+    },
+
     /**
      * @private
      */
@@ -34,11 +41,12 @@ EventHandler.prototype = {
         var room, client = this.client;
         room = this.server.roomManager.rooms[client.roomid];
         if (room) {
-            room.leave(client);
-            // Room takes care of removing client data. It needs client data
-            // to finish the round gracefully.
+            // If client is in a room, we cannot clean up immediately
+            // because we need data to remove the client from the room
+            // gracefully.
+            room.disconnect(client);
         } else {
-            this.server.state.removeClient(client);
+            this.server.removeClient(client);
         }
     },
 

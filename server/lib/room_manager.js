@@ -8,7 +8,7 @@ var Room = require('./room.js');
  */
 function RoomManager(server) {
     this.server = server;
-    this.curid = 0;
+    this.inc = 0;
     this.rooms = {};
 }
 
@@ -50,7 +50,7 @@ RoomManager.prototype = {
      */
     createRoom: function(filter) {
         var id, room;
-        id = ++this.curid;
+        id = ++this.inc;
         room = new Room(this.server, id, filter);
         this.rooms[room.id] = room;
         return room;

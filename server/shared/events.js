@@ -3,7 +3,7 @@
 'use strict';
 
 module.exports = {
-    CLIENT_CONNECT       : 'CCN',
+    CLIENT_CONNECT       : 'CCO',
 
     CLIENT_ROOM_JOIN     : 'CRJ',
     CLIENT_ROOM_INDEX    : 'CRI',

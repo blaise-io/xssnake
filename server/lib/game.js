@@ -38,7 +38,7 @@ Game.prototype = {
     CRASH_OPPONENT: 2,
 
     countdown: function() {
-        var delay = config.shared.game.countdown * 1000;
+        var delay = config.TIME_COUNTDOWN_FROM * 1000;
         this._gameStartTimer = setTimeout(this.start.bind(this), delay);
         this.room.emit(events.CLIENT_GAME_COUNTDOWN, null);
         this._setupClients();
@@ -51,7 +51,7 @@ Game.prototype = {
         this.room.inProgress = true;
         this.server.ticker.addListener('tick', this._tickBound);
 
-        var respawnAfter = config.shared.game.respawnApple * 1000;
+        var respawnAfter = config.TIME_RESPAWN_APPLE * 1000;
         this.spawner.spawn(this.spawner.APPLE, null, true, respawnAfter);
         this._delaySpawnPowerup();
     },
@@ -130,7 +130,7 @@ Game.prototype = {
     /**
      * @param client
      */
-    clientQuit: function(client) {
+    clientDisconnect: function(client) {
         this._setSnakeCrashed(client, client.snake.parts);
     },
 
@@ -185,7 +185,7 @@ Game.prototype = {
      * @private
      */
     _delaySpawnPowerup: function() {
-        var i = config.server.spawnInterval;
+        var i = config.TIME_SPAWN_POWERUP;
         clearTimeout(this._powerUpTimer);
         this._powerUpTimer = setTimeout(function() {
             this.spawner.spawn(this.spawner.POWERUP);
@@ -309,10 +309,10 @@ Game.prototype = {
         this._roundEnded = true;
         this.room.emit(
             events.CLIENT_CHAT_NOTICE,
-            'New round starting in ' + config.shared.game.gloat + ' seconds'
+            'New round starting in ' + config.TIME_GLOAT + ' seconds'
         );
         void(winner);
-        setTimeout(this._startNewRound.bind(this), config.shared.game.gloat * 1000);
+        setTimeout(this._startNewRound.bind(this), config.TIME_GLOAT * 1000);
     },
 
     /**
@@ -442,8 +442,8 @@ Game.prototype = {
 
         spawn = this.level.getSpawn(index);
         direction = this.level.getSpawnDirection(index);
-        size = config.shared.snake.size;
-        speed = config.shared.snake.speed;
+        size = config.SNAKE_SIZE;
+        speed = config.SNAKE_SPEED;
 
         snake = new Snake(spawn, direction, size, speed);
         snake.elapsed = 0;

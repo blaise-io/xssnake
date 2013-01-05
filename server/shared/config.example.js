@@ -3,36 +3,21 @@
 'use strict';
 
 module.exports = {
+    SERVER_PORT        : 80,
+    SERVER_ENDPOINT    : 'http://localhost:80',
+    SOCKET_IO_JS       : 'http://localhost:80/socket.io/socket.io.js',
 
-    // Server-only config
-    server: {
-        port: 1337,
-        spawnInterval: [5, 30]
-    },
+    GAME_TICK          : 50,
 
-    // Client-only config
-    client: {
-        socketio: {
-            host  : 'http://localhost:8080',
-            script: 'http://localhost:8080/socket.io/socket.io.js'
-        }
-    },
+    ROOM_CAPACITY      : 4,
 
-    // Config used by both client and server
-    shared: {
-        snake: {
-            speed: 150,
-            size : 4
-        },
-        game: {
-            capacity    : 4,
-            tick        : 50,
-            countdown   : 3,
-            gloat       : 5,
-            respawnApple: 30
-        }
-    }
+    TIME_GLOAT         : 5,
+    TIME_COUNTDOWN_FROM: 3,
+    TIME_RESPAWN_APPLE : 30,
+    TIME_SPAWN_POWERUP : [5, 30],
 
+    SNAKE_SPEED        : 150,
+    SNAKE_SIZE         : 4
 };
 
 if (typeof XSS !== 'undefined') {

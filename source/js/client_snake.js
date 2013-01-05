@@ -14,8 +14,8 @@
 function ClientSnake(index, local, name, location, direction) {
     var size, speed;
 
-    size  = XSS.config.shared.snake.size;
-    speed = XSS.config.shared.snake.speed;
+    size  = XSS.config.SNAKE_SIZE;
+    speed = XSS.config.SNAKE_SPEED;
 
     Snake.call(this, location, direction, size, speed);
 

@@ -2,19 +2,24 @@
 'use strict';
 
 /**
- * @constructor
- * @param {Server} server
  * @param {number} id
+ * @param {Server} server
  * @param {EventEmitter} socket
+ * @constructor
  */
-function Client (server, id, socket) {
+function Client(id, server, socket) {
     this.server = server;
     this.id = id;
     this.socket = socket;
-    this.roomid = null;
-    this.name = 'Anonymous';
+
+    /** @type {string} */
+    this.name = null;
     /** @type {Snake} */
     this.snake = null;
+    /** @type {number} */
+    this.roomid = null;
+    /** @type {EventHandler} */
+    this.eventHandler = null;
 }
 
 module.exports = Client;
@@ -31,6 +36,8 @@ Client.prototype = {
     },
 
     destruct: function() {
+        this.eventHandler.destruct();
+        delete this.eventHandler;
         delete this.snake;
         delete this.socket;
     }

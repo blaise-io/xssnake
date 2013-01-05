@@ -9,8 +9,9 @@
  * @constructor
  */
 function Socket(callback) {
-    Util.loadScript(XSS.config.client.socketio.script, function() {
-        this.socket = io.connect(XSS.config.client.socketio.host);
+    var ioSettings = {'reconnect': false};
+    Util.loadScript(XSS.config.SOCKET_IO_JS, function() {
+        this.socket = io.connect(XSS.config.SERVER_ENDPOINT, ioSettings);
         this._addEventListeners(callback);
     }.bind(this));
 }
@@ -32,11 +33,7 @@ Socket.prototype = {
     _addEventListeners: function(callback) {
         var events = XSS.events, socket = this.socket;
 
-        socket.on(events.CLIENT_CONNECT, function() {
-            if (callback) {
-                callback(this);
-            }
-        }.bind(this));
+        socket.on(events.CLIENT_CONNECT, callback);
 
         socket.on(events.CLIENT_ROOM_INDEX, function(data) {
             if (!XSS.room) {
