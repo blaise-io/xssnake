@@ -4,6 +4,7 @@
 
 module.exports = {
     CLIENT_CONNECT       : 'CCO',
+    CLIENT_PING          : 'CPI',
 
     CLIENT_ROOM_JOIN     : 'CRJ',
     CLIENT_ROOM_INDEX    : 'CRI',
@@ -21,6 +22,7 @@ module.exports = {
     CLIENT_POWERUP_HIT   : 'CPH',
     CLIENT_POWERUP_SPAWN : 'CPS',
 
+    SERVER_PONG          : 'SPO',
     SERVER_ROOM_MATCH    : 'SRM',
     SERVER_CHAT_MESSAGE  : 'SCM',
     SERVER_SNAKE_UPDATE  : 'SSU',

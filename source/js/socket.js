@@ -35,6 +35,10 @@ Socket.prototype = {
 
         socket.on(events.CLIENT_CONNECT, callback);
 
+        socket.on(events.CLIENT_PING, function(data) {
+            this.emit(events.SERVER_PONG, data);
+        });
+
         socket.on(events.CLIENT_ROOM_INDEX, function(data) {
             if (!XSS.room) {
                 XSS.room = new Room(data[0], data[1], data[2], data[3]);

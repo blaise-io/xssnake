@@ -14,6 +14,8 @@ function EventHandler(server, client, socket) {
     this.client = client;
     this.socket = socket;
 
+    this._pingInterval = setInterval(this._ping.bind(this), 5000);
+
     client.emit(events.CLIENT_CONNECT, client.id);
 
     socket.on('disconnect', this._disconnect.bind(this));
@@ -21,6 +23,7 @@ function EventHandler(server, client, socket) {
     socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
     socket.on(events.SERVER_SNAKE_UPDATE, this._snakeUpdate.bind(this));
     socket.on(events.SERVER_GAME_STATE, this._gameState.bind(this));
+    socket.on(events.SERVER_PONG, this._pong.bind(this));
 }
 
 module.exports = EventHandler;
@@ -28,10 +31,25 @@ module.exports = EventHandler;
 EventHandler.prototype = {
 
     destruct: function() {
-        // Event listeners will remove themselves.
+        // Other event listeners will remove themselves.
+        clearInterval(this._pingInterval);
         delete this.server;
         delete this.client;
         delete this.socket;
+    },
+
+    _ping: function() {
+        this.client.emit(events.CLIENT_PING, +new Date());
+    },
+
+    /**
+     * @param {number} data
+     * @private
+     */
+    _pong: function(data) {
+        var roundtrip = (+new Date()) - data;
+        this.client.ping = roundtrip / 2;
+        console.log(this.client.name, 'ping', this.client.ping);
     },
 
     /**

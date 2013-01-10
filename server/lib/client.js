@@ -11,6 +11,7 @@ function Client(id, server, socket) {
     this.server = server;
     this.id = id;
     this.socket = socket;
+    this.ping = 0;
 
     /** @type {string} */
     this.name = null;
