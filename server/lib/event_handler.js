@@ -38,18 +38,20 @@ EventHandler.prototype = {
         delete this.socket;
     },
 
+    /**
+     * @private
+     */
     _ping: function() {
         this.client.emit(events.CLIENT_PING, +new Date());
     },
 
     /**
-     * @param {number} data
+     * @param {number} sendTime
      * @private
      */
-    _pong: function(data) {
-        var roundtrip = (+new Date()) - data;
-        this.client.ping = roundtrip / 2;
-        console.log(this.client.name, 'ping', this.client.ping);
+    _pong: function(sendTime) {
+        var roundtrip = (+new Date()) - sendTime;
+        this.client.latency = Math.round(roundtrip / 2);
     },
 
     /**

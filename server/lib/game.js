@@ -11,6 +11,7 @@ var util = require('util'),
     Snake = require('../shared/snake.js'),
     Powerup = require('./powerup.js');
 
+
 /**
  * @param {Room} room
  * @param {number} levelID
@@ -33,9 +34,14 @@ module.exports = Game;
 
 Game.prototype = {
 
-    CRASH_WALL    : 0,
-    CRASH_SELF    : 1,
-    CRASH_OPPONENT: 2,
+    // Max allowed client-server delta
+    MAX_DELTA_ALLOWED: 4,
+
+    CRASH_OBJECTS: {
+        WALL    : 0,
+        SELF    : 1,
+        OPPONENT: 2
+    },
 
     countdown: function() {
         var delay = config.TIME_COUNTDOWN_FROM * 1000;
@@ -81,14 +87,14 @@ Game.prototype = {
      * @param {number} direction
      */
     updateSnake: function(client, parts, direction) {
-        var head = parts[parts.length - 1];
+        var head = parts[parts.length - 1],
+            allowedDelta = this._getAllowedDelta(client);
 
         client.snake.direction = direction;
 
         // Check if server-client delta is similar enough,
         // We tolerate a small difference because of lag.
-        // TODO: Latency defines allowed gap size
-        if (Util.gap(head, client.snake.head()) <= 1) {
+        if (Util.delta(head, client.snake.head()) <= allowedDelta) {
             client.snake.parts = parts;
             this._broadCastSnake(client);
         } else {
@@ -182,6 +188,16 @@ Game.prototype = {
     },
 
     /**
+     * @param {Client} client
+     * @return {number}
+     * @private
+     */
+    _getAllowedDelta: function(client) {
+        var allowedDelta = Math.ceil(client.latency / client.snake.speed) + 1;
+        return Math.min(allowedDelta, this.MAX_DELTA_ALLOWED);
+    },
+
+    /**
      * @private
      */
     _delaySpawnPowerup: function() {
@@ -226,8 +242,9 @@ Game.prototype = {
      * @private
      */
     _isCrash: function(client, parts) {
-        var clients = this.room.clients,
+        var eq = Util.eq,
             limbo = client.snake.limbo,
+            clients = this.room.clients,
             level = this.level;
 
         for (var i = 0, m = parts.length; i < m; i++) {
@@ -235,24 +252,28 @@ Game.prototype = {
 
             // Wall
             if (level.isWall(part[0], part[1])) {
-                return [this.CRASH_WALL, clients.indexOf(client)];
+                return [this.CRASH_OBJECTS.WALL, clients.indexOf(client)];
             }
 
             // Self
-            if (m >= 5 && m - 1 !== i && Util.eq(part, parts[m - 1])) {
-                return [this.CRASH_SELF, clients.indexOf(client)];
+            if (m >= 5 && m - 1 !== i && eq(part, parts[m - 1])) {
+                return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
             }
 
             // Self (limbo)
-            else if (limbo && m >= 5 && m - 2 !== i && Util.eq(part, parts[m - 2])) {
-                return [this.CRASH_SELF, clients.indexOf(client)];
+            else if (limbo && m >= 5 && m - 2 !== i && eq(part, parts[m - 2])) {
+                return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
             }
 
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii]) {
                     if (clients[ii].snake.hasPart(part)) {
-                        return [this.CRASH_OPPONENT, clients.indexOf(client), ii];
+                        return [
+                            this.CRASH_OBJECTS.OPPONENT,
+                            clients.indexOf(client),
+                            ii
+                        ];
                     }
                 }
             }
@@ -409,12 +430,12 @@ Game.prototype = {
      * @private
      */
     _emitCrashMessage: function(crash) {
-        var message;
-        if (crash[0] === this.CRASH_WALL) {
+        var message, object = crash[0];
+        if (object === this.CRASH_OBJECTS.WALL) {
             message = util.format('{%d} crashed into a wall', crash[1]);
-        } else if (crash[0] === this.CRASH_SELF) {
+        } else if (object === this.CRASH_OBJECTS.SELF) {
             message = util.format('{%d} crashed into own tail', crash[1]);
-        } else if (crash[0] === this.CRASH_OPPONENT) {
+        } else if (object === this.CRASH_OBJECTS.OPPONENT) {
             message = util.format('{%d} crashed into {%d}', crash[1], crash[2]);
         }
         this.room.emit(events.CLIENT_CHAT_NOTICE, message);
