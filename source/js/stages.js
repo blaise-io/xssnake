@@ -90,7 +90,7 @@ XSS.stages = {
             '\'1234512345kip\'.lastIndexOf(\'%d\');'
         ];
 
-        challenge = Util.randomItem(challenges);
+        challenge = String(Util.randomItem(challenges));
         challenge = challenge.replace(/%s/g, str);
         challenge = challenge.replace(/%d/g, digit);
 

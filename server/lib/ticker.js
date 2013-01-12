@@ -2,7 +2,8 @@
 'use strict';
 
 var util = require('util'),
-    nodeEvents = require('events'); // Prevent name collision with our events mod
+    // Prevent name collision with shared/events.js
+    nodeEvents = require('events');
 
 /**
  * @param {number} tick
@@ -14,7 +15,7 @@ function Ticker(tick) {
     setInterval(this.tick.bind(this), tick);
 }
 
-util.inherits(Ticker, nodeEvents['EventEmitter']);
+util.inherits(Ticker, nodeEvents.EventEmitter);
 module.exports = Ticker;
 
 Ticker.prototype.tick = function() {

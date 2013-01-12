@@ -5,17 +5,20 @@ var fs = require('fs'),
     util = require('util');
 
 /**
+ * Compile Server files
+ * Starts with the main file, inlines all non-core require()'s recursively,
+ * removes all core require()'s and saves them for later inclusion.
  * @constructor
  */
 function ServerCompile() {
+    this.mainFile = __dirname + '/../../server/start.js';
+    this.excludeFiles = [
+        'config.example.js'
+    ];
     this.moduleDirs = [
         __dirname + '/../../server/shared/',
         __dirname + '/../../server/lib/'
     ];
-
-    this.excludeFiles = ['config.example.js'];
-
-    this.mainFile = __dirname + '/../../server/start.js';
 
     this.populateFiles();
     this.inlineRequires();
@@ -28,13 +31,11 @@ ServerCompile.prototype = {
 
     code: '',
 
+    files: [],
+
     requiredStack: [],
 
     coreModules: [],
-
-    files: [],
-
-    requireRE: /[\w ]+ = require\('[\w\.\/_]+'\)(,|;)/g,
 
     populateFiles: function() {
         for (var i = 0, m = this.moduleDirs.length; i < m; i++) {
@@ -48,64 +49,69 @@ ServerCompile.prototype = {
     },
 
     inlineRequires: function() {
+        var requireRegExp = /[\w ]+ = require\('[\w\.\/_]+'\)(,|;)/g;
         this.code = String(fs.readFileSync(this.mainFile));
-        while (this.requireRE.test(this.code)) {
-            var matches = this.code.match(this.requireRE);
+        while (requireRegExp.test(this.code)) {
+            var matches = this.code.match(requireRegExp);
             for (var i = 0, m = matches.length; i < m; i++) {
                 this.inlineRequire(matches[i]);
             }
         }
     },
 
-    inlineRequire: function(req) {
-        var mod, varName;
+    inlineRequire: function(requireCall) {
+        var moduleName, varName;
 
-        mod = req.match(/\/?[\w\.]+'/g)[0];
-        mod = mod.replace(/[\/']/g, '');
+        moduleName = requireCall.match(/\/?[\w\.]+'/g)[0];
+        moduleName = moduleName.replace(/[\/']/g, '');
 
-        varName = this.getVarName(req);
+        varName = this.getVarName(requireCall);
 
         // Module is already inlined
-        if (-1 !== this.requiredStack.indexOf(mod)) {
-            var repl = util.format('// %s (already inlined)', mod);
-            this.code = this.code.replace(req, repl);
+        if (-1 !== this.requiredStack.indexOf(moduleName)) {
+            var repl = util.format('// %s (already inlined)', moduleName);
+            this.code = this.code.replace(requireCall, repl);
         }
 
         // Core module
-        else if (!mod.match(/\.js/)) {
-            var coreModule = util.format('%s = require(\'%s\')', varName, mod);
-            this.code = this.code.replace(req, ''); // Remove from code
-            this.requiredStack.push(mod);
+        else if (!moduleName.match(/\.js/)) {
+            // Append to list of core modules
+            var coreModule = util.format(
+                '%s = require(\'%s\')', varName, moduleName
+            );
+            // Remove from code; core modules should not be compiled
+            this.code = this.code.replace(requireCall, '');
+            this.requiredStack.push(moduleName);
             this.coreModules.push(coreModule);
         }
 
         // Inline module
         else {
-            var moduleJS, filePath = this.getFilePath(mod);
+            var jsContent, filePath = this.getFilePath(moduleName);
 
             if (!filePath) {
-                console.log('Module not found:', mod);
+                console.log('Module not found:', moduleName);
                 return;
             }
 
-            moduleJS = String(fs.readFileSync(filePath));
+            jsContent = String(fs.readFileSync(filePath));
 
             // If module exports an object literal, use the reference name
             // for inlining.
-            if (moduleJS.match(/module\.exports = [^\w]/g)) {
-                moduleJS = moduleJS.replace(
+            if (jsContent.match(/module\.exports = [^\w]/g)) {
+                jsContent = jsContent.replace(
                     /module\.exports =/,
                     util.format('var %s = ', varName)
                 );
             } else {
                 // Module defines a named object. Comment-out the export.
-                moduleJS = moduleJS.replace(/(module\.exports = .*)/, '// $1');
+                jsContent = jsContent.replace(/(module\.exports = .*)/, '// $1');
             }
 
-            moduleJS = util.format('// INLINED: %s\n%s\n', mod, moduleJS);
+            jsContent = util.format('// INLINED: %s\n%s\n', moduleName, jsContent);
 
-            this.code = this.code.replace(req, moduleJS);
-            this.requiredStack.push(mod);
+            this.code = this.code.replace(requireCall, jsContent);
+            this.requiredStack.push(moduleName);
         }
     },
 

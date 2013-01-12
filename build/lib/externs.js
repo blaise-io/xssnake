@@ -18,6 +18,7 @@ var Manager = function(){};
 Manager.prototype.sockets = {
     "in": function(id) {},
     "to": function(id) {},
+    "EventEmitter": {},
     "broadcast": {}
 };
 
