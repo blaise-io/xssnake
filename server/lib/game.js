@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
 var util = require('util'),
@@ -14,14 +14,14 @@ var util = require('util'),
 
 /**
  * @param {Room} room
- * @param {number} levelID
+ * @param {number} level
  * @constructor
  */
-function Game(room, levelID) {
+function Game(room, level) {
     this.room = room;
     this.server = room.server;
 
-    this.level = new Level(levelID, levels);
+    this.level = new Level(level, levels);
     this.spawner = new Spawner(this);
 
     this.snakes = [];
@@ -170,7 +170,7 @@ Game.prototype = {
     hitPowerup: function(client, index) {
         var clientIndex = this.room.clients.indexOf(client);
         this.room.emit(events.CLIENT_POWERUP_HIT, [clientIndex, index]);
-        void(new Powerup(this, client));
+        return new Powerup(this, client);
     },
 
     /**
@@ -318,21 +318,19 @@ Game.prototype = {
         }
 
         if (numcrashed >= clients.length -1 && !this._roundEnded) {
-            this._endRound(alive);
+            this._endRound();
         }
     },
 
     /**
-     * @param {Client=} winner
      * @private
      */
-    _endRound: function(winner) {
+    _endRound: function() {
         this._roundEnded = true;
         this.room.emit(
             events.CLIENT_CHAT_NOTICE,
             'New round starting in ' + config.TIME_GLOAT + ' seconds'
         );
-        void(winner);
         setTimeout(this._startNewRound.bind(this), config.TIME_GLOAT * 1000);
     },
 

@@ -1,7 +1,7 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var Util = module.exports = {
+var Util = {
 
     /**
      * @param {*} destination
@@ -74,3 +74,5 @@ var Util = module.exports = {
     }
 
 };
+
+module.exports = Util;

@@ -1,8 +1,8 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
 var http = require('http'),
-    io = require('socket.io'),
+    socketio = require('socket.io'),
     config = require('../shared/config.js'),
     EventHandler = require('./event_handler.js'),
     RoomManager = require('./room_manager.js'),
@@ -33,7 +33,9 @@ Server.prototype = {
      */
     listen: function(port) {
         var server = http.createServer();
-        this.io = io.listen(server, {log: false});
+
+        /** @type {Manager} */
+        this.io = socketio.listen(server, {log: false});
 
         this.io.set('browser client etag', true);
         this.io.set('browser client gzip', true);

@@ -1,7 +1,7 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
 var Server = require('./lib/server.js');
-void(new Server());
+var server = new Server();
 
 console.log('XSSNAKE server is running...');

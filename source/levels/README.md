@@ -2,7 +2,7 @@ Creating/modifying level images
 ===
 
 These images contain the XSSNAKE's levels. Generate level data from these images
-by running `node build/parse_levels.js`, which will update
+by running `node build/levels.js`, which will update
 `server/shared/levels.js`.
 
 Because of compatibility with the [png-js](https://npmjs.org/package/png-js)

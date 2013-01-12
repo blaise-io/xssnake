@@ -3,7 +3,7 @@
 'use strict';
 
 // Generated on %DATE%
-// Generate file: `node build/parse_levels.js`
+// Generate file: `node build/levels.js`
 // Template file: source/templates/levels.js.tpl
 
 module.exports = %LEVELS%;

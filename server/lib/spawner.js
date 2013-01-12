@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
 var Util = require('../shared/util.js'),
@@ -35,7 +35,7 @@ Spawner.prototype = {
 
     /**
      * @param {number} type
-     * @param {number=} index
+     * @param {number|null=} index
      * @param {boolean=} respawn
      * @param {number=} respawnAfter
      * @return {Object}

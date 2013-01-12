@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
 /**
@@ -13,11 +13,11 @@ function Client(id, server, socket) {
     this.socket = socket;
     this.latency = 0;
 
-    /** @type {string} */
+    /** @type {?string} */
     this.name = null;
     /** @type {Snake} */
     this.snake = null;
-    /** @type {number} */
+    /** @type {?number} */
     this.roomid = null;
     /** @type {EventHandler} */
     this.eventHandler = null;

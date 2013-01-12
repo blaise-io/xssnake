@@ -1,9 +1,9 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 /*globals XSS*/
 'use strict';
 
 // Generated on Wed, 10 Oct 2012 17:11:27 GMT
-// Generate file: `node build/parse_levels.js`
+// Generate file: `node build/levels.js`
 // Template file: source/templates/levels.js.tpl
 
 module.exports = [

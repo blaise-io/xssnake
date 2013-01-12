@@ -36,7 +36,7 @@ XSS.fontLoad = function() {
         var data = {
             'name'    : decodeURIComponent(location.search).substring(1) || Util.storage('name') || 'Anon',
             'friendly': true,
-            'pub'     : true
+            'public'  : true
         };
         XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
     };

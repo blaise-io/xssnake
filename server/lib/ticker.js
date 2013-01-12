@@ -1,25 +1,25 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var util = require('util');
-var EventEmitter = require('events').EventEmitter;
+var util = require('util'),
+    nodeEvents = require('events'); // Prevent name collision with our events mod
 
 /**
  * @param {number} tick
- * @lends {EventEmitter}
+ * @extends {EventEmitter}
  * @constructor
  */
 function Ticker(tick) {
-    this.lasttick = +new Date();
+    this._time = +new Date();
     setInterval(this.tick.bind(this), tick);
 }
 
-util.inherits(Ticker, EventEmitter);
+util.inherits(Ticker, nodeEvents['EventEmitter']);
 module.exports = Ticker;
 
 Ticker.prototype.tick = function() {
     var now = +new Date(),
-        elapsed = now - this.lasttick;
+        elapsed = now - this._time;
     this.emit('tick', elapsed);
-    this.lasttick = new Date();
+    this._time = new Date();
 };

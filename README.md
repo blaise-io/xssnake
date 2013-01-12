@@ -11,6 +11,9 @@ optimized code.
 
 **Note: XSSNAKE is in an early stage of development.**
 
+Documentation below image.
+
+![XSSNAKE](http://i.imgur.com/scMK2.png)
 
 ## Initial Setup
 
@@ -26,7 +29,7 @@ optimized code.
 
 ## Production
 
- * Compile the source: `node build/compile_source.js`
+ * Compile the client source: `node build/client.js`
  * Make sure the `www` dir is accessible by browsers
  * Make sure the `server` dir is accessible by node.js
  * Run the game server: `node server/start.js`
@@ -45,6 +48,14 @@ If you open `source/source.html` from a local disk in Chrome (`file://...`), you
 have to start the browser with the `--disable-web-security` parameter to
 work around an Access-Control restriction.
 
+After you modify code, it can be useful to compile the code to see if you
+made any errors.
+
+ * Compile server code: `node build/server.js` (Warning: this contains a
+   hack to inline node.js modules to allow compiling with Google Closure.
+   Check `build/lib/server_compile.js` code comments for details.)
+ * Compile client code: `node build/client.js`
+
 ## Creating/Updating Levels
 
 If you adjusted one of the level images, you have to rebuild
@@ -53,4 +64,4 @@ can be found in `source/levels/README.md`.
 
  * Install [png-js](https://npmjs.org/package/png-js) by running
    `npm install png-js`
- * Run `node build/parse_levels.js`
+ * Run `node build/levels.js`

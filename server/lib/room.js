@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, node:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
 var Game = require('./game.js'),
@@ -7,7 +7,7 @@ var Game = require('./game.js'),
 
 /**
  * @param {Server} server
- * @param {string} id
+ * @param {number} id
  * @param {Object} filter
  * @constructor
  */
@@ -19,8 +19,8 @@ function Room(server, id, filter) {
     this.points = [];
     this.inProgress = false;
 
-    this.pub      = !!filter.pub;
-    this.friendly = !!filter.friendly;
+    this.pub      = !!filter['public'];
+    this.friendly = !!filter['friendly'];
     this.capacity = config.ROOM_CAPACITY;
 
     this.level = 0;
@@ -95,8 +95,6 @@ Room.prototype = {
      * @return {Game}
      */
     newRound: function() {
-        var removed;
-
         // Before round starts
         this.game.destruct();
         this._removeDisconnectedClients(this._disconnected);
@@ -138,7 +136,7 @@ Room.prototype = {
      * @param {*} data
      */
     emit: function(name, data) {
-        this.server.io.sockets['in'](this.id).emit(name, data);
+        this.server.io.sockets.in(this.id).emit(name, data);
     },
 
     /**
