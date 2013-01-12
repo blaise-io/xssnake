@@ -4,6 +4,7 @@ Online multiplayer Snake where the winner of a game is allowed to execute
 JavaScript in the browser of other players.
 
 ![XSSNAKE](http://i.imgur.com/scMK2.png)
+
 [Font can be downloaded here.](http://fontstruct.com/fontstructions/show/xssnake)
 
 XSSNAKE is written in HTML5 and JavaScript. It works in all browsers that
