@@ -133,6 +133,8 @@ XSS.stages = {
     themesScreen: function() {
         var setTheme, menu = new SelectMenu('theme');
 
+        menu.selected = parseInt(Util.storage('theme'), 10) || 0;
+
         setTheme = function(index) {
             XSS.canvas.setTheme(XSS.themes[index]);
             Util.storage('theme', index);
