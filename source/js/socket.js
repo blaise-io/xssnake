@@ -33,6 +33,8 @@ Socket.prototype = {
     _addEventListeners: function(callback) {
         var events = XSS.events, map = {};
 
+        this.map = map;
+
         map[events.CLIENT_CONNECT]        = callback;
         map['disconnect']                 = this.disconnect;
 
@@ -43,7 +45,8 @@ Socket.prototype = {
         map[events.CLIENT_CHAT_NOTICE]    = this.chatNotice;
         map[events.CLIENT_GAME_COUNTDOWN] = this.gameCountdown;
         map[events.CLIENT_GAME_START]     = this.gameStart;
-        map[events.CLIENT_GAME_STATE]     = this.gameState;
+        map[events.CLIENT_GAME_SNAKES]    = this.gameSnakes;
+        map[events.CLIENT_GAME_SPAWNS]    = this.gameSpawns;
         map[events.CLIENT_SNAKE_UPDATE]   = this.snakeUpdate;
         map[events.CLIENT_SNAKE_CRASH]    = this.snakeCrash;
         map[events.CLIENT_SNAKE_ACTION]   = this.snakeAction;
@@ -123,13 +126,23 @@ Socket.prototype = {
     },
 
     /**
+     * Combined package, delegate.
      * @param {Array.<Array>} data
      */
-    gameState: function(data) {
+    gameSnakes: function(data) {
         for (var i = 0, m = data.length; i < m; i++) {
             this.snakeUpdate(data[i]);
         }
-        XSS.room.game.gameStateReq = false;
+    },
+
+    /**
+     * Combined package, delegate.
+     * @param {Array.<Array>} data
+     */
+    gameSpawns: function(data) {
+        for (var i = 0, m = data.length; i < m; i++) {
+            this.map[data[i][0]](data[i][1]);
+        }
     },
 
     /**

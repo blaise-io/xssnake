@@ -15,7 +15,8 @@ module.exports = {
 
     CLIENT_GAME_COUNTDOWN: 'CG1',
     CLIENT_GAME_START    : 'CG2',
-    CLIENT_GAME_STATE    : 'CG3',
+    CLIENT_GAME_SNAKES   : 'CG3',
+    CLIENT_GAME_SPAWNS   : 'CG4',
 
     CLIENT_POWERUP_HIT   : 'CP1',
     CLIENT_POWERUP_SPAWN : 'CP2',

@@ -190,9 +190,13 @@ Game.prototype = {
                 snake.elapsed += delta;
             }
         } else {
-            if (!this.gameStateReq) {
+            // TODO: Remove deltaOK as trigger for reindexing
+            if (!this._gameStateReq) {
                 XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
-                this.gameStateReq = true;
+                this._gameStateReq = true;
+                window.setTimeout(function() {
+                    this._gameStateReq = false;
+                }.bind(this), 1500);
             }
         }
     },

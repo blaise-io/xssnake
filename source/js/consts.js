@@ -5,8 +5,8 @@
 /** @const */ XSS.PIXELS_H = 256;
 /** @const */ XSS.PIXELS_V = 161;
 
-/** @const */ XSS.MIN_DELTA = 7;
-/** @const */ XSS.MAX_DELTA = 200;
+/** @const */ XSS.MIN_DELTA = 5;
+/** @const */ XSS.MAX_DELTA = 250;
 
 /** @const */ XSS.UI_MAX_NAME_WIDTH = 40;
 

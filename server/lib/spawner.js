@@ -97,7 +97,7 @@ Spawner.prototype = {
     handleHits: function(client, location) {
         var hits = [];
         for (var i = 0, m = this.spawns.length; i < m; i++) {
-            if (this.spawns[i] && Util.eq(this.spawns[i].location, location)) {
+            if (null !== this.spawns[i] && Util.eq(this.spawns[i].location, location)) {
                 hits.push(i);
                 this.hit(client, i);
             }

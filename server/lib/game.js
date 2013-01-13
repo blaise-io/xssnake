@@ -144,11 +144,36 @@ Game.prototype = {
      * @param client
      */
     emitState: function(client) {
+        this.emitSnakes(client);
+        this.emitSpawns(client);
+    },
+
+    /**
+     * @param client
+     */
+    emitSnakes: function(client) {
         var data = [];
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             data.push([i, this.snakes[i].parts, this.snakes[i].direction]);
         }
-        client.emit(events.CLIENT_GAME_STATE, data);
+        client.emit(events.CLIENT_GAME_SNAKES, data);
+    },
+
+    /**
+     * Spawns a sent as separate messages.
+     * @param client
+     */
+    emitSpawns: function(client) {
+        var spawner = this.spawner,
+            spawns = spawner.spawns,
+            data = [];
+        for (var i = 0, m = spawns.length; i < m; i++) {
+            var spawn = spawns[i];
+            if (null !== spawn) {
+                data.push([spawner.EVENTS[spawn.type], [i, spawn.location]]);
+            }
+        }
+        client.emit(events.CLIENT_GAME_SPAWNS, data);
     },
 
     /**
