@@ -59,7 +59,7 @@ StageFlow.prototype = {
         options = options || {};
 
         // Unload old stage
-        this.stage.destroyStage();
+        this.stage.destructStage();
 
         // Remove everything
         delete XSS.shapes.instruction;

@@ -11,7 +11,7 @@
  */
 function Game(index, levelID, names) {
 
-    XSS.stageflow.stage.destroyStage();
+    XSS.stageflow.stage.destructStage();
     XSS.shapes.stage = null;
     XSS.shapes.header = null;
     XSS.shapes.instruction = null;
@@ -29,8 +29,7 @@ function Game(index, levelID, names) {
 Game.prototype = {
 
     start: function() {
-        window.onfocus = this._requestGameState.bind(this);
-        XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._tick.bind(this));
+        XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._moveSnakes.bind(this));
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
         }
@@ -80,6 +79,9 @@ Game.prototype = {
         count = XSS.config.TIME_COUNTDOWN_FROM;
         total = count;
 
+        // This is a good time to clean up.
+        XSS.canvas.garbageCollect();
+
         do {
             var pixels, shape, bbox, start;
             start = (total - count) * 1000;
@@ -119,21 +121,6 @@ Game.prototype = {
 
             XSS.shapes['GC' + count] = shape;
         } while (count--);
-    },
-
-    /**
-     * @private
-     */
-    _requestGameState: function() {
-        XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
-    },
-
-    /**
-     * @param {number} delta
-     * @private
-     */
-    _tick: function(delta) {
-        this._moveSnakes(delta);
     },
 
     /**
@@ -189,16 +176,24 @@ Game.prototype = {
 
     /**
      * @param {number} delta
+     * @param {boolean} deltaOK
      * @private
      */
-    _moveSnakes: function(delta) {
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            var snake = this.snakes[i];
-            if (snake.elapsed >= snake.speed && !snake.crashed) {
-                snake.elapsed -= snake.speed;
-                this._moveSnake(snake);
+    _moveSnakes: function(delta, deltaOK) {
+        if (deltaOK) {
+            for (var i = 0, m = this.snakes.length; i < m; i++) {
+                var snake = this.snakes[i];
+                if (snake.elapsed >= snake.speed && !snake.crashed) {
+                    snake.elapsed -= snake.speed;
+                    this._moveSnake(snake);
+                }
+                snake.elapsed += delta;
             }
-            snake.elapsed += delta;
+        } else {
+            if (!this.gameStateReq) {
+                XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
+                this.gameStateReq = true;
+            }
         }
     },
 

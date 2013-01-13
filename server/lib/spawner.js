@@ -27,9 +27,9 @@ Spawner.prototype = {
         events.CLIENT_POWERUP_SPAWN
     ],
 
-    destroy: function() {
+    destruct: function() {
         for (var i = 0, m = this.spawns.length; i < m; i++) {
-            this._destroySpawn(i);
+            this._destructSpawn(i);
         }
     },
 
@@ -52,7 +52,7 @@ Spawner.prototype = {
 
         if (respawnAfter) {
             spawn.timer = setTimeout(function() {
-                this._destroySpawn(index);
+                this._destructSpawn(index);
                 this.spawn(type, index, respawn, respawnAfter);
             }.bind(this), respawnAfter);
         }
@@ -82,10 +82,10 @@ Spawner.prototype = {
         }
 
         if (spawn.respawn) {
-            this._destroySpawn(index);
+            this._destructSpawn(index);
             this.spawn(spawn.type, index, true, spawn.respawnAfter);
         } else {
-            this._destroySpawn(index);
+            this._destructSpawn(index);
         }
     },
 
@@ -109,7 +109,7 @@ Spawner.prototype = {
      * @param {number} index
      * @private
      */
-    _destroySpawn: function(index) {
+    _destructSpawn: function(index) {
         var spawn = this.spawns[index];
         if (spawn && spawn.timer) {
             clearTimeout(spawn.timer);

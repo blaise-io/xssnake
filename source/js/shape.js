@@ -204,7 +204,7 @@ Shape.prototype = {
             // Stop time reached
             if (end && progress >= end) {
                 key = Util.getKey(XSS.shapes, this);
-                if (key) { delete XSS.shapes[key]; }
+                if (key) { XSS.shapes[key] = null; }
             }
 
             // Start time reached

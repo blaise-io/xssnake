@@ -2,31 +2,38 @@
 /*globals XSS*/
 'use strict';
 
+// Event keys are hard-coded and unique.
 module.exports = {
-    CLIENT_CONNECT       : 'CCO',
-    CLIENT_PING          : 'CPI',
+    CLIENT_CONNECT       : 'CON',
+    CLIENT_PING          : 'PING',
 
-    CLIENT_ROOM_JOIN     : 'CRJ',
-    CLIENT_ROOM_INDEX    : 'CRI',
-    CLIENT_ROOM_SCORE    : 'CRS',
-    CLIENT_CHAT_NOTICE   : 'CCN',
-    CLIENT_CHAT_MESSAGE  : 'CCM',
-    CLIENT_GAME_COUNTDOWN: 'CGS',
+    CLIENT_APPLE_HIT     : 'CA1',
+    CLIENT_APPLE_SPAWN   : 'CA2',
+
+    CLIENT_CHAT_NOTICE   : 'CC1',
+    CLIENT_CHAT_MESSAGE  : 'CC2',
+
+    CLIENT_GAME_COUNTDOWN: 'CG1',
     CLIENT_GAME_START    : 'CG2',
-    CLIENT_SNAKE_ACTION  : 'CSA',
-    CLIENT_SNAKE_UPDATE  : 'CSU',
-    CLIENT_SNAKE_CRASH   : 'CSN',
-    CLIENT_SNAKE_SPEED   : 'CSS',
-    CLIENT_APPLE_HIT     : 'CAH',
-    CLIENT_APPLE_SPAWN   : 'CAS',
-    CLIENT_POWERUP_HIT   : 'CPH',
-    CLIENT_POWERUP_SPAWN : 'CPS',
+    CLIENT_GAME_STATE    : 'CG3',
 
-    SERVER_PONG          : 'SPO',
-    SERVER_ROOM_MATCH    : 'SRM',
-    SERVER_CHAT_MESSAGE  : 'SCM',
-    SERVER_SNAKE_UPDATE  : 'SSU',
-    SERVER_GAME_STATE    : 'SGS'
+    CLIENT_POWERUP_HIT   : 'CP1',
+    CLIENT_POWERUP_SPAWN : 'CP2',
+
+    CLIENT_ROOM_JOIN     : 'CR1',
+    CLIENT_ROOM_INDEX    : 'CR2',
+    CLIENT_ROOM_SCORE    : 'CR3',
+
+    CLIENT_SNAKE_ACTION  : 'CS1',
+    CLIENT_SNAKE_CRASH   : 'CS2',
+    CLIENT_SNAKE_SPEED   : 'CS3',
+    CLIENT_SNAKE_UPDATE  : 'CS4',
+
+    SERVER_PONG          : 'SP1',
+    SERVER_ROOM_MATCH    : 'SR1',
+    SERVER_CHAT_MESSAGE  : 'SC1',
+    SERVER_SNAKE_UPDATE  : 'SS1',
+    SERVER_GAME_STATE    : 'SG1'
 };
 
 if (typeof XSS !== 'undefined') {

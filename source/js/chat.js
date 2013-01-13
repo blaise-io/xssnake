@@ -84,7 +84,7 @@ Chat.prototype = {
             this.shapes['CM0'] = null;
             XSS.shapes['CM0'] = null;
             for (var k in this.shapes) {
-                if (this.shapes.hasOwnProperty(k)) {
+                if (this.shapes.hasOwnProperty(k) && XSS.shapes[k]) {
                     XSS.shapes[k].animate(anim);
                 }
             }

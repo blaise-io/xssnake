@@ -73,7 +73,7 @@ Game.prototype = {
         clearTimeout(this._powerUpTimer);
 
         if (this.spawner) {
-            this.spawner.destroy();
+            this.spawner.destruct();
             this.spawner = null;
         }
 
@@ -144,10 +144,11 @@ Game.prototype = {
      * @param client
      */
     emitState: function(client) {
+        var data = [];
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            var data = [i, this.snakes[i].parts, this.snakes[i].direction];
-            client.emit(events.CLIENT_SNAKE_UPDATE, data);
+            data.push([i, this.snakes[i].parts, this.snakes[i].direction]);
         }
+        client.emit(events.CLIENT_GAME_STATE, data);
     },
 
     /**

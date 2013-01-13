@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Client, Room, Game, Apple, Util, Powerup, io*/
+/*globals XSS, Client, Room, Game, Apple, Util, Powerup, StageFlow*/
 
 'use strict';
 
@@ -9,9 +9,9 @@
  * @constructor
  */
 function Socket(callback) {
-    var ioSettings = {'reconnect': false};
+    var options = {'max reconnection attempts': 4};
     Util.loadScript(XSS.config.SOCKET_IO_JS, function() {
-        this.socket = io.connect(XSS.config.SERVER_ENDPOINT, ioSettings);
+        this.socket = window['io'].connect(XSS.config.SERVER_ENDPOINT, options);
         this._addEventListeners(callback);
     }.bind(this));
 }
@@ -31,91 +31,176 @@ Socket.prototype = {
      * @private
      */
     _addEventListeners: function(callback) {
-        var events = XSS.events, socket = this.socket;
+        var events = XSS.events, map = {};
 
-        socket.on(events.CLIENT_CONNECT, callback);
+        map[events.CLIENT_CONNECT]        = callback;
+        map['disconnect']                 = this.disconnect;
 
-        socket.on(events.CLIENT_PING, function(data) {
-            this.emit(events.SERVER_PONG, data);
-        });
+        map[events.CLIENT_PING]           = this.clientPing;
+        map[events.CLIENT_ROOM_INDEX]     = this.roomIndex;
+        map[events.CLIENT_ROOM_SCORE]     = this.updateScore;
+        map[events.CLIENT_CHAT_MESSAGE]   = this.chatMessage;
+        map[events.CLIENT_CHAT_NOTICE]    = this.chatNotice;
+        map[events.CLIENT_GAME_COUNTDOWN] = this.gameCountdown;
+        map[events.CLIENT_GAME_START]     = this.gameStart;
+        map[events.CLIENT_GAME_STATE]     = this.gameState;
+        map[events.CLIENT_SNAKE_UPDATE]   = this.snakeUpdate;
+        map[events.CLIENT_SNAKE_CRASH]    = this.snakeCrash;
+        map[events.CLIENT_SNAKE_ACTION]   = this.snakeAction;
+        map[events.CLIENT_APPLE_HIT]      = this.appleHit;
+        map[events.CLIENT_APPLE_SPAWN]    = this.appleSpawn;
+        map[events.CLIENT_POWERUP_HIT]    = this.powerupHit;
+        map[events.CLIENT_POWERUP_SPAWN]  = this.powerupSpawn;
+        map[events.CLIENT_SNAKE_SPEED]    = this.snakeSpeed;
 
-        socket.on(events.CLIENT_ROOM_INDEX, function(data) {
-            if (!XSS.room) {
-                XSS.room = new Room(data[0], data[1], data[2], data[3]);
-            } else {
-                XSS.room.update.apply(XSS.room, data);
+        for (var k in map) {
+            if (map.hasOwnProperty(k)) {
+                this.socket.on(k, map[k].bind(this));
             }
-        });
+        }
+    },
 
-        socket.on(events.CLIENT_ROOM_SCORE, function(data) {
-            XSS.room.score.updateScore(data[0], data[1]);
-        });
+    disconnect: function() {
+        var str = 'OHSHI!! Lost server connection\n' +
+                  '(appropriate moment for panic)';
+        if (XSS.room && XSS.room.game) {
+            XSS.room.game.destruct();
+        }
+        XSS.shapes = {msg: XSS.font.shape(str, 60, 60)};
+        window.setTimeout(function() {
+            XSS.shapes = {};
+            XSS.stageflow = new StageFlow();
+        }, 5000);
+    },
 
-        socket.on(events.CLIENT_CHAT_MESSAGE, function(data) {
-            XSS.room.chat.add({author: data[0], body: data[1]});
-        });
+    /**
+     * @param {number} time
+     */
+    clientPing: function(time) {
+        this.emit(XSS.events.SERVER_PONG, time);
+    },
 
-        socket.on(events.CLIENT_CHAT_NOTICE, function(notice) {
-            if (XSS.room) {
-                XSS.room.chat.add({body: notice});
-            }
-        });
+    /**
+     * @param {Array} data
+     */
+    roomIndex: function(data) {
+        if (!XSS.room) {
+            XSS.room = new Room(data[0], data[1], data[2], data[3]);
+        } else {
+            XSS.room.update.apply(XSS.room, data);
+        }
+    },
 
-        socket.on(events.CLIENT_GAME_COUNTDOWN, function() {
-            XSS.room.game.countdown();
-        });
+    /**
+     * @param {Array} data
+     */
+    updateScore: function(data) {
+        XSS.room.score.updateScore(data[0], data[1]);
+    },
 
-        socket.on(events.CLIENT_GAME_START, function() {
-            XSS.room.game.start();
-        });
+    /**
+     * @param {Array} data
+     */
+    chatMessage: function(data) {
+        XSS.room.chat.add({author: data[0], body: data[1]});
+    },
 
-        socket.on(events.CLIENT_SNAKE_UPDATE, function(data) {
-            var snake = XSS.room.game.snakes[data[0]];
-            snake.limbo = false;
-            snake.parts = data[1];
-            snake.direction = data[2];
-        });
+    /**
+     * @param {string} notice
+     */
+    chatNotice: function(notice) {
+        if (XSS.room) {
+            XSS.room.chat.add({body: notice});
+        }
+    },
 
-        socket.on(events.CLIENT_SNAKE_CRASH, function(data) {
-            var snake;
-            snake = XSS.room.game.snakes[data[0]];
-            snake.parts = data[1];
-            snake.crash();
-        });
+    gameCountdown: function() {
+        XSS.room.game.countdown();
+    },
 
-        socket.on(events.CLIENT_SNAKE_ACTION, function(data) {
-            var snake = XSS.room.game.snakes[data[0]];
-            snake.showAction(data[1]);
-        });
+    gameStart: function() {
+        XSS.room.game.start();
+    },
 
-        socket.on(events.CLIENT_APPLE_HIT, function(data) {
-            var game = XSS.room.game;
-            game.snakes[data[0]].size = data[1];
-            game.apples[data[2]].destruct();
-            game.apples[data[2]] = null;
-        });
+    /**
+     * @param {Array.<Array>} data
+     */
+    gameState: function(data) {
+        for (var i = 0, m = data.length; i < m; i++) {
+            this.snakeUpdate(data[i]);
+        }
+        XSS.room.game.gameStateReq = false;
+    },
 
-        socket.on(events.CLIENT_APPLE_SPAWN, function(data) {
-            var index = data[0], location = data[1];
-            XSS.room.game.apples[index] = new Apple(index, location[0], location[1]);
-        });
+    /**
+     * @param {Array} data
+     */
+    snakeUpdate: function(data) {
+        var snake = XSS.room.game.snakes[data[0]];
+        snake.limbo = false;
+        snake.parts = data[1];
+        snake.direction = data[2];
+    },
 
-        socket.on(events.CLIENT_POWERUP_HIT, function(data) {
-            var game = XSS.room.game;
-            game.powerups[data[1]].destruct();
-            game.powerups[data[1]] = null;
-        });
+    /**
+     * @param {Array} data
+     */
+    snakeCrash: function(data) {
+        var snake;
+        snake = XSS.room.game.snakes[data[0]];
+        snake.parts = data[1];
+        snake.crash();
+    },
 
-        socket.on(events.CLIENT_POWERUP_SPAWN, function(data) {
-            var index = data[0], location = data[1];
-            XSS.room.game.powerups[index] = new Powerup(index, location[0], location[1]);
-        });
+    /**
+     * @param {Array} data
+     */
+    snakeAction: function(data) {
+        var snake = XSS.room.game.snakes[data[0]];
+        snake.showAction(data[1]);
+    },
 
-        socket.on(events.CLIENT_SNAKE_SPEED, function(data) {
-            var game = XSS.room.game;
-            game.snakes[data[0]].speed = data[1];
-        });
+    /**
+     * @param {Array} data
+     */
+    appleHit: function(data) {
+        var game = XSS.room.game;
+        game.snakes[data[0]].size = data[1];
+        game.apples[data[2]].destruct();
+        game.apples[data[2]] = null;
+    },
 
+    /**
+     * @param {Array} data
+     */
+    appleSpawn: function(data) {
+        var index = data[0], location = data[1];
+        XSS.room.game.apples[index] = new Apple(index, location[0], location[1]);
+    },
+
+    /**
+     * @param {Array} data
+     */
+    powerupHit: function(data) {
+        var game = XSS.room.game;
+        game.powerups[data[1]].destruct();
+        game.powerups[data[1]] = null;
+    },
+
+    /**
+     * @param {Array} data
+     */
+    powerupSpawn: function(data) {
+        var index = data[0], location = data[1];
+        XSS.room.game.powerups[index] = new Powerup(index, location[0], location[1]);
+    },
+
+    /**
+     * @param {Array} data
+     */
+    snakeSpeed: function(data) {
+        var game = XSS.room.game;
+        game.snakes[data[0]].speed = data[1];
     }
 
 };

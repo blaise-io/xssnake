@@ -129,7 +129,7 @@ StageInterface.prototype = {
     },
 
     /** @return */
-    destroyStage: function() {
+    destructStage: function() {
     }
 };
 
@@ -179,7 +179,7 @@ InputStage.prototype = {
         XSS.shapes.stage = null;
     },
 
-    destroyStage: function() {
+    destructStage: function() {
         XSS.off.keydown(this._handleKeysBound);
         this.input.destruct();
     },
@@ -250,7 +250,7 @@ ScreenStage.prototype = {
         }
     },
 
-    destroyStage: function() {
+    destructStage: function() {
         XSS.off.keydown(this.handleKeys);
         XSS.shapes.stage = null;
     }
@@ -284,7 +284,7 @@ SelectStage.prototype = {
         XSS.on.keydown(this.handleKeys);
     },
 
-    destroyStage: function() {
+    destructStage: function() {
         XSS.off.keydown(this.handleKeys);
         XSS.shapes.stage = null;
     },
@@ -344,6 +344,6 @@ GameStage.prototype = {
         });
     },
 
-    destroyStage: function() {
+    destructStage: function() {
     }
 };

@@ -99,7 +99,7 @@ Room.prototype = {
         this.game.destruct();
         this._removeDisconnectedClients(this._disconnected);
 
-        // Check if Room was destroyed
+        // Check if Room was destructed
         if (!this.clients.length) {
             this.server.roomManager.remove(this);
             return null;

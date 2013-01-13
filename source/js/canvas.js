@@ -20,17 +20,21 @@ function Canvas() {
     this._positionCanvas();
     this._addEventListeners();
 
-    this._lastPaint = new Date() - 20;
+    this._prevFrame = new Date() - 20;
     this._dummyBBox = new BoundingBox();
     this._frameBound = this._frame.bind(this);
-    this._frameBound();
+
+    window.requestAnimationFrame(this._frameBound, this.canvas);
 }
 
 Canvas.prototype = {
 
+    /**
+     * @param {number} theme
+     */
     setTheme: function(theme) {
         this.theme = theme;
-        this._clearShapeCache(XSS.shapes);
+        this._clearShapeCache();
         this._setBackgroundPattern();
     },
 
@@ -38,8 +42,10 @@ Canvas.prototype = {
      * @param {number} delta
      */
     paint: function(delta) {
+        var deltaOK = delta >= XSS.MIN_DELTA && delta <= XSS.MAX_DELTA;
+
         // Abuse this loop to trigger game tick
-        XSS.pubsub.publish(XSS.GAME_TICK, delta);
+        XSS.pubsub.publish(XSS.GAME_TICK, delta, deltaOK);
 
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -74,8 +80,8 @@ Canvas.prototype = {
     },
 
     /** @private */
-    _frame: function() {
-        var now, delta;
+    _frame: function(now) {
+        var delta;
 
         // Make appointment for next paint. Quit on error.
         if (!XSS.error) {
@@ -83,19 +89,14 @@ Canvas.prototype = {
         }
 
         // Time since last paint
-        now = +new Date();
-        delta = now - this._lastPaint;
-        this._lastPaint = now;
+        delta = now - this._prevFrame;
+        this._prevFrame = now;
 
         // Show FPS in title bar
         // var fps = Math.round(1000 / delta);
         // document.title = 'XXSNAKE ' + fps;
 
-        // Do not paint when requestAnimationFrame is
-        // catching up or heavily delayed.
-        if (delta >= 7 && delta <= 250) {
-            this.paint(delta);
-        }
+        this.paint(delta);
     },
 
     /**
@@ -218,13 +219,27 @@ Canvas.prototype = {
     },
 
     /**
-     * @param shapes
      * @private
      */
-    _clearShapeCache: function(shapes) {
+    _clearShapeCache: function() {
+        var shapes = XSS.shapes;
         for (var k in shapes) {
             if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
                 shapes[k].uncache();
+            }
+        }
+    },
+
+    /**
+     * Remove all nulled shapes. We don't delete shapes immediately
+     * because this triggers a slow garbage collection during gameplay,
+     * which may affect fps negatively.
+     */
+    garbageCollect: function() {
+        var shapes = XSS.shapes;
+        for (var k in shapes) {
+            if (shapes.hasOwnProperty(k) && null === shapes[k]) {
+                delete shapes[k];
             }
         }
     },
@@ -255,7 +270,7 @@ Canvas.prototype = {
         var windowCenter, windowMiddle, left, top, style;
 
         this._setCanvasDimensions();
-        this._clearShapeCache(XSS.shapes);
+        this._clearShapeCache();
 
         windowCenter = window.innerWidth / 2;
         windowMiddle = window.innerHeight / 2;
