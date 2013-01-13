@@ -64,11 +64,10 @@ Shape.prototype = {
 
     /**
      * @param {number} start
-     * @param {number} stop
-     * @param {boolean=} deleteShape
+     * @param {number} end
      * @return {Shape}
      */
-    lifetime: function(start, stop, deleteShape) {
+    lifetime: function(start, end) {
         this.effects.lifetime = this._lifetimeEffect.apply(this, arguments);
         return this;
     },
@@ -189,12 +188,11 @@ Shape.prototype = {
 
     /**
      * @param {number} start
-     * @param {number} stop
-     * @param {boolean=} deleteShape
+     * @param {number} end
      * @return {function({number})}
      * @private
      */
-    _lifetimeEffect: function(start, stop, deleteShape) {
+    _lifetimeEffect: function(start, end) {
         var key, progress = 0;
         return function(delta) {
             // Enable/disable shape only once, allows combination
@@ -207,19 +205,14 @@ Shape.prototype = {
             }
 
             // Stop time reached
-            if (stop && progress >= stop) {
-                if (deleteShape) {
-                    key = Util.getKey(XSS.shapes, this);
-                    if (key) { delete XSS.shapes[key]; }
-                } else {
-                    delete this.effects.lifetime;
-                    this.enabled = false;
-                }
+            if (end && progress >= end) {
+                key = Util.getKey(XSS.shapes, this);
+                if (key) { delete XSS.shapes[key]; }
             }
 
             // Start time reached
             else if (progress >= start) {
-                start = stop;
+                start = end;
                 this.enabled = true;
             }
         };

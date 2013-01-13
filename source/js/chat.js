@@ -170,7 +170,7 @@ Chat.prototype = {
 
     _sentIndication: function() {
         var shape = XSS.font.shape(XSS.UNICODE_ENTER_KEY, XSS.PIXELS_H - 8, XSS.PIXELS_V - 9);
-        shape.flash(XSS.FLASH_FAST).lifetime(0, XSS.FLASH_FAST * 3, true);
+        shape.flash(XSS.FLASH_FAST).lifetime(0, XSS.FLASH_FAST * 3);
         XSS.shapes.msgsent = shape;
     },
 

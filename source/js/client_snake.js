@@ -25,6 +25,7 @@ function ClientSnake(index, local, name, location, direction) {
     this.limbo   = false;
 
     this._shape = new Shape();
+    this._shape.clear = true;
     this._shape.dynamic = true;
 
     /**
@@ -90,7 +91,7 @@ Util.extend(ClientSnake.prototype, {
             shape = XSS.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
             shape.clear = true;
             name = 'AL_' + Util.randomStr();
-            XSS.shapes[name] = shape.lifetime(i, duration + i, true);
+            XSS.shapes[name] = shape.lifetime(i, duration + i);
         }
     },
 

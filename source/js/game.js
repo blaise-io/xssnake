@@ -115,7 +115,7 @@ Game.prototype = {
             }
 
             shape.add.apply(shape, border);
-            shape.lifetime(start, start + 1000, true);
+            shape.lifetime(start, start + 1000);
             shape.overlay = true;
 
             XSS.shapes['GC' + count] = shape;
