@@ -35,8 +35,8 @@ Room.prototype = {
 
     destruct: function() {
         this.game.destruct();
-        delete this.game;
-        delete this.clients;
+        this.game = null;
+        this.clients = null;
     },
 
     emitState: function() {

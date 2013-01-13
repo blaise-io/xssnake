@@ -20,7 +20,7 @@ function Powerup(index, x, y) {
 Powerup.prototype = {
 
     destruct: function() {
-        delete XSS.shapes[this._shapeName];
+        XSS.shapes[this._shapeName] = null;
     },
 
     /**

@@ -25,8 +25,6 @@ function ClientSnake(index, local, name, location, direction) {
     this.limbo   = false;
 
     this._shape = new Shape();
-    this._shape.clear = true;
-    this._shape.dynamic = true;
 
     /**
      * @type {Array}
@@ -51,7 +49,7 @@ Util.extend(ClientSnake.prototype, {
         this.removeControls();
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
-                delete XSS.shapes[this.shapes[k]];
+                XSS.shapes[this.shapes[k]] = null;
             }
         }
     },
@@ -108,8 +106,8 @@ Util.extend(ClientSnake.prototype, {
     },
 
     removeNameAndDirection: function() {
-        delete XSS.shapes[this.shapes.name];
-        delete XSS.shapes[this.shapes.direction];
+        XSS.shapes[this.shapes.name] = null;
+        XSS.shapes[this.shapes.direction] = null;
     },
 
     addControls: function() {
@@ -131,7 +129,7 @@ Util.extend(ClientSnake.prototype, {
      * @return {Shape}
      */
     updateShape: function() {
-        this._shape.pixels = XSS.transform.zoomGame(this.parts);
+        this._shape.set(XSS.transform.zoomGame(this.parts));
         return this._shape;
     },
 

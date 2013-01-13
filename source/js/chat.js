@@ -81,8 +81,8 @@ Chat.prototype = {
         // Animation
         else {
             anim = {to: [0, -7], duration: this.animDuration, callback: callback};
-            delete this.shapes['CM0'];
-            delete XSS.shapes['CM0'];
+            this.shapes['CM0'] = null;
+            XSS.shapes['CM0'] = null;
             for (var k in this.shapes) {
                 if (this.shapes.hasOwnProperty(k)) {
                     XSS.shapes[k].animate(anim);
@@ -177,7 +177,7 @@ Chat.prototype = {
     _deleteShapes: function() {
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
-                delete XSS.shapes[k];
+                XSS.shapes[k] = null;
             }
         }
     },

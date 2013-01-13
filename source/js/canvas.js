@@ -21,6 +21,7 @@ function Canvas() {
     this._addEventListeners();
 
     this._lastPaint = new Date() - 20;
+    this._dummyBBox = new BoundingBox();
     this._frameBound = this._frame.bind(this);
     this._frameBound();
 }
@@ -55,7 +56,7 @@ Canvas.prototype = {
     _paint: function(delta, shapes) {
         var k, overlays = {};
         for (k in shapes) {
-            if (shapes.hasOwnProperty(k)) {
+            if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
                 if (shapes[k].overlay) {
                     this._paintShapeDispatch(k, shapes[k], delta);
                 } else {
@@ -87,8 +88,8 @@ Canvas.prototype = {
         this._lastPaint = now;
 
         // Show FPS in title bar
-        // var fps = Math.round(1000 / delta);
-        // document.title = 'XXSNAKE ' + fps;
+        var fps = Math.round(1000 / delta);
+        document.title = 'XXSNAKE ' + fps;
 
         // Do not paint when requestAnimationFrame is
         // catching up or heavily delayed.
@@ -103,18 +104,31 @@ Canvas.prototype = {
      * @param {BoundingBox} bbox
      */
     _paintShape: function(context, shape, bbox) {
-        var pixels = shape.pixels, s = this.pixelSize;
-
+        var pixels = shape.pixels;
         context.fillStyle = this.theme.on;
-
         for (var i = 0, m = pixels.length; i < m; i++) {
-            var x = pixels[i][0] * this.tileSize - bbox.x1,
-                y = pixels[i][1] * this.tileSize - bbox.y1;
-            if (shape.clear) {
-                context.clearRect(x, y, s, s);
-            }
-            context.fillRect(x, y, s, s);
+            this._drawPixel(context, pixels[i], bbox.x1, bbox.y1, shape.clear);
         }
+    },
+
+    /**
+     * @param {Object} context
+     * @param {XSS.ShapePixel} pixel
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} clear
+     * @suppress {checkTypes}
+     * @private
+     */
+    _drawPixel: function(context, pixel, offsetX, offsetY, clear) {
+        var pixelSize = this.pixelSize,
+            tileSize = this.tileSize;
+        offsetX = pixel[0] * tileSize - offsetX;
+        offsetY = pixel[1] * tileSize - offsetY;
+        if (clear) {
+            context.clearRect(offsetX, offsetY, pixelSize, pixelSize);
+        }
+        context.fillRect(offsetX, offsetY, pixelSize, pixelSize);
     },
 
     /**
@@ -124,7 +138,7 @@ Canvas.prototype = {
      * @private
      */
     _paintShapeDispatch: function(name, shape, delta) {
-        var bbox, cache;
+        var bbox, cache, ctx = this.ctx;
 
         // Apply effects
         for (var k in shape.effects) {
@@ -141,18 +155,18 @@ Canvas.prototype = {
         // Clear surface below shape
         if (shape.overlay) {
             bbox = shape.bbox();
-            this.ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
+            ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
         }
 
         // Paint shape without caching
-        if (shape.dynamic || shape.clear) {
-            this._paintShape(this.ctx, shape, new BoundingBox());
+        if (shape.clear) {
+            this._paintShape(ctx, shape, this._dummyBBox);
         }
 
         // Create cache and paint
         else {
             cache = shape.cache || (shape.cache = this._getPaintedShape(shape));
-            this.ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
+            ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
         }
     },
 

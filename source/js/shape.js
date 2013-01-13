@@ -24,9 +24,6 @@ function Shape(varArgs) {
     /** @type {boolean} */
     this.enabled = true;
 
-    /** @type {boolean} */
-    this.dynamic = false;
-
     /**
      * Put at end of painting queue and clear bbox coverage before painting.
      * @type {boolean}
@@ -224,17 +221,16 @@ Shape.prototype = {
      * @private
      */
     _animateEffect: function(options) {
-        var from, to, duration, clone, dynamic, progress = 0;
+        var from, to, duration, clone, clear, progress = 0;
 
         options  = options || {};
         from     = options.from || [0, 0];
         to       = options.to || [0, 0];
         duration = options.duration || 200;
-
         clone    = this.clone();
-        dynamic  = this.dynamic;
+        clear    = this.clear;
 
-        this.dynamic = true;
+        this.clear = true;
 
         /** @this {Shape} */
         return function(delta) {
@@ -248,7 +244,7 @@ Shape.prototype = {
                 this.pixels = XSS.transform.shift(clone.pixels, x, y);
             } else {
                 delete this.effects.animate;
-                this.dynamic = dynamic;
+                this.clear = clear;
                 this.set(clone.shift(to[0], to[1]).pixels);
                 if (options.callback) {
                     options.callback();

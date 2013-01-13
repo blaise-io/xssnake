@@ -25,7 +25,7 @@ ScoreBoard.prototype = {
     destruct: function() {
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
-                delete XSS.shapes[k];
+                XSS.shapes[k] = null;
             }
         }
     },

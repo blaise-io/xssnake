@@ -33,9 +33,9 @@ EventHandler.prototype = {
     destruct: function() {
         // Other event listeners will remove themselves.
         clearInterval(this._pingInterval);
-        delete this.server;
-        delete this.client;
-        delete this.socket;
+        this.server = null;
+        this.client = null;
+        this.socket = null;
     },
 
     /**

@@ -74,11 +74,11 @@ Game.prototype = {
 
         if (this.spawner) {
             this.spawner.destroy();
-            delete this.spawner;
+            this.spawner = null;
         }
 
-        delete this.snakes;
-        delete this.level;
+        this.snakes = null;
+        this.level = null;
     },
 
     /**
@@ -106,7 +106,7 @@ Game.prototype = {
         if (this._isCrash(client, parts)) {
             this._setSnakeCrashed(client, parts);
         } else {
-            delete client.snake.limbo;
+            client.snake.limbo = false;
         }
 
         this.spawner.handleHits(client, head);

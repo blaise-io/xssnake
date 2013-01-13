@@ -19,7 +19,7 @@ function Apple(index, x, y) {
 Apple.prototype = {
 
     destruct: function() {
-        delete XSS.shapes[this._shapeName];
+        XSS.shapes[this._shapeName] = null;
     },
 
     /**

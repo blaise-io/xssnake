@@ -176,7 +176,7 @@ InputStage.prototype = {
         }.bind(this);
 
         // Handled by InputField
-        delete XSS.shapes.stage;
+        XSS.shapes.stage = null;
     },
 
     destroyStage: function() {
@@ -252,7 +252,7 @@ ScreenStage.prototype = {
 
     destroyStage: function() {
         XSS.off.keydown(this.handleKeys);
-        delete XSS.shapes.stage;
+        XSS.shapes.stage = null;
     }
 
 };
@@ -286,7 +286,7 @@ SelectStage.prototype = {
 
     destroyStage: function() {
         XSS.off.keydown(this.handleKeys);
-        delete XSS.shapes.stage;
+        XSS.shapes.stage = null;
     },
 
     handleKeys: function(e) {
@@ -336,7 +336,7 @@ GameStage.prototype = {
 
     createStage: function() {
         var choices;
-        delete XSS.shapes.header;
+        XSS.shapes.header = null;
 
         choices = XSS.stageflow.getNamedChoices();
         XSS.socket = new Socket(function() {

@@ -12,10 +12,10 @@
 function Game(index, levelID, names) {
 
     XSS.stageflow.stage.destroyStage();
-    delete XSS.shapes.stage;
-    delete XSS.shapes.header;
-    delete XSS.shapes.instruction;
-    delete XSS.shapes.border;
+    XSS.shapes.stage = null;
+    XSS.shapes.header = null;
+    XSS.shapes.instruction = null;
+    XSS.shapes.border = null;
 
     /** @type {Level} */
     this.level = this._setupLevel(levelID);
@@ -51,7 +51,6 @@ Game.prototype = {
             if (this.apples[i]) {
                 this.apples[i].destruct();
             }
-
         }
 
         for (i = 0, m = this.powerups.length; i < m; i++) {
@@ -60,11 +59,11 @@ Game.prototype = {
             }
         }
 
-        delete this.apples;
-        delete this.powerups;
+        this.apples = null;
+        this.powerups = null;
 
-        delete XSS.shapes.border;
-        delete XSS.shapes.level;
+        XSS.shapes.border = null;
+        XSS.shapes.level = null;
     },
 
     addControls: function() {

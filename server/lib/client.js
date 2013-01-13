@@ -21,6 +21,8 @@ function Client(id, server, socket) {
     this.roomid = null;
     /** @type {EventHandler} */
     this.eventHandler = null;
+    /** @type {boolean} */
+    this.limbo = false;
 }
 
 module.exports = Client;
@@ -38,9 +40,9 @@ Client.prototype = {
 
     destruct: function() {
         this.eventHandler.destruct();
-        delete this.eventHandler;
-        delete this.snake;
-        delete this.socket;
+        this.eventHandler = null;
+        this.snake = null;
+        this.socket = null;
     }
 
 };

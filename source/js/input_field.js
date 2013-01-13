@@ -38,8 +38,8 @@ InputField.prototype = {
         }
         XSS.off.keydown(this._updateShapesBound);
         XSS.off.keyup(this._updateShapesBound);
-        delete XSS.shapes.caret;
-        delete XSS.shapes.inputval;
+        XSS.shapes.caret = null;
+        XSS.shapes.inputval = null;
         this._isDestruct = true;
     },
 
