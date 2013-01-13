@@ -88,8 +88,8 @@ Canvas.prototype = {
         this._lastPaint = now;
 
         // Show FPS in title bar
-        var fps = Math.round(1000 / delta);
-        document.title = 'XXSNAKE ' + fps;
+        // var fps = Math.round(1000 / delta);
+        // document.title = 'XXSNAKE ' + fps;
 
         // Do not paint when requestAnimationFrame is
         // catching up or heavily delayed.
@@ -223,7 +223,7 @@ Canvas.prototype = {
      */
     _clearShapeCache: function(shapes) {
         for (var k in shapes) {
-            if (shapes.hasOwnProperty(k)) {
+            if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
                 shapes[k].uncache();
             }
         }

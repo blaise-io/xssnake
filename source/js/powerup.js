@@ -28,9 +28,7 @@ Powerup.prototype = {
      * @private
      */
     _getShape: function() {
-        var shape = XSS.font.shape(XSS.UNICODE_ELECTRIC, this.x, this.y);
-        shape.clear = true;
-        return shape;
+        return XSS.font.shape(XSS.UNICODE_ELECTRIC, this.x, this.y);
     }
 
 };
