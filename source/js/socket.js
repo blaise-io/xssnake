@@ -66,12 +66,16 @@ Socket.prototype = {
     disconnect: function() {
         var str = 'OHSHI!! Lost server connection\n' +
                   '(appropriate moment for panic)';
-        if (XSS.room && XSS.room.game) {
-            XSS.room.game.destruct();
+
+        if (XSS.room) {
+            XSS.room.destruct();
         }
-        XSS.shapes = {msg: XSS.font.shape(str, 60, 60)};
+
+        XSS.shapes = {
+            header: XSS.font.shape(str, 60, 60)
+        };
+
         window.setTimeout(function() {
-            XSS.shapes = {};
             XSS.stageflow = new StageFlow();
         }, 5000);
     },

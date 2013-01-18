@@ -33,9 +33,8 @@ gcc.header(util.format(
     compile.coreModules.join(',\n    ')
 ));
 
-// DEBUG: Uncomment the next line to write the inlined code to a file before
-// it is compoiled by Google Closure Compiler.
-fs.writeFileSync(__dirname + '/precompiled.js', compile.code);
+// DEBUG: Uncomment next lien to write inlined code to file before compilation.
+// fs.writeFileSync(__dirname + '/precompiled.js', compile.code);
 
 gcc.addCode(compile.code);
 gcc.output(__dirname + '/../server/compiled_start.js');

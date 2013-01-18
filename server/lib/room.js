@@ -31,6 +31,15 @@ function Room(server, id, filter) {
 
 module.exports = Room;
 
+/**
+ * @enum {number}
+ */
+Room.RANK = {
+    LEADING: 0,
+    NEUTRAL: 1,
+    LOSING : 2
+};
+
 Room.prototype = {
 
     destruct: function() {
@@ -147,6 +156,36 @@ Room.prototype = {
      */
     broadcast: function(name, data, exclude) {
         exclude.socket.broadcast.to(this.id).emit(name, data);
+    },
+
+    /**
+     * @param client
+     * @param {*} losing
+     * @param {*} leading
+     * @param {*} neutral
+     * @return {*}
+     */
+    rank: function(client, leading, neutral, losing) {
+        var clientPoints, rankTmp = 0;
+        if (this.clients.length === 1) {
+            return neutral;
+        } else {
+            clientPoints = this.points[this.clients.indexOf(client)];
+            for (var i = 0, m = this.points.length; i < m; i++) {
+                if (clientPoints > this.points[i]) {
+                    rankTmp++;
+                } else if (clientPoints < this.points[i]) {
+                    rankTmp--;
+                }
+            }
+            if (rankTmp > 0) {
+                return leading;
+            } else if (rankTmp === 0) {
+                return neutral;
+            } else {
+                return losing;
+            }
+        }
     },
 
     /**

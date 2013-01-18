@@ -1,16 +1,16 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var util = require('util'),
-    Spawner = require('./spawner.js'),
-    levels = require('../shared/levels.js'),
-    config = require('../shared/config.js'),
-    events = require('../shared/events.js'),
-    Util = require('../shared/util.js'),
-    Level = require('../shared/level.js'),
-    Snake = require('../shared/snake.js'),
-    Powerup = require('./powerup.js');
-
+var util = require('util');
+var Spawner = require('./spawner.js');
+var levels = require('../shared/levels.js');
+var config = require('../shared/config.js');
+var events = require('../shared/events.js');
+var Level = require('../shared/level.js');
+var Snake = require('../shared/snake.js');
+var Powerup = require('./powerup.js');
+/** @type {Util} */
+var Util = require('../shared/util.js');
 
 /**
  * @param {Room} room

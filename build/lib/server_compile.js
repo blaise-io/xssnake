@@ -179,7 +179,7 @@ ServerCompile.prototype = {
                 //      var config = require('module.js');
                 // Result:
                 //      var MyObject = function(){};
-                jsContent = jsContent.replace(/(module\.exports = .*)/, '// $1');
+                jsContent = jsContent.replace(/(module\.exports = [\s\w{}\.\[\]]+)/, '// $1');
             }
 
             // !!IMPORTANT: This library currently does not support fragmented
@@ -203,6 +203,7 @@ ServerCompile.prototype = {
     cleanCode: function() {
         this.code = this.code.replace(/'use strict';/g, '');
         this.code = this.code.replace(/XSS\.[\w]+ = module\.exports;/g, '');
+        this.code = this.code.replace(/\/\*\* @type [\w{}\.]+ \*\//g, '');
     },
 
     /**

@@ -10,10 +10,19 @@
  * @constructor
  */
 function Room(index, level, names, score) {
+    this.game = null;
+    this.score = null;
+    this.chat = null;
     this.update.apply(this, arguments);
 }
 
 Room.prototype = {
+
+    destruct: function() {
+        this.game.destruct();
+        this.score.destruct();
+        this.chat.destruct();
+    },
 
     /**
      * @param {number} index

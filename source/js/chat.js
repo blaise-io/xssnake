@@ -93,14 +93,11 @@ Chat.prototype = {
         return this;
     },
 
-    _updateShapes: function() {
-        this.shapes = this._getShapes(this._messages);
-    },
-
     destruct: function() {
         if (this.field) {
             this.field.destruct();
         }
+        XSS.off.keydown(this._chatFocusBound);
         this._deleteShapes();
     },
 
@@ -110,6 +107,10 @@ Chat.prototype = {
 
     _bindEvents: function() {
         XSS.on.keydown(this._chatFocusBound);
+    },
+
+    _updateShapes: function() {
+        this.shapes = this._getShapes(this._messages);
     },
 
     /**
