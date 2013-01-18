@@ -77,7 +77,7 @@ Util.extend(ClientSnake.prototype, {
      * @param {number=} amount
      */
     showAction: function(label, duration, amount) {
-        duration = duration || 100;
+        duration = duration || this.speed;
         amount = amount || 3;
 
         var rand = function() {

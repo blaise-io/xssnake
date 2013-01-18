@@ -54,6 +54,20 @@ Canvas.prototype = {
     },
 
     /**
+     * Remove all nulled shapes. We don't delete shapes immediately
+     * because this triggers a slow garbage collection during gameplay,
+     * which may affect fps negatively.
+     */
+    garbageCollect: function() {
+        var shapes = XSS.shapes;
+        for (var k in shapes) {
+            if (shapes.hasOwnProperty(k) && null === shapes[k]) {
+                delete shapes[k];
+            }
+        }
+    },
+
+    /**
      * @param {number} delta
      * @param {*} shapes
      * @private
@@ -148,7 +162,7 @@ Canvas.prototype = {
         }
 
         // Draw on canvas if shape is enabled and visible
-        if (false === shape.enabled && this.focus) {
+        if (false === shape.enabled) {
             return;
         }
 
@@ -236,20 +250,6 @@ Canvas.prototype = {
         for (var k in shapes) {
             if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
                 shapes[k].uncache();
-            }
-        }
-    },
-
-    /**
-     * Remove all nulled shapes. We don't delete shapes immediately
-     * because this triggers a slow garbage collection during gameplay,
-     * which may affect fps negatively.
-     */
-    garbageCollect: function() {
-        var shapes = XSS.shapes;
-        for (var k in shapes) {
-            if (shapes.hasOwnProperty(k) && null === shapes[k]) {
-                delete shapes[k];
             }
         }
     },

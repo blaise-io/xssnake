@@ -201,16 +201,17 @@ Shape.prototype = {
                 this.enabled = false;
             }
 
+            // Start time reached
+            if (progress >= start) {
+                this.enabled = true;
+            }
+
             // Stop time reached
             if (end && progress >= end) {
                 key = Util.getKey(XSS.shapes, this);
-                if (key) { XSS.shapes[key] = null; }
-            }
-
-            // Start time reached
-            else if (progress >= start) {
-                start = end;
-                this.enabled = true;
+                if (key) {
+                    XSS.shapes[key] = null;
+                }
             }
         };
     },
