@@ -28,8 +28,14 @@ function Game(index, levelID, names) {
 
 Game.prototype = {
 
+    pubsubKey: 'GM',
+
     start: function() {
-        XSS.pubsub.subscribe(XSS.GAME_TICK, '', this._moveSnakes.bind(this));
+        var sub = XSS.pubsub.subscribe.bind(XSS.pubsub);
+
+        sub(XSS.PUB_GAME_TICK, this.pubsubKey, this._moveSnakes.bind(this));
+        sub(XSS.PUB_FOCUS_CHANGE, this.pubsubKey, this._handleFocus.bind(this));
+
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
         }
@@ -38,7 +44,9 @@ Game.prototype = {
 
     destruct: function() {
         var i, m;
-        XSS.pubsub.unsubscribe(XSS.GAME_TICK, '');
+
+        XSS.pubsub.unsubscribe(XSS.PUB_GAME_TICK, this.pubsubKey);
+        XSS.pubsub.unsubscribe(XSS.PUB_FOCUS_CHANGE, this.pubsubKey);
 
         for (i = 0, m = this.snakes.length; i < m; i++) {
             if (this.snakes[i]) {
@@ -120,7 +128,7 @@ Game.prototype = {
             shape.overlay = true;
 
             XSS.shapes['GC' + count] = shape;
-        } while (count--);
+        } while (count-- && XSS.canvas.focus);
     },
 
     /**
@@ -173,31 +181,28 @@ Game.prototype = {
         return snake;
     },
 
+    /**
+     * @param {boolean} focus
+     * @private
+     */
+    _handleFocus: function(focus) {
+        if (focus) {
+            XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
+        }
+    },
 
     /**
      * @param {number} delta
-     * @param {boolean} deltaOK
      * @private
      */
-    _moveSnakes: function(delta, deltaOK) {
-        if (deltaOK) {
-            for (var i = 0, m = this.snakes.length; i < m; i++) {
-                var snake = this.snakes[i];
-                if (snake.elapsed >= snake.speed && !snake.crashed) {
-                    snake.elapsed -= snake.speed;
-                    this._moveSnake(snake);
-                }
-                snake.elapsed += delta;
+    _moveSnakes: function(delta) {
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            var snake = this.snakes[i];
+            if (snake.elapsed >= snake.speed && !snake.crashed) {
+                snake.elapsed -= snake.speed;
+                this._moveSnake(snake);
             }
-        } else {
-            // TODO: Remove deltaOK as trigger for reindexing
-            if (!this._gameStateReq) {
-                XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
-                this._gameStateReq = true;
-                window.setTimeout(function() {
-                    this._gameStateReq = false;
-                }.bind(this), 1500);
-            }
+            snake.elapsed += delta;
         }
     },
 

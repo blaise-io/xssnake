@@ -12,7 +12,7 @@ function Socket(callback) {
     var options = {'max reconnection attempts': 4};
     Util.loadScript(XSS.config.SOCKET_IO_JS, function() {
         this.socket = window['io'].connect(XSS.config.SERVER_ENDPOINT, options);
-        this._addEventListeners(callback);
+        this._bindEvents(callback);
     }.bind(this));
 }
 
@@ -30,7 +30,7 @@ Socket.prototype = {
      * @param callback {function(Socket)}
      * @private
      */
-    _addEventListeners: function(callback) {
+    _bindEvents: function(callback) {
         var events = XSS.events, map = {};
 
         this.map = map;

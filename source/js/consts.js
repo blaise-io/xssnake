@@ -31,7 +31,9 @@
 /** @const */ XSS.GAME_LEFT = 2;
 /** @const */ XSS.GAME_TOP = 2;
 /** @const */ XSS.GAME_TILE = 4;
-/** @const */ XSS.GAME_TICK = 'TICK';
+
+/** @const */ XSS.PUB_GAME_TICK = 'TICK';
+/** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCUS';
 
 /** @const */ XSS.FLASH_SLOW = 450;
 /** @const */ XSS.FLASH_NORMAL = 300;

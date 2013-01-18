@@ -17,8 +17,9 @@ function Canvas() {
         this._useVendorRequestAnimationFrame();
     }
 
+    this.focus = true;
     this._positionCanvas();
-    this._addEventListeners();
+    this._bindEvents();
 
     this._prevFrame = new Date() - 20;
     this._dummyBBox = new BoundingBox();
@@ -42,10 +43,8 @@ Canvas.prototype = {
      * @param {number} delta
      */
     paint: function(delta) {
-        var deltaOK = delta >= XSS.MIN_DELTA && delta <= XSS.MAX_DELTA;
-
         // Abuse this loop to trigger game tick
-        XSS.pubsub.publish(XSS.GAME_TICK, delta, deltaOK);
+        XSS.pubsub.publish(XSS.PUB_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -148,8 +147,8 @@ Canvas.prototype = {
             }
         }
 
-        // Draw on canvas
-        if (false === shape.enabled) {
+        // Draw on canvas if shape is enabled and visible
+        if (false === shape.enabled && this.focus) {
             return;
         }
 
@@ -214,8 +213,19 @@ Canvas.prototype = {
     },
 
     /** @private */
-    _addEventListeners: function() {
+    _bindEvents: function() {
         window.onresize = this._positionCanvas.bind(this);
+        window.onfocus  = this._handleFocusChange.bind(this);
+        window.onblur   = this._handleFocusChange.bind(this);
+    },
+
+    /**
+     * @param {Event} ev
+     * @private
+     */
+    _handleFocusChange: function(ev) {
+        this.focus = (ev.type === 'blur');
+        XSS.pubsub.publish(XSS.PUB_FOCUS_CHANGE, this.focus);
     },
 
     /**

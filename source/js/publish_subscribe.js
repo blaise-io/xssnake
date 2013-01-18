@@ -40,7 +40,7 @@ PublishSubscribe.prototype = {
 
     /**
      * @param {string} topic
-     * @param {?string} key
+     * @param {string=} key
      */
     unsubscribe: function(topic, key) {
         if (topic in this._subscriptions) {
