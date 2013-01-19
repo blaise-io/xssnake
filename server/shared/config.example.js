@@ -7,8 +7,6 @@ module.exports = {
     SERVER_ENDPOINT    : 'http://localhost:80',
     SOCKET_IO_JS       : 'http://localhost:80/socket.io/socket.io.js',
 
-    GAME_TICK          : 50,
-
     ROOM_CAPACITY      : 4,
 
     TIME_GLOAT         : 5,

@@ -16,7 +16,7 @@ module.exports = {
     CLIENT_GAME_COUNTDOWN: 'CG1',
     CLIENT_GAME_START    : 'CG2',
     CLIENT_GAME_SNAKES   : 'CG3',
-    CLIENT_GAME_SPAWNS   : 'CG4',
+    CLIENT_COMBI_EVENTS   : 'CG4',
 
     CLIENT_POWERUP_HIT   : 'CP1',
     CLIENT_POWERUP_SPAWN : 'CP2',
@@ -27,8 +27,9 @@ module.exports = {
 
     CLIENT_SNAKE_ACTION  : 'CS1',
     CLIENT_SNAKE_CRASH   : 'CS2',
-    CLIENT_SNAKE_SPEED   : 'CS3',
-    CLIENT_SNAKE_UPDATE  : 'CS4',
+    CLIENT_SNAKE_SIZE    : 'CS3',
+    CLIENT_SNAKE_SPEED   : 'CS4',
+    CLIENT_SNAKE_UPDATE  : 'CS5',
 
     SERVER_PONG          : 'SP1',
     SERVER_ROOM_MATCH    : 'SR1',

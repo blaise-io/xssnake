@@ -25,6 +25,7 @@ function Game(room, level) {
     this.spawner = new Spawner(this);
 
     this.snakes = [];
+    this.timers = [];
 
     this._roundEnded = false;
     this._tickBound = this._tick.bind(this);
@@ -45,7 +46,7 @@ Game.prototype = {
 
     countdown: function() {
         var delay = config.TIME_COUNTDOWN_FROM * 1000;
-        this._gameStartTimer = setTimeout(this.start.bind(this), delay);
+        this.timers.push(setTimeout(this.start.bind(this), delay));
         this.room.emit(events.CLIENT_GAME_COUNTDOWN, null);
         this._setupClients();
     },
@@ -69,8 +70,9 @@ Game.prototype = {
             ticker.removeListener('tick', this._tickBound);
         }
 
-        clearTimeout(this._gameStartTimer);
-        clearTimeout(this._powerUpTimer);
+        for (var i = 0, m = this.timers.length; i < m; i++) {
+            clearTimeout(this.timers[i]);
+        }
 
         if (this.spawner) {
             this.spawner.destruct();
@@ -114,10 +116,10 @@ Game.prototype = {
 
     /**
      * Reverse Snake (powerup)
-     * @param {number} i
+     * @param {number} index
      */
-    reverseSnake: function(i) {
-        var data, dx, dy, snake = this.snakes[i];
+    reverseSnake: function(index) {
+        var data, dx, dy, snake = this.snakes[index];
 
         dx = snake.parts[0][0] - snake.parts[1][0];
         dy = snake.parts[0][1] - snake.parts[1][1];
@@ -129,8 +131,8 @@ Game.prototype = {
         }
 
         snake.parts.reverse();
-        data = [i, snake.parts, snake.direction];
-        this.room.emit(events.CLIENT_SNAKE_UPDATE, data);
+        data = [index, snake.parts, snake.direction];
+        this.room.buffer(events.CLIENT_SNAKE_UPDATE, data);
     },
 
     /**
@@ -173,7 +175,7 @@ Game.prototype = {
                 data.push([spawner.EVENTS[spawn.type], [i, spawn.location]]);
             }
         }
-        client.emit(events.CLIENT_GAME_SPAWNS, data);
+        client.emit(events.CLIENT_COMBI_EVENTS, data);
     },
 
     /**
@@ -227,12 +229,14 @@ Game.prototype = {
      * @private
      */
     _delaySpawnPowerup: function() {
-        var i = config.TIME_SPAWN_POWERUP;
-        clearTimeout(this._powerUpTimer);
-        this._powerUpTimer = setTimeout(function() {
+        var timer, range, delay;
+        range = config.TIME_SPAWN_POWERUP;
+        delay = Util.randomBetween(range[0] * 1000, range[1] * 1000);
+        timer = setTimeout(function() {
             this.spawner.spawn(this.spawner.POWERUP);
             this._delaySpawnPowerup();
-        }.bind(this), Util.randomBetween(i[0] * 1000, i[1]* 1000));
+        }.bind(this), delay);
+        this.timers.push(timer);
     },
 
     /**

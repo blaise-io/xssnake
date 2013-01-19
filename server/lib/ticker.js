@@ -1,9 +1,8 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var util = require('util'),
-    // Prevent name collision with shared/events.js
-    nodeEvents = require('events');
+var util = require('util');
+var nodeEvents = require('events');
 
 /**
  * @param {number} tick

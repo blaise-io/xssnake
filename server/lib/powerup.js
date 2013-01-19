@@ -68,54 +68,119 @@ Powerup.prototype = {
 
         return [
             // Weight, Powerup
-            [beneficial, this._speedUp],
+
+            [beneficial, this._speedIncPerm],
             [beneficial, this._reverseOthers],
-            [neutral, this._appleSpree],
-            [neutral, this._powerupSpree],
-            [harmful, this._reverseClient]
+            [beneficial, this._speedBoostOthers],
+            [beneficial, this._speedDownOthers],
+            [beneficial, this._IncTailSelf],
+            [beneficial, this._cutTailOthers],
+
+            [neutral, this._spawnApples],
+            [neutral, this._spawnPowerups],
+
+            [harmful, this._reverseSelf],
+            [harmful, this._speedBoostSelf],
+            [harmful, this._incTailOthers],
+            [harmful, this._cutTailSelf],
+            [harmful, this._speedDownSelf]
+
             // TODO: Implement more powerups, like:
-            //  - Temporary Speed Up/Speed Down,
-            //  - Temporary Reversed controls (no prep...)
             //  - Spawn stuff near a snake, far from a snake
             //  - Invincible snake
-            //  - Long tail
-            //  - Cut tail
         ];
     },
 
+    /**
+     * @return {Array.<Client>}
+     * @private
+     */
+    _others: function() {
+        var clients = this.game.room.clients.slice();
+        clients.splice(this._clientIndex(), 1);
+        return clients;
+    },
+
+    /**
+     * @return {number}
+     * @private
+     */
     _clientIndex: function() {
         return this.game.room.clients.indexOf(this.client);
     },
 
     /**
-     * Change snake speed
+     * @param {number} delay
+     * @param {Function} callback
      * @private
      */
-    _speedUp: function() {
-        var game = this.game,
+    _resetState: function(delay, callback) {
+        var timer = setTimeout(callback, delay);
+        this.game.timers.push(timer);
+    },
+
+    _speedIncPerm: function() {
+        var room = this.game.room,
             index = this._clientIndex(),
             snake = this.client.snake;
         snake.speed -= 5;
-        game.room.emit(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
-        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Speed+']);
+        room.buffer(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
+        room.buffer(events.CLIENT_SNAKE_ACTION, [index, '+Speed']).flush();
+    },
+
+    _speedBoostSelf: function() {
+        this._speed([this.client], -100, '5s Boost', 5000);
+    },
+
+    _speedBoostOthers: function() {
+        this._speed(this._others(), -100, '5s Boost', 5000);
+    },
+
+    _speedDownSelf: function() {
+        this._speed([this.client], 100, '7s Snail', 7000);
+    },
+
+    _speedDownOthers: function() {
+        this._speed(this._others(), 100, '7s Snail', 7000);
     },
 
     /**
-     * Spawn multiple apples
+     * @param {Array.<Client>} clients
+     * @param {number} delta
+     * @param {string} label
+     * @param {number} duration
      * @private
      */
-    _appleSpree: function() {
+    _speed: function(clients, delta, label, duration) {
+        var room = this.game.room;
+        for (var i = 0, m = clients.length; i < m; i++) {
+            var index = room.clients.indexOf(clients[i]),
+                snake = clients[i].snake;
+            snake.speed += delta;
+            room.buffer(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
+            room.buffer(events.CLIENT_SNAKE_ACTION, [index, label]);
+        }
+        room.flush();
+
+        this._resetState(duration, function() {
+            for (var i = 0, m = clients.length; i < m; i++) {
+                var index = room.clients.indexOf(clients[i]),
+                    snake = clients[i].snake;
+                snake.speed -= delta;
+                room.buffer(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
+            }
+            room.flush();
+        });
+    },
+
+    _spawnApples: function() {
         var r = Util.randomBetween(2, 6), game = this.game;
-        this._spawn(game.spawner.APPLE, r, 'Apples+');
+        this._spawn(game.spawner.APPLE, r, '+Apples');
     },
 
-    /**
-     * Spawn multiple powerups
-     * @private
-     */
-    _powerupSpree: function() {
+    _spawnPowerups: function() {
         var r = Util.randomBetween(2, 4), game = this.game;
-        this._spawn(game.spawner.POWERUP, r, 'Power-ups+');
+        this._spawn(game.spawner.POWERUP, r, '+Power-ups');
     },
 
     /**
@@ -139,26 +204,60 @@ Powerup.prototype = {
         }
     },
 
-    /**
-     * Reverse Snake direction
-     * @private
-     */
-    _reverseOthers: function() {
-        var client = this.client,
-            game = this.game,
-            snakes = game.snakes, index = game.room.clients.indexOf(client);
-        for (var i = 0, m = snakes.length; i < m; i++) {
-            if (i !== index) {
-                game.room.emit(events.CLIENT_SNAKE_ACTION, [i, 'Reverse']);
-                game.reverseSnake(i);
-            }
-        }
+    _reverseSelf: function() {
+        this._reverse([this.client]);
     },
 
-    _reverseClient: function() {
-        var index = this._clientIndex();
-        this.game.room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Reverse']);
-        this.game.reverseSnake(index);
+    _reverseOthers: function() {
+        this._reverse(this._others());
+    },
+
+    /**
+     * @param {Array.<Client>} clients
+     * @private
+     */
+    _reverse: function(clients) {
+        var room = this.game.room;
+        for (var i = 0, m = clients.length; i < m; i++) {
+            var index = room.clients.indexOf(clients[i]);
+            room.buffer(events.CLIENT_SNAKE_ACTION, [index, 'Reverse']);
+            this.game.reverseSnake(index);
+        }
+        room.flush();
+    },
+
+    _IncTailSelf: function() {
+        this._tail([this.client], 15, 'Long tail');
+    },
+
+    _incTailOthers: function() {
+        this._tail(this._others(), -20, 'Cut tail');
+    },
+
+    _cutTailSelf: function() {
+        this._tail([this.client], -20, 'Cut tail');
+    },
+
+    _cutTailOthers: function() {
+        this._tail(this._others(), 15, 'Long tail');
+    },
+
+    /**
+     * @param {Array.<Client>} clients
+     * @param {number} delta
+     * @param {string} message
+     * @private
+     */
+    _tail: function(clients, delta, message) {
+        var room = this.game.room;
+        for (var i = 0, m = clients.length; i < m; i++) {
+            var index = room.clients.indexOf(clients[i]),
+                snake = clients[i].snake;
+            snake.size = Math.max(1, snake.size + delta);
+            room.buffer(events.CLIENT_SNAKE_ACTION, [index, message]);
+            room.buffer(events.CLIENT_SNAKE_SIZE, [index, snake.size]);
+        }
+        room.flush();
     }
 
 };

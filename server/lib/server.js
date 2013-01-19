@@ -1,13 +1,13 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var http = require('http'),
-    socketio = require('socket.io'),
-    config = require('../shared/config.js'),
-    EventHandler = require('./event_handler.js'),
-    RoomManager = require('./room_manager.js'),
-    Client = require('./client.js'),
-    Ticker = require('./ticker.js');
+var http = require('http');
+var socketio = require('socket.io');
+var config = require('../shared/config.js');
+var EventHandler = require('./event_handler.js');
+var RoomManager = require('./room_manager.js');
+var Client = require('./client.js');
+var Ticker = require('./ticker.js');
 
 /**
  * @constructor

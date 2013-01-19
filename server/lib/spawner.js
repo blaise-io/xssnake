@@ -1,8 +1,9 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var Util = require('../shared/util.js'),
-    events = require('../shared/events.js');
+/** @type {Util} */
+var Util = require('../shared/util.js');
+var events = require('../shared/events.js');
 
 /**
  * Spawnable

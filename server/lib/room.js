@@ -1,9 +1,9 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var Game = require('./game.js'),
-    events = require('../shared/events.js'),
-    config = require('../shared/config.js');
+var Game = require('./game.js');
+var events = require('../shared/events.js');
+var config = require('../shared/config.js');
 
 /**
  * @param {Server} server
@@ -27,6 +27,7 @@ function Room(server, id, filter) {
     this.game = new Game(this, this.level);
 
     this._disconnected = [];
+    this._buffer = [];
 }
 
 module.exports = Room;
@@ -146,6 +147,27 @@ Room.prototype = {
      */
     emit: function(name, data) {
         this.server.io.sockets.in(this.id).emit(name, data);
+    },
+
+    /**
+     * Buffer events to be sent later using flush()
+     * @param {string} name
+     * @param {*} data
+     * @return {Room}
+     */
+    buffer: function(name, data) {
+        this._buffer.push([name, data]);
+        return this;
+    },
+
+    /**
+     * Send buffer
+     * @return {Room}
+     */
+    flush: function() {
+        this.emit(events.CLIENT_COMBI_EVENTS, this._buffer);
+        this._buffer = [];
+        return this;
     },
 
     /**

@@ -39,6 +39,7 @@ Socket.prototype = {
         map['disconnect']                 = this.disconnect;
 
         map[events.CLIENT_PING]           = this.clientPing;
+        map[events.CLIENT_COMBI_EVENTS]   = this.combinedEvents;
         map[events.CLIENT_ROOM_INDEX]     = this.roomIndex;
         map[events.CLIENT_ROOM_SCORE]     = this.updateScore;
         map[events.CLIENT_CHAT_MESSAGE]   = this.chatMessage;
@@ -46,8 +47,8 @@ Socket.prototype = {
         map[events.CLIENT_GAME_COUNTDOWN] = this.gameCountdown;
         map[events.CLIENT_GAME_START]     = this.gameStart;
         map[events.CLIENT_GAME_SNAKES]    = this.gameSnakes;
-        map[events.CLIENT_GAME_SPAWNS]    = this.gameSpawns;
         map[events.CLIENT_SNAKE_UPDATE]   = this.snakeUpdate;
+        map[events.CLIENT_SNAKE_SIZE]     = this.snakeSize;
         map[events.CLIENT_SNAKE_CRASH]    = this.snakeCrash;
         map[events.CLIENT_SNAKE_ACTION]   = this.snakeAction;
         map[events.CLIENT_APPLE_HIT]      = this.appleHit;
@@ -85,6 +86,16 @@ Socket.prototype = {
      */
     clientPing: function(time) {
         this.emit(XSS.events.SERVER_PONG, time);
+    },
+
+    /**
+     * Combined package, delegate.
+     * @param {Array.<Array>} data
+     */
+    combinedEvents: function(data) {
+        for (var i = 0, m = data.length; i < m; i++) {
+            this.map[data[i][0]](data[i][1]);
+        }
     },
 
     /**
@@ -140,16 +151,6 @@ Socket.prototype = {
     },
 
     /**
-     * Combined package, delegate.
-     * @param {Array.<Array>} data
-     */
-    gameSpawns: function(data) {
-        for (var i = 0, m = data.length; i < m; i++) {
-            this.map[data[i][0]](data[i][1]);
-        }
-    },
-
-    /**
      * @param {Array} data
      */
     snakeUpdate: function(data) {
@@ -157,6 +158,14 @@ Socket.prototype = {
         snake.limbo = false;
         snake.parts = data[1];
         snake.direction = data[2];
+    },
+
+    /**
+     * @param {Array} data
+     */
+    snakeSize: function(data) {
+        var snake = XSS.room.game.snakes[data[0]];
+        snake.size = data[1];
     },
 
     /**
