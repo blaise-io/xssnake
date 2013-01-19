@@ -56,38 +56,37 @@ Powerup.prototype = {
             this.client,
             // Y-axis: Leading, Neutral, Losing
             // X-axis: Beneficial, Neutral, Harmful
-            [0.1, 0.5, 0.4],
+            [0.1, 0.3, 0.6],
             [0.4, 0.4, 0.2],
-            [0.6, 0.3, 0.1]
+            [0.7, 0.3, 0.0]
         );
 
-        // Legend
         beneficial = chance[0];
         neutral    = chance[1];
         harmful    = chance[2];
 
         return [
-            // Weight, Powerup
+            // [Rareness * Beneficial Weight, Powerup]
+            [1.5 * beneficial, this._speedIncPerm],
+            [0.8 * beneficial, this._reverseOthers],
+            [1.2 * beneficial, this._speedBoostOthers],
+            [1.1 * beneficial, this._speedDownOthers],
+            [1.1 * beneficial, this._IncTailSelf],
+            [0.7 * beneficial, this._cutTailOthers],
 
-            [beneficial, this._speedIncPerm],
-            [beneficial, this._reverseOthers],
-            [beneficial, this._speedBoostOthers],
-            [beneficial, this._speedDownOthers],
-            [beneficial, this._IncTailSelf],
-            [beneficial, this._cutTailOthers],
+            [1.5 * neutral, this._spawnApples],
+            [1.1 * neutral, this._spawnPowerups],
 
-            [neutral, this._spawnApples],
-            [neutral, this._spawnPowerups],
-
-            [harmful, this._reverseSelf],
-            [harmful, this._speedBoostSelf],
-            [harmful, this._incTailOthers],
-            [harmful, this._cutTailSelf],
-            [harmful, this._speedDownSelf]
+            [0.8 * harmful, this._reverseSelf],
+            [1.3 * harmful, this._speedBoostSelf],
+            [1.1 * harmful, this._incTailOthers],
+            [0.8 * harmful, this._cutTailSelf],
+            [1.5 * harmful, this._speedDownSelf]
 
             // TODO: Implement more powerups, like:
             //  - Spawn stuff near a snake, far from a snake
             //  - Invincible snake
+            //  - More neutral power-ups
         ];
     },
 
@@ -123,25 +122,25 @@ Powerup.prototype = {
         var room = this.game.room,
             index = this._clientIndex(),
             snake = this.client.snake;
-        snake.speed -= 5;
+        snake.speed -= 15;
         room.buffer(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
         room.buffer(events.CLIENT_SNAKE_ACTION, [index, '+Speed']).flush();
     },
 
     _speedBoostSelf: function() {
-        this._speed([this.client], -100, '5s Boost', 5000);
+        this._speed([this.client], -75, '7s Fast', 7000);
     },
 
     _speedBoostOthers: function() {
-        this._speed(this._others(), -100, '5s Boost', 5000);
+        this._speed(this._others(), -75, '7s Fast', 7000);
     },
 
     _speedDownSelf: function() {
-        this._speed([this.client], 100, '7s Snail', 7000);
+        this._speed([this.client], 100, '10s Slooow', 10 * 1000);
     },
 
     _speedDownOthers: function() {
-        this._speed(this._others(), 100, '7s Snail', 7000);
+        this._speed(this._others(), 100, '10s Slooow', 10 * 1000);
     },
 
     /**
@@ -174,12 +173,12 @@ Powerup.prototype = {
     },
 
     _spawnApples: function() {
-        var r = Util.randomBetween(2, 6), game = this.game;
+        var r = Util.randomBetween(3, 10), game = this.game;
         this._spawn(game.spawner.APPLE, r, '+Apples');
     },
 
     _spawnPowerups: function() {
-        var r = Util.randomBetween(2, 4), game = this.game;
+        var r = Util.randomBetween(2, 5), game = this.game;
         this._spawn(game.spawner.POWERUP, r, '+Power-ups');
     },
 
@@ -227,19 +226,19 @@ Powerup.prototype = {
     },
 
     _IncTailSelf: function() {
-        this._tail([this.client], 15, 'Long tail');
+        this._tail([this.client], 20, 'Long tail');
     },
 
     _incTailOthers: function() {
-        this._tail(this._others(), -20, 'Cut tail');
+        this._tail(this._others(), 20, 'Long tail');
     },
 
     _cutTailSelf: function() {
-        this._tail([this.client], -20, 'Cut tail');
+        this._tail([this.client], -10, 'Cut tail');
     },
 
     _cutTailOthers: function() {
-        this._tail(this._others(), 15, 'Long tail');
+        this._tail(this._others(), -10, 'Cut tail');
     },
 
     /**
