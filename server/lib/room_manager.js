@@ -80,7 +80,7 @@ RoomManager.prototype = {
      * @private
      */
     _isFilterMatch: function(filter, room) {
-        var eqFriendly = room.friendly === filter.friendly;
+        var eqFriendly = room.friendly === filter['friendly'];
         return (room.pub && eqFriendly && !room.isFull() && !room.inProgress);
     }
 
