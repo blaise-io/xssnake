@@ -16,6 +16,7 @@ var done = 0;
 var total = 0;
 
 function whiteSpaceOCD(str) {
+    str = str.replace(/([,:])/g, '$1 '); // Normalize whitespace
     str = str.replace(/\s+/g, ' '); // Normalize whitespace
     str = str.replace(/([\[\{]) /g, '$1'); // No spaces following opening bracket
     str = str.replace(/ ([\]\}])/g, '$1'); // No spaces before closing bracket
@@ -31,8 +32,9 @@ function setlevel(file, index) {
 
         // Got all levels, write to file
         if (++done === total) {
-            levelsStr = util.inspect(levels);
+            levelsStr = JSON.stringify(levels);
             levelsStr = whiteSpaceOCD(levelsStr);
+            levelsStr = levelsStr.replace(/"/g, ''); // Remove all quotes (GCC)
 
             template = fs.readFileSync(levelTplFile, 'utf-8');
             template = template.replace('%LEVELS%', levelsStr);

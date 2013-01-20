@@ -87,7 +87,7 @@ Util.extend(ClientSnake.prototype, {
         for (var i = 0; i <= duration * amount; i += duration) {
             var shape, name, h = this.head();
             shape = XSS.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
-            shape.clear = true;
+            shape.clearPx = true;
             name = 'AL_' + Util.randomStr();
             XSS.shapes[name] = shape.lifetime(i, duration + i);
         }

@@ -76,10 +76,10 @@ Canvas.prototype = {
         var k, overlays = {};
         for (k in shapes) {
             if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
-                if (shapes[k].overlay) {
-                    this._paintShapeDispatch(k, shapes[k], delta);
-                } else {
+                if (shapes[k].clearBBox) {
                     overlays[k] = shapes[k];
+                } else {
+                    this._paintShapeDispatch(k, shapes[k], delta);
                 }
             }
         }
@@ -121,7 +121,7 @@ Canvas.prototype = {
         var pixels = shape.pixels;
         context.fillStyle = this.theme.on;
         for (var i = 0, m = pixels.length; i < m; i++) {
-            this._drawPixel(context, pixels[i], bbox.x1, bbox.y1, shape.clear);
+            this._drawPixel(context, pixels[i], bbox.x1, bbox.y1, shape.clearPx);
         }
     },
 
@@ -167,13 +167,13 @@ Canvas.prototype = {
         }
 
         // Clear surface below shape
-        if (shape.overlay) {
+        if (shape.clearBBox) {
             bbox = shape.bbox();
             ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
         }
 
         // Paint shape without caching
-        if (shape.clear) {
+        if (shape.clearPx) {
             this._paintShape(ctx, shape, this._dummyBBox);
         }
 

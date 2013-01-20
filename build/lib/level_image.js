@@ -30,7 +30,6 @@ LevelImage.prototype = {
             this.height = png.height;
 
             this._parsePixels(png.data);
-
         }.bind(this));
     },
 
@@ -46,6 +45,9 @@ LevelImage.prototype = {
         }
 
         this._postProcessDirections();
+
+        this.unreachables = this.compress(this.unreachables);
+        this.walls = this.compress(this.walls);
 
         return this.fn({
             width: this.width,
@@ -139,8 +141,38 @@ LevelImage.prototype = {
         }
     },
 
+    /**
+     * @param {number} seq
+     * @param {number} width
+     * @return {Array.<number>}
+     */
     seqToXY: function(seq, width) {
         return [seq % width, Math.floor(seq / width)];
+    },
+
+    /**
+     * Simple and fast algorithm for compressing ranges.
+     * Example input: [0,2,3,4,5,7,8,9,11]
+     * Example output: [0,[2,3],[7,2],11]
+     * @param {Array.<number>} arr
+     * @return {Array.<number|Array>}
+     */
+    compress: function(arr) {
+        var compressed = [], start = arr[0], len = 0;
+        for (var i = 1, m = arr.length; i <= m; i++) {
+            if (arr[i] - arr[i-1] === 1) {
+                len++;
+            } else {
+                if (len) {
+                    compressed.push([start, len]);
+                } else {
+                    compressed.push(start);
+                }
+                start = arr[i];
+                len = 0;
+            }
+        }
+        return compressed;
     }
 
 };

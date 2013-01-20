@@ -28,7 +28,7 @@ Apple.prototype = {
      */
     _getShape: function() {
         var shape = XSS.font.shape(XSS.UNICODE_BULLSEYE, this.x,  this.y);
-        shape.clear = true;
+        shape.clearPx = true;
         return shape;
     }
 

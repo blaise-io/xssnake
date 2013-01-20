@@ -9,6 +9,8 @@
  */
 function ClientLevel(levelID) {
     this.level = XSS.levels[levelID];
+    this.level.walls = this.decompress(this.level.walls);
+    this.level.unreachables = this.decompress(this.level.unreachables);
 }
 
 ClientLevel.prototype = Object.create(Level.prototype);
@@ -20,14 +22,16 @@ Util.extend(ClientLevel.prototype, {
      * @return {Shape}
      */
     getShape: function() {
-        var xy, pixels = [], shape, walls = this.level.walls;
+        var pixels = [], shape, walls = this.level.walls;
+
         for (var i = 0, m = walls.length; i < m; i++) {
-            xy = this.seqToXY(walls[i]);
-            pixels.push(xy);
+            pixels.push(this.seqToXY(walls[i]));
         }
+
         shape = new Shape(XSS.transform.zoomGame(pixels));
         shape.add(XSS.shapegen.outerBorder().pixels);
         shape.add(XSS.shapegen.innerBorder().pixels);
+
         return shape;
     }
 

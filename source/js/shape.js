@@ -28,13 +28,13 @@ function Shape(varArgs) {
      * Put at end of painting queue and clear bbox coverage before painting.
      * @type {boolean}
      */
-    this.overlay = false;
+    this.clearBBox = false;
 
     /**
      * Clear pixels before painting. Useful for lazy overlays.
      * @type {boolean}
      */
-    this.clear = false;
+    this.clearPx = false;
 
     /** @type {Object.<string,*>} */
     this.effects = {};
@@ -229,9 +229,9 @@ Shape.prototype = {
         to       = options.to || [0, 0];
         duration = options.duration || 200;
         clone    = this.clone();
-        clear    = this.clear;
+        clear    = this.clearPx;
 
-        this.clear = true;
+        this.clearPx = true;
 
         /** @this {Shape} */
         return function(delta) {
@@ -245,7 +245,7 @@ Shape.prototype = {
                 this.pixels = XSS.transform.shift(clone.pixels, x, y);
             } else {
                 delete this.effects.animate;
-                this.clear = clear;
+                this.clearPx = clear;
                 this.set(clone.shift(to[0], to[1]).pixels);
                 if (options.callback) {
                     options.callback();
