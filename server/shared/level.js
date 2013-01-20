@@ -29,6 +29,7 @@ Level.prototype = {
         return false;
     },
 
+
     /**
      * @param {number} playerID
      * @return {Array.<number>}
@@ -54,7 +55,7 @@ Level.prototype = {
         var m = this.level.width * this.level.height;
         while (true) {
             var location = this.seqToXY(Math.floor(Math.random() * m));
-            if (this.isEmpty(locations, location)) {
+            if (this.isEmptyLocation(locations, location)) {
                 return location;
             }
         }
@@ -65,8 +66,11 @@ Level.prototype = {
      * @param {Array.<number>} location
      * @return {boolean}
      */
-    isEmpty: function(locations, location) {
+    isEmptyLocation: function(locations, location) {
         if (this.isWall(location[0], location[1])) {
+            return false;
+        }
+        if (this.isUnreachable(location[0], location[1])) {
             return false;
         }
         for (var i = 0, m = locations.length; i < m; i++) {
@@ -109,6 +113,21 @@ Level.prototype = {
         var wall = this.level.walls;
         for (var i = 0, m = wall.length; i < m; i++) {
             if (seq === wall[i]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {boolean}
+     */
+    isUnreachable: function(x, y) {
+        var unreachables = this.level.unreachables;
+        for (var i = 0, m = unreachables.length; i < m; i++) {
+            if (this.xyToSeq(x, y) === unreachables[i]) {
                 return true;
             }
         }

@@ -15,13 +15,6 @@ var levels = [];
 var done = 0;
 var total = 0;
 
-for (var i = 0, m = files.length; i < m; i++) {
-    if (/\.png$/.test(files[i])) {
-        setlevel(levelImagesDir + files[i], i);
-        total++;
-    }
-}
-
 function whiteSpaceOCD(str) {
     str = str.replace(/\s+/g, ' '); // Normalize whitespace
     str = str.replace(/([\[\{]) /g, '$1'); // No spaces following opening bracket
@@ -51,4 +44,11 @@ function setlevel(file, index) {
             console.log('\n' + (1+index) + ' levels saved to ' + jsOutputFile);
         }
     }));
+}
+
+for (var i = 0, m = files.length; i < m; i++) {
+    if (/\.png$/.test(files[i])) {
+        setlevel(levelImagesDir + files[i], i);
+        total++;
+    }
 }

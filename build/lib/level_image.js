@@ -1,11 +1,11 @@
-/*jshint globalstrict:true,es5:true*/
+/*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
 var fs = require('fs'),
-    Png = require('png-js');
+    pngparse = require('pngparse');
 
 function LevelImage(file, fn) {
-    this.file = file;
+    this.file = fs.realpathSync(file);
     this.fn = fn;
     this._toLevel();
 }
@@ -15,26 +15,23 @@ module.exports = LevelImage;
 LevelImage.prototype = {
 
     _toLevel: function() {
-        var buffer, png;
+        var buffer = fs.readFileSync(this.file);
+        pngparse.parse(buffer, function(err, png) {
+            if (err) {
+                throw err;
+            }
 
-        buffer = fs.readFileSync(this.file);
-        png = new Png(buffer);
+            this.spawns = [];
+            this.directions = [];
+            this.unreachables = [];
+            this.walls = [];
 
-        this.spawns = [];
-        this.directions = [];
-        this.walls = [];
+            this.width = png.width;
+            this.height = png.height;
 
-        this.width = png.width;
-        this.height = png.height;
+            this._parsePixels(png.data);
 
-        if (png.pixelBitlength !== 32) {
-            console.error('Image has wrong bith depth:', this.file);
-            console.error('See README.md for PNG compatibility.');
-            console.error(png);
-            process.exit(1);
-        }
-
-        png.decode(this._parsePixels.bind(this));
+        }.bind(this));
     },
 
     _parsePixels: function(imageData) {
@@ -45,11 +42,7 @@ LevelImage.prototype = {
             g = imageData[i * 4 + 1];
             b = imageData[i * 4 + 2];
             a = imageData[i * 4 + 3];
-
-            if (!this._handleColor(r, g, b, i)) {
-                console.error('Unknown color:', [r, g, b], this.file, i);
-                process.exit(1);
-            }
+            this._handleColor(r, g, b, i);
         }
 
         this._postProcessDirections();
@@ -59,6 +52,7 @@ LevelImage.prototype = {
             height: this.height,
             spawns: this.spawns,
             directions: this.directions,
+            unreachables: this.unreachables,
             walls: this.walls
         });
     },
@@ -70,6 +64,9 @@ LevelImage.prototype = {
                 return true;
             case '0,0,0':
                 this.walls.push(i);
+                return true;
+            case '222,222,222':
+                this.unreachables.push(i);
                 return true;
             case '255,0,0':
                 this.spawns[0] = i;
@@ -83,18 +80,38 @@ LevelImage.prototype = {
             case '255,255,0':
                 this.spawns[3] = i;
                 return true;
+            case '255,0,255':
+                this.spawns[4] = i;
+                return true;
+            case '0,255,255':
+                this.spawns[5] = i;
+                return true;
             case '99,99,99':
                 this.directions.push(i);
                 return true;
             default:
+                console.error('Unknown color:', [r, g, b]);
+                console.error('File:', this.file);
+                console.error('[ X, Y ]:', this.seqToXY(i, this.width));
+                process.exit(1);
                 return false;
         }
     },
 
     _postProcessDirections: function() {
-        var spawnAt, nextAt, directions = [];
+        var i, m, spawnAt, nextAt, directions = [];
 
-        for (var i = 0, m = this.spawns.length; i < m; i++) {
+        // Missing spawns?
+        for (i = 0, m = this.spawns.length; i < m; i++) {
+            if (!this.spawns[i]) {
+                console.error('Missing spawn with index:', i);
+                console.error('File:', this.file);
+                process.exit(1);
+            }
+        }
+
+        // Generate directions
+        for (i = 0, m = this.spawns.length; i < m; i++) {
             for (var ii = 0, mm = this.directions.length; ii < mm; ii++) {
                 spawnAt = this.seqToXY(this.spawns[i], this.width);
                 nextAt = this.seqToXY(this.directions[ii], this.width);
@@ -111,6 +128,15 @@ LevelImage.prototype = {
             }
         }
         this.directions = directions;
+
+        // Missing directions?
+        for (i = 0, m = this.directions.length; i < m; i++) {
+            if (!this.spawns[i]) {
+                console.error('Missing direction with index:', i);
+                console.error('File:', this.file);
+                process.exit(1);
+            }
+        }
     },
 
     seqToXY: function(seq, width) {

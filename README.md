@@ -3,17 +3,17 @@
 Online multiplayer Snake where the winner of a game is allowed to execute
 JavaScript in the browser of other players.
 
+The game is still in development and currently not yet deployed.
+
 ![XSSNAKE](http://i.imgur.com/scMK2.png)
 
-[Font can be downloaded here.](http://fontstruct.com/fontstructions/show/xssnake)
-
 XSSNAKE is written in HTML5 and JavaScript. It works in all browsers that
-support HTML5's Canvas and Websocket. XSSNAKE uses Node.js for the server,
-Socket.IO for client–server communication, and Google Closure Compiler with
+support Canvas and Websocket. XSSNAKE uses Node.js for the server,
+socket.io for client–server communication, and Google Closure Compiler with
 Advanced Compilation to check for errors and to compile to minified and
 optimized code.
 
-**Note: XSSNAKE is in an early stage of development.**
+[The font used in the game can be downloaded here.](http://fontstruct.com/fontstructions/show/xssnake)
 
 ## Initial Setup
 
@@ -59,9 +59,4 @@ made any errors.
 ## Creating/Updating Levels
 
 If you adjusted one of the level images, you have to rebuild
-`server/shared/levels.js`. See instructions below. More info on level images
-can be found in `source/levels/README.md`.
-
- * Install [png-js](https://npmjs.org/package/png-js) by running
-   `npm install png-js`
- * Run `node build/levels.js`
+`server/shared/levels.js`. This is documented in `source/levels/README.md`.
