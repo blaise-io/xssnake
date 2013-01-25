@@ -59,4 +59,4 @@ made any errors.
 ## Creating/Updating Levels
 
 If you adjusted one of the level images, you have to rebuild
-`server/shared/levels.js`. This is documented in `source/levels/README.md`.
+`server/shared/levels.js`. This is documented in [`source/levels/README.md`](https://github.com/blaise-io/xssnake/tree/master/source/levels).
