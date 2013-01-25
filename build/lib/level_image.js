@@ -2,6 +2,7 @@
 'use strict';
 
 var fs = require('fs'),
+    path = require('path'),
     pngparse = require('pngparse');
 
 function LevelImage(file, fn) {
@@ -50,12 +51,13 @@ LevelImage.prototype = {
         this.walls = this.compress(this.walls);
 
         return this.fn({
-            width: this.width,
-            height: this.height,
-            spawns: this.spawns,
-            directions: this.directions,
+            file        : path.basename(this.file),
+            width       : this.width,
+            height      : this.height,
+            spawns      : this.spawns,
+            directions  : this.directions,
             unreachables: this.unreachables,
-            walls: this.walls
+            walls       : this.walls
         });
     },
 
@@ -123,7 +125,7 @@ LevelImage.prototype = {
                     if (spawnAt[1] === nextAt[1]) {
                         directions[i] = (nextAt[0] < spawnAt[0]) ? 0 : 2;
                     } else {
-                        directions[i] = (nextAt[1] < spawnAt[1]) ? 3 : 1;
+                        directions[i] = (nextAt[1] < spawnAt[1]) ? 1 : 3;
                     }
                     break;
                 }

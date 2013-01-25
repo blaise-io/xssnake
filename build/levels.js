@@ -34,7 +34,9 @@ function setlevel(file, index) {
         if (++done === total) {
             levelsStr = JSON.stringify(levels);
             levelsStr = whiteSpaceOCD(levelsStr);
-            levelsStr = levelsStr.replace(/"/g, ''); // Remove all quotes (GCC)
+
+            // Don't quote property names, conflicts with Closure Compiler.
+            levelsStr = levelsStr.replace(/"([\w]+)"(:)/g, '$1$2');
 
             template = fs.readFileSync(levelTplFile, 'utf-8');
             template = template.replace('%LEVELS%', levelsStr);
@@ -43,7 +45,8 @@ function setlevel(file, index) {
             fs.writeFile(jsOutputFile, template);
 
             jsOutputFile = fs.realpathSync(jsOutputFile);
-            console.log('\n' + (1+index) + ' levels saved to ' + jsOutputFile);
+            console.log('Saved ' + (1+index) + ' levels to ' + jsOutputFile);
+            console.log(Math.round(levelsStr.length / 1024) + ' KB');
         }
     }));
 }
