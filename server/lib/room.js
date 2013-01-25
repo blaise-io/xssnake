@@ -117,13 +117,13 @@ Room.prototype = {
         }
 
         // Next level
-        var level = ++this.level;
-        if (typeof levels[level] === 'undefined') {
-            level = 0;
+        ++this.level;
+        if (typeof levels[this.level] === 'undefined') {
+            this.level = 0;
         }
 
         // Round start
-        this.game = new Game(this, level);
+        this.game = new Game(this, this.level);
         this.emitState();
         this.game.countdown();
         return this.game;
