@@ -19,8 +19,8 @@ You should not edit levels.js directly.
     Yellow       rgb(255,255,0)     Spawn Player 4
     Turqoise     rgb(0,255,255)     Spawn Player 5
     Fuchsia      rgb(255,0,255)     Spawn Player 6
-    Dark-Gray    rgb(99,99,99)      Player direction at spawn
-    Light-Gray   rgb(222,222,222)   Unreachable area
+    Dark-Gray    rgb(99,99,99)      Player Direction at Spawn
+    Light-Gray   rgb(222,222,222)   Unsuitable for Apple/Power-up Spawning
 
 ## Level Requirements
 
@@ -29,4 +29,3 @@ You should not edit levels.js directly.
  * A direction pixel must be placed next to a spawn pixel.
 
 The build script will tell you if anything is wrong.
-
