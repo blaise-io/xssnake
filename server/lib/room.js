@@ -4,6 +4,7 @@
 var Game = require('./game.js');
 var events = require('../shared/events.js');
 var config = require('../shared/config.js');
+var levels = require('../shared/levels.js');
 
 /**
  * @param {Server} server
@@ -115,8 +116,14 @@ Room.prototype = {
             return null;
         }
 
+        // Next level
+        var level = ++this.level;
+        if (typeof levels[level] === 'undefined') {
+            level = 0;
+        }
+
         // Round start
-        this.game = new Game(this, this.level);
+        this.game = new Game(this, level);
         this.emitState();
         this.game.countdown();
         return this.game;
