@@ -1,111 +1,6 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
 /*globals XSS, Shape, Socket, InputField, Util, Font*/
-
 'use strict';
-
-/**
- * SelectMenu
- * Creates a single navigatable verticle menu
- * @param {string} name
- * @constructor
- */
-function SelectMenu(name) {
-    this.name = name;
-    this.selected = 0;
-    this._options = [];
-}
-
-SelectMenu.prototype = {
-
-    /**
-     * @param {?(boolean|string)} value
-     * @param {function()|null} next
-     * @param {string} title
-     * @param {string|null} description
-     * @param {function(number)=} callback
-     */
-    addOption: function(value, next, title, description, callback) {
-        this._options.push({
-            value      : value,
-            next       : next,
-            title      : title,
-            description: description || '',
-            callback   : callback
-        });
-    },
-
-    /**
-     * @param {number} delta
-     */
-    select: function(delta) {
-        var index, option;
-        this.selected += delta;
-        index = this.getSelected();
-        option = this.getSelectedOption();
-        if (option.callback) {
-            option.callback(index);
-        }
-    },
-
-    /**
-     * @return {Object}
-     */
-    getSelectedOption: function() {
-        var selected = this.getSelected();
-        return this._options[selected];
-    },
-
-    /**
-     * @return {function()}
-     */
-    getNextStage: function() {
-        return this.getSelectedOption().next;
-    },
-
-    /**
-     * @return {Shape}
-     */
-    getShape: function() {
-        var x, y, font, shape, desc;
-
-        x = XSS.MENU_LEFT;
-        y = XSS.MENU_TOP;
-
-        shape = new Shape();
-
-        // Draw options
-        for (var i = 0, m = this._options.length; i < m; i++) {
-            var title, active = (this.getSelected() === i);
-            title = this._options[i].title;
-            font = XSS.font.pixels(title, x, y, {invert: active});
-            y += Font.LINE_HEIGHT + 1;
-            shape.add(font);
-        }
-
-        // Help text line(s)
-        desc = this.getSelectedOption().description;
-        y += Font.LINE_HEIGHT;
-        font = XSS.font.pixels(desc, x, y, {wrap: XSS.MENU_WRAP});
-        shape.add(font);
-
-        return shape;
-    },
-
-    /**
-     * @return {number}
-     */
-    getSelected: function() {
-        if (typeof this.selected === 'undefined') {
-            this.selected = 0;
-        } else if (this.selected < 0) {
-            this.selected = this._options.length - 1;
-        } else if (this.selected > this._options.length - 1) {
-            this.selected = 0;
-        }
-        return this.selected;
-    }
-
-};
 
 
 /**
@@ -259,15 +154,15 @@ ScreenStage.prototype = {
 
 
 /**
- * BaseSelectStage
+ * SelectStage
  * Stage with a vertical select menu
- * @param {SelectMenu=} menu
+ * @param {SelectMenu} menu
  * @constructor
  * @implements {StageInterface}
  */
 function SelectStage(menu) {
     this.menu = menu;
-    this.handleKeys = this.handleKeys.bind(this);
+    this.handleKeysBound = this.handleKeys.bind(this);
 }
 
 SelectStage.prototype = {
@@ -281,11 +176,11 @@ SelectStage.prototype = {
     },
 
     createStage: function() {
-        XSS.on.keydown(this.handleKeys);
+        XSS.on.keydown(this.handleKeysBound);
     },
 
     destructStage: function() {
-        XSS.off.keydown(this.handleKeys);
+        XSS.off.keydown(this.handleKeysBound);
         XSS.shapes.stage = null;
     },
 
@@ -311,6 +206,66 @@ SelectStage.prototype = {
                 this.menu.select(1);
                 XSS.stageflow.setStageShapes();
         }
+    }
+
+};
+
+/**
+ * Stage with a vertical form
+ * @param {Form} form
+ * @constructor
+ * @implements {StageInterface}
+ */
+function FormStage(form) {
+    this.form = form;
+    this.handleKeysBound = this.handleKeys.bind(this);
+}
+
+FormStage.prototype = {
+
+    getInstruction: function() {
+        return '';
+    },
+
+    getShape: function() {
+        return this.form.getShape();
+    },
+
+    createStage: function() {
+        XSS.on.keydown(this.handleKeysBound);
+    },
+
+    destructStage: function() {
+        XSS.off.keydown(this.handleKeysBound);
+        XSS.shapes.stage = null;
+    },
+
+    handleKeys: function(e) {
+        switch (e.which) {
+            case XSS.KEY_BACKSPACE:
+            case XSS.KEY_ESCAPE:
+                XSS.stageflow.previousStage();
+                break;
+            case XSS.KEY_ENTER:
+                break;
+            case XSS.KEY_UP:
+                this.form.selectField(-1);
+                XSS.stageflow.setStageShapes();
+                break;
+            case XSS.KEY_DOWN:
+                this.form.selectField(1);
+                XSS.stageflow.setStageShapes();
+                break;
+            case XSS.KEY_LEFT:
+                this.form.selectOption(-1);
+                XSS.stageflow.setStageShapes();
+                break;
+            case XSS.KEY_RIGHT:
+                this.form.selectOption(1);
+                XSS.stageflow.setStageShapes();
+                break;
+        }
+
     }
 
 };

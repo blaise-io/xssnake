@@ -31,37 +31,9 @@ gcc.params({
 
 gcc.header(header);
 
-gcc.addFiles(
-    home + 'source/js/main.js',
-    home + 'source/js/consts.js',
-    home + 'server/shared/util.js',
-    home + 'server/shared/config.js',
-    home + 'server/shared/events.js',
-    home + 'server/shared/levels.js',
-    home + 'server/shared/level.js',
-    home + 'server/shared/snake.js',
-    home + 'source/js/client_util.js',
-    home + 'source/js/bounding_box.js',
-    home + 'source/js/shape.js',
-    home + 'source/js/shape_generator.js',
-    home + 'source/js/publish_subscribe.js',
-    home + 'source/js/themes.js',
-    home + 'source/js/canvas.js',
-    home + 'source/js/transform.js',
-    home + 'source/js/font.js',
-    home + 'source/js/input_field.js',
-    home + 'source/js/stage_classes.js',
-    home + 'source/js/stages.js',
-    home + 'source/js/stage_flow.js',
-    home + 'source/js/socket.js',
-    home + 'source/js/client_snake.js',
-    home + 'source/js/client_level.js',
-    home + 'source/js/apple.js',
-    home + 'source/js/powerup.js',
-    home + 'source/js/room.js',
-    home + 'source/js/game.js',
-    home + 'source/js/scoreboard.js',
-    home + 'source/js/chat.js'
-);
+gcc.addFile(home + 'source/js/main.js');
+gcc.addDir(home + 'server/shared', ['config.example.js']);
+gcc.addDir(home + 'source/js', ['main.js']);
+
 gcc.replace(/'use strict';/g, '');
 gcc.output(home + 'www/xssnake.js');

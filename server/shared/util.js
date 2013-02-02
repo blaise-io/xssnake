@@ -42,6 +42,22 @@ var Util = {
     },
 
     /**
+     * Normalize an array index.
+     * @param {number} index
+     * @param {Array} arr
+     * @return {number}
+     */
+    normArrIndex: function(index, arr) {
+        var len = arr.length;
+        if (index >= len) {
+            return 0;
+        } else if (index < 0) {
+            return len - 1;
+        }
+        return index;
+    },
+
+    /**
      * @param {Array.<number>} a
      * @param {Array.<number>} b
      * @return {number}

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true, evil:true*/
-/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, GameStage, Shape, Util*/
+/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, FormStage, Form, GameStage, Shape, Util*/
 
 'use strict';
 
@@ -12,7 +12,7 @@ XSS.stages = {
         var menu;
 
         menu = new SelectMenu('main');
-        menu.addOption(null, XSS.stages.inputName,
+        menu.addOption(null, XSS.stages.multiplayer,
             'MULTIPLAYER',
             'Play with a friend or (un)friendly stranger.');
         menu.addOption(null, XSS.stages.startGame,
@@ -29,6 +29,58 @@ XSS.stages = {
             'Who spent all this blood & tears?');
 
         return new SelectStage(menu);
+    },
+
+    multiplayer: function() {
+        var form, field = XSS.form.FIELD, value = XSS.form.FIELD;
+
+        form = new Form('GAME OPTIONS', 'SUBMIT >');
+
+        form.addField(field.LEVEL_DIFFICULTY, 'LEVEL DIFFICULTY', [
+            [value.ANY, 'ANY'],
+            [value.EASY, 'WORM'],
+            [value.MEDIUM, 'SNAKE'],
+            [value.HARD, 'PYTHON']
+        ]);
+
+        form.addField(field.POWERUPS, 'POWER-UPS', [
+            [value.ANY, 'ANY'],
+            [value.YES, 'YES'],
+            [value.NO, 'NO']
+        ]);
+
+        // Trololol
+        form.addField(null, 'WEIRD BUGS', [
+            [null, 'ANY'],
+            [null, 'YES'],
+            [null, 'OK'],
+            [null, 'TRUE'],
+            [null, 'ACCEPT'],
+            [null, 'ENABLE'],
+            [null, 'OUI!']
+        ]);
+
+        form.addField(field.PRIVATE, 'PRIVATE', [
+            [value.NO, 'NO'],
+            [value.YES, 'YES']
+        ]);
+
+        form.addField(field.XSS, 'XSS ' + XSS.UNICODE_SKULL, [
+            [value.NO, 'NO'],
+            [value.YES, 'YES']
+        ]);
+
+        form.addField(field.MAX_PLAYERS, 'MAX PLAYERS', [
+            [6, '6'],
+            [2, '2'],
+            [3, '3'],
+            [4, '4'],
+            [5, '5']
+        ]);
+
+        form.focus = form.fields.length;
+
+        return new FormStage(form);
     },
 
     /**

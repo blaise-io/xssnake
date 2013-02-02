@@ -16,6 +16,7 @@ function Font() {
 /** @const */ Font.MAX_HEIGHT = 7;
 /** @const */ Font.BASELINE = 6;
 /** @const */ Font.LINE_HEIGHT = 8;
+/** @const */ Font.LINE_HEIGHT_MENU = 9;
 /** @const */ Font.BLURRY_TRESHOLD = 3;
 
 Font.prototype = {

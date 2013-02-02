@@ -26,6 +26,7 @@
 
 /** @const */ XSS.MENU_LEFT = 40;
 /** @const */ XSS.MENU_TOP = 56;
+/** @const */ XSS.MENU_WIDTH = 170;
 /** @const */ XSS.MENU_WRAP = 176;
 
 /** @const */ XSS.GAME_LEFT = 2;

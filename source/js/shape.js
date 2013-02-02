@@ -94,6 +94,10 @@ Shape.prototype = {
         return this.set(XSS.transform.shift(this.pixels, x, y));
     },
 
+    /**
+     * @param {BoundingBox=} bbox
+     * @return {Shape}
+     */
     invert: function(bbox) {
         var pixels = this.pixels.slice(), inverted = [];
         bbox = bbox || this.bbox();
