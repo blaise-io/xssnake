@@ -40,11 +40,15 @@
 /** @const */ XSS.FLASH_NORMAL = 300;
 /** @const */ XSS.FLASH_FAST = 150;
 
-/** @const */ XSS.UNICODE_HEART = '\u2665';
-/** @const */ XSS.UNICODE_SKULL = '\u2620';
-/** @const */ XSS.UNICODE_SQUARE = '\u25a0';
-/** @const */ XSS.UNICODE_BULLSEYE = '\u25ce';
-/** @const */ XSS.UNICODE_ELECTRIC = '\u2301';
-/** @const */ XSS.UNICODE_ENTER_KEY = '\u23ce';
-/** @const */ XSS.UNICODE_HAPPY_FACE = '\u263A';
-/** @const */ XSS.UNICODE_FROWNY_FACE = '\u2639';
+/** @const */ XSS.UC_ELECTRIC = '\u2301';
+/** @const */ XSS.UC_ENTER_KEY = '\u23ce';
+/** @const */ XSS.UC_SQUARE = '\u25a0';
+/** @const */ XSS.UC_TR_LEFT = '\u25c0';
+/** @const */ XSS.UC_TR_RIGHT = '\u25b6';
+/** @const */ XSS.UC_TR_UP = '\u25b2';
+/** @const */ XSS.UC_TR_DOWN = '\u25bc';
+/** @const */ XSS.UC_BULLSEYE = '\u25ce';
+/** @const */ XSS.UC_SKULL = '\u2620';
+/** @const */ XSS.UC_FROWNY_FACE = '\u2639';
+/** @const */ XSS.UC_HAPPY_FACE = '\u263A';
+/** @const */ XSS.UC_HEART = '\u2665';

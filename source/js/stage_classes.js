@@ -52,7 +52,7 @@ function InputStage(name, nextStage, label) {
 InputStage.prototype = {
 
     getInstruction: function() {
-        return 'Start typing and submit using ' + XSS.UNICODE_ENTER_KEY + '.';
+        return 'Start typing and submit using ' + XSS.UC_ENTER_KEY + '.';
     },
 
     getShape: function() {
@@ -168,7 +168,7 @@ function SelectStage(menu) {
 SelectStage.prototype = {
 
     getInstruction: function() {
-        return 'Navigate using arrow keys and select using ' + XSS.UNICODE_ENTER_KEY + '.';
+        return 'Navigate using arrow keys and select using ' + XSS.UC_ENTER_KEY + '.';
     },
 
     getShape: function() {

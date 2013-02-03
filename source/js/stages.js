@@ -34,24 +34,21 @@ XSS.stages = {
     multiplayer: function() {
         var form, field = XSS.form.FIELD, value = XSS.form.FIELD;
 
-        form = new Form('GAME OPTIONS', 'SUBMIT >');
+        form = new Form('GAME OPTIONS', 'SUBMIT ' + XSS.UC_TR_RIGHT);
 
         form.addField(field.LEVEL_DIFFICULTY, 'LEVEL DIFFICULTY', [
-            [value.ANY, 'ANY'],
-            [value.EASY, 'WORM'],
             [value.MEDIUM, 'SNAKE'],
-            [value.HARD, 'PYTHON']
+            [value.HARD, 'PYTHON'],
+            [value.EASY, 'WORM']
         ]);
 
         form.addField(field.POWERUPS, 'POWER-UPS', [
-            [value.ANY, 'ANY'],
             [value.YES, 'YES'],
             [value.NO, 'NO']
         ]);
 
         // Trololol
         form.addField(null, 'WEIRD BUGS', [
-            [null, 'ANY'],
             [null, 'YES'],
             [null, 'OK'],
             [null, 'TRUE'],
@@ -65,7 +62,7 @@ XSS.stages = {
             [value.YES, 'YES']
         ]);
 
-        form.addField(field.XSS, 'XSS ' + XSS.UNICODE_SKULL, [
+        form.addField(field.XSS, 'XSS ' + XSS.UC_SKULL, [
             [value.NO, 'NO'],
             [value.YES, 'YES']
         ]);
@@ -108,12 +105,12 @@ XSS.stages = {
 
         menu = new SelectMenu('friendly');
         menu.addOption(true, XSS.stages.startGame,
-            'FRIENDLY MODE', 'May slightly dent your ego ' + XSS.UNICODE_HEART);
+            'FRIENDLY MODE', 'May slightly dent your ego ' + XSS.UC_HEART);
         menu.addOption(false, XSS.stages.captcha,
             'XSS MODE',
             'The winner of a game is allowed to execute JavaScript in the ' +
             'browsers of every loser… ' +
-            'while(true){alert(\'' + XSS.UNICODE_SKULL + '\');}');
+            'while(true){alert(\'' + XSS.UC_SKULL + '\');}');
 
         return new SelectStage(menu);
     },
@@ -230,7 +227,7 @@ XSS.stages = {
         screen = new Shape(
             XSS.transform.zoomX2(XSS.font.pixels('<HEEELP?!!>'), left, top, true),
             XSS.font.pixels('Play using the arrow keys on your keyboard. ' +
-                'Chat during the game by pressing '+XSS.UNICODE_ENTER_KEY+'. ' +
+                'Chat during the game by pressing '+XSS.UC_ENTER_KEY+'. ' +
                 'Supported: IE9 and up, Webkit, Gecko, Opera. Source code ' +
                 'available at Github (Google: "github xssnake"). Bugs and ' +
                 'feature request through GitHub. Other questions or issues: ' +
@@ -269,8 +266,8 @@ XSS.stages = {
         wits = [
             '%s%s%s',
             'You have the same name as my mom',
-            'LOVELY ' + new Array(4).join(XSS.UNICODE_HEART),
-            XSS.UNICODE_SKULL,
+            'LOVELY ' + new Array(4).join(XSS.UC_HEART),
+            XSS.UC_SKULL,
             'Lamest name EVER',
             'Clever name!',
             'Mmm I love the way you handled that keyboard',

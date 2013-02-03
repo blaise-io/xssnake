@@ -180,7 +180,7 @@ Form.prototype = {
         y = XSS.MENU_TOP - 4;
 
         optionX = XSS.MENU_LEFT + XSS.MENU_WIDTH -
-                  this._optionMaxWidth - XSS.font.width(' >');
+                  this._optionMaxWidth - XSS.font.width(' ' + XSS.UC_TR_LEFT);
 
         shape = new Shape();
         shape.add(this._getHeaderPixels(x, y));
@@ -197,8 +197,8 @@ Form.prototype = {
                 bbox = option.bbox();
                 bbox.x1 -= 1;
                 bbox.x2 += 1;
-                bbox.y1 -= 2;
-                bbox.y2 = bbox.y1 + Font.LINE_HEIGHT_MENU;
+                bbox.y1 = y - 1;
+                bbox.y2 = y + Font.LINE_HEIGHT;
                 option.invert();
             }
 
@@ -231,8 +231,7 @@ Form.prototype = {
         return XSS.font.pixels(
             this.submit,
             XSS.MENU_LEFT + XSS.MENU_WIDTH - XSS.font.width(this.submit),
-            y,
-            {invert: this.focus === this.fields.length}
+            y, {invert: this.focus === this.fields.length}
         );
     },
 
@@ -245,7 +244,7 @@ Form.prototype = {
      * @private
      */
     _getOptionsShape: function(i, x, col2X, y) {
-        var label, value, optionPixels, optionX, shape, field;
+        var label, value, optionPixels, optionX, shape, field, leftX, rightX;
 
         field = this.fields[i];
 
@@ -260,9 +259,12 @@ Form.prototype = {
         optionPixels = XSS.font.pixels(value, optionX, y);
         shape.add(optionPixels);
 
+        leftX = col2X - XSS.font.width(XSS.UC_TR_LEFT + ' ');
+        rightX = col2X + this._optionMaxWidth + XSS.font.width(' ');
+
         shape.add(
-            XSS.font.pixels('<', col2X - XSS.font.width('< '), y),
-            XSS.font.pixels('>', col2X + this._optionMaxWidth + 3, y)
+            XSS.font.pixels(XSS.UC_TR_LEFT, leftX, y),
+            XSS.font.pixels(XSS.UC_TR_RIGHT + ' ', rightX, y)
         );
 
         return shape;

@@ -24,7 +24,7 @@ Font.prototype = {
     _cache: {},
 
     detectFontSupport: function() {
-        if (!this._getChrProperties(XSS.UNICODE_SQUARE)) {
+        if (!this._getChrProperties(XSS.UC_SQUARE)) {
             throw new Error('Cannot render xssnake font');
         }
     },
@@ -116,7 +116,7 @@ Font.prototype = {
     _chrProperties: function(chr) {
         if (!this._cache[chr]) {
             var chrProperties = this._getChrProperties(chr);
-            this._cache[chr] = chrProperties || this._chrProperties(XSS.UNICODE_SQUARE);
+            this._cache[chr] = chrProperties || this._chrProperties(XSS.UC_SQUARE);
         }
         return this._cache[chr];
     },
