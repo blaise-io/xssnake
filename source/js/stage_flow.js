@@ -90,7 +90,7 @@ StageFlow.prototype = {
     },
 
     setStageShapes: function() {
-        var instruction = this.stage.getInstruction();
+        var instruction = '';// XSS.UC_ENTER_KEY; this.stage.getInstruction();
         XSS.shapes.stage = this.stage.getShape();
         XSS.shapes.instruction = XSS.font.shape(
             instruction, XSS.PIXELS_H - XSS.font.width(instruction + ' '), XSS.PIXELS_V - 10

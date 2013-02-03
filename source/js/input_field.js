@@ -91,7 +91,7 @@ InputField.prototype = {
 
         if (!segments[1]) {
             untilCaretStr = segments[0] + segments[1];
-            endPos = XSS.font.endPos(String(this.prefix + untilCaretStr));
+            endPos = XSS.font.endPos(this.prefix + untilCaretStr);
             caret = [this.x + endPos[0] - 1, this.y + endPos[1]];
 
             caretShape = XSS.shapegen.lineShape(

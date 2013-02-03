@@ -9,6 +9,7 @@
 function StageInterface() {}
 
 StageInterface.prototype = {
+
     /** @return {string} */
     getInstruction: function() {
         return '';
@@ -20,12 +21,11 @@ StageInterface.prototype = {
     },
 
     /** @return */
-    createStage: function() {
-    },
+    createStage: function() {},
 
     /** @return */
-    destructStage: function() {
-    }
+    destructStage: function() {}
+
 };
 
 
@@ -34,11 +34,12 @@ StageInterface.prototype = {
  * Stage with a form input
  * @param {string|null} name
  * @param {Function} nextStage
+ * @param {string} header
  * @param {string} label
- * @constructor
  * @implements {StageInterface}
+ * @constructor
  */
-function InputStage(name, nextStage, label) {
+function InputStage(name, nextStage, header, label) {
     this.name = name;
     this.nextStage = nextStage;
     this.label = label;
@@ -46,35 +47,42 @@ function InputStage(name, nextStage, label) {
     this.val = Util.storage(name);
     this.minChars = 0;
 
+    this.inputTop = XSS.MENU_TOP + 17;
+
+    this.header = this._headerStrToShape(header);
+    this.headerAndValue = this._getHeaderAndValue();
+    this.shape = this.headerAndValue;
+
     this._handleKeysBound = this.handleKeys.bind(this);
 }
 
 InputStage.prototype = {
 
     getInstruction: function() {
-        return 'Start typing and submit using ' + XSS.UC_ENTER_KEY + '.';
+        return '';
     },
 
     getShape: function() {
-        var str = this.label + this.val;
-        return XSS.font.shape(str, XSS.MENU_LEFT, XSS.MENU_TOP);
+        return this.shape;
     },
 
     createStage: function() {
         XSS.on.keydown(this._handleKeysBound);
-        this.input = new InputField(XSS.MENU_LEFT, XSS.MENU_TOP, this.label);
+        this.input = new InputField(XSS.MENU_LEFT, this.inputTop, this.label);
         this.input.setValue(this.val);
         this.input.maxWidth = this.maxWidth || this.input.maxWidth;
         this.input.callback = function(value) {
             this.val = value;
             Util.storage(this.name, value);
+            this.shape = this.header;
         }.bind(this);
 
-        // Handled by InputField
-        XSS.shapes.stage = null;
+        // Input handled by InputField
+        XSS.shapes.stage = this.header;
     },
 
     destructStage: function() {
+        this.shape = this.headerAndValue;
         XSS.off.keydown(this._handleKeysBound);
         this.input.destruct();
     },
@@ -85,8 +93,23 @@ InputStage.prototype = {
                 XSS.stageflow.previousStage();
                 break;
             case XSS.KEY_ENTER:
-                var val = this.val.trim();
-                this.inputSubmit(this._getInputError(val), val);
+                var val = this.val.trim(),
+                    top = XSS.font.height(this.label) +
+                        XSS.MENU_TOP +
+                        XSS.SUBHEADER_HEIGHT +
+                        -3;
+                this.inputSubmit(this._getInputError(val), val, top);
+        }
+    },
+
+    /**
+     * @param {string} error
+     * @param {string} value
+     * @param {number} top
+     */
+    inputSubmit: function(error, value, top) {
+        if (!error && value) {
+            XSS.stageflow.switchStage(this.nextStage);
         }
     },
 
@@ -100,13 +123,25 @@ InputStage.prototype = {
     },
 
     /**
-     * @param {string} error
-     * @param {string} value
+     * @param {string} str
+     * @return {Shape}
+     * @private
      */
-    inputSubmit: function(error, value) {
-        if (!error && value) {
-            XSS.stageflow.switchStage(this.nextStage);
-        }
+    _headerStrToShape: function(str) {
+        var pixels = XSS.font.pixels(str);
+        pixels = XSS.transform.zoomX2(pixels, XSS.MENU_LEFT, XSS.MENU_TOP, true);
+        return new Shape(pixels);
+    },
+
+    /**
+     * @return {Shape}
+     * @private
+     */
+    _getHeaderAndValue: function() {
+        var shape, value = this.label + this.val;
+        shape = new Shape(XSS.font.pixels(value, XSS.MENU_LEFT, this.inputTop));
+        shape.add(this.header.pixels);
+        return shape;
     }
 
 };
@@ -116,8 +151,8 @@ InputStage.prototype = {
  * BaseScreenStage
  * Stage with static content
  * @param {Shape} screen
- * @constructor
  * @implements {StageInterface}
+ * @constructor
  */
 function ScreenStage(screen) {
     this._shape = screen;
@@ -157,8 +192,8 @@ ScreenStage.prototype = {
  * SelectStage
  * Stage with a vertical select menu
  * @param {SelectMenu} menu
- * @constructor
  * @implements {StageInterface}
+ * @constructor
  */
 function SelectStage(menu) {
     this.menu = menu;
@@ -168,7 +203,7 @@ function SelectStage(menu) {
 SelectStage.prototype = {
 
     getInstruction: function() {
-        return 'Navigate using arrow keys and select using ' + XSS.UC_ENTER_KEY + '.';
+        return '';
     },
 
     getShape: function() {
@@ -213,8 +248,8 @@ SelectStage.prototype = {
 /**
  * Stage with a vertical form
  * @param {Form} form
- * @constructor
  * @implements {StageInterface}
+ * @constructor
  */
 function FormStage(form) {
     this.form = form;
@@ -247,6 +282,8 @@ FormStage.prototype = {
                 XSS.stageflow.previousStage();
                 break;
             case XSS.KEY_ENTER:
+                var nextStage = this.form.getNextStage();
+                XSS.stageflow.switchStage(nextStage);
                 break;
             case XSS.KEY_UP:
                 this.form.selectField(-1);
@@ -273,8 +310,8 @@ FormStage.prototype = {
 
 /**
  * Game Stage
- * @constructor
  * @implements {StageInterface}
+ * @constructor
  */
 function GameStage() {
 }

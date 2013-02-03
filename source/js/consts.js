@@ -25,7 +25,9 @@
 /** @const */ XSS.DIRECTION_DOWN = 3;
 
 /** @const */ XSS.MENU_LEFT = 40;
-/** @const */ XSS.MENU_TOP = 56;
+/** @const */ XSS.MENU_TOP = 54;
+/** @const */ XSS.SUBHEADER_HEIGHT = 20;
+
 /** @const */ XSS.MENU_WIDTH = 170;
 /** @const */ XSS.MENU_WRAP = 176;
 
@@ -40,6 +42,11 @@
 /** @const */ XSS.FLASH_NORMAL = 300;
 /** @const */ XSS.FLASH_FAST = 150;
 
+
+/** @const */ XSS.UC_ARR_LEFT = '\u2190';
+/** @const */ XSS.UC_ARR_UP = '\u2191';
+/** @const */ XSS.UC_ARR_RIGHT = '\u2192';
+/** @const */ XSS.UC_ARR_DOWN = '\u2193';
 /** @const */ XSS.UC_ELECTRIC = '\u2301';
 /** @const */ XSS.UC_ENTER_KEY = '\u23ce';
 /** @const */ XSS.UC_SQUARE = '\u25a0';

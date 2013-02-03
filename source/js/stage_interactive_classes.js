@@ -7,10 +7,12 @@
  * SelectMenu
  * Creates a single navigatable verticle menu
  * @param {string} name
+ * @param {string=} header
  * @constructor
  */
-function SelectMenu(name) {
+function SelectMenu(name, header) {
     this.name = name;
+    this.header = header || '';
     this.selected = 0;
     this._options = [];
 }
@@ -66,12 +68,15 @@ SelectMenu.prototype = {
      * @return {Shape}
      */
     getShape: function() {
-        var x, y, font, shape, desc;
+        var x, y, header, font, shape, desc;
 
         x = XSS.MENU_LEFT;
         y = XSS.MENU_TOP;
 
-        shape = new Shape();
+        header = XSS.transform.zoomX2(XSS.font.pixels(this.header), x, y, true);
+        shape = new Shape(header);
+
+        y += XSS.SUBHEADER_HEIGHT;
 
         // Draw options
         for (var i = 0, m = this._options.length; i < m; i++) {
@@ -110,13 +115,14 @@ SelectMenu.prototype = {
 
 /**
  * Form with choice fields
- * @param header
- * @param submit
+ * @param {string} header
+ * @param {function(string)} next
  * @constructor
  */
-function Form(header, submit) {
+function Form(header, next) {
     this.header = header;
-    this.submit = submit;
+    this.next = next;
+
     this.focus = 0;
     this.fields = [];
     this.selected = [];
@@ -126,7 +132,7 @@ function Form(header, submit) {
 Form.prototype = {
 
     /**
-     * @param {string|null} name
+     * @param {string} name
      * @param {string} label
      * @param {Array.<Array>} options
      */
@@ -142,7 +148,7 @@ Form.prototype = {
         for (var i = 0, m = options.length; i < m; i++) {
             this._optionMaxWidth = Math.max(
                 this._optionMaxWidth,
-                XSS.font.width(options[i][1])
+                XSS.font.width(options[i][1] || String(options[i][0]))
             );
         }
     },
@@ -151,10 +157,7 @@ Form.prototype = {
      * @param {number} delta
      */
     selectField: function(delta) {
-        this.focus = Util.normArrIndex(
-            this.focus + delta,
-            this.fields.concat([1])
-        );
+        this.focus = Util.normArrIndex(this.focus + delta, this.fields);
     },
 
     /**
@@ -177,7 +180,7 @@ Form.prototype = {
         var x, optionX, y, shape;
 
         x = XSS.MENU_LEFT;
-        y = XSS.MENU_TOP - 4;
+        y = XSS.MENU_TOP;
 
         optionX = XSS.MENU_LEFT + XSS.MENU_WIDTH -
                   this._optionMaxWidth - XSS.font.width(' ' + XSS.UC_TR_LEFT);
@@ -185,13 +188,13 @@ Form.prototype = {
         shape = new Shape();
         shape.add(this._getHeaderPixels(x, y));
 
-        y += 17;
+        y += XSS.SUBHEADER_HEIGHT;
 
         // Draw options
         for (var i = 0, m = this.fields.length; i < m; i++) {
             var option, bbox, active = (this.focus === i);
 
-            option = this._getOptionsShape(i, x, optionX, y);
+            option = this._getOptionsShape(i, x, optionX, y, active);
 
             if (active) {
                 bbox = option.bbox();
@@ -206,9 +209,24 @@ Form.prototype = {
             y += Font.LINE_HEIGHT_MENU;
         }
 
-        shape.add(this._getSubmitPixels(y + Font.LINE_HEIGHT_MENU));
-
         return shape;
+    },
+
+    getValues: function() {
+        var values = {};
+        for (var i = 0, m = this.fields.length; i < m; i++) {
+            var field = this.fields[i],
+                optionIndex = this.selected[i];
+            if (field.name) {
+                values[field.name] = field.options[optionIndex][0];
+            }
+        }
+        return values;
+    },
+
+    getNextStage: function() {
+        var values = this.getValues();
+        return this.next(values);
     },
 
     /**
@@ -223,48 +241,35 @@ Form.prototype = {
     },
 
     /**
-     * @param {number} y
-     * @return {XSS.ShapePixels}
-     * @private
-     */
-    _getSubmitPixels: function(y) {
-        return XSS.font.pixels(
-            this.submit,
-            XSS.MENU_LEFT + XSS.MENU_WIDTH - XSS.font.width(this.submit),
-            y, {invert: this.focus === this.fields.length}
-        );
-    },
-
-    /**
      * @param {number} i
      * @param {number} x
      * @param {number} col2X
      * @param {number} y
+     * @param {boolean} active
      * @return {Shape}
      * @private
      */
-    _getOptionsShape: function(i, x, col2X, y) {
-        var label, value, optionPixels, optionX, shape, field, leftX, rightX;
+    _getOptionsShape: function(i, x, col2X, y, active) {
+        var label, shape, value, option, pixels, xx = {};
 
-        field = this.fields[i];
-
-        label = field.label;
+        label = this.fields[i].label;
         shape = XSS.font.shape(label, x, y);
 
-        value = field.options[this.selected[i] || 0][1];
+        option = this.fields[i].options[this.selected[i] || 0];
+        value = option[1] || String(option[0]);
 
-        optionX = col2X + (this._optionMaxWidth - XSS.font.width(value)) / 2;
-        optionX = Math.floor(optionX);
+        xx.option = col2X + (this._optionMaxWidth - XSS.font.width(value)) / 2;
+        xx.option = Math.floor(xx.option);
 
-        optionPixels = XSS.font.pixels(value, optionX, y);
-        shape.add(optionPixels);
+        pixels = XSS.font.pixels(value, xx.option, y);
+        shape.add(pixels);
 
-        leftX = col2X - XSS.font.width(XSS.UC_TR_LEFT + ' ');
-        rightX = col2X + this._optionMaxWidth + XSS.font.width(' ');
+        xx.left = col2X - XSS.font.width(XSS.UC_TR_LEFT + ' ');
+        xx.right = col2X + this._optionMaxWidth + XSS.font.width(' ');
 
         shape.add(
-            XSS.font.pixels(XSS.UC_TR_LEFT, leftX, y),
-            XSS.font.pixels(XSS.UC_TR_RIGHT + ' ', rightX, y)
+            XSS.font.pixels(active ? XSS.UC_TR_LEFT : '<', xx.left, y),
+            XSS.font.pixels(active ? XSS.UC_TR_RIGHT : '>', xx.right, y)
         );
 
         return shape;

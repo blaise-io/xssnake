@@ -17,12 +17,23 @@ Util.extend(Util, {
         script.src = url;
         script.onload = callback;
         script.onerror = function() {
-            var err = 'Error loading ' + url;
-            XSS.shapes.instruction = XSS.font.shape(
-                err, XSS.PIXELS_H - XSS.font.width(err + ' '), XSS.PIXELS_V - 10
-            );
+            Util.instruct('Error loading ' + url);
         };
         document.querySelector('head').appendChild(script);
+    },
+
+    /**
+     * @param {string} str
+     * @param {number=} duration
+     */
+    instruct: function(str, duration) {
+        var shape = XSS.font.shape(
+                str, XSS.PIXELS_H - XSS.font.width(str) - 3, XSS.PIXELS_V - 10
+            );
+        if (duration) {
+            shape.lifetime(0, duration);
+        }
+        XSS.shapes.instruction = shape;
     },
 
     addListener: {
@@ -73,10 +84,10 @@ Util.extend(Util, {
         } else if (value === null) {
             localStorage.removeItem(key);
             return '';
-        } else if (value) {
+        } else if (typeof value !== 'undefined') {
             return localStorage.setItem(key, value);
         } else {
-            return localStorage.getItem(key) || '';
+            return localStorage.getItem(key);
         }
     }
 

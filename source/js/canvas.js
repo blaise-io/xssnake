@@ -231,6 +231,7 @@ Canvas.prototype = {
         window.onresize = this._positionCanvas.bind(this);
         window.onfocus  = this._handleFocusChange.bind(this);
         window.onblur   = this._handleFocusChange.bind(this);
+        window.onclick  = this._promoteKeyboard.bind(this);
     },
 
     /**
@@ -240,6 +241,28 @@ Canvas.prototype = {
     _handleFocusChange: function(ev) {
         this.focus = (ev.type === 'blur');
         XSS.pubsub.publish(XSS.PUB_FOCUS_CHANGE, this.focus);
+    },
+
+    /**
+     * @param {Event} ev
+     * @private
+     */
+    _promoteKeyboard: function(ev) {
+        if (Number(ev.which) !== 1) { // Only LMB
+            return;
+        }
+        var keys = [
+            'Esc',
+            XSS.UC_ENTER_KEY,
+            XSS.UC_ARR_LEFT,
+            XSS.UC_ARR_UP,
+            XSS.UC_ARR_RIGHT,
+            XSS.UC_ARR_DOWN
+        ];
+        Util.instruct(
+            'WT*?! Use the electronic typing device!!  Keys:  ' +
+            keys.join(' ')
+        );
     },
 
     /**

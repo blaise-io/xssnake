@@ -4,18 +4,18 @@
 
 XSS.themes = [
     {
-        title: 'Vampire Campfire',
-        desc : 'Bloody pixels! (Default theme)',
-        bg   : '#000',
-        off  : '#300',
-        on   : '#f00'
-    },
-    {
         title: 'Public Transport',
-        desc : 'Like the display on a bus!!',
+        desc : 'Default theme',
         bg   : '#111',
         off  : '#222',
         on   : '#dd0'
+    },
+    {
+        title: 'Vampire Campfire',
+        desc : 'Bloody pixels!',
+        bg   : '#000',
+        off  : '#300',
+        on   : '#f00'
     },
     {
         title: 'My First LED Screen',
