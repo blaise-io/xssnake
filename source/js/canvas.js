@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, BoundingBox, Util*/
+/*globals XSS, BoundingBox*/
 'use strict';
 
 /**
@@ -10,7 +10,7 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setTheme(XSS.themes[Util.storage('theme') || 0]);
+    this.setTheme(XSS.themes[XSS.util.storage('theme') || 0]);
     this._setCanvasDimensions();
 
     if (!window.requestAnimationFrame) {
@@ -259,9 +259,9 @@ Canvas.prototype = {
             XSS.UC_ARR_RIGHT,
             XSS.UC_ARR_DOWN
         ];
-        Util.instruct(
-            'WT*?! Use the electronic typing device!!  Keys:  ' +
-            keys.join(' ')
+        XSS.util.instruct(
+            'HUH?! Use the electronic typing device:  ' + keys.join(' / '),
+            4000
         );
     },
 

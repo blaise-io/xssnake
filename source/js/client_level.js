@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Level, Shape, Util*/
+/*globals XSS, Level, Shape*/
 'use strict';
 
 /**
@@ -16,7 +16,7 @@ function ClientLevel(levelID) {
 ClientLevel.prototype = Object.create(Level.prototype);
 
 /** @lends {ClientLevel.prototype} */
-Util.extend(ClientLevel.prototype, {
+XSS.util.extend(ClientLevel.prototype, {
 
     /**
      * @return {Shape}

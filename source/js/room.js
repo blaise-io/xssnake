@@ -4,16 +4,18 @@
 
 /**
  * @param {number} index
+ * @param {string} key
  * @param {number} level
  * @param {Array.<string>} names
  * @param {Array.<number>} score
  * @constructor
  */
-function Room(index, level, names, score) {
+function Room(index, key, level, names, score) {
     this.game = null;
     this.score = null;
     this.chat = null;
     this.update.apply(this, arguments);
+    location.replace('#room:' + key);
 }
 
 Room.prototype = {
@@ -26,11 +28,12 @@ Room.prototype = {
 
     /**
      * @param {number} index
+     * @param {string} key
      * @param {number} level
      * @param {Array.<string>} names
      * @param {Array.<number>} score
      */
-    update: function(index, level, names, score) {
+    update: function(index, key, level, names, score) {
         names = this._sanitizeNames(names);
         this.score = new ScoreBoard(names, score);
         if (this.game) {

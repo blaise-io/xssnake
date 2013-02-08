@@ -8,8 +8,7 @@
  * @constructor
  */
 function Font() {
-    this._ctx = this._getCanvas();
-    this.detectFontSupport();
+    this._ctx = this._getContext();
 }
 
 /** @const */ Font.MAX_WIDTH = 9;
@@ -22,12 +21,6 @@ function Font() {
 Font.prototype = {
 
     _cache: {},
-
-    detectFontSupport: function() {
-        if (!this._getChrProperties(XSS.UC_SQUARE)) {
-            throw new Error('Cannot render xssnake font');
-        }
-    },
 
     /**
      * @param {string} str
@@ -176,8 +169,8 @@ Font.prototype = {
      * @return {CanvasRenderingContext2D}
      * @private
      */
-    _getCanvas: function() {
-        var canvas, context;
+    _getContext: function() {
+        var canvas, context, font;
 
         canvas = document.createElement('canvas');
         canvas.width = Font.MAX_WIDTH;
@@ -186,11 +179,11 @@ Font.prototype = {
         context = canvas.getContext('2d');
 
         // "xssnake" is a special font that was crafted for this game.
-        context.font = '8px xssnake';
-
+        font = '8px xssnake';
         // Specify blurry fonts in the fallback, to make it easier to detect
-        // glyphs that are (un)supported by our font.
-        context.font += ', "Courier New", "Times New Roman", serif';
+        // glyphs that are (un)supported by the xssnake font.
+        font += ', courier new, serif';
+        context.font = font;
 
         return context;
     },

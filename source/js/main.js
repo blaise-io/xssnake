@@ -1,53 +1,36 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals Util, PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, Socket */
+/*globals PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow */
 'use strict';
 
-// Dummy object for Requirejs client+server shared objects
-var module = {};
-
-var XSS = {};
+var XSS = {}, module = {};
 
 window.onerror = function() {
-    XSS.error = true; // Stops draw loop
+    XSS.error = true;
 };
 
-XSS.load = function() {
+XSS.main = function() {
 
     /** @type {Object.<string,Shape>} */
     XSS.shapes    = {};
 
-    // DOM
-    XSS.doc       = document.body;
-
     // Shortcuts
-    XSS.on        = Util.addListener;
-    XSS.off       = Util.removeListener;
+    XSS.doc       = document.body;
+    XSS.on        = XSS.util.addListener;
+    XSS.off       = XSS.util.removeListener;
 
     // Singletons
     XSS.pubsub    = new PublishSubscribe();
     XSS.canvas    = new Canvas();
     XSS.shapegen  = new ShapeGenerator();
     XSS.transform = new Transform();
-};
-
-// Load this part when font has loaded
-XSS.fontLoad = function() {
-    var callback = function() {
-        var data = {
-            'name'    : decodeURIComponent(location.search).substring(1) || Util.storage('name') || 'Anon',
-            'friendly': true,
-            'public'  : true
-        };
-        XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
-    };
-
     XSS.font      = new Font();
     XSS.stageflow = new StageFlow();
-    XSS.socket    = new Socket(callback);
+
 };
 
-// Give Webkit time to initialize @font-face
-document.body.onload = function() {
-    XSS.load();
-    setTimeout(XSS.fontLoad, 250);
-};
+XSS.check = window.setInterval(function() {
+    if (document.readyState === 'complete') {
+        window.clearInterval(XSS.check);
+        window.setTimeout(XSS.main, 50);
+    }
+}, 50);

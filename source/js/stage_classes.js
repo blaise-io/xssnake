@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Socket, InputField, Util, Font*/
+/*globals XSS, Shape, Socket, InputField, Font*/
 'use strict';
 
 
@@ -9,11 +9,6 @@
 function StageInterface() {}
 
 StageInterface.prototype = {
-
-    /** @return {string} */
-    getInstruction: function() {
-        return '';
-    },
 
     /** @return {Shape} */
     getShape: function() {
@@ -44,7 +39,7 @@ function InputStage(name, nextStage, header, label) {
     this.nextStage = nextStage;
     this.label = label;
 
-    this.val = Util.storage(name);
+    this.val = XSS.util.storage(name);
     this.minChars = 0;
 
     this.inputTop = XSS.MENU_TOP + 17;
@@ -58,10 +53,6 @@ function InputStage(name, nextStage, header, label) {
 
 InputStage.prototype = {
 
-    getInstruction: function() {
-        return '';
-    },
-
     getShape: function() {
         return this.shape;
     },
@@ -73,7 +64,7 @@ InputStage.prototype = {
         this.input.maxWidth = this.maxWidth || this.input.maxWidth;
         this.input.callback = function(value) {
             this.val = value;
-            Util.storage(this.name, value);
+            XSS.util.storage(this.name, value);
             this.shape = this.header;
         }.bind(this);
 
@@ -160,10 +151,6 @@ function ScreenStage(screen) {
 
 ScreenStage.prototype = {
 
-    getInstruction: function() {
-        return 'Press Esc to go back.';
-    },
-
     getShape: function() {
         return this._shape;
     },
@@ -201,10 +188,6 @@ function SelectStage(menu) {
 }
 
 SelectStage.prototype = {
-
-    getInstruction: function() {
-        return '';
-    },
 
     getShape: function() {
         return this.menu.getShape();
@@ -257,10 +240,6 @@ function FormStage(form) {
 }
 
 FormStage.prototype = {
-
-    getInstruction: function() {
-        return '';
-    },
 
     getShape: function() {
         return this.form.getShape();
@@ -318,24 +297,25 @@ function GameStage() {
 
 GameStage.prototype = {
 
-    getInstruction: function() {
-        return '';
-    },
-
     getShape: function() {
         return new Shape();
     },
 
     createStage: function() {
-        var choices;
+        var stages, values;
+
         XSS.shapes.header = null;
 
-        choices = XSS.stageflow.getNamedChoices();
+        stages = XSS.stageflow.stageInstances;
+        values = stages.multiplayer.form.getValues();
+        values[XSS.form.FIELD.NAME] = stages.inputName.val;
+
         XSS.socket = new Socket(function() {
-            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, choices);
+            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, values);
         });
     },
 
     destructStage: function() {
     }
+
 };

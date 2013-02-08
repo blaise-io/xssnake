@@ -1,7 +1,8 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
+/*globals XSS*/
 'use strict';
 
-var Util = {
+module.exports = {
 
     /**
      * @param {*} destination
@@ -31,14 +32,15 @@ var Util = {
      * @return {*}
      */
     randomItem: function(arr) {
-        return arr[Util.randomBetween(0, arr.length - 1)];
+        return arr[Math.floor(Math.random() * (arr.length - 1))];
     },
 
     /**
+     * @param {number=} len
      * @return {string}
      */
-    randomStr: function() {
-        return Math.random().toString(36).substring(2, 5);
+    randomStr: function(len) {
+        return Math.random().toString(36).substr(2, len || 3);
     },
 
     /**
@@ -91,4 +93,6 @@ var Util = {
 
 };
 
-module.exports = Util;
+if (typeof XSS !== 'undefined') {
+    XSS.util = module.exports;
+}

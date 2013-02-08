@@ -2,13 +2,14 @@
 'use strict';
 
 var Room = require('./room.js');
+var Util = require('../shared/util.js');
+var form = require('../shared/form.js');
 
 /**
  * @constructor
  */
 function RoomManager(server) {
     this.server = server;
-    this.inc = 0;
     this.rooms = {};
 }
 
@@ -28,44 +29,43 @@ RoomManager.prototype = {
      * @param {Room} room
      */
     remove: function(room) {
-        delete this.rooms[room.id];
+        delete this.rooms[room.key];
         room.destruct();
     },
 
     /**
-     * @param {Object.<string, boolean>} filter
+     * @param {Object.<string, number|boolean>} gameOptions
      * @return {Room}
      */
-    getPreferredRoom: function(filter) {
-        var room = this._findRoom(filter);
+    getPreferredRoom: function(gameOptions) {
+        var room = this._findRoom(gameOptions);
         if (!room) {
-            room = this.createRoom(filter);
+            room = this.createRoom(gameOptions);
         }
         return room;
     },
 
     /**
-     * @param {Object.<string, boolean>} filter
+     * @param {Object.<string, number|boolean>} gameOptions
      * @return {Room}
      */
-    createRoom: function(filter) {
-        var id, room;
-        id = ++this.inc;
-        room = new Room(this.server, id, filter);
-        this.rooms[room.id] = room;
+    createRoom: function(gameOptions) {
+        var room, id = Util.randomStr(5);
+        room = new Room(this.server, id, gameOptions);
+        this.rooms[room.key] = room;
         return room;
     },
 
     /**
-     * @param {Object.<string, boolean>} filter
+     * @param {Object.<string, number|boolean>} gameOptions
      * @return {?Room}
      * @private
      */
-    _findRoom: function(filter) {
+    _findRoom: function(gameOptions) {
         for (var k in this.rooms) {
             if (this.rooms.hasOwnProperty(k)) {
                 var room = this.rooms[k];
-                if (this._isFilterMatch(filter, room)) {
+                if (this._isFilterMatch(gameOptions, room)) {
                     return room;
                 }
             }
@@ -74,14 +74,25 @@ RoomManager.prototype = {
     },
 
     /**
-     * @param {Object.<string, boolean>} filter
+     * @param {Object.<string, number|boolean>} gameOptions
      * @param {Room} room
      * @return {boolean}
      * @private
      */
-    _isFilterMatch: function(filter, room) {
-        var eqFriendly = room.friendly === filter['friendly'];
-        return (room.pub && eqFriendly && !room.isFull() && !room.inProgress);
+    _isFilterMatch: function(gameOptions, room) {
+        var field = form.FIELD, roomOptions = room.options;
+        switch (true) {
+            case room.isFull():
+            case room.inProgress:
+            case roomOptions.priv:
+            case roomOptions.difficulty !== gameOptions[field.DIFFICULTY]:
+            case roomOptions.powerups   !== gameOptions[field.POWERUPS]:
+            case roomOptions.xss        !== gameOptions[field.XSS]:
+            case roomOptions.maxPlayers   > gameOptions[field.MAX_PLAYERS]:
+                return false;
+            default:
+                return true;
+        }
     }
 
 };

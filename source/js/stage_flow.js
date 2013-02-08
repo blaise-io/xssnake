@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Util*/
+/*globals XSS*/
 'use strict';
 
 /**
@@ -23,21 +23,18 @@ StageFlow.prototype = {
     _prevStages: [],
 
     /** @type {Object} */
-    _stageInits: {},
-
-    getNamedChoices: function() {
-    },
+    stageInstances: {},
 
     /**
      * @param {function()} stage
      * @return {StageInterface}
      */
     getStage: function(stage) {
-        var key = Util.getKey(XSS.stages, stage);
-        if (!this._stageInits[key]) {
-            this._stageInits[key] = stage();
+        var key = XSS.util.getKey(XSS.stages, stage);
+        if (!this.stageInstances[key]) {
+            this.stageInstances[key] = stage();
         }
-        return this._stageInits[key];
+        return this.stageInstances[key];
     },
 
     /**
@@ -62,7 +59,6 @@ StageFlow.prototype = {
         this.stage.destructStage();
 
         // Remove everything
-        delete XSS.shapes.instruction;
         delete XSS.shapes.stage;
 
         // Replace by animation
@@ -90,11 +86,7 @@ StageFlow.prototype = {
     },
 
     setStageShapes: function() {
-        var instruction = '';// XSS.UC_ENTER_KEY; this.stage.getInstruction();
         XSS.shapes.stage = this.stage.getShape();
-        XSS.shapes.instruction = XSS.font.shape(
-            instruction, XSS.PIXELS_H - XSS.font.width(instruction + ' '), XSS.PIXELS_V - 10
-        );
     },
 
     /**

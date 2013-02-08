@@ -6,6 +6,7 @@
 }
 
 * {
+    font: 8px 'xssnake', monospace;
     margin: 0;
     padding: 0;
 }
@@ -18,13 +19,13 @@ html, body, input {
 }
 
 body {
-    background: #000;
+    background: #222;
+    color: yellow;
     box-shadow: inset 0 4px 4px rgba(0, 0, 0, .15);
 }
 
-span {
-    /* Font preloader for Chrome */
-    font: 8px xssnake, sans-serif;
+body:after {
+    content: 'This triggers Chrome font-face loading...';
     position: absolute;
     left: -999em;
 }

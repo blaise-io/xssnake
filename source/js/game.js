@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Shape, Util */
+/*globals XSS, ClientSnake, ClientLevel, Shape */
 'use strict';
 
 /***
@@ -14,7 +14,6 @@ function Game(index, levelID, names) {
     XSS.stageflow.stage.destructStage();
     XSS.shapes.stage = null;
     XSS.shapes.header = null;
-    XSS.shapes.instruction = null;
     XSS.shapes.border = null;
 
     /** @type {Level} */

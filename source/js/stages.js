@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true, evil:true*/
-/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Shape, Util*/
+/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Shape*/
 
 'use strict';
 
@@ -10,7 +10,7 @@ XSS.stages = {
      */
     main: function() {
         var menu,
-            name = Util.storage('name'),
+            name = XSS.util.storage('name'),
             welcome = name ?
                       'WLCM BCK ' + name.toUpperCase() + '!' :
                       'WELCOME STRANGER!!';
@@ -39,7 +39,7 @@ XSS.stages = {
         var form, next, field = XSS.form.FIELD, value = XSS.form.VALUE;
 
         next = function(values) {
-            if (values[field.XSS] === value.YES) {
+            if (values[field.XSS]) {
                 return XSS.stages.captcha;
             }
             return XSS.stages.startGame
@@ -47,15 +47,15 @@ XSS.stages = {
 
         form = new Form('GAME OPTIONS', next);
 
-        form.addField(field.LEVEL_DIFFICULTY, 'LEVEL DIFFICULTY', [
+        form.addField(field.DIFFICULTY, 'LEVEL DIFFICULTY', [
             [value.MEDIUM, 'SNAKE'],
             [value.HARD, 'PYTHON'],
             [value.EASY, 'WORM']
         ]);
 
         form.addField(field.POWERUPS, 'POWER-UPS', [
-            [value.YES, 'YES'],
-            [value.NO, 'NO']
+            [true, 'YES'],
+            [false, 'NO']
         ]);
 
         // Trololol
@@ -69,13 +69,13 @@ XSS.stages = {
         ]);
 
         form.addField(field.PRIVATE, 'PRIVATE', [
-            [value.NO, 'NO'],
-            [value.YES, 'YES']
+            [false, 'NO'],
+            [true, 'YES']
         ]);
 
         form.addField(field.XSS, 'XSS ' + XSS.UC_SKULL, [
-            [value.NO, 'NO'],
-            [value.YES, 'YES']
+            [false, 'NO'],
+            [true, 'YES']
         ]);
 
         form.addField(field.MAX_PLAYERS, 'MAX PLAYERS', [
@@ -96,8 +96,8 @@ XSS.stages = {
         var challenges, challenge, intro, stage, str, digit,
             nextstage = XSS.stages.startGame;
 
-        str = Util.randomStr().substr(0, 3).toUpperCase();
-        digit = String(Util.randomBetween(0, 5));
+        str = XSS.util.randomStr().substr(0, 3).toUpperCase();
+        digit = String(XSS.util.randomBetween(0, 5));
 
         challenges = [
             'document.scripts[0].tagName',
@@ -121,7 +121,7 @@ XSS.stages = {
             'var A=%d;A--;--A;A-=1; A;'
         ];
 
-        challenge = String(Util.randomItem(challenges));
+        challenge = String(XSS.util.randomItem(challenges));
         challenge = challenge.replace(/%s/g, str);
         challenge = challenge.replace(/%d/g, digit);
 
@@ -146,11 +146,11 @@ XSS.stages = {
     themesScreen: function() {
         var setTheme, menu = new SelectMenu('theme', 'THEEEMES');
 
-        menu.selected = parseInt(Util.storage('theme'), 10) || 0;
+        menu.selected = parseInt(XSS.util.storage('theme'), 10) || 0;
 
         setTheme = function(index) {
             XSS.canvas.setTheme(XSS.themes[index]);
-            Util.storage('theme', index);
+            XSS.util.storage('theme', index);
         };
 
         for (var i = 0, m = XSS.themes.length; i < m; i++) {
@@ -270,7 +270,7 @@ XSS.stages = {
         if (error) {
             text = error;
         } else {
-            text = Util.randomItem(wits);
+            text = XSS.util.randomItem(wits);
             text = text.replace(/%s/g, value);
             duration = Math.max(text.length * 30, 500);
             setTimeout(function() {

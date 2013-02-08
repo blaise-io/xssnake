@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Snake, Util*/
+/*globals XSS, Shape, Snake*/
 'use strict';
 
 /**
@@ -43,7 +43,7 @@ function ClientSnake(index, local, name, location, direction) {
 ClientSnake.prototype = Object.create(Snake.prototype);
 
 /** @lends {ClientSnake.prototype} */
-Util.extend(ClientSnake.prototype, {
+XSS.util.extend(ClientSnake.prototype, {
 
     destruct: function() {
         this.removeControls();
@@ -81,14 +81,14 @@ Util.extend(ClientSnake.prototype, {
         amount = amount || 3;
 
         var rand = function() {
-            return Util.randomBetween(-12, 12);
+            return XSS.util.randomBetween(-12, 12);
         };
 
         for (var i = 0; i <= duration * amount; i += duration) {
             var shape, name, h = this.head();
             shape = XSS.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
             shape.clearPx = true;
-            name = 'AL_' + Util.randomStr();
+            name = 'AL_' + XSS.util.randomStr();
             XSS.shapes[name] = shape.lifetime(i, duration + i);
         }
     },

@@ -1,12 +1,11 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Util*/
+/*globals XSS*/
 'use strict';
 
 /**
- * Client Util extension
- * @lends {Util}
+ * Client XSS.util extension
  */
-Util.extend(Util, {
+XSS.util.extend(XSS.util, {
 
     /**
      * @param {string} url
@@ -17,7 +16,7 @@ Util.extend(Util, {
         script.src = url;
         script.onload = callback;
         script.onerror = function() {
-            Util.instruct('Error loading ' + url);
+            XSS.util.instruct('Error loading ' + url);
         };
         document.querySelector('head').appendChild(script);
     },
@@ -30,6 +29,7 @@ Util.extend(Util, {
         var shape = XSS.font.shape(
                 str, XSS.PIXELS_H - XSS.font.width(str) - 3, XSS.PIXELS_V - 10
             );
+        shape.clearBBox = true;
         if (duration) {
             shape.lifetime(0, duration);
         }

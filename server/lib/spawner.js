@@ -1,7 +1,6 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-/** @type {Util} */
 var Util = require('../shared/util.js');
 var events = require('../shared/events.js');
 

@@ -3,7 +3,6 @@
 
 var events = require('../shared/events.js');
 var Room = require('./room.js');
-/** @type {Util} */
 var Util = require('../shared/util.js');
 
 /**

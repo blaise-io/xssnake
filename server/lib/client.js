@@ -17,8 +17,8 @@ function Client(id, server, socket) {
     this.name = null;
     /** @type {Snake} */
     this.snake = null;
-    /** @type {?number} */
-    this.roomid = null;
+    /** @type {?string} */
+    this.roomKey = null;
     /** @type {EventHandler} */
     this.eventHandler = null;
     /** @type {boolean} */

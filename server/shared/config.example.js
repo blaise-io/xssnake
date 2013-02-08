@@ -4,8 +4,8 @@
 
 module.exports = {
     SERVER_PORT        : 80,
-    SERVER_ENDPOINT    : 'http://localhost:80',
-    SOCKET_IO_JS       : 'http://localhost:80/socket.io/socket.io.js',
+    SERVER_ENDPOINT    : 'http://localhost',
+    SOCKET_IO_JS       : 'http://localhost/socket.io/socket.io.js',
 
     ROOM_CAPACITY      : 6,
 

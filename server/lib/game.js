@@ -9,7 +9,6 @@ var events = require('../shared/events.js');
 var Level = require('../shared/level.js');
 var Snake = require('../shared/snake.js');
 var Powerup = require('./powerup.js');
-/** @type {Util} */
 var Util = require('../shared/util.js');
 
 /**
@@ -52,7 +51,7 @@ Game.prototype = {
     },
 
     start: function() {
-        console.log('___ NEW ROUND IN ROOM ' + this.room.id + ' ___');
+        console.log('___ NEW ROUND IN ROOM ' + this.room.key + ' ___');
         this.room.emit(events.CLIENT_GAME_START, []);
 
         this.room.inProgress = true;

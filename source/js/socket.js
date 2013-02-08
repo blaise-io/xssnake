@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Client, Room, Game, Apple, Util, Powerup, StageFlow*/
+/*globals XSS, Client, Room, Game, Apple, Powerup, StageFlow*/
 
 'use strict';
 
@@ -10,7 +10,7 @@
  */
 function Socket(callback) {
     var options = {'max reconnection attempts': 4};
-    Util.loadScript(XSS.config.SOCKET_IO_JS, function() {
+    XSS.util.loadScript(XSS.config.SOCKET_IO_JS, function() {
         this.socket = window['io'].connect(XSS.config.SERVER_ENDPOINT, options);
         this._bindEvents(callback);
     }.bind(this));
@@ -103,7 +103,7 @@ Socket.prototype = {
      */
     roomIndex: function(data) {
         if (!XSS.room) {
-            XSS.room = new Room(data[0], data[1], data[2], data[3]);
+            XSS.room = new Room(data[0], data[1], data[2], data[3], data[4]);
         } else {
             XSS.room.update.apply(XSS.room, data);
         }

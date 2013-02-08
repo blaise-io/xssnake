@@ -2,29 +2,27 @@
 'use strict';
 
 var Game = require('./game.js');
+var form = require('../shared/form.js');
 var events = require('../shared/events.js');
 var config = require('../shared/config.js');
 var levels = require('../shared/levels.js');
 
 /**
  * @param {Server} server
- * @param {number} id
- * @param {Object} filter
+ * @param {string} key
+ * @param {Object} gameOptions
  * @constructor
  */
-function Room(server, id, filter) {
+function Room(server, key, gameOptions) {
     this.server = server;
 
-    this.id = id;
+    this.key = key;
     this.clients = [];
     this.points = [];
     this.inProgress = false;
-
-    this.pub      = !!filter['public'];
-    this.friendly = !!filter['friendly'];
-    this.capacity = config.ROOM_CAPACITY;
-
     this.level = 0;
+
+    this.options = this.cleanGameOptions(gameOptions);
     this.game = new Game(this, this.level);
 
     this._disconnected = [];
@@ -53,8 +51,44 @@ Room.prototype = {
     emitState: function() {
         var names = this.names();
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            var data = [i, this.level, names, this.points];
+            var data = [i, this.key, this.level, names, this.points];
             this.clients[i].emit(events.CLIENT_ROOM_INDEX, data);
+        }
+    },
+
+    /**
+     * @param gameOptions
+     * @return {{
+     *    maxPlayers: number,
+     *    difficulty: number,
+     *    powerups: boolean,
+     *    priv: boolean,
+     *    xss: boolean
+     * }}
+     */
+    cleanGameOptions: function(gameOptions) {
+        var value = form.VALUE,
+            field = form.FIELD,
+
+            maxPlayers = gameOptions[field.MAX_PLAYERS],
+            difficulty = gameOptions[field.DIFFICULTY],
+            powerups   = !!gameOptions[field.POWERUPS],
+            priv       = !!gameOptions[field.PRIVATE],
+            xss        = !!gameOptions[field.XSS];
+
+        if (-1 === [2,3,4,5,6].indexOf(maxPlayers)) {
+            maxPlayers = config.ROOM_CAPACITY;
+        }
+
+        if (-1 === [value.EASY, value.MEDIUM, value.HARD].indexOf(difficulty)) {
+            difficulty = value.MEDIUM
+        }
+        return {
+            maxPlayers: maxPlayers,
+            difficulty: difficulty,
+            powerups  : powerups,
+            priv      : priv,
+            xss       : xss
         }
     },
 
@@ -64,8 +98,8 @@ Room.prototype = {
      */
     join: function(client) {
         var index = this.clients.push(client) - 1;
-        client.socket.join(this.id);
-        client.roomid = this.id;
+        client.socket.join(this.key);
+        client.roomKey = this.key;
         this.points[index] = 0;
 
         this.emitState();
@@ -133,7 +167,7 @@ Room.prototype = {
      * @return {boolean}
      */
     isFull: function() {
-        return (this.clients.length === this.capacity);
+        return (this.clients.length === this.options.maxPlayers);
     },
 
     /**
@@ -153,7 +187,7 @@ Room.prototype = {
      * @param {*} data
      */
     emit: function(name, data) {
-        this.server.io.sockets.in(this.id).emit(name, data);
+        this.server.io.sockets.in(this.key).emit(name, data);
     },
 
     /**
@@ -184,7 +218,7 @@ Room.prototype = {
      * @param {Client} exclude
      */
     broadcast: function(name, data, exclude) {
-        exclude.socket.broadcast.to(this.id).emit(name, data);
+        exclude.socket.broadcast.to(this.key).emit(name, data);
     },
 
     /**

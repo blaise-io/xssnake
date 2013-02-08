@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Font, Util*/
+/*globals XSS, Shape, Font*/
 'use strict';
 
 
@@ -157,7 +157,7 @@ Form.prototype = {
      * @param {number} delta
      */
     selectField: function(delta) {
-        this.focus = Util.normArrIndex(this.focus + delta, this.fields);
+        this.focus = XSS.util.normArrIndex(this.focus + delta, this.fields);
     },
 
     /**
@@ -166,7 +166,7 @@ Form.prototype = {
     selectOption: function(delta) {
         var focusField = this.fields[this.focus];
         if (focusField) {
-            this.selected[this.focus] = Util.normArrIndex(
+            this.selected[this.focus] = XSS.util.normArrIndex(
                 this.selected[this.focus] + delta,
                 focusField.options
             );

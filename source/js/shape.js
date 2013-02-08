@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, BoundingBox, Util*/
+/*globals XSS, BoundingBox*/
 
 'use strict';
 
@@ -212,7 +212,7 @@ Shape.prototype = {
 
             // Stop time reached
             if (end && progress >= end) {
-                key = Util.getKey(XSS.shapes, this);
+                key = XSS.util.getKey(XSS.shapes, this);
                 if (key) {
                     XSS.shapes[key] = null;
                 }

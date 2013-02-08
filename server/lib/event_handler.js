@@ -2,6 +2,7 @@
 'use strict';
 
 var events = require('../shared/events.js');
+var form = require('../shared/form.js');
 
 /**
  * @param {Object} server
@@ -59,7 +60,7 @@ EventHandler.prototype = {
      */
     _disconnect: function() {
         var room, client = this.client;
-        room = this.server.roomManager.rooms[client.roomid];
+        room = this.server.roomManager.rooms[client.roomKey];
         if (room) {
             // If client is in a room, we cannot clean up immediately
             // because we need data to remove the client from the room
@@ -71,13 +72,13 @@ EventHandler.prototype = {
     },
 
     /**
-     * @param {Object} data Object with keys name, pub, friendly
+     * @param {Object} gameOptions
      * @private
      */
-    _matchRoom: function(data) {
+    _matchRoom: function(gameOptions) {
         var room, client = this.client, server = this.server;
-        client.name = data.name;
-        room = server.roomManager.getPreferredRoom(data);
+        client.name = gameOptions[form.FIELD.NAME];
+        room = server.roomManager.getPreferredRoom(gameOptions);
         room.join(client);
     },
 
@@ -122,7 +123,7 @@ EventHandler.prototype = {
      * @private
      */
     _clientRoom: function(client) {
-        return this.server.roomManager.room(client.roomid);
+        return this.server.roomManager.room(client.roomKey);
     },
 
     /**
@@ -131,7 +132,7 @@ EventHandler.prototype = {
      * @private
      */
     _clientGame: function(client) {
-        return (client.roomid) ? this._clientRoom(client).game : null;
+        return (client.roomKey) ? this._clientRoom(client).game : null;
     }
 
 };

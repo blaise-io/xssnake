@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Util, InputField*/
+/*globals XSS, InputField*/
 'use strict';
 
 /** @typedef {{author:?string,body:string}} */
@@ -216,7 +216,7 @@ Chat.prototype = {
             shapes['CM' + i] = this._getMessageShape(i, messages[i]);
         }
 
-        Util.extend(XSS.shapes, shapes);
+        XSS.util.extend(XSS.shapes, shapes);
         return shapes;
     }
 
