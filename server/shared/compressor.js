@@ -3,7 +3,8 @@
 
 /**
  * Compress and decompress large arrays containing numbers up to 92*92.
- * Converts an array into string using a variant of base92 technique.
+ * Applies preprocessing for sequential numbers, and a base 92 encode.
+ * Compression is somewhere around 25% - 75%.
  * @constructor
  */
 function Compressor() {
@@ -53,7 +54,7 @@ Compressor.prototype = {
         for (var i = 0, m = moduli.length; i < m; i++) {
             decompressed.push(
                 divisions[i] * base + map.indexOf(moduli.charAt(i))
-            )
+            );
         }
 
         return decompressed;
@@ -122,7 +123,7 @@ Compressor.prototype = {
                 case 34: // Double Quote
                 case 36: // Dollar Sign (special meaning in String.replace)
                 case 39: // Single Quote
-                case 47: // Reserve slash for separating divisions and modulus
+                case 47: // Reserve slash for separating divisions and moduli
                 case 92: // Backslash
                     break;
                 default:
