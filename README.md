@@ -5,7 +5,7 @@ Javascript in the browser of other players.
 
 The game is still in development and currently not yet deployed.
 
-![XSSNAKE](http://i.imgur.com/scMK2.png)
+![XSSNAKE](http://i.imgur.com/Axwt9ND.png)
 
 XSSNAKE is written in HTML5 and Javascript. It works in all browsers that
 support Canvas and Websocket. XSSNAKE uses Node.js for the server,
