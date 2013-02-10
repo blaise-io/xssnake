@@ -76,7 +76,7 @@ Room.prototype = {
             priv       = !!gameOptions[field.PRIVATE],
             xss        = !!gameOptions[field.XSS];
 
-        if (-1 === [2,3,4,5,6].indexOf(maxPlayers)) {
+        if (-1 === [1,2,3,4,5,6].indexOf(maxPlayers)) {
             maxPlayers = config.ROOM_CAPACITY;
         }
 

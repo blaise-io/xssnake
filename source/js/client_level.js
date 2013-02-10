@@ -8,9 +8,13 @@
  * @constructor
  */
 function ClientLevel(levelID) {
+    var decompress = XSS.compressor.decompress.bind(XSS.compressor);
     this.level = XSS.levels[levelID];
-    this.level.walls = this.decompress(this.level.walls);
-    this.level.unreachables = this.decompress(this.level.unreachables);
+
+    this.level.spawns       = decompress(this.level.spawns);
+    this.level.directions   = decompress(this.level.directions);
+    this.level.unreachables = decompress(this.level.unreachables);
+    this.level.walls        = decompress(this.level.walls);
 }
 
 ClientLevel.prototype = Object.create(Level.prototype);

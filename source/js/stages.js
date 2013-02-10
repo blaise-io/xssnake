@@ -9,11 +9,12 @@ XSS.stages = {
      * @return {SelectStage}
      */
     main: function() {
-        var menu,
-            name = XSS.util.storage('name'),
-            welcome = name ?
-                      'WLCM BCK ' + name.toUpperCase() + '!' :
-                      'WELCOME STRANGER!!';
+        var menu, name, welcome;
+
+        name = XSS.util.storage('name');
+        welcome = name ?
+                  'WLCM BCK ' + name.toUpperCase() + '!' :
+                  'WELCOME STRANGER!!';
 
         menu = new SelectMenu('main', welcome);
         menu.addOption(null, XSS.stages.inputName,
@@ -80,6 +81,7 @@ XSS.stages = {
 
         form.addField(field.MAX_PLAYERS, 'MAX PLAYERS', [
             [6],
+            [1],
             [2],
             [3],
             [4],

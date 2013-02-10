@@ -3,6 +3,7 @@
 
 var fs = require('fs'),
     util = require('util'),
+    Compressor = require('../server/shared/compressor'),
     LevelImage = require('./lib/level_image.js');
 
 var levelTplFile = __dirname + '/../source/templates/levels.js.tpl';
@@ -15,32 +16,39 @@ var levels = [];
 var done = 0;
 var total = 0;
 
-function whiteSpaceOCD(str) {
-    str = str.replace(/([,:])/g, '$1 '); // Normalize whitespace
-    str = str.replace(/\s+/g, ' '); // Normalize whitespace
-    str = str.replace(/([\[\{]) /g, '$1'); // No spaces following opening bracket
-    str = str.replace(/ ([\]\}])/g, '$1'); // No spaces before closing bracket
-    str = str.replace(/\{/g, '\n    ' + '{'); // Start each level on a new line
-    str = str.replace(/\]$/g, '\n' + ']'); // Closing bracket on new line
+var compressor = new Compressor();
+
+function formattingOCD(str) {
+    str = str.replace(/"/g, '\''); // Double quotes to single
+    str = str.replace(/\n\s{8}/g, ''); // Put objects one one huge line
+    str = str.replace(/\n\s{4}\}/g, '}'); // Put object closing bracket on same line
+    str = str.replace(/\n\s{4}\{ /g, '\n    {'); // Remove a space...
     return str;
 }
 
 function setlevel(file, index) {
     void(new LevelImage(file, function(data) {
         var template, levelsStr;
+
+        for (var k in data) {
+            if (data.hasOwnProperty(k) && typeof data[k] === 'object') {
+                data[k] = compressor.compress(data[k]);
+            }
+        }
+
         levels[index] = data;
 
         // Got all levels, write to file
         if (++done === total) {
-            levelsStr = JSON.stringify(levels);
-            levelsStr = whiteSpaceOCD(levelsStr);
+            levelsStr = JSON.stringify(levels, null, 4);
 
             // Don't quote property names, conflicts with Closure Compiler.
-            levelsStr = levelsStr.replace(/"([\w]+)"(:)/g, '$1$2');
+            levelsStr = levelsStr.replace(/"([\w]+)"(:)/g, ' $1:');
+            levelsStr = formattingOCD(levelsStr);
 
             template = fs.readFileSync(levelTplFile, 'utf-8');
-            template = template.replace('%LEVELS%', levelsStr);
-            template = template.replace('%DATE%', new Date().toUTCString());
+            template = template.replace('%%LEVELS%%', levelsStr);
+            template = template.replace('%%DATE%%', new Date().toUTCString());
 
             fs.writeFile(jsOutputFile, template);
 

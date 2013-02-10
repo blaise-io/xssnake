@@ -9,32 +9,11 @@
  */
 function Level(levelID, levelData) {
     this.level = levelData[levelID];
-    this.level.walls = this.decompress(this.level.walls);
-    this.level.unreachables = this.decompress(this.level.unreachables);
 }
 
 module.exports = Level;
 
 Level.prototype = {
-
-    /**
-     * Decompress level array
-     * @param {Array.<number|Array>} arr
-     * @return {Array.<number>}
-     */
-    decompress: function(arr) {
-        var decompressed = [];
-        for (var i = 0, m = arr.length; i < m; i++) {
-            if (typeof arr[i] === 'number') {
-                decompressed.push(arr[i]);
-            } else {
-                for (var ii = 0; ii <= arr[i][1]; ii++) {
-                    decompressed.push(arr[i][0] + ii);
-                }
-            }
-        }
-        return decompressed;
-    },
 
     /**
      * @param {number} x

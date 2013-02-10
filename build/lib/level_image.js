@@ -160,21 +160,22 @@ LevelImage.prototype = {
      * @return {Array.<number|Array>}
      */
     compress: function(arr) {
-        var compressed = [], start = arr[0], len = 0;
-        for (var i = 1, m = arr.length; i <= m; i++) {
-            if (arr[i] - arr[i-1] === 1) {
-                len++;
-            } else {
-                if (len) {
-                    compressed.push([start, len]);
-                } else {
-                    compressed.push(start);
-                }
-                start = arr[i];
-                len = 0;
-            }
-        }
-        return compressed;
+        return arr;
+//        var compressed = [], start = arr[0], len = 0;
+//        for (var i = 1, m = arr.length; i <= m; i++) {
+//            if (arr[i] - arr[i-1] === 1) {
+//                len++;
+//            } else {
+//                if (len) {
+//                    compressed.push([start, len]);
+//                } else {
+//                    compressed.push(start);
+//                }
+//                start = arr[i];
+//                len = 0;
+//            }
+//        }
+//        return compressed;
     }
 
 };

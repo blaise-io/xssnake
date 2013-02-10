@@ -8,7 +8,7 @@ XSS.themes = [
         desc : 'Default theme',
         bg   : '#111',
         off  : '#222',
-        on   : '#dd0'
+        on   : '#dc0'
     },
     {
         title: 'Vampire Campfire',
