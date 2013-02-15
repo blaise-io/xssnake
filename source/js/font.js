@@ -68,7 +68,7 @@ Font.prototype = {
      * @param {number=} x
      * @param {number=} y
      * @param {Object=} options
-     * @return {XSS.ShapePixels}
+     * @return {ShapePixels}
      */
     pixels: function(str, x, y, options) {
         return this.shape.apply(this, arguments).pixels;
@@ -190,17 +190,17 @@ Font.prototype = {
 
     /**
      * @param {string} chr
-     * @return {Object}
+     * @return {{width: number, pixels: ShapePixels}|null}
      * @private
      */
     _getChrProperties: function(chr) {
-        var data, pixels = [], width = 0, blurry = 0, valid,
+        var data, pixels = new ShapePixels(), width = 0, len = 0, blurry = 0, valid,
             w = Font.MAX_WIDTH,
             h = Font.MAX_HEIGHT;
 
         // Handle whitespace characters
         if (chr.match(/\s/)) {
-            return {width: 1, pixels: []};
+            return {width: 1, pixels: pixels};
         }
 
         this._ctx.fillStyle = '#000';
@@ -215,14 +215,15 @@ Font.prototype = {
                 var seq = i / 4,
                     x = seq % w,
                     y = Math.floor(seq / w);
-                pixels.push([x, y]);
+                pixels.add(x, y);
+                len++;
                 width = Math.max(x, width);
             } else if (data[i]) {
                 blurry++;
             }
         }
 
-        valid = pixels.length && blurry / pixels.length <= Font.BLURRY_TRESHOLD;
+        valid = len && blurry / len <= Font.BLURRY_TRESHOLD;
         return (valid) ? {width: width, pixels: pixels} : null;
     }
 

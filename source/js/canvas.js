@@ -118,27 +118,27 @@ Canvas.prototype = {
      * @param {BoundingBox} bbox
      */
     _paintShape: function(context, shape, bbox) {
-        var pixels = shape.pixels;
         context.fillStyle = this.theme.on;
-        for (var i = 0, m = pixels.length; i < m; i++) {
-            this._drawPixel(context, pixels[i], bbox.x1, bbox.y1, shape.clearPx);
-        }
+        shape.pixels.each(function(x, y) {
+            this._drawPixel(context, x, y, bbox.x1, bbox.y1, shape.clearPx);
+        }.bind(this));
     },
 
     /**
      * @param {Object} context
-     * @param {XSS.ShapePixel} pixel
+     * @param {number} x
+     * @param {number} y
      * @param {number} offsetX
      * @param {number} offsetY
      * @param {boolean} clear
      * @suppress {checkTypes}
      * @private
      */
-    _drawPixel: function(context, pixel, offsetX, offsetY, clear) {
+    _drawPixel: function(context, x, y, offsetX, offsetY, clear) {
         var pixelSize = this.pixelSize,
             tileSize = this.tileSize;
-        offsetX = pixel[0] * tileSize - offsetX;
-        offsetY = pixel[1] * tileSize - offsetY;
+        offsetX = x * tileSize - offsetX;
+        offsetY = y * tileSize - offsetY;
         if (clear) {
             context.clearRect(offsetX, offsetY, pixelSize, pixelSize);
         }

@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, Compressor */
+/*globals PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, ClientLevel */
 'use strict';
 
 var XSS = {}, module = {};
@@ -25,8 +25,9 @@ XSS.main = function() {
     XSS.transform  = new Transform();
     XSS.font       = new Font();
     XSS.stageflow  = new StageFlow();
-    XSS.compressor = new Compressor();
 
+    // Preloading
+    ClientLevel.prototype.generateLevelCache();
 };
 
 XSS.check = window.setInterval(function() {

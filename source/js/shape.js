@@ -6,20 +6,17 @@
 /** @typedef {Array.<number>} */
 XSS.ShapePixel = null;
 
-/** @typedef {Array.<XSS.ShapePixel>} */
-XSS.ShapePixels = null;
-
 /** @typedef {{canvas: *, bbox: BoundingBox}} */
 XSS.ShapeCache = null;
 
 /**
  * Shape
  * @constructor
- * @param {...Array} varArgs
+ * @param {...ShapePixels} varArgs
  */
 function Shape(varArgs) {
-    /** @type {XSS.ShapePixels} */
-    this.pixels = [];
+    /** @type {ShapePixels} */
+    this.pixels = new ShapePixels();
 
     /** @type {boolean} */
     this.enabled = true;
@@ -99,17 +96,22 @@ Shape.prototype = {
      * @return {Shape}
      */
     invert: function(bbox) {
-        var pixels = this.pixels.slice(), inverted = [];
+        var pixels = this.pixels, inverted;
+
+        inverted = new ShapePixels();
         bbox = bbox || this.bbox();
+
         for (var x = bbox.x1; x < bbox.x2; x++) {
             for (var y = bbox.y1; y < bbox.y2; y++) {
-                inverted.push([x, y]);
+                if (!pixels.has(x, y)) {
+                    inverted.add(x, y);
+                }
             }
         }
+
         this.pixels = inverted;
-        this.remove(pixels);
-        this.uncache();
-        return this;
+
+        return this.uncache();
     },
 
     /**
@@ -122,40 +124,34 @@ Shape.prototype = {
     },
 
     /**
-     * @param {...Array} varArgs
+     * @param {...ShapePixels} varArgs
      * @return {Shape}
      */
     set: function(varArgs) {
-        this.pixels = [];
+        this.pixels = new ShapePixels();
         return this.add.apply(this, arguments);
     },
 
     /**
-     * @param {...Array} varArgs
+     * @param {...ShapePixels} varArgs
      * @return {Shape}
      */
     add: function(varArgs) {
+        var add = this.pixels.add.bind(this.pixels);
         for (var i = 0, m = arguments.length; i < m; i++) {
-            for (var ii = 0, mm = arguments[i].length; ii < mm; ii++) {
-                this.pixels.push(arguments[i][ii]);
-            }
+            arguments[i].each(add);
         }
         return this.uncache();
     },
 
     /**
-     * @param {XSS.ShapePixels} pixels
+     * @param {...ShapePixels} pixels
      * @return {Shape}
      */
     remove: function(pixels) {
-        for (var i = 0, m = pixels.length; i < m; i++) {
-            for (var ii = 0, mm = this.pixels.length; ii < mm; ii++) {
-                if (pixels[i][0] === this.pixels[ii][0] &&
-                    pixels[i][1] === this.pixels[ii][1]) {
-                    this.pixels.splice(ii, 1);
-                    break;
-                }
-            }
+        var remove = this.pixels.remove.bind(this.pixels);
+        for (var i = 0, m = arguments.length; i < m; i++) {
+            arguments[i].each(remove);
         }
         return this.uncache();
     },

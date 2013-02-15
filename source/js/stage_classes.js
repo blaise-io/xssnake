@@ -99,7 +99,7 @@ InputStage.prototype = {
      * @param {number} top
      */
     inputSubmit: function(error, value, top) {
-        if (!error && value) {
+        if (!error && value && top) {
             XSS.stageflow.switchStage(this.nextStage);
         }
     },

@@ -34,8 +34,7 @@ Level.prototype = {
      * @return {Array.<number>}
      */
     getSpawn: function(playerID) {
-        var pos = this.level.spawns[playerID];
-        return this.seqToXY(pos);
+        return this.level.spawns[playerID];
     },
 
     /**
@@ -51,9 +50,11 @@ Level.prototype = {
      * @return {Array.<number>}
      */
     getEmptyLocation: function(locations) {
-        var m = this.level.width * this.level.height;
         while (true) {
-            var location = this.seqToXY(Math.floor(Math.random() * m));
+            var location = [
+                Math.floor(Math.random() * this.level.width),
+                Math.floor(Math.random() * this.level.height)
+            ];
             if (this.isEmptyLocation(locations, location)) {
                 return location;
             }
@@ -100,22 +101,7 @@ Level.prototype = {
      * @return {boolean}
      */
     innerWall: function(x, y) {
-        var seq = this.xyToSeq(x, y);
-        return this.innerWallSeq(seq);
-    },
-
-    /**
-     * @param {number} seq
-     * @return {boolean}
-     */
-    innerWallSeq: function(seq) {
-        var wall = this.level.walls;
-        for (var i = 0, m = wall.length; i < m; i++) {
-            if (seq === wall[i]) {
-                return true;
-            }
-        }
-        return false;
+        return this.hasXY(this.level.walls, x, y);
     },
 
     /**
@@ -124,33 +110,25 @@ Level.prototype = {
      * @return {boolean}
      */
     isUnreachable: function(x, y) {
-        var unreachables = this.level.unreachables;
-        for (var i = 0, m = unreachables.length; i < m; i++) {
-            if (this.xyToSeq(x, y) === unreachables[i]) {
-                return true;
+        return this.hasXY(this.level.unreachables, x, y);
+    },
+
+    /**
+     * @param {Array.<Array.<number>>} obj
+     * @param x
+     * @param y
+     * @return {boolean}
+     */
+    hasXY: function(obj, x, y) {
+        var row = obj[y];
+        if (typeof row !== 'undefined') {
+            for (var i = 0, m = row.length; i < m; i++) {
+                if (x === row[i]) {
+                    return true;
+                }
             }
         }
         return false;
-    },
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {number}
-     */
-    xyToSeq: function(x, y) {
-        return x + this.level.width * y;
-    },
-
-    /**
-     * @param {number} seq
-     * @return {Array.<number>}
-     */
-    seqToXY: function(seq) {
-        return [
-            seq % this.level.width,
-            Math.floor(seq / this.level.width)
-        ];
     }
 
 };

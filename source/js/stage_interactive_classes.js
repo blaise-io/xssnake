@@ -232,7 +232,7 @@ Form.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @return {XSS.ShapePixels}
+     * @return {ShapePixels}
      * @private
      */
     _getHeaderPixels: function(x, y) {

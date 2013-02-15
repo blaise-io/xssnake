@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape*/
+/*globals XSS, Shape, ShapePixels*/
 'use strict';
 
 /**
@@ -31,12 +31,13 @@ ShapeGenerator.prototype = {
      * @param {number} y0
      * @param {number} x1
      * @param {number} y1
-     * @return {XSS.ShapePixels}
+     * @return {ShapePixels}
      */
     line: function(x0, y0, x1, y1) {
         var pixels, dx, dy, sx, sy, err, errTmp;
 
-        pixels = [];
+        pixels = new ShapePixels();
+
         dx = Math.abs(x1 - x0);
         dy = Math.abs(y1 - y0);
         sx = x0 < x1 ? 1 : -1;
@@ -44,7 +45,7 @@ ShapeGenerator.prototype = {
         err = dx - dy;
 
         while (true) {
-            pixels.push([x0, y0]);
+            pixels.add(x0, y0);
             if (x0 === x1 && y0 === y1) {
                 break;
             }
@@ -192,12 +193,13 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     header: function(x, y) {
+        var shape, welcome = XSS.font.pixels('<XSSNAKE>');
+
         y = y || 16;
-        var welcome = XSS.font.pixels('<XSSNAKE>');
-        return new Shape(
-            XSS.transform.zoomX4(welcome, x, y, true),
-            XSS.font.pixels((new Array(43)).join('*'), x, y + 28)
-        );
+        shape = new Shape(XSS.transform.zoomX4(welcome, x, y, true));
+        shape.add(XSS.font.pixels((new Array(43)).join('*'), x, y + 28));
+
+        return shape;
     }
 
 };

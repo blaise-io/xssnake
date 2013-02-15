@@ -1,20 +1,14 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Level, Shape*/
+/*globals XSS, Level, Shape, LevelParser*/
 'use strict';
 
 /**
- * @param {number} levelID
+ * @param {number} id
  * @extends {Level}
  * @constructor
  */
-function ClientLevel(levelID) {
-    var decompress = XSS.compressor.decompress.bind(XSS.compressor);
-    this.level = XSS.levels[levelID];
-
-    this.level.spawns       = decompress(this.level.spawns);
-    this.level.directions   = decompress(this.level.directions);
-    this.level.unreachables = decompress(this.level.unreachables);
-    this.level.walls        = decompress(this.level.walls);
+function ClientLevel(id) {
+    this.level = XSS.levelCache[id];
 }
 
 ClientLevel.prototype = Object.create(Level.prototype);
@@ -26,17 +20,44 @@ XSS.util.extend(ClientLevel.prototype, {
      * @return {Shape}
      */
     getShape: function() {
-        var pixels = [], shape, walls = this.level.walls;
+        var shape, walls;
 
-        for (var i = 0, m = walls.length; i < m; i++) {
-            pixels.push(this.seqToXY(walls[i]));
-        }
+        walls = new ShapePixels(this.level.walls);
 
-        shape = new Shape(XSS.transform.zoomGame(pixels));
+        shape = new Shape(XSS.transform.zoomGame(walls));
         shape.add(XSS.shapegen.outerBorder().pixels);
         shape.add(XSS.shapegen.innerBorder().pixels);
 
         return shape;
+    },
+
+    /**
+     * @static
+     */
+    generateLevelCache: function() {
+        XSS.levelCache = {};
+
+        var onload = function() {
+            var canvas, ctx, imagedata;
+
+            canvas = document.createElement('canvas');
+            canvas.width = this.width;
+            canvas.height = this.height;
+
+            ctx = canvas.getContext('2d');
+            ctx.drawImage(this, 0, 0);
+
+            imagedata = ctx.getImageData(0, 0, this.width, this.height);
+
+            XSS.levelCache[this.index] = new LevelParser(imagedata).data();
+        };
+
+        for (var i = 0, m = XSS.levels.length; i < m; i++) {
+            var img = new Image();
+            img.src = 'data:image/png;base64,' + XSS.levels[i];
+            img.index = i;
+            img.onload = onload;
+        }
     }
 
 });

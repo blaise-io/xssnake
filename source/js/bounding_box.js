@@ -30,14 +30,12 @@ BoundingBox.prototype = {
             y1 = null,
             y2 = null;
 
-        for (var i = 0, m = pixels.length; i < m; i++) {
-            var x = pixels[i][0],
-                y = pixels[i][1];
+        pixels.each(function(x, y) {
             x1 = (x1 === null || x1 > x) ? x : x1;
             x2 = (x2 === null || x2 < x) ? x : x2;
             y1 = (y1 === null || y1 > y) ? y : y1;
             y2 = (y2 === null || y2 < y) ? y : y2;
-        }
+        });
 
         this.x1 = Number(x1);
         this.x2 = Number(x2) + 1;

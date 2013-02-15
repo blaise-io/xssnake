@@ -4,7 +4,6 @@
 var util = require('util');
 var Spawner = require('./spawner.js');
 var Powerup = require('./powerup.js');
-var Compressor = require('../shared/compressor.js');
 var levels = require('../shared/levels.js');
 var config = require('../shared/config.js');
 var events = require('../shared/events.js');
@@ -46,16 +45,6 @@ Game.prototype = {
     },
 
     getLevels: function() {
-        if (!this.server.levels) {
-            var compressor = new Compressor();
-            for (var i = 0, m = levels.length; i < m; i++) {
-                levels[i].spawns = compressor.decompress(levels[i].spawns);
-                levels[i].directions = compressor.decompress(levels[i].directions);
-                levels[i].unreachables = compressor.decompress(levels[i].unreachables);
-                levels[i].walls = compressor.decompress(levels[i].walls);
-            }
-            this.server.levels = levels;
-        }
         return this.server.levels;
     },
 

@@ -97,11 +97,14 @@ XSS.util.extend(ClientSnake.prototype, {
         var shift, head, pixels, shape;
         shift = this.directionToShift(this.direction);
         head = this.head();
-        pixels = [
-            [head[0] + shift[0], head[1] + shift[1]]
-        ];
-        shape = new Shape(XSS.transform.zoomGame(pixels));
+
+        pixels = new ShapePixels();
+        pixels.add(head[0] + shift[0], head[1] + shift[1]);
+        pixels = XSS.transform.zoomGame(pixels);
+
+        shape = new Shape(pixels);
         shape.flash(XSS.FLASH_FAST);
+
         XSS.shapes[this.shapes.direction] = shape;
     },
 
@@ -129,8 +132,10 @@ XSS.util.extend(ClientSnake.prototype, {
      * @return {Shape}
      */
     updateShape: function() {
-        this._shape.set(XSS.transform.zoomGame(this.parts));
-        return this._shape;
+        var pixels = new ShapePixels();
+        pixels.pairs(this.parts);
+        pixels = XSS.transform.zoomGame(pixels);
+        return this._shape.set(pixels);
     },
 
     crash: function() {
