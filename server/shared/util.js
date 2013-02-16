@@ -89,6 +89,45 @@ module.exports = {
             }
         }
         return null;
+    },
+
+    hash: function(key, val) {
+        var hash, arr, newhash = '', dict = {};
+
+        hash = location.hash.substr(1);
+        arr = hash.split(/[:;]/g);
+
+        // Populate dict
+        for (var i = 0, m = arr.length; i < m; i += 2) {
+            dict[arr[i]] = arr[i + 1]
+        }
+
+        switch (arguments.length) {
+            case 0: // Empty
+                if (location.hash) {
+                    try {
+                        history.pushState(null, '', location.pathname + location.search);
+                    } catch(err) {
+                        document.hash = '';
+                    }
+                }
+                break;
+            case 1: // Return value
+                return dict[key];
+                break;
+            case 2: // Set value
+                dict[key] = val;
+                for (var k in dict) {
+                    if (dict.hasOwnProperty(k)) {
+                        if (k && dict[k]) {
+                            newhash += k + ':' + dict[k] + ';'
+                        }
+                    }
+                }
+                location.replace('#' + newhash.replace(/;$/, ''));
+                return val;
+        }
+        return null;
     }
 
 };

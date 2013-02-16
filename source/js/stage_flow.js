@@ -8,6 +8,10 @@
  * @constructor
  */
 function StageFlow(stageRef) {
+    if (XSS.util.hash('room')) {
+        stageRef = XSS.stages.autojoin;
+    }
+
     stageRef = stageRef || XSS.stages.main;
 
     this._prevStages.push(stageRef);

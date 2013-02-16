@@ -33,6 +33,19 @@ XSS.stages = {
         return new SelectStage(menu);
     },
 
+    autojoin: function() {
+        var stage, next = XSS.stages.multiplayer;
+
+        stage = new InputStage('name', next, 'JOIN ROOM',
+            'My friends know me as ');
+
+        stage.minChars = 2;
+        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
+        stage.inputSubmit = XSS.stages._inputNameSubmit;
+
+        return stage;
+    },
+
     /**
      * @return {FormStage}
      */

@@ -15,7 +15,7 @@ function Room(index, key, level, names, score) {
     this.score = null;
     this.chat = null;
     this.update.apply(this, arguments);
-    location.replace('#room:' + key);
+    XSS.util.hash('room', key);
 }
 
 Room.prototype = {
