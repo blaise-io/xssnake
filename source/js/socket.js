@@ -40,6 +40,7 @@ Socket.prototype = {
 
         map[events.CLIENT_PING]           = this.clientPing;
         map[events.CLIENT_COMBI_EVENTS]   = this.combinedEvents;
+        map[events.CLIENT_AUTO_JOIN]      = this.autoJoin;
         map[events.CLIENT_ROOM_INDEX]     = this.roomIndex;
         map[events.CLIENT_ROOM_SCORE]     = this.updateScore;
         map[events.CLIENT_CHAT_MESSAGE]   = this.chatMessage;
@@ -95,6 +96,27 @@ Socket.prototype = {
     combinedEvents: function(data) {
         for (var i = 0, m = data.length; i < m; i++) {
             this.map[data[i][0]](data[i][1]);
+        }
+    },
+
+    /**
+     * @param data
+     */
+    autoJoin: function(data) {
+        if (data === 404) {
+            var pixels = XSS.transform.zoomX2(
+                XSS.font.pixels('404 ROOM NOT FOUND'),
+                XSS.MENU_LEFT,
+                XSS.MENU_TOP,
+                true
+            );
+
+            XSS.stageflow.stage.destruct();
+            XSS.shapes.stage = new Shape(pixels);
+
+            window.setTimeout(function() {
+                XSS.stageflow.previousStage();
+            }, 5000);
         }
     },
 

@@ -16,10 +16,10 @@ StageInterface.prototype = {
     },
 
     /** @return */
-    createStage: function() {},
+    create: function() {},
 
     /** @return */
-    destructStage: function() {}
+    destruct: function() {}
 
 };
 
@@ -57,7 +57,7 @@ InputStage.prototype = {
         return this.shape;
     },
 
-    createStage: function() {
+    create: function() {
         XSS.on.keydown(this._handleKeysBound);
         this.input = new InputField(XSS.MENU_LEFT, this.inputTop, this.label);
         this.input.setValue(this.val);
@@ -72,9 +72,10 @@ InputStage.prototype = {
         XSS.shapes.stage = this.header;
     },
 
-    destructStage: function() {
+    destruct: function() {
         this.shape = this.headerAndValue;
         XSS.off.keydown(this._handleKeysBound);
+        XSS.shapes.message = null;
         this.input.destruct();
     },
 
@@ -155,7 +156,7 @@ ScreenStage.prototype = {
         return this._shape;
     },
 
-    createStage: function() {
+    create: function() {
         XSS.on.keydown(this.handleKeys);
     },
 
@@ -167,7 +168,7 @@ ScreenStage.prototype = {
         }
     },
 
-    destructStage: function() {
+    destruct: function() {
         XSS.off.keydown(this.handleKeys);
         XSS.shapes.stage = null;
     }
@@ -193,11 +194,11 @@ SelectStage.prototype = {
         return this.menu.getShape();
     },
 
-    createStage: function() {
+    create: function() {
         XSS.on.keydown(this.handleKeysBound);
     },
 
-    destructStage: function() {
+    destruct: function() {
         XSS.off.keydown(this.handleKeysBound);
         XSS.shapes.stage = null;
     },
@@ -245,11 +246,11 @@ FormStage.prototype = {
         return this.form.getShape();
     },
 
-    createStage: function() {
+    create: function() {
         XSS.on.keydown(this.handleKeysBound);
     },
 
-    destructStage: function() {
+    destruct: function() {
         XSS.off.keydown(this.handleKeysBound);
         XSS.shapes.stage = null;
     },
@@ -301,7 +302,7 @@ GameStage.prototype = {
         return new Shape();
     },
 
-    createStage: function() {
+    create: function() {
         var stages, values;
 
         XSS.shapes.header = null;
@@ -315,7 +316,7 @@ GameStage.prototype = {
         });
     },
 
-    destructStage: function() {
+    destruct: function() {
     }
 
 };

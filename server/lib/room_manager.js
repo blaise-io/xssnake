@@ -4,6 +4,7 @@
 var Room = require('./room.js');
 var Util = require('../shared/util.js');
 var form = require('../shared/form.js');
+var events = require('../shared/events.js');
 
 /**
  * @constructor
@@ -31,6 +32,14 @@ RoomManager.prototype = {
     remove: function(room) {
         delete this.rooms[room.key];
         room.destruct();
+    },
+
+    handleAutoJoin: function(client, room) {
+        if (this.rooms[room]) {
+            // ...
+        } else {
+            client.emit(events.CLIENT_AUTO_JOIN, 404);
+        }
     },
 
     /**

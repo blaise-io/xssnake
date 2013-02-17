@@ -8,10 +8,6 @@
  * @constructor
  */
 function StageFlow(stageRef) {
-    if (XSS.util.hash('room')) {
-        stageRef = XSS.stages.autojoin;
-    }
-
     stageRef = stageRef || XSS.stages.main;
 
     this._prevStages.push(stageRef);
@@ -47,7 +43,7 @@ StageFlow.prototype = {
     newStage: function(stageRef) {
         this.stage = this.getStage(stageRef);
         this.setStageShapes();
-        this.stage.createStage();
+        this.stage.create();
     },
 
     /**
@@ -60,7 +56,7 @@ StageFlow.prototype = {
         options = options || {};
 
         // Unload old stage
-        this.stage.destructStage();
+        this.stage.destruct();
 
         // Remove everything
         delete XSS.shapes.stage;
@@ -144,6 +140,7 @@ StageFlow.prototype = {
 
         // Log states
         if (back) {
+            XSS.util.hash();
             this._prevStages.pop();
         } else {
             this._prevStages.push(newStageRef);

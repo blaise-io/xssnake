@@ -30,9 +30,18 @@ XSS.stages = {
             'CREDITS',
             'Evil genius.');
 
+        if (XSS.util.hash('room')) {
+            window.setTimeout(function() {
+                XSS.stageflow.switchStage(XSS.stages.autojoin);
+            }, 500);
+        }
+
         return new SelectStage(menu);
     },
 
+    /**
+     * @return {InputStage}
+     */
     autojoin: function() {
         var stage, next = XSS.stages.multiplayer;
 
@@ -41,7 +50,7 @@ XSS.stages = {
 
         stage.minChars = 2;
         stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
-        stage.inputSubmit = XSS.stages._inputNameSubmit;
+        stage.inputSubmit = XSS.stages._autojoinSubmit;
 
         return stage;
     },
@@ -221,7 +230,6 @@ XSS.stages = {
         return new GameStage();
     },
 
-
     /**
      * @param {string} value
      * @param {string} challenge
@@ -244,6 +252,30 @@ XSS.stages = {
             top
         );
         shape.lifetime(0, 1000);
+        XSS.shapes.message = shape;
+    },
+
+    /**
+     * @param {string} error
+     * @param {string} value
+     * @param {number} top
+     * @private
+     */
+    _autojoinSubmit: function(error, value, top) {
+        var shape, text = error, duration = 500;
+
+        if (!error) {
+            text = 'Getting room properties...';
+            duration = 5000;
+
+            XSS.socket = new Socket(function() {
+                var room = XSS.util.hash('room');
+                XSS.socket.emit(XSS.events.SERVER_AUTO_JOIN, room);
+            });
+        }
+
+        shape = XSS.font.shape(text, XSS.MENU_LEFT, top);
+        shape.lifetime(0, duration);
         XSS.shapes.message = shape;
     },
 
@@ -287,7 +319,7 @@ XSS.stages = {
         } else {
             text = XSS.util.randomItem(wits);
             text = text.replace(/%s/g, value);
-            duration = Math.max(text.length * 30, 500);
+            duration = Math.max(text.length * 30, 400);
             setTimeout(function() {
                 XSS.stageflow.switchStage(this.nextStage);
             }.bind(this), duration + 50);

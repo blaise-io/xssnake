@@ -11,7 +11,7 @@
  */
 function Game(index, levelID, names) {
 
-    XSS.stageflow.stage.destructStage();
+    XSS.stageflow.stage.destruct();
     XSS.shapes.stage = null;
     XSS.shapes.header = null;
     XSS.shapes.border = null;
