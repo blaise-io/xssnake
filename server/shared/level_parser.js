@@ -22,17 +22,6 @@ module.exports = LevelParser;
 
 LevelParser.prototype = {
 
-    data: function() {
-        return {
-            spawns      : this.spawns,
-            directions  : this.directions,
-            unreachables: this.unreachables,
-            walls       : this.walls,
-            width       : this.width,
-            height      : this.height
-        };
-    },
-
     _parseImagedata: function() {
         var imagedata = this.imagedata;
 
@@ -47,6 +36,8 @@ LevelParser.prototype = {
         this._detectMissingSpawns();
         this._processDirections();
         this._detectMissingDirections();
+
+        this.imagedata = null;
     },
 
     _addTo: function(obj, x, y) {

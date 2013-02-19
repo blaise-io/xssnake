@@ -28,7 +28,7 @@ Server.prototype = {
         var i, m, appendLevel, parsed = [];
 
         appendLevel = function(err, data) {
-            parsed[this] = new LevelParser(data).data();
+            parsed[this] = new LevelParser(data);
             if (this + 1 === m) {
                 callback(parsed);
             }
