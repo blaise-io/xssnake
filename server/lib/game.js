@@ -133,7 +133,7 @@ Game.prototype = {
 
         if (dx !== 0) {
             snake.direction = (dx === -1) ? 0 : 2;
-        } else if (dy !== 0) {
+        } else {
             snake.direction = (dy === -1) ? 1 : 3;
         }
 

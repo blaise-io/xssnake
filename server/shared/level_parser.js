@@ -1,5 +1,4 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals */
+/*jshint globalstrict:true, es5:true, node:true */
 'use strict';
 
 /**

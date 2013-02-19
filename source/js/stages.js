@@ -63,7 +63,7 @@ XSS.stages = {
             if (values[field.XSS]) {
                 return XSS.stages.captcha;
             }
-            return XSS.stages.startGame
+            return XSS.stages.startGame;
         };
 
         form = new Form('GAME OPTIONS', next);

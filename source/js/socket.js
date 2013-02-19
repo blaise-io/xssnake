@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Client, Room, Game, Apple, Powerup, StageFlow*/
+/*globals XSS, Client, Room, Game, Apple, Powerup, Shape, StageFlow*/
 
 'use strict';
 

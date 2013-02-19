@@ -109,7 +109,7 @@ XSS.util.extend(XSS.util, {
 
         // Populate dict
         for (var i = 0, m = arr.length; i < m; i += 2) {
-            dict[arr[i]] = arr[i + 1]
+            dict[arr[i]] = arr[i + 1];
         }
 
         switch (arguments.length) {
@@ -121,23 +121,21 @@ XSS.util.extend(XSS.util, {
                         document.hash = '';
                     }
                 }
-                break;
+                return;
             case 1: // Return value
                 return dict[key];
-                break;
             case 2: // Set value
                 dict[key] = value;
                 for (var k in dict) {
                     if (dict.hasOwnProperty(k)) {
                         if (k && dict[k]) {
-                            newhash += k + ':' + dict[k] + ';'
+                            newhash += k + ':' + dict[k] + ';';
                         }
                     }
                 }
                 location.replace('#' + newhash.replace(/;$/, ''));
                 return value;
         }
-        return null;
     }
 
 });
