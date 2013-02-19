@@ -116,7 +116,8 @@ Socket.prototype = {
 
             window.setTimeout(function() {
                 XSS.stageflow.previousStage();
-            }, 5000);
+                XSS.stageflow.switchStage(XSS.stages.multiplayer);
+            }, 3000);
         }
     },
 

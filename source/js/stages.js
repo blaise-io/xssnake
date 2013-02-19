@@ -45,9 +45,7 @@ XSS.stages = {
     autojoin: function() {
         var stage, next = XSS.stages.multiplayer;
 
-        stage = new InputStage('name', next, 'JOIN ROOM',
-            'My friends know me as ');
-
+        stage = new InputStage('name', next, 'JOIN ROOM', 'Hello, my name is ');
         stage.minChars = 2;
         stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
         stage.inputSubmit = XSS.stages._autojoinSubmit;
@@ -265,13 +263,9 @@ XSS.stages = {
         var shape, text = error, duration = 500;
 
         if (!error) {
+            XSS.socket.emit(XSS.events.SERVER_AUTO_JOIN, XSS.util.hash('room'));
             text = 'Getting room properties...';
             duration = 5000;
-
-            XSS.socket = new Socket(function() {
-                var room = XSS.util.hash('room');
-                XSS.socket.emit(XSS.events.SERVER_AUTO_JOIN, room);
-            });
         }
 
         shape = XSS.font.shape(text, XSS.MENU_LEFT, top);

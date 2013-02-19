@@ -5,7 +5,7 @@ var events = require('../shared/events.js');
 var form = require('../shared/form.js');
 
 /**
- * @param {Object} server
+ * @param {Server} server
  * @param {Client} client
  * @param {Object} socket
  * @constructor
