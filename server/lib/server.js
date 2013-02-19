@@ -25,19 +25,23 @@ module.exports = Server;
 Server.prototype = {
 
     preloadLevels: function(callback) {
-        this.levels = [];
-        for (var i = 0, m = levels.length; i < m; i++) {
-            png.parse(new Buffer(levels[i], 'base64'), function(err, data) {
-                var level = new LevelParser(data).data();
-                this.scope.levels[this.index] = level;
-                if (this.index + 1 === m) {
-                    callback();
-                }
-            }.bind({scope: this, index: i}));
+        var i, m, appendLevel, parsed = [];
+
+        appendLevel = function(err, data) {
+            parsed[this] = new LevelParser(data).data();
+            if (this + 1 === m) {
+                callback(parsed);
+            }
+        };
+
+        for (i = 0, m = levels.length; i < m; i++) {
+            png.parse(new Buffer(levels[i], 'base64'), appendLevel.bind(i));
         }
     },
 
-    init: function() {
+    init: function(levels) {
+        this.levels = levels;
+
         /** @typedef {number} */
         this.inc = 0;
         /** @typedef {Object.<number, {Client}>} */
