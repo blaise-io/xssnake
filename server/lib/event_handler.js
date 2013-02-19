@@ -20,12 +20,12 @@ function EventHandler(server, client, socket) {
     client.emit(events.CLIENT_CONNECT, client.id);
 
     socket.on('disconnect', this._disconnect.bind(this));
-    socket.on(events.SERVER_AUTO_JOIN, this._autoJoin.bind(this));
+    socket.on(events.SERVER_ROOM_STATUS, this._autoJoin.bind(this));
     socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
     socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
     socket.on(events.SERVER_SNAKE_UPDATE, this._snakeUpdate.bind(this));
     socket.on(events.SERVER_GAME_STATE, this._gameState.bind(this));
-    socket.on(events.SERVER_PONG, this._pong.bind(this));
+    socket.on(events.SERVER_PING, this._pong.bind(this));
 }
 
 module.exports = EventHandler;

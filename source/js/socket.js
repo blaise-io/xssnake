@@ -86,7 +86,7 @@ Socket.prototype = {
      * @param {number} time
      */
     clientPing: function(time) {
-        this.emit(XSS.events.SERVER_PONG, time);
+        this.emit(XSS.events.SERVER_PING, time);
     },
 
     /**

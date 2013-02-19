@@ -263,7 +263,7 @@ XSS.stages = {
         var shape, text = error, duration = 500;
 
         if (!error) {
-            XSS.socket.emit(XSS.events.SERVER_AUTO_JOIN, XSS.util.hash('room'));
+            XSS.socket.emit(XSS.events.SERVER_ROOM_STATUS, XSS.util.hash('room'));
             text = 'Getting room properties...';
             duration = 5000;
         }
