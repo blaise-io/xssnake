@@ -99,7 +99,7 @@ InputField.prototype = {
                 caret[0], caret[1] + 7
             );
 
-            caretShape.flash();
+            caretShape.flash(300, 300);
         } else {
             caretShape = new Shape();
         }

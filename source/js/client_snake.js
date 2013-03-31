@@ -103,7 +103,7 @@ XSS.util.extend(ClientSnake.prototype, {
         pixels = XSS.transform.zoomGame(pixels);
 
         shape = new Shape(pixels);
-        shape.flash(XSS.FLASH_FAST);
+        shape.flash();
 
         XSS.shapes[this.shapes.direction] = shape;
     },

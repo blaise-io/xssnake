@@ -38,11 +38,6 @@
 /** @const */ XSS.PUB_GAME_TICK = 'TICK';
 /** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCUS';
 
-/** @const */ XSS.FLASH_SLOW = 450;
-/** @const */ XSS.FLASH_NORMAL = 300;
-/** @const */ XSS.FLASH_FAST = 150;
-
-
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';
 /** @const */ XSS.UC_ARR_RIGHT = '\u2192';

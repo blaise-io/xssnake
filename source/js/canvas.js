@@ -31,7 +31,7 @@ function Canvas() {
 Canvas.prototype = {
 
     /**
-     * @param {number} theme
+     * @param {Object} theme
      */
     setTheme: function(theme) {
         this.theme = theme;
@@ -79,7 +79,7 @@ Canvas.prototype = {
                 if (shapes[k].clearBBox) {
                     overlays[k] = shapes[k];
                 } else {
-                    this._paintShapeDispatch(k, shapes[k], delta);
+                    this._paintShape(k, shapes[k], delta);
                 }
             }
         }
@@ -87,7 +87,7 @@ Canvas.prototype = {
         // Overlays are painted at a later time
         for (k in overlays) {
             if (overlays.hasOwnProperty(k)) {
-                this._paintShapeDispatch(k, overlays[k], delta);
+                this._paintShape(k, overlays[k], delta);
             }
         }
     },
@@ -114,18 +114,6 @@ Canvas.prototype = {
 
     /**
      * @param {Object} context
-     * @param {Shape} shape
-     * @param {BoundingBox} bbox
-     */
-    _paintShape: function(context, shape, bbox) {
-        context.fillStyle = this.theme.on;
-        shape.pixels.each(function(x, y) {
-            this._drawPixel(context, x, y, bbox.x1, bbox.y1, shape.clearPx);
-        }.bind(this));
-    },
-
-    /**
-     * @param {Object} context
      * @param {number} x
      * @param {number} y
      * @param {number} offsetX
@@ -134,7 +122,7 @@ Canvas.prototype = {
      * @suppress {checkTypes}
      * @private
      */
-    _drawPixel: function(context, x, y, offsetX, offsetY, clear) {
+    _paintPixel: function(context, x, y, offsetX, offsetY, clear) {
         var pixelSize = this.pixelSize,
             tileSize = this.tileSize;
         offsetX = x * tileSize - offsetX;
@@ -151,15 +139,10 @@ Canvas.prototype = {
      * @param {number} delta
      * @private
      */
-    _paintShapeDispatch: function(name, shape, delta) {
+    _paintShape: function(name, shape, delta) {
         var bbox, cache, ctx = this.ctx;
 
-        // Apply effects
-        for (var k in shape.effects) {
-            if (shape.effects.hasOwnProperty(k)) {
-                shape.effects[k].call(shape, delta);
-            }
-        }
+        shape.applyEffects(delta);
 
         // Draw on canvas if shape is enabled and visible
         if (false === shape.enabled) {
@@ -174,7 +157,7 @@ Canvas.prototype = {
 
         // Paint shape without caching
         if (shape.clearPx) {
-            this._paintShape(ctx, shape, this._dummyBBox);
+            this._paintShapeNoCache(ctx, shape, this._dummyBBox);
         }
 
         // Create cache and paint
@@ -182,6 +165,18 @@ Canvas.prototype = {
             cache = shape.cache || (shape.cache = this._getPaintedShape(shape));
             ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
         }
+    },
+
+    /**
+     * @param {Object} context
+     * @param {Shape} shape
+     * @param {BoundingBox} bbox
+     */
+    _paintShapeNoCache: function(context, shape, bbox) {
+        context.fillStyle = this.theme.on;
+        shape.pixels.each(function(x, y) {
+            this._paintPixel(context, x, y, bbox.x1, bbox.y1, shape.clearPx);
+        }.bind(this));
     },
 
     /**
@@ -198,7 +193,7 @@ Canvas.prototype = {
         canvas.width  = bbox.width;
         canvas.height = bbox.height;
 
-        this._paintShape(canvas.getContext('2d'), shape, bbox);
+        this._paintShapeNoCache(canvas.getContext('2d'), shape, bbox);
 
         return {canvas: canvas, bbox: bbox};
     },

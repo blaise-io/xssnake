@@ -48,10 +48,11 @@ function Shape(varArgs) {
 Shape.prototype = {
 
     /**
-     * @param {number=} speed
+     * @param {number=} on Visible duration
+     * @param {number=} off Invisible duration
      * @return {Shape}
      */
-    flash: function(speed) {
+    flash: function(on, off) {
         this.effects.flash = this._flashEffect.apply(this, arguments);
         return this;
     },
@@ -73,6 +74,17 @@ Shape.prototype = {
     animate: function(options) {
         this.effects.animate = this._animateEffect.apply(this, arguments);
         return this;
+    },
+
+    /**
+     * @param {number} delta
+     */
+    applyEffects: function(delta) {
+        for (var k in this.effects) {
+            if (this.effects.hasOwnProperty(k)) {
+                this.effects[k].call(this, delta);
+            }
+        }
     },
 
     /**
@@ -167,17 +179,17 @@ Shape.prototype = {
     },
 
     /**
-     * @param {number=} speed
+     * @param {number=} on
+     * @param {number=} off
      * @return {function({number})}
      * @private
      */
-    _flashEffect: function(speed) {
-        var progress = 0;
-        speed = speed || XSS.FLASH_NORMAL;
+    _flashEffect: function(on, off) {
+        var duration = [on || 500, off || 100], progress = 0;
         return function(delta) {
             progress += delta;
-            if (progress > speed) {
-                progress -= speed;
+            if (progress > duration[+!this.enabled]) {
+                progress -= duration[+!this.enabled];
                 this.enabled = !this.enabled;
             }
         };
