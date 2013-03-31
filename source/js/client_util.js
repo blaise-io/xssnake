@@ -79,15 +79,62 @@ XSS.util.extend(XSS.util, {
      * @return {*}
      */
     storage: function(key, value) {
-        if (!key || !localStorage) {
+        if (!localStorage) {
             return '';
-        } else if (value === null) {
-            localStorage.removeItem(key);
-            return '';
-        } else if (typeof value !== 'undefined') {
-            return localStorage.setItem(key, value);
-        } else {
-            return localStorage.getItem(key);
+        }
+        switch (arguments.length) {
+            case 0: return '';
+            case 1: return localStorage.getItem(key);
+            case 2:
+                if (value === null) {
+                    localStorage.removeItem(key);
+                    return '';
+                } else {
+                    return localStorage.setItem(key, value);
+                }
+        }
+    },
+
+    /**
+     * Simple wrapper for location.hash
+     * @param {string?} key
+     * @param {*?} value
+     * @return {*}
+     */
+    hash: function(key, value) {
+        var hash, arr, newhash = '', dict = {};
+
+        hash = location.hash.substr(1);
+        arr = hash.split(/[:;]/g);
+
+        // Populate dict
+        for (var i = 0, m = arr.length; i < m; i += 2) {
+            dict[arr[i]] = arr[i + 1];
+        }
+
+        switch (arguments.length) {
+            case 0: // Empty
+                if (location.hash) {
+                    try {
+                        history.replaceState(null, '', location.pathname + location.search);
+                    } catch(err) {
+                        document.hash = '';
+                    }
+                }
+                return;
+            case 1: // Return value
+                return dict[key];
+            case 2: // Set value
+                dict[key] = value;
+                for (var k in dict) {
+                    if (dict.hasOwnProperty(k)) {
+                        if (k && dict[k]) {
+                            newhash += k + ':' + dict[k] + ';';
+                        }
+                    }
+                }
+                location.replace('#' + newhash.replace(/;$/, ''));
+                return value;
         }
     }
 

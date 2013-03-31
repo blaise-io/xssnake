@@ -4,7 +4,6 @@
 var util = require('util');
 var Spawner = require('./spawner.js');
 var Powerup = require('./powerup.js');
-var levels = require('../shared/levels.js');
 var config = require('../shared/config.js');
 var events = require('../shared/events.js');
 var Level = require('../shared/level.js');
@@ -20,7 +19,7 @@ function Game(room, level) {
     this.room = room;
     this.server = room.server;
 
-    this.level = new Level(level, this.getLevels());
+    this.level = new Level(level, this.server.levels);
     this.spawner = new Spawner(this);
     this.options = this.room.options;
 
@@ -42,10 +41,6 @@ Game.prototype = {
         WALL    : 0,
         SELF    : 1,
         OPPONENT: 2
-    },
-
-    getLevels: function() {
-        return this.server.levels;
     },
 
     countdown: function() {
@@ -133,7 +128,7 @@ Game.prototype = {
 
         if (dx !== 0) {
             snake.direction = (dx === -1) ? 0 : 2;
-        } else if (dy !== 0) {
+        } else {
             snake.direction = (dy === -1) ? 1 : 3;
         }
 

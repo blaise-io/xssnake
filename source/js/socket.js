@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Client, Room, Game, Apple, Powerup, StageFlow*/
+/*globals XSS, Client, Room, Game, Apple, Powerup, Shape, StageFlow*/
 
 'use strict';
 
@@ -86,7 +86,7 @@ Socket.prototype = {
      * @param {number} time
      */
     clientPing: function(time) {
-        this.emit(XSS.events.SERVER_PONG, time);
+        this.emit(XSS.events.SERVER_PING, time);
     },
 
     /**
@@ -116,7 +116,8 @@ Socket.prototype = {
 
             window.setTimeout(function() {
                 XSS.stageflow.previousStage();
-            }, 5000);
+                XSS.stageflow.switchStage(XSS.stages.multiplayer);
+            }, 3000);
         }
     },
 

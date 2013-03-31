@@ -5,7 +5,7 @@
  * Collisions and levels
  * @constructor
  * @param {number} levelID
- * @param {Object} levelData
+ * @param {Array.<LevelParser>} levelData
  */
 function Level(levelID, levelData) {
     this.level = levelData[levelID];

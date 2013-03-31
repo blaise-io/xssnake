@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Level, Shape, LevelParser*/
+/*globals XSS, Level, Shape, ShapePixels, LevelParser*/
 'use strict';
 
 /**
@@ -49,7 +49,7 @@ XSS.util.extend(ClientLevel.prototype, {
 
             imagedata = ctx.getImageData(0, 0, this.width, this.height);
 
-            XSS.levelCache[this.index] = new LevelParser(imagedata).data();
+            XSS.levelCache[this.index] = new LevelParser(imagedata);
         };
 
         for (var i = 0, m = XSS.levels.length; i < m; i++) {
