@@ -32,7 +32,6 @@ XSS.main = function() {
 
 XSS.check = window.setInterval(function() {
     if (document.readyState === 'complete') {
-        module = null;
         window.clearInterval(XSS.check);
         window.setTimeout(XSS.main, 50);
     }

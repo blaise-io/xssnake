@@ -33,7 +33,7 @@ module.exports = {
     CLIENT_SNAKE_UPDATE  : 'CS5',
 
     SERVER_ROOM_STATUS   : 'SA1',
-    SERVER_PONG          : 'SP1',
+    SERVER_PING          : 'SP1',
     SERVER_ROOM_MATCH    : 'SR1',
     SERVER_CHAT_MESSAGE  : 'SC1',
     SERVER_SNAKE_UPDATE  : 'SS1',
