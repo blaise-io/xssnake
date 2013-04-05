@@ -2,7 +2,7 @@
 'use strict';
 
 var Game = require('./game.js');
-var form = require('../shared/form.js');
+var form = require('../shared/map.js');
 var events = require('../shared/events.js');
 var config = require('../shared/config.js');
 var levels = require('../shared/levels.js');

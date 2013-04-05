@@ -309,7 +309,7 @@ GameStage.prototype = {
 
         stages = XSS.stageflow.stageInstances;
         values = stages.multiplayer.form.getValues();
-        values[XSS.form.FIELD.NAME] = stages.inputName.val;
+        values[XSS.map.FIELD.NAME] = stages.inputName.val;
 
         XSS.socket = new Socket(function() {
             XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, values);

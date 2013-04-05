@@ -2,7 +2,7 @@
 'use strict';
 
 var events = require('../shared/events.js');
-var form = require('../shared/form.js');
+var form = require('../shared/map.js');
 
 /**
  * @param {Server} server
@@ -20,7 +20,7 @@ function EventHandler(server, client, socket) {
     client.emit(events.CLIENT_CONNECT, client.id);
 
     socket.on('disconnect', this._disconnect.bind(this));
-    socket.on(events.SERVER_ROOM_STATUS, this._autoJoin.bind(this));
+    socket.on(events.SERVER_ROOM_AUTOJOIN, this._autoJoin.bind(this));
     socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
     socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
     socket.on(events.SERVER_SNAKE_UPDATE, this._snakeUpdate.bind(this));

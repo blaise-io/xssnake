@@ -40,7 +40,8 @@ Socket.prototype = {
 
         map[events.CLIENT_PING]           = this.clientPing;
         map[events.CLIENT_COMBI_EVENTS]   = this.combinedEvents;
-        map[events.CLIENT_AUTO_JOIN]      = this.autoJoin;
+        map[events.CLIENT_AUTOJOIN_SUCC]  = this.autoJoinSuccess;
+        map[events.CLIENT_AUTOJOIN_ERR]   = this.autoJoinError;
         map[events.CLIENT_ROOM_INDEX]     = this.roomIndex;
         map[events.CLIENT_ROOM_SCORE]     = this.updateScore;
         map[events.CLIENT_CHAT_MESSAGE]   = this.chatMessage;
@@ -100,25 +101,17 @@ Socket.prototype = {
     },
 
     /**
-     * @param data
+     * @param {Array} data
      */
-    autoJoin: function(data) {
-        if (data === 404) {
-            var pixels = XSS.transform.zoomX2(
-                XSS.font.pixels('404 ROOM NOT FOUND'),
-                XSS.MENU_LEFT,
-                XSS.MENU_TOP,
-                true
-            );
+    autoJoinSuccess: function(data) {
+        XSS.stages.autoJoinSuccess(data);
+    },
 
-            XSS.stageflow.stage.destruct();
-            XSS.shapes.stage = new Shape(pixels);
-
-            window.setTimeout(function() {
-                XSS.stageflow.previousStage();
-                XSS.stageflow.switchStage(XSS.stages.multiplayer);
-            }, 3000);
-        }
+    /**
+     * @param {number} error
+     */
+    autoJoinError: function(error) {
+        XSS.stages.autoJoinError(error);
     },
 
     /**

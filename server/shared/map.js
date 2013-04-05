@@ -2,7 +2,6 @@
 /*globals XSS*/
 'use strict';
 
-// Values and fields are hard-coded and unique.
 module.exports = {
 
     FIELD: {
@@ -18,10 +17,16 @@ module.exports = {
         EASY  : 1,
         MEDIUM: 2,
         HARD  : 3
+    },
+
+    ROOM: {
+        FULL       : 1,
+        NOT_FOUND  : 2,
+        IN_PROGRESS: 3
     }
 
 };
 
 if (typeof XSS !== 'undefined') {
-    XSS.form = module.exports;
+    XSS.map = module.exports;
 }

@@ -7,7 +7,8 @@ module.exports = {
 
     CLIENT_APPLE_HIT     : 'CA1',
     CLIENT_APPLE_SPAWN   : 'CA2',
-    CLIENT_AUTO_JOIN     : 'CA3',
+    CLIENT_AUTOJOIN_ERR  : 'CA3',
+    CLIENT_AUTOJOIN_SUCC : 'CA4',
 
     CLIENT_CHAT_NOTICE   : 'CC1',
     CLIENT_CHAT_MESSAGE  : 'CC2',
@@ -32,9 +33,9 @@ module.exports = {
     CLIENT_SNAKE_SPEED   : 'CS4',
     CLIENT_SNAKE_UPDATE  : 'CS5',
 
-    SERVER_ROOM_STATUS   : 'SA1',
     SERVER_PING          : 'SP1',
-    SERVER_ROOM_MATCH    : 'SR1',
+    SERVER_ROOM_AUTOJOIN : 'SR1',
+    SERVER_ROOM_MATCH    : 'SR2',
     SERVER_CHAT_MESSAGE  : 'SC1',
     SERVER_SNAKE_UPDATE  : 'SS1',
     SERVER_GAME_STATE    : 'SG1'

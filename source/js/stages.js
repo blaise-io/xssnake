@@ -32,7 +32,7 @@ XSS.stages = {
 
         if (XSS.util.hash('room')) {
             window.setTimeout(function() {
-                XSS.stageflow.switchStage(XSS.stages.autojoin);
+                XSS.stageflow.switchStage(XSS.stages.autoJoin);
             }, 500);
         }
 
@@ -42,7 +42,7 @@ XSS.stages = {
     /**
      * @return {InputStage}
      */
-    autojoin: function() {
+    autoJoin: function() {
         var stage, next = XSS.stages.multiplayer;
 
         stage = new InputStage('name', next, 'JOIN ROOM', 'Hello, my name is ');
@@ -54,10 +54,51 @@ XSS.stages = {
     },
 
     /**
+     * @param {Array} data
+     */
+    autoJoinSuccess: function(data) {
+        console.log(data);
+    },
+
+    /**
+     * @param {number} error
+     */
+    autoJoinError: function(error) {
+        var errString, pixels;
+
+        switch (error) {
+            case XSS.map.ROOM.NOT_FOUND:
+                errString = '4O4 ROOM NOT FOUND';
+                break;
+            case XSS.map.ROOM.FULL:
+                errString = 'LE ROOM IS FULL!';
+                break;
+            case XSS.map.ROOM.IN_PROGRESS:
+                errString = 'GAME ALREADY IN PROGRESS!';
+                break;
+        }
+
+        pixels = XSS.transform.zoomX2(
+            XSS.font.pixels(errString),
+            XSS.MENU_LEFT,
+            XSS.MENU_TOP,
+            true
+        );
+
+        XSS.stageflow.stage.destruct();
+        XSS.shapes.stage = new Shape(pixels);
+
+        window.setTimeout(function() {
+            XSS.stageflow.previousStage();
+            XSS.stageflow.switchStage(XSS.stages.multiplayer);
+        }, 2000);
+    },
+
+    /**
      * @return {FormStage}
      */
     multiplayer: function() {
-        var form, next, field = XSS.form.FIELD, value = XSS.form.VALUE;
+        var form, next, field = XSS.map.FIELD, value = XSS.map.VALUE;
 
         next = function(values) {
             if (values[field.XSS]) {
@@ -263,7 +304,7 @@ XSS.stages = {
         var shape, text = error, duration = 500;
 
         if (!error) {
-            XSS.socket.emit(XSS.events.SERVER_ROOM_STATUS, XSS.util.hash('room'));
+            XSS.socket.emit(XSS.events.SERVER_ROOM_AUTOJOIN, XSS.util.hash('room'));
             text = 'Getting room properties...';
             duration = 5000;
         }

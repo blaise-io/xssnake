@@ -3,7 +3,7 @@
 
 var Room = require('./room.js');
 var Util = require('../shared/util.js');
-var form = require('../shared/form.js');
+var map = require('../shared/map.js');
 var events = require('../shared/events.js');
 
 /**
@@ -19,11 +19,11 @@ module.exports = RoomManager;
 RoomManager.prototype = {
 
     /**
-     * @param {number} id
+     * @param {string} key
      * @return {Room}
      */
-    room: function(id) {
-        return this.rooms[id];
+    room: function(key) {
+        return this.rooms[key];
     },
 
     /**
@@ -34,11 +34,26 @@ RoomManager.prototype = {
         room.destruct();
     },
 
-    handleAutoJoin: function(client, room) {
-        if (this.rooms[room]) {
-            // ...
+    /**
+     * @param {Client} client
+     * @param {string} key
+     */
+    handleAutoJoin: function(client, key) {
+        var error, data, room = this.rooms[key];
+
+        if (!room) {
+            error = map.ROOM.NOT_FOUND;
+        } else if (room.isFull()) {
+            error = map.ROOM.FULL;
+        } else if (room.inProgress) {
+            error = map.ROOM.IN_PROGRESS;
+        }
+
+        if (error) {
+            client.emit(events.CLIENT_AUTOJOIN_ERR, error);
         } else {
-            client.emit(events.CLIENT_AUTO_JOIN, 404);
+            data = [room.id, room.names, room.options];
+            client.emit(events.CLIENT_AUTOJOIN_SUCC, data);
         }
     },
 
@@ -89,7 +104,7 @@ RoomManager.prototype = {
      * @private
      */
     _isFilterMatch: function(gameOptions, room) {
-        var field = form.FIELD, roomOptions = room.options;
+        var field = map.FIELD, roomOptions = room.options;
         switch (true) {
             case room.isFull():
             case room.inProgress:
