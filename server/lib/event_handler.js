@@ -2,7 +2,7 @@
 'use strict';
 
 var events = require('../shared/events.js');
-var form = require('../shared/map.js');
+var map = require('../shared/map.js');
 
 /**
  * @param {Server} server
@@ -86,7 +86,7 @@ EventHandler.prototype = {
      */
     _matchRoom: function(gameOptions) {
         var room, client = this.client, server = this.server;
-        client.name = gameOptions[form.FIELD.NAME];
+        client.name = gameOptions[map.FIELD.NAME];
         room = server.roomManager.getPreferredRoom(gameOptions);
         room.join(client);
     },

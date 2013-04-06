@@ -2,7 +2,7 @@
 'use strict';
 
 var Game = require('./game.js');
-var form = require('../shared/map.js');
+var map = require('../shared/map.js');
 var events = require('../shared/events.js');
 var config = require('../shared/config.js');
 var levels = require('../shared/levels.js');
@@ -67,8 +67,8 @@ Room.prototype = {
      * }}
      */
     cleanGameOptions: function(gameOptions) {
-        var value = form.VALUE,
-            field = form.FIELD,
+        var value = map.VALUE,
+            field = map.FIELD,
 
             maxPlayers = gameOptions[field.MAX_PLAYERS],
             difficulty = gameOptions[field.DIFFICULTY],
