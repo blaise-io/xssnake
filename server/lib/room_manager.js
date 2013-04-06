@@ -38,23 +38,20 @@ RoomManager.prototype = {
      * @param {Client} client
      * @param {string} key
      */
-    handleAutoJoin: function(client, key) {
-        var error, data, room = this.rooms[key];
+    emitRoomStatus: function(client, key) {
+        var data = [0], room = this.rooms[key];
 
         if (!room) {
-            error = map.ROOM.NOT_FOUND;
+            data.push(map.ROOM.NOT_FOUND);
         } else if (room.isFull()) {
-            error = map.ROOM.FULL;
+            data.push(map.ROOM.FULL);
         } else if (room.inProgress) {
-            error = map.ROOM.IN_PROGRESS;
+            data.push(map.ROOM.IN_PROGRESS);
+        } else {
+            data = [1, room.options, room.names()];
         }
 
-        if (error) {
-            client.emit(events.CLIENT_AUTOJOIN_ERR, error);
-        } else {
-            data = [room.id, room.names, room.options];
-            client.emit(events.CLIENT_AUTOJOIN_SUCC, data);
-        }
+        client.emit(events.CLIENT_ROOM_STATUS, data);
     },
 
     /**
@@ -98,21 +95,21 @@ RoomManager.prototype = {
     },
 
     /**
-     * @param {Object.<string, number|boolean>} gameOptions
+     * @param {Object.<string, number|boolean>} reqOptions
      * @param {Room} room
      * @return {boolean}
      * @private
      */
-    _isFilterMatch: function(gameOptions, room) {
-        var field = map.FIELD, roomOptions = room.options;
+    _isFilterMatch: function(reqOptions, room) {
+        var field = map.FIELD, options = room.options;
         switch (true) {
             case room.isFull():
             case room.inProgress:
-            case roomOptions.priv:
-            case roomOptions.difficulty !== gameOptions[field.DIFFICULTY]:
-            case roomOptions.powerups   !== gameOptions[field.POWERUPS]:
-            case roomOptions.xss        !== gameOptions[field.XSS]:
-            case roomOptions.maxPlayers   > gameOptions[field.MAX_PLAYERS]:
+            case options[field.PRIVATE]:
+            case options[field.DIFFICULTY] !== reqOptions[field.DIFFICULTY]:
+            case options[field.POWERUPS]   !== reqOptions[field.POWERUPS]:
+            case options[field.XSS]        !== reqOptions[field.XSS]:
+            case options[field.MAX_PLAYERS]  > reqOptions[field.MAX_PLAYERS]:
                 return false;
             default:
                 return true;

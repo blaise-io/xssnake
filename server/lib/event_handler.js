@@ -20,7 +20,7 @@ function EventHandler(server, client, socket) {
     client.emit(events.CLIENT_CONNECT, client.id);
 
     socket.on('disconnect', this._disconnect.bind(this));
-    socket.on(events.SERVER_ROOM_AUTOJOIN, this._autoJoin.bind(this));
+    socket.on(events.SERVER_ROOM_STATUS, this._roomStatus.bind(this));
     socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
     socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
     socket.on(events.SERVER_SNAKE_UPDATE, this._snakeUpdate.bind(this));
@@ -76,8 +76,8 @@ EventHandler.prototype = {
      * @param room
      * @private
      */
-    _autoJoin: function(room) {
-        this.server.roomManager.handleAutoJoin(this.client, room);
+    _roomStatus: function(room) {
+        this.server.roomManager.emitRoomStatus(this.client, room);
     },
 
     /**

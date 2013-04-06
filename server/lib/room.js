@@ -57,39 +57,33 @@ Room.prototype = {
     },
 
     /**
-     * @param gameOptions
-     * @return {{
-     *    maxPlayers: number,
-     *    difficulty: number,
-     *    powerups: boolean,
-     *    priv: boolean,
-     *    xss: boolean
-     * }}
+     * @param options
+     * @return {Object}
      */
-    cleanGameOptions: function(gameOptions) {
-        var value = map.VALUE,
-            field = map.FIELD,
+    cleanGameOptions: function(options) {
+        var players = [], difficulties, field = map.FIELD;
 
-            maxPlayers = gameOptions[field.MAX_PLAYERS],
-            difficulty = gameOptions[field.DIFFICULTY],
-            powerups   = !!gameOptions[field.POWERUPS],
-            priv       = !!gameOptions[field.PRIVATE],
-            xss        = !!gameOptions[field.XSS];
-
-        if (-1 === [1,2,3,4,5,6].indexOf(maxPlayers)) {
-            maxPlayers = config.ROOM_CAPACITY;
+        for (var i = 1; i <= config.ROOM_CAPACITY; i++) {
+            players.push(i);
         }
 
-        if (-1 === [value.EASY, value.MEDIUM, value.HARD].indexOf(difficulty)) {
-            difficulty = value.MEDIUM
+        difficulties = [map.VALUE.EASY, map.VALUE.MEDIUM, map.VALUE.HARD];
+
+        options[field.MAX_PLAYERS] = options[field.MAX_PLAYERS];
+        options[field.DIFFICULTY] = options[field.DIFFICULTY];
+        options[field.POWERUPS] = !!options[field.POWERUPS];
+        options[field.PRIVATE] = !!options[field.PRIVATE];
+        options[field.XSS] = !!options[field.XSS];
+
+        if (-1 === players.indexOf(options[field.MAX_PLAYERS])) {
+            options[field.MAX_PLAYERS] = config.ROOM_CAPACITY;
         }
-        return {
-            maxPlayers: maxPlayers,
-            difficulty: difficulty,
-            powerups  : powerups,
-            priv      : priv,
-            xss       : xss
+
+        if (-1 === difficulties.indexOf(options[field.DIFFICULTY])) {
+            options[field.DIFFICULTY] = map.VALUE.MEDIUM;
         }
+
+        return options;
     },
 
     /**
@@ -167,7 +161,7 @@ Room.prototype = {
      * @return {boolean}
      */
     isFull: function() {
-        return (this.clients.length === this.options.maxPlayers);
+        return (this.clients.length === this.options[map.FIELD.MAX_PLAYERS]);
     },
 
     /**

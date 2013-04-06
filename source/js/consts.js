@@ -37,6 +37,7 @@
 
 /** @const */ XSS.PUB_GAME_TICK = 'TICK';
 /** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCUS';
+/** @const */ XSS.PUB_ROOM_STATUS = 'RSTAT';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';

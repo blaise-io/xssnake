@@ -50,6 +50,23 @@ Room.prototype = {
     },
 
     /**
+     * @param {number} error
+     * @returns {string}
+     */
+    errorCodeToStr: function(error) {
+        switch (error) {
+            case XSS.map.ROOM.NOT_FOUND:
+                return '404 ROOM NOT FOUND';
+            case XSS.map.ROOM.FULL:
+                return 'LE ROOM IS FULL!';
+            case XSS.map.ROOM.IN_PROGRESS:
+                return 'GAME ALREADY IN PROGRESS!';
+            default:
+                return 'UNKNOWN ERROR OHSHI'
+        }
+    },
+
+    /**
      * @param {Array.<string>} names
      * @return {Array.<string>}
      * @private

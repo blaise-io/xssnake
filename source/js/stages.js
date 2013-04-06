@@ -31,67 +31,85 @@ XSS.stages = {
             'Evil genius.');
 
         if (XSS.util.hash('room')) {
-            window.setTimeout(function() {
-                XSS.stageflow.switchStage(XSS.stages.autoJoin);
-            }, 500);
+            XSS.stages._autoJoinRoom();
         }
 
         return new SelectStage(menu);
     },
 
+    _autoJoinRoom: function() {
+        var pubKey = 'RSTAT';
+
+        XSS.util.instruct('Connecting...', 0, true);
+
+        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, pubKey, function(data) {
+            var error = Room.prototype.errorCodeToStr(data[1]);
+            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, pubKey);
+            if (!data[0]) {
+                XSS.util.error(error);
+            } else {
+                XSS._autoJoinRoomData = data;
+                XSS.stageflow.switchStage(XSS.stages.autoJoin);
+            }
+        });
+
+        XSS.socket = new Socket(function() {
+            XSS.util.instruct('Getting room properties...', 1000, true);
+            window.setTimeout(function() {
+                XSS.socket.emit(
+                    XSS.events.SERVER_ROOM_STATUS,
+                    XSS.util.hash('room')
+                );
+            }, 1000);
+        });
+    },
+
     /**
-     * @return {InputStage}
+     * @return {ScreenStage}
      */
     autoJoin: function() {
-        var stage, next = XSS.stages.multiplayer;
+        var screen, left, top, data, names, opts, field = XSS.map.FIELD;
 
-        stage = new InputStage('name', next, 'JOIN ROOM', 'Hello, my name is ');
-        stage.minChars = 2;
-        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
-        stage.inputSubmit = XSS.stages._autojoinSubmit;
+        left = XSS.MENU_LEFT;
+        top = XSS.MENU_TOP;
 
-        return stage;
-    },
+        data = XSS._autoJoinRoomData;
+        names = data[2].join(', ');
+        opts = data[1];
 
-    /**
-     * @param {Array} data
-     */
-    autoJoinSuccess: function(data) {
-        console.log(data);
-    },
+        var diffs = {
+            '1': 'Worm',
+            '2': 'Snake',
+            '3': 'Python'
+        };
 
-    /**
-     * @param {number} error
-     */
-    autoJoinError: function(error) {
-        var errString, pixels;
+        var bools = {
+            'false': 'Yes',
+            'true': 'No'
+        };
 
-        switch (error) {
-            case XSS.map.ROOM.NOT_FOUND:
-                errString = '4O4 ROOM NOT FOUND';
-                break;
-            case XSS.map.ROOM.FULL:
-                errString = 'LE ROOM IS FULL!';
-                break;
-            case XSS.map.ROOM.IN_PROGRESS:
-                errString = 'GAME ALREADY IN PROGRESS!';
-                break;
-        }
-
-        pixels = XSS.transform.zoomX2(
-            XSS.font.pixels(errString),
-            XSS.MENU_LEFT,
-            XSS.MENU_TOP,
-            true
+        screen = new Shape(
+            XSS.transform.zoomX2(XSS.font.pixels('JOIN GAME'), left, top, true),
+            XSS.font.pixels('' +
+                'Players          ' + names + '\n' +
+                'Difficulty        ' + diffs[opts[field.DIFFICULTY]] + '\n' +
+                'Max Players    ' + opts[field.MAX_PLAYERS] + '\n' +
+                'Power-Ups      ' + bools[opts[field.POWERUPS]] + '\n' +
+                'XSS ' + XSS.UC_SKULL + '          ' + bools[opts[field.XSS]] + '\n\n' +
+                'Press ' + XSS.UC_ENTER_KEY + ' to join this game.',
+                left, top + XSS.SUBHEADER_HEIGHT)
         );
 
-        XSS.stageflow.stage.destruct();
-        XSS.shapes.stage = new Shape(pixels);
+        return new ScreenStage(screen);
 
-        window.setTimeout(function() {
-            XSS.stageflow.previousStage();
-            XSS.stageflow.switchStage(XSS.stages.multiplayer);
-        }, 2000);
+
+// , next = XSS.stages.multiplayer
+//        stage = new InputStage('name', next, 'JOIN ROOM', label);
+//        stage.minChars = 2;
+//        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
+//        stage.inputSubmit = XSS.stages._autojoinSubmit;
+
+//        return stage;
     },
 
     /**
@@ -304,9 +322,11 @@ XSS.stages = {
         var shape, text = error, duration = 500;
 
         if (!error) {
-            XSS.socket.emit(XSS.events.SERVER_ROOM_AUTOJOIN, XSS.util.hash('room'));
             text = 'Getting room properties...';
-            duration = 5000;
+            XSS.socket = new Socket(function() {
+                XSS.socket.emit(XSS.events.SERVER_ROOM_STATUS, XSS.util.hash('room'));
+                duration = 5000;
+            });
         }
 
         shape = XSS.font.shape(text, XSS.MENU_LEFT, top);

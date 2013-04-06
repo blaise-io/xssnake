@@ -12,6 +12,8 @@ function StageFlow(stageRef) {
 
     this._prevStages.push(stageRef);
 
+    XSS.shapes = {};
+
     this._disableEscKeyDefault();
     this.setupMenuSkeletton();
     this.newStage(stageRef);

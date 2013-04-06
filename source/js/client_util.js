@@ -24,8 +24,9 @@ XSS.util.extend(XSS.util, {
     /**
      * @param {string} str
      * @param {number=} duration
+     * @param {boolean=} flash
      */
-    instruct: function(str, duration) {
+    instruct: function(str, duration, flash) {
         var shape = XSS.font.shape(
                 str, XSS.PIXELS_H - XSS.font.width(str) - 3, XSS.PIXELS_V - 10
             );
@@ -33,7 +34,32 @@ XSS.util.extend(XSS.util, {
         if (duration) {
             shape.lifetime(0, duration);
         }
+        if (flash) {
+            shape.flash(500, 250);
+        }
         XSS.shapes.instruction = shape;
+    },
+
+    /**
+     * @param {string} str
+     */
+    error: function(str) {
+        var left, exit;
+
+        left = XSS.MENU_LEFT + ((XSS.MENU_WIDTH - XSS.font.width(str)) / 2);
+        exit = function() {
+            XSS.off.keydown(exit);
+            XSS.stageflow = new StageFlow();
+        };
+
+        XSS.util.hash();
+
+        XSS.shapes = {
+            error: XSS.font.shape(str, left, 60)
+        };
+
+        XSS.on.keydown(exit);
+        window.setTimeout(exit, 6000);
     },
 
     addListener: {

@@ -40,10 +40,9 @@ Socket.prototype = {
 
         map[events.CLIENT_PING]           = this.clientPing;
         map[events.CLIENT_COMBI_EVENTS]   = this.combinedEvents;
-        map[events.CLIENT_AUTOJOIN_SUCC]  = this.autoJoinSuccess;
-        map[events.CLIENT_AUTOJOIN_ERR]   = this.autoJoinError;
         map[events.CLIENT_ROOM_INDEX]     = this.roomIndex;
         map[events.CLIENT_ROOM_SCORE]     = this.updateScore;
+        map[events.CLIENT_ROOM_STATUS]    = this.roomStatus;
         map[events.CLIENT_CHAT_MESSAGE]   = this.chatMessage;
         map[events.CLIENT_CHAT_NOTICE]    = this.chatNotice;
         map[events.CLIENT_GAME_COUNTDOWN] = this.gameCountdown;
@@ -69,18 +68,10 @@ Socket.prototype = {
     disconnect: function() {
         var str = 'OHSHI!! Lost server connection\n' +
                   '(appropriate moment for panic)';
-
         if (XSS.room) {
             XSS.room.destruct();
         }
-
-        XSS.shapes = {
-            header: XSS.font.shape(str, 60, 60)
-        };
-
-        window.setTimeout(function() {
-            XSS.stageflow = new StageFlow();
-        }, 5000);
+        XSS.util.error(str);
     },
 
     /**
@@ -103,15 +94,8 @@ Socket.prototype = {
     /**
      * @param {Array} data
      */
-    autoJoinSuccess: function(data) {
-        XSS.stages.autoJoinSuccess(data);
-    },
-
-    /**
-     * @param {number} error
-     */
-    autoJoinError: function(error) {
-        XSS.stages.autoJoinError(error);
+    roomStatus: function(data) {
+        XSS.pubsub.publish(XSS.PUB_ROOM_STATUS, data);
     },
 
     /**
