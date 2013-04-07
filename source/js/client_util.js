@@ -27,16 +27,19 @@ XSS.util.extend(XSS.util, {
      * @param {boolean=} flash
      */
     instruct: function(str, duration, flash) {
-        var shape = XSS.font.shape(
-                str, XSS.PIXELS_H - XSS.font.width(str) - 3, XSS.PIXELS_V - 10
-            );
+        var shape, left = XSS.PIXELS_H - XSS.font.width(str) - 3;
+
+        shape = XSS.font.shape(str, left, XSS.PIXELS_V - 10);
         shape.clearBBox = true;
+
         if (duration) {
             shape.lifetime(0, duration);
         }
+
         if (flash) {
-            shape.flash(120, 120);
+            shape.flash();
         }
+
         XSS.shapes.instruction = shape;
     },
 

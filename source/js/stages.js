@@ -53,13 +53,13 @@ XSS.stages = {
         });
 
         XSS.socket = new Socket(function() {
-            XSS.util.instruct('Getting room properties...', 500, true);
+            XSS.util.instruct('Getting room properties...', 2000, true);
             window.setTimeout(function() {
                 XSS.socket.emit(
                     XSS.events.SERVER_ROOM_STATUS,
                     XSS.util.hash('room')
                 );
-            }, 500);
+            }, 2000);
         });
     },
 

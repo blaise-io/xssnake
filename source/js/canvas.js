@@ -234,7 +234,7 @@ Canvas.prototype = {
      * @private
      */
     _handleFocusChange: function(ev) {
-        this.focus = (ev.type === 'blur');
+        this.focus = (ev.type !== 'blur');
         XSS.pubsub.publish(XSS.PUB_FOCUS_CHANGE, this.focus);
     },
 
