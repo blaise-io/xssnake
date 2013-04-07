@@ -35,7 +35,7 @@ XSS.util.extend(XSS.util, {
             shape.lifetime(0, duration);
         }
         if (flash) {
-            shape.flash(500, 250);
+            shape.flash(120, 120);
         }
         XSS.shapes.instruction = shape;
     },
@@ -59,7 +59,7 @@ XSS.util.extend(XSS.util, {
         };
 
         XSS.on.keydown(exit);
-        window.setTimeout(exit, 6000);
+        window.setTimeout(exit, 5000);
     },
 
     addListener: {
@@ -105,7 +105,7 @@ XSS.util.extend(XSS.util, {
      * @return {*}
      */
     storage: function(key, value) {
-        if (!localStorage) {
+        if (!localStorage || key === null) {
             return '';
         }
         switch (arguments.length) {

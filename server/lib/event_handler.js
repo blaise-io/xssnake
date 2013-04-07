@@ -21,6 +21,7 @@ function EventHandler(server, client, socket) {
 
     socket.on('disconnect', this._disconnect.bind(this));
     socket.on(events.SERVER_ROOM_STATUS, this._roomStatus.bind(this));
+    socket.on(events.SERVER_ROOM_JOIN, this._joinRoom.bind(this));
     socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
     socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
     socket.on(events.SERVER_SNAKE_UPDATE, this._snakeUpdate.bind(this));
@@ -81,13 +82,23 @@ EventHandler.prototype = {
     },
 
     /**
+     * @param {Object} data
+     * @private
+     */
+    _joinRoom: function(data) {
+        var client = this.client;
+        client.name = data[1];
+        this.server.roomManager.attemptJoinRoom(client, data[0]);
+    },
+
+    /**
      * @param {Object} gameOptions
      * @private
      */
     _matchRoom: function(gameOptions) {
-        var room, client = this.client, server = this.server;
+        var room, client = this.client;
         client.name = gameOptions[map.FIELD.NAME];
-        room = server.roomManager.getPreferredRoom(gameOptions);
+        room = this.server.roomManager.getPreferredRoom(gameOptions);
         room.join(client);
     },
 

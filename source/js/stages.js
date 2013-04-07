@@ -38,78 +38,74 @@ XSS.stages = {
     },
 
     _autoJoinRoom: function() {
-        var pubKey = 'RSTAT';
+        var pubsubKey = 'RSTAT';
 
         XSS.util.instruct('Connecting...', 0, true);
 
-        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, pubKey, function(data) {
-            var error = Room.prototype.errorCodeToStr(data[1]);
-            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, pubKey);
+        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, pubsubKey, function(data) {
+            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, pubsubKey);
             if (!data[0]) {
-                XSS.util.error(error);
+                XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             } else {
-                XSS._autoJoinRoomData = data;
+                XSS.stages.autoJoinData = data;
                 XSS.stageflow.switchStage(XSS.stages.autoJoin);
             }
         });
 
         XSS.socket = new Socket(function() {
-            XSS.util.instruct('Getting room properties...', 1000, true);
+            XSS.util.instruct('Getting room properties...', 500, true);
             window.setTimeout(function() {
                 XSS.socket.emit(
                     XSS.events.SERVER_ROOM_STATUS,
                     XSS.util.hash('room')
                 );
-            }, 1000);
+            }, 500);
         });
     },
 
     /**
-     * @return {ScreenStage}
+     * @return {InputStage}
      */
     autoJoin: function() {
-        var screen, left, top, data, names, opts, field = XSS.map.FIELD;
+        var diffs, bools, field, options, players, sep, label, next, stage;
 
-        left = XSS.MENU_LEFT;
-        top = XSS.MENU_TOP;
-
-        data = XSS._autoJoinRoomData;
-        names = data[2].join(', ');
-        opts = data[1];
-
-        var diffs = {
+        diffs = {
             '1': 'Worm',
             '2': 'Snake',
             '3': 'Python'
         };
 
-        var bools = {
-            'false': 'Yes',
-            'true': 'No'
+        bools = {
+            'false': 'No',
+            'true' : 'Yes'
         };
 
-        screen = new Shape(
-            XSS.transform.zoomX2(XSS.font.pixels('JOIN GAME'), left, top, true),
-            XSS.font.pixels('' +
-                'Players          ' + names + '\n' +
-                'Difficulty        ' + diffs[opts[field.DIFFICULTY]] + '\n' +
-                'Max Players    ' + opts[field.MAX_PLAYERS] + '\n' +
-                'Power-Ups      ' + bools[opts[field.POWERUPS]] + '\n' +
-                'XSS ' + XSS.UC_SKULL + '          ' + bools[opts[field.XSS]] + '\n\n' +
-                'Press ' + XSS.UC_ENTER_KEY + ' to join this game.',
-                left, top + XSS.SUBHEADER_HEIGHT)
-        );
+        field = XSS.map.FIELD;
+        options = XSS.stages.autoJoinData[1];
+        players = XSS.stages.autoJoinData[2];
+        sep = '\n';
 
-        return new ScreenStage(screen);
+        label = '' +
+            'Players ' + players.length + '/' + options[field.MAX_PLAYERS] +
+                        ': ' + players.join(', ') + sep +
+            'Difficulty: ' + diffs[options[field.DIFFICULTY]] + sep +
+            'Power-Ups: ' + bools[options[field.POWERUPS]] + sep +
+            'XSS ' + XSS.UC_SKULL + ': ' + bools[options[field.XSS]] + '\n\n' +
+            'Enter your name to join: ';
 
+        if (options[field.XSS]) {
+            next = XSS.stages.challenge;
+        } else {
+            next = XSS.stages.startGame;
+        }
 
-// , next = XSS.stages.multiplayer
-//        stage = new InputStage('name', next, 'JOIN ROOM', label);
-//        stage.minChars = 2;
-//        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
-//        stage.inputSubmit = XSS.stages._autojoinSubmit;
+        stage = new InputStage('name', next, 'JOiN GAME', label);
 
-//        return stage;
+        stage.minChars = 2;
+        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
+        stage.inputSubmit = XSS.stages._autojoinSubmit;
+
+        return stage;
     },
 
     /**
@@ -120,7 +116,7 @@ XSS.stages = {
 
         next = function(values) {
             if (values[field.XSS]) {
-                return XSS.stages.captcha;
+                return XSS.stages.challenge;
             }
             return XSS.stages.startGame;
         };
@@ -145,6 +141,7 @@ XSS.stages = {
             ['TRUE'],
             ['ACCEPT'],
             ['ENABLE'],
+            ['HAO'],
             ['OUI!']
         ]);
 
@@ -173,7 +170,7 @@ XSS.stages = {
     /**
      * @return {InputStage}
      */
-    captcha: function() {
+    challenge: function() {
         var challenges, challenge, intro, stage, str, digit,
             nextstage = XSS.stages.startGame;
 
@@ -291,6 +288,7 @@ XSS.stages = {
      * @param {string} value
      * @param {string} challenge
      * @param {number} top
+     * @this {InputStage}
      * @private
      */
     _captchaSubmit: function(value, challenge, top) {
@@ -316,28 +314,24 @@ XSS.stages = {
      * @param {string} error
      * @param {string} value
      * @param {number} top
+     * @this {InputStage}
      * @private
      */
     _autojoinSubmit: function(error, value, top) {
-        var shape, text = error, duration = 500;
-
-        if (!error) {
-            text = 'Getting room properties...';
-            XSS.socket = new Socket(function() {
-                XSS.socket.emit(XSS.events.SERVER_ROOM_STATUS, XSS.util.hash('room'));
-                duration = 5000;
-            });
+        if (error) {
+            var shape = XSS.font.shape(error, XSS.MENU_LEFT, top);
+            shape.lifetime(0, 500);
+            XSS.shapes.message = shape;
+        } else {
+            XSS.stageflow.switchStage(this.nextStage);
         }
-
-        shape = XSS.font.shape(text, XSS.MENU_LEFT, top);
-        shape.lifetime(0, duration);
-        XSS.shapes.message = shape;
     },
 
     /**
      * @param {string} error
      * @param {string} value
      * @param {number} top
+     * @this {InputStage}
      * @private
      */
     _inputNameSubmit: function(error, value, top) {

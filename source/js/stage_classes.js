@@ -290,6 +290,7 @@ FormStage.prototype = {
 
 /**
  * Game Stage
+ * TODO: Should be in XSS.stages
  * @implements {StageInterface}
  * @constructor
  */
@@ -303,20 +304,44 @@ GameStage.prototype = {
     },
 
     create: function() {
-        var stages, values;
-
         XSS.shapes.header = null;
 
-        stages = XSS.stageflow.stageInstances;
-        values = stages.multiplayer.form.getValues();
-        values[XSS.map.FIELD.NAME] = stages.inputName.val;
-
-        XSS.socket = new Socket(function() {
-            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, values);
-        });
+        if (XSS.stages.autoJoinData) {
+            this._autoJoin(XSS.util.hash('room'));
+            delete XSS.stages.autoJoinData;
+        } else {
+            this._matchRoom();
+        }
     },
 
     destruct: function() {
+    },
+
+    _autoJoin: function(key) {
+        var stages, pubsubKey = 'RSTAT';
+
+        stages = XSS.stageflow.stageInstances;
+
+        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, pubsubKey, function(data) {
+            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, pubsubKey);
+            if (!data[0]) {
+                XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
+            }
+        });
+
+        XSS.socket.emit(XSS.events.SERVER_ROOM_JOIN, [key, stages.autoJoin.val]);
+    },
+
+    _matchRoom: function() {
+        var stages, data;
+
+        stages = XSS.stageflow.stageInstances;
+        data = stages.multiplayer.form.getValues();
+        data[XSS.map.FIELD.NAME] = stages.inputName.val;
+
+        XSS.socket = new Socket(function() {
+            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
+        });
     }
 
 };

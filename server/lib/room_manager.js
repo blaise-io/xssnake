@@ -39,19 +39,26 @@ RoomManager.prototype = {
      * @param {string} key
      */
     emitRoomStatus: function(client, key) {
-        var data = [0], room = this.rooms[key];
-
-        if (!room) {
-            data.push(map.ROOM.NOT_FOUND);
-        } else if (room.isFull()) {
-            data.push(map.ROOM.FULL);
-        } else if (room.inProgress) {
-            data.push(map.ROOM.IN_PROGRESS);
-        } else {
-            data = [1, room.options, room.names()];
-        }
-
+        var room, data;
+        room = this.rooms[key];
+        data = this._getRoomJoinData(room);
         client.emit(events.CLIENT_ROOM_STATUS, data);
+    },
+
+    /**
+     * @param {Client} client
+     * @param {string} key
+     */
+    attemptJoinRoom: function(client, key) {
+        var room, data;
+        room = this.rooms[key];
+        data = this._getRoomJoinData(room);
+
+        if (data[0]) {
+            room.join(client); // Room can be joined
+        } else {
+            client.emit(events.CLIENT_ROOM_STATUS, data); // Nope
+        }
     },
 
     /**
@@ -92,6 +99,27 @@ RoomManager.prototype = {
             }
         }
         return null;
+    },
+
+    /**
+     * @param {Room|undefined} room
+     * @return {Array}
+     * @private
+     */
+    _getRoomJoinData: function(room) {
+        var data = [0];
+
+        if (!room) {
+            data.push(map.ROOM.NOT_FOUND);
+        } else if (room.isFull()) {
+            data.push(map.ROOM.FULL);
+        } else if (room.inProgress) {
+            data.push(map.ROOM.IN_PROGRESS);
+        } else {
+            data = [1, room.options, room.names()];
+        }
+
+        return data;
     },
 
     /**
