@@ -11,13 +11,18 @@
  */
 function Game(index, levelID, names) {
 
-    XSS.stageflow.stage.destruct();
+    // Remove old snakes, apples and power-ups.
+    // Don't do this during gameplay, might affects fps
+    XSS.canvas.garbageCollect();
+
+    XSS.flow.stage.destruct();
     XSS.shapes.stage = null;
     XSS.shapes.header = null;
     XSS.shapes.border = null;
 
     /** @type {Level} */
     this.level = this._setupLevel(levelID);
+    /** @type {Array.<ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
     /** @type {Array.<Apple>} */
     this.apples = [];
@@ -85,9 +90,6 @@ Game.prototype = {
 
         count = XSS.config.TIME_COUNTDOWN_FROM;
         total = count;
-
-        // This is a good time to clean up.
-        XSS.canvas.garbageCollect();
 
         do {
             var pixels, shape, bbox, start;

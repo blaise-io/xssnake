@@ -67,7 +67,7 @@ Server.prototype = {
         this.io.set('browser client etag', true);
         this.io.set('browser client gzip', true);
         this.io.set('browser client minification', true);
-        this.io.set('transports', ['websocket']);
+        this.io.set('transports', ['websocket', 'flashsocket']);
         this.io.set('close timeout', 10);
         this.io.set('heartbeat timeout ', 10);
 

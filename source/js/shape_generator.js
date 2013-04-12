@@ -92,7 +92,6 @@ ShapeGenerator.prototype = {
                 shape.add(line(x - 5, y + 2, x - 2, y - 1));
                 shape.add(line(x - 5, y + 3, x - 2, y));
                 break;
-            //
             case 1:
                 hw = Math.ceil(width / 2);
                 shape = XSS.font.shape(text, x - hw, y - 13);

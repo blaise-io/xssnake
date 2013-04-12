@@ -24,7 +24,8 @@ XSS.main = function() {
     XSS.shapegen   = new ShapeGenerator();
     XSS.transform  = new Transform();
     XSS.font       = new Font();
-    XSS.stageflow  = new StageFlow();
+    XSS.play       = new AudioPlayer();
+    XSS.flow       = new StageFlow();
 
     // Preloading
     ClientLevel.prototype.generateLevelCache();

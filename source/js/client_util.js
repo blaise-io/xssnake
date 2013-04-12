@@ -52,7 +52,7 @@ XSS.util.extend(XSS.util, {
         left = XSS.MENU_LEFT + ((XSS.MENU_WIDTH - XSS.font.width(str)) / 2);
         exit = function() {
             XSS.off.keydown(exit);
-            XSS.stageflow = new StageFlow();
+            XSS.flow = new StageFlow();
         };
 
         XSS.util.hash();

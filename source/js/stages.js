@@ -48,7 +48,7 @@ XSS.stages = {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             } else {
                 XSS.stages.autoJoinData = data;
-                XSS.stageflow.switchStage(XSS.stages.autoJoin);
+                XSS.flow.switchStage(XSS.stages.autoJoin);
             }
         });
 
@@ -297,7 +297,7 @@ XSS.stages = {
         if (value.replace(/['"]/g, '') === String(eval(challenge))) { // 666
             text = '> bleep!';
             setTimeout(function() {
-                XSS.stageflow.switchStage(this.nextStage);
+                XSS.flow.switchStage(this.nextStage);
             }.bind(this), 1000);
         }
 
@@ -323,7 +323,7 @@ XSS.stages = {
             shape.lifetime(0, 500);
             XSS.shapes.message = shape;
         } else {
-            XSS.stageflow.switchStage(this.nextStage);
+            XSS.flow.switchStage(this.nextStage);
         }
     },
 
@@ -370,7 +370,7 @@ XSS.stages = {
             text = text.replace(/%s/g, value);
             duration = Math.max(text.length * 30, 400);
             setTimeout(function() {
-                XSS.stageflow.switchStage(this.nextStage);
+                XSS.flow.switchStage(this.nextStage);
             }.bind(this), duration + 50);
         }
 

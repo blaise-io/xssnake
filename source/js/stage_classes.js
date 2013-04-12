@@ -82,7 +82,7 @@ InputStage.prototype = {
     handleKeys: function(e) {
         switch (e.which) {
             case XSS.KEY_ESCAPE:
-                XSS.stageflow.previousStage();
+                XSS.flow.previousStage();
                 break;
             case XSS.KEY_ENTER:
                 var val = this.val.trim(),
@@ -101,7 +101,7 @@ InputStage.prototype = {
      */
     inputSubmit: function(error, value, top) {
         if (!error && value && top) {
-            XSS.stageflow.switchStage(this.nextStage);
+            XSS.flow.switchStage(this.nextStage);
         }
     },
 
@@ -164,7 +164,7 @@ ScreenStage.prototype = {
         switch (e.which) {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
-                XSS.stageflow.previousStage();
+                XSS.flow.previousStage();
         }
     },
 
@@ -207,23 +207,25 @@ SelectStage.prototype = {
         switch (e.which) {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
-                XSS.stageflow.previousStage();
+                XSS.flow.previousStage();
                 break;
             case XSS.KEY_ENTER:
                 var nextStage = this.menu.getNextStage();
                 if (nextStage) {
-                    XSS.stageflow.switchStage(nextStage);
+                    XSS.flow.switchStage(nextStage);
                 } else {
-                    XSS.stageflow.previousStage();
+                    XSS.flow.previousStage();
                 }
                 break;
             case XSS.KEY_UP:
                 this.menu.select(-1);
-                XSS.stageflow.setStageShapes();
+                XSS.play.menu();
+                XSS.flow.setStageShapes();
                 break;
             case XSS.KEY_DOWN:
                 this.menu.select(1);
-                XSS.stageflow.setStageShapes();
+                XSS.play.menu();
+                XSS.flow.setStageShapes();
         }
     }
 
@@ -259,27 +261,31 @@ FormStage.prototype = {
         switch (e.which) {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
-                XSS.stageflow.previousStage();
+                XSS.flow.previousStage();
                 break;
             case XSS.KEY_ENTER:
                 var nextStage = this.form.getNextStage();
-                XSS.stageflow.switchStage(nextStage);
+                XSS.flow.switchStage(nextStage);
                 break;
             case XSS.KEY_UP:
                 this.form.selectField(-1);
-                XSS.stageflow.setStageShapes();
+                XSS.play.menu();
+                XSS.flow.setStageShapes();
                 break;
             case XSS.KEY_DOWN:
                 this.form.selectField(1);
-                XSS.stageflow.setStageShapes();
+                XSS.play.menu();
+                XSS.flow.setStageShapes();
                 break;
             case XSS.KEY_LEFT:
                 this.form.selectOption(-1);
-                XSS.stageflow.setStageShapes();
+                XSS.play.menu_alt();
+                XSS.flow.setStageShapes();
                 break;
             case XSS.KEY_RIGHT:
                 this.form.selectOption(1);
-                XSS.stageflow.setStageShapes();
+                XSS.play.menu_alt();
+                XSS.flow.setStageShapes();
                 break;
         }
 
@@ -320,7 +326,7 @@ GameStage.prototype = {
     _autoJoin: function(key) {
         var stages, pubsubKey = 'RSTAT';
 
-        stages = XSS.stageflow.stageInstances;
+        stages = XSS.flow.stageInstances;
 
         XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, pubsubKey, function(data) {
             XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, pubsubKey);
@@ -335,7 +341,7 @@ GameStage.prototype = {
     _matchRoom: function() {
         var stages, data;
 
-        stages = XSS.stageflow.stageInstances;
+        stages = XSS.flow.stageInstances;
         data = stages.multiplayer.form.getValues();
         data[XSS.map.FIELD.NAME] = stages.inputName.val;
 
