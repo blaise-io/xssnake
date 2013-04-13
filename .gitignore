@@ -7,6 +7,6 @@ desktop.ini
 
 # Build, install or configure these files yourself. See README.md
 node_modules
-xssnake.js
-compiled_start.js
-config.js
+server/compiled_start.js
+server/shared/config.js
+www/index.html

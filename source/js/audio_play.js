@@ -5,7 +5,7 @@
 /**
  * @constructor
  */
-function AudioPlayer() {
+function AudioPlay() {
     this._setupFiles();
     // this._bindEvents(); TODO: subscribe to XSS.canvas.focus
     this.settings = {
@@ -14,7 +14,7 @@ function AudioPlayer() {
     };
 }
 
-AudioPlayer.prototype = {
+AudioPlay.prototype = {
 
     _mimetypes: {
         mp3: 'audio/mpeg',
