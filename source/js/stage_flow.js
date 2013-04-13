@@ -123,6 +123,12 @@ StageFlow.prototype = {
 
         newStageAnim.callback = callback;
 
+        if (back) {
+            XSS.play.swoosh_rev();
+        } else {
+            XSS.play.swoosh();
+        }
+
         XSS.shapes.oldstage = oldStage.clone().animate(oldStageAnim);
         XSS.shapes.newstage = newStage.clone().animate(newStageAnim);
     },

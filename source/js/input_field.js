@@ -36,6 +36,7 @@ InputField.prototype = {
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
+        XSS.off.keydown(this._playMenuAlt);
         XSS.off.keydown(this._updateShapesBound);
         XSS.off.keyup(this._updateShapesBound);
         XSS.shapes.caret = null;
@@ -48,14 +49,26 @@ InputField.prototype = {
      */
     _bindEvents: function() {
         this._updateShapesBound = this._updateShapes.bind(this);
+        XSS.on.keydown(this._playMenuAlt);
         XSS.on.keydown(this._updateShapesBound);
         XSS.on.keyup(this._updateShapesBound);
     },
 
     /**
+     * @param {Event} e
      * @private
      */
-    _updateShapes: function() {
+    _playMenuAlt: function(e) {
+        // Silent keys: enter, shift, ctrl, alt, meta
+        if (-1 === [13, 16, 17, 18, 91].indexOf(Number(e.keyCode))) {
+            XSS.play.menu_alt();
+        }
+    },
+
+    /**
+     * @private
+     */
+    _updateShapes: function(e) {
         // _isDestruct: IE9 workaround for issue where _updateShapes executes
         // after event listeners are removed.
         if (this._isDestruct) { return; }
