@@ -29,8 +29,8 @@ optimized code.
 
 ## Production
 
- * Compile the client source: `node build/client.js`,
-   which will create the file `index.html` in the `www` dir.
+ * Compile the client source: `node build/client.js`.  
+   This will create the file `index.html` in the `www` dir.
  * Make sure the `www` dir is accessible by browsers
  * Make sure the `server` dir is accessible by node.js
  * Run the game server: `node server/start.js`
