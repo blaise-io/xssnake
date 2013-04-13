@@ -59,7 +59,7 @@ AudioPlay.prototype = {
     _setupDummyFiles: function() {
         for (var k in XSS.audio.mp3) {
             if (XSS.audio.mp3.hasOwnProperty(k)) {
-                this[key] = function() {};
+                this[k] = function() {};
             }
         }
     }
