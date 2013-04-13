@@ -29,7 +29,8 @@ optimized code.
 
 ## Production
 
- * Compile the client source: `node build/client.js`
+ * Compile the client source: `node build/client.js`,
+   which will create the file `index.html` in the `www` dir.
  * Make sure the `www` dir is accessible by browsers
  * Make sure the `server` dir is accessible by node.js
  * Run the game server: `node server/start.js`
@@ -54,7 +55,7 @@ made any errors.
  * Compile server code: `node build/server.js` (Warning: this contains a
    hack to inline node.js modules to allow compiling with Google Closure.
    Check `build/lib/server_compile.js` code comments for details.)
- * Compile client code: `node build/client.js`
+ * Compile client code: `node build/client.js` to check for errors.
 
 ## Creating/Updating Levels
 
