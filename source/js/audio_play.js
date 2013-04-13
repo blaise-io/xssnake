@@ -24,10 +24,12 @@ AudioPlay.prototype = {
     _getAudioData: function() {
         var el = document.createElement('audio');
         if (el.canPlayType) {
-            if (el.canPlayType(this._mimetypes.mp3).replace(/no/, '')) {
-                return {mime: this._mimetypes.mp3, files: XSS.audio.mp3};
-            } else if (el.canPlayType(this._mimetypes.ogg).replace(/no/, '')) {
+            // Prefer ogg over mp3 because of this Firefox bug:
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=849264
+            if (el.canPlayType(this._mimetypes.ogg).replace(/no/, '')) {
                 return {mime: this._mimetypes.ogg, files: XSS.audio.ogg};
+            } else if (el.canPlayType(this._mimetypes.mp3).replace(/no/, '')) {
+                return {mime: this._mimetypes.mp3, files: XSS.audio.mp3};
             }
         }
         return null;
@@ -49,9 +51,7 @@ AudioPlay.prototype = {
     _setupFile: function(key, mime, data) {
         this[key] = function() {
             if (!this.settings.mute && this.settings.enabled) {
-                window.setTimeout(function() {
-                    new Audio('data:' + mime + ';base64,' + data).play();
-                }, 0);
+                new Audio('data:' + mime + ';base64,' + data).play();
             }
         }.bind(this);
     },
