@@ -9,23 +9,27 @@ XSS.stages = {
      * @return {SelectStage}
      */
     main: function() {
-        var menu, name, welcome;
+        var menu, name, header, footer;
 
         name = XSS.util.storage('name');
-        welcome = name ?
+        header = name ?
                   'WLCM BCK ' + name.toUpperCase() + '!' :
                   'WELCOME STRANGER!!';
 
-        menu = new SelectMenu('main', welcome);
+        footer = '' +
+            'Press M to toggle muting sounds.\n' +
+            'Use arrow keys, Esc and ' + XSS.UC_ENTER_KEY + ' to navigate.';
+
+        menu = new SelectMenu('main', header, footer);
         menu.addOption(null, XSS.stages.inputName,
             'MULTIPLAYER',
-            'Play with a friend or (un)friendly stranger.');
+            'Play with friends or (un)friendly strangers.');
         menu.addOption(null, XSS.stages.startGame,
             'SINGLE PLAYER',
-            'Play with yourself, see how long you can get your snake.');
+            'Play with yourself and grow a long snake.');
         menu.addOption(null, XSS.stages.themesScreen,
-            'THEEEMES',
-            'Change the color scheme YAY!');
+            'COLOR SCHEME',
+            'Nothing wrong with yellow.');
         menu.addOption(null, XSS.stages.creditsScreen,
             'CREDITS',
             'Evil genius.');
@@ -252,7 +256,7 @@ XSS.stages = {
         screen = new Shape(
             XSS.transform.zoomX2(XSS.font.pixels('CREDITS'), left, top, true),
             XSS.font.pixels('' +
-                'Concept, Code, Pixels, Font & ' + XSS.UC_SKULL + ':\n' +
+                'Concept, Code, Bugs, Font & ' + XSS.UC_SKULL + ':\n' +
                 'Blaise Kal, 2012-2013.\n\n' +
                 'Website: www.blaise.io\n' +
                 'Email: blaisekal@gmail.com\n\n' +

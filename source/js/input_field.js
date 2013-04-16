@@ -69,9 +69,10 @@ InputField.prototype = {
      * @private
      */
     _updateShapes: function() {
-        // _isDestruct: IE9 workaround for issue where _updateShapes executes
+        // IE9 workaround for issue where _updateShapes executes
         // after event listeners are removed.
         if (this._isDestruct) { return; }
+
         this._applyMaxWidth();
         this.value = this.input.value;
         if (this.callback) {

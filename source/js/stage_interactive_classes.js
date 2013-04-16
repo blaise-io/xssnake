@@ -8,11 +8,13 @@
  * Creates a single navigatable verticle menu
  * @param {string} name
  * @param {string=} header
+ * @param {string=} footer
  * @constructor
  */
-function SelectMenu(name, header) {
+function SelectMenu(name, header, footer) {
     this.name = name;
     this.header = header || '';
+    this.footer = footer || '';
     this.selected = 0;
     this._options = [];
 }
@@ -68,15 +70,21 @@ SelectMenu.prototype = {
      * @return {Shape}
      */
     getShape: function() {
-        var x, y, header, font, shape, desc;
+        var x, y, header, footer, font, shape, desc;
 
         x = XSS.MENU_LEFT;
         y = XSS.MENU_TOP;
 
+        // Header
         header = XSS.transform.zoomX2(XSS.font.pixels(this.header), x, y, true);
         shape = new Shape(header);
-
         y += XSS.SUBHEADER_HEIGHT;
+
+        // Footer
+        footer = XSS.font.pixels(
+            this.footer, x, XSS.PIXELS_V - 3 - XSS.font.height(this.footer)
+        );
+        shape.add(footer);
 
         // Draw options
         for (var i = 0, m = this._options.length; i < m; i++) {

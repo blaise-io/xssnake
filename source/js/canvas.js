@@ -17,10 +17,10 @@ function Canvas() {
         this._useVendorRequestAnimationFrame();
     }
 
-    this.focus = true;
     this._positionCanvas();
     this._bindEvents();
 
+    this.focus = true;
     this._prevFrame = new Date() - 20;
     this._dummyBBox = new BoundingBox();
     this._frameBound = this._frame.bind(this);
@@ -142,7 +142,13 @@ Canvas.prototype = {
     _paintShape: function(name, shape, delta) {
         var bbox, cache, ctx = this.ctx;
 
-        shape.applyEffects(delta);
+        // Apply effects if FPS is in a normal range. If window is out
+        // of focus, we don't want animations. Also we do not want anims
+        // if a browser is "catching up" frames after being focused after
+        // a blur, where it tries to make up for slow frames.
+        if (delta > 5 && delta < 300) {
+            shape.applyEffects(delta);
+        }
 
         // Draw on canvas if shape is enabled and visible
         if (false === shape.enabled) {
@@ -246,16 +252,8 @@ Canvas.prototype = {
         if (Number(ev.which) !== 1) { // Only LMB
             return;
         }
-        var keys = [
-            'Esc',
-            XSS.UC_ENTER_KEY,
-            XSS.UC_ARR_LEFT,
-            XSS.UC_ARR_UP,
-            XSS.UC_ARR_RIGHT,
-            XSS.UC_ARR_DOWN
-        ];
         XSS.util.instruct(
-            'HUH?! Use the electronic typing device:  ' + keys.join(' / '),
+            'No mousing please',
             4000
         );
     },

@@ -29,7 +29,9 @@ XSS.util.extend(XSS.util, {
     instruct: function(str, duration, flash) {
         var shape, left = XSS.PIXELS_H - XSS.font.width(str) - 3;
 
-        shape = XSS.font.shape(str, left, XSS.PIXELS_V - 10);
+        shape = XSS.font.shape(
+            str, left, XSS.PIXELS_V - 3 - XSS.font.height(str), {invert: true}
+        );
         shape.clearBBox = true;
 
         if (duration) {
@@ -113,13 +115,13 @@ XSS.util.extend(XSS.util, {
         }
         switch (arguments.length) {
             case 0: return '';
-            case 1: return localStorage.getItem(key);
+            case 1: return JSON.parse(localStorage.getItem(key));
             case 2:
                 if (value === null) {
                     localStorage.removeItem(key);
                     return '';
                 } else {
-                    return localStorage.setItem(key, value);
+                    return localStorage.setItem(key, JSON.stringify(value));
                 }
         }
     },

@@ -8,10 +8,6 @@
 function AudioPlay() {
     this._setupFiles();
     // this._bindEvents(); TODO: subscribe to XSS.canvas.focus
-    this.settings = {
-        mute: false,
-        enabled: true
-    };
 }
 
 AudioPlay.prototype = {
@@ -50,7 +46,7 @@ AudioPlay.prototype = {
 
     _setupFile: function(key, mime, data) {
         this[key] = function() {
-            if (!this.settings.mute && this.settings.enabled) {
+            if (!XSS.util.storage('mute')) {
                 new Audio('data:' + mime + ';base64,' + data).play();
             }
         }.bind(this);

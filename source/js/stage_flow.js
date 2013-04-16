@@ -14,7 +14,7 @@ function StageFlow(stageRef) {
 
     XSS.shapes = {};
 
-    this._disableEscKeyDefault();
+    this._globalKeys();
     this.setupMenuSkeletton();
     this.newStage(stageRef);
 }
@@ -92,13 +92,23 @@ StageFlow.prototype = {
     },
 
     /**
-     * Firefox disconnects websocket on Esc O___O
      * @private
      */
-    _disableEscKeyDefault: function() {
+    _globalKeys: function() {
         XSS.on.keydown(function(e) {
+            // Firefox disconnects websocket on Esc O___O
+            // Disable that.
             if (e.keyCode === XSS.KEY_ESCAPE) {
                 e.preventDefault();
+            }
+            // Global mute key. Ignore key when user is in input field.
+            if (e.keyCode === XSS.KEY_MUTE) {
+                if (!document.getElementsByTagName('input')[0]) {
+                    var mute = !XSS.util.storage('mute');
+                    XSS.util.storage('mute', mute);
+                    XSS.util.instruct('Sounds ' + (mute ? 'muted' : 'on'), 1e3);
+                    XSS.play.menu_alt();
+                }
             }
         });
     },
