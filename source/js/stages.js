@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true, evil:true*/
-/*globals XSS, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Shape*/
+/*globals XSS, ClientLevel, ClientSnake, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Room, Shape, Socket*/
 
 'use strict';
 
@@ -17,28 +17,52 @@ XSS.stages = {
                   'WELCOME STRANGER!!';
 
         footer = '' +
-            'Press M to toggle muting sounds.\n' +
+            'Press M to mute/unmute sounds.\n' +
             'Use arrow keys, Esc and ' + XSS.UC_ENTER_KEY + ' to navigate.';
 
         menu = new SelectMenu('main', header, footer);
-        menu.addOption(null, XSS.stages.inputName,
-            'MULTIPLAYER',
-            'Play with friends or (un)friendly strangers.');
-        menu.addOption(null, XSS.stages.startGame,
-            'SINGLE PLAYER',
-            'Play with yourself and grow a long snake.');
-        menu.addOption(null, XSS.stages.themesScreen,
-            'COLOR SCHEME',
-            'Nothing wrong with yellow.');
-        menu.addOption(null, XSS.stages.creditsScreen,
-            'CREDITS',
-            'Evil genius.');
+        menu.addOption(null, XSS.stages.inputName, 'MULTIPLAYER');
+        menu.addOption(null, XSS.stages.startGame, 'SINGLE PLAYER');
+        menu.addOption(null, XSS.stages.colorSchemeScreen, 'COLOR SCHEME');
+        menu.addOption(null, XSS.stages.creditsScreen, 'CREDITS');
 
         if (XSS.util.hash('room')) {
             XSS.stages._autoJoinRoom();
         }
 
+        window.setTimeout(XSS.stages._roboSnake, 500);
+
         return new SelectStage(menu);
+    },
+
+    _roboSnake: function() {
+        var snake, level;
+
+        snake = new ClientSnake(0, true, '', [1, 1], 2);
+        snake.addToShapes();
+        snake.addControls();
+        snake.showDirection();
+
+        level = new ClientLevel(0);
+        level.level.height = Math.floor(XSS.PIXELS_V / 4)- 2;
+
+        var update = function() {
+            var head = snake.head();
+            snake.removeNameAndDirection();
+            if (level.isWall(head[0], head[1])) {
+                snake.crash();
+                snake.showAction('CRASH!');
+                window.setTimeout(XSS.stages._roboSnake, 5e3);
+            } else {
+                snake.move(snake.getNextPosition());
+                snake.updateShape();
+                window.setTimeout(update, 100);
+            }
+        };
+
+        if (!XSS.room) {
+            window.setTimeout(update, 1000);
+        }
     },
 
     _autoJoinRoom: function() {
@@ -225,7 +249,7 @@ XSS.stages = {
     /**
      * @return {SelectStage}
      */
-    themesScreen: function() {
+    colorSchemeScreen: function() {
         var setTheme, menu = new SelectMenu('theme', 'THEEEMES');
 
         menu.selected = parseInt(XSS.util.storage('theme'), 10) || 0;

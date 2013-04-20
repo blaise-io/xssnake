@@ -196,7 +196,7 @@ ShapeGenerator.prototype = {
 
         y = y || 16;
         shape = new Shape(XSS.transform.zoomX4(welcome, x, y, true));
-        shape.add(XSS.font.pixels((new Array(43)).join('*'), x, y + 28));
+        shape.add(this.line(x, y + 28, x + XSS.MENU_WIDTH, y + 28));
 
         return shape;
     }

@@ -172,7 +172,7 @@ Game.prototype = {
         direction = this.level.getSpawnDirection(i);
 
         snake = new ClientSnake(i, i === index, name, location, direction);
-        snake.addToEntities();
+        snake.addToShapes();
         snake.showName();
 
         if (i === index) {

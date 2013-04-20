@@ -25,6 +25,7 @@ function ClientSnake(index, local, name, location, direction) {
     this.limbo   = false;
 
     this._shape = new Shape();
+    this._shape.clearPx = true;
 
     /**
      * @type {Array}
@@ -124,7 +125,7 @@ XSS.util.extend(ClientSnake.prototype, {
         }
     },
 
-    addToEntities: function() {
+    addToShapes: function() {
         XSS.shapes[this.shapes.snake] = this.updateShape();
     },
 
@@ -145,7 +146,9 @@ XSS.util.extend(ClientSnake.prototype, {
     },
 
     emitState: function(direction) {
-        XSS.socket.emit(XSS.events.SERVER_SNAKE_UPDATE, [this.parts, direction]);
+        if (XSS.room) {
+            XSS.socket.emit(XSS.events.SERVER_SNAKE_UPDATE, [this.parts, direction]);
+        }
     },
 
     /** @private */

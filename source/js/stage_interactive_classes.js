@@ -25,7 +25,7 @@ SelectMenu.prototype = {
      * @param {?(boolean|string)} value
      * @param {function()|null} next
      * @param {string} title
-     * @param {string|null} description
+     * @param {string=} description
      * @param {function(number)=} callback
      */
     addOption: function(value, next, title, description, callback) {
@@ -190,7 +190,7 @@ Form.prototype = {
         x = XSS.MENU_LEFT;
         y = XSS.MENU_TOP;
 
-        optionX = XSS.MENU_LEFT + XSS.MENU_WIDTH -
+        optionX = XSS.MENU_LEFT + 2 + XSS.MENU_WIDTH -
                   this._optionMaxWidth - XSS.font.width(' ' + XSS.UC_TR_LEFT);
 
         shape = new Shape();

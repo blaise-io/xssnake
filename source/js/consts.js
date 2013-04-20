@@ -26,10 +26,10 @@
 /** @const */ XSS.DIRECTION_DOWN = 3;
 
 /** @const */ XSS.MENU_LEFT = 40;
-/** @const */ XSS.MENU_TOP = 54;
+/** @const */ XSS.MENU_TOP = 50;
 /** @const */ XSS.SUBHEADER_HEIGHT = 20;
 
-/** @const */ XSS.MENU_WIDTH = 170;
+/** @const */ XSS.MENU_WIDTH = 167;
 /** @const */ XSS.MENU_WRAP = 176;
 
 /** @const */ XSS.GAME_LEFT = 2;
