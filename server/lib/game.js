@@ -4,11 +4,11 @@
 var util = require('util');
 var Spawner = require('./spawner.js');
 var Powerup = require('./powerup.js');
-var config = require('../shared/config.js');
-var events = require('../shared/events.js');
 var Level = require('../shared/level.js');
 var Snake = require('../shared/snake.js');
 var Util = require('../shared/util.js');
+var config = require('../shared/config.js');
+var events = require('../shared/events.js');
 
 /**
  * @param {Room} room
@@ -54,7 +54,7 @@ Game.prototype = {
         console.log('___ NEW ROUND IN ROOM ' + this.room.key + ' ___');
         this.room.emit(events.CLIENT_GAME_START, []);
 
-        this.room.inProgress = true;
+        this.room.round = true;
         this.server.ticker.addListener('tick', this._tickBound);
 
         var respawnAfter = config.TIME_RESPAWN_APPLE * 1000;
@@ -371,7 +371,7 @@ Game.prototype = {
      */
     _startNewRound: function() {
         this.server.ticker.removeListener('tick', this._tickBound);
-        this.room.newRound();
+        this.room.nextRound();
     },
 
     /**

@@ -7,7 +7,6 @@
  */
 function AudioPlay() {
     this._setupFiles();
-    // this._bindEvents(); TODO: subscribe to XSS.canvas.focus
 }
 
 AudioPlay.prototype = {
@@ -46,16 +45,17 @@ AudioPlay.prototype = {
 
     _setupFile: function(key, mime, data) {
         this[key] = function() {
-            if (!XSS.util.storage('mute')) {
+            if (!XSS.util.storage('mute') && XSS.canvas.focus) {
                 new Audio('data:' + mime + ';base64,' + data).play();
             }
         }.bind(this);
     },
 
     _setupDummyFiles: function() {
+        var dummy = function(){};
         for (var k in XSS.audio.mp3) {
             if (XSS.audio.mp3.hasOwnProperty(k)) {
-                this[k] = function() {};
+                this[k] = dummy;
             }
         }
     }

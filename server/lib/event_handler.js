@@ -122,7 +122,7 @@ EventHandler.prototype = {
      */
     _snakeUpdate: function(data) {
         var game = this._clientGame(this.client);
-        if (game && game.room.inProgress) {
+        if (game && game.room.round) {
             game.updateSnake(this.client, data[0], data[1]);
         }
     },
@@ -132,7 +132,7 @@ EventHandler.prototype = {
      */
     _gameState: function() {
         var game = this._clientGame(this.client);
-        if (game && game.room.inProgress) {
+        if (game && game.room.round) {
             game.emitState(this.client);
         }
     },

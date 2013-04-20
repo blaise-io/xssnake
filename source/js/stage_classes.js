@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Socket, InputField, Font*/
+/*globals XSS, Shape, Socket, InputField, Font, Room*/
 'use strict';
 
 
@@ -16,7 +16,7 @@ StageInterface.prototype = {
     },
 
     /** @return */
-    create: function() {},
+    construct: function() {},
 
     /** @return */
     destruct: function() {}
@@ -57,7 +57,7 @@ InputStage.prototype = {
         return this.shape;
     },
 
-    create: function() {
+    construct: function() {
         XSS.on.keydown(this._handleKeysBound);
         this.input = new InputField(XSS.MENU_LEFT, this.inputTop, this.label);
         this.input.setValue(this.val);
@@ -156,7 +156,7 @@ ScreenStage.prototype = {
         return this._shape;
     },
 
-    create: function() {
+    construct: function() {
         XSS.on.keydown(this.handleKeys);
     },
 
@@ -194,7 +194,7 @@ SelectStage.prototype = {
         return this.menu.getShape();
     },
 
-    create: function() {
+    construct: function() {
         XSS.on.keydown(this.handleKeysBound);
     },
 
@@ -248,7 +248,7 @@ FormStage.prototype = {
         return this.form.getShape();
     },
 
-    create: function() {
+    construct: function() {
         XSS.on.keydown(this.handleKeysBound);
     },
 
@@ -296,7 +296,6 @@ FormStage.prototype = {
 
 /**
  * Game Stage
- * TODO: Should be in XSS.stages
  * @implements {StageInterface}
  * @constructor
  */
@@ -309,7 +308,7 @@ GameStage.prototype = {
         return new Shape();
     },
 
-    create: function() {
+    construct: function() {
         XSS.shapes.header = null;
 
         if (XSS.stages.autoJoinData) {
@@ -335,7 +334,10 @@ GameStage.prototype = {
             }
         });
 
-        XSS.socket.emit(XSS.events.SERVER_ROOM_JOIN, [key, stages.autoJoin.val]);
+        XSS.socket.emit(
+            XSS.events.SERVER_ROOM_JOIN,
+            [key, stages.autoJoin.val]
+        );
     },
 
     _matchRoom: function() {

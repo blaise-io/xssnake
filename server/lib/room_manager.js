@@ -113,7 +113,7 @@ RoomManager.prototype = {
             data.push(map.ROOM.NOT_FOUND);
         } else if (room.isFull()) {
             data.push(map.ROOM.FULL);
-        } else if (room.inProgress) {
+        } else if (room.round) {
             data.push(map.ROOM.IN_PROGRESS);
         } else {
             data = [1, room.options, room.names()];
@@ -132,7 +132,7 @@ RoomManager.prototype = {
         var field = map.FIELD, options = room.options;
         switch (true) {
             case room.isFull():
-            case room.inProgress:
+            case !!room.round:
             case options[field.PRIVATE]:
             case options[field.DIFFICULTY] !== reqOptions[field.DIFFICULTY]:
             case options[field.POWERUPS]   !== reqOptions[field.POWERUPS]:

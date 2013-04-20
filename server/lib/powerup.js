@@ -82,6 +82,8 @@ Powerup.prototype = {
             [0.8 * harmful, this._cutTailSelf],
             [1.5 * harmful, this._speedDownSelf]
 
+            // TODO: Disable some powerups in hard levels
+            // as they will result in immediate death.
             // TODO: Implement more powerups, like:
             //  - Spawn stuff near a snake, far from a snake
             //  - Invincible snake

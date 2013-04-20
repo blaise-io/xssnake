@@ -5,24 +5,23 @@ var Game = require('./game.js');
 var map = require('../shared/map.js');
 var events = require('../shared/events.js');
 var config = require('../shared/config.js');
-var levels = require('../shared/levels.js');
 
 /**
  * @param {Server} server
  * @param {string} key
- * @param {Object} gameOptions
+ * @param {Object} options
  * @constructor
  */
-function Room(server, key, gameOptions) {
+function Room(server, key, options) {
     this.server = server;
 
     this.key = key;
     this.clients = [];
     this.points = [];
-    this.inProgress = false;
+    this.round = 0;
     this.level = 0;
 
-    this.options = this.cleanGameOptions(gameOptions);
+    this.options = this.cleanOptions(options);
     this.game = new Game(this, this.level);
 
     this._disconnected = [];
@@ -57,10 +56,10 @@ Room.prototype = {
     },
 
     /**
-     * @param options
+     * @param {Object} options
      * @return {Object}
      */
-    cleanGameOptions: function(options) {
+    cleanOptions: function(options) {
         var players = [], difficulties, field = map.FIELD;
 
         for (var i = 1; i <= config.ROOM_CAPACITY; i++) {
@@ -113,7 +112,7 @@ Room.prototype = {
         var index = this.clients.indexOf(client);
 
         // Leave during game, clean up after round ends
-        if (this.inProgress) {
+        if (this.round) {
             this.game.clientDisconnect(client);
             this._disconnected.push(client);
         }
@@ -130,31 +129,52 @@ Room.prototype = {
         this.emit(events.CLIENT_CHAT_NOTICE, '{' + index + '} left');
     },
 
-    /**
-     * @return {Game}
-     */
-    newRound: function() {
-        // Before round starts
-        this.game.destruct();
+    nextRound: function() {
+
         this._removeDisconnectedClients(this._disconnected);
 
-        // Check if Room was destructed
-        if (!this.clients.length) {
+        if (this.clients.length) {
+            this.level++;
+            this.round++;
+
+            if (this.hasWinner()) {
+                this.roundsEnded();
+            } else {
+                this.nextRoundStart();
+            }
+        } else {
             this.server.roomManager.remove(this);
-            return null;
         }
+    },
 
-        // Next level
-        ++this.level;
-        if (typeof levels[this.level] === 'undefined') {
-            this.level = 0;
+    /**
+     * @returns {boolean}
+     */
+    hasWinner: function() {
+        if (this.round >= config.ROOM_ROUNDS && this.points.length > 1) {
+            var sorted = this.points.slice().sort().reverse();
+            if (sorted[0] - config.ROOM_WIN_BY_MIN > sorted[1]) {
+                return true;
+            }
         }
+        return false;
+    },
 
-        // Round start
+    roundsEnded: function() {
+        if (this.options[map.FIELD.XSS]) {
+            // TODO: Implement this.game.fireXSS
+            console.log('this.game.fireXSS()');
+        } else {
+            // TODO: Implement this.game.showHeaven
+            console.log('this.game.showHeaven()');
+        }
+    },
+
+    nextRoundStart: function() {
+        this.game.destruct();
         this.game = new Game(this, this.level);
-        this.emitState();
         this.game.countdown();
-        return this.game;
+        this.emitState();
     },
 
     /**
