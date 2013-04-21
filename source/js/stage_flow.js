@@ -84,7 +84,7 @@ StageFlow.prototype = {
 
     setupMenuSkeletton: function() {
         XSS.shapes.border = XSS.shapegen.outerBorder();
-        XSS.shapes.header = XSS.shapegen.header(XSS.MENU_LEFT);
+        XSS.shapes.header = XSS.shapegen.header();
     },
 
     setStageShapes: function() {

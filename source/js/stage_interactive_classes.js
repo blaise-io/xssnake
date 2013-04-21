@@ -78,7 +78,7 @@ SelectMenu.prototype = {
         // Header
         header = XSS.transform.zoomX2(XSS.font.pixels(this.header), x, y, true);
         shape = new Shape(header);
-        y += XSS.SUBHEADER_HEIGHT;
+        y += XSS.MENU_TITLE_HEIGHT;
 
         // Footer
         footer = XSS.font.pixels(
@@ -196,7 +196,7 @@ Form.prototype = {
         shape = new Shape();
         shape.add(this._getHeaderPixels(x, y));
 
-        y += XSS.SUBHEADER_HEIGHT;
+        y += XSS.MENU_TITLE_HEIGHT;
 
         // Draw options
         for (var i = 0, m = this.fields.length; i < m; i++) {

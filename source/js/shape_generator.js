@@ -187,14 +187,14 @@ ShapeGenerator.prototype = {
     },
 
     /**
-     * @param {number} x
-     * @param {number} y
      * @return {Shape}
      */
-    header: function(x, y) {
-        var shape, welcome = XSS.font.pixels('<XSSNAKE>');
+    header: function() {
+        var x, y, shape, welcome = XSS.font.pixels('<XSSNAKE>');
 
-        y = y || 16;
+        x = XSS.MENU_LEFT;
+        y = XSS.MENU_TOP - 34;
+
         shape = new Shape(XSS.transform.zoomX4(welcome, x, y, true));
         shape.add(this.line(x, y + 28, x + XSS.MENU_WIDTH, y + 28));
 

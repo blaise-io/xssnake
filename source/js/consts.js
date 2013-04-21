@@ -25,12 +25,11 @@
 /** @const */ XSS.DIRECTION_RIGHT = 2;
 /** @const */ XSS.DIRECTION_DOWN = 3;
 
-/** @const */ XSS.MENU_LEFT = 40;
-/** @const */ XSS.MENU_TOP = 50;
-/** @const */ XSS.SUBHEADER_HEIGHT = 20;
-
+/** @const */ XSS.MENU_LEFT = 42;
+/** @const */ XSS.MENU_TOP = 48;
 /** @const */ XSS.MENU_WIDTH = 167;
 /** @const */ XSS.MENU_WRAP = 176;
+/** @const */ XSS.MENU_TITLE_HEIGHT = 20;
 
 /** @const */ XSS.GAME_LEFT = 2;
 /** @const */ XSS.GAME_TOP = 2;

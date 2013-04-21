@@ -88,7 +88,7 @@ InputStage.prototype = {
                 var val = this.val.trim(),
                     top = XSS.font.height(this.label) +
                         XSS.MENU_TOP +
-                        XSS.SUBHEADER_HEIGHT +
+                        XSS.MENU_TITLE_HEIGHT +
                         -3;
                 this.inputSubmit(this._getInputError(val), val, top);
         }

@@ -1,7 +1,9 @@
 /*jshint globalstrict:true, es5:true, sub:true, evil:true*/
-/*globals XSS, ClientLevel, ClientSnake, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Room, Shape, Socket*/
+/*globals XSS, ClientLevel, ClientSnake, ShapePixels, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Room, Shape, Socket*/
 
 'use strict';
+
+// TODO: Remove logic, only allow copy and Stage classes inits.
 
 XSS.stages = {
 
@@ -44,15 +46,29 @@ XSS.stages = {
         snake.showDirection();
 
         level = new ClientLevel(0);
-        level.level.height = Math.floor(XSS.PIXELS_V / 4)- 2;
+        level.level.height = Math.floor(XSS.PIXELS_V / XSS.GAME_TILE)- 2;
+
+        var isLevelIntersect = function() {
+            var snakePixels, intersect = false;
+            snakePixels = XSS.shapes[snake.shapes.snake].pixels;
+            snakePixels.each(function(x, y) {
+                if (x % 2 || y % 2) {
+                    if (snakePixels.hasMultiple(XSS.shapes, x, y)) {
+                        intersect = true;
+                    }
+                }
+            });
+            return intersect;
+        };
 
         var update = function() {
             var head = snake.head();
             snake.removeNameAndDirection();
-            if (level.isWall(head[0], head[1])) {
+            if (level.isWall(head[0], head[1]) || isLevelIntersect()) {
                 snake.crash();
                 snake.showAction('CRASH!');
-                window.setTimeout(XSS.stages._roboSnake, 5e3);
+                window.setTimeout(snake.destruct.bind(snake), 1500);
+                window.setTimeout(XSS.stages._roboSnake, 7500);
             } else {
                 snake.move(snake.getNextPosition());
                 snake.updateShape();
@@ -61,7 +77,7 @@ XSS.stages = {
         };
 
         if (!XSS.room) {
-            window.setTimeout(update, 1000);
+            window.setTimeout(update, 1500);
         }
     },
 
@@ -284,7 +300,7 @@ XSS.stages = {
                 'Blaise Kal, 2012-2013.\n\n' +
                 'Website: www.blaise.io\n' +
                 'Email: blaisekal@gmail.com\n\n' +
-                'Thank you for playing!', left, top + XSS.SUBHEADER_HEIGHT)
+                'Thank you for playing!', left, top + XSS.MENU_TITLE_HEIGHT)
         );
 
         return new ScreenStage(screen);
