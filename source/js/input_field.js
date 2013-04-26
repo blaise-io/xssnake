@@ -138,7 +138,6 @@ InputField.prototype = {
         }
 
         endpos = XSS.font.endPos(this.prefix + values[0] + values[1]);
-
         shape.add(
             XSS.font.pixels(values[2],
             this.x + endpos[0],

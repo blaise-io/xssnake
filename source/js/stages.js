@@ -25,8 +25,8 @@ XSS.stages = {
         menu = new SelectMenu('main', header, footer);
         menu.addOption(null, XSS.stages.inputName, 'MULTIPLAYER');
         menu.addOption(null, XSS.stages.startGame, 'SINGLE PLAYER');
-        menu.addOption(null, XSS.stages.colorSchemeScreen, 'COLOR SCHEME');
-        menu.addOption(null, XSS.stages.creditsScreen, 'CREDITS');
+        menu.addOption(null, XSS.stages.colorScheme, 'COLOR SCHEME');
+        menu.addOption(null, XSS.stages.credits, 'CREDITS');
 
         if (XSS.util.hash('room')) {
             XSS.stages._autoJoinRoom();
@@ -44,6 +44,8 @@ XSS.stages = {
         snake.addToShapes();
         snake.addControls();
         snake.showDirection();
+
+        XSS.menuSnake = snake;
 
         level = new ClientLevel(0);
         level.level.height = Math.floor(XSS.PIXELS_V / XSS.GAME_TILE)- 2;
@@ -147,7 +149,6 @@ XSS.stages = {
 
         stage.minChars = 2;
         stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
-        stage.inputSubmit = XSS.stages._autojoinSubmit;
 
         return stage;
     },
@@ -216,7 +217,7 @@ XSS.stages = {
      */
     challenge: function() {
         var challenges, challenge, intro, stage, str, digit,
-            nextstage = XSS.stages.startGame;
+            nextstage = XSS.stages.inputXSS;
 
         str = XSS.util.randomStr().substr(0, 3).toUpperCase();
         digit = String(XSS.util.randomBetween(0, 5));
@@ -262,10 +263,28 @@ XSS.stages = {
         return stage;
     },
 
+    inputXSS: function() {
+        var stage, intro, next = XSS.stages.startGame;
+
+        intro = 'Paste your JS. Will be executed using eval().\n' +
+                'Keep it short; max 128 chars.\n\n' +
+                '> ';
+
+        stage = new InputStage('xurl', next, 'ENTER XSS', intro);
+        stage.minChars = 2;
+        stage.maxChars = 128;
+
+        if (!stage.val) {
+            stage.val = 'alert("loser!!!");';
+        }
+
+        return stage;
+    },
+
     /**
      * @return {SelectStage}
      */
-    colorSchemeScreen: function() {
+    colorScheme: function() {
         var setTheme, menu = new SelectMenu('theme', 'THEEEMES');
 
         menu.selected = parseInt(XSS.util.storage('theme'), 10) || 0;
@@ -287,7 +306,7 @@ XSS.stages = {
     /**
      * @return {ScreenStage}
      */
-    creditsScreen: function() {
+    credits: function() {
         var screen, left, top;
 
         left = XSS.MENU_LEFT;
@@ -325,6 +344,7 @@ XSS.stages = {
      * @return {GameStage}
      */
     startGame: function() {
+        XSS.menuSnake.destruct();
         return new GameStage();
     },
 
@@ -352,23 +372,6 @@ XSS.stages = {
         );
         shape.lifetime(0, 1000);
         XSS.shapes.message = shape;
-    },
-
-    /**
-     * @param {string} error
-     * @param {string} value
-     * @param {number} top
-     * @this {InputStage}
-     * @private
-     */
-    _autojoinSubmit: function(error, value, top) {
-        if (error) {
-            var shape = XSS.font.shape(error, XSS.MENU_LEFT, top);
-            shape.lifetime(0, 500);
-            XSS.shapes.message = shape;
-        } else {
-            XSS.flow.switchStage(this.nextStage);
-        }
     },
 
     /**

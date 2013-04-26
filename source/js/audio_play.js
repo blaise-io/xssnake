@@ -45,7 +45,7 @@ AudioPlay.prototype = {
 
     _setupFile: function(key, mime, data) {
         this[key] = function() {
-            if (!XSS.util.storage('mute') && XSS.canvas.focus) {
+            if (!XSS.util.storage(XSS.STORAGE_MUTE) && XSS.canvas.focus) {
                 new Audio('data:' + mime + ';base64,' + data).play();
             }
         }.bind(this);

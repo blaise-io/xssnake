@@ -96,17 +96,21 @@ StageFlow.prototype = {
      */
     _globalKeys: function() {
         XSS.on.keydown(function(e) {
+            var mute, instruct;
+
             // Firefox disconnects websocket on Esc O___O
             // Disable that.
             if (e.keyCode === XSS.KEY_ESCAPE) {
                 e.preventDefault();
             }
+
             // Global mute key. Ignore key when user is in input field.
-            if (e.keyCode === XSS.KEY_MUTE) {
+            else if (e.keyCode === XSS.KEY_MUTE) {
                 if (!document.getElementsByTagName('input')[0]) {
-                    var mute = !XSS.util.storage('mute');
-                    XSS.util.storage('mute', mute);
-                    XSS.util.instruct('Sounds ' + (mute ? 'muted' : 'on'), 1e3);
+                    mute = !XSS.util.storage(XSS.STORAGE_MUTE);
+                    instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
+                    XSS.util.storage(XSS.STORAGE_MUTE, mute);
+                    XSS.util.instruct(instruct, 1e3);
                     XSS.play.menu_alt();
                 }
             }

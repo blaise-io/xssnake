@@ -35,9 +35,11 @@
 /** @const */ XSS.GAME_TOP = 2;
 /** @const */ XSS.GAME_TILE = 4;
 
-/** @const */ XSS.PUB_GAME_TICK = 'TICK';
-/** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCUS';
-/** @const */ XSS.PUB_ROOM_STATUS = 'RSTAT';
+/** @const */ XSS.PUB_GAME_TICK = 'TIK';
+/** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCS';
+/** @const */ XSS.PUB_ROOM_STATUS = 'RSTT';
+
+/** @const */ XSS.STORAGE_MUTE = 'MUT';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';

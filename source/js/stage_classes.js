@@ -102,6 +102,10 @@ InputStage.prototype = {
     inputSubmit: function(error, value, top) {
         if (!error && value && top) {
             XSS.flow.switchStage(this.nextStage);
+        } else {
+            var shape = XSS.font.shape(error, XSS.MENU_LEFT, top);
+            shape.lifetime(0, 500);
+            XSS.shapes.message = shape;
         }
     },
 
@@ -111,7 +115,12 @@ InputStage.prototype = {
      * @private
      */
     _getInputError: function(val) {
-        return (val.length < this.minChars) ? 'Too short!!' : '';
+        if (val.length < this.minChars) {
+            return 'Too short!!';
+        } else if (this.maxChars && val.length > this.maxChars) {
+            return 'Too long!!';
+        }
+        return '';
     },
 
     /**
