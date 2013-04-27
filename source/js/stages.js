@@ -148,7 +148,7 @@ XSS.stages = {
         stage = new InputStage('name', next, 'JOiN GAME', label);
 
         stage.minChars = 2;
-        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
+        stage.maxValWidth = XSS.UI_MAX_NAME_WIDTH;
 
         return stage;
     },
@@ -256,26 +256,31 @@ XSS.stages = {
                 challenge + '\n> ';
 
         stage = new InputStage(null, nextstage, 'DANGER DANGER', intro);
+        stage.maxValWidth = 50;
         stage.inputSubmit = function(error, value, top) {
-            XSS.stages._captchaSubmit.call(stage, value, challenge, top);
+            XSS.stages._challengeSubmit.call(stage, value, challenge, top);
         };
 
         return stage;
     },
 
+    /**
+     * @return {InputStage}
+     */
     inputXSS: function() {
         var stage, intro, next = XSS.stages.startGame;
 
-        intro = 'Paste your JS. Will be executed using eval().\n' +
-                'Keep it short; max 128 chars.\n\n' +
+        intro = 'Paste your JS. Keep it short; max 128 chars.\n' +
+                'Line breaks will be removed.\n\n' +
                 '> ';
 
         stage = new InputStage('xurl', next, 'ENTER XSS', intro);
         stage.minChars = 2;
         stage.maxChars = 128;
+        stage.displayWidth = XSS.MENU_WIDTH - XSS.font.width('> ');
 
         if (!stage.val) {
-            stage.val = 'alert("loser!!!");';
+            stage.val = 'window.alert("LOSERRRRR");';
         }
 
         return stage;
@@ -334,7 +339,7 @@ XSS.stages = {
         stage = new InputStage('name', next, 'HELLO', 'My name is ');
 
         stage.minChars = 2;
-        stage.maxWidth = XSS.UI_MAX_NAME_WIDTH;
+        stage.maxValWidth = XSS.UI_MAX_NAME_WIDTH;
         stage.inputSubmit = XSS.stages._inputNameSubmit;
 
         return stage;
@@ -355,7 +360,7 @@ XSS.stages = {
      * @this {InputStage}
      * @private
      */
-    _captchaSubmit: function(value, challenge, top) {
+    _challengeSubmit: function(value, challenge, top) {
         var shape, text = '> ACCESS DENIED!!';
 
         if (value.replace(/['"]/g, '') === String(eval(challenge))) { // 666
@@ -415,7 +420,7 @@ XSS.stages = {
         } else {
             text = XSS.util.randomItem(wits);
             text = text.replace(/%s/g, value);
-            duration = Math.max(text.length * 30, 400);
+            duration = Math.max(text.length * 30, 300);
             setTimeout(function() {
                 XSS.flow.switchStage(this.nextStage);
             }.bind(this), duration + 50);

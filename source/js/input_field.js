@@ -12,7 +12,10 @@ function InputField(x, y, prefix) {
     this.x = x;
     this.y = y;
     this.prefix = prefix || '';
-    this.maxWidth = XSS.PIXELS_H - x - 4;
+
+    this.maxValWidth = 0;
+    this.displayWidth = XSS.PIXELS_H - x - 8;
+    this.maxlength = 156;
 
     this.input = this._getInput();
     this.input.focus();
@@ -90,6 +93,7 @@ InputField.prototype = {
         var input = document.getElementsByTagName('input')[0];
         if (!input) {
             input = document.createElement('input');
+            input.setAttribute('maxlength', String(this.maxlength));
             XSS.doc.appendChild(input);
         }
         return input;
@@ -152,17 +156,32 @@ InputField.prototype = {
      * @private
      */
     _getValueSegments: function() {
-        var input = this.input, value = input.value;
+        var input = this.input, value = input.value, start = input.selectionStart,
+            end = input.selectionEnd;
+
+        // Handle situation where input value is wider than display width
+        while (XSS.font.width(value) > this.displayWidth) {
+            if (start === 0) {
+                value = value.substring(0, value.length - 2);
+            } else {
+                value = value.substring(1, value.length);
+                start--;
+                end--;
+            }
+        }
+
         return [
-            value.substring(0, input.selectionStart),
-            value.substring(input.selectionStart, input.selectionEnd),
-            value.substring(input.selectionEnd)
+            value.substring(0, start),
+            value.substring(start, end),
+            value.substring(end)
         ];
     },
 
     _applyMaxWidth: function() {
-        while (XSS.font.width(this.input.value) > this.maxWidth) {
-            this.input.value = this.input.value.slice(0, -1);
+        if (this.maxValWidth) {
+            while (XSS.font.width(this.input.value) > this.maxValWidth) {
+                this.input.value = this.input.value.slice(0, -1);
+            }
         }
     }
 

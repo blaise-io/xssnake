@@ -41,6 +41,10 @@ function InputStage(name, nextStage, header, label) {
 
     this.val = XSS.util.storage(name);
     this.minChars = 0;
+    this.maxChars = 0;
+
+    this.maxValWidth = 0; // Passed to InputField
+    this.displayWidth = 0;
 
     this.inputTop = XSS.MENU_TOP + 17;
 
@@ -59,14 +63,20 @@ InputStage.prototype = {
 
     construct: function() {
         XSS.on.keydown(this._handleKeysBound);
+
         this.input = new InputField(XSS.MENU_LEFT, this.inputTop, this.label);
         this.input.setValue(this.val);
-        this.input.maxWidth = this.maxWidth || this.input.maxWidth;
+        this.input.maxValWidth = this.maxValWidth || this.input.maxValWidth;
+        this.input.displayWidth = this.displayWidth || this.input.displayWidth;
+
         this.input.callback = function(value) {
             this.val = value;
             XSS.util.storage(this.name, value);
             this.shape = this.header;
         }.bind(this);
+
+        // Apply properties
+        this.input.setValue(this.val);
 
         // Input handled by InputField
         XSS.shapes.stage = this.header;

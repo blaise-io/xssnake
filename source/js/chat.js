@@ -138,14 +138,14 @@ Chat.prototype = {
      * @private
      */
     _focusInput: function(focus) {
-        var left = 126, prefix, maxWidth;
+        var left = 126, prefix, maxValWidth;
         prefix = this.names[this.index] + ': ';
-        maxWidth = XSS.PIXELS_H - XSS.font.width(prefix) - left - 8;
+        maxValWidth = XSS.PIXELS_H - XSS.font.width(prefix) - left - 8;
         this._hasFocus = focus;
         this._updateShapes();
         if (focus) {
             this.field = new InputField(left, XSS.PIXELS_V - 10, prefix);
-            this.field.maxWidth = maxWidth;
+            this.field.maxValWidth = maxValWidth;
             this.field.setValue('');
         } else if (this.field) {
             this.field.destruct();
