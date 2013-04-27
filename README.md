@@ -41,15 +41,11 @@ optimized code.
  * Run the game server: `node server/start.js`
  * Access the game by opening `source/source.html` in your browser
 
-While testing, it may be useful to automatically reload the server when you
-change something. You can do this by installing supervisor: `npm install
-supervisor -g`. Run it using `supervisor -w server -n exit server/start.js`.
-
 If you open `source/source.html` from a local disk in Chrome (`file://...`), you
-have to start the browser with the `--disable-web-security` parameter to
+may have to start the browser with the `--disable-web-security` parameter to
 work around an Access-Control restriction.
 
-After you modify code, it can be useful to compile the code to see if you
+If you modify code, it can be useful to compile the code to see if you
 made any errors.
 
  * Compile server code: `node build/server.js` (Warning: this contains a
@@ -59,11 +55,11 @@ made any errors.
 
 ## Creating/Updating Levels
 
-If you adjusted one of the level images, you have to rebuild
+If you adjust one of the level images, you have to rebuild
 `server/shared/levels.js` by running `node build/levels.js`.
 This is documented in [`source/levels/README.md`](https://github.com/blaise-io/xssnake/tree/master/source/levels).
 
 ## Creating/Updating Audio Files
 
-If you adjusted one of the audio files, you have to rebuild
+If you adjust one of the audio files, you have to rebuild
 `source/js/audio.js` by running `node build/audio.js`.
