@@ -3,7 +3,7 @@
 Online multiplayer Snake where the winner of a game is allowed to execute
 Javascript in the browser of other players.
 
-XSSNAKE is currently in development. A beta release is planned in Q3 2013.
+XSSNAKE is currently in development. The beta release is planned in Q3 2013.
 
 ![XSSNAKE](http://i.imgur.com/h4BTxp1.png)
 
