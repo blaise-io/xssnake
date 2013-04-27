@@ -3,9 +3,9 @@
 Online multiplayer Snake where the winner of a game is allowed to execute
 Javascript in the browser of other players.
 
-The game is still in development and currently not yet deployed.
+XSSNAKE is currently in development. A beta release is planned in Q3 2013.
 
-![XSSNAKE](http://i.imgur.com/Axwt9ND.png)
+![XSSNAKE](http://i.imgur.com/elZpYDD.png)
 
 XSSNAKE is written in HTML5 and Javascript. It works in all browsers that
 support Canvas and Websocket. XSSNAKE uses Node.js for the server,
