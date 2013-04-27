@@ -5,7 +5,7 @@ Javascript in the browser of other players.
 
 XSSNAKE is currently in development. A beta release is planned in Q3 2013.
 
-![XSSNAKE](http://i.imgur.com/elZpYDD.png)
+![XSSNAKE](http://i.imgur.com/h4BTxp1.png)
 
 XSSNAKE is written in HTML5 and Javascript. It works in all browsers that
 support Canvas and Websocket. XSSNAKE uses Node.js for the server,
