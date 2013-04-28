@@ -13,7 +13,7 @@ XSS.stages = {
     main: function() {
         var menu, name, header, footer;
 
-        name = XSS.util.storage('name');
+        name = XSS.util.storage(XSS.STORAGE_NAME);
         header = name ?
                   'WLCM BCK ' + name.toUpperCase() + '!' :
                   'WELCOME STRANGER!!';
@@ -292,11 +292,12 @@ XSS.stages = {
     colorScheme: function() {
         var setTheme, menu = new SelectMenu('theme', 'THEEEMES');
 
-        menu.selected = parseInt(XSS.util.storage('theme'), 10) || 0;
+        menu.selected = XSS.util.storage(XSS.STORAGE_THEME);
+        menu.selected = parseInt(menu.selected, 10) || 0;
 
         setTheme = function(index) {
             XSS.canvas.setTheme(XSS.themes[index]);
-            XSS.util.storage('theme', index);
+            XSS.util.storage(XSS.STORAGE_THEME, index);
         };
 
         for (var i = 0, m = XSS.themes.length; i < m; i++) {
@@ -349,7 +350,6 @@ XSS.stages = {
      * @return {GameStage}
      */
     startGame: function() {
-        XSS.menuSnake.destruct();
         return new GameStage();
     },
 

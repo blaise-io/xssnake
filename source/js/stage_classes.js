@@ -328,6 +328,7 @@ GameStage.prototype = {
     },
 
     construct: function() {
+        XSS.menuSnake.destruct();
         XSS.shapes.header = null;
 
         if (XSS.stages.autoJoinData) {

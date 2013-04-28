@@ -10,7 +10,7 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setTheme(XSS.themes[XSS.util.storage('theme')] || XSS.themes[0]);
+    this.setTheme(XSS.themes[XSS.util.storage(XSS.STORAGE_THEME)] || XSS.themes[0]);
     this._setCanvasDimensions();
 
     if (!window.requestAnimationFrame) {

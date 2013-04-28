@@ -39,7 +39,9 @@
 /** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCS';
 /** @const */ XSS.PUB_ROOM_STATUS = 'RSTT';
 
-/** @const */ XSS.STORAGE_MUTE = 'MUT';
+/** @const */ XSS.STORAGE_MUTE = 'MUTE';
+/** @const */ XSS.STORAGE_NAME = 'NAME';
+/** @const */ XSS.STORAGE_THEME = 'THEME';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';
