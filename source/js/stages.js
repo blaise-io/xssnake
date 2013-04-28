@@ -48,7 +48,7 @@ XSS.stages = {
         XSS.menuSnake = snake;
 
         level = new ClientLevel(0);
-        level.level.height = Math.floor(XSS.PIXELS_V / XSS.GAME_TILE)- 2;
+        level.level.height = Math.floor(XSS.HEIGHT / XSS.GAME_TILE)- 2;
 
         var isLevelIntersect = function() {
             var snakePixels, intersect = false;
@@ -84,12 +84,10 @@ XSS.stages = {
     },
 
     _autoJoinRoom: function() {
-        var pubsubKey = 'RSTAT';
-
         XSS.util.instruct('Connecting...', 0, true);
 
-        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, pubsubKey, function(data) {
-            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, pubsubKey);
+        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
+            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES);
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             } else {
@@ -148,7 +146,7 @@ XSS.stages = {
         stage = new InputStage('name', next, 'JOiN GAME', label);
 
         stage.minChars = 2;
-        stage.maxValWidth = XSS.UI_MAX_NAME_WIDTH;
+        stage.maxValWidth = XSS.UI_WIDTH_NAME;
 
         return stage;
     },
@@ -340,7 +338,7 @@ XSS.stages = {
         stage = new InputStage('name', next, 'HELLO', 'My name is ');
 
         stage.minChars = 2;
-        stage.maxValWidth = XSS.UI_MAX_NAME_WIDTH;
+        stage.maxValWidth = XSS.UI_WIDTH_NAME;
         stage.inputSubmit = XSS.stages._inputNameSubmit;
 
         return stage;

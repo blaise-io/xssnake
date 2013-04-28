@@ -37,7 +37,7 @@ function Chat(index, names) {
 
 Chat.prototype = {
 
-    top: XSS.PIXELS_V - (7 * 3) - 3,
+    top: XSS.HEIGHT - (7 * 3) - 3,
 
     left: 126,
 
@@ -140,11 +140,11 @@ Chat.prototype = {
     _focusInput: function(focus) {
         var left = 126, prefix, maxValWidth;
         prefix = this.names[this.index] + ': ';
-        maxValWidth = XSS.PIXELS_H - XSS.font.width(prefix) - left - 8;
+        maxValWidth = XSS.WIDTH - XSS.font.width(prefix) - left - 8;
         this._hasFocus = focus;
         this._updateShapes();
         if (focus) {
-            this.field = new InputField(left, XSS.PIXELS_V - 10, prefix);
+            this.field = new InputField(left, XSS.HEIGHT - 10, prefix);
             this.field.maxValWidth = maxValWidth;
             this.field.setValue('');
         } else if (this.field) {
@@ -170,7 +170,7 @@ Chat.prototype = {
     },
 
     _sentIndication: function() {
-        var shape = XSS.font.shape(XSS.UC_ENTER_KEY, XSS.PIXELS_H - 8, XSS.PIXELS_V - 10);
+        var shape = XSS.font.shape(XSS.UC_ENTER_KEY, XSS.WIDTH - 8, XSS.HEIGHT - 10);
         shape.flash(150, 150).lifetime(0, 150 * 3);
         XSS.shapes.msgsent = shape;
     },

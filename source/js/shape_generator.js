@@ -155,8 +155,8 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     innerBorder: function() {
-        var w = XSS.PIXELS_H - 1,
-            h = XSS.PIXELS_V - 1;
+        var w = XSS.WIDTH - 1,
+            h = XSS.HEIGHT - 1;
         return new Shape(
             this.line(2, h - 25, w - 2, h - 25),
             this.line(2, h - 26, w - 2, h - 26)
@@ -167,8 +167,8 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     outerBorder: function() {
-        var w = XSS.PIXELS_H - 1,
-            h = XSS.PIXELS_V - 1;
+        var w = XSS.WIDTH - 1,
+            h = XSS.HEIGHT - 1;
 
         return new Shape(
             // Top

@@ -30,7 +30,7 @@ Powerup.prototype = {
     _getShape: function() {
         var shape = XSS.font.shape(XSS.UC_ELECTRIC, this.x, this.y);
         shape.flash();
-        shape.clearPx = true;
+        shape.clearPixels = true;
         return shape;
     }
 

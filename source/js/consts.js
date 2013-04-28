@@ -2,13 +2,13 @@
 /*globals XSS */
 'use strict';
 
-/** @const */ XSS.PIXELS_H = 256;
-/** @const */ XSS.PIXELS_V = 161;
+/** @const */ XSS.WIDTH = 256;
+/** @const */ XSS.HEIGHT = 161;
 
-/** @const */ XSS.MIN_DELTA = 5;
-/** @const */ XSS.MAX_DELTA = 250;
+/** @const */ XSS.MIN_FRAME_DELTA = 5;
+/** @const */ XSS.MAX_FRAME_DELTA = 250;
 
-/** @const */ XSS.UI_MAX_NAME_WIDTH = 40;
+/** @const */ XSS.UI_WIDTH_NAME = 40;
 
 /** @const */ XSS.KEY_BACKSPACE = 8;
 /** @const */ XSS.KEY_TAB = 9;
@@ -18,7 +18,7 @@
 /** @const */ XSS.KEY_UP = 38;
 /** @const */ XSS.KEY_RIGHT = 39;
 /** @const */ XSS.KEY_DOWN = 40;
-/** @const */ XSS.KEY_MUTE = 77; // M
+/** @const */ XSS.KEY_MUTE = 77;
 
 /** @const */ XSS.DIRECTION_LEFT = 0;
 /** @const */ XSS.DIRECTION_UP = 1;
@@ -36,6 +36,7 @@
 /** @const */ XSS.GAME_TILE = 4;
 
 /** @const */ XSS.PUB_NS_GAME = 'NG';
+/** @const */ XSS.PUB_NS_STAGES = 'NS';
 /** @const */ XSS.PUB_GAME_TICK = 'GT';
 /** @const */ XSS.PUB_FOCUS_CHANGE = 'FC';
 /** @const */ XSS.PUB_ROOM_STATUS = 'RS';

@@ -73,7 +73,7 @@ Room.prototype = {
      */
     _sanitizeNames: function(names) {
         for (var i = 0, m = names.length; i < m; i++) {
-            while (XSS.font.width(names[i]) > XSS.UI_MAX_NAME_WIDTH) {
+            while (XSS.font.width(names[i]) > XSS.UI_WIDTH_NAME) {
                 names[i] = names[i].slice(0, -1);
             }
         }

@@ -99,8 +99,8 @@ Game.prototype = {
             bbox = shape.bbox();
 
             shape.shift(
-                Math.floor(XSS.PIXELS_H / 2 - bbox.width / 2),
-                Math.floor(XSS.PIXELS_V / 2 - bbox.height / 2) - 12
+                Math.floor(XSS.WIDTH / 2 - bbox.width / 2),
+                Math.floor(XSS.HEIGHT / 2 - bbox.height / 2) - 12
             );
 
             // Make "Go" fit

@@ -146,7 +146,7 @@ Canvas.prototype = {
         // of focus, we don't want animations. Also we do not want anims
         // if a browser is "catching up" frames after being focused after
         // a blur, where it tries to make up for slow frames.
-        if (delta > 5 && delta < 300) {
+        if (delta > XSS.MIN_FRAME_DELTA && delta < XSS.MAX_FRAME_DELTA) {
             shape.applyEffects(delta);
         }
 
@@ -162,7 +162,7 @@ Canvas.prototype = {
         }
 
         // Paint shape without caching
-        if (shape.clearPx) {
+        if (shape.clearPixels) {
             this._paintShapeNoCache(ctx, shape, this._dummyBBox);
         }
 
@@ -181,7 +181,7 @@ Canvas.prototype = {
     _paintShapeNoCache: function(context, shape, bbox) {
         context.fillStyle = this.theme.on;
         shape.pixels.each(function(x, y) {
-            this._paintPixel(context, x, y, bbox.x1, bbox.y1, shape.clearPx);
+            this._paintPixel(context, x, y, bbox.x1, bbox.y1, shape.clearPixels);
         }.bind(this));
     },
 
@@ -210,8 +210,8 @@ Canvas.prototype = {
      */
     _getTileSize: function() {
         return Math.floor(Math.min(
-            window.innerWidth / XSS.PIXELS_H,
-            window.innerHeight / XSS.PIXELS_V
+            window.innerWidth / XSS.WIDTH,
+            window.innerHeight / XSS.HEIGHT
         )) || 1;
     },
 
@@ -283,8 +283,8 @@ Canvas.prototype = {
             this.pixelSize = this.tileSize - 0.6;
         }
 
-        this.canvasWidth = this.tileSize * XSS.PIXELS_H;
-        this.canvasHeight = this.tileSize * XSS.PIXELS_V;
+        this.canvasWidth = this.tileSize * XSS.WIDTH;
+        this.canvasHeight = this.tileSize * XSS.HEIGHT;
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
 

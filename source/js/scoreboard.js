@@ -89,7 +89,7 @@ ScoreBoard.prototype = {
      * @private
      */
     _podiumIndexToXY: function(index) {
-        var top = XSS.PIXELS_V - 24,
+        var top = XSS.HEIGHT - 24,
             lefts = [5, 64];
         return [
             (index % 2) ? lefts[1] : lefts[0],

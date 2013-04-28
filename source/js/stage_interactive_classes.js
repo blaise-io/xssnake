@@ -82,7 +82,7 @@ SelectMenu.prototype = {
 
         // Footer
         footer = XSS.font.pixels(
-            this.footer, x, XSS.PIXELS_V - 3 - XSS.font.height(this.footer)
+            this.footer, x, XSS.HEIGHT - 3 - XSS.font.height(this.footer)
         );
         shape.add(footer);
 

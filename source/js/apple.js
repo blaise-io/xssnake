@@ -29,7 +29,7 @@ Apple.prototype = {
     _getShape: function() {
         var shape = XSS.font.shape(XSS.UC_BULLSEYE, this.x,  this.y);
         shape.flash();
-        shape.clearPx = true;
+        shape.clearPixels = true;
         return shape;
     }
 

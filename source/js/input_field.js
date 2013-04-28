@@ -14,7 +14,7 @@ function InputField(x, y, prefix) {
     this.prefix = prefix || '';
 
     this.maxValWidth = 0;
-    this.displayWidth = XSS.PIXELS_H - x - 8;
+    this.displayWidth = XSS.WIDTH - x - 8;
     this.maxlength = 156;
 
     this.input = this._getInput();

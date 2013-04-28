@@ -344,12 +344,10 @@ GameStage.prototype = {
     },
 
     _autoJoin: function(key) {
-        var stages, pubsubKey = 'RSTAT';
+        var stages = XSS.flow.stageInstances;
 
-        stages = XSS.flow.stageInstances;
-
-        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, pubsubKey, function(data) {
-            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, pubsubKey);
+        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
+            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES);
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             }

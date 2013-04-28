@@ -125,7 +125,7 @@ StageFlow.prototype = {
      * @private
      */
     _switchStageAnimate: function(oldStage, newStage, back, callback) {
-        var oldStageAnim, newStageAnim, width = XSS.PIXELS_H;
+        var oldStageAnim, newStageAnim, width = XSS.WIDTH;
 
         if (back) {
             oldStageAnim = {to: [width, 0]};

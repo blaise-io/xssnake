@@ -31,7 +31,7 @@ function Shape(varArgs) {
      * Clear pixels before painting. Useful for lazy overlays.
      * @type {boolean}
      */
-    this.clearPx = false;
+    this.clearPixels = false;
 
     /** @type {Object.<string,*>} */
     this.effects = {};
@@ -241,9 +241,9 @@ Shape.prototype = {
         to       = options.to || [0, 0];
         duration = options.duration || 200;
         clone    = this.clone();
-        clear    = this.clearPx;
+        clear    = this.clearPixels;
 
-        this.clearPx = true;
+        this.clearPixels = true;
 
         /** @this {Shape} */
         return function(delta) {
@@ -257,7 +257,7 @@ Shape.prototype = {
                 this.pixels = XSS.transform.shift(clone.pixels, x, y);
             } else {
                 delete this.effects.animate;
-                this.clearPx = clear;
+                this.clearPixels = clear;
                 this.set(clone.shift(to[0], to[1]).pixels);
                 if (options.callback) {
                     options.callback();
