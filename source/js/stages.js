@@ -28,7 +28,7 @@ XSS.stages = {
         menu.addOption(null, XSS.stages.colorScheme, 'COLOR SCHEME');
         menu.addOption(null, XSS.stages.credits, 'CREDITS');
 
-        if (XSS.util.hash('room')) {
+        if (XSS.util.hash(XSS.HASH_ROOM)) {
             XSS.stages._autoJoinRoom();
         }
 
@@ -103,7 +103,7 @@ XSS.stages = {
             window.setTimeout(function() {
                 XSS.socket.emit(
                     XSS.events.SERVER_ROOM_STATUS,
-                    XSS.util.hash('room')
+                    XSS.util.hash(XSS.HASH_ROOM)
                 );
             }, 2000);
         });

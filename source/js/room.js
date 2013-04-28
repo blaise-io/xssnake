@@ -15,7 +15,7 @@ function Room(index, key, level, names, score) {
     this.score = null;
     this.chat = null;
     this.update.apply(this, arguments);
-    XSS.util.hash('room', key);
+    XSS.util.hash(XSS.HASH_ROOM, key);
 }
 
 Room.prototype = {
@@ -62,7 +62,7 @@ Room.prototype = {
             case XSS.map.ROOM.IN_PROGRESS:
                 return 'GAME ALREADY IN PROGRESS!';
             default:
-                return 'UNKNOWN ERROR OHSHI'
+                return 'UNKNOWN ERROR OHSHI';
         }
     },
 

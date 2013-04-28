@@ -32,13 +32,11 @@ function Game(index, levelID, names) {
 
 Game.prototype = {
 
-    pubsubKey: 'GM',
-
     start: function() {
         var sub = XSS.pubsub.subscribe.bind(XSS.pubsub);
 
-        sub(XSS.PUB_GAME_TICK, this.pubsubKey, this._moveSnakes.bind(this));
-        sub(XSS.PUB_FOCUS_CHANGE, this.pubsubKey, this._handleFocus.bind(this));
+        sub(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME, this._moveSnakes.bind(this));
+        sub(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME, this._handleFocus.bind(this));
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
@@ -49,8 +47,8 @@ Game.prototype = {
     destruct: function() {
         var i, m;
 
-        XSS.pubsub.unsubscribe(XSS.PUB_GAME_TICK, this.pubsubKey);
-        XSS.pubsub.unsubscribe(XSS.PUB_FOCUS_CHANGE, this.pubsubKey);
+        XSS.pubsub.unsubscribe(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME);
+        XSS.pubsub.unsubscribe(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME);
 
         for (i = 0, m = this.snakes.length; i < m; i++) {
             if (this.snakes[i]) {

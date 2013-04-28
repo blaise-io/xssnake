@@ -332,7 +332,8 @@ GameStage.prototype = {
         XSS.shapes.header = null;
 
         if (XSS.stages.autoJoinData) {
-            this._autoJoin(XSS.util.hash('room'));
+            var room = XSS.util.hash(XSS.HASH_ROOM);
+            this._autoJoin(room);
             delete XSS.stages.autoJoinData;
         } else {
             this._matchRoom();

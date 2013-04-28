@@ -35,13 +35,16 @@
 /** @const */ XSS.GAME_TOP = 2;
 /** @const */ XSS.GAME_TILE = 4;
 
-/** @const */ XSS.PUB_GAME_TICK = 'TIK';
-/** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCS';
-/** @const */ XSS.PUB_ROOM_STATUS = 'RSTT';
+/** @const */ XSS.PUB_NS_GAME = 'NG';
+/** @const */ XSS.PUB_GAME_TICK = 'GT';
+/** @const */ XSS.PUB_FOCUS_CHANGE = 'FC';
+/** @const */ XSS.PUB_ROOM_STATUS = 'RS';
 
-/** @const */ XSS.STORAGE_MUTE = 'MUTE';
-/** @const */ XSS.STORAGE_NAME = 'NAME';
-/** @const */ XSS.STORAGE_THEME = 'THEME';
+/** @const */ XSS.HASH_ROOM = 'room';
+
+/** @const */ XSS.STORAGE_MUTE = 'mute';
+/** @const */ XSS.STORAGE_NAME = 'name';
+/** @const */ XSS.STORAGE_THEME = 'theme';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';
