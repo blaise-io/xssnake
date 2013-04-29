@@ -25,7 +25,6 @@ XSS.util.extend(ClientLevel.prototype, {
         walls = new ShapePixels(this.level.walls);
 
         shape = new Shape(XSS.transform.zoomGame(walls));
-        shape.add(XSS.shapegen.outerBorder().pixels);
         shape.add(XSS.shapegen.innerBorder().pixels);
 
         return shape;

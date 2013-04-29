@@ -25,7 +25,6 @@ function ClientSnake(index, local, name, location, direction) {
     this.limbo   = false;
 
     this._shape = new Shape();
-    this._shape.clearPixels = true;
 
     /**
      * @type {Array}
@@ -88,7 +87,6 @@ XSS.util.extend(ClientSnake.prototype, {
         for (var i = 0; i <= duration * amount; i += duration) {
             var shape, name, h = this.head();
             shape = XSS.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
-            shape.clearPixels = true;
             name = 'AL_' + XSS.util.randomStr();
             XSS.shapes[name] = shape.lifetime(i, duration + i);
         }

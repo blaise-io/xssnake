@@ -83,7 +83,12 @@ StageFlow.prototype = {
     },
 
     setupMenuSkeletton: function() {
-        XSS.shapes.border = XSS.shapegen.outerBorder();
+        var border = XSS.shapegen.outerBorder();
+        for (var k in border) {
+            if (border.hasOwnProperty(k)) {
+                XSS.shapes[k] = border[k];
+            }
+        }
         XSS.shapes.header = XSS.shapegen.header();
     },
 

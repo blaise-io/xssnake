@@ -177,7 +177,6 @@ ShapeGenerator.prototype = {
         shape.shift(0, Math.round((XSS.HEIGHT - shape.bbox().height) / 2));
         shape.outline();
         shape.bbox(-1);
-        shape.clearPixels = true;
 
         return shape;
     },
@@ -195,26 +194,35 @@ ShapeGenerator.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {Object.<string, Shape>}
      */
     outerBorder: function() {
-        var w = XSS.WIDTH - 1,
+        var shapes = {},
+            w = XSS.WIDTH - 1,
             h = XSS.HEIGHT - 1;
 
-        return new Shape(
-            // Top
+        // Splitting this up or it spans too big of an area
+        shapes.top = new Shape(
             this.line(1, 0, w - 1, 0),
-            this.line(0, 1, w, 1),
-            // Bottom
-            this.line(1, h, w - 1, h),
-            this.line(0, h - 1, w, h - 1),
-            // Left
-            this.line(0, 2, 0, h - 2),
-            this.line(1, 2, 1, h - 2),
-            // Right
+            this.line(0, 1, w, 1)
+        );
+
+        shapes.right = new Shape(
             this.line(w, 2, w, h - 2),
             this.line(w - 1, 2, w - 1, h - 2)
         );
+
+        shapes.bottom = new Shape(
+            this.line(1, h, w - 1, h),
+            this.line(0, h - 1, w, h - 1)
+        );
+
+        shapes.left = new Shape(
+            this.line(0, 2, 0, h - 2),
+            this.line(1, 2, 1, h - 2)
+        );
+
+        return shapes;
     },
 
     /**

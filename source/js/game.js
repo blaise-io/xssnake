@@ -45,7 +45,7 @@ Game.prototype = {
     },
 
     destruct: function() {
-        var i, m;
+        var i, m, border;
 
         XSS.pubsub.unsubscribe(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME);
         XSS.pubsub.unsubscribe(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME);
@@ -71,7 +71,13 @@ Game.prototype = {
         this.apples = null;
         this.powerups = null;
 
-        XSS.shapes.border = null;
+        border = XSS.shapegen.outerBorder();
+        for (var k in border) {
+            if (border.hasOwnProperty(k)) {
+                XSS.shapes[k] = null;
+            }
+        }
+
         XSS.shapes.level = null;
     },
 
@@ -136,8 +142,16 @@ Game.prototype = {
      * @private
      */
     _setupLevel: function(levelID) {
-        var level = new ClientLevel(levelID);
+        var border, level = new ClientLevel(levelID);
         XSS.shapes.level = level.getShape();
+
+        border = XSS.shapegen.outerBorder();
+        for (var k in border) {
+            if (border.hasOwnProperty(k)) {
+                XSS.shapes[k] = border[k];
+            }
+        }
+
         return level;
     },
 

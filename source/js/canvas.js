@@ -7,11 +7,12 @@
  * @constructor
  */
 function Canvas() {
+    var theme = XSS.util.storage(XSS.STORAGE_THEME);
+
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setTheme(XSS.themes[XSS.util.storage(XSS.STORAGE_THEME)] || XSS.themes[0]);
-    this._setCanvasDimensions();
+    this.setTheme(XSS.themes[theme] || XSS.themes[0]);
 
     if (!window.requestAnimationFrame) {
         this._useVendorRequestAnimationFrame();
@@ -22,11 +23,17 @@ function Canvas() {
 
     this.focus = true;
     this._prevFrame = new Date() - 20;
-    this._dummyBBox = new BoundingBox();
     this._frameBound = this._frame.bind(this);
 
     window.requestAnimationFrame(this._frameBound, this.canvas);
 }
+
+/**
+ * Level of ghosting. 0 = no ghosting, 1 = permanent on
+ * @const
+ * @type {number}
+ */
+Canvas.GHOSTING = 0.6;
 
 Canvas.prototype = {
 
@@ -36,7 +43,8 @@ Canvas.prototype = {
     setTheme: function(theme) {
         this.theme = theme;
         this._clearShapeCache();
-        this._setBackgroundPattern();
+        this._setCanvasDimensions();
+        this._setPatterns();
     },
 
     /**
@@ -47,7 +55,11 @@ Canvas.prototype = {
         XSS.pubsub.publish(XSS.PUB_GAME_TICK, delta, this.focus);
 
         // Clear canvas
-        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.save();
+        this.ctx.fillStyle = this.tileOff;
+        this.ctx.globalAlpha = 1 - Canvas.GHOSTING;
+        this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.restore();
 
         // Paint all layers
         this._paint(delta, XSS.shapes);
@@ -118,19 +130,14 @@ Canvas.prototype = {
      * @param {number} y
      * @param {number} offsetX
      * @param {number} offsetY
-     * @param {boolean} clear
      * @suppress {checkTypes}
      * @private
      */
-    _paintPixel: function(context, x, y, offsetX, offsetY, clear) {
-        var pixelSize = this.pixelSize,
-            tileSize = this.tileSize;
+    _paintPixel: function(context, x, y, offsetX, offsetY) {
+        var tileSize = this.tileSize;
         offsetX = x * tileSize - offsetX;
         offsetY = y * tileSize - offsetY;
-        if (clear) {
-            context.clearRect(offsetX, offsetY, pixelSize, pixelSize);
-        }
-        context.fillRect(offsetX, offsetY, pixelSize, pixelSize);
+        context.fillRect(offsetX, offsetY, tileSize, tileSize);
     },
 
     /**
@@ -158,19 +165,13 @@ Canvas.prototype = {
         // Clear surface below shape
         if (shape.clearBBox) {
             bbox = this._getCanvasBBox(shape);
-            ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
-        }
-
-        // Paint shape without caching
-        if (shape.clearPixels) {
-            this._paintShapeNoCache(ctx, shape, this._dummyBBox);
+            ctx.fillStyle = this.tileOff;
+            ctx.fillRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
         }
 
         // Create cache and paint
-        else {
-            cache = shape.cache || (shape.cache = this._getPaintedShape(shape));
-            ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
-        }
+        cache = shape.cache || (shape.cache = this._getPaintedShape(shape));
+        ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
     },
 
     /**
@@ -179,9 +180,9 @@ Canvas.prototype = {
      * @param {BoundingBox} bbox
      */
     _paintShapeNoCache: function(context, shape, bbox) {
-        context.fillStyle = this.theme.on;
+        context.fillStyle = this.tileOn;
         shape.pixels.each(function(x, y) {
-            this._paintPixel(context, x, y, bbox.x1, bbox.y1, shape.clearPixels);
+            this._paintPixel(context, x, y, bbox.x1, bbox.y1);
         }.bind(this));
     },
 
@@ -275,7 +276,7 @@ Canvas.prototype = {
         this.tileSize = this._getTileSize();
 
         // Attempt to make fat pixels pleasing at all sizes
-        if (this.tileSize >= 5) {
+        if (this.tileSize >= 4) {
             this.pixelSize = this.tileSize - 1;
         } else if (this.tileSize === 1) {
             this.pixelSize = 1;
@@ -287,16 +288,17 @@ Canvas.prototype = {
         this.canvasHeight = this.tileSize * XSS.HEIGHT;
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
-
-        this._setBackgroundPattern();
     },
 
     /** @private */
-    _positionCanvas: function() {
+    _positionCanvas: function(e) {
         var windowCenter, windowMiddle, left, top, style;
 
-        this._setCanvasDimensions();
-        this._clearShapeCache();
+        if (e) {
+            this._clearShapeCache();
+            this._setCanvasDimensions();
+            this._setPatterns();
+        }
 
         windowCenter = window.innerWidth / 2;
         windowMiddle = window.innerHeight / 2;
@@ -311,22 +313,27 @@ Canvas.prototype = {
     },
 
     /** @private */
-    _setBackgroundPattern: function() {
-        var canvas, context, pixelSize, rectSize, bgImage;
-
-        pixelSize = Math.max(this.tileSize, 2);
-        rectSize = pixelSize - 1;
+    _setPatterns: function() {
+        var canvas, getTile, backgroundImage;
 
         canvas = document.createElement('canvas');
-        canvas.width  = pixelSize;
-        canvas.height = pixelSize;
+        canvas.setAttribute('width', this.tileSize);
+        canvas.setAttribute('height', this.tileSize);
 
-        context = canvas.getContext('2d');
-        context.fillStyle = this.theme.off;
-        context.fillRect(0, 0, rectSize, rectSize);
+        getTile = function(color) {
+            var context = canvas.getContext('2d');
+            context.fillStyle = this.theme.bg;
+            context.fillRect(0, 0, this.tileSize, this.tileSize);
+            context.fillStyle = color;
+            context.fillRect(0, 0, this.pixelSize, this.pixelSize);
+            return this.ctx.createPattern(canvas, 'repeat');
+        }.bind(this);
 
-        bgImage = ' url(' + canvas.toDataURL('image/png') + ')';
-        XSS.doc.style.background = this.theme.bg + bgImage;
+        this.tileOn = getTile(this.theme.on);
+        this.tileOff = getTile(this.theme.off);
+
+        backgroundImage = ' url(' + canvas.toDataURL('image/png') + ')';
+        XSS.doc.style.background = this.theme.bg + backgroundImage;
     },
 
     /**
