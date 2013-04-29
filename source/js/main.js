@@ -14,18 +14,18 @@ XSS.main = function() {
     XSS.shapes     = {};
 
     // Shortcuts
-    XSS.doc        = document.body;
-    XSS.on         = XSS.util.addListener;
-    XSS.off        = XSS.util.removeListener;
+    XSS.doc       = document.body;
+    XSS.on        = XSS.util.addListener;
+    XSS.off       = XSS.util.removeListener;
 
     // Singletons
-    XSS.pubsub     = new PublishSubscribe();
-    XSS.canvas     = new Canvas();
-    XSS.shapegen   = new ShapeGenerator();
-    XSS.transform  = new Transform();
-    XSS.font       = new Font();
-    XSS.play       = new AudioPlay();
-    XSS.flow       = new StageFlow();
+    XSS.pubsub    = new PublishSubscribe();
+    XSS.canvas    = new Canvas();
+    XSS.shapegen  = new ShapeGenerator();
+    XSS.transform = new Transform();
+    XSS.font      = new Font();
+    XSS.play      = new AudioPlay();
+    XSS.flow      = new StageFlow();
 
     // Preloading
     ClientLevel.prototype.generateLevelCache();
