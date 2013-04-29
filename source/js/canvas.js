@@ -290,7 +290,10 @@ Canvas.prototype = {
         this.canvas.height = this.canvasHeight;
     },
 
-    /** @private */
+    /**
+     * @param {Event=} e
+     * @private
+     */
     _positionCanvas: function(e) {
         var windowCenter, windowMiddle, left, top, style;
 
