@@ -32,6 +32,36 @@ Transform.prototype = {
     },
 
     /**
+     * @param {Shape} shape
+     * @param {number=} hPadding
+     * @param {number=} vPadding
+     * @param {boolean=} round
+     */
+    outline: function(shape, hPadding, vPadding, round) {
+        var r, x1, x2, y1, y2, bbox = shape.bbox();
+
+        r = (typeof round === 'undefined') ? 1 : 0;
+
+        hPadding = (hPadding || 5) + 1;
+        vPadding = (vPadding || 3) + 1;
+
+        x1 = bbox.x1 - hPadding;
+        x2 = bbox.x2 + hPadding;
+        y1 = bbox.y1 - vPadding;
+        y2 = bbox.y2 + vPadding;
+
+        shape.add(
+            XSS.shapegen.line(x1, y1+1, x1, y2),      // Left
+            XSS.shapegen.line(x1+r, y1, x2-r, y1),    // Top
+            XSS.shapegen.line(x2, y1+1, x2, y2),      // Right
+            XSS.shapegen.line(x1, y2, x2, y2),        // Bottom
+            XSS.shapegen.line(x1+r, y2+1, x2-r, y2+1) // Bottom 2
+        );
+
+        return shape;
+    },
+
+    /**
      * @param {ShapePixels} pixels
      * @param {number=} xshift
      * @param {number=} yshift

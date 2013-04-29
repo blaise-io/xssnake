@@ -1,6 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
 /*globals XSS, BoundingBox, ShapePixels*/
-
 'use strict';
 
 /** @typedef {Array.<number>} */
@@ -39,8 +38,11 @@ function Shape(varArgs) {
     /** @type {?XSS.ShapeCache} */
     this.cache = null;
 
-    /** @type {?BoundingBox} */
-    this._bbox = null;
+    /**
+     * @type {number}
+     * @private
+     */
+    this._expand = 0;
 
     this.add.apply(this, arguments);
 }
@@ -104,6 +106,15 @@ Shape.prototype = {
     },
 
     /**
+     * @param {number=} padding
+     * @return {Shape}
+     */
+    outline: function(padding) {
+        XSS.transform.outline(this, padding);
+        return this;
+    },
+
+    /**
      * @param {BoundingBox=} bbox
      * @return {Shape}
      */
@@ -122,7 +133,6 @@ Shape.prototype = {
         }
 
         this.pixels = inverted;
-
         return this.uncache();
     },
 
@@ -169,12 +179,20 @@ Shape.prototype = {
     },
 
     /**
+     * @param {number=} expand
      * @return {BoundingBox}
      */
-    bbox: function() {
-        if (!this._bbox) {
-            this._bbox = new BoundingBox().ofShape(this);
+    bbox: function(expand) {
+        if (typeof expand === 'undefined') {
+            expand = this._expand || 0;
         }
+        if (!this._bbox || this._expand !== expand) {
+            this._bbox = this.pixels.bbox();
+            if (expand) {
+                this._bbox.expand(expand);
+            }
+        }
+        this._expand = expand;
         return this._bbox;
     },
 

@@ -2,29 +2,44 @@
 'use strict';
 
 /**
- * @param {number=} x1
- * @param {number=} y1
- * @param {number=} x2
- * @param {number=} y2
+ * @param {ShapePixels=} pixels
  * @constructor
  */
-function BoundingBox(x1, y1, x2, y2) {
-    this.x1 = x1 || 0;
-    this.y1 = y1 || 0;
-    this.x2 = x2 || 0;
-    this.y2 = y2 || 0;
-    this._calculateDimensions();
+function BoundingBox(pixels) {
+    if (pixels) {
+        this._calculateFromPixels(pixels);
+    }
 }
 
 BoundingBox.prototype = {
 
+    x1: 0,
+    x2: 0,
+    y1: 0,
+    y2: 0,
+    width: 0,
+    height: 0,
+
     /**
-     * @param {Shape} shape
+     * @param {number} expand
      * @return {BoundingBox}
      */
-    ofShape: function(shape) {
-        var pixels = shape.pixels,
-            x1 = null,
+    expand: function(expand) {
+        this.x1 -= expand;
+        this.y1 -= expand;
+        this.x2 += expand;
+        this.y2 += expand;
+        this._calculateDimensions();
+        return this;
+    },
+
+    /**
+     * @param {ShapePixels} pixels
+     * @return {BoundingBox}
+     * @private
+     */
+    _calculateFromPixels: function(pixels) {
+        var x1 = null,
             x2 = null,
             y1 = null,
             y2 = null;
@@ -37,25 +52,12 @@ BoundingBox.prototype = {
         });
 
         this.x1 = Number(x1);
-        this.x2 = Number(x2) + 1;
+        this.x2 = Number(x2);
         this.y1 = Number(y1);
-        this.y2 = Number(y2) + 1;
+        this.y2 = Number(y2);
 
         this._calculateDimensions();
 
-        return this;
-    },
-
-    /**
-     * @param {number} expandBy
-     * @return {BoundingBox}
-     */
-    expand: function(expandBy) {
-        this.x1 -= expandBy;
-        this.y1 -= expandBy;
-        this.x2 += expandBy;
-        this.y2 += expandBy;
-        this._calculateDimensions();
         return this;
     },
 

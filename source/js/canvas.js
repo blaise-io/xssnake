@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, BoundingBox*/
+/*globals XSS, BoundingBox, ShapePixels*/
 'use strict';
 
 /**
@@ -157,7 +157,7 @@ Canvas.prototype = {
 
         // Clear surface below shape
         if (shape.clearBBox) {
-            bbox = shape.bbox();
+            bbox = this._getCanvasBBox(shape);
             ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
         }
 
@@ -193,11 +193,11 @@ Canvas.prototype = {
     _getPaintedShape: function(shape) {
         var bbox, canvas;
 
-        bbox = this._getBBoxRealPixels(shape);
+        bbox = this._getCanvasBBox(shape, true);
 
         canvas = document.createElement('canvas');
-        canvas.width  = bbox.width;
-        canvas.height = bbox.height;
+        canvas.width  = bbox.width + this.tileSize;
+        canvas.height = bbox.height + this.tileSize;
 
         this._paintShapeNoCache(canvas.getContext('2d'), shape, bbox);
 
@@ -301,8 +301,8 @@ Canvas.prototype = {
         windowCenter = window.innerWidth / 2;
         windowMiddle = window.innerHeight / 2;
 
-        left = this._snapToFatPixels(windowCenter - (this.canvasWidth / 2));
-        top = this._snapToFatPixels(windowMiddle - (this.canvasHeight / 2));
+        left = this._snapCanvasToTiles(windowCenter - (this.canvasWidth / 2));
+        top = this._snapCanvasToTiles(windowMiddle - (this.canvasHeight / 2));
 
         style = this.canvas.style;
         style.position = 'absolute';
@@ -341,16 +341,20 @@ Canvas.prototype = {
 
     /**
      * @param {Shape} shape
+     * @param {boolean=} ignoreExpand
      * @return {BoundingBox}
      * @private
      */
-    _getBBoxRealPixels: function(shape) {
-        var bbox = shape.bbox();
+    _getCanvasBBox: function(shape, ignoreExpand) {
+        var bbox = (ignoreExpand) ? shape.pixels.bbox() : shape.bbox();
+        bbox = XSS.util.extend({}, bbox);
+
         for (var k in bbox) {
             if (bbox.hasOwnProperty(k)) {
                 bbox[k] *= this.tileSize;
             }
         }
+
         return bbox;
     },
 
@@ -359,7 +363,7 @@ Canvas.prototype = {
      * @return {number}
      * @private
      */
-    _snapToFatPixels: function(num) {
+    _snapCanvasToTiles: function(num) {
         return Math.floor(num / this.tileSize) * this.tileSize;
     }
 

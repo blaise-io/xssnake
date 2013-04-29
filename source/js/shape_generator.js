@@ -152,6 +152,37 @@ ShapeGenerator.prototype = {
     },
 
     /**
+     * @param {string} header
+     * @param {string} body
+     * @param {number=} width
+     * @returns {Shape}
+     */
+    dialog: function(header, body, width) {
+        var left, headerPixels, bodyPixels, top = 0, shape = new Shape();
+
+        width = Math.max(width || 100, XSS.font.width(header) * 2);
+        left = Math.round((XSS.WIDTH - width) / 2);
+
+        headerPixels = XSS.font.pixels(header);
+        headerPixels = XSS.transform.zoomX2(headerPixels, left, top, true);
+
+        top = 14;
+        width = Math.max(width, headerPixels.bbox().width);
+
+        bodyPixels = XSS.font.pixels(body, left, top, {wrap: width - 4});
+
+        shape.add(headerPixels, bodyPixels);
+        shape.clearBBox = true;
+
+        shape.shift(0, Math.round((XSS.HEIGHT - shape.bbox().height) / 2));
+        shape.outline();
+        shape.bbox(-1);
+        shape.clearPixels = true;
+
+        return shape;
+    },
+
+    /**
      * @return {Shape}
      */
     innerBorder: function() {

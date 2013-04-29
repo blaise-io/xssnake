@@ -114,8 +114,15 @@ XSS.util.extend(XSS.util, {
             return '';
         }
         switch (arguments.length) {
-            case 0: return '';
-            case 1: return JSON.parse(localStorage.getItem(key));
+            case 0:
+                return '';
+            case 1:
+                try {
+                    return JSON.parse(localStorage.getItem(key));
+                } catch(err) {
+                    localStorage.removeItem(key);
+                }
+                return '';
             case 2:
                 if (value === null) {
                     localStorage.removeItem(key);

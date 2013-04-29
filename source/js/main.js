@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, StageFlow, ClientLevel */
+/*globals PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, AudioPlay, StageFlow, ClientLevel */
 'use strict';
 
 var XSS = {}, module = {};

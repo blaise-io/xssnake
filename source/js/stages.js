@@ -69,17 +69,17 @@ XSS.stages = {
             if (level.isWall(head[0], head[1]) || isLevelIntersect()) {
                 snake.crash();
                 snake.showAction('CRASH!');
-                window.setTimeout(snake.destruct.bind(snake), 1500);
-                window.setTimeout(XSS.stages._roboSnake, 7500);
+                window.setTimeout(snake.destruct.bind(snake), 2e3);
+                window.setTimeout(XSS.stages._roboSnake, 1e5);
             } else {
                 snake.move(snake.getNextPosition());
                 snake.updateShape();
-                window.setTimeout(update, 100);
+                window.setTimeout(update, 1e2);
             }
         };
 
         if (!XSS.room) {
-            window.setTimeout(update, 1500);
+            window.setTimeout(update, 5e3); // Pay for killing the snake
         }
     },
 

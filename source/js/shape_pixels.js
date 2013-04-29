@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals */
+/*globals BoundingBox*/
 'use strict';
 
 /**
@@ -8,7 +8,9 @@
  * @constructor
  */
 function ShapePixels(pixels) {
-    /** @type {Array.<Array.<number>>} */
+    /**
+     * @type {Array.<Array.<number>>}
+     */
     this.pixels = pixels || [];
 }
 
@@ -18,7 +20,7 @@ ShapePixels.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @returns {ShapePixels}
+     * @return {ShapePixels}
      */
     add: function(x, y) {
         var pixels = this.pixels;
@@ -28,6 +30,13 @@ ShapePixels.prototype = {
             pixels[y] = [x];
         }
         return this;
+    },
+
+    /**
+     * @return {BoundingBox}
+     */
+    bbox: function() {
+        return new BoundingBox(this);
     },
 
     /**
