@@ -124,7 +124,7 @@ Shape.prototype = {
         inverted = new ShapePixels();
         bbox = bbox || this.bbox();
 
-        for (var x = bbox.x1; x < bbox.x2; x++) {
+        for (var x = bbox.x1; x <= bbox.x2; x++) {
             for (var y = bbox.y1; y < bbox.y2; y++) {
                 if (!pixels.has(x, y)) {
                     inverted.add(x, y);
