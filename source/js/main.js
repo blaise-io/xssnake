@@ -11,7 +11,7 @@ window.onerror = function() {
 XSS.main = function() {
 
     /** @type {Object.<string,Shape>} */
-    XSS.shapes     = {};
+    XSS.shapes    = {};
 
     // Shortcuts
     XSS.doc       = document.body;
