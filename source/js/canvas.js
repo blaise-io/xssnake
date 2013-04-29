@@ -7,15 +7,15 @@
  * @constructor
  */
 function Canvas() {
-    var theme = XSS.util.storage(XSS.STORAGE_THEME);
+    var scheme = XSS.util.storage(XSS.STORAGE_SCHEME);
 
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setTheme(XSS.themes[theme] || XSS.themes[0]);
+    this.setScheme(XSS.schemes[scheme] || XSS.schemes[0]);
 
     if (!window.requestAnimationFrame) {
-        this._useVendorRequestAnimationFrame();
+        this._vendorRequestAnimationFrame();
     }
 
     this._positionCanvas();
@@ -38,13 +38,13 @@ Canvas.GHOSTING = 0.6;
 Canvas.prototype = {
 
     /**
-     * @param {Object} theme
+     * @param {Object} scheme
      */
-    setTheme: function(theme) {
-        this.theme = theme;
-        this._clearShapeCache();
+    setScheme: function(scheme) {
+        this.scheme = scheme;
         this._setCanvasDimensions();
         this._setPatterns();
+        this._clearShapeCache();
     },
 
     /**
@@ -217,7 +217,7 @@ Canvas.prototype = {
     },
 
     /** @private */
-    _useVendorRequestAnimationFrame: function() {
+    _vendorRequestAnimationFrame: function() {
         window['requestAnimationFrame'] =
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame ||
@@ -298,9 +298,9 @@ Canvas.prototype = {
         var windowCenter, windowMiddle, left, top, style;
 
         if (e) {
-            this._clearShapeCache();
             this._setCanvasDimensions();
             this._setPatterns();
+            this._clearShapeCache();
         }
 
         windowCenter = window.innerWidth / 2;
@@ -325,18 +325,18 @@ Canvas.prototype = {
 
         getTile = function(color) {
             var context = canvas.getContext('2d');
-            context.fillStyle = this.theme.bg;
+            context.fillStyle = this.scheme.bg;
             context.fillRect(0, 0, this.tileSize, this.tileSize);
             context.fillStyle = color;
             context.fillRect(0, 0, this.pixelSize, this.pixelSize);
             return this.ctx.createPattern(canvas, 'repeat');
         }.bind(this);
 
-        this.tileOn = getTile(this.theme.on);
-        this.tileOff = getTile(this.theme.off);
+        this.tileOn = getTile(this.scheme.on);
+        this.tileOff = getTile(this.scheme.off);
 
         backgroundImage = ' url(' + canvas.toDataURL('image/png') + ')';
-        XSS.doc.style.background = this.theme.bg + backgroundImage;
+        XSS.doc.style.background = this.scheme.bg + backgroundImage;
     },
 
     /**

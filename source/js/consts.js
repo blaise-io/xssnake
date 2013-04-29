@@ -45,7 +45,7 @@
 
 /** @const */ XSS.STORAGE_MUTE = 'mute';
 /** @const */ XSS.STORAGE_NAME = 'name';
-/** @const */ XSS.STORAGE_THEME = 'theme';
+/** @const */ XSS.STORAGE_SCHEME = 'scheme';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';

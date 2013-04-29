@@ -2,10 +2,10 @@
 /*globals XSS*/
 'use strict';
 
-XSS.themes = [
+XSS.schemes = [
     {
         title: 'Public Transport',
-        desc : 'Default theme',
+        desc : 'Better stick to this color scheme\nif you don’t want to get epilepsified.',
         bg   : '#111',
         off  : '#222',
         on   : '#dc0'
@@ -22,7 +22,7 @@ XSS.themes = [
         desc : 'Without backlight.',
         bg   : '#798',
         off  : '#687',
-        on   : '#232'
+        on   : '#121'
     },
     {
         title: '1337',
@@ -40,7 +40,7 @@ XSS.themes = [
     },
     {
         title: 'Gaymer',
-        desc : 'Rainbows and unicorns not included.',
+        desc : 'Batteries, rainbows, shoes\nand unicorns are included.',
         bg   : '#808',
         off  : '#a0a',
         on   : '#ff2'

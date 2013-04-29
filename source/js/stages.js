@@ -289,19 +289,19 @@ XSS.stages = {
      * @return {SelectStage}
      */
     colorScheme: function() {
-        var setTheme, menu = new SelectMenu('theme', 'THEEEMES');
+        var setTheme, menu = new SelectMenu('scheme', 'COLOR SCHEME');
 
-        menu.selected = XSS.util.storage(XSS.STORAGE_THEME);
+        menu.selected = XSS.util.storage(XSS.STORAGE_SCHEME);
         menu.selected = parseInt(menu.selected, 10) || 0;
 
         setTheme = function(index) {
-            XSS.canvas.setTheme(XSS.themes[index]);
-            XSS.util.storage(XSS.STORAGE_THEME, index);
+            XSS.canvas.setScheme(XSS.schemes[index]);
+            XSS.util.storage(XSS.STORAGE_SCHEME, index);
         };
 
-        for (var i = 0, m = XSS.themes.length; i < m; i++) {
-            var title = XSS.themes[i].title,
-                desc = XSS.themes[i].desc;
+        for (var i = 0, m = XSS.schemes.length; i < m; i++) {
+            var title = XSS.schemes[i].title,
+                desc = XSS.schemes[i].desc;
             menu.addOption(true, null, title, desc, setTheme);
         }
 
