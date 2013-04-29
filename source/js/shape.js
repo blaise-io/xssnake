@@ -126,8 +126,7 @@ Shape.prototype = {
             }
         }
 
-        this.pixels = inverted;
-        return this.uncache();
+        return this.set(inverted);
     },
 
     /**
@@ -246,7 +245,7 @@ Shape.prototype = {
      * @private
      */
     _animateEffect: function(options) {
-        var from, to, duration, clone, clear, progress = 0;
+        var from, to, duration, clone, progress = 0;
 
         options  = options || {};
         from     = options.from || [0, 0];
@@ -263,7 +262,7 @@ Shape.prototype = {
                 x = Math.round(x);
                 y = from[1] - ((from[1] - to[1]) * progress / duration);
                 y = Math.round(y);
-                this.pixels = XSS.transform.shift(clone.pixels, x, y);
+                this.set(XSS.transform.shift(clone.pixels, x, y));
             } else {
                 delete this.effects.animate;
                 this.set(clone.shift(to[0], to[1]).pixels);

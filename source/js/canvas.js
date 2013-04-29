@@ -22,7 +22,7 @@ function Canvas() {
     this._bindEvents();
 
     this.focus = true;
-    this._prevFrame = new Date() - 20;
+    this._prevFrame = new Date();
     this._frameBound = this._frame.bind(this);
 
     window.requestAnimationFrame(this._frameBound, this.canvas);
