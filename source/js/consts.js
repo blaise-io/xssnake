@@ -18,7 +18,8 @@
 /** @const */ XSS.KEY_UP = 38;
 /** @const */ XSS.KEY_RIGHT = 39;
 /** @const */ XSS.KEY_DOWN = 40;
-/** @const */ XSS.KEY_MUTE = 77;
+/** @const */ XSS.KEY_MUTE = 77; // M
+/** @const */ XSS.KEY_START = 83; // S
 
 /** @const */ XSS.DIRECTION_LEFT = 0;
 /** @const */ XSS.DIRECTION_UP = 1;

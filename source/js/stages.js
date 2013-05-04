@@ -30,15 +30,19 @@ XSS.stages = {
 
         if (XSS.util.hash(XSS.HASH_ROOM)) {
             XSS.stages._autoJoinRoom();
+        } else {
+            window.setTimeout(XSS.stages._roboSnake, 1e3);
         }
-
-        window.setTimeout(XSS.stages._roboSnake, 1e3);
 
         return new SelectStage(menu);
     },
 
     _roboSnake: function() {
-        var snake, level;
+        var snake;
+
+        if (XSS.room) {
+            return;
+        }
 
         snake = new ClientSnake(0, true, '', [1, 1], 2);
         snake.addToShapes();
@@ -47,15 +51,12 @@ XSS.stages = {
 
         XSS.menuSnake = snake;
 
-        level = new ClientLevel(0);
-        level.level.height = Math.floor(XSS.HEIGHT / XSS.GAME_TILE)- 2;
-
         var isLevelIntersect = function() {
-            var snakePixels, intersect = false;
-            snakePixels = XSS.shapes[snake.shapes.snake].pixels;
-            snakePixels.each(function(x, y) {
+            var snakeShape, intersect = false;
+            snakeShape = XSS.shapes[snake.shapes.snake];
+            snakeShape.pixels.each(function(x, y) {
                 if (x % 2 || y % 2) {
-                    if (snakePixels.hasMultiple(XSS.shapes, x, y)) {
+                    if (snakeShape.pixels.hasMultiple(XSS.shapes, x, y)) {
                         intersect = true;
                     }
                 }
@@ -64,9 +65,14 @@ XSS.stages = {
         };
 
         var update = function() {
-            var head = snake.head();
+            if (XSS.room || !XSS.shapes[snake.shapes.snake]) {
+                if (snake.destroy) {
+                    snake.destroy();
+                }
+                return;
+            }
             snake.removeNameAndDirection();
-            if (level.isWall(head[0], head[1]) || isLevelIntersect()) {
+            if (isLevelIntersect()) {
                 snake.crash();
                 snake.showAction('CRASH!');
                 window.setTimeout(snake.destruct.bind(snake), 100);
@@ -79,13 +85,12 @@ XSS.stages = {
             }
         };
 
-        if (!XSS.room) {
-            window.setTimeout(update, 1e3);
-        }
+        window.setTimeout(update, 1e3);
     },
 
     _autoJoinRoom: function() {
-        XSS.util.instruct('Connecting...', 0, true);
+        var title = 'Auto-join room';
+        XSS.util.dialog(title, 'Connecting to server...');
 
         XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
             XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES);
@@ -93,12 +98,13 @@ XSS.stages = {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             } else {
                 XSS.stages.autoJoinData = data;
+                XSS.shapes.dialog = null;
                 XSS.flow.switchStage(XSS.stages.autoJoin);
             }
         });
 
         XSS.socket = new Socket(function() {
-            XSS.util.instruct('Getting room properties...', 2000, true);
+            XSS.util.dialog(title, 'Getting room properties...');
             window.setTimeout(function() {
                 XSS.socket.emit(
                     XSS.events.SERVER_ROOM_STATUS,

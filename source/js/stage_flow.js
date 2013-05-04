@@ -10,11 +10,11 @@
 function StageFlow(stageRef) {
     stageRef = stageRef || XSS.stages.main;
 
-    this._prevStages.push(stageRef);
-
     XSS.shapes = {};
 
-    this._globalKeys();
+    this._prevStages.push(stageRef);
+    this._bindGlobalKeys();
+
     this.setupMenuSkeletton();
     this.newStage(stageRef);
 }
@@ -26,6 +26,10 @@ StageFlow.prototype = {
 
     /** @type {Object} */
     stageInstances: {},
+
+    destruct: function() {
+        XSS.off.keydown(this._handleKeysBound);
+    },
 
     /**
      * @param {function()} stage
@@ -99,27 +103,31 @@ StageFlow.prototype = {
     /**
      * @private
      */
-    _globalKeys: function() {
-        XSS.on.keydown(function(e) {
-            var mute, instruct;
+    _bindGlobalKeys: function() {
+        this._handleKeysBound = this.handleKeys.bind(this);
+        XSS.on.keydown(this._handleKeysBound);
+    },
 
-            // Firefox disconnects websocket on Esc O___O
-            // Disable that.
-            if (e.keyCode === XSS.KEY_ESCAPE) {
-                e.preventDefault();
-            }
+    /**
+     * @param {Event} e
+     * @private
+     */
+    handleKeys: function(e) {
+        var mute, instruct;
 
-            // Global mute key. Ignore key when user is in input field.
-            else if (e.keyCode === XSS.KEY_MUTE) {
-                if (!document.getElementsByTagName('input')[0]) {
-                    mute = !XSS.util.storage(XSS.STORAGE_MUTE);
-                    instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
-                    XSS.util.storage(XSS.STORAGE_MUTE, mute);
-                    XSS.util.instruct(instruct, 1e3);
-                    XSS.play.menu_alt();
-                }
-            }
-        });
+        // Firefox disconnects websocket on Esc. Disable that.
+        if (e.keyCode === XSS.KEY_ESCAPE) {
+            e.preventDefault();
+        }
+
+        // Global mute key. Ignore key when user is in input field.
+        if (e.keyCode === XSS.KEY_MUTE && !XSS.inputFocus) {
+            mute = !XSS.util.storage(XSS.STORAGE_MUTE);
+            instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
+            XSS.util.storage(XSS.STORAGE_MUTE, mute);
+            XSS.util.instruct(instruct, 1e3);
+            XSS.play.menu_alt();
+        }
     },
 
     /**

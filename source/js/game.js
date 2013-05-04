@@ -68,8 +68,8 @@ Game.prototype = {
             }
         }
 
-        this.apples = null;
-        this.powerups = null;
+        this.apples = [];
+        this.powerups = [];
 
         border = XSS.shapegen.outerBorder();
         for (var k in border) {
@@ -91,6 +91,8 @@ Game.prototype = {
 
     countdown: function() {
         var count, total, border, line = XSS.shapegen.line;
+
+        XSS.shapes.dialog = null;
 
         count = XSS.config.TIME_COUNTDOWN_FROM;
         total = count;

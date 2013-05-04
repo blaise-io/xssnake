@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS*/
+/*globals XSS, StageFlow*/
 'use strict';
 
 /**
@@ -46,22 +46,27 @@ XSS.util.extend(XSS.util, {
     },
 
     /**
+     * @param {string} header
+     * @param {string} body
+     * @param {Object=} settings
+     */
+    dialog: function(header, body, settings) {
+        XSS.shapes.dialog = XSS.shapegen.dialog(header, body, settings);
+        return XSS.shapes.dialog;
+    },
+
+    /**
      * @param {string} str
      */
     error: function(str) {
-        var left, exit;
-
-        left = XSS.MENU_LEFT + ((XSS.MENU_WIDTH - XSS.font.width(str)) / 2);
-        exit = function() {
+        var exit = function() {
             XSS.off.keydown(exit);
+            XSS.flow.destruct();
             XSS.flow = new StageFlow();
         };
 
         XSS.util.hash();
-
-        XSS.shapes = {
-            error: XSS.font.shape(str, left, 60)
-        };
+        XSS.util.dialog(str, 'Press any key to continue.');
 
         XSS.on.keydown(exit);
         window.setTimeout(exit, 5000);

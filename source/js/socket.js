@@ -66,8 +66,7 @@ Socket.prototype = {
     },
 
     disconnect: function() {
-        var str = 'OHSHI!! Lost server connection\n' +
-                  '(appropriate moment for panic)';
+        var str = 'LOST CONNECTION';
         if (XSS.room) {
             XSS.room.destruct();
         }
@@ -103,7 +102,15 @@ Socket.prototype = {
      */
     roomIndex: function(data) {
         if (!XSS.room) {
-            XSS.room = new Room(data[0], data[1], data[2], data[3], data[4]);
+            XSS.room = new Room(
+                data[0], // index
+                data[1], // capacity
+                data[2], // round
+                data[3], // key
+                data[4], // level
+                data[5], // names
+                data[6]  // score
+            );
         } else {
             XSS.room.update.apply(XSS.room, data);
         }
@@ -134,6 +141,7 @@ Socket.prototype = {
 
     gameCountdown: function() {
         XSS.room.game.countdown();
+        XSS.room.unbindKeys();
     },
 
     gameStart: function() {

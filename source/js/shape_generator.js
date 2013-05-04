@@ -154,29 +154,31 @@ ShapeGenerator.prototype = {
     /**
      * @param {string} header
      * @param {string} body
-     * @param {number=} width
+     * @param {Object=} settings
      * @returns {Shape}
      */
-    dialog: function(header, body, width) {
-        var left, headerPixels, bodyPixels, top = 0, shape = new Shape();
+    dialog: function(header, body, settings) {
+        var left, width, areaHeight, headerPixels, bodyPixels, shape;
 
-        width = Math.max(width || 100, XSS.font.width(header) * 2);
+        settings = settings || {};
+
+        areaHeight = (settings.ingame && XSS.levelCache[0]) ?
+            XSS.levelCache[0].height * XSS.GAME_TILE :
+            XSS.HEIGHT;
+
+        width = Math.max(settings.width || 100, XSS.font.width(header) * 2);
         left = Math.round((XSS.WIDTH - width) / 2);
 
         headerPixels = XSS.font.pixels(header);
-        headerPixels = XSS.transform.zoomX2(headerPixels, left, top, true);
+        headerPixels = XSS.transform.zoomX2(headerPixels, left, 0, true);
 
-        top = 14;
-        width = Math.max(width, headerPixels.bbox().width);
+        bodyPixels = XSS.font.pixels(body, left, 14, {wrap: width - 4});
 
-        bodyPixels = XSS.font.pixels(body, left, top, {wrap: width - 4});
-
-        shape.add(headerPixels, bodyPixels);
-        shape.clearBBox = true;
-
-        shape.shift(0, Math.round((XSS.HEIGHT - shape.bbox().height) / 2));
+        shape = new Shape(headerPixels, bodyPixels);
+        shape.shift(0, Math.round((areaHeight - shape.bbox().height) / 2));
         shape.outline();
-        shape.bbox(-1);
+        shape.bbox(-1); // Rounded corners
+        shape.clearBBox = true;
 
         return shape;
     },

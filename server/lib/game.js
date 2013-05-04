@@ -53,8 +53,8 @@ Game.prototype = {
     start: function() {
         console.log('___ NEW ROUND IN ROOM ' + this.room.key + ' ___');
         this.room.emit(events.CLIENT_GAME_START, []);
+        this.room.round++;
 
-        this.room.round = true;
         this.server.ticker.addListener('tick', this._tickBound);
 
         var respawnAfter = config.TIME_RESPAWN_APPLE * 1000;

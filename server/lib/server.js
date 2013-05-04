@@ -25,7 +25,7 @@ module.exports = Server;
 Server.prototype = {
 
     preloadLevels: function(callback) {
-        var i, m, appendLevel, parsed = [];
+        var i, m, buffer, appendLevel, parsed = [];
 
         appendLevel = function(err, data) {
             parsed[this] = new LevelParser(data);
@@ -35,7 +35,8 @@ Server.prototype = {
         };
 
         for (i = 0, m = levels.length; i < m; i++) {
-            png.parse(new Buffer(levels[i], 'base64'), appendLevel.bind(i));
+            buffer = new Buffer(levels[i], 'base64');
+            png.parse(buffer, appendLevel.bind(i));
         }
     },
 

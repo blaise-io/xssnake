@@ -48,11 +48,19 @@ Room.prototype = {
     },
 
     emitState: function() {
-        var names = this.names();
+        var names = this.names(), capacity = this.options[map.FIELD.MAX_PLAYERS];
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            var data = [i, this.key, this.level, names, this.points];
+            var data = [i, capacity, this.round, this.key, this.level, names, this.points];
             this.clients[i].emit(events.CLIENT_ROOM_INDEX, data);
         }
+    },
+
+    /**
+     * @param {Client} client
+     * @returns {boolean}
+     */
+    isHost: function(client) {
+        return (0 === this.clients.indexOf(client));
     },
 
     /**
@@ -68,8 +76,8 @@ Room.prototype = {
 
         difficulties = [map.VALUE.EASY, map.VALUE.MEDIUM, map.VALUE.HARD];
 
-        options[field.MAX_PLAYERS] = options[field.MAX_PLAYERS];
-        options[field.DIFFICULTY] = options[field.DIFFICULTY];
+        options[field.MAX_PLAYERS] = +options[field.MAX_PLAYERS];
+        options[field.DIFFICULTY] = +options[field.DIFFICULTY];
         options[field.POWERUPS] = !!options[field.POWERUPS];
         options[field.PRIVATE] = !!options[field.PRIVATE];
         options[field.XSS] = !!options[field.XSS];
@@ -135,7 +143,6 @@ Room.prototype = {
 
         if (this.clients.length) {
             this.level++;
-            this.round++;
 
             if (this.hasWinner()) {
                 this.roundsEnded();
@@ -151,7 +158,7 @@ Room.prototype = {
      * @returns {boolean}
      */
     hasWinner: function() {
-        if (this.round >= config.ROOM_ROUNDS && this.points.length > 1) {
+        if (this.round + 1 >= config.ROOM_ROUNDS && this.points.length > 1) {
             var sorted = this.points.slice().sort().reverse();
             if (sorted[0] - config.ROOM_WIN_BY_MIN > sorted[1]) {
                 return true;

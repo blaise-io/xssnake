@@ -204,7 +204,7 @@ ScreenStage.prototype = {
  */
 function SelectStage(menu) {
     this.menu = menu;
-    this.handleKeysBound = this.handleKeys.bind(this);
+    this._handleKeysBound = this.handleKeys.bind(this);
 }
 
 SelectStage.prototype = {
@@ -214,11 +214,11 @@ SelectStage.prototype = {
     },
 
     construct: function() {
-        XSS.on.keydown(this.handleKeysBound);
+        XSS.on.keydown(this._handleKeysBound);
     },
 
     destruct: function() {
-        XSS.off.keydown(this.handleKeysBound);
+        XSS.off.keydown(this._handleKeysBound);
         XSS.shapes.stage = null;
     },
 
@@ -258,7 +258,7 @@ SelectStage.prototype = {
  */
 function FormStage(form) {
     this.form = form;
-    this.handleKeysBound = this.handleKeys.bind(this);
+    this._handleKeysBound = this.handleKeys.bind(this);
 }
 
 FormStage.prototype = {
@@ -268,11 +268,11 @@ FormStage.prototype = {
     },
 
     construct: function() {
-        XSS.on.keydown(this.handleKeysBound);
+        XSS.on.keydown(this._handleKeysBound);
     },
 
     destruct: function() {
-        XSS.off.keydown(this.handleKeysBound);
+        XSS.off.keydown(this._handleKeysBound);
         XSS.shapes.stage = null;
     },
 
@@ -307,7 +307,6 @@ FormStage.prototype = {
                 XSS.flow.setStageShapes();
                 break;
         }
-
     }
 
 };
@@ -328,8 +327,12 @@ GameStage.prototype = {
     },
 
     construct: function() {
-        XSS.menuSnake.destruct();
+        if (XSS.menuSnake) {
+            XSS.menuSnake.destruct();
+        }
+
         XSS.shapes.header = null;
+        XSS.shapes.dialog = null;
 
         if (XSS.stages.autoJoinData) {
             var room = XSS.util.hash(XSS.HASH_ROOM);

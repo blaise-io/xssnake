@@ -17,8 +17,10 @@ function InputField(x, y, prefix) {
     this.displayWidth = XSS.WIDTH - x - 8;
     this.maxlength = 156;
 
-    this.input = this._getInput();
+    this.input = this._createInput();
     this.input.focus();
+
+    XSS.inputFocus = true;
 }
 
 InputField.prototype = {
@@ -44,7 +46,7 @@ InputField.prototype = {
         XSS.off.keyup(this._updateShapesBound);
         XSS.shapes.caret = null;
         XSS.shapes.inputval = null;
-        this._isDestruct = true;
+        XSS.inputFocus = false;
     },
 
     /**
@@ -74,7 +76,7 @@ InputField.prototype = {
     _updateShapes: function() {
         // IE9 workaround for issue where _updateShapes executes
         // after event listeners are removed.
-        if (this._isDestruct) { return; }
+        if (!XSS.inputFocus) { return; }
 
         this._applyMaxWidth();
         this.value = this.input.value;
@@ -89,13 +91,12 @@ InputField.prototype = {
      * @return {Element}
      * @private
      */
-    _getInput: function() {
-        var input = document.getElementsByTagName('input')[0];
-        if (!input) {
-            input = document.createElement('input');
-            input.setAttribute('maxlength', String(this.maxlength));
-            XSS.doc.appendChild(input);
-        }
+    _createInput: function() {
+        var input;
+        input = document.createElement('input');
+        input.setAttribute('maxlength', String(this.maxlength));
+        input.focus();
+        XSS.doc.appendChild(input);
         return input;
     },
 

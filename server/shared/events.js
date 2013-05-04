@@ -37,6 +37,7 @@ module.exports = {
     SERVER_ROOM_STATUS   : 'SR1',
     SERVER_ROOM_JOIN     : 'SR2',
     SERVER_ROOM_MATCH    : 'SR3',
+    SERVER_ROOM_START    : 'SR4',
 
     SERVER_CHAT_MESSAGE  : 'SC1',
 
