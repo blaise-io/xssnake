@@ -31,13 +31,13 @@ XSS.stages = {
         if (XSS.util.hash(XSS.HASH_ROOM)) {
             XSS.stages._autoJoinRoom();
         } else {
-            window.setTimeout(XSS.stages._roboSnake, 1e3);
+            window.setTimeout(XSS.stages._menuSnake, 1e3);
         }
 
         return new SelectStage(menu);
     },
 
-    _roboSnake: function() {
+    _menuSnake: function() {
         var snake;
 
         if (XSS.room) {
@@ -83,7 +83,7 @@ XSS.stages = {
                 snake.showAction('CRASH!');
                 window.setTimeout(snake.destruct.bind(snake), 1000);
                  // Pay for killing the snake
-                window.setTimeout(XSS.stages._roboSnake, 1e5);
+                window.setTimeout(XSS.stages._menuSnake, 1e5);
             } else {
                 snake.move(nextpos);
                 snake.updateShape();

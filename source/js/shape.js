@@ -100,11 +100,21 @@ Shape.prototype = {
     },
 
     /**
-     * @param {number=} padding
+     * @param {number} width
+     * @param {number} height
+     * @returns {Shape}
+     */
+    center: function(width, height) {
+        return this.set(XSS.transform.center(this.pixels, width, height));
+    },
+
+    /**
+     * @param {number=} hPadding
+     * @param {number=} vPadding
      * @return {Shape}
      */
-    outline: function(padding) {
-        XSS.transform.outline(this, padding);
+    outline: function(hPadding, vPadding) {
+        XSS.transform.outline(this, hPadding, vPadding);
         return this;
     },
 

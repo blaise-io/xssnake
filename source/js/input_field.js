@@ -20,7 +20,7 @@ function InputField(x, y, prefix) {
     this.input = this._createInput();
     this.input.focus();
 
-    XSS.inputFocus = true;
+    XSS.keysBlocked = true;
 }
 
 InputField.prototype = {
@@ -46,7 +46,7 @@ InputField.prototype = {
         XSS.off.keyup(this._updateShapesBound);
         XSS.shapes.caret = null;
         XSS.shapes.inputval = null;
-        XSS.inputFocus = false;
+        XSS.keysBlocked = false;
     },
 
     /**
@@ -65,7 +65,8 @@ InputField.prototype = {
      */
     _playMenuAlt: function(e) {
         // Silent keys: enter, shift, ctrl, alt, meta
-        if (-1 === [13, 16, 17, 18, 91].indexOf(Number(e.keyCode))) {
+        var silentKey = -1 === [13, 16, 17, 18, 91].indexOf(Number(e.keyCode));
+        if (!XSS.keysBlocked && !silentKey) {
             XSS.play.menu_alt();
         }
     },
@@ -76,7 +77,7 @@ InputField.prototype = {
     _updateShapes: function() {
         // IE9 workaround for issue where _updateShapes executes
         // after event listeners are removed.
-        if (!XSS.inputFocus) { return; }
+        if (!XSS.keysBlocked) { return; }
 
         this._applyMaxWidth();
         this.value = this.input.value;

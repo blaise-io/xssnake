@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Socket, InputField, Font, Room*/
+/*globals XSS, Shape, Socket, InputField, Font, Room, StageFlow*/
 'use strict';
 
 
@@ -90,7 +90,7 @@ InputStage.prototype = {
     },
 
     handleKeys: function(e) {
-        switch (e.which) {
+        switch (e.keyCode) {
             case XSS.KEY_ESCAPE:
                 XSS.flow.previousStage();
                 break;
@@ -180,7 +180,7 @@ ScreenStage.prototype = {
     },
 
     handleKeys: function(e) {
-        switch (e.which) {
+        switch (e.keyCode) {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
                 XSS.flow.previousStage();
@@ -223,7 +223,10 @@ SelectStage.prototype = {
     },
 
     handleKeys: function(e) {
-        switch (e.which) {
+        if (XSS.keysBlocked) {
+            return;
+        }
+        switch (e.keyCode) {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
                 XSS.flow.previousStage();
@@ -277,7 +280,10 @@ FormStage.prototype = {
     },
 
     handleKeys: function(e) {
-        switch (e.which) {
+        if (XSS.keysBlocked) {
+            return;
+        }
+        switch (e.keyCode) {
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
                 XSS.flow.previousStage();
@@ -327,13 +333,44 @@ GameStage.prototype = {
     },
 
     construct: function() {
+        this._destructMenu();
+        this._joinGame();
+        this._bindKeys();
+    },
+
+    destruct: function() {
+        XSS.off.keydown(this._exitKeysBound);
+    },
+
+    _bindKeys: function() {
+        this._exitKeysBound = this._exitKeys.bind(this);
+        XSS.on.keydown(this._exitKeysBound);
+    },
+
+    _exitKeys: function(e) {
+        if (!XSS.keysBlocked && e.keyCode === XSS.KEY_ESCAPE) {
+            XSS.util.dialog(
+                'LEAVING GAME',
+                'Are you sure you want to leave this game?', {
+                    ingame: true,
+                    ok: function() {
+                        XSS.flow.destruct();
+                        XSS.flow = new StageFlow();
+                    }
+                }
+            );
+        }
+    },
+
+    _destructMenu: function() {
         if (XSS.menuSnake) {
             XSS.menuSnake.destruct();
         }
-
         XSS.shapes.header = null;
         XSS.shapes.dialog = null;
+    },
 
+    _joinGame: function() {
         if (XSS.stages.autoJoinData) {
             var room = XSS.util.hash(XSS.HASH_ROOM);
             this._autoJoin(room);
@@ -341,9 +378,6 @@ GameStage.prototype = {
         } else {
             this._matchRoom();
         }
-    },
-
-    destruct: function() {
     },
 
     _autoJoin: function(key) {

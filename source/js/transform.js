@@ -32,23 +32,52 @@ Transform.prototype = {
     },
 
     /**
+     * @param {ShapePixels} pixels
+     * @param {number=} width
+     * @param {number=} height
+     * @return {ShapePixels}
+     */
+    center: function(pixels, width, height) {
+        var x, y, bbox = pixels.bbox();
+
+        width = XSS.WIDTH || width;
+        height = XSS.HEIGHT || height;
+
+        x = Math.round((width - bbox.width) / 2);
+        y = Math.round((height - bbox.height) / 2);
+
+        x -= bbox.x1;
+        y -= bbox.y1;
+
+        return XSS.transform.shift(pixels, x, y);
+    },
+
+    /**
      * @param {Shape} shape
      * @param {number=} hPadding
      * @param {number=} vPadding
      * @param {boolean=} round
+     * @return {Shape}
      */
     outline: function(shape, hPadding, vPadding, round) {
         var r, x1, x2, y1, y2, bbox = shape.bbox();
 
         r = (typeof round === 'undefined') ? 1 : 0;
 
-        hPadding = (hPadding || 5) + 1;
-        vPadding = (vPadding || 3) + 1;
+        hPadding = (hPadding || 6);
+        vPadding = (vPadding || 4);
 
         x1 = bbox.x1 - hPadding;
         x2 = bbox.x2 + hPadding;
         y1 = bbox.y1 - vPadding;
         y2 = bbox.y2 + vPadding;
+
+        // Cannot add negative Y pixels, shift to y=0 position.
+        if (y1 < 0) {
+            shape.shift(0, Math.abs(y1));
+            y2 += Math.abs(y1);
+            y1 = 0;
+        }
 
         shape.add(
             XSS.shapegen.line(x1, y1+1, x1, y2),      // Left
@@ -57,6 +86,10 @@ Transform.prototype = {
             XSS.shapegen.line(x1, y2, x2, y2),        // Bottom
             XSS.shapegen.line(x1+r, y2+1, x2-r, y2+1) // Bottom 2
         );
+
+        // Don't clear the missing pixel in the corners
+        // because of rounded corners:
+        shape.bbox(-1);
 
         return shape;
     },

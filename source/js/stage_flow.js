@@ -28,6 +28,9 @@ StageFlow.prototype = {
     stageInstances: {},
 
     destruct: function() {
+        if (XSS.socket) {
+            XSS.socket.socket.disconnect();
+        }
         XSS.off.keydown(this._handleKeysBound);
     },
 
@@ -120,8 +123,10 @@ StageFlow.prototype = {
             e.preventDefault();
         }
 
-        // Global mute key. Ignore key when user is in input field.
-        if (e.keyCode === XSS.KEY_MUTE && !XSS.inputFocus) {
+        // Global mute key.
+        // Ignore key when user is in input field. Start screen might
+        // contain a dialog, so do not use XSS.keysBlocked here.
+        if (!XSS.shapes.caret && e.keyCode === XSS.KEY_MUTE) {
             mute = !XSS.util.storage(XSS.STORAGE_MUTE);
             instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
             XSS.util.storage(XSS.STORAGE_MUTE, mute);

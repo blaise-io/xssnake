@@ -27,36 +27,37 @@ ShapeGenerator.prototype = {
     },
 
     /**
-     * @param {number} x0
-     * @param {number} y0
      * @param {number} x1
      * @param {number} y1
+     * @param {number} x2
+     * @param {number} y2
      * @return {ShapePixels}
      */
-    line: function(x0, y0, x1, y1) {
+    line: function(x1, y1, x2, y2) {
         var pixels, dx, dy, sx, sy, err, errTmp;
 
         pixels = new ShapePixels();
 
-        dx = Math.abs(x1 - x0);
-        dy = Math.abs(y1 - y0);
-        sx = x0 < x1 ? 1 : -1;
-        sy = y0 < y1 ? 1 : -1;
+        dx = Math.abs(x2 - x1);
+        dy = Math.abs(y2 - y1);
+        sx = x1 < x2 ? 1 : -1;
+        sy = y1 < y2 ? 1 : -1;
+
         err = dx - dy;
 
         while (true) {
-            pixels.add(x0, y0);
-            if (x0 === x1 && y0 === y1) {
+            pixels.add(x1, y1);
+            if (x1 === x2 && y1 === y2) {
                 break;
             }
             errTmp = err;
             if (errTmp > -dx) {
                 err -= dy;
-                x0 += sx;
+                x1 += sx;
             }
             if (errTmp < dy) {
                 err += dx;
-                y0 += sy;
+                y1 += sy;
             }
         }
 

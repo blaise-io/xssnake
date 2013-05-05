@@ -118,7 +118,7 @@ Chat.prototype = {
      * @private
      */
     _chatFocus: function(e) {
-        switch (e.which) {
+        switch (e.keyCode) {
             case XSS.KEY_ESCAPE:
                 this._focusInput(false);
                 e.preventDefault();
@@ -126,8 +126,13 @@ Chat.prototype = {
             case XSS.KEY_ENTER:
                 if (this._hasFocus) {
                     this._sendMessage(this.field.value.trim());
+                    this._focusInput(false);
+                } else {
+                    if (XSS.keysBlocked) {
+                        this._focusInput(true);
+                    }
                 }
-                this._focusInput(!this._hasFocus);
+
                 e.preventDefault();
                 break;
         }

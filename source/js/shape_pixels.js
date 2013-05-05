@@ -24,10 +24,12 @@ ShapePixels.prototype = {
      */
     add: function(x, y) {
         var pixels = this.pixels;
-        if (typeof pixels[y] !== 'undefined') {
-            pixels[y].push(x);
-        } else {
-            pixels[y] = [x];
+        if (y >= 0) {
+            if (typeof pixels[y] !== 'undefined') {
+                pixels[y].push(x);
+            } else {
+                pixels[y] = [x];
+            }
         }
         return this;
     },

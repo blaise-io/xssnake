@@ -171,7 +171,10 @@ XSS.util.extend(ClientSnake.prototype, {
      * @private
      */
     _snakeKeys: function(e) {
-        switch (e.which) {
+        if (XSS.keysBlocked) {
+            return;
+        }
+        switch (e.keyCode) {
             case XSS.KEY_LEFT:
                 this._changeDirection(XSS.DIRECTION_LEFT);
                 break;

@@ -45,7 +45,7 @@ Room.prototype = {
     },
 
     _forceStart: function(e) {
-        if (Number(e.which) === XSS.KEY_START && !XSS.inputFocus) {
+        if (!XSS.keysBlocked && e.keyCode === XSS.KEY_START) {
             XSS.socket.emit(XSS.events.SERVER_ROOM_START);
         }
     },
