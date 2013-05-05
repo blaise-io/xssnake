@@ -62,13 +62,13 @@ Canvas.prototype = {
         this.ctx.restore();
 
         // Paint all layers
-        this._paint(delta, XSS.shapes);
+        this._paintShapes(delta, XSS.shapes);
     },
 
     /**
      * Remove all nulled shapes. We don't delete shapes immediately
      * because this triggers a slow garbage collection during gameplay,
-     * which may affect fps negatively.
+     * which may affect framerate negatively.
      */
     garbageCollect: function() {
         var shapes = XSS.shapes;
@@ -84,10 +84,10 @@ Canvas.prototype = {
      * @param {*} shapes
      * @private
      */
-    _paint: function(delta, shapes) {
+    _paintShapes: function(delta, shapes) {
         var k, overlays = {};
         for (k in shapes) {
-            if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
+            if (shapes.hasOwnProperty(k) && shapes[k]) {
                 if (shapes[k].clearBBox) {
                     overlays[k] = shapes[k];
                 } else {
@@ -125,29 +125,13 @@ Canvas.prototype = {
     },
 
     /**
-     * @param {Object} context
-     * @param {number} x
-     * @param {number} y
-     * @param {number} offsetX
-     * @param {number} offsetY
-     * @suppress {checkTypes}
-     * @private
-     */
-    _paintPixel: function(context, x, y, offsetX, offsetY) {
-        var tileSize = this.tileSize;
-        offsetX = x * tileSize - offsetX;
-        offsetY = y * tileSize - offsetY;
-        context.fillRect(offsetX, offsetY, tileSize, tileSize);
-    },
-
-    /**
      * @param {string} name
      * @param {Shape} shape
      * @param {number} delta
      * @private
      */
     _paintShape: function(name, shape, delta) {
-        var bbox, cache, ctx = this.ctx;
+        var bbox, ctx = this.ctx;
 
         // Apply effects if FPS is in a normal range. If window is out
         // of focus, we don't want animations. Also we do not want anims
@@ -169,9 +153,17 @@ Canvas.prototype = {
             ctx.fillRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
         }
 
-        // Create cache and paint
-        cache = shape.cache || (shape.cache = this._getPaintedShape(shape));
-        ctx.drawImage(cache.canvas, cache.bbox.x1, cache.bbox.y1);
+        // Create cache
+        if (!shape.cache) {
+            shape.cache = this._paintShapeOffscreen(shape);
+        }
+
+        // Paint cached image on canvas
+        ctx.drawImage(
+            shape.cache.canvas,
+            shape.cache.bbox.x1,
+            shape.cache.bbox.y1
+        );
     },
 
     /**
@@ -179,11 +171,38 @@ Canvas.prototype = {
      * @param {Shape} shape
      * @param {BoundingBox} bbox
      */
-    _paintShapeNoCache: function(context, shape, bbox) {
+    _paintShapePixels: function(context, shape, bbox) {
+        var i, m, tileSize = this.tileSize,
+            shapePixels = shape.pixels,
+            cache = null,
+            hlines = [];
+
+        // Group pixels by horizontal lines to save paint calls.
+        shapePixels.sort().each(function(x, y) {
+            if (cache && x === cache[0] + cache[2] && y === cache[1]) {
+                cache[2]++;
+            } else {
+                if (cache) {
+                    hlines.push(cache[0], cache[1], cache[2]);
+                }
+                cache = [x, y, 1];
+            }
+        });
+
+        if (cache) {
+            hlines.push(cache[0], cache[1], cache[2]);
+        }
+
         context.fillStyle = this.tileOn;
-        shape.pixels.each(function(x, y) {
-            this._paintPixel(context, x, y, bbox.x1, bbox.y1);
-        }.bind(this));
+
+        for (i = 0, m = hlines.length; i < m; i+=3) {
+            context.fillRect(
+                hlines[i + 0] * tileSize - bbox.x1,
+                hlines[i + 1] * tileSize - bbox.y1,
+                hlines[i + 2] * tileSize,
+                tileSize
+            );
+        }
     },
 
     /**
@@ -191,7 +210,7 @@ Canvas.prototype = {
      * @return {XSS.ShapeCache}
      * @private
      */
-    _getPaintedShape: function(shape) {
+    _paintShapeOffscreen: function(shape) {
         var bbox, canvas;
 
         bbox = this._getCanvasBBox(shape, true);
@@ -200,7 +219,7 @@ Canvas.prototype = {
         canvas.width  = bbox.width + this.tileSize;
         canvas.height = bbox.height + this.tileSize;
 
-        this._paintShapeNoCache(canvas.getContext('2d'), shape, bbox);
+        this._paintShapePixels(canvas.getContext('2d'), shape, bbox);
 
         return {canvas: canvas, bbox: bbox};
     },

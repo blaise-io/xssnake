@@ -52,6 +52,24 @@ ShapePixels.prototype = {
     },
 
     /**
+     * @returns {ShapePixels}
+     */
+    sort: function() {
+        var sort, pixels = this.pixels;
+
+        sort = function(a, b) {
+            return a - b;
+        };
+
+        for (var i = 0, m = pixels.length; i < m; i++) {
+            if (pixels[i]) {
+                pixels[i] = pixels[i].sort(sort);
+            }
+        }
+        return this;
+    },
+
+    /**
      * @param {function(number,number)} callback
      */
     each: function(callback) {

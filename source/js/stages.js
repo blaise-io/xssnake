@@ -51,20 +51,25 @@ XSS.stages = {
 
         XSS.menuSnake = snake;
 
-        var isLevelIntersect = function() {
+        var isPixel = function(nextpos) {
             var snakeShape, intersect = false;
             snakeShape = XSS.shapes[snake.shapes.snake];
-            snakeShape.pixels.each(function(x, y) {
-                if (x % 2 || y % 2) {
-                    if (snakeShape.pixels.hasMultiple(XSS.shapes, x, y)) {
-                        intersect = true;
+            if (nextpos[0] < 0 || nextpos[1] < 0) {
+                intersect = true;
+            } else {
+                snakeShape.pixels.each(function(x, y) {
+                    if (x % 2 || y % 2) {
+                        if (snakeShape.pixels.hasMultiple(XSS.shapes, x, y)) {
+                            intersect = true;
+                        }
                     }
-                }
-            });
+                });
+            }
             return intersect;
         };
 
         var update = function() {
+            var nextpos;
             if (XSS.room || !XSS.shapes[snake.shapes.snake]) {
                 if (snake.destroy) {
                     snake.destroy();
@@ -72,14 +77,15 @@ XSS.stages = {
                 return;
             }
             snake.removeNameAndDirection();
-            if (isLevelIntersect()) {
+            nextpos = snake.getNextPosition();
+            if (isPixel(nextpos)) {
                 snake.crash();
                 snake.showAction('CRASH!');
-                window.setTimeout(snake.destruct.bind(snake), 100);
+                window.setTimeout(snake.destruct.bind(snake), 1000);
                  // Pay for killing the snake
                 window.setTimeout(XSS.stages._roboSnake, 1e5);
             } else {
-                snake.move(snake.getNextPosition());
+                snake.move(nextpos);
                 snake.updateShape();
                 window.setTimeout(update, 100);
             }
