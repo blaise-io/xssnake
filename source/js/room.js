@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Game, Chat, ScoreBoard*/
+/*globals XSS, Game, Chat, Dialog, ScoreBoard*/
 'use strict';
 
 /**
@@ -89,13 +89,19 @@ Room.prototype = {
     },
 
     updateAwaitingMessage: function() {
-        var title, body, remaining = this.capacity - this.players;
-        title = 'NEED ' + remaining + ' MORE PLAYERS...';
+        var header, body, remaining = this.capacity - this.players;
+        header = 'NEED ' + remaining + ' MORE PLAYERS...';
         body = 'Invite people to this room by sharing the page URL.';
         if (this.players > 1 && this.localIsHost) {
-            body += '\nAlternatively, press S to start now.';
+            body += '\nOr press S to start now.';
         }
-        XSS.util.dialog(title, body, {ingame: true});
+
+        if (this.dialog) {
+            this.dialog.setHeader(header);
+            this.dialog.setBody(body);
+        } else {
+            this.dialog = new Dialog(header, body, {blockKeys: false});
+        }
     },
 
     /**

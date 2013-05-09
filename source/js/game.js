@@ -33,7 +33,7 @@ function Game(index, levelID, names) {
 Game.prototype = {
 
     start: function() {
-        var sub = XSS.pubsub.subscribe.bind(XSS.pubsub);
+        var sub = XSS.pubsub.on.bind(XSS.pubsub);
 
         sub(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME, this._moveSnakes.bind(this));
         sub(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME, this._handleFocus.bind(this));
@@ -47,8 +47,8 @@ Game.prototype = {
     destruct: function() {
         var i, m, border;
 
-        XSS.pubsub.unsubscribe(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME);
-        XSS.pubsub.unsubscribe(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME);
+        XSS.pubsub.off(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME);
+        XSS.pubsub.off(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME);
 
         for (i = 0, m = this.snakes.length; i < m; i++) {
             if (this.snakes[i]) {
@@ -92,7 +92,7 @@ Game.prototype = {
     countdown: function() {
         var count, total, border, line = XSS.shapegen.line;
 
-        XSS.shapes.dialog = null;
+        this.dialog.destruct();
 
         count = XSS.config.TIME_COUNTDOWN_FROM;
         total = count;

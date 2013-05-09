@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Socket, InputField, Font, Room, StageFlow*/
+/*globals XSS, Dialog, Shape, Socket, InputField, Font, Room, StageFlow*/
 'use strict';
 
 
@@ -349,10 +349,9 @@ GameStage.prototype = {
 
     _exitKeys: function(e) {
         if (!XSS.keysBlocked && e.keyCode === XSS.KEY_ESCAPE) {
-            XSS.util.dialog(
+            this.dialog = new Dialog(
                 'LEAVING GAME',
                 'Are you sure you want to leave this game?', {
-                    ingame: true,
                     ok: function() {
                         XSS.flow.destruct();
                         XSS.flow = new StageFlow();
@@ -367,7 +366,6 @@ GameStage.prototype = {
             XSS.menuSnake.destruct();
         }
         XSS.shapes.header = null;
-        XSS.shapes.dialog = null;
     },
 
     _joinGame: function() {
@@ -383,8 +381,8 @@ GameStage.prototype = {
     _autoJoin: function(key) {
         var stages = XSS.flow.stageInstances;
 
-        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
-            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES);
+        XSS.pubsub.on(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
+            XSS.pubsub.off(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES);
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             }

@@ -66,11 +66,11 @@ Socket.prototype = {
     },
 
     disconnect: function() {
-        var str = 'LOST CONNECTION';
-        if (XSS.room) {
-            XSS.room.destruct();
-        }
-        XSS.util.error(str);
+        XSS.util.error('CONNECTION LOST', function() {
+            if (XSS.room) {
+                XSS.room.destruct();
+            }
+        });
     },
 
     /**

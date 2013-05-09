@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, StageFlow*/
+/*globals XSS, Dialog, StageFlow*/
 'use strict';
 
 /**
@@ -46,30 +46,29 @@ XSS.util.extend(XSS.util, {
     },
 
     /**
-     * @param {string} header
-     * @param {string} body
-     * @param {Object=} settings
-     */
-    dialog: function(header, body, settings) {
-        XSS.shapes.dialog = XSS.shapegen.dialog(header, body, settings);
-        return XSS.shapes.dialog;
-    },
-
-    /**
      * @param {string} str
+     * @param {Function=} callback
      */
-    error: function(str) {
-        var exit = function() {
-            XSS.off.keydown(exit);
+    error: function(str, callback) {
+        var exit, dialog;
+
+        XSS.util.hash();
+
+        exit = function() {
+            dialog.destruct();
+
+            if (callback) {
+                callback();
+            }
+
             XSS.flow.destruct();
             XSS.flow = new StageFlow();
         };
 
-        XSS.util.hash();
-        XSS.util.dialog(str, 'Press any key to continue.');
-
-        XSS.on.keydown(exit);
-        window.setTimeout(exit, 5000);
+        dialog = new Dialog(str, 'Press ' + XSS.UC_ENTER_KEY + ' to continue', {
+            type: Dialog.TYPE.ALERT,
+            ok  : exit
+        });
     },
 
     addListener: {

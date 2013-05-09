@@ -2,40 +2,55 @@
 /*globals XSS, Shape, ShapePixels, Font*/
 'use strict';
 
-/**
- * @param {string} header
- * @param {string} body
- * @param {{
-     confirm: (boolean|undefined),
+/** @typedef {{
+     blockKeys: (boolean|undefined),
+     type: (number|undefined),
      width: (number|undefined),
      ok: (Function|undefined),
      cancel: (Function|undefined)
-   }} settings
+   }} */
+var DialogSettings;
+
+/**
+ * @param {string} header
+ * @param {string} body
+ * @param {DialogSettings=} settings
  * @constructor
  */
 function Dialog(header, body, settings) {
-    settings = settings || {};
+    this._header = header;
+    this._body = body;
 
-    this.header = header;
-    this.body = body;
-
-    this.confirm = settings.confirm || false;
-    this.width = settings.width || 100;
+    this.type = settings.type || Dialog.TYPE.INFO;
+    this.width = settings.width || Dialog.MIN_WIDTH;
     this.okCallback = settings.ok || function() {};
     this.cancelCallback = settings.cancel || function() {};
 
-    this._okSelected = false;
+    XSS.keysBlocked = (typeof settings.blockKeys === 'undefined') ?
+        true : settings.blockKeys;
 
-    XSS.keysBlocked = true;
-
-    // TODO: Play a bubble sound
+    if (this.type === Dialog.TYPE.ALERT) {
+        this._okSelected = true;
+        this._bindEvents();
+    } else if (this.type === Dialog.TYPE.CONFIRM) {
+        this._okSelected = false;
+        this._bindEvents();
+    }
 
     this._updateShape();
-    this._bindEvents();
+    // TODO: Play a bubble sound
 }
 
+Dialog.MIN_WIDTH = 80;
 Dialog.STR_OK = 'OK';
 Dialog.STR_CANCEL = 'CANCEL';
+
+/** @enum {number} */
+Dialog.TYPE = {
+    INFO   : 0, // No buttons, not closable
+    ALERT  : 1, // OK button, closable
+    CONFIRM: 2  // OK and CANCEL button
+};
 
 Dialog.prototype = {
 
@@ -56,6 +71,24 @@ Dialog.prototype = {
     },
 
     /**
+     * @param {string} header
+     */
+    setHeader: function(header) {
+        XSS.play.menu_alt();
+        this._header = header;
+        this._updateShape();
+    },
+
+    /**
+     * @param {string} body
+     */
+    setBody: function(body) {
+        XSS.play.menu_alt();
+        this._body = body;
+        this._updateShape();
+    },
+
+    /**
      * @private
      */
     _bindEvents: function() {
@@ -73,13 +106,19 @@ Dialog.prototype = {
             case XSS.KEY_UP:
             case XSS.KEY_DOWN:
             case XSS.KEY_RIGHT:
-                XSS.play.menu_alt();
-                this._okSelected = !this._okSelected;
-                this._updateShape();
+                if (this.type === Dialog.TYPE.CONFIRM) {
+                    XSS.play.menu_alt();
+                    this._okSelected = !this._okSelected;
+                    this._updateShape();
+                }
                 break;
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
-                this.cancel();
+                if (this.type === Dialog.TYPE.CONFIRM) {
+                    this.cancel();
+                } else {
+                    this.ok();
+                }
                 break;
             case XSS.KEY_ENTER:
                 if (this._okSelected) {
@@ -116,7 +155,15 @@ Dialog.prototype = {
      * @private
      */
     _getContentWidth: function() {
-        return Math.max(this.width, XSS.font.width(this.header) * 2);
+        return Math.max(this.width, XSS.font.width(this._header) * 2);
+    },
+
+    /**
+     * @returns {number}
+     * @private
+     */
+    _getButtonPosition: function() {
+        return Font.MAX_HEIGHT * 3 + XSS.font.height(this._body);
     },
 
     /**
@@ -125,7 +172,7 @@ Dialog.prototype = {
      */
     _getHeaderPixels: function() {
         var header;
-        header = XSS.font.pixels(this.header, 0, 0);
+        header = XSS.font.pixels(this._header, 0, 0);
         header = XSS.transform.zoomX2(header, 0, 0, true);
         return header;
     },
@@ -136,7 +183,50 @@ Dialog.prototype = {
      */
     _getBodyPixels: function() {
         var settings = {wrap: this._getContentWidth()};
-        return XSS.font.pixels(this.body, 0, 1 + Font.MAX_HEIGHT * 2, settings);
+        return XSS.font.pixels(this._body, 0, 1 + Font.MAX_HEIGHT * 2, settings);
+    },
+
+    /**
+     * @param {number} y
+     * @return {ShapePixels}
+     * @private
+     */
+    _getLine: function(y) {
+        return XSS.shapegen.line(0, y - 5, this._getContentWidth(), y - 5);
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {ShapePixels}
+     * @private
+     */
+    _getCancelButton: function(x, y) {
+        return XSS.font.pixels(Dialog.STR_CANCEL, x, y, {invert: !this._okSelected});
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {ShapePixels}
+     * @private
+     */
+    _getOkButton: function(x, y) {
+        return XSS.font.pixels(Dialog.STR_OK, x, y, {invert: this._okSelected});
+    },
+
+    /**
+     * @return {ShapePixels}
+     * @private
+     */
+    _getAlertPixels: function() {
+        var y, ok, line;
+
+        y = this._getButtonPosition();
+        ok = this._getOkButton(1, y);
+        line = this._getLine(y);
+
+        return new Shape(ok, line).pixels;
     },
 
     /**
@@ -144,15 +234,13 @@ Dialog.prototype = {
      * @private
      */
     _getConfirmPixels: function() {
-        var x, y, cancel, ok, line, okSelect = this._okSelected;
+        var x, y, cancel, ok, line;
 
         x = XSS.font.width(Dialog.STR_CANCEL) + 5;
-        y = 2 + Font.MAX_HEIGHT * 4 + XSS.font.height(this.body);
-
-        cancel = XSS.font.pixels(Dialog.STR_CANCEL, 1, y, {invert: !okSelect});
-        ok = XSS.font.pixels(Dialog.STR_OK, x, y, {invert: okSelect});
-
-        line = XSS.shapegen.line(0, y - 5, this._getContentWidth(), y - 5);
+        y = this._getButtonPosition();
+        cancel = this._getCancelButton(1, y);
+        ok = this._getOkButton(x, y);
+        line = this._getLine(y);
 
         return new Shape(ok, cancel, line).pixels;
     },
@@ -161,16 +249,21 @@ Dialog.prototype = {
      * @private
      */
     _updateShape: function() {
-        var shape, header, body, confirm = new ShapePixels();
+        var shape, header, body, buttons = new ShapePixels();
 
         header = this._getHeaderPixels();
         body = this._getBodyPixels();
 
-        if (this.confirm) {
-            confirm = this._getConfirmPixels();
+        switch (this.type) {
+            case Dialog.TYPE.ALERT:
+                buttons = this._getAlertPixels();
+                break;
+            case Dialog.TYPE.CONFIRM:
+                buttons = this._getConfirmPixels();
+                break;
         }
 
-        shape = new Shape(header, body, confirm);
+        shape = new Shape(header, body, buttons);
         shape.clearBBox = true;
 
         shape.outline();

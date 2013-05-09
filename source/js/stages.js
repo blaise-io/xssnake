@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true, evil:true*/
-/*globals XSS, ClientLevel, ClientSnake, ShapePixels, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Room, Shape, Socket*/
+/*globals XSS, ClientLevel, ClientSnake, Dialog, ShapePixels, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Room, Shape, Socket*/
 
 'use strict';
 
@@ -95,28 +95,28 @@ XSS.stages = {
     },
 
     _autoJoinRoom: function() {
-        var title = 'Auto-join room';
-        XSS.util.dialog(title, 'Connecting to server...');
+        var dialog = new Dialog('AUTO-JOIN ROOM', 'Connecting to server...');
 
-        XSS.pubsub.subscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
-            XSS.pubsub.unsubscribe(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES);
+        XSS.pubsub.one(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
+            dialog.destruct();
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             } else {
                 XSS.stages.autoJoinData = data;
-                XSS.shapes.dialog = null;
                 XSS.flow.switchStage(XSS.stages.autoJoin);
             }
         });
 
         XSS.socket = new Socket(function() {
-            XSS.util.dialog(title, 'Getting room properties...');
             window.setTimeout(function() {
-                XSS.socket.emit(
-                    XSS.events.SERVER_ROOM_STATUS,
-                    XSS.util.hash(XSS.HASH_ROOM)
-                );
-            }, 2000);
+                dialog.setBody('Getting room properties...');
+                window.setTimeout(function() {
+                    XSS.socket.emit(
+                        XSS.events.SERVER_ROOM_STATUS,
+                        XSS.util.hash(XSS.HASH_ROOM)
+                    );
+                }, 500);
+            }, 500);
         });
     },
 

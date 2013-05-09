@@ -31,7 +31,7 @@ PublishSubscribe.prototype = {
      * @param {string} key
      * @param {Object} callback
      */
-    subscribe: function(topic, key, callback) {
+    on: function(topic, key, callback) {
         if (!this._subscriptions[topic]) {
             this._subscriptions[topic] = [];
         }
@@ -40,9 +40,22 @@ PublishSubscribe.prototype = {
 
     /**
      * @param {string} topic
+     * @param {string} key
+     * @param {Object} callback
+     */
+    one: function(topic, key, callback) {
+        var callbackAndOff = function() {
+            callback.apply(callback, arguments);
+            this.off(topic, key);
+        }.bind(this);
+        this.on(topic, key, callbackAndOff);
+    },
+
+    /**
+     * @param {string} topic
      * @param {string=} key
      */
-    unsubscribe: function(topic, key) {
+    off: function(topic, key) {
         if (topic in this._subscriptions) {
             if (typeof key !== 'undefined') {
                 delete this._subscriptions[topic][key];

@@ -124,16 +124,13 @@ Chat.prototype = {
                 e.preventDefault();
                 break;
             case XSS.KEY_ENTER:
+                e.preventDefault();
                 if (this._hasFocus) {
                     this._sendMessage(this.field.value.trim());
                     this._focusInput(false);
-                } else {
-                    if (XSS.keysBlocked) {
-                        this._focusInput(true);
-                    }
+                } else if (!XSS.keysBlocked) {
+                    this._focusInput(true);
                 }
-
-                e.preventDefault();
                 break;
         }
     },

@@ -40,8 +40,8 @@ Transform.prototype = {
     center: function(pixels, width, height) {
         var x, y, bbox = pixels.bbox();
 
-        width = XSS.WIDTH || width;
-        height = XSS.HEIGHT || height;
+        width = width || XSS.WIDTH;
+        height = height || XSS.HEIGHT;
 
         x = Math.round((width - bbox.width) / 2);
         y = Math.round((height - bbox.height) / 2);
