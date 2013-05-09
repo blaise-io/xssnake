@@ -9,8 +9,7 @@ window.onerror = function() {
 };
 
 XSS.main = function() {
-
-    /** @type {Object.<string,Shape>} */
+    /** @type {Object.<string, Shape>} */
     XSS.shapes    = {};
 
     // Shortcuts
