@@ -153,38 +153,6 @@ ShapeGenerator.prototype = {
     },
 
     /**
-     * @param {string} header
-     * @param {string} body
-     * @param {Object=} settings
-     * @returns {Shape}
-     */
-    dialog: function(header, body, settings) {
-        var left, width, areaHeight, headerPixels, bodyPixels, shape;
-
-        settings = settings || {};
-
-        areaHeight = (settings.ingame && XSS.levelCache[0]) ?
-            XSS.levelCache[0].height * XSS.GAME_TILE :
-            XSS.HEIGHT;
-
-        width = Math.max(settings.width || 100, XSS.font.width(header) * 2);
-        left = Math.round((XSS.WIDTH - width) / 2);
-
-        headerPixels = XSS.font.pixels(header);
-        headerPixels = XSS.transform.zoomX2(headerPixels, left, 0, true);
-
-        bodyPixels = XSS.font.pixels(body, left, 14, {wrap: width - 4});
-
-        shape = new Shape(headerPixels, bodyPixels);
-        shape.shift(0, Math.round((areaHeight - shape.bbox().height) / 2));
-        shape.outline();
-        shape.bbox(-1); // Rounded corners
-        shape.clearBBox = true;
-
-        return shape;
-    },
-
-    /**
      * @return {Shape}
      */
     innerBorder: function() {
