@@ -4,13 +4,13 @@
 /**
  * @param {number} id
  * @param {Server} server
- * @param {EventEmitter} socket
+ * @param {Object} connection
  * @constructor
  */
-function Client(id, server, socket) {
+function Client(id, server, connection) {
     this.server = server;
     this.id = id;
-    this.socket = socket;
+    this.connection = connection;
     this.latency = 0;
 
     /** @type {?string} */
@@ -35,14 +35,25 @@ Client.prototype = {
      * @param {*} data
      */
     emit: function(name, data) {
-        this.socket.emit(name, data);
+        this.connection.write(JSON.stringify([name, data]));
+    },
+
+    broadcast: function(name, data) {
+        var room = this.server.roomManager.room[this.roomKey];
+        if (room) {
+            for (var i = 0, m = room.clients.length; i < m; i++) {
+                if (room.clients[i] !== this) {
+                    room.clients[i].emit(name, data);
+                }
+            }
+        }
     },
 
     destruct: function() {
         this.eventHandler.destruct();
         this.eventHandler = null;
         this.snake = null;
-        this.socket = null;
+        this.connection = null;
     }
 
 };

@@ -2,8 +2,8 @@
 'use strict';
 
 var http = require('http');
-var socketio = require('socket.io');
 var png = require('pngparse');
+var sockjs = require('sockjs');
 var config = require('../shared/config.js');
 var EventHandler = require('./event_handler.js');
 var RoomManager = require('./room_manager.js');
@@ -60,30 +60,25 @@ Server.prototype = {
      * @param {number} port
      */
     listen: function(port) {
-        var server = http.createServer();
+        var xssnake, server;
 
-        /** @type {Manager} */
-        this.io = socketio.listen(server, {log: false});
+        xssnake = sockjs.createServer();
+        xssnake.on('connection', function(conn) {
+            this.addClient(conn);
+        }.bind(this));
 
-        this.io.set('browser client etag', true);
-        this.io.set('browser client gzip', true);
-        this.io.set('browser client minification', true);
-        this.io.set('transports', ['websocket', 'flashsocket']);
-        this.io.set('close timeout', 10);
-        this.io.set('heartbeat timeout ', 10);
-
-        this.io.sockets.on('connection', this.addClient.bind(this));
-
-        server.listen(port);
+        server = http.createServer();
+        xssnake.installHandlers(server, {prefix: '/xssnake'});
+        server.listen(port, '0.0.0.0');
     },
 
     /**
-     * @param {EventEmitter} socket
+     * @param {Object} conn
      */
-    addClient: function(socket) {
+    addClient: function(conn) {
         var client, id = ++this.inc;
-        client = new Client(id, this, socket);
-        client.eventHandler = new EventHandler(this, client, socket);
+        client = new Client(id, this, conn);
+        client.eventHandler = new EventHandler(this, client, conn);
         this.clients[id] = client;
     },
 

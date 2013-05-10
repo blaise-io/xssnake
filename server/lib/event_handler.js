@@ -7,27 +7,16 @@ var map = require('../shared/map.js');
 /**
  * @param {Server} server
  * @param {Client} client
- * @param {Object} socket
+ * @param {Object} connection
  * @constructor
  */
-function EventHandler(server, client, socket) {
+function EventHandler(server, client, connection) {
     this.server = server;
     this.client = client;
-    this.socket = socket;
+    this._pingInterval = setInterval(this._ping.bind(this), 1000);
 
-    this._pingInterval = setInterval(this._ping.bind(this), 5000);
-
-    client.emit(events.CLIENT_CONNECT, client.id);
-
-    socket.on('disconnect', this._disconnect.bind(this));
-    socket.on(events.SERVER_ROOM_STATUS, this._roomStatus.bind(this));
-    socket.on(events.SERVER_ROOM_JOIN, this._joinRoom.bind(this));
-    socket.on(events.SERVER_ROOM_MATCH, this._matchRoom.bind(this));
-    socket.on(events.SERVER_ROOM_START, this._forceStart.bind(this));
-    socket.on(events.SERVER_CHAT_MESSAGE, this._chat.bind(this));
-    socket.on(events.SERVER_SNAKE_UPDATE, this._snakeUpdate.bind(this));
-    socket.on(events.SERVER_GAME_STATE, this._gameState.bind(this));
-    socket.on(events.SERVER_PING, this._pong.bind(this));
+    this._registerEvents();
+    this._bindEvents(connection);
 }
 
 module.exports = EventHandler;
@@ -35,11 +24,43 @@ module.exports = EventHandler;
 EventHandler.prototype = {
 
     destruct: function() {
-        // Other event listeners will remove themselves.
         clearInterval(this._pingInterval);
+        this.map = {};
         this.server = null;
         this.client = null;
-        this.socket = null;
+    },
+
+    /**
+     * TODO: Decentralize events
+     * @deprecated
+     * @private
+     */
+    _registerEvents: function() {
+        this.map = {};
+        this.map[events.SERVER_ROOM_STATUS] = this._roomStatus.bind(this);
+        this.map[events.SERVER_ROOM_JOIN] = this._joinRoom.bind(this);
+        this.map[events.SERVER_ROOM_MATCH] = this._matchRoom.bind(this);
+        this.map[events.SERVER_ROOM_START] = this._forceStart.bind(this);
+        this.map[events.SERVER_CHAT_MESSAGE] = this._chat.bind(this);
+        this.map[events.SERVER_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
+        this.map[events.SERVER_GAME_STATE] = this._gameState.bind(this);
+        this.map[events.SERVER_PING] = this._pong.bind(this);
+    },
+
+    _bindEvents: function(connection) {
+        var map = this.map;
+
+        connection.on('data', function(message) {
+            var event, data;
+            message = JSON.parse(message);
+            event = message[0];
+            data = message[1];
+            if (map[event]) {
+                map[event](data);
+            }
+        }.bind(this));
+
+        connection.on('close', this._disconnect.bind(this));
     },
 
     /**
@@ -123,7 +144,7 @@ EventHandler.prototype = {
         if (room) {
             index = room.clients.indexOf(this.client);
             data = [index, message.substr(0, 30)];
-            room.broadcast(events.CLIENT_CHAT_MESSAGE, data, this.client);
+            this.client.broadcast(events.CLIENT_CHAT_MESSAGE, data);
             room.emit(events.CLIENT_SNAKE_ACTION, [index, 'Blah']);
         }
     },

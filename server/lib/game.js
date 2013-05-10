@@ -259,12 +259,12 @@ Game.prototype = {
      * @private
      */
     _broadCastSnake: function(client) {
-        var send = [
+        var data = [
             this.room.clients.indexOf(client),
             client.snake.parts,
             client.snake.direction
         ];
-        this.room.broadcast(events.CLIENT_SNAKE_UPDATE, send, client);
+        client.broadcast(events.CLIENT_SNAKE_UPDATE, data);
     },
 
     /**

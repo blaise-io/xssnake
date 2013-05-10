@@ -1,3 +1,7 @@
+var sockjs = {
+    "installHandlers": function () {}
+};
+
 var util = {
     "format": function () {},
     "deprecate": function () {},
@@ -13,13 +17,8 @@ var util = {
     "inherits": function () {}
 };
 
-/** @constructor */
-var Manager = function(){};
-Manager.prototype.sockets = {
-    "in": function(id) {},
-    "to": function(id) {},
-    "EventEmitter": {},
-    "broadcast": {}
+var nodeEvents = {
+    "EventEmitter": function() {}
 };
 
 /** @constructor */

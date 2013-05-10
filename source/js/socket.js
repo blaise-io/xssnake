@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Client, Room, Game, Apple, Powerup, Shape, StageFlow*/
+/*globals XSS, Client, Room, Game, Apple, Powerup, Shape, StageFlow, SockJS*/
 
 'use strict';
 
@@ -9,34 +9,37 @@
  * @constructor
  */
 function Socket(callback) {
-    var options = {'max reconnection attempts': 4};
-    XSS.util.loadScript(XSS.config.SOCKET_IO_JS, function() {
-        this.socket = window['io'].connect(XSS.config.SERVER_ENDPOINT, options);
-        this._bindEvents(callback);
-    }.bind(this));
+    var map = this._bindEvents();
+
+    this.connection = new SockJS(XSS.config.SERVER_ENDPOINT);
+    this.connection.onopen = callback.bind(this);
+    this.connection.onclose = this.disconnect.bind(this);
+    this.connection.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if (map[data[0]]) {
+            map[data[0]](data[1]);
+        } else {
+            throw new Error('Unregistered event: ' + data[1]);
+        }
+    };
+
 }
 
 Socket.prototype = {
 
     /**
-     * @param {string} action
+     * @param {string} type
      * @param {*} data
      */
-    emit: function(action, data) {
-        this.socket.emit(action, data);
+    emit: function(type, data) {
+        this.connection.send(JSON.stringify([type, data]));
     },
 
     /**
-     * @param callback {function(Socket)}
      * @private
      */
-    _bindEvents: function(callback) {
+    _bindEvents: function() {
         var events = XSS.events, map = {};
-
-        this.map = map;
-
-        map[events.CLIENT_CONNECT]        = callback;
-        map['disconnect']                 = this.disconnect;
 
         map[events.CLIENT_PING]           = this.clientPing;
         map[events.CLIENT_COMBI_EVENTS]   = this.combinedEvents;
@@ -58,11 +61,7 @@ Socket.prototype = {
         map[events.CLIENT_POWERUP_SPAWN]  = this.powerupSpawn;
         map[events.CLIENT_SNAKE_SPEED]    = this.snakeSpeed;
 
-        for (var k in map) {
-            if (map.hasOwnProperty(k)) {
-                this.socket.on(k, map[k].bind(this));
-            }
-        }
+        return map;
     },
 
     disconnect: function() {
@@ -77,7 +76,7 @@ Socket.prototype = {
      * @param {number} time
      */
     clientPing: function(time) {
-        this.emit(XSS.events.SERVER_PING, time);
+        XSS.socket.emit(XSS.events.SERVER_PING, time);
     },
 
     /**

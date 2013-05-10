@@ -10,8 +10,7 @@ module.exports = {
 
     CLIENT_CHAT_NOTICE   : 'CC1',
     CLIENT_CHAT_MESSAGE  : 'CC2',
-    CLIENT_CONNECT       : 'CC3',
-    CLIENT_COMBI_EVENTS  : 'CC4',
+    CLIENT_COMBI_EVENTS  : 'CC3',
 
     CLIENT_GAME_COUNTDOWN: 'CG1',
     CLIENT_GAME_START    : 'CG2',

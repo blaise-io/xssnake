@@ -4,8 +4,7 @@
 
 module.exports = {
     SERVER_PORT        : 80,
-    SERVER_ENDPOINT    : 'http://localhost',
-    SOCKET_IO_JS       : 'http://localhost/socket.io/socket.io.js',
+    SERVER_ENDPOINT    : 'http://localhost/xssnake',
 
     ROOM_CAPACITY      : 6,
 

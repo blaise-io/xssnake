@@ -29,7 +29,7 @@ StageFlow.prototype = {
 
     destruct: function() {
         if (XSS.socket) {
-            XSS.socket.socket.disconnect();
+            XSS.socket.connection.close();
         }
         XSS.off.keydown(this._handleKeysBound);
     },

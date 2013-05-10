@@ -8,15 +8,16 @@
 XSS.util.extend(XSS.util, {
 
     /**
-     * @param {string} url
+     * @param {string} src
      * @param {Function} callback
      */
-    loadScript: function(url, callback) {
+    loadScript: function(src, callback) {
         var script = document.createElement('script');
-        script.src = url;
+        script.src = src;
         script.onload = callback;
         script.onerror = function() {
-            XSS.util.instruct('Error loading ' + url);
+            console.warn(src);
+            XSS.util.error('CANNOT LOAD SCRIPT');
         };
         document.querySelector('head').appendChild(script);
     },

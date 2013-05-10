@@ -99,12 +99,11 @@ Room.prototype = {
      */
     join: function(client) {
         var index = this.clients.push(client) - 1;
-        client.socket.join(this.key);
         client.roomKey = this.key;
         this.points[index] = 0;
 
         this.emitState();
-        this.broadcast(events.CLIENT_CHAT_NOTICE, '{' + index + '} joined', client);
+        client.broadcast(events.CLIENT_CHAT_NOTICE, '{' + index + '} joined');
 
         if (this.isFull()) {
             this.game.countdown();
@@ -208,7 +207,9 @@ Room.prototype = {
      * @param {*} data
      */
     emit: function(name, data) {
-        this.server.io.sockets.in(this.key).emit(name, data);
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            this.clients[i].emit(name, data);
+        }
     },
 
     /**
@@ -230,16 +231,6 @@ Room.prototype = {
         this.emit(events.CLIENT_COMBI_EVENTS, this._buffer);
         this._buffer = [];
         return this;
-    },
-
-    /**
-     * Send data to everyone else in the room.
-     * @param {string} name
-     * @param {*} data
-     * @param {Client} exclude
-     */
-    broadcast: function(name, data, exclude) {
-        exclude.socket.broadcast.to(this.key).emit(name, data);
     },
 
     /**

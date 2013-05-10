@@ -9,7 +9,7 @@ XSSNAKE is currently in development. The beta release is planned in Q3 2013.
 
 XSSNAKE is written in HTML5 and Javascript. It works in all browsers that
 support Canvas and Websocket. XSSNAKE uses Node.js for the server,
-socket.io for client–server communication, and Google Closure Compiler with
+SockJS for client–server communication, and Google Closure Compiler with
 Advanced Compilation to check for errors and to compile to minified and
 optimized code.
 
@@ -22,8 +22,8 @@ optimized code.
    `server/shared/config.js`
  * Adjust the contents of `server/shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)
- * Install [socket.io](https://npmjs.org/package/socket.io) by running
-   `npm install socket.io`
+ * Install [SockJS](https://npmjs.org/package/sockjs) by running
+   `npm install sockjs`
  * Install [gcc-rest](https://github.com/blaise-io/gcc-rest) by running
    `npm install gcc-rest`
 
