@@ -14,10 +14,12 @@ var DialogSettings;
 /**
  * @param {string} header
  * @param {string} body
- * @param {DialogSettings=} settings
+ * @param {DialogSettings|Object=} settings
  * @constructor
  */
 function Dialog(header, body, settings) {
+    settings = settings || {};
+
     this._header = header;
     this._body = body;
 
@@ -163,7 +165,8 @@ Dialog.prototype = {
      * @private
      */
     _getButtonPosition: function() {
-        return Font.MAX_HEIGHT * 3 + XSS.font.height(this._body);
+        var bodyBBox = this._getBodyPixels().bbox();
+        return Font.MAX_HEIGHT * 3 + bodyBBox.height + 4;
     },
 
     /**
