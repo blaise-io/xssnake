@@ -8,21 +8,6 @@
 XSS.util.extend(XSS.util, {
 
     /**
-     * @param {string} src
-     * @param {Function} callback
-     */
-    loadScript: function(src, callback) {
-        var script = document.createElement('script');
-        script.src = src;
-        script.onload = callback;
-        script.onerror = function() {
-            console.warn(src);
-            XSS.util.error('CANNOT LOAD SCRIPT');
-        };
-        document.querySelector('head').appendChild(script);
-    },
-
-    /**
      * @param {string} str
      * @param {number=} duration
      * @param {boolean=} flash
