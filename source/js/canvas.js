@@ -55,14 +55,18 @@ Canvas.prototype = {
         XSS.pubsub.publish(XSS.PUB_GAME_TICK, delta, this.focus);
 
         // Clear canvas
+        this._clear();
+
+        // Paint all layers
+        this._paintShapes(delta, XSS.shapes);
+    },
+
+    _clear: function() {
         this.ctx.save();
         this.ctx.fillStyle = this.tileOff;
         this.ctx.globalAlpha = 1 - Canvas.GHOSTING;
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.restore();
-
-        // Paint all layers
-        this._paintShapes(delta, XSS.shapes);
     },
 
     /**

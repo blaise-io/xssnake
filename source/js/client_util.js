@@ -42,12 +42,12 @@ XSS.util.extend(XSS.util, {
 
         exit = function() {
             dialog.destruct();
+            XSS.flow.destruct();
 
             if (callback) {
                 callback();
             }
 
-            XSS.flow.destruct();
             XSS.flow = new StageFlow();
         };
 

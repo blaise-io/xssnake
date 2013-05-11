@@ -20,8 +20,6 @@ function Room(index, capacity, round, key, level, names, score) {
     this.round = 0;
 
     this.update.apply(this, arguments);
-
-    XSS.util.hash(XSS.HASH_ROOM, key);
 }
 
 Room.prototype = {
@@ -34,19 +32,29 @@ Room.prototype = {
     },
 
     bindKeys: function() {
-        this._forceStartBound = this._forceStart.bind(this);
+        this._bindKeysBound = this._bindKeys.bind(this);
         if (this.localIsHost) {
-            XSS.on.keydown(this._forceStartBound);
+            XSS.on.keydown(this._bindKeysBound);
         }
     },
 
     unbindKeys: function() {
-        XSS.off.keydown(this._forceStartBound);
+        XSS.off.keydown(this._bindKeysBound);
     },
 
-    _forceStart: function(e) {
-        if (!XSS.keysBlocked && e.keyCode === XSS.KEY_START) {
-            XSS.socket.emit(XSS.events.SERVER_ROOM_START);
+    _bindKeys: function(e) {
+        if (!XSS.keysBlocked && this.players > 1 && e.keyCode === XSS.KEY_START) {
+            this.dialog.destruct();
+            this.dialog = new Dialog(
+                'ROOM NOT FULL',
+                'Are you sure you want to start the game already?', {
+                    type  : Dialog.TYPE.CONFIRM,
+                    ok    : function() {
+                        XSS.socket.emit(XSS.events.SERVER_ROOM_START);
+                    },
+                    cancel: this.updateAwaitingMessage.bind(this)
+                }
+            );
         }
     },
 
@@ -67,6 +75,8 @@ Room.prototype = {
         }
 
         this.game = new Game(index, level, names);
+
+        XSS.util.hash(XSS.HASH_ROOM, key);
 
         this.index = index;
         this.capacity = capacity;
@@ -90,18 +100,16 @@ Room.prototype = {
 
     updateAwaitingMessage: function() {
         var header, body, remaining = this.capacity - this.players;
-        header = 'NEED ' + remaining + ' MORE PLAYERS...';
+        header = 'NEED ' + remaining + ' MORE PLAYER%s...';
+        header = header.replace('%s', remaining !== 1 ? 'S' : '');
         body = 'Invite people to this room by sharing the page URL.';
         if (this.players > 1 && this.localIsHost) {
             body += '\nOr press S to start now.';
         }
 
-        if (this.dialog) {
-            this.dialog.setHeader(header);
-            this.dialog.setBody(body);
-        } else {
-            this.dialog = new Dialog(header, body, {blockKeys: false});
-        }
+        this.dialog = new Dialog(header, body, {
+            blockKeys: false
+        });
     },
 
     /**

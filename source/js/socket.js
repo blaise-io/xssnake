@@ -9,20 +9,11 @@
  * @constructor
  */
 function Socket(callback) {
-    var map = this._bindEvents();
-
+    this.map = this._bindEvents();
     this.connection = new SockJS(XSS.config.SERVER_ENDPOINT);
     this.connection.onopen = callback.bind(this);
     this.connection.onclose = this.disconnect.bind(this);
-    this.connection.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        if (map[data[0]]) {
-            map[data[0]](data[1]);
-        } else {
-            throw new Error('Unregistered event: ' + data[1]);
-        }
-    };
-
+    this.connection.onmessage = this.handleMessage.bind(this);
 }
 
 Socket.prototype = {
@@ -35,31 +26,44 @@ Socket.prototype = {
         this.connection.send(JSON.stringify([type, data]));
     },
 
+    handleMessage: function(e) {
+        var data, type, map = this.map;
+
+        data = JSON.parse(e.data);
+        type = data[0];
+
+        if (map[type]) {
+            map[type](data[1]);
+        } else {
+            throw new Error('Unregistered event: ' + type);
+        }
+    },
+
     /**
      * @private
      */
     _bindEvents: function() {
         var events = XSS.events, map = {};
 
-        map[events.CLIENT_PING]           = this.clientPing;
-        map[events.CLIENT_COMBI_EVENTS]   = this.combinedEvents;
-        map[events.CLIENT_ROOM_INDEX]     = this.roomIndex;
-        map[events.CLIENT_ROOM_SCORE]     = this.updateScore;
-        map[events.CLIENT_ROOM_STATUS]    = this.roomStatus;
-        map[events.CLIENT_CHAT_MESSAGE]   = this.chatMessage;
-        map[events.CLIENT_CHAT_NOTICE]    = this.chatNotice;
-        map[events.CLIENT_GAME_COUNTDOWN] = this.gameCountdown;
-        map[events.CLIENT_GAME_START]     = this.gameStart;
-        map[events.CLIENT_GAME_SNAKES]    = this.gameSnakes;
-        map[events.CLIENT_SNAKE_UPDATE]   = this.snakeUpdate;
-        map[events.CLIENT_SNAKE_SIZE]     = this.snakeSize;
-        map[events.CLIENT_SNAKE_CRASH]    = this.snakeCrash;
-        map[events.CLIENT_SNAKE_ACTION]   = this.snakeAction;
-        map[events.CLIENT_APPLE_HIT]      = this.appleHit;
-        map[events.CLIENT_APPLE_SPAWN]    = this.appleSpawn;
-        map[events.CLIENT_POWERUP_HIT]    = this.powerupHit;
-        map[events.CLIENT_POWERUP_SPAWN]  = this.powerupSpawn;
-        map[events.CLIENT_SNAKE_SPEED]    = this.snakeSpeed;
+        map[events.CLIENT_PING]           = this.clientPing.bind(this);
+        map[events.CLIENT_COMBI_EVENTS]   = this.combinedEvents.bind(this);
+        map[events.CLIENT_ROOM_INDEX]     = this.roomIndex.bind(this);
+        map[events.CLIENT_ROOM_SCORE]     = this.updateScore.bind(this);
+        map[events.CLIENT_ROOM_STATUS]    = this.roomStatus.bind(this);
+        map[events.CLIENT_CHAT_MESSAGE]   = this.chatMessage.bind(this);
+        map[events.CLIENT_CHAT_NOTICE]    = this.chatNotice.bind(this);
+        map[events.CLIENT_GAME_COUNTDOWN] = this.gameCountdown.bind(this);
+        map[events.CLIENT_GAME_START]     = this.gameStart.bind(this);
+        map[events.CLIENT_GAME_SNAKES]    = this.gameSnakes.bind(this);
+        map[events.CLIENT_SNAKE_UPDATE]   = this.snakeUpdate.bind(this);
+        map[events.CLIENT_SNAKE_SIZE]     = this.snakeSize.bind(this);
+        map[events.CLIENT_SNAKE_CRASH]    = this.snakeCrash.bind(this);
+        map[events.CLIENT_SNAKE_ACTION]   = this.snakeAction.bind(this);
+        map[events.CLIENT_APPLE_HIT]      = this.appleHit.bind(this);
+        map[events.CLIENT_APPLE_SPAWN]    = this.appleSpawn.bind(this);
+        map[events.CLIENT_POWERUP_HIT]    = this.powerupHit.bind(this);
+        map[events.CLIENT_POWERUP_SPAWN]  = this.powerupSpawn.bind(this);
+        map[events.CLIENT_SNAKE_SPEED]    = this.snakeSpeed.bind(this);
 
         return map;
     },
@@ -85,7 +89,9 @@ Socket.prototype = {
      */
     combinedEvents: function(data) {
         for (var i = 0, m = data.length; i < m; i++) {
-            this.map[data[i][0]](data[i][1]);
+            this.handleMessage({
+                data: data[i]
+            });
         }
     },
 

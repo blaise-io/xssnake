@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Shape */
+/*globals XSS, ClientSnake, ClientLevel, Dialog, Shape */
 'use strict';
 
 /***
@@ -90,52 +90,24 @@ Game.prototype = {
     },
 
     countdown: function() {
-        var count, total, border, line = XSS.shapegen.line;
+        var from, body, settings, dialog, updateShape, timer;
 
-        this.dialog.destruct();
+        from = XSS.config.TIME_COUNTDOWN_FROM;
+        body = 'Game starting in: %d';
+        settings = {blockKeys: false};
 
-        count = XSS.config.TIME_COUNTDOWN_FROM;
-        total = count;
+        dialog = new Dialog('GET READY!', body.replace('%d', from), settings);
 
-        do {
-            var pixels, shape, bbox, start;
-            start = (total - count) * 1000;
-
-            pixels = XSS.font.pixels(String(count).replace(/^0$/, 'Go!'), 0, 0);
-
-            shape = new Shape(XSS.transform.zoomX2(pixels, 0, 0, true));
-            bbox = shape.bbox();
-
-            shape.shift(
-                Math.floor(XSS.WIDTH / 2 - bbox.width / 2),
-                Math.floor(XSS.HEIGHT / 2 - bbox.height / 2) - 12
-            );
-
-            // Make "Go" fit
-            bbox = shape.bbox().expand(4);
-            bbox.y1 -= 1;
-            bbox.x1 -= 9;
-            bbox.x2 += 9;
-
-            if (!border) {
-                border = [
-                    line(bbox.x1 + 1, bbox.y1, bbox.x2 - 1, bbox.y1),
-                    line(bbox.x1 + 1, bbox.y2, bbox.x2 - 1, bbox.y2),
-                    line(bbox.x1 + 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y1 + 1),
-                    line(bbox.x1 + 1, bbox.y2 - 1, bbox.x2 - 1, bbox.y2 - 1),
-                    line(bbox.x1, bbox.y1 + 1, bbox.x1, bbox.y2 - 1),
-                    line(bbox.x2, bbox.y1 + 1, bbox.x2, bbox.y2 - 1),
-                    line(bbox.x1 + 1, bbox.y1 + 1, bbox.x1 + 1, bbox.y2 - 1),
-                    line(bbox.x2 - 1, bbox.y1 + 1, bbox.x2 - 1, bbox.y2 - 1)
-                ];
+        updateShape = function() {
+            if (--from > 0) {
+                dialog.setBody(body.replace('%d', from));
+            } else {
+                dialog.destruct();
+                clearTimeout(timer);
             }
+        };
 
-            shape.add.apply(shape, border);
-            shape.lifetime(start, start + 1000);
-            shape.clearBBox = true;
-
-            XSS.shapes['GC' + count] = shape;
-        } while (count-- && XSS.canvas.focus);
+        timer = window.setInterval(updateShape, 1e3);
     },
 
     /**

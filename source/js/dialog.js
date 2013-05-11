@@ -63,13 +63,13 @@ Dialog.prototype = {
     },
 
     ok: function() {
-        this.okCallback();
         this.destruct();
+        this.okCallback();
     },
 
     cancel: function() {
-        this.cancelCallback();
         this.destruct();
+        this.cancelCallback();
     },
 
     /**

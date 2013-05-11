@@ -42,9 +42,11 @@ Room.RANK = {
 Room.prototype = {
 
     destruct: function() {
+        console.log('destruct', this.key);
         this.game.destruct();
         this.game = null;
-        this.clients = null;
+        this.clients = [];
+        this.points = [];
     },
 
     emitState: function() {
@@ -214,12 +216,12 @@ Room.prototype = {
 
     /**
      * Buffer events to be sent later using flush()
-     * @param {string} name
+     * @param {string} type
      * @param {*} data
      * @return {Room}
      */
-    buffer: function(name, data) {
-        this._buffer.push([name, data]);
+    buffer: function(type, data) {
+        this._buffer.push([type, data]);
         return this;
     },
 
