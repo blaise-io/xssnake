@@ -49,11 +49,20 @@ Room.prototype = {
         this.points = [];
     },
 
-    emitState: function() {
-        var names = this.names(), capacity = this.options[map.FIELD.MAX_PLAYERS];
+    updateIndices: function() {
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            var data = [i, capacity, this.round, this.key, this.level, names, this.points];
-            this.clients[i].emit(events.CLIENT_ROOM_INDEX, data);
+            this.clients[i].index = i;
+        }
+    },
+
+    emitState: function() {
+        var capacity = this.options[map.FIELD.MAX_PLAYERS];
+        for (var i = 0, m = this.clients.length; i < m; i++) {
+            var data = [
+                i, capacity, this.round, this.key,
+                this.level, this.names(), this.points
+            ];
+            this.clients[i].emit(events.ROOM_INDEX, data);
         }
     },
 
@@ -62,7 +71,7 @@ Room.prototype = {
      * @returns {boolean}
      */
     isHost: function(client) {
-        return (0 === this.clients.indexOf(client));
+        return (0 === client.index);
     },
 
     /**
@@ -101,11 +110,15 @@ Room.prototype = {
      */
     join: function(client) {
         var index = this.clients.push(client) - 1;
-        client.roomKey = this.key;
-        this.points[index] = 0;
+
+        client.room = this;
+        client.index = index;
 
         this.emitState();
-        client.broadcast(events.CLIENT_CHAT_NOTICE, '{' + index + '} joined');
+
+        client.broadcast(events.CHAT_NOTICE, '{' + index + '} joined');
+
+        this.points[index] = 0;
 
         if (this.isFull()) {
             this.game.countdown();
@@ -118,7 +131,7 @@ Room.prototype = {
      * @param {Client} client
      */
     disconnect: function(client) {
-        var index = this.clients.indexOf(client);
+        var index = client.index;
 
         // Leave during game, clean up after round ends
         if (this.round) {
@@ -129,13 +142,14 @@ Room.prototype = {
         // Leave before game, clean up immediately
         else {
             this.clients.splice(index, 1);
+            this.updateIndices();
             this.emitState();
             if (!this.clients.length) {
                 this.server.roomManager.remove(this);
             }
         }
 
-        this.emit(events.CLIENT_CHAT_NOTICE, '{' + index + '} left');
+        this.emit(events.CHAT_NOTICE, '{' + index + '} left');
     },
 
     nextRound: function() {
@@ -230,7 +244,7 @@ Room.prototype = {
      * @return {Room}
      */
     flush: function() {
-        this.emit(events.CLIENT_COMBI_EVENTS, this._buffer);
+        this.emit(events.COMBI, this._buffer);
         this._buffer = [];
         return this;
     },
@@ -247,7 +261,7 @@ Room.prototype = {
         if (this.clients.length === 1) {
             return neutral;
         } else {
-            clientPoints = this.points[this.clients.indexOf(client)];
+            clientPoints = this.points[client.index];
             for (var i = 0, m = this.points.length; i < m; i++) {
                 if (clientPoints > this.points[i]) {
                     rankTmp++;
@@ -272,7 +286,8 @@ Room.prototype = {
     _removeDisconnectedClients: function(clients) {
         if (clients) {
             for (var i = 0, m = clients.length; i < m; i++) {
-                this.clients.splice(this.clients.indexOf(clients[i]), 1);
+                this.clients.splice(clients[i].index, 1);
+                this.clients.updateIndices();
                 this.server.removeClient(clients[i]);
             }
         }

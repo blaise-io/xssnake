@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Dialog, Shape */
+/*globals XSS, ClientSnake, ClientLevel, Dialog, Shape, Spawnable */
 'use strict';
 
 /***
@@ -11,7 +11,7 @@
  */
 function Game(index, levelID, names) {
 
-    // Remove old snakes, apples and power-ups.
+    // Remove old snakes, spawnables
     // Don't do this during gameplay, might affects fps
     XSS.canvas.garbageCollect();
 
@@ -22,21 +22,23 @@ function Game(index, levelID, names) {
 
     /** @type {Level} */
     this.level = this._setupLevel(levelID);
+
     /** @type {Array.<ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
-    /** @type {Array.<Apple>} */
-    this.apples = [];
-    /** @type {Array.<Powerup>} */
-    this.powerups = [];
+
+    /** @type {Array.<Spawnable>} */
+    this.spawnables = [];
+
+    this._bindEvents();
 }
 
 Game.prototype = {
 
     start: function() {
-        var sub = XSS.pubsub.on.bind(XSS.pubsub);
+        var pubsub = XSS.pubsub, ns = XSS.NS_GAME;
 
-        sub(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME, this._moveSnakes.bind(this));
-        sub(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME, this._handleFocus.bind(this));
+        pubsub(XSS.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
+        pubsub(XSS.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
@@ -45,10 +47,20 @@ Game.prototype = {
     },
 
     destruct: function() {
-        var i, m, border;
+        var i, m, border, pubsub, events, ns;
 
-        XSS.pubsub.off(XSS.PUB_GAME_TICK, XSS.PUB_NS_GAME);
-        XSS.pubsub.off(XSS.PUB_FOCUS_CHANGE, XSS.PUB_NS_GAME);
+        pubsub = XSS.pubsub;
+        events = XSS.events;
+        ns = XSS.NS_GAME;
+
+        pubsub.off(events.GAME_COUNTDOWN, ns);
+        pubsub.off(events.GAME_START, ns);
+        pubsub.off(events.GAME_SPAWN, ns);
+        pubsub.off(events.GAME_SNAKE_UPDATE, ns);
+        pubsub.off(events.GAME_SNAKE_SIZE, ns);
+        pubsub.off(events.GAME_SNAKE_CRASH, ns);
+        pubsub.off(events.GAME_SNAKE_ACTION, ns);
+        pubsub.off(events.GAME_SNAKE_SPEED, ns);
 
         for (i = 0, m = this.snakes.length; i < m; i++) {
             if (this.snakes[i]) {
@@ -56,20 +68,13 @@ Game.prototype = {
             }
         }
 
-        for (i = 0, m = this.apples.length; i < m; i++) {
-            if (this.apples[i]) {
-                this.apples[i].destruct();
+        for (i = 0, m = this.spawnables.length; i < m; i++) {
+            if (this.spawnables[i]) {
+                this.spawnables[i].destruct();
             }
         }
 
-        for (i = 0, m = this.powerups.length; i < m; i++) {
-            if (this.powerups[i]) {
-                this.powerups[i].destruct();
-            }
-        }
-
-        this.apples = [];
-        this.powerups = [];
+        this.spawnables = [];
 
         border = XSS.shapegen.outerBorder();
         for (var k in border) {
@@ -92,6 +97,8 @@ Game.prototype = {
     countdown: function() {
         var from, body, settings, dialog, updateShape, timer;
 
+        XSS.room._unbindKeys();
+
         from = XSS.config.TIME_COUNTDOWN_FROM;
         body = 'Game starting in: %d';
         settings = {blockKeys: false};
@@ -108,6 +115,77 @@ Game.prototype = {
         };
 
         timer = window.setInterval(updateShape, 1e3);
+    },
+
+    _bindEvents: function() {
+        var events = XSS.events, ns = XSS.NS_GAME, pubsub = XSS.pubsub;
+        pubsub.on(events.GAME_COUNTDOWN,    ns, this.countdown.bind(this));
+        pubsub.on(events.GAME_START,        ns, this.start.bind(this));
+        pubsub.on(events.GAME_SPAWN,        ns, this._evSpawn.bind(this));
+        pubsub.on(events.GAME_SPAWN_HIT,    ns, this._evSpawnHit.bind(this));
+        pubsub.on(events.GAME_SNAKE_UPDATE, ns, this._evSnakeUpdate.bind(this));
+        pubsub.on(events.GAME_SNAKE_SIZE,   ns, this._evSnakeSize.bind(this));
+        pubsub.on(events.GAME_SNAKE_CRASH,  ns, this._evSnakeCrash.bind(this));
+        pubsub.on(events.GAME_SNAKE_ACTION, ns, this._evSnakeAction.bind(this));
+        pubsub.on(events.GAME_SNAKE_SPEED,  ns, this._evSnakeSpeed.bind(this));
+    },
+
+    _evSpawn: function(data) {
+        var spawn, index = data[0], type = data[1];
+        spawn = new Spawnable(index, type, data[2]);
+        this.spawnables[index] = spawn;
+    },
+
+
+    /**
+     * @param {Array} data
+     */
+    _evSpawnHit: function(data) {
+        this.spawnables[data[0]].destruct();
+        this.spawnables[data[0]] = null;
+        if (data.length === 3) {
+            this.snakes[data[1]].size = data[2];
+        }
+    },
+
+    /**
+     * @param {Array} data
+     */
+    _evSnakeUpdate: function(data) {
+        var snake = this.snakes[data[0]];
+        snake.limbo = false;
+        snake.parts = data[1];
+        snake.direction = data[2];
+    },
+
+    /**
+     * @param {Array} data
+     */
+    _evSnakeSize: function(data) {
+        this.snakes[data[0]].size = data[1];
+    },
+
+    /**
+     * @param {Array} data
+     */
+    _evSnakeCrash: function(data) {
+        var snake = this.snakes[data[0]];
+        snake.parts = data[1];
+        snake.crash();
+    },
+
+    /**
+     * @param {Array} data
+     */
+    _evSnakeAction: function(data) {
+        this.snakes[data[0]].showAction(data[1]);
+    },
+
+    /**
+     * @param {Array} data
+     */
+    _evSnakeSpeed: function(data) {
+        this.snakes[data[0]].speed = data[1];
     },
 
     /**
@@ -174,7 +252,7 @@ Game.prototype = {
      */
     _handleFocus: function(focus) {
         if (focus) {
-            XSS.socket.emit(XSS.events.SERVER_GAME_STATE);
+            XSS.socket.emit(XSS.events.GAME_STATE);
         }
     },
 

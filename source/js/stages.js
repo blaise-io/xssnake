@@ -97,7 +97,7 @@ XSS.stages = {
     _autoJoinRoom: function() {
         var dialog = new Dialog('AUTO-JOIN ROOM', 'Connecting to server...');
 
-        XSS.pubsub.one(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
+        XSS.pubsub.once(XSS.events.ROOM_STATUS, XSS.NS_STAGES, function(data) {
             dialog.destruct();
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
@@ -112,7 +112,7 @@ XSS.stages = {
                 dialog.setBody('Getting room properties...');
                 window.setTimeout(function() {
                     XSS.socket.emit(
-                        XSS.events.SERVER_ROOM_STATUS,
+                        XSS.events.ROOM_STATUS,
                         XSS.util.hash(XSS.HASH_ROOM)
                     );
                 }, 500);

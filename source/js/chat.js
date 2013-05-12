@@ -2,7 +2,10 @@
 /*globals XSS, InputField*/
 'use strict';
 
-/** @typedef {{author:?string,body:string}} */
+/** @typedef {{
+    author: (string|undefined),
+    body: string}}
+*/
 XSS.ChatMessage = null;
 
 /**
@@ -44,6 +47,17 @@ Chat.prototype = {
     maxMessages: 3,
 
     animDuration: 200,
+
+    destruct: function() {
+        var events = XSS.events;
+        XSS.pubsub.off(events.CHAT_MESSAGE);
+        XSS.pubsub.off(events.CHAT_NOTICE);
+        XSS.off.keydown(this._chatFocusBound);
+        this._deleteShapes();
+        if (this.field) {
+            this.field.destruct();
+        }
+    },
 
     /**
      * @param {XSS.ChatMessage} message
@@ -93,20 +107,30 @@ Chat.prototype = {
         return this;
     },
 
-    destruct: function() {
-        if (this.field) {
-            this.field.destruct();
-        }
-        XSS.off.keydown(this._chatFocusBound);
-        this._deleteShapes();
-    },
 
     send: function(str) {
-        XSS.socket.emit(XSS.events.SERVER_CHAT_MESSAGE, str);
+        XSS.socket.emit(XSS.events.CHAT_MESSAGE, str);
     },
 
     _bindEvents: function() {
+        var events = XSS.events, pubsub = XSS.pubsub, ns = XSS.NS_GAME;
+        pubsub.on(events.CHAT_MESSAGE, ns, this._chatMessage.bind(this));
+        pubsub.on(events.CHAT_NOTICE, ns, this._chatNotice.bind(this));
         XSS.on.keydown(this._chatFocusBound);
+    },
+
+    /**
+     * @param {Array} data
+     */
+    _chatMessage: function(data) {
+        this.add({author: data[0], body: data[1]});
+    },
+
+    /**
+     * @param {string} notice
+     */
+    _chatNotice: function(notice) {
+        this.add({body: notice});
     },
 
     _updateShapes: function() {

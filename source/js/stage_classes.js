@@ -336,6 +336,8 @@ GameStage.prototype = {
         this._destructMenu();
         this._joinGame();
         this._bindKeys();
+
+        XSS.room = new Room();
     },
 
     destruct: function() {
@@ -381,15 +383,14 @@ GameStage.prototype = {
     _autoJoin: function(key) {
         var stages = XSS.flow.stageInstances;
 
-        XSS.pubsub.on(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES, function(data) {
-            XSS.pubsub.off(XSS.PUB_ROOM_STATUS, XSS.PUB_NS_STAGES);
+        XSS.pubsub.once(XSS.events.ROOM_STATUS, XSS.NS_STAGES, function(data) {
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             }
         });
 
         XSS.socket.emit(
-            XSS.events.SERVER_ROOM_JOIN,
+            XSS.events.ROOM_JOIN,
             [key, stages.autoJoin.val]
         );
     },
@@ -402,7 +403,7 @@ GameStage.prototype = {
         data[XSS.map.FIELD.NAME] = stages.inputName.val;
 
         XSS.socket = new Socket(function() {
-            XSS.socket.emit(XSS.events.SERVER_ROOM_MATCH, data);
+            XSS.socket.emit(XSS.events.ROOM_MATCH, data);
         });
     }
 

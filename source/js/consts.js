@@ -36,17 +36,23 @@
 /** @const */ XSS.GAME_TOP = 2;
 /** @const */ XSS.GAME_TILE = 4;
 
-/** @const */ XSS.PUB_NS_GAME = 'NG';
-/** @const */ XSS.PUB_NS_STAGES = 'NS';
-/** @const */ XSS.PUB_GAME_TICK = 'GT';
-/** @const */ XSS.PUB_FOCUS_CHANGE = 'FC';
-/** @const */ XSS.PUB_ROOM_STATUS = 'RS';
-
 /** @const */ XSS.HASH_ROOM = 'room';
 
-/** @const */ XSS.STORAGE_MUTE = 'mute';
-/** @const */ XSS.STORAGE_NAME = 'name';
-/** @const */ XSS.STORAGE_SCHEME = 'scheme';
+/** @const */ XSS.NS_SCORE = 'SCR';
+/** @const */ XSS.NS_CHAT = 'CHT';
+/** @const */ XSS.NS_GAME = 'GAM';
+/** @const */ XSS.NS_ROOM = 'ROM';
+/** @const */ XSS.NS_SOCKET = 'SOK';
+/** @const */ XSS.NS_SNAKE = 'SNK';
+/** @const */ XSS.NS_SPAWN = 'SPW';
+/** @const */ XSS.NS_STAGES = 'STG';
+
+/** @const */ XSS.PUB_GAME_TICK = 'GAME_TICK';
+/** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCUS_CHANGE';
+
+/** @const */ XSS.STORAGE_MUTE = 'MUTE';
+/** @const */ XSS.STORAGE_NAME = 'NAME';
+/** @const */ XSS.STORAGE_SCHEME = 'SCHEME';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';

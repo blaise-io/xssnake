@@ -43,7 +43,7 @@ PublishSubscribe.prototype = {
      * @param {string} key
      * @param {Object} callback
      */
-    one: function(topic, key, callback) {
+    once: function(topic, key, callback) {
         var callbackAndOff = function() {
             callback.apply(callback, arguments);
             this.off(topic, key);
@@ -71,10 +71,7 @@ PublishSubscribe.prototype = {
      * @private
      */
     _exec: function(func, args) {
-        // Wrapped in setTimeout to prevent locks
-        setTimeout(function() {
-            func.apply(func, args);
-        }, 0);
+        func.apply(func, args);
     }
 
 };

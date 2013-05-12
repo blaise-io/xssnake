@@ -3,62 +3,35 @@
 'use strict';
 
 /**
- * @param {number} index
- * @param {number} capacity
- * @param {number} round
- * @param {string} key
- * @param {number} level
- * @param {Array.<string>} names
- * @param {Array.<number>} score
  * @constructor
  */
-function Room(index, capacity, round, key, level, names, score) {
+function Room() {
     this.game = null;
     this.score = null;
     this.chat = null;
+
     this.capacity = 0;
     this.round = 0;
+    this.players = 0;
 
-    this.update.apply(this, arguments);
+    this._bindKeys();
+    this._bindEvents();
 }
 
 Room.prototype = {
 
     destruct: function() {
-        this.unbindKeys();
-        this.game.destruct();
-        this.score.destruct();
-        this.chat.destruct();
-    },
-
-    bindKeys: function() {
-        this._bindKeysBound = this._bindKeys.bind(this);
-        if (this.localIsHost) {
-            XSS.on.keydown(this._bindKeysBound);
-        }
-    },
-
-    unbindKeys: function() {
-        XSS.off.keydown(this._bindKeysBound);
-    },
-
-    _bindKeys: function(e) {
-        if (!XSS.keysBlocked && this.players > 1 && e.keyCode === XSS.KEY_START) {
-            this.dialog.destruct();
-            this.dialog = new Dialog(
-                'ROOM NOT FULL',
-                'Are you sure you want to start the game already?', {
-                    type  : Dialog.TYPE.CONFIRM,
-                    ok    : function() {
-                        XSS.socket.emit(XSS.events.SERVER_ROOM_START);
-                    },
-                    cancel: this.updateAwaitingMessage.bind(this)
-                }
-            );
+        XSS.pubsub.off(XSS.events.ROOM_INDEX, XSS.NS_ROOM);
+        this._unbindKeys();
+        if (this.players) {
+            this.game.destruct();
+            this.score.destruct();
+            this.chat.destruct();
         }
     },
 
     /**
+     * TODO: Split up
      * @param {number} index
      * @param {number} capacity
      * @param {number} round
@@ -91,14 +64,70 @@ Room.prototype = {
         }
 
         if (round === 0) {
-            this.updateAwaitingMessage();
+            this._updateAwaitingMessage();
         }
-
-        this.unbindKeys();
-        this.bindKeys();
     },
 
-    updateAwaitingMessage: function() {
+    /**
+     * @private
+     */
+    _bindEvents: function() {
+        var ns = XSS.NS_ROOM;
+        XSS.pubsub.on(XSS.events.ROOM_INDEX, ns, this._initRoom.bind(this));
+    },
+
+    /**
+     * @param {Array} data
+     */
+    _initRoom: function(data) {
+        this.update.apply(this, data);
+    },
+
+    /**
+     * @private
+     */
+    _unbindKeys: function() {
+        XSS.off.keydown(this._bindKeysBound);
+    },
+
+    /**
+     * @private
+     */
+    _bindKeys: function() {
+        this._bindKeysBound = this._bindStartKey.bind(this);
+        if (this.localIsHost) {
+            XSS.on.keydown(this._bindKeysBound);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _bindStartKey: function(e) {
+        var settings, isStartKey;
+
+        settings = {
+            type  : Dialog.TYPE.CONFIRM,
+            ok    : function() { XSS.socket.emit(XSS.events.ROOM_START); },
+            cancel: this._updateAwaitingMessage.bind(this)
+        };
+
+        isStartKey = e.keyCode === XSS.KEY_START;
+
+        if (!XSS.keysBlocked && this.players > 1 && isStartKey) {
+            this.dialog.destruct();
+            this.dialog = new Dialog(
+                'ROOM NOT FULL',
+                'Are you sure you want to start the game already?',
+                settings
+            );
+        }
+    },
+
+    /**
+     * @private
+     */
+    _updateAwaitingMessage: function() {
         var header, body, remaining = this.capacity - this.players;
         header = 'NEED ' + remaining + ' MORE PLAYER%s...';
         header = header.replace('%s', remaining !== 1 ? 'S' : '');

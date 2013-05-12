@@ -1,6 +1,9 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
+var events = require('../shared/events.js');
+var EventHandler = require('./event_handler.js');
+
 /**
  * @param {number} id
  * @param {Server} server
@@ -8,26 +11,38 @@
  * @constructor
  */
 function Client(id, server, connection) {
-    this.server = server;
     this.id = id;
+    this.server = server;
     this.connection = connection;
-    this.latency = 0;
 
-    /** @type {?string} */
-    this.name = null;
-    /** @type {Snake} */
-    this.snake = null;
-    /** @type {?string} */
-    this.roomKey = null;
     /** @type {EventHandler} */
-    this.eventHandler = null;
+    this.eventHandler = new EventHandler(this.server, this, connection);
+
+    /** @type {number} */
+    this.latency = 0;
+    /** @type {number} */
+    this.index = -1;
     /** @type {boolean} */
     this.limbo = false;
+    /** @type {string} */
+    this.name = '';
+    /** @type {Snake} */
+    this.snake = null;
+    /** @type {string} */
+    this.room = null;
 }
 
 module.exports = Client;
 
 Client.prototype = {
+
+    destruct: function() {
+        this.eventHandler.destruct();
+        this.eventHandler = null;
+        this.connection = null;
+        this.snake = null;
+        this.room = null;
+    },
 
     /**
      * Send data to client
@@ -38,8 +53,12 @@ Client.prototype = {
         this.connection.write(JSON.stringify([name, data]));
     },
 
+    /**
+     * @param {string} name
+     * @param {*=} data
+     */
     broadcast: function(name, data) {
-        var room = this.server.roomManager.room[this.roomKey];
+        var room = this.room;
         if (room) {
             for (var i = 0, m = room.clients.length; i < m; i++) {
                 if (room.clients[i] !== this) {
@@ -49,11 +68,25 @@ Client.prototype = {
         }
     },
 
-    destruct: function() {
-        this.eventHandler.destruct();
-        this.eventHandler = null;
-        this.snake = null;
-        this.connection = null;
+    /**
+     * Buffer events to be sent later using flush()
+     * @param {string} type
+     * @param {*} data
+     * @return {Room}
+     */
+    buffer: function(type, data) {
+        this._buffer.push([type, data]);
+        return this;
+    },
+
+    /**
+     * Send buffer
+     * @return {Room}
+     */
+    flush: function() {
+        this.emit(events.COMBI, this._buffer);
+        this._buffer = [];
+        return this;
     }
 
 };

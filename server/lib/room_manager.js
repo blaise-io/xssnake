@@ -12,11 +12,38 @@ var events = require('../shared/events.js');
 function RoomManager(server) {
     this.server = server;
     this.rooms = {};
+    this.bindEvents();
 }
 
 module.exports = RoomManager;
 
 RoomManager.prototype = {
+
+    bindEvents: function() {
+        this.server.pubsub.on(events.ROOM_STATUS, this.emitRoomStatus.bind(this));
+        this.server.pubsub.on(events.ROOM_JOIN, this._joinRoom.bind(this));
+        this.server.pubsub.on(events.ROOM_MATCH, this._matchRoom.bind(this));
+    },
+
+    /**
+     * @param {Object} data
+     * @param {Client} client
+     * @private
+     */
+    _joinRoom: function(data, client) {
+        client.name = data[1];
+        this.attemptJoinRoom(client, data[0]);
+    },
+
+    /**
+     * @param {Object} preferences
+     * @param {Client} client
+     * @private
+     */
+    _matchRoom: function(preferences, client) {
+        client.name = preferences[map.FIELD.NAME];
+        this.getPreferredRoom(preferences).join(client);
+    },
 
     /**
      * @param {string} key
@@ -35,14 +62,14 @@ RoomManager.prototype = {
     },
 
     /**
-     * @param {Client} client
      * @param {string} key
+     * @param {Client} client
      */
-    emitRoomStatus: function(client, key) {
+    emitRoomStatus: function(key, client) {
         var room, data;
         room = this.rooms[key];
         data = this._getRoomJoinData(room);
-        client.emit(events.CLIENT_ROOM_STATUS, data);
+        client.emit(events.ROOM_STATUS, data);
     },
 
     /**
@@ -57,7 +84,7 @@ RoomManager.prototype = {
         if (data[0]) {
             room.join(client); // Room can be joined
         } else {
-            client.emit(events.CLIENT_ROOM_STATUS, data); // Nope
+            client.emit(events.ROOM_STATUS, data); // Nope
         }
     },
 

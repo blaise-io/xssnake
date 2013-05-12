@@ -23,7 +23,10 @@ module.exports = {
         FULL       : 1,
         NOT_FOUND  : 2,
         IN_PROGRESS: 3
-    }
+    },
+
+    SPAWN_APPLE  : 0,
+    SPAWN_POWERUP: 1
 
 };
 

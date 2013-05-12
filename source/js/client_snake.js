@@ -34,9 +34,9 @@ function ClientSnake(index, local, name, location, direction) {
 
     /** @type {Object.<string,string>} */
     this.shapes = {
-        snake    : 'S'  + index, // Snake
-        name     : 'SN' + index, // Snake name tag
-        direction: 'SD' + index  // Snake direction
+        snake    : XSS.NS_SNAKE + index,
+        name     : XSS.NS_SNAKE + 'TAG' + index,
+        direction: XSS.NS_SNAKE + 'DIR' + index
     };
 }
 
@@ -87,7 +87,7 @@ XSS.util.extend(ClientSnake.prototype, {
         for (var i = 0; i <= duration * amount; i += duration) {
             var shape, name, h = this.head();
             shape = XSS.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
-            name = 'AL_' + XSS.util.randomStr();
+            name = XSS.NS_SNAKE + XSS.util.randomStr();
             XSS.shapes[name] = shape.lifetime(i, duration + i);
         }
     },
@@ -145,7 +145,7 @@ XSS.util.extend(ClientSnake.prototype, {
 
     emitState: function(direction) {
         if (XSS.room) {
-            XSS.socket.emit(XSS.events.SERVER_SNAKE_UPDATE, [this.parts, direction]);
+            XSS.socket.emit(XSS.events.GAME_SNAKE_UPDATE, [this.parts, direction]);
         }
     },
 

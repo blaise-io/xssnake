@@ -4,11 +4,10 @@
 var http = require('http');
 var png = require('pngparse');
 var sockjs = require('sockjs');
+var nodeEvents = require('events');
 var config = require('../shared/config.js');
-var EventHandler = require('./event_handler.js');
 var RoomManager = require('./room_manager.js');
 var Client = require('./client.js');
-var Ticker = require('./ticker.js');
 var levels = require('../shared/levels.js');
 var LevelParser = require('../shared/level_parser.js');
 
@@ -48,8 +47,8 @@ Server.prototype = {
         /** @typedef {Object.<number, {Client}>} */
         this.clients = {};
 
-        this.ticker = new Ticker(50);
-        this.ticker.setMaxListeners(0);
+        this.pubsub = this.setupPubSub();
+
         this.roomManager = new RoomManager(this);
         this.listen(config.SERVER_PORT);
 
@@ -57,19 +56,39 @@ Server.prototype = {
     },
 
     /**
+     * @return {nodeEvents.EventEmitter}
+     */
+    setupPubSub: function() {
+        var emitter, tick;
+
+        emitter = new nodeEvents.EventEmitter();
+        emitter.setMaxListeners(0);
+
+        // Tick every N ms
+        this._time = +new Date();
+        setInterval(function() {
+            emitter.emit('tick', +new Date() - this._time);
+            this._time = +new Date();
+        }.bind(this), 50);
+
+        return emitter;
+    },
+
+    /**
      * @param {number} port
      */
     listen: function(port) {
-        var xssnake, server;
+        var server, xssnake;
+
+        server = http.createServer();
+        server.listen(port, '0.0.0.0');
 
         xssnake = sockjs.createServer();
         xssnake.on('connection', function(conn) {
             this.addClient(conn);
         }.bind(this));
 
-        server = http.createServer();
         xssnake.installHandlers(server, {prefix: '/xssnake'});
-        server.listen(port, '0.0.0.0');
     },
 
     /**
@@ -78,7 +97,6 @@ Server.prototype = {
     addClient: function(conn) {
         var client, id = ++this.inc;
         client = new Client(id, this, conn);
-        client.eventHandler = new EventHandler(this, client, conn);
         this.clients[id] = client;
     },
 

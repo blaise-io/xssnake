@@ -12,6 +12,7 @@ XSS.Score = null;
  */
 function ScoreBoard(names, points) {
     this.score = this.initScore(names, points);
+    this._bindEvents();
     this._sortScore();
     this.shapes = this._updateShapes();
 }
@@ -23,6 +24,7 @@ ScoreBoard.prototype = {
     animDuration: 200,
 
     destruct: function() {
+        XSS.pubsub.on(XSS.events.SCORE_UPDATE, XSS.NS_SCORE);
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
                 XSS.shapes[k] = null;
@@ -48,13 +50,20 @@ ScoreBoard.prototype = {
     },
 
     /**
-     * @param {number} playerID
-     * @param {number} newScore
+     * @param {Array.<number>} score [playerIndex, newScore]
      */
-    updateScore: function(playerID, newScore) {
-        var index = this._getPodiumIndexByPlayerId(this.score, playerID);
-        this.score[index].score = newScore;
+    updateScore: function(score) {
+        var index = this._getPodiumIndexByPlayerId(this.score, score[0]);
+        this.score[index].score = score[1];
         this._updateShapes();
+    },
+
+    /**
+     * @private
+     */
+    _bindEvents: function() {
+        var ns = XSS.NS_SCORE;
+        XSS.pubsub.on(XSS.events.SCORE_UPDATE, ns, this.updateScore.bind(this));
     },
 
     /**

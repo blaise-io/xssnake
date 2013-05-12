@@ -42,7 +42,9 @@ XSS.util.extend(XSS.util, {
 
         exit = function() {
             dialog.destruct();
+
             XSS.flow.destruct();
+            XSS.socket.destruct();
 
             if (callback) {
                 callback();

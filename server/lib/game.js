@@ -9,6 +9,7 @@ var Snake = require('../shared/snake.js');
 var Util = require('../shared/util.js');
 var config = require('../shared/config.js');
 var events = require('../shared/events.js');
+var map = require('../shared/map.js');
 
 /**
  * @param {Room} room
@@ -46,19 +47,19 @@ Game.prototype = {
     countdown: function() {
         var delay = config.TIME_COUNTDOWN_FROM * 1000;
         this.timers.push(setTimeout(this.start.bind(this), delay));
-        this.room.emit(events.CLIENT_GAME_COUNTDOWN, null);
+        this.room.emit(events.GAME_COUNTDOWN, null);
         this._setupClients();
     },
 
     start: function() {
         console.log('___ NEW ROUND IN ROOM ' + this.room.key + ' ___');
-        this.room.emit(events.CLIENT_GAME_START, []);
+        this.room.emit(events.GAME_START, []);
         this.room.round++;
 
-        this.server.ticker.addListener('tick', this._tickBound);
+        this.server.pubsub.on('tick', this._tickBound);
 
         var respawnAfter = config.TIME_RESPAWN_APPLE * 1000;
-        this.spawner.spawn(this.spawner.APPLE, null, true, respawnAfter);
+        this.spawner.spawn(null, map.SPAWN_APPLE, true, respawnAfter);
 
         if (this.options.powerups) {
             this._delaySpawnPowerup();
@@ -66,7 +67,7 @@ Game.prototype = {
     },
 
     destruct: function() {
-        var ticker = this.server.ticker;
+        var ticker = this.server.pubsub;
 
         if (ticker.listeners('tick')) {
             ticker.removeListener('tick', this._tickBound);
@@ -134,7 +135,7 @@ Game.prototype = {
 
         snake.parts.reverse();
         data = [index, snake.parts, snake.direction];
-        this.room.buffer(events.CLIENT_SNAKE_UPDATE, data);
+        this.room.buffer(events.GAME_SNAKE_UPDATE, data);
     },
 
     /**
@@ -156,11 +157,11 @@ Game.prototype = {
      * @param client
      */
     emitSnakes: function(client) {
-        var data = [];
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            data.push([i, this.snakes[i].parts, this.snakes[i].direction]);
+            var data = [i, this.snakes[i].parts, this.snakes[i].direction];
+            client.buffer(events.GAME_SNAKE_UPDATE, data);
         }
-        client.emit(events.CLIENT_GAME_SNAKES, data);
+        client.flush();
     },
 
     /**
@@ -177,7 +178,7 @@ Game.prototype = {
                 data.push([spawner.EVENTS[spawn.type], [i, spawn.location]]);
             }
         }
-        client.emit(events.CLIENT_COMBI_EVENTS, data);
+        client.emit(events.COMBI, data);
     },
 
     /**
@@ -185,12 +186,17 @@ Game.prototype = {
      * @param {number} index
      */
     hitApple: function(client, index) {
-        var clientIndex = this.room.clients.indexOf(client),
-            size = client.snake.size += 3,
-            score = ++this.room.points[clientIndex];
-        this.room.emit(events.CLIENT_APPLE_HIT, [clientIndex, size, index]);
-        this.room.emit(events.CLIENT_SNAKE_ACTION, [clientIndex, 'Nom']);
-        this.room.emit(events.CLIENT_ROOM_SCORE, [clientIndex, score]);
+        var clientIndex, size, score;
+
+        clientIndex = client.index;
+        size = client.snake.size += 3;
+        score = ++this.room.points[clientIndex];
+
+        this.room.buffer(events.GAME_SPAWN_HIT, index);
+        this.room.buffer(events.GAME_SNAKE_SIZE, [index, clientIndex, size]);
+        this.room.buffer(events.GAME_SNAKE_ACTION, [clientIndex, 'Nom']);
+        this.room.buffer(events.SCORE_UPDATE, [clientIndex, score]);
+        this.room.flush();
     },
 
     /**
@@ -198,8 +204,7 @@ Game.prototype = {
      * @param {number} index
      */
     hitPowerup: function(client, index) {
-        var clientIndex = this.room.clients.indexOf(client);
-        this.room.emit(events.CLIENT_POWERUP_HIT, [clientIndex, index]);
+        this.room.emit(events.GAME_SPAWN_HIT, [index]);
         return new Powerup(this, client);
     },
 
@@ -247,11 +252,11 @@ Game.prototype = {
      */
     _sendServerSnakeState: function(client) {
         var data = [
-            this.room.clients.indexOf(client),
+            client.index,
             client.snake.parts,
             client.snake.direction
         ];
-        this.room.emit(events.CLIENT_SNAKE_UPDATE, data);
+        this.room.emit(events.GAME_SNAKE_UPDATE, data);
     },
 
     /**
@@ -260,11 +265,11 @@ Game.prototype = {
      */
     _broadCastSnake: function(client) {
         var data = [
-            this.room.clients.indexOf(client),
+            client.index,
             client.snake.parts,
             client.snake.direction
         ];
-        client.broadcast(events.CLIENT_SNAKE_UPDATE, data);
+        client.broadcast(events.GAME_SNAKE_UPDATE, data);
     },
 
     /**
@@ -303,7 +308,7 @@ Game.prototype = {
                     if (clients[ii].snake.hasPart(part)) {
                         return [
                             this.CRASH_OBJECTS.OPPONENT,
-                            clients.indexOf(client),
+                            client.index,
                             ii
                         ];
                     }
@@ -321,8 +326,8 @@ Game.prototype = {
      */
     _setSnakeCrashed: function(client, parts) {
         client.snake.crashed = true;
-        var clientIndex = this.room.clients.indexOf(client);
-        this.room.emit(events.CLIENT_SNAKE_CRASH, [clientIndex, parts]);
+        var clientIndex = client.index;
+        this.room.emit(events.GAME_SNAKE_CRASH, [clientIndex, parts]);
         this._checkRoundEnded();
     },
 
@@ -343,7 +348,7 @@ Game.prototype = {
 
                 // Knockout system points
                 this.room.emit(
-                    events.CLIENT_ROOM_SCORE,
+                    events.SCORE_UPDATE,
                     [i, this.room.points[i] += 2]
                 );
             }
@@ -360,7 +365,7 @@ Game.prototype = {
     _endRound: function() {
         this._roundEnded = true;
         this.room.emit(
-            events.CLIENT_CHAT_NOTICE,
+            events.CHAT_NOTICE,
             'New round starting in ' + config.TIME_GLOAT + ' seconds'
         );
         setTimeout(this._startNewRound.bind(this), config.TIME_GLOAT * 1000);
@@ -370,7 +375,7 @@ Game.prototype = {
      * @private
      */
     _startNewRound: function() {
-        this.server.ticker.removeListener('tick', this._tickBound);
+        this.server.pubsub.removeListener('tick', this._tickBound);
         this.room.nextRound();
     },
 
@@ -468,7 +473,7 @@ Game.prototype = {
         } else if (object === this.CRASH_OBJECTS.OPPONENT) {
             message = util.format('{%d} crashed into {%d}', crash[1], crash[2]);
         }
-        this.room.emit(events.CLIENT_CHAT_NOTICE, message);
+        this.room.emit(events.CHAT_NOTICE, message);
     },
 
     /**

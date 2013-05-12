@@ -4,6 +4,7 @@
 var events = require('../shared/events.js');
 var Room = require('./room.js');
 var Util = require('../shared/util.js');
+var map = require('../shared/map.js');
 
 /**
  * Powerup
@@ -106,7 +107,7 @@ Powerup.prototype = {
      * @private
      */
     _clientIndex: function() {
-        return this.game.room.clients.indexOf(this.client);
+        return this.client.index;
     },
 
     /**
@@ -124,8 +125,8 @@ Powerup.prototype = {
             index = this._clientIndex(),
             snake = this.client.snake;
         snake.speed -= 15;
-        room.buffer(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
-        room.buffer(events.CLIENT_SNAKE_ACTION, [index, '+Speed']).flush();
+        room.buffer(events.SNAKE_SPEED, [index, snake.speed]);
+        room.buffer(events.GAME_SNAKE_ACTION, [index, '+Speed']).flush();
     },
 
     _speedBoostSelf: function() {
@@ -154,33 +155,33 @@ Powerup.prototype = {
     _speed: function(clients, delta, label, duration) {
         var room = this.game.room;
         for (var i = 0, m = clients.length; i < m; i++) {
-            var index = room.clients.indexOf(clients[i]),
+            var index = clients[i].index,
                 snake = clients[i].snake;
             snake.speed += delta;
-            room.buffer(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
-            room.buffer(events.CLIENT_SNAKE_ACTION, [index, label]);
+            room.buffer(events.SNAKE_SPEED, [index, snake.speed]);
+            room.buffer(events.GAME_SNAKE_ACTION, [index, label]);
         }
         room.flush();
 
         this._resetState(duration, function() {
             for (var i = 0, m = clients.length; i < m; i++) {
-                var index = room.clients.indexOf(clients[i]),
+                var index = clients[i].index,
                     snake = clients[i].snake;
                 snake.speed -= delta;
-                room.buffer(events.CLIENT_SNAKE_SPEED, [index, snake.speed]);
+                room.buffer(events.SNAKE_SPEED, [index, snake.speed]);
             }
             room.flush();
         });
     },
 
     _spawnApples: function() {
-        var r = Util.randomBetween(3, 10), game = this.game;
-        this._spawn(game.spawner.APPLE, r, '+Apples');
+        var r = Util.randomBetween(3, 10);
+        this._spawn(map.SPAWN_APPLE, r, '+Apples');
     },
 
     _spawnPowerups: function() {
-        var r = Util.randomBetween(2, 5), game = this.game;
-        this._spawn(game.spawner.POWERUP, r, '+Power-ups');
+        var r = Util.randomBetween(2, 5);
+        this._spawn(map.SPAWN_POWERUP, r, '+Power-ups');
     },
 
     /**
@@ -197,7 +198,7 @@ Powerup.prototype = {
             game.spawner.spawn(type);
         };
 
-        game.room.emit(events.CLIENT_SNAKE_ACTION, [index, message]);
+        game.room.emit(events.GAME_SNAKE_ACTION, [index, message]);
 
         for (var i = 0; i < amount; i++) {
             setTimeout(spawn, i * 100);
@@ -219,8 +220,8 @@ Powerup.prototype = {
     _reverse: function(clients) {
         var room = this.game.room;
         for (var i = 0, m = clients.length; i < m; i++) {
-            var index = room.clients.indexOf(clients[i]);
-            room.buffer(events.CLIENT_SNAKE_ACTION, [index, 'Reverse']);
+            var index = clients[i].index;
+            room.buffer(events.GAME_SNAKE_ACTION, [index, 'Reverse']);
             this.game.reverseSnake(index);
         }
         room.flush();
@@ -251,11 +252,11 @@ Powerup.prototype = {
     _tail: function(clients, delta, message) {
         var room = this.game.room;
         for (var i = 0, m = clients.length; i < m; i++) {
-            var index = room.clients.indexOf(clients[i]),
+            var index = clients[i].index,
                 snake = clients[i].snake;
             snake.size = Math.max(1, snake.size + delta);
-            room.buffer(events.CLIENT_SNAKE_ACTION, [index, message]);
-            room.buffer(events.CLIENT_SNAKE_SIZE, [index, snake.size]);
+            room.buffer(events.GAME_SNAKE_ACTION, [index, message]);
+            room.buffer(events.GAME_SNAKE_SIZE, [index, snake.size]);
         }
         room.flush();
     }

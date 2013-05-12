@@ -3,9 +3,10 @@
 
 var Util = require('../shared/util.js');
 var events = require('../shared/events.js');
+var map = require('../shared/map.js');
 
 /**
- * Spawnable
+ * Spawner
  * @param {Game} game
  * @constructor
  */
@@ -18,14 +19,6 @@ function Spawner(game) {
 module.exports = Spawner;
 
 Spawner.prototype = {
-
-    APPLE  : 0,
-    POWERUP: 1,
-
-    EVENTS: [
-        events.CLIENT_APPLE_SPAWN,
-        events.CLIENT_POWERUP_SPAWN
-    ],
 
     destruct: function() {
         for (var i = 0, m = this.spawns.length; i < m; i++) {
@@ -40,7 +33,7 @@ Spawner.prototype = {
      * @param {number=} respawnAfter
      * @return {Object}
      */
-    spawn: function(type, index, respawn, respawnAfter) {
+    spawn: function(index, type, respawn, respawnAfter) {
         var spawn = {
             location    : this.game.getEmptyLocation(),
             type        : type,
@@ -53,14 +46,14 @@ Spawner.prototype = {
         if (respawnAfter) {
             spawn.timer = setTimeout(function() {
                 this._destructSpawn(index);
-                this.spawn(type, index, respawn, respawnAfter);
+                this.spawn(index, type, respawn, respawnAfter);
             }.bind(this), respawnAfter);
         }
 
         this.spawns[index] = spawn;
         this.locations[index] = spawn.location;
 
-        this.game.room.emit(this.EVENTS[type], [index, spawn.location]);
+        this.game.room.emit(events.GAME_SPAWN, [index, type, spawn.location]);
 
         return spawn;
     },
@@ -73,17 +66,17 @@ Spawner.prototype = {
         var spawn = this.spawns[index];
 
         switch (spawn.type) {
-            case this.APPLE:
+            case map.SPAWN_APPLE:
                 this.game.hitApple(client, index);
                 break;
-            case this.POWERUP:
+            case map.SPAWN_POWERUP:
                 this.game.hitPowerup(client, index);
                 break;
         }
 
         if (spawn.respawn) {
             this._destructSpawn(index);
-            this.spawn(spawn.type, index, true, spawn.respawnAfter);
+            this.spawn(index, spawn.type, true, spawn.respawnAfter);
         } else {
             this._destructSpawn(index);
         }
