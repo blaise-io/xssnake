@@ -2,7 +2,7 @@
 /*globals XSS*/
 'use strict';
 
-XSS.schemes = [
+XSS.colors = [
     {
         title: 'Public Transport',
         desc : 'Better stick to this color scheme\nif you don’t want to get epilepsified.',

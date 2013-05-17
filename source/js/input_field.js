@@ -97,7 +97,7 @@ InputField.prototype = {
         input = document.createElement('input');
         input.setAttribute('maxlength', String(this.maxlength));
         input.focus();
-        XSS.doc.appendChild(input);
+        document.body.appendChild(input);
         return input;
     },
 

@@ -4,11 +4,10 @@
 /**
  * Collisions and levels
  * @constructor
- * @param {number} levelID
- * @param {Array.<LevelParser>} levelData
+ * @param {LevelData} levelData
  */
-function Level(levelID, levelData) {
-    this.level = levelData[levelID];
+function Level(levelData) {
+    this.levelData = levelData;
 }
 
 module.exports = Level;
@@ -34,7 +33,7 @@ Level.prototype = {
      * @return {Array.<number>}
      */
     getSpawn: function(playerID) {
-        return this.level.spawns[playerID];
+        return this.levelData.spawns[playerID];
     },
 
     /**
@@ -42,7 +41,7 @@ Level.prototype = {
      * @return {number}
      */
     getSpawnDirection: function(playerID) {
-        return this.level.directions[playerID];
+        return this.levelData.directions[playerID];
     },
 
     /**
@@ -52,8 +51,8 @@ Level.prototype = {
     getEmptyLocation: function(locations) {
         while (true) {
             var location = [
-                Math.floor(Math.random() * this.level.width),
-                Math.floor(Math.random() * this.level.height)
+                Math.floor(Math.random() * this.levelData.width),
+                Math.floor(Math.random() * this.levelData.height)
             ];
             if (this.isEmptyLocation(locations, location)) {
                 return location;
@@ -91,7 +90,7 @@ Level.prototype = {
         if (x < 0 || y < 0) {
             return true;
         } else {
-            return x >= this.level.width || y >= this.level.height;
+            return x >= this.levelData.width || y >= this.levelData.height;
         }
     },
 
@@ -101,7 +100,7 @@ Level.prototype = {
      * @return {boolean}
      */
     innerWall: function(x, y) {
-        return this.hasXY(this.level.walls, x, y);
+        return this.hasXY(this.levelData.walls, x, y);
     },
 
     /**
@@ -110,7 +109,7 @@ Level.prototype = {
      * @return {boolean}
      */
     isUnreachable: function(x, y) {
-        return this.hasXY(this.level.unreachables, x, y);
+        return this.hasXY(this.levelData.unreachables, x, y);
     },
 
     /**

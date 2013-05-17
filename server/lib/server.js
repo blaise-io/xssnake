@@ -9,7 +9,7 @@ var config = require('../shared/config.js');
 var RoomManager = require('./room_manager.js');
 var Client = require('./client.js');
 var levels = require('../shared/levels.js');
-var LevelParser = require('../shared/level_parser.js');
+var LevelData = require('../shared/level_data.js');
 
 
 /**
@@ -27,7 +27,7 @@ Server.prototype = {
         var i, m, buffer, appendLevel, parsed = [];
 
         appendLevel = function(err, data) {
-            parsed[this] = new LevelParser(data);
+            parsed[this] = new LevelData(data);
             if (this + 1 === m) {
                 callback(parsed);
             }

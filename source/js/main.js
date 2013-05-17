@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals PublishSubscribe, Canvas, ShapeGenerator, Transform, Font, AudioPlay, StageFlow, ClientLevel */
+/*globals PublishSubscribe, Font, Canvas, LevelCache, ShapeGenerator, Transform, AudioPlay, StageFlow */
 'use strict';
 
 var XSS = {}, module = {};
@@ -8,31 +8,22 @@ window.onerror = function() {
     XSS.error = true;
 };
 
-XSS.main = function() {
+document.addEventListener('DOMContentLoaded', function() {
+
     /** @type {Object.<string, Shape>} */
-    XSS.shapes    = {};
+    XSS.shapes = {};
 
     // Shortcuts
-    XSS.doc       = document.body;
-    XSS.on        = XSS.util.addListener;
-    XSS.off       = XSS.util.removeListener;
+    XSS.on   = XSS.util.addListener;
+    XSS.off  = XSS.util.removeListener;
 
-    // Singletons
     XSS.pubsub    = new PublishSubscribe();
+    XSS.font      = new Font();
     XSS.canvas    = new Canvas();
+    XSS.level     = new LevelCache();
     XSS.shapegen  = new ShapeGenerator();
     XSS.transform = new Transform();
-    XSS.font      = new Font();
     XSS.play      = new AudioPlay();
     XSS.flow      = new StageFlow();
 
-    // Preloading
-    ClientLevel.prototype.generateLevelCache();
-};
-
-XSS.check = window.setInterval(function() {
-    if (document.readyState === 'complete') {
-        window.clearInterval(XSS.check);
-        window.setTimeout(XSS.main, 50);
-    }
-}, 50);
+}, false);

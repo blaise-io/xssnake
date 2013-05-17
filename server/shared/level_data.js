@@ -5,8 +5,7 @@
  * @param {ImageData} imagedata
  * @constructor
  */
-function LevelParser(imagedata) {
-    this.imagedata = imagedata.data;
+function LevelData(imagedata) {
     this.width = imagedata.width;
     this.height = imagedata.height;
 
@@ -15,16 +14,18 @@ function LevelParser(imagedata) {
     this.unreachables = [];
     this.walls = [];
 
-    this._parseImagedata();
+    this._parseImagedata(imagedata.data);
 }
 
-module.exports = LevelParser;
+module.exports = LevelData;
 
-LevelParser.prototype = {
+LevelData.prototype = {
 
-    _parseImagedata: function() {
-        var imagedata = this.imagedata;
-
+    /**
+     * @param {Object} imagedata
+     * @private
+     */
+    _parseImagedata: function(imagedata) {
         for (var i = 0, m = imagedata.length / 4; i < m; i++) {
             var rgb = [], location = this._seqToXY(i);
             for (var ii = 0; ii < 3; ii++) {
@@ -36,13 +37,6 @@ LevelParser.prototype = {
         this._detectMissingSpawns();
         this._processDirections();
         this._detectMissingDirections();
-
-        this.imagedata = null;
-    },
-
-    _addTo: function(obj, x, y) {
-        obj[y] = obj[y] || [];
-        obj[y].push(x);
     },
 
     _handleColor: function(rgb, x, y) {
@@ -82,6 +76,29 @@ LevelParser.prototype = {
                     'at ' + x + ',' + y
                 );
         }
+    },
+
+    /**
+     * @param {Object} obj
+     * @param {number} x
+     * @param {number} y
+     * @private
+     */
+    _addTo: function(obj, x, y) {
+        obj[y] = obj[y] || [];
+        obj[y].push(x);
+    },
+
+    /**
+     * @param {number} seq
+     * @returns {Array.<number>}
+     * @private
+     */
+    _seqToXY: function(seq) {
+        return [
+            seq % this.width,
+            Math.floor(seq / this.width)
+        ];
     },
 
     _detectMissingSpawns: function() {
@@ -125,13 +142,6 @@ LevelParser.prototype = {
         }
 
         this.directions = directions;
-    },
-
-    _seqToXY: function(seq) {
-        return [
-            seq % this.width,
-            Math.floor(seq / this.width)
-        ];
     }
 
 };

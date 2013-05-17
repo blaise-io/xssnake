@@ -145,9 +145,9 @@ Dialog.prototype = {
      * @private
      */
     _getAreaHeight: function() {
-        var height = XSS.HEIGHT;
-        if (this._isIngame() && XSS.levelCache[0]) {
-            height = XSS.levelCache[0].height * XSS.GAME_TILE;
+        var height = XSS.HEIGHT, level = XSS.level.levelData(0);
+        if (this._isIngame() && level) {
+            height = level.height * XSS.GAME_TILE;
         }
         return height;
     },

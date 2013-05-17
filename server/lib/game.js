@@ -13,14 +13,14 @@ var map = require('../shared/map.js');
 
 /**
  * @param {Room} room
- * @param {number} level
+ * @param {number} levelID
  * @constructor
  */
-function Game(room, level) {
+function Game(room, levelID) {
     this.room = room;
     this.server = room.server;
 
-    this.level = new Level(level, this.server.levels);
+    this.level = new Level(this.server.levels[levelID]);
     this.spawner = new Spawner(this);
     this.options = this.room.options;
 

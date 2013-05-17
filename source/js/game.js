@@ -1,11 +1,11 @@
 /*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, ClientSnake, ClientLevel, Dialog, Shape, Spawnable */
+/*globals XSS, ClientSnake, Level, Dialog, Shape, Spawnable */
 'use strict';
 
 /***
  * Game
- * @param {number} levelID
  * @param {number} index
+ * @param {number} levelID
  * @param {Array.<string>} names
  * @constructor
  */
@@ -28,6 +28,7 @@ function Game(index, levelID, names) {
 
     /** @type {Array.<Spawnable>} */
     this.spawnables = [];
+
 
     this._bindEvents();
 }
@@ -97,7 +98,7 @@ Game.prototype = {
     countdown: function() {
         var from, body, settings, dialog, updateShape, timer;
 
-        XSS.room._unbindKeys();
+        XSS.room.unbindKeys();
 
         from = XSS.config.TIME_COUNTDOWN_FROM;
         body = 'Game starting in: %d';
@@ -190,12 +191,14 @@ Game.prototype = {
 
     /**
      * @param {number} levelID
-     * @return {ClientLevel}
+     * @return {Level}
      * @private
      */
     _setupLevel: function(levelID) {
-        var border, level = new ClientLevel(levelID);
-        XSS.shapes.level = level.getShape();
+        var data, border;
+
+        data = XSS.level.levelData(levelID);
+        XSS.shapes.level = XSS.shapegen.level(data);
 
         border = XSS.shapegen.outerBorder();
         for (var k in border) {
@@ -204,7 +207,7 @@ Game.prototype = {
             }
         }
 
-        return level;
+        return new Level(data);
     },
 
     /**

@@ -22,12 +22,16 @@ Room.prototype = {
 
     destruct: function() {
         XSS.pubsub.off(XSS.events.ROOM_INDEX, XSS.NS_ROOM);
-        this._unbindKeys();
+        this.unbindKeys();
         if (this.players) {
             this.game.destruct();
             this.score.destruct();
             this.chat.destruct();
         }
+    },
+
+    unbindKeys: function() {
+        XSS.off.keydown(this._bindKeysBound);
     },
 
     /**
@@ -81,13 +85,6 @@ Room.prototype = {
      */
     _initRoom: function(data) {
         this.update.apply(this, data);
-    },
-
-    /**
-     * @private
-     */
-    _unbindKeys: function() {
-        XSS.off.keydown(this._bindKeysBound);
     },
 
     /**

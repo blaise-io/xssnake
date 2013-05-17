@@ -65,7 +65,7 @@ XSS.util.extend(XSS.util, {
          * @return {*}
          */
         keydown: function(listener) {
-            return XSS.doc.addEventListener('keydown', listener, false);
+            return document.addEventListener('keydown', listener, false);
         },
 
         /**
@@ -73,7 +73,7 @@ XSS.util.extend(XSS.util, {
          * @return {*}
          */
         keyup: function(listener) {
-            return XSS.doc.addEventListener('keyup', listener, false);
+            return document.addEventListener('keyup', listener, false);
         }
     },
 
@@ -83,7 +83,7 @@ XSS.util.extend(XSS.util, {
          * @return {*}
          */
         keydown: function(listener) {
-            return XSS.doc.removeEventListener('keydown', listener, false);
+            return document.removeEventListener('keydown', listener, false);
         },
 
         /**
@@ -91,7 +91,7 @@ XSS.util.extend(XSS.util, {
          * @return {*}
          */
         keyup: function(listener) {
-            return XSS.doc.removeEventListener('keyup', listener, false);
+            return document.removeEventListener('keyup', listener, false);
         }
     },
 

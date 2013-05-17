@@ -8,15 +8,12 @@
  * @constructor
  */
 function StageFlow(stageRef) {
-    stageRef = stageRef || XSS.stages.main;
-
-    XSS.shapes = {};
-
-    this._prevStages.push(stageRef);
-    this._bindGlobalKeys();
-
-    this.setupMenuSkeletton();
-    this.newStage(stageRef);
+    this._prevStages.push(stageRef || XSS.stages.main);
+    if (XSS.font.loaded) {
+        this.initUI();
+    } else {
+        XSS.pubsub.once(XSS.PUB_FONT_LOAD, XSS.NS_FLOW, this.initUI.bind(this));
+    }
 }
 
 StageFlow.prototype = {
@@ -32,6 +29,13 @@ StageFlow.prototype = {
             XSS.socket.connection.close();
         }
         XSS.off.keydown(this._handleKeysBound);
+    },
+
+    initUI: function() {
+        XSS.shapes = {};
+        this._bindGlobalKeys();
+        this.setupMenuSkeletton();
+        this.newStage(this._prevStages[0]);
     },
 
     /**

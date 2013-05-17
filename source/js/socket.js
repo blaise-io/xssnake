@@ -19,8 +19,8 @@ Socket.prototype = {
 
     destruct: function() {
         var events = XSS.events, ns = XSS.NS_SOCKET;
-        XSS.pubsub.on(events.PING, ns);
-        XSS.pubsub.on(events.COMBI, ns);
+        XSS.pubsub.off(events.PING, ns);
+        XSS.pubsub.off(events.COMBI, ns);
         if (this.connection.readyState <= 1) {
             this.connection.close();
         }

@@ -7,12 +7,12 @@
  * @constructor
  */
 function Canvas() {
-    var scheme = XSS.util.storage(XSS.STORAGE_SCHEME);
+    var color = XSS.util.storage(XSS.STORAGE_COLOR);
 
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setScheme(XSS.schemes[scheme] || XSS.schemes[0]);
+    this.setColor(XSS.colors[color] || XSS.colors[0]);
 
     if (!window.requestAnimationFrame) {
         this._vendorRequestAnimationFrame();
@@ -38,13 +38,13 @@ Canvas.GHOSTING = 0.6;
 Canvas.prototype = {
 
     /**
-     * @param {Object} scheme
+     * @param {Object} color
      */
-    setScheme: function(scheme) {
-        this.scheme = scheme;
+    setColor: function(color) {
+        this.color = color;
         this._setCanvasDimensions();
         this._setPatterns();
-        this._clearShapeCache();
+        this.flushShapeCache();
     },
 
     /**
@@ -61,14 +61,6 @@ Canvas.prototype = {
         this._paintShapes(delta, XSS.shapes);
     },
 
-    _clear: function() {
-        this.ctx.save();
-        this.ctx.fillStyle = this.tileOff;
-        this.ctx.globalAlpha = 1 - Canvas.GHOSTING;
-        this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        this.ctx.restore();
-    },
-
     /**
      * Remove all nulled shapes. We don't delete shapes immediately
      * because this triggers a slow garbage collection during gameplay,
@@ -81,6 +73,23 @@ Canvas.prototype = {
                 delete shapes[k];
             }
         }
+    },
+
+    flushShapeCache: function() {
+        var shapes = XSS.shapes;
+        for (var k in shapes) {
+            if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
+                shapes[k].uncache();
+            }
+        }
+    },
+
+    _clear: function() {
+        this.ctx.save();
+        this.ctx.fillStyle = this.tileOff;
+        this.ctx.globalAlpha = 1 - Canvas.GHOSTING;
+        this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.restore();
     },
 
     /**
@@ -282,18 +291,6 @@ Canvas.prototype = {
         );
     },
 
-    /**
-     * @private
-     */
-    _clearShapeCache: function() {
-        var shapes = XSS.shapes;
-        for (var k in shapes) {
-            if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
-                shapes[k].uncache();
-            }
-        }
-    },
-
     /** @private */
     _setCanvasDimensions: function() {
         this.tileSize = this._getTileSize();
@@ -323,7 +320,7 @@ Canvas.prototype = {
         if (e) {
             this._setCanvasDimensions();
             this._setPatterns();
-            this._clearShapeCache();
+            this.flushShapeCache();
         }
 
         windowCenter = window.innerWidth / 2;
@@ -348,18 +345,18 @@ Canvas.prototype = {
 
         getTile = function(color) {
             var context = canvas.getContext('2d');
-            context.fillStyle = this.scheme.bg;
+            context.fillStyle = this.color.bg;
             context.fillRect(0, 0, this.tileSize, this.tileSize);
             context.fillStyle = color;
             context.fillRect(0, 0, this.pixelSize, this.pixelSize);
             return this.ctx.createPattern(canvas, 'repeat');
         }.bind(this);
 
-        this.tileOn = getTile(this.scheme.on);
-        this.tileOff = getTile(this.scheme.off);
+        this.tileOn = getTile(this.color.on);
+        this.tileOff = getTile(this.color.off);
 
         backgroundImage = ' url(' + canvas.toDataURL('image/png') + ')';
-        XSS.doc.style.background = this.scheme.bg + backgroundImage;
+        document.body.style.background = this.color.bg + backgroundImage;
     },
 
     /**
@@ -368,7 +365,7 @@ Canvas.prototype = {
      */
     _setupCanvas: function() {
         var canvas = document.createElement('canvas');
-        XSS.doc.appendChild(canvas);
+        document.body.appendChild(canvas);
         return canvas;
     },
 

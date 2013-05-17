@@ -196,7 +196,8 @@ Chat.prototype = {
     },
 
     _sentIndication: function() {
-        var shape = XSS.font.shape(XSS.UC_ENTER_KEY, XSS.WIDTH - 8, XSS.HEIGHT - 10);
+        var shape, x = XSS.WIDTH - XSS.font.width(XSS.UC_ENTER_KEY) - 2;
+        shape = XSS.font.shape(XSS.UC_ENTER_KEY, x, XSS.HEIGHT - 10);
         shape.flash(150, 150).lifetime(0, 150 * 3);
         XSS.shapes.msgsent = shape;
     },

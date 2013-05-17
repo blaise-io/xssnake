@@ -197,6 +197,20 @@ ShapeGenerator.prototype = {
     },
 
     /**
+     * @param {LevelData} data
+     * @returns {Shape}
+     */
+    level: function(data) {
+        var shape, walls;
+
+        walls = new ShapePixels(data.walls);
+        shape = new Shape(XSS.transform.zoomGame(walls));
+        shape.add(XSS.shapegen.innerBorder().pixels);
+
+        return shape;
+    },
+
+    /**
      * @return {Shape}
      */
     header: function() {

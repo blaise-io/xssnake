@@ -38,6 +38,7 @@
 
 /** @const */ XSS.HASH_ROOM = 'room';
 
+/** @const */ XSS.NS_FLOW = 'FLW';
 /** @const */ XSS.NS_SCORE = 'SCR';
 /** @const */ XSS.NS_CHAT = 'CHT';
 /** @const */ XSS.NS_GAME = 'GAM';
@@ -47,18 +48,20 @@
 /** @const */ XSS.NS_SPAWN = 'SPW';
 /** @const */ XSS.NS_STAGES = 'STG';
 
-/** @const */ XSS.PUB_GAME_TICK = 'GAME_TICK';
-/** @const */ XSS.PUB_FOCUS_CHANGE = 'FOCUS_CHANGE';
+/** @const */ XSS.PUB_GAME_TICK = 'TIK';
+/** @const */ XSS.PUB_FOCUS_CHANGE = 'FCH';
+/** @const */ XSS.PUB_FONT_LOAD = 'FLD';
 
-/** @const */ XSS.STORAGE_MUTE = 'MUTE';
-/** @const */ XSS.STORAGE_NAME = 'NAME';
-/** @const */ XSS.STORAGE_SCHEME = 'SCHEME';
+/** @const */ XSS.STORAGE_MUTE = 'MUT';
+/** @const */ XSS.STORAGE_NAME = 'NME';
+/** @const */ XSS.STORAGE_COLOR = 'CLR';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';
 /** @const */ XSS.UC_ARR_UP = '\u2191';
 /** @const */ XSS.UC_ARR_RIGHT = '\u2192';
 /** @const */ XSS.UC_ARR_DOWN = '\u2193';
 /** @const */ XSS.UC_ELECTRIC = '\u2301';
+/** @const */ XSS.UC_HOURGLASS = '\u231B';
 /** @const */ XSS.UC_ENTER_KEY = '\u23ce';
 /** @const */ XSS.UC_SQUARE = '\u25a0';
 /** @const */ XSS.UC_TR_LEFT = '\u25c0';

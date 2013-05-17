@@ -9,6 +9,7 @@
  */
 function Font() {
     this._ctx = this._getContext();
+    this._detectFontLoad();
 }
 
 /** @const */ Font.MAX_WIDTH = 9;
@@ -99,6 +100,19 @@ Font.prototype = {
      */
     endPos: function(str) {
         return [this.width(str), this.height(str) - Font.LINE_HEIGHT];
+    },
+
+    /**
+     * @private
+     */
+    _detectFontLoad: function() {
+        var props = this._getChrProperties(XSS.UC_HOURGLASS);
+        if (props.width !== 8) {
+            window.setTimeout(this._detectFontLoad.bind(this), 0);
+        } else {
+            this.loaded = true;
+            XSS.pubsub.publish(XSS.PUB_FONT_LOAD);
+        }
     },
 
     /**
