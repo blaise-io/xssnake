@@ -125,7 +125,7 @@ Powerup.prototype = {
             index = this._clientIndex(),
             snake = this.client.snake;
         snake.speed -= 15;
-        room.buffer(events.SNAKE_SPEED, [index, snake.speed]);
+        room.buffer(events.GAME_SNAKE_SPEED, [index, snake.speed]);
         room.buffer(events.GAME_SNAKE_ACTION, [index, '+Speed']).flush();
     },
 
@@ -158,7 +158,7 @@ Powerup.prototype = {
             var index = clients[i].index,
                 snake = clients[i].snake;
             snake.speed += delta;
-            room.buffer(events.SNAKE_SPEED, [index, snake.speed]);
+            room.buffer(events.GAME_SNAKE_SPEED, [index, snake.speed]);
             room.buffer(events.GAME_SNAKE_ACTION, [index, label]);
         }
         room.flush();
@@ -168,7 +168,7 @@ Powerup.prototype = {
                 var index = clients[i].index,
                     snake = clients[i].snake;
                 snake.speed -= delta;
-                room.buffer(events.SNAKE_SPEED, [index, snake.speed]);
+                room.buffer(events.GAME_SNAKE_SPEED, [index, snake.speed]);
             }
             room.flush();
         });

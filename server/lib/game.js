@@ -59,9 +59,9 @@ Game.prototype = {
         this.server.pubsub.on('tick', this._tickBound);
 
         var respawnAfter = config.TIME_RESPAWN_APPLE * 1000;
-        this.spawner.spawn(null, map.SPAWN_APPLE, true, respawnAfter);
+        this.spawner.spawn(map.SPAWN_APPLE, undefined, true, respawnAfter);
 
-        if (this.options.powerups) {
+        if (this.options[map.FIELD.POWERUPS]) {
             this._delaySpawnPowerup();
         }
     },
@@ -165,20 +165,19 @@ Game.prototype = {
     },
 
     /**
-     * Spawns a sent as separate messages.
+     * Send all apples and powerups
      * @param client
      */
     emitSpawns: function(client) {
         var spawner = this.spawner,
-            spawns = spawner.spawns,
-            data = [];
+            spawns = spawner.spawns;
         for (var i = 0, m = spawns.length; i < m; i++) {
             var spawn = spawns[i];
             if (null !== spawn) {
-                data.push([spawner.EVENTS[spawn.type], [i, spawn.location]]);
+                client.buffer(events.GAME_SPAWN, [i, spawn.type, spawn.location]);
             }
         }
-        client.emit(events.COMBI, data);
+        client.flush();
     },
 
     /**
@@ -240,7 +239,7 @@ Game.prototype = {
         range = config.TIME_SPAWN_POWERUP;
         delay = Util.randomBetween(range[0] * 1000, range[1] * 1000);
         timer = setTimeout(function() {
-            this.spawner.spawn(this.spawner.POWERUP);
+            this.spawner.spawn(this.map.SPAWN_POWERUP);
             this._delaySpawnPowerup();
         }.bind(this), delay);
         this.timers.push(timer);

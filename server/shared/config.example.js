@@ -7,6 +7,8 @@ module.exports = {
     SERVER_ENDPOINT    : 'http://localhost/xssnake',
 
     ROOM_CAPACITY      : 6,
+    ROOM_ROUNDS        : 3,
+    ROOM_WIN_BY_MIN    : 2,
 
     TIME_GLOAT         : 5,
     TIME_COUNTDOWN_FROM: 3,

@@ -102,8 +102,8 @@ EventHandler.prototype = {
      * @private
      */
     _roomStart: function() {
-        var room = this._clientRoom(this.client);
-        if (room.isHost(this.client) && !room.round && room.clients.length > 1) {
+        var client = this.client, room = client.room;
+        if (room.isHost(client) && !room.round && room.clients.length > 1) {
             room.game.countdown();
         }
     },

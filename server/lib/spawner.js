@@ -28,12 +28,12 @@ Spawner.prototype = {
 
     /**
      * @param {number} type
-     * @param {number|null=} index
+     * @param {number=} index
      * @param {boolean=} respawn
      * @param {number=} respawnAfter
      * @return {Object}
      */
-    spawn: function(index, type, respawn, respawnAfter) {
+    spawn: function(type, index, respawn, respawnAfter) {
         var spawn = {
             location    : this.game.getEmptyLocation(),
             type        : type,
@@ -46,7 +46,7 @@ Spawner.prototype = {
         if (respawnAfter) {
             spawn.timer = setTimeout(function() {
                 this._destructSpawn(index);
-                this.spawn(index, type, respawn, respawnAfter);
+                this.spawn(type, index, respawn, respawnAfter);
             }.bind(this), respawnAfter);
         }
 
@@ -76,7 +76,7 @@ Spawner.prototype = {
 
         if (spawn.respawn) {
             this._destructSpawn(index);
-            this.spawn(index, spawn.type, true, spawn.respawnAfter);
+            this.spawn(spawn.type, index, true, spawn.respawnAfter);
         } else {
             this._destructSpawn(index);
         }

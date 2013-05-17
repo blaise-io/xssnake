@@ -56,7 +56,7 @@ Server.prototype = {
     },
 
     /**
-     * @return {nodeEvents.EventEmitter}
+     * @return {EventEmitter}
      */
     setupPubSub: function() {
         var emitter, tick;

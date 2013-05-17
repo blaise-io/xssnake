@@ -72,7 +72,7 @@ Client.prototype = {
      * Buffer events to be sent later using flush()
      * @param {string} type
      * @param {*} data
-     * @return {Room}
+     * @return {Client}
      */
     buffer: function(type, data) {
         this._buffer.push([type, data]);
@@ -81,7 +81,7 @@ Client.prototype = {
 
     /**
      * Send buffer
-     * @return {Room}
+     * @return {Client}
      */
     flush: function() {
         this.emit(events.COMBI, this._buffer);

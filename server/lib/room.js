@@ -287,7 +287,7 @@ Room.prototype = {
         if (clients) {
             for (var i = 0, m = clients.length; i < m; i++) {
                 this.clients.splice(clients[i].index, 1);
-                this.clients.updateIndices();
+                this.updateIndices();
                 this.server.removeClient(clients[i]);
             }
         }

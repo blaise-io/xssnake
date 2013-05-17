@@ -17,9 +17,6 @@ var util = {
     "inherits": function () {}
 };
 
-var nodeEvents = {
-    "EventEmitter": function() {}
-};
 
 /** @constructor */
 var EventEmitter = function() {};
@@ -75,6 +72,12 @@ EventEmitter.prototype.listeners = function(eventType) {};
  * @return {boolean} true if there was at least one handler for the event;
  */
 EventEmitter.prototype.emit = function(eventType, var_args) {};
+
+var nodeEvents = {};
+
+/** @typedef {EventEmitter} */
+nodeEvents.EventEmitter;
+
 
 var http = {};
 
