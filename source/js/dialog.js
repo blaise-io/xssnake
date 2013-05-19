@@ -161,7 +161,7 @@ Dialog.prototype = {
      * @private
      */
     _getContentWidth: function() {
-        return Math.max(this.width, XSS.font.width(this._header) * 2);
+        return Math.max(this.width, -2 + XSS.font.width(this._header) * 2);
     },
 
     /**
