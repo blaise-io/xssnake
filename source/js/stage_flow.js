@@ -26,9 +26,17 @@ StageFlow.prototype = {
 
     destruct: function() {
         if (XSS.socket) {
-            XSS.socket.connection.close();
+            XSS.socket.destruct();
         }
+        this._prevStages = [];
         XSS.off.keydown(this._handleKeysBound);
+    },
+
+    restart: function() {
+        XSS.socket.destruct();
+        this.destruct();
+        this._prevStages = [XSS.stages.main];
+        this.initUI();
     },
 
     initUI: function() {

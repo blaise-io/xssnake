@@ -2,12 +2,11 @@
 /*globals XSS*/
 'use strict';
 
-// Event keys are hard-coded and unique.
 module.exports = {
 
+    COMBI            : 'COMBI',
     CHAT_NOTICE      : 'CHAT_NOTICE',
     CHAT_MESSAGE     : 'CHAT_MESSAGE',
-    COMBI            : 'COMBI',
     GAME_COUNTDOWN   : 'GAME_COUNTDOWN',
     GAME_START       : 'GAME_START',
     GAME_STATE       : 'GAME_STATE',
@@ -16,11 +15,12 @@ module.exports = {
     ROOM_JOIN        : 'ROOM_JOIN',
     ROOM_MATCH       : 'ROOM_MATCH',
     ROOM_INDEX       : 'ROOM_INDEX',
+    ROOM_LEAVE        : 'ROOM_LEAVE',
     ROOM_START       : 'ROOM_START',
     ROOM_STATUS      : 'ROOM_STATUS',
     SCORE_UPDATE     : 'SCORE_UPDATE',
     GAME_SPAWN       : 'GAME_SPAWN',
-    GAME_SPAWN_HIT   : 'GAME_SPAWN_HIT',
+    GAME_DESPAWN     : 'GAME_DESPAWN',
     GAME_SNAKE_ACTION: 'GAME_SNAKE_ACTION',
     GAME_SNAKE_CRASH : 'GAME_SNAKE_CRASH',
     GAME_SNAKE_SIZE  : 'GAME_SNAKE_SIZE',

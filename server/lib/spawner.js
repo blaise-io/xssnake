@@ -34,8 +34,10 @@ Spawner.prototype = {
      * @return {Object}
      */
     spawn: function(type, index, respawn, respawnAfter) {
-        var spawn = {
-            location    : this.game.getEmptyLocation(),
+        var spawn, game = this.game;
+
+        spawn = {
+            location    : game.getEmptyLocation(),
             type        : type,
             respawn     : !!respawn,
             respawnAfter: respawnAfter
@@ -53,7 +55,7 @@ Spawner.prototype = {
         this.spawns[index] = spawn;
         this.locations[index] = spawn.location;
 
-        this.game.room.emit(events.GAME_SPAWN, [index, type, spawn.location]);
+        game.room.emit(events.GAME_SPAWN, [type, index, spawn.location]);
 
         return spawn;
     },

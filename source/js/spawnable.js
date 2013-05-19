@@ -3,12 +3,12 @@
 'use strict';
 
 /**
- * @param {number} index
  * @param {number} type
+ * @param {number} index
  * @param {Array.<number>} location
  * @constructor
  */
-function Spawnable(index, type, location) {
+function Spawnable(type, index, location) {
     this.type = type;
     this.x = location[0] * XSS.GAME_TILE + XSS.GAME_LEFT;
     this.y = location[1] * XSS.GAME_TILE + XSS.GAME_TOP;

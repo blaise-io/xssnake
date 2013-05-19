@@ -355,8 +355,7 @@ GameStage.prototype = {
                 'LEAVING GAME',
                 'Are you sure you want to leave this game?', {
                     ok: function() {
-                        XSS.flow.destruct();
-                        XSS.flow = new StageFlow();
+                        XSS.flow.restart();
                     }
                 }
             );

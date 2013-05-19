@@ -47,7 +47,7 @@ Game.prototype = {
     countdown: function() {
         var delay = config.TIME_COUNTDOWN_FROM * 1000;
         this.timers.push(setTimeout(this.start.bind(this), delay));
-        this.room.emit(events.GAME_COUNTDOWN, null);
+        this.room.emit(events.GAME_COUNTDOWN);
         this._setupClients();
     },
 
@@ -191,8 +191,8 @@ Game.prototype = {
         size = client.snake.size += 3;
         score = ++this.room.points[clientIndex];
 
-        this.room.buffer(events.GAME_SPAWN_HIT, index);
-        this.room.buffer(events.GAME_SNAKE_SIZE, [index, clientIndex, size]);
+        this.room.buffer(events.GAME_DESPAWN, index);
+        this.room.buffer(events.GAME_SNAKE_SIZE, [clientIndex, size]);
         this.room.buffer(events.GAME_SNAKE_ACTION, [clientIndex, 'Nom']);
         this.room.buffer(events.SCORE_UPDATE, [clientIndex, score]);
         this.room.flush();
@@ -203,7 +203,7 @@ Game.prototype = {
      * @param {number} index
      */
     hitPowerup: function(client, index) {
-        this.room.emit(events.GAME_SPAWN_HIT, [index]);
+        this.room.emit(events.GAME_DESPAWN, index);
         return new Powerup(this, client);
     },
 
@@ -239,7 +239,7 @@ Game.prototype = {
         range = config.TIME_SPAWN_POWERUP;
         delay = Util.randomBetween(range[0] * 1000, range[1] * 1000);
         timer = setTimeout(function() {
-            this.spawner.spawn(this.map.SPAWN_POWERUP);
+            this.spawner.spawn(map.SPAWN_POWERUP);
             this._delaySpawnPowerup();
         }.bind(this), delay);
         this.timers.push(timer);

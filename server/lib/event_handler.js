@@ -5,20 +5,17 @@ var events = require('../shared/events.js');
 var map = require('../shared/map.js');
 
 /**
- * @param {Server} server
  * @param {Client} client
- * @param {Object} connection
  * @constructor
  */
-function EventHandler(server, client, connection) {
-    this.server = server;
+function EventHandler(client) {
     this.client = client;
 
     this._pingHeartBeat();
-    this._bindIncomingEvents();
+    this._map = this._getMap();
 
-    connection.on('data', this._handleMessage.bind(this));
-    connection.on('close', this._disconnect.bind(this));
+    client.connection.on('data', this._handleMessage.bind(this));
+    client.connection.on('close', this._disconnect.bind(this));
 }
 
 module.exports = EventHandler;
@@ -26,43 +23,40 @@ module.exports = EventHandler;
 EventHandler.prototype = {
 
     destruct: function() {
+        console.log('-- CLIENT DESTROY --', this.client.id);
+        this.client.connection.on('data', function(){});
         clearInterval(this._pingInterval);
-
-        var bound = this.bound;
-        for (var k in bound) {
-            if (bound.hasOwnProperty(k)) {
-                this.server.pubsub.removeListener(k, bound[k]);
-            }
-        }
-
-        this.server = null;
-        this.client = null;
-    },
-
-    _handleMessage: function(message) {
-        message = JSON.parse(message);
-        this.server.pubsub.emit(message[0], message[1], this.client);
+        delete this.client;
     },
 
     /**
      * @private
      */
-    _bindIncomingEvents: function() {
-        var pubsub = this.server.pubsub;
+    _handleMessage: function(message) {
+        message = JSON.parse(message);
+        this.client.server.pubsub.emit(message[0], message[1], this.client);
+        this._handlePrivateEvent(message[0], message[1]);
+    },
 
-        this.bound = {
-            pong       : this._pong.bind(this),
-            roomStart  : this._roomStart.bind(this),
-            chat       : this._chat.bind(this),
-            snakeUpdate: this._snakeUpdate.bind(this),
-            gameState  : this._gameState.bind(this)
-        };
+    _getMap: function() {
+        var map = {};
+        map[events.PONG] = this._pong.bind(this);
+        map[events.ROOM_START] = this._roomStart.bind(this);
+        map[events.CHAT_MESSAGE] = this._chat.bind(this);
+        map[events.GAME_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
+        map[events.GAME_STATE] = this._gameState.bind(this);
+        return map;
+    },
 
-        pubsub.on(events.PONG,              this.bound.pong);
-        pubsub.on(events.ROOM_START,        this.bound.roomStart);
-        pubsub.on(events.CHAT_MESSAGE,      this.bound.chat);
-        pubsub.on(events.GAME_SNAKE_UPDATE, this.bound.snakeUpdate);
-        pubsub.on(events.GAME_STATE,        this.bound.gameState);
+    /**
+     * @private
+     */
+    _handlePrivateEvent: function(event, data) {
+        var map = this._map;
+
+        if (map[event]) {
+            map[event](data);
+        }
     },
 
     /**
@@ -71,7 +65,7 @@ EventHandler.prototype = {
     _pingHeartBeat: function() {
         this._pingInterval = setInterval(function() {
             this.client.emit(events.PING, +new Date());
-        }.bind(this), 1000);
+        }.bind(this), 2000);
     },
 
     /**
@@ -94,7 +88,7 @@ EventHandler.prototype = {
             // gracefully.
             room.disconnect(client);
         } else {
-            this.server.removeClient(client);
+            this.client.server.removeClient(client);
         }
     },
 

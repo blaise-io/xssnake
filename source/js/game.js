@@ -29,7 +29,6 @@ function Game(index, levelID, names) {
     /** @type {Array.<Spawnable>} */
     this.spawnables = [];
 
-
     this._bindEvents();
 }
 
@@ -96,15 +95,14 @@ Game.prototype = {
     },
 
     countdown: function() {
-        var from, body, settings, dialog, updateShape, timer;
+        var from, body, dialog, updateShape, timer;
 
         XSS.room.unbindKeys();
 
         from = XSS.config.TIME_COUNTDOWN_FROM;
         body = 'Game starting in: %d';
-        settings = {blockKeys: false};
 
-        dialog = new Dialog('GET READY!', body.replace('%d', from), settings);
+        dialog = new Dialog('GET READY!', body.replace('%d', from));
 
         updateShape = function() {
             if (--from > 0) {
@@ -123,7 +121,7 @@ Game.prototype = {
         pubsub.on(events.GAME_COUNTDOWN,    ns, this.countdown.bind(this));
         pubsub.on(events.GAME_START,        ns, this.start.bind(this));
         pubsub.on(events.GAME_SPAWN,        ns, this._evSpawn.bind(this));
-        pubsub.on(events.GAME_SPAWN_HIT,    ns, this._evSpawnHit.bind(this));
+        pubsub.on(events.GAME_DESPAWN,      ns, this._evSpawnHit.bind(this));
         pubsub.on(events.GAME_SNAKE_UPDATE, ns, this._evSnakeUpdate.bind(this));
         pubsub.on(events.GAME_SNAKE_SIZE,   ns, this._evSnakeSize.bind(this));
         pubsub.on(events.GAME_SNAKE_CRASH,  ns, this._evSnakeCrash.bind(this));
@@ -132,21 +130,19 @@ Game.prototype = {
     },
 
     _evSpawn: function(data) {
-        var spawn, index = data[0], type = data[1];
-        spawn = new Spawnable(index, type, data[2]);
+        var spawn, type = data[0], index = data[1];
+        spawn = new Spawnable(type, index, data[2]);
         this.spawnables[index] = spawn;
     },
 
 
     /**
-     * @param {Array} data
+     * @param {number} index
      */
-    _evSpawnHit: function(data) {
-        this.spawnables[data[0]].destruct();
-        this.spawnables[data[0]] = null;
-        if (data.length === 3) {
-            this.snakes[data[1]].size = data[2];
-        }
+    _evSpawnHit: function(index) {
+        var spawnable = this.spawnables[index];
+        spawnable.destruct();
+        spawnable[index] = null;
     },
 
     /**

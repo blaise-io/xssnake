@@ -3,7 +3,7 @@
 'use strict';
 
 /** @typedef {{
-     blockKeys: (boolean|undefined),
+     keysBlocked: (boolean|undefined),
      type: (number|undefined),
      width: (number|undefined),
      ok: (Function|undefined),
@@ -27,18 +27,10 @@ function Dialog(header, body, settings) {
     this.width = settings.width || Dialog.MIN_WIDTH;
     this.okCallback = settings.ok || function() {};
     this.cancelCallback = settings.cancel || function() {};
+    this.keysBlocked = (typeof settings.keysBlocked === 'undefined') ?
+        true : settings.keysBlocked;
 
-    XSS.keysBlocked = (typeof settings.blockKeys === 'undefined') ?
-        true : settings.blockKeys;
-
-    if (this.type === Dialog.TYPE.ALERT) {
-        this._okSelected = true;
-        this._bindEvents();
-    } else if (this.type === Dialog.TYPE.CONFIRM) {
-        this._okSelected = false;
-        this._bindEvents();
-    }
-
+    this._bindEvents();
     this._updateShape();
     // TODO: Play a bubble sound
 }
@@ -60,6 +52,11 @@ Dialog.prototype = {
         XSS.shapes.dialog = null;
         XSS.keysBlocked = false;
         XSS.off.keydown(this._handleKeysBound);
+    },
+
+    restore: function() {
+        this._bindEvents();
+        this._updateShape();
     },
 
     ok: function() {
@@ -94,8 +91,15 @@ Dialog.prototype = {
      * @private
      */
     _bindEvents: function() {
+        XSS.keysBlocked = this.keysBlocked;
         this._handleKeysBound = this._handleKeys.bind(this);
-        XSS.on.keydown(this._handleKeysBound);
+        if (this.type === Dialog.TYPE.ALERT) {
+            this._okSelected = true;
+            XSS.on.keydown(this._handleKeysBound);
+        } else if (this.type === Dialog.TYPE.CONFIRM) {
+            this._okSelected = false;
+            XSS.on.keydown(this._handleKeysBound);
+        }
     },
 
     /**

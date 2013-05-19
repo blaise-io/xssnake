@@ -8,10 +8,11 @@
  * @constructor
  */
 function Socket(callback) {
+    this.callback = callback;
     this._bindEvents();
     this.connection = new SockJS(XSS.config.SERVER_ENDPOINT);
-    this.connection.onopen = callback.bind(this);
-    this.connection.onclose = this.disconnect.bind(this);
+    this.connection.onopen = this._connect.bind(this);
+    this.connection.onclose = this._disconnect.bind(this);
     this.connection.onmessage = this.handleMessage.bind(this);
 }
 
@@ -22,13 +23,32 @@ Socket.prototype = {
         XSS.pubsub.off(events.PING, ns);
         XSS.pubsub.off(events.COMBI, ns);
         if (this.connection.readyState <= 1) {
+            this.connection.onclose = function() {};
             this.connection.close();
+        }
+    },
+
+    _connect: function() {
+        this.connected = true;
+        this.callback();
+    },
+
+    _disconnect: function() {
+        var callback = function() {
+            if (XSS.room) {
+                XSS.room.destruct();
+            }
+        };
+        if (this.connected) {
+            XSS.util.error('CONNECTION LOST', callback);
+        } else {
+            XSS.util.error('CANNOT CONNECT');
         }
     },
 
     /**
      * @param {string} type
-     * @param {*} data
+     * @param {*=} data
      */
     emit: function(type, data) {
         this.connection.send(JSON.stringify([type, data]));
@@ -51,15 +71,6 @@ Socket.prototype = {
         XSS.pubsub.on(events.COMBI, ns, this.combinedEvents.bind(this));
     },
 
-    disconnect: function() {
-        var callback = function() {
-            if (XSS.room) {
-                XSS.room.destruct();
-            }
-        };
-        XSS.util.error('CONNECTION LOST', callback);
-    },
-
     /**
      * @param {number} time
      */
@@ -73,9 +84,7 @@ Socket.prototype = {
      */
     combinedEvents: function(data) {
         for (var i = 0, m = data.length; i < m; i++) {
-            this.handleMessage({
-                data: data[i]
-            });
+            XSS.pubsub.publish(data[i][0], data[i][1]);
         }
     }
 

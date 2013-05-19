@@ -78,17 +78,16 @@ Server.prototype = {
      * @param {number} port
      */
     listen: function(port) {
-        var server, xssnake;
+        var serverXSS, server;
 
-        server = http.createServer();
-        server.listen(port, '0.0.0.0');
-
-        xssnake = sockjs.createServer();
-        xssnake.on('connection', function(conn) {
+        serverXSS = sockjs.createServer();
+        serverXSS.on('connection', function(conn) {
             this.addClient(conn);
         }.bind(this));
 
-        xssnake.installHandlers(server, {prefix: '/xssnake'});
+        server = http.createServer();
+        serverXSS.installHandlers(server, {prefix: '/xssnake'});
+        server.listen(port, '0.0.0.0');
     },
 
     /**

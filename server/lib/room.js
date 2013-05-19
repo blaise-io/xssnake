@@ -42,9 +42,13 @@ Room.RANK = {
 Room.prototype = {
 
     destruct: function() {
-        console.log('destruct', this.key);
-        this.game.destruct();
-        this.game = null;
+        if (this.game) {
+            this.game.destruct();
+            this.game = null;
+        }
+        if (this._disconnected.length) {
+            this._removeDisconnectedClients(this._disconnected);
+        }
         this.clients = [];
         this.points = [];
     },
@@ -133,23 +137,22 @@ Room.prototype = {
     disconnect: function(client) {
         var index = client.index;
 
-        // Leave during game, clean up after round ends
-        if (this.round) {
+        // Wait until round end if user is playing with others.
+        if (this.round && this.clients.length > 1) {
             this.game.clientDisconnect(client);
             this._disconnected.push(client);
-        }
-
-        // Leave before game, clean up immediately
-        else {
+        } else {
             this.clients.splice(index, 1);
+            this.server.removeClient(client);
             this.updateIndices();
             this.emitState();
-            if (!this.clients.length) {
-                this.server.roomManager.remove(this);
-            }
         }
 
-        this.emit(events.CHAT_NOTICE, '{' + index + '} left');
+        if (this.clients.length) {
+            this.emit(events.CHAT_NOTICE, '{' + index + '} left');
+        } else {
+            this.server.roomManager.remove(this);
+        }
     },
 
     nextRound: function() {
@@ -220,7 +223,7 @@ Room.prototype = {
     /**
      * Send data to everyone in the room.
      * @param {string} name
-     * @param {*} data
+     * @param {*=} data
      */
     emit: function(name, data) {
         for (var i = 0, m = this.clients.length; i < m; i++) {

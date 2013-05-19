@@ -43,14 +43,11 @@ XSS.util.extend(XSS.util, {
         exit = function() {
             dialog.destruct();
 
-            XSS.flow.destruct();
-            XSS.socket.destruct();
-
             if (callback) {
                 callback();
             }
 
-            XSS.flow = new StageFlow();
+            XSS.flow.restart();
         };
 
         dialog = new Dialog(str, 'Press ' + XSS.UC_ENTER_KEY + ' to continue', {

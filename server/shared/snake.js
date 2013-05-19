@@ -45,15 +45,6 @@ Snake.prototype = {
         return (this.partIndex(part) > treshold);
     },
 
-//    /**
-//     * @return {Array.<number>}
-//     */
-//    getNextPosition: function() {
-//        var shift, head = this.head();
-//        shift = this.directionToShift(this.direction);
-//        return [head[0] + shift[0], head[1] + shift[1], 'x'];
-//    },
-
     trim: function() {
         while (this.parts.length > this.size) {
             this.parts.shift();

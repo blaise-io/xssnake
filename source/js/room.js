@@ -14,7 +14,6 @@ function Room() {
     this.round = 0;
     this.players = 0;
 
-    this._bindKeys();
     this._bindEvents();
 }
 
@@ -22,7 +21,9 @@ Room.prototype = {
 
     destruct: function() {
         XSS.pubsub.off(XSS.events.ROOM_INDEX, XSS.NS_ROOM);
+        XSS.util.hash(XSS.HASH_ROOM, null);
         this.unbindKeys();
+        this.destructDialog();
         if (this.players) {
             this.game.destruct();
             this.score.destruct();
@@ -32,6 +33,16 @@ Room.prototype = {
 
     unbindKeys: function() {
         XSS.off.keydown(this._bindKeysBound);
+    },
+
+    destructDialog: function() {
+        if (this.dialog) {
+            this.dialog.destruct();
+            this.dialog = null;
+        }
+        if (this.dialog2) {
+            this.dialog2.destruct();
+        }
     },
 
     /**
@@ -75,6 +86,9 @@ Room.prototype = {
      * @private
      */
     _bindEvents: function() {
+        this._bindKeysBound = this._bindKeys.bind(this);
+        XSS.on.keydown(this._bindKeysBound);
+
         var ns = XSS.NS_ROOM;
         XSS.pubsub.on(XSS.events.ROOM_INDEX, ns, this._initRoom.bind(this));
     },
@@ -89,37 +103,74 @@ Room.prototype = {
     /**
      * @private
      */
-    _bindKeys: function() {
-        this._bindKeysBound = this._bindStartKey.bind(this);
-        XSS.on.keydown(this._bindKeysBound);
+    _bindKeys: function(e) {
+        if (XSS.keysBlocked) {
+            return;
+        }
+        switch (e.keyCode) {
+            case XSS.KEY_ESCAPE:
+                this._handleExitKey();
+                break;
+            case XSS.KEY_START:
+                this._handleStartKey();
+                break;
+        }
     },
 
     /**
      * @private
      */
-    _bindStartKey: function(e) {
-        var settings, startKey;
+    _handleExitKey: function() {
+        var settings = {
+            type  : Dialog.TYPE.CONFIRM,
+            ok    : this._leaveRoom.bind(this),
+            cancel: this._restoreDialog.bind(this)
+        };
+        this.dialog.destruct();
+        this.dialog2 = new Dialog(
+            'LEAVING ROOM',
+            'Are you sure?',
+            settings
+        );
+    },
 
-        if (XSS.keysBlocked) {
-            return;
-        }
-
-        settings = {
+    /**
+     * @private
+     */
+    _handleStartKey: function() {
+        var settings = {
             type  : Dialog.TYPE.CONFIRM,
             ok    : function() { XSS.socket.emit(XSS.events.ROOM_START); },
-            cancel: this._updateAwaitingMessage.bind(this)
+            cancel: this._restoreDialog.bind(this)
         };
-
-        startKey = e.keyCode === XSS.KEY_START;
-
-        if (startKey && this.index === 0 && this.players > 1) {
+        
+        if (this.index === 0 && this.players > 1) {
             this.dialog.destruct();
-            this.dialog = new Dialog(
+            this.dialog2 = new Dialog(
                 'ROOM NOT FULL',
                 'You could squeeze in more players. Are you sure you want ' +
-                'to start the game already?',
+                    'to start the game already?',
                 settings
             );
+        }
+    },
+
+    /**
+     * @private
+     */
+    _leaveRoom: function() {
+        this.destruct();
+        XSS.socket.emit(XSS.events.ROOM_LEAVE);
+        XSS.socket.destruct();
+        XSS.flow.restart();
+    },
+
+    /**
+     * @private
+     */
+    _restoreDialog: function() {
+        if (this.dialog) {
+            this.dialog.restore();
         }
     },
 
@@ -136,7 +187,7 @@ Room.prototype = {
         }
 
         this.dialog = new Dialog(header, body, {
-            blockKeys: false
+            keysBlocked: false
         });
     },
 

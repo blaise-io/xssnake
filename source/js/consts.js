@@ -45,7 +45,7 @@
 /** @const */ XSS.NS_ROOM = 'ROM';
 /** @const */ XSS.NS_SOCKET = 'SOK';
 /** @const */ XSS.NS_SNAKE = 'SNK';
-/** @const */ XSS.NS_SPAWN = 'SPW';
+/** @const */ XSS.NS_SPAWN = 'SPN';
 /** @const */ XSS.NS_STAGES = 'STG';
 
 /** @const */ XSS.PUB_GAME_TICK = 'TIK';

@@ -16,7 +16,8 @@ function Client(id, server, connection) {
     this.connection = connection;
 
     /** @type {EventHandler} */
-    this.eventHandler = new EventHandler(this.server, this, connection);
+    this.eventHandler = new EventHandler(this);
+    this._buffer = [];
 
     /** @type {number} */
     this.latency = 0;
@@ -47,7 +48,7 @@ Client.prototype = {
     /**
      * Send data to client
      * @param {string} name
-     * @param {*} data
+     * @param {*=} data
      */
     emit: function(name, data) {
         this.connection.write(JSON.stringify([name, data]));
