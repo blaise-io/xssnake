@@ -38,8 +38,8 @@ Game.prototype = {
     start: function() {
         var pubsub = XSS.pubsub, ns = XSS.NS_GAME;
 
-        pubsub(XSS.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
-        pubsub(XSS.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
+        pubsub.on(XSS.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
+        pubsub.on(XSS.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
