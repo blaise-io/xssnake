@@ -35,7 +35,7 @@ Room.prototype = {
     },
 
     /**
-     * TODO: Split up
+     * TODO: Split up in multiple functions
      * @param {number} index
      * @param {number} capacity
      * @param {number} round
@@ -58,7 +58,6 @@ Room.prototype = {
         this.index = index;
         this.capacity = capacity;
         this.players = names.length;
-        this.localIsHost = (index === 0);
 
         if (this.chat) {
             this.chat.index = index;
@@ -92,16 +91,18 @@ Room.prototype = {
      */
     _bindKeys: function() {
         this._bindKeysBound = this._bindStartKey.bind(this);
-        if (this.localIsHost) {
-            XSS.on.keydown(this._bindKeysBound);
-        }
+        XSS.on.keydown(this._bindKeysBound);
     },
 
     /**
      * @private
      */
     _bindStartKey: function(e) {
-        var settings, isStartKey;
+        var settings, startKey;
+
+        if (XSS.keysBlocked) {
+            return;
+        }
 
         settings = {
             type  : Dialog.TYPE.CONFIRM,
@@ -109,13 +110,14 @@ Room.prototype = {
             cancel: this._updateAwaitingMessage.bind(this)
         };
 
-        isStartKey = e.keyCode === XSS.KEY_START;
+        startKey = e.keyCode === XSS.KEY_START;
 
-        if (!XSS.keysBlocked && this.players > 1 && isStartKey) {
+        if (startKey && this.index === 0 && this.players > 1) {
             this.dialog.destruct();
             this.dialog = new Dialog(
                 'ROOM NOT FULL',
-                'Are you sure you want to start the game already?',
+                'You could squeeze in more players. Are you sure you want ' +
+                'to start the game already?',
                 settings
             );
         }
@@ -129,7 +131,7 @@ Room.prototype = {
         header = 'NEED ' + remaining + ' MORE PLAYER%s...';
         header = header.replace('%s', remaining !== 1 ? 'S' : '');
         body = 'Invite people to this room by sharing the page URL.';
-        if (this.players > 1 && this.localIsHost) {
+        if (this.players > 1 && this.index === 0) {
             body += '\nOr press S to start now.';
         }
 
