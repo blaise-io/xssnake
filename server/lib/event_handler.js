@@ -23,7 +23,6 @@ module.exports = EventHandler;
 EventHandler.prototype = {
 
     destruct: function() {
-        console.log('-- CLIENT DESTROY --', this.client.id);
         this.client.connection.on('data', function(){});
         clearInterval(this._pingInterval);
         delete this.client;
@@ -40,11 +39,11 @@ EventHandler.prototype = {
 
     _getMap: function() {
         var map = {};
-        map[events.PONG] = this._pong.bind(this);
-        map[events.ROOM_START] = this._roomStart.bind(this);
-        map[events.CHAT_MESSAGE] = this._chat.bind(this);
+        map[events.PONG]              = this._pong.bind(this);
+        map[events.ROOM_START]        = this._roomStart.bind(this);
+        map[events.CHAT_MESSAGE]      = this._chat.bind(this);
         map[events.GAME_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
-        map[events.GAME_STATE] = this._gameState.bind(this);
+        map[events.GAME_STATE]        = this._gameState.bind(this);
         return map;
     },
 
