@@ -144,12 +144,13 @@ Room.prototype = {
         } else {
             this.clients.splice(index, 1);
             this.server.removeClient(client);
-            this.updateIndices();
-            this.emitState();
         }
 
         if (this.clients.length) {
+            // Emit chat notice first or client cannot replace index with name.
             this.emit(events.CHAT_NOTICE, '{' + index + '} left');
+            this.updateIndices();
+            this.emitState();
         } else {
             this.server.roomManager.remove(this);
         }

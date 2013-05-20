@@ -71,8 +71,8 @@ XSS.stages = {
         var update = function() {
             var nextpos;
             if (XSS.room || !XSS.shapes[snake.shapes.snake]) {
-                if (snake.destroy) {
-                    snake.destroy();
+                if (snake.destruct) {
+                    snake.destruct();
                 }
                 return;
             }

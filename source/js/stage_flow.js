@@ -41,7 +41,7 @@ StageFlow.prototype = {
 
     initUI: function() {
         XSS.shapes = {};
-        this._bindGlobalKeys();
+        this._bindGlobalEvents();
         this.setupMenuSkeletton();
         this.newStage(this._prevStages[0]);
     },
@@ -118,9 +118,19 @@ StageFlow.prototype = {
     /**
      * @private
      */
-    _bindGlobalKeys: function() {
+    _bindGlobalEvents: function() {
+        window.onhashchange = this._hashChange.bind(this);
         this._handleKeysBound = this.handleKeys.bind(this);
         XSS.on.keydown(this._handleKeysBound);
+    },
+
+    /**
+     * @private
+     */
+    _hashChange: function() {
+        if (XSS.util.hash(XSS.HASH_ROOM) && !XSS.room) {
+            XSS.stages._autoJoinRoom();
+        }
     },
 
     /**

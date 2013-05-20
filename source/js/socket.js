@@ -9,11 +9,14 @@
  */
 function Socket(callback) {
     this.callback = callback;
-    this._bindEvents();
+    this.connected = false;
+
     this.connection = new SockJS(XSS.config.SERVER_ENDPOINT);
     this.connection.onopen = this._connect.bind(this);
     this.connection.onclose = this._disconnect.bind(this);
     this.connection.onmessage = this.handleMessage.bind(this);
+
+    this._bindEvents();
 }
 
 Socket.prototype = {
@@ -22,8 +25,13 @@ Socket.prototype = {
         var events = XSS.events, ns = XSS.NS_SOCKET;
         XSS.pubsub.off(events.PING, ns);
         XSS.pubsub.off(events.COMBI, ns);
+        if (XSS.room) {
+            XSS.room.destruct();
+            XSS.room = null;
+        }
         if (this.connection.readyState <= 1) {
-            this._disconnect = XSS.util.dummy;
+            this.connection.onclose = XSS.util.dummy;
+            this.connection.onmessage = XSS.util.dummy;
             this.connection.close();
         }
     },
@@ -37,6 +45,7 @@ Socket.prototype = {
         var callback = function() {
             if (XSS.room) {
                 XSS.room.destruct();
+                XSS.room = null;
             }
         };
         if (this.connected) {

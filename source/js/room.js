@@ -21,7 +21,7 @@ Room.prototype = {
 
     destruct: function() {
         XSS.pubsub.off(XSS.events.ROOM_INDEX, XSS.NS_ROOM);
-        XSS.util.hash(XSS.HASH_ROOM, null);
+        XSS.util.hash();
         this.unbindKeys();
         this.destructDialog();
         if (this.players) {
@@ -160,8 +160,6 @@ Room.prototype = {
      */
     _leaveRoom: function() {
         this.destruct();
-        XSS.socket.emit(XSS.events.ROOM_LEAVE);
-        XSS.socket.destruct();
         XSS.flow.restart();
     },
 
@@ -181,9 +179,10 @@ Room.prototype = {
         var header, body, remaining = this.capacity - this.players;
         header = 'NEED ' + remaining + ' MORE PLAYER%s...';
         header = header.replace('%s', remaining !== 1 ? 'S' : '');
-        body = 'Invite people to this room by sharing the page URL.';
+        body = 'Share the current page URL with friends so they ' +
+               'can join this room directly!';
         if (this.players > 1 && this.index === 0) {
-            body += '\nOr press S to start now.';
+            body += ' Or press S to start now.';
         }
 
         this.dialog = new Dialog(header, body, {

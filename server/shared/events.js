@@ -15,7 +15,6 @@ module.exports = {
     ROOM_JOIN        : 'ROOM_JOIN',
     ROOM_MATCH       : 'ROOM_MATCH',
     ROOM_INDEX       : 'ROOM_INDEX',
-    ROOM_LEAVE        : 'ROOM_LEAVE',
     ROOM_START       : 'ROOM_START',
     ROOM_STATUS      : 'ROOM_STATUS',
     SCORE_UPDATE     : 'SCORE_UPDATE',
