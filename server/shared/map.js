@@ -20,9 +20,10 @@ module.exports = {
     },
 
     ROOM: {
-        FULL       : 1,
-        NOT_FOUND  : 2,
-        IN_PROGRESS: 3
+        INVALID    : 1,
+        FULL       : 2,
+        NOT_FOUND  : 3,
+        IN_PROGRESS: 4
     },
 
     SPAWN_APPLE  : 0,

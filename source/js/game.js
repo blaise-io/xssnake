@@ -135,7 +135,6 @@ Game.prototype = {
         this.spawnables[index] = spawn;
     },
 
-
     /**
      * @param {number} index
      */

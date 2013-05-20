@@ -46,6 +46,13 @@ Client.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    playing: function() {
+        return !!(this.room && this.room.game && this.room.round);
+    },
+
+    /**
      * Send data to client
      * @param {string} name
      * @param {*=} data

@@ -2,6 +2,7 @@
 'use strict';
 
 var Room = require('./room.js');
+var Validate = require('./validate.js');
 var Util = require('../shared/util.js');
 var map = require('../shared/map.js');
 var events = require('../shared/events.js');
@@ -17,32 +18,14 @@ function RoomManager(server) {
 
 module.exports = RoomManager;
 
+RoomManager.ROOM_KEY_LENGTH = 5;
+
 RoomManager.prototype = {
 
     bindEvents: function() {
-        this.server.pubsub.on(events.ROOM_STATUS, this.emitRoomStatus.bind(this));
-        this.server.pubsub.on(events.ROOM_JOIN, this._joinRoom.bind(this));
-        this.server.pubsub.on(events.ROOM_MATCH, this._matchRoom.bind(this));
-    },
-
-    /**
-     * @param {Object} data
-     * @param {Client} client
-     * @private
-     */
-    _joinRoom: function(data, client) {
-        client.name = data[1];
-        this.attemptJoinRoom(client, data[0]);
-    },
-
-    /**
-     * @param {Object} preferences
-     * @param {Client} client
-     * @private
-     */
-    _matchRoom: function(preferences, client) {
-        client.name = preferences[map.FIELD.NAME];
-        this.getPreferredRoom(preferences).join(client);
+        this.server.pubsub.on(events.ROOM_STATUS, this._evRoomStatus.bind(this));
+        this.server.pubsub.on(events.ROOM_JOIN, this._evJoinRoom.bind(this));
+        this.server.pubsub.on(events.ROOM_MATCH, this._evMatchRoom.bind(this));
     },
 
     /**
@@ -62,13 +45,52 @@ RoomManager.prototype = {
     },
 
     /**
+     * @param {*} key
+     * @return {boolean}
+     */
+    _validRoomKey: function(key) {
+        var len = RoomManager.ROOM_KEY_LENGTH;
+        return new Validate(key).assertStringOfLength(len, len).valid();
+    },
+
+    /**
+     * @param {*} name
+     * @return {string}
+     */
+    _cleanUsername: function(name) {
+        if (new Validate(name).assertStringOfLength(2, 20).valid()) {
+            return String(name);
+        } else {
+            return 'Idiot' + Util.randomStr(3);
+        }
+    },
+
+    /**
+     * @param {Object} data
+     * @param {Client} client
+     * @private
+     */
+    _evJoinRoom: function(data, client) {
+        client.name = this._cleanUsername(data[1]);
+        this._attemptJoinRoom(client, data[0]);
+    },
+
+    /**
+     * @param {Object} preferences
+     * @param {Client} client
+     * @private
+     */
+    _evMatchRoom: function(preferences, client) {
+        client.name = this._cleanUsername(preferences[map.FIELD.NAME]);
+        this.getPreferredRoom(preferences).join(client);
+    },
+
+    /**
      * @param {string} key
      * @param {Client} client
      */
-    emitRoomStatus: function(key, client) {
-        var room, data;
-        room = this.rooms[key];
-        data = this._getRoomJoinData(room);
+    _evRoomStatus: function(key, client) {
+        var data = this._getRoomJoinData(key);
         client.emit(events.ROOM_STATUS, data);
     },
 
@@ -76,15 +98,16 @@ RoomManager.prototype = {
      * @param {Client} client
      * @param {string} key
      */
-    attemptJoinRoom: function(client, key) {
+    _attemptJoinRoom: function(client, key) {
         var room, data;
-        room = this.rooms[key];
-        data = this._getRoomJoinData(room);
-
-        if (data[0]) {
-            room.join(client); // Room can be joined
-        } else {
-            client.emit(events.ROOM_STATUS, data); // Nope
+        if (this._validRoomKey(key)) {
+            data = this._getRoomJoinData(key);
+            if (data[0]) {
+                room = this.rooms[key];
+                room.join(client); // Room can be joined
+            } else {
+                client.emit(events.ROOM_STATUS, data); // Nope
+            }
         }
     },
 
@@ -105,7 +128,7 @@ RoomManager.prototype = {
      * @return {Room}
      */
     createRoom: function(gameOptions) {
-        var room, id = Util.randomStr(5);
+        var room, id = Util.randomStr(RoomManager.ROOM_KEY_LENGTH);
         room = new Room(this.server, id, gameOptions);
         this.rooms[room.key] = room;
         return room;
@@ -129,21 +152,25 @@ RoomManager.prototype = {
     },
 
     /**
-     * @param {Room|undefined} room
+     * @param {string} key
      * @return {Array}
      * @private
      */
-    _getRoomJoinData: function(room) {
-        var data = [0];
-
-        if (!room) {
-            data.push(map.ROOM.NOT_FOUND);
-        } else if (room.isFull()) {
-            data.push(map.ROOM.FULL);
-        } else if (room.round) {
-            data.push(map.ROOM.IN_PROGRESS);
+    _getRoomJoinData: function(key) {
+        var room, data = [0];
+        if (!this._validRoomKey(key)) {
+            data.push(map.ROOM.INVALID);
         } else {
-            data = [1, room.options, room.names()];
+            room = this.rooms[key];
+            if (!room) {
+                data.push(map.ROOM.NOT_FOUND);
+            } else if (room.isFull()) {
+                data.push(map.ROOM.FULL);
+            } else if (room.round) {
+                data.push(map.ROOM.IN_PROGRESS);
+            } else {
+                data = [1, room.options, room.names()];
+            }
         }
 
         return data;

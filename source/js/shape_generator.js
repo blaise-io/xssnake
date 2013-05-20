@@ -198,7 +198,7 @@ ShapeGenerator.prototype = {
 
     /**
      * @param {LevelData} data
-     * @returns {Shape}
+     * @return {Shape}
      */
     level: function(data) {
         var shape, walls;

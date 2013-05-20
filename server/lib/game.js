@@ -92,8 +92,10 @@ Game.prototype = {
      * @param {number} direction
      */
     updateSnake: function(client, parts, direction) {
-        var head = parts[parts.length - 1],
-            allowedDelta = this._getAllowedDelta(client);
+        var head, allowedDelta;
+
+        head = parts[parts.length - 1];
+        allowedDelta = this._getAllowedDelta(client);
 
         client.snake.direction = direction;
 
@@ -174,7 +176,9 @@ Game.prototype = {
         for (var i = 0, m = spawns.length; i < m; i++) {
             var spawn = spawns[i];
             if (null !== spawn) {
-                client.buffer(events.GAME_SPAWN, [i, spawn.type, spawn.location]);
+                client.buffer(events.GAME_SPAWN, [
+                    spawn.type, i, spawn.location
+                ]);
             }
         }
         client.flush();

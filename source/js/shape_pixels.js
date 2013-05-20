@@ -43,7 +43,7 @@ ShapePixels.prototype = {
 
     /**
      * @param {Array.<Array.<number>>} pairs
-     * @returns {ShapePixels}
+     * @return {ShapePixels}
      */
     pairs: function(pairs) {
         for (var i = 0, m = pairs.length; i < m; i++) {
@@ -54,7 +54,7 @@ ShapePixels.prototype = {
     },
 
     /**
-     * @returns {ShapePixels}
+     * @return {ShapePixels}
      */
     sort: function() {
         var sort, pixels = this.pixels;
@@ -89,7 +89,7 @@ ShapePixels.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @returns {number}
+     * @return {number}
      */
     index: function(x, y) {
         var row = this.pixels[y];
@@ -106,7 +106,7 @@ ShapePixels.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @returns {boolean}
+     * @return {boolean}
      */
     has: function(x, y) {
         var row = this.pixels[y];
@@ -124,7 +124,7 @@ ShapePixels.prototype = {
      * @param {*} shapes
      * @param {number} x
      * @param {number} y
-     * @returns {boolean}
+     * @return {boolean}
      */
     hasMultiple: function(shapes, x, y) {
         for (var k in shapes) {
@@ -140,7 +140,7 @@ ShapePixels.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @returns {ShapePixels}
+     * @return {ShapePixels}
      */
     remove: function(x, y) {
         var index = this.index(x, y);

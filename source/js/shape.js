@@ -102,7 +102,7 @@ Shape.prototype = {
     /**
      * @param {number} width
      * @param {number} height
-     * @returns {Shape}
+     * @return {Shape}
      */
     center: function(width, height) {
         return this.set(XSS.transform.center(this.pixels, width, height));

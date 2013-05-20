@@ -192,10 +192,12 @@ Room.prototype = {
 
     /**
      * @param {number} error
-     * @returns {string}
+     * @return {string}
      */
     errorCodeToStr: function(error) {
         switch (error) {
+            case XSS.map.ROOM.INVALID:
+                return 'INVALID ROOM KEY';
             case XSS.map.ROOM.NOT_FOUND:
                 return 'ROOM NOT FOUND';
             case XSS.map.ROOM.FULL:
@@ -203,7 +205,7 @@ Room.prototype = {
             case XSS.map.ROOM.IN_PROGRESS:
                 return 'GAME IN PROGRESS';
             default:
-                return 'UNKNOWN ERROR OHSHI';
+                return 'UNKNOWN ERROROOSHIII';
         }
     },
 

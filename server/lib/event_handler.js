@@ -1,6 +1,7 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
+var Validate = require('./validate.js');
 var events = require('../shared/events.js');
 var map = require('../shared/map.js');
 
@@ -32,9 +33,22 @@ EventHandler.prototype = {
      * @private
      */
     _handleMessage: function(message) {
-        message = JSON.parse(message);
-        this.client.server.pubsub.emit(message[0], message[1], this.client);
-        this._handlePrivateEvent(message[0], message[1]);
+        var messageValidate, json, jsonValidate;
+
+        messageValidate = new Validate(message)
+            .assertStringOfLength(6, 1024 * 4)
+            .assertJSON();
+
+        if (messageValidate.valid()) {
+            json = messageValidate.json();
+
+            jsonValidate = new Validate(json).assertArrayOfLength(1, 2);
+
+            if (jsonValidate.valid()) {
+                this.client.server.pubsub.emit(json[0], json[1], this.client);
+                this._handleClientEvent(json[0], json[1]);
+            }
+        }
     },
 
     _getMap: function() {
@@ -50,7 +64,7 @@ EventHandler.prototype = {
     /**
      * @private
      */
-    _handlePrivateEvent: function(event, data) {
+    _handleClientEvent: function(event, data) {
         var map = this._map;
 
         if (map[event]) {
@@ -72,8 +86,9 @@ EventHandler.prototype = {
      * @private
      */
     _pong: function(sendTime) {
-        var roundtrip = (+new Date()) - sendTime;
-        this.client.latency = Math.round(roundtrip / 2);
+        this.client.latency = new Validate((+new Date()) - sendTime)
+            .assertRange(0, 1000)
+            .value(0);
     },
 
     /**
@@ -106,12 +121,13 @@ EventHandler.prototype = {
      * @private
      */
     _chat: function(message) {
-        var room, data, index;
-        room = this.client.room;
-        if (room) {
+        var index, validMessage, room = this.client.room;
+
+        validMessage = new Validate(message).assertStringOfLength(1, 30);
+
+        if (room && validMessage.valid()) {
             index = this.client.index;
-            data = [index, message.substr(0, 30)];
-            this.client.broadcast(events.CHAT_MESSAGE, data);
+            this.client.broadcast(events.CHAT_MESSAGE, [index, message]);
             room.emit(events.GAME_SNAKE_ACTION, [index, 'Blah']);
         }
     },
@@ -120,9 +136,14 @@ EventHandler.prototype = {
      * @param data [<Array>,<number>] 0: parts, 1: direction
      */
     _snakeUpdate: function(data) {
-        var game = this._clientGame(this.client);
-        if (game && game.room.round) {
-            game.updateSnake(this.client, data[0], data[1]);
+        var parts, direction, game, client = this.client;
+
+        parts = new Validate(data[0]).assertArray();
+        direction = new Validate(data[1]).assertRange(0, 3);
+
+        if (client.playing() && parts.valid() && direction.valid()) {
+            game = client.room.game;
+            game.updateSnake(client, parts.value(), direction.value());
         }
     },
 
@@ -130,19 +151,10 @@ EventHandler.prototype = {
      * @private
      */
     _gameState: function() {
-        var game = this._clientGame(this.client);
-        if (game && game.room.round) {
-            game.emitState(this.client);
+        var client = this.client;
+        if (client.playing()) {
+            client.room.game.emitState(client);
         }
-    },
-
-    /**
-     * @param {Client} client
-     * @return {Game}
-     * @private
-     */
-    _clientGame: function(client) {
-        return (client.room) ? client.room.game : null;
     }
 
 };

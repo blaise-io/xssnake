@@ -2,6 +2,7 @@
 'use strict';
 
 var Game = require('./game.js');
+var Validate = require('./validate.js');
 var map = require('../shared/map.js');
 var events = require('../shared/events.js');
 var config = require('../shared/config.js');
@@ -72,7 +73,7 @@ Room.prototype = {
 
     /**
      * @param {Client} client
-     * @returns {boolean}
+     * @return {boolean}
      */
     isHost: function(client) {
         return (0 === client.index);
@@ -83,29 +84,29 @@ Room.prototype = {
      * @return {Object}
      */
     cleanOptions: function(options) {
-        var players = [], difficulties, field = map.FIELD;
+        var field = map.FIELD, clean = {};
 
-        for (var i = 1; i <= config.ROOM_CAPACITY; i++) {
-            players.push(i);
-        }
+        clean[field.MAX_PLAYERS] = new Validate(options[field.MAX_PLAYERS])
+            .assertRange(1, config.ROOM_CAPACITY)
+            .value(config.ROOM_CAPACITY);
 
-        difficulties = [map.VALUE.EASY, map.VALUE.MEDIUM, map.VALUE.HARD];
+        clean[field.DIFFICULTY] = new Validate(options[field.DIFFICULTY])
+            .assertInArray([map.VALUE.EASY, map.VALUE.MEDIUM, map.VALUE.HARD])
+            .value(map.VALUE.MEDIUM);
 
-        options[field.MAX_PLAYERS] = +options[field.MAX_PLAYERS];
-        options[field.DIFFICULTY] = +options[field.DIFFICULTY];
-        options[field.POWERUPS] = !!options[field.POWERUPS];
-        options[field.PRIVATE] = !!options[field.PRIVATE];
-        options[field.XSS] = !!options[field.XSS];
+        clean[field.POWERUPS] = new Validate(options[field.POWERUPS])
+            .assertType('boolean')
+            .value(true);
 
-        if (-1 === players.indexOf(options[field.MAX_PLAYERS])) {
-            options[field.MAX_PLAYERS] = config.ROOM_CAPACITY;
-        }
+        clean[field.PRIVATE] = new Validate(options[field.PRIVATE])
+            .assertType('boolean')
+            .value(false);
 
-        if (-1 === difficulties.indexOf(options[field.DIFFICULTY])) {
-            options[field.DIFFICULTY] = map.VALUE.MEDIUM;
-        }
+        clean[field.XSS] = new Validate(options[field.XSS])
+            .assertType('boolean')
+            .value(false);
 
-        return options;
+        return clean;
     },
 
     /**
@@ -174,7 +175,7 @@ Room.prototype = {
     },
 
     /**
-     * @returns {boolean}
+     * @return {boolean}
      */
     hasWinner: function() {
         if (this.round + 1 >= config.ROOM_ROUNDS && this.points.length > 1) {

@@ -168,7 +168,7 @@ Dialog.prototype = {
     },
 
     /**
-     * @returns {number}
+     * @return {number}
      * @private
      */
     _getButtonPosition: function() {

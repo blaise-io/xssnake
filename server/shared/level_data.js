@@ -91,7 +91,7 @@ LevelData.prototype = {
 
     /**
      * @param {number} seq
-     * @returns {Array.<number>}
+     * @return {Array.<number>}
      * @private
      */
     _seqToXY: function(seq) {
