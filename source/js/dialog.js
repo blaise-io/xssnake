@@ -4,10 +4,10 @@
 
 /** @typedef {{
      keysBlocked: (boolean|undefined),
-     type: (number|undefined),
-     width: (number|undefined),
-     ok: (Function|undefined),
-     cancel: (Function|undefined)
+     type       : (number|undefined),
+     width      : (number|undefined),
+     ok         : (Function|undefined),
+     cancel     : (Function|undefined)
    }} */
 var DialogSettings;
 
@@ -18,17 +18,17 @@ var DialogSettings;
  * @constructor
  */
 function Dialog(header, body, settings) {
-    settings = settings || {};
-
     this._header = header;
     this._body = body;
 
-    this.type = settings.type || Dialog.TYPE.INFO;
-    this.width = settings.width || Dialog.MIN_WIDTH;
-    this.okCallback = settings.ok || function() {};
-    this.cancelCallback = settings.cancel || function() {};
-    this.keysBlocked = (typeof settings.keysBlocked === 'undefined') ?
-        true : settings.keysBlocked;
+    /** @type {DialogSettings} */
+    this.settings = XSS.util.extend({
+        keysBlocked: true,
+        type       : Dialog.TYPE.INFO,
+        width      : Dialog.MIN_WIDTH,
+        ok         : XSS.util.dummy,
+        cancel     : XSS.util.dummy
+    }, settings);
 
     this._bindEvents();
     this._updateShape();
@@ -61,12 +61,12 @@ Dialog.prototype = {
 
     ok: function() {
         this.destruct();
-        this.okCallback();
+        this.settings.ok();
     },
 
     cancel: function() {
         this.destruct();
-        this.cancelCallback();
+        this.settings.cancel();
     },
 
     /**
@@ -91,12 +91,12 @@ Dialog.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.keysBlocked = this.keysBlocked;
+        XSS.keysBlocked = this.settings.keysBlocked;
         this._handleKeysBound = this._handleKeys.bind(this);
-        if (this.type === Dialog.TYPE.ALERT) {
+        if (this.settings.type === Dialog.TYPE.ALERT) {
             this._okSelected = true;
             XSS.on.keydown(this._handleKeysBound);
-        } else if (this.type === Dialog.TYPE.CONFIRM) {
+        } else if (this.settings.type === Dialog.TYPE.CONFIRM) {
             this._okSelected = false;
             XSS.on.keydown(this._handleKeysBound);
         }
@@ -112,7 +112,7 @@ Dialog.prototype = {
             case XSS.KEY_UP:
             case XSS.KEY_DOWN:
             case XSS.KEY_RIGHT:
-                if (this.type === Dialog.TYPE.CONFIRM) {
+                if (this.settings.type === Dialog.TYPE.CONFIRM) {
                     XSS.play.menu_alt();
                     this._okSelected = !this._okSelected;
                     this._updateShape();
@@ -120,7 +120,7 @@ Dialog.prototype = {
                 break;
             case XSS.KEY_BACKSPACE:
             case XSS.KEY_ESCAPE:
-                if (this.type === Dialog.TYPE.CONFIRM) {
+                if (this.settings.type === Dialog.TYPE.CONFIRM) {
                     this.cancel();
                 } else {
                     this.ok();
@@ -161,7 +161,10 @@ Dialog.prototype = {
      * @private
      */
     _getContentWidth: function() {
-        return Math.max(this.width, -2 + XSS.font.width(this._header) * 2);
+        return Math.max(
+            this.settings.width,
+            -2 + XSS.font.width(this._header) * 2
+        );
     },
 
     /**
@@ -189,8 +192,9 @@ Dialog.prototype = {
      * @private
      */
     _getBodyPixels: function() {
-        var settings = {wrap: this._getContentWidth()};
-        return XSS.font.pixels(this._body, 0, 1 + Font.MAX_HEIGHT * 2, settings);
+        var y, settings = {wrap: this._getContentWidth()};
+        y = 1 + Font.MAX_HEIGHT * 2;
+        return XSS.font.pixels(this._body, 0, y, settings);
     },
 
     /**
@@ -209,7 +213,8 @@ Dialog.prototype = {
      * @private
      */
     _getCancelButton: function(x, y) {
-        return XSS.font.pixels(Dialog.STR_CANCEL, x, y, {invert: !this._okSelected});
+        var settings = {invert: !this._okSelected};
+        return XSS.font.pixels(Dialog.STR_CANCEL, x, y, settings);
     },
 
     /**
@@ -219,7 +224,8 @@ Dialog.prototype = {
      * @private
      */
     _getOkButton: function(x, y) {
-        return XSS.font.pixels(Dialog.STR_OK, x, y, {invert: this._okSelected});
+        var settings = {invert: this._okSelected};
+        return XSS.font.pixels(Dialog.STR_OK, x, y, settings);
     },
 
     /**
@@ -261,7 +267,7 @@ Dialog.prototype = {
         header = this._getHeaderPixels();
         body = this._getBodyPixels();
 
-        switch (this.type) {
+        switch (this.settings.type) {
             case Dialog.TYPE.ALERT:
                 buttons = this._getAlertPixels();
                 break;

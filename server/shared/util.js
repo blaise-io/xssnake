@@ -4,6 +4,9 @@
 
 module.exports = {
 
+    dummy: function() {
+    },
+
     /**
      * @param {*} destination
      * @param {*} source

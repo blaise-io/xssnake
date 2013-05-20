@@ -23,7 +23,7 @@ Socket.prototype = {
         XSS.pubsub.off(events.PING, ns);
         XSS.pubsub.off(events.COMBI, ns);
         if (this.connection.readyState <= 1) {
-            this.connection.onclose = function() {};
+            this._disconnect = XSS.util.dummy;
             this.connection.close();
         }
     },
