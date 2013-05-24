@@ -33,22 +33,44 @@ EventHandler.prototype = {
      * @private
      */
     _handleMessage: function(message) {
-        var messageValidate, json, jsonValidate;
-
-        messageValidate = new Validate(message)
-            .assertStringOfLength(6, 1024 * 4)
-            .assertJSON();
-
-        if (messageValidate.valid()) {
-            json = messageValidate.json();
-
-            jsonValidate = new Validate(json).assertArrayOfLength(1, 2);
-
-            if (jsonValidate.valid()) {
-                this.client.server.pubsub.emit(json[0], json[1], this.client);
-                this._handleClientEvent(json[0], json[1]);
-            }
+        var cleanMessage, pubsub = this.client.server.pubsub;
+        cleanMessage = this._cleanMessage(message);
+        if (cleanMessage) {
+            pubsub.emit(cleanMessage.event, cleanMessage.data, this.client);
+            this._handleClientEvent(cleanMessage.event, cleanMessage.data);
         }
+    },
+
+    /**
+     * @param {string} dirtyMessage
+     * @return {Object}
+     * @private
+     */
+    _cleanMessage: function(dirtyMessage) {
+        var messageValidate, json, jsonValidate, eventValidate;
+
+        messageValidate = new Validate(dirtyMessage)
+            .assertStringOfLength(6, 1024 * 4) // Allows a snake of ~ 450 tiles
+            .assertJSON();
+        if (!messageValidate.valid()) {
+            return null;
+        }
+
+        json = messageValidate.json();
+        jsonValidate = new Validate(json).assertArrayOfLength(1, 2);
+        if (!jsonValidate.valid()) {
+            return null;
+        }
+
+        eventValidate = new Validate(json[0]).assertStringOfLength(1, 20);
+        if (!eventValidate.valid()) {
+            return null;
+        }
+
+        return {
+            event: eventValidate.value(),
+            data: json[1] // Can be any type, validate in event listener
+        };
     },
 
     _getMap: function() {

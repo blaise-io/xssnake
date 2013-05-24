@@ -43,11 +43,13 @@ Validate.prototype = {
      * @returns {Validate}
      */
     assertJSON: function() {
-        try {
-            this._json = JSON.parse(this._value);
-        } catch(err) {
-            this._log('assertJSON', this._value);
-            this._valid = false;
+        if (this._valid) { // Don't parse if already invalid
+            try {
+                this._json = JSON.parse(this._value);
+            } catch(err) {
+                this._log('assertJSON', this._value);
+                this._valid = false;
+            }
         }
         return this;
     },

@@ -66,7 +66,7 @@ RoomManager.prototype = {
     },
 
     /**
-     * @param {Object} data
+     * @param {Array} data [roomKey, name]
      * @param {Client} client
      * @private
      */
@@ -140,9 +140,10 @@ RoomManager.prototype = {
      * @private
      */
     _findRoom: function(gameOptions) {
-        for (var k in this.rooms) {
-            if (this.rooms.hasOwnProperty(k)) {
-                var room = this.rooms[k];
+        var rooms = this.rooms;
+        for (var k in rooms) {
+            if (rooms.hasOwnProperty(k)) {
+                var room = rooms[k];
                 if (this._isFilterMatch(gameOptions, room)) {
                     return room;
                 }
