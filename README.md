@@ -43,7 +43,7 @@ decrease server load a little, but it will also make debugging painful.
  * Run the game server: `npm start`
  * Access the game by opening `source/source.html` in your browser
  * Check if the client and server still compile: `npm test`
- * [![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
+ * Current build status: [![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
 
 ## Creating/Updating Levels
 
