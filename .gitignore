@@ -5,8 +5,9 @@
 Thumbs.db
 desktop.ini
 
-# Build, install or configure these files yourself. See README.md
+# Build or install these files yourself. See README.md
 node_modules
 server/compiled_start.js
-server/shared/config.js
 www/index.html
+
+# git update-index --assume-unchanged server/shared/config.js
