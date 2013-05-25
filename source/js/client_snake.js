@@ -30,7 +30,7 @@ function ClientSnake(index, local, name, location, direction) {
      * @type {Array}
      * @private
      */
-    this._snakeTurnRequests = [];
+    this._snakeTurnCache = [];
 
     /** @type {Object.<string,string>} */
     this.shapes = {
@@ -143,16 +143,21 @@ XSS.util.extend(ClientSnake.prototype, {
         this.updateShape();
     },
 
-    emitState: function(direction) {
-        if (XSS.room) {
-            XSS.socket.emit(XSS.events.GAME_SNAKE_UPDATE, [this.parts, direction]);
-        }
+    /**
+     * @param {number} direction
+     * @private
+     */
+    _emitSnake: function(direction) {
+        var data, sync;
+        sync = Math.round(XSS.map.NETCODE_SYNC_MS / this.speed);
+        data = [this.parts.slice(-sync), direction];
+        XSS.socket.emit(XSS.events.GAME_SNAKE_UPDATE, data);
     },
 
     /** @private */
-    applyCachedDirection: function() {
-        if (this._snakeTurnRequests.length) {
-            this.direction = this._snakeTurnRequests.shift();
+    _applyCachedDirection: function() {
+        if (this._snakeTurnCache.length) {
+            this.direction = this._snakeTurnCache.shift();
         }
     },
 
@@ -161,7 +166,7 @@ XSS.util.extend(ClientSnake.prototype, {
      */
     getNextPosition: function() {
         var shift, head = this.head();
-        this.applyCachedDirection();
+        this._applyCachedDirection();
         shift = this.directionToShift(this.direction);
         return [head[0] + shift[0], head[1] + shift[1]];
     },
@@ -195,24 +200,26 @@ XSS.util.extend(ClientSnake.prototype, {
      * @private
      */
     _changeDirection: function(direction) {
-        var lastDirection, turns;
+        var allowed = this._isTurnAllowed(direction, this._getPrevDirection());
+        if (this._snakeTurnCache.length <= 2 && allowed) {
+            this._snakeTurnCache.push(direction);
+            this._emitProxy(direction);
+        }
+    },
 
-        // Allow max of 2 turn requests in 1 move
-        if (this._snakeTurnRequests.length <= 2) {
-            lastDirection = this._getLastDirection();
-            turns = Math.abs(direction - lastDirection);
-            if (direction !== lastDirection && this._isNumTurnAllowed(turns)) {
-                this._snakeTurnRequests.push(direction);
-
-                // Send to server
-                if (this._snakeTurnRequests.length === 1) {
-                    this.emitState(direction);
-                } else {
-                    // Wait a bit before sending this
-                    setTimeout(function() {
-                        this.emitState(direction);
-                    }.bind(this), this.speed - 20);
-                }
+    /**
+     * @param {number} direction
+     * @private
+     */
+    _emitProxy: function(direction) {
+        var emit = function() {
+            this._emitSnake(direction);
+        }.bind(this);
+        if (XSS.room && XSS.room.game && XSS.room.game.started) {
+            if (this._snakeTurnCache.length <= 1) {
+                emit();
+            } else {
+                setTimeout(emit, this.speed);
             }
         }
     },
@@ -221,17 +228,19 @@ XSS.util.extend(ClientSnake.prototype, {
      * @return {number}
      * @private
      */
-    _getLastDirection: function() {
-        return (this._snakeTurnRequests.length) ?
-            this._snakeTurnRequests[0] :
+    _getPrevDirection: function() {
+        return (this._snakeTurnCache.length) ?
+            this._snakeTurnCache[0] :
             this.direction;
     },
 
     /**
-     * @param {number} turns
+     * @param {number} direction
+     * @param {number} prevDirection
      * @private
      */
-    _isNumTurnAllowed: function(turns) {
+    _isTurnAllowed: function(direction, prevDirection) {
+        var turns = Math.abs(direction - prevDirection);
         // Disallow 0: no turn, 2: bumping into torso
         return turns === 1 || turns === 3;
     }

@@ -130,19 +130,19 @@ Powerup.prototype = {
     },
 
     _speedBoostSelf: function() {
-        this._speed([this.client], -75, '7s Fast', 7000);
+        this._speed([this.client], -50, '5s Fast', 5000);
     },
 
     _speedBoostOthers: function() {
-        this._speed(this._others(), -75, '7s Fast', 7000);
+        this._speed(this._others(), -50, '5s Fast', 5000);
     },
 
     _speedDownSelf: function() {
-        this._speed([this.client], 100, '10s Slooow', 10 * 1000);
+        this._speed([this.client], 100, '10s S.l.o.o.w', 10 * 1000);
     },
 
     _speedDownOthers: function() {
-        this._speed(this._others(), 100, '10s Slooow', 10 * 1000);
+        this._speed(this._others(), 100, '10s S.l.o.o.w', 10 * 1000);
     },
 
     /**

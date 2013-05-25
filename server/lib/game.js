@@ -35,9 +35,6 @@ module.exports = Game;
 
 Game.prototype = {
 
-    // Max allowed client-server delta
-    MAX_DELTA_ALLOWED: 4,
-
     CRASH_OBJECTS: {
         WALL    : 0,
         SELF    : 1,
@@ -88,35 +85,56 @@ Game.prototype = {
 
     /**
      * @param {Client} client
-     * @param {Array.<Array>} parts
+     * @param {Array.<Array>} clientParts
      * @param {number} direction
      */
-    updateSnake: function(client, parts, direction) {
-        var head, allowedDelta;
+    updateSnake: function(client, clientParts, direction) {
+        var sync, serverParts, common, snake = client.snake;
 
-        head = parts[parts.length - 1];
-        allowedDelta = this._getAllowedDelta(client);
-
+        // Always allow a new direction
         client.snake.direction = direction;
 
-        // Check if server-client delta is similar enough,
-        // We tolerate a small difference because of lag.
-        if (Util.delta(head, client.snake.head()) <= allowedDelta) {
-            client.snake.parts = parts;
-            this._broadCastSnake(client);
-        } else {
-            head = client.snake.head();
-            parts = client.snake.parts;
-            this._sendServerSnakeState(client);
+        // Crop client snake because we don't trust the length the client sent
+        sync = map.NETCODE_SYNC_MS / client.snake.speed;
+        clientParts = clientParts.slice(-sync);
+
+        // Don't allow gaps in the snake
+        if (this._containsGaps(clientParts)) {
+            this._emitSnakeRoom(client);
+            return;
         }
 
-        if (this._isCrash(client, parts)) {
-            this._setSnakeCrashed(client, parts);
+        // Find latest tile where client and server matched
+        serverParts = client.snake.parts.slice(-sync);
+        common = this._findCommon(clientParts, serverParts);
+
+        // Reject if there was no common
+        if (!common) {
+            this._emitSnakeRoom(client);
+            return;
+        }
+
+        // Check if client-server delta does not exceed limit
+        if (serverParts.length - 1 - common[1] > this._maxMismatches(client)) {
+            this._emitSnakeRoom(client);
+            return;
+        }
+
+        // Glue snake back together
+        snake.parts.splice(-sync);
+        snake.parts = snake.parts.concat(
+            serverParts.slice(0, common[1] + 1),
+            clientParts.slice(common[0] + 1)
+        );
+
+        // Handle new location
+        if (this._isCrash(client, snake.parts)) {
+            this._setSnakeCrashed(client, snake.parts);
         } else {
             client.snake.limbo = false;
+            this.spawner.handleHits(client, client.snake.head());
+            this._broadcastSnakeRoom(client);
         }
-
-        this.spawner.handleHits(client, head);
     },
 
     /**
@@ -226,13 +244,51 @@ Game.prototype = {
     },
 
     /**
+     * @param {Array.<Array>} parts
+     * @returns {boolean}
+     * @private
+     */
+    _containsGaps: function(parts) {
+        for (var i = 1, m = parts.length; i < m; i++) {
+            // Sanity check
+            if (parts[i].length !== 2 ||
+                typeof parts[i][0] !== 'number' ||
+                typeof parts[i][1] !== 'number'
+            ) {
+                return false;
+            }
+            // Delta must be 1
+            if (Util.delta(parts[i], parts[i - 1]) !== 1) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * @param {Array.<Array>} clientParts
+     * @param {Array.<Array>} serverParts
+     * @returns {Array.<number>} common
+     * @private
+     */
+    _findCommon: function(clientParts, serverParts) {
+        for (var i = clientParts.length - 1; i >= 0; i--) {
+            for (var ii = serverParts.length - 1; ii >= 0; ii--) {
+                if (Util.eq(clientParts[i], serverParts[ii])) {
+                    return [i, ii];
+                }
+            }
+        }
+        return null;
+    },
+
+    /**
      * @param {Client} client
      * @return {number}
      * @private
      */
-    _getAllowedDelta: function(client) {
-        var allowedDelta = Math.ceil(client.latency / client.snake.speed) + 1;
-        return Math.min(allowedDelta, this.MAX_DELTA_ALLOWED);
+    _maxMismatches: function(client) {
+        return Math.ceil(client.latency / client.snake.speed);
     },
 
     /**
@@ -253,7 +309,7 @@ Game.prototype = {
      * @param {Client} client
      * @private
      */
-    _sendServerSnakeState: function(client) {
+    _emitSnakeRoom: function(client) {
         var data = [
             client.index,
             client.snake.parts,
@@ -266,7 +322,7 @@ Game.prototype = {
      * @param {Client} client
      * @private
      */
-    _broadCastSnake: function(client) {
+    _broadcastSnakeRoom: function(client) {
         var data = [
             client.index,
             client.snake.parts,
@@ -282,10 +338,12 @@ Game.prototype = {
      * @private
      */
     _isCrash: function(client, parts) {
-        var eq = Util.eq,
-            limbo = client.snake.limbo,
-            clients = this.room.clients,
-            level = this.level;
+        var eq, limbo, clients, level;
+
+        eq = Util.eq;
+        limbo = client.snake.limbo;
+        clients = this.room.clients;
+        level = this.level;
 
         for (var i = 0, m = parts.length; i < m; i++) {
             var part = parts[i];
@@ -296,25 +354,21 @@ Game.prototype = {
             }
 
             // Self
-            if (m >= 5 && m - 1 !== i && eq(part, parts[m - 1])) {
-                return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
-            }
+            if (m > 4) {
+                if (m - 1 !== i && eq(part, parts[m - 1])) {
+                    return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
+                }
 
-            // Self (limbo)
-            else if (limbo && m >= 5 && m - 2 !== i && eq(part, parts[m - 2])) {
-                return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
+                // Limbo: check neck tile because head has already crashed.
+                else if (limbo && m - 2 !== i && eq(part, parts[m - 2])) {
+                    return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
+                }
             }
 
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
-                if (client !== clients[ii]) {
-                    if (clients[ii].snake.hasPart(part)) {
-                        return [
-                            this.CRASH_OBJECTS.OPPONENT,
-                            client.index,
-                            ii
-                        ];
-                    }
+                if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
+                    return [this.CRASH_OBJECTS.OPPONENT, client.index, ii];
                 }
             }
         }
@@ -440,9 +494,9 @@ Game.prototype = {
             // A snake is in limbo when the server predicts that a snake has
             // crashed. The prediction is wrong when the client made a turn
             // just in time but that message was received too late by the server
-            // because of network delay. When the turn message is received by
+            // because of network latency. When the turn message is received by
             // the server, and it seems like the server made a wrong prediction,
-            // the snake returns from limbo.
+            // the snake returns back to life.
             if (snake.limbo) {
                 this._emitCrashMessage(crash);
                 this._setSnakeCrashed(client, snake.limbo);

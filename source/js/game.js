@@ -29,6 +29,9 @@ function Game(index, levelID, names) {
     /** @type {Array.<Spawnable>} */
     this.spawnables = [];
 
+    /** @type {boolean} */
+    this.started = false;
+
     this._bindEvents();
 }
 
@@ -43,7 +46,9 @@ Game.prototype = {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
         }
+
         this.addControls();
+        this.started = true;
     },
 
     destruct: function() {

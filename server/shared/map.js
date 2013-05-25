@@ -26,6 +26,8 @@ module.exports = {
         IN_PROGRESS: 4
     },
 
+    NETCODE_SYNC_MS: 500,
+
     SPAWN_APPLE  : 0,
     SPAWN_POWERUP: 1
 

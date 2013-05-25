@@ -15,7 +15,7 @@ module.exports = {
     TIME_RESPAWN_APPLE : 30,
     TIME_SPAWN_POWERUP : [5, 30],
 
-    SNAKE_SPEED        : 150,
+    SNAKE_SPEED        : 120,
     SNAKE_SIZE         : 4
 };
 
