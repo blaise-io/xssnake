@@ -9,12 +9,18 @@ var gcc = require('gcc-rest');
 
 // Start compiling out server code.
 var compile = new ServerCompile();
+var output_info = ['compiled_code', 'errors', 'warnings', 'statistics'];
+
+// Do not display output info when testing
+if (module.parent) {
+    output_info.pop();
+}
 
 // Set Google Closure Compiler parameters. Make sure to add externs for all
 // core node.js modules that you use!
 gcc.params({
     js_externs                : String(fs.readFileSync(__dirname + '/lib/externs.js')),
-    output_info               : ['compiled_code', 'errors', 'warnings', 'statistics'],
+    output_info               : output_info,
     use_types_for_optimization: 'true',
     language                  : 'ECMASCRIPT5_STRICT',
     compilation_level         : 'ADVANCED_OPTIMIZATIONS',
@@ -37,4 +43,12 @@ gcc.header(util.format(
 // fs.writeFileSync(__dirname + '/precompiled.js', compile.code);
 
 gcc.addCode(compile.code);
-gcc.output(__dirname + '/../server/compiled_start.js');
+
+if (module.parent) {
+    // Testing
+    module.exports = gcc;
+} else {
+    // Building
+    gcc.output(__dirname + '/../server/compiled_start.js');
+}
+
