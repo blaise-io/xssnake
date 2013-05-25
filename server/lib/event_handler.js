@@ -50,7 +50,7 @@ EventHandler.prototype = {
         var messageValidate, json, jsonValidate, eventValidate;
 
         messageValidate = new Validate(dirtyMessage)
-            .assertStringOfLength(6, 1024 * 4) // Allows a snake of ~ 450 tiles
+            .assertStringOfLength(6, 512)
             .assertJSON();
         if (!messageValidate.valid()) {
             return null;

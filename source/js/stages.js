@@ -281,13 +281,13 @@ XSS.stages = {
     inputXSS: function() {
         var stage, intro, next = XSS.stages.startGame;
 
-        intro = 'Paste your JS. Keep it short; max 128 chars.\n' +
+        intro = 'Paste your JS. Keep it short; max 256 chars.\n' +
                 'Line breaks will be removed.\n\n' +
                 '> ';
 
         stage = new InputStage('xurl', next, 'ENTER XSS', intro);
         stage.minChars = 2;
-        stage.maxChars = 128;
+        stage.maxChars = 256;
         stage.displayWidth = XSS.MENU_WIDTH - XSS.font.width('> ');
 
         if (!stage.val) {
