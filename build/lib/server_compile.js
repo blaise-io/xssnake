@@ -16,7 +16,7 @@ function ServerCompile() {
 
     // Files that should not be compiled.
     this.excludeFiles = [
-        'config.example.js'
+        'config.default.js'
     ];
 
     // Directories containing all node.js module files that should be compiled.

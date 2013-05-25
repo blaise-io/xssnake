@@ -18,8 +18,6 @@ optimized code.
 ## Initial Setup
 
  * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
- * Create a configuration file by copying `server/shared/config.example.js` to
-   `server/shared/config.js`
  * Adjust the contents of `server/shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)
  * Install [SockJS](https://npmjs.org/package/sockjs) by running
@@ -33,25 +31,19 @@ optimized code.
    This will create the file `index.html` in the `www` dir.
  * Make sure the `www` dir is accessible by browsers
  * Make sure the `server` dir is accessible by node.js
- * Run the game server: `node server/start.js`
+ * Run the game server: `npm start`
  * Access the game by navigating your browser to the `www` dir's public address
+
+Optionally you can compile the server code using `node build/server.js` and
+start the compiled server using `node server/compiled_start.js`. This may have
+decrease server load a little, but it will also make debugging painful.
 
 ## Developing and Testing
 
- * Run the game server: `node server/start.js`
+ * Run the game server: `npm start`
  * Access the game by opening `source/source.html` in your browser
-
-If you open `source/source.html` from a local disk in Chrome (`file://...`), you
-may have to start the browser with the `--disable-web-security` parameter to
-work around an Access-Control restriction.
-
-If you modify code, it can be useful to compile the code to see if you
-made any errors.
-
- * Compile server code: `node build/server.js` (Warning: this contains a
-   hack to inline node.js modules to allow compiling with Google Closure.
-   Check `build/lib/server_compile.js` code comments for details.)
- * Compile client code: `node build/client.js` to check for errors.
+ * Check if the client and server still compile: `npm test`
+ * [![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
 
 ## Creating/Updating Levels
 

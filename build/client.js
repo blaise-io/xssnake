@@ -31,7 +31,7 @@ gcc.params({
 });
 
 gcc.addFile(home + 'source/js/main.js');
-gcc.addDir(home + 'server/shared', ['config.example.js']);
+gcc.addDir(home + 'server/shared');
 gcc.addDir(home + 'source/js', ['main.js']);
 
 gcc.replace(/'use strict';/g, '');
