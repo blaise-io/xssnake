@@ -265,8 +265,8 @@ XSS.stages = {
 
         stage = new InputStage(null, nextstage, 'DANGER DANGER', intro);
         stage.maxValWidth = 50;
-        stage.inputSubmit = function(scope, error, value, top) {
-            XSS.off.keydown(scope._handleKeysBound);
+        stage.inputSubmit = function(error, value, top) {
+            XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_INPUT);
             XSS.stages._challengeSubmit.call(stage, value, challenge, top);
         };
 
@@ -389,14 +389,13 @@ XSS.stages = {
     },
 
     /**
-     * @param {InputStage} scope
      * @param {string} error
      * @param {string} value
      * @param {number} top
      * @this {InputStage}
      * @private
      */
-    _inputNameSubmit: function(scope, error, value, top) {
+    _inputNameSubmit: function(error, value, top) {
         var wits, shape, text, duration = 500;
 
         wits = [
@@ -428,20 +427,15 @@ XSS.stages = {
         if (error) {
             text = error;
         } else {
-            XSS.off.keydown(scope._handleKeysBound);
-            text = XSS.util.randomItem(wits);
-            text = text.replace(/%s/g, value);
-            duration = Math.min(text.length * 30, 500);
+            XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_INPUT);
+            text = XSS.util.randomItem(wits).replace(/%s/g, value);
+            duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(function() {
                 XSS.flow.switchStage(this.nextStage);
-            }.bind(this), duration + 50);
+            }.bind(this), duration);
         }
 
-        shape = XSS.font.shape(
-            text,
-            XSS.MENU_LEFT,
-            top
-        );
+        shape = XSS.font.shape(text, XSS.MENU_LEFT, top);
         shape.lifetime(0, duration);
         XSS.shapes.message = shape;
     }

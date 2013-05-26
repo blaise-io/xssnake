@@ -22,9 +22,8 @@ function Socket(callback) {
 Socket.prototype = {
 
     destruct: function() {
-        var events = XSS.events, ns = XSS.NS_SOCKET;
-        XSS.pubsub.off(events.PING, ns);
-        XSS.pubsub.off(events.COMBI, ns);
+        XSS.pubsub.off(XSS.events.PING, XSS.NS_SOCKET);
+        XSS.pubsub.off(XSS.events.COMBI, XSS.NS_SOCKET);
         if (XSS.room) {
             XSS.room.destruct();
             XSS.room = null;
@@ -75,9 +74,8 @@ Socket.prototype = {
      * @private
      */
     _bindEvents: function() {
-        var events = XSS.events, ns = XSS.NS_SOCKET;
-        XSS.pubsub.on(events.PING,  ns, this.clientPing.bind(this));
-        XSS.pubsub.on(events.COMBI, ns, this.combinedEvents.bind(this));
+        XSS.pubsub.on(XSS.events.PING,  XSS.NS_SOCKET, this.clientPing.bind(this));
+        XSS.pubsub.on(XSS.events.COMBI, XSS.NS_SOCKET, this.combinedEvents.bind(this));
     },
 
     /**

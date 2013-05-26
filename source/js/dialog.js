@@ -51,7 +51,7 @@ Dialog.prototype = {
     destruct: function() {
         XSS.shapes.dialog = null;
         XSS.keysBlocked = false;
-        XSS.off.keydown(this.handleKeysBound);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_DIALOG);
     },
 
     restore: function() {
@@ -92,13 +92,13 @@ Dialog.prototype = {
      */
     _bindEvents: function() {
         XSS.keysBlocked = this.settings.keysBlocked;
-        this.handleKeysBound = this._handleKeys.bind(this);
+        if (this.settings.type !== Dialog.TYPE.INFO) {
+            XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_DIALOG, this._handleKeys.bind(this));
+        }
         if (this.settings.type === Dialog.TYPE.ALERT) {
             this._okSelected = true;
-            XSS.on.keydown(this.handleKeysBound);
         } else if (this.settings.type === Dialog.TYPE.CONFIRM) {
             this._okSelected = false;
-            XSS.on.keydown(this.handleKeysBound);
         }
     },
 

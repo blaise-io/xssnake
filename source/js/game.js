@@ -38,10 +38,10 @@ function Game(index, levelID, names) {
 Game.prototype = {
 
     start: function() {
-        var pubsub = XSS.pubsub, ns = XSS.NS_GAME;
+        var ns = XSS.NS_GAME;
 
-        pubsub.on(XSS.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
-        pubsub.on(XSS.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
+        XSS.pubsub.on(XSS.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
+        XSS.pubsub.on(XSS.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
@@ -52,20 +52,19 @@ Game.prototype = {
     },
 
     destruct: function() {
-        var i, m, border, pubsub, events, ns;
+        var i, m, border, events, ns;
 
-        pubsub = XSS.pubsub;
         events = XSS.events;
         ns = XSS.NS_GAME;
 
-        pubsub.off(events.GAME_COUNTDOWN, ns);
-        pubsub.off(events.GAME_START, ns);
-        pubsub.off(events.GAME_SPAWN, ns);
-        pubsub.off(events.GAME_SNAKE_UPDATE, ns);
-        pubsub.off(events.GAME_SNAKE_SIZE, ns);
-        pubsub.off(events.GAME_SNAKE_CRASH, ns);
-        pubsub.off(events.GAME_SNAKE_ACTION, ns);
-        pubsub.off(events.GAME_SNAKE_SPEED, ns);
+        XSS.pubsub.off(events.GAME_COUNTDOWN, ns);
+        XSS.pubsub.off(events.GAME_START, ns);
+        XSS.pubsub.off(events.GAME_SPAWN, ns);
+        XSS.pubsub.off(events.GAME_SNAKE_UPDATE, ns);
+        XSS.pubsub.off(events.GAME_SNAKE_SIZE, ns);
+        XSS.pubsub.off(events.GAME_SNAKE_CRASH, ns);
+        XSS.pubsub.off(events.GAME_SNAKE_ACTION, ns);
+        XSS.pubsub.off(events.GAME_SNAKE_SPEED, ns);
 
         for (i = 0, m = this.snakes.length; i < m; i++) {
             if (this.snakes[i]) {
@@ -122,16 +121,16 @@ Game.prototype = {
     },
 
     _bindEvents: function() {
-        var events = XSS.events, ns = XSS.NS_GAME, pubsub = XSS.pubsub;
-        pubsub.on(events.GAME_COUNTDOWN,    ns, this.countdown.bind(this));
-        pubsub.on(events.GAME_START,        ns, this.start.bind(this));
-        pubsub.on(events.GAME_SPAWN,        ns, this._evSpawn.bind(this));
-        pubsub.on(events.GAME_DESPAWN,      ns, this._evSpawnHit.bind(this));
-        pubsub.on(events.GAME_SNAKE_UPDATE, ns, this._evSnakeUpdate.bind(this));
-        pubsub.on(events.GAME_SNAKE_SIZE,   ns, this._evSnakeSize.bind(this));
-        pubsub.on(events.GAME_SNAKE_CRASH,  ns, this._evSnakeCrash.bind(this));
-        pubsub.on(events.GAME_SNAKE_ACTION, ns, this._evSnakeAction.bind(this));
-        pubsub.on(events.GAME_SNAKE_SPEED,  ns, this._evSnakeSpeed.bind(this));
+        var events = XSS.events, ns = XSS.NS_GAME;
+        XSS.pubsub.on(events.GAME_COUNTDOWN,    ns, this.countdown.bind(this));
+        XSS.pubsub.on(events.GAME_START,        ns, this.start.bind(this));
+        XSS.pubsub.on(events.GAME_SPAWN,        ns, this._evSpawn.bind(this));
+        XSS.pubsub.on(events.GAME_DESPAWN,      ns, this._evSpawnHit.bind(this));
+        XSS.pubsub.on(events.GAME_SNAKE_UPDATE, ns, this._evSnakeUpdate.bind(this));
+        XSS.pubsub.on(events.GAME_SNAKE_SIZE,   ns, this._evSnakeSize.bind(this));
+        XSS.pubsub.on(events.GAME_SNAKE_CRASH,  ns, this._evSnakeCrash.bind(this));
+        XSS.pubsub.on(events.GAME_SNAKE_ACTION, ns, this._evSnakeAction.bind(this));
+        XSS.pubsub.on(events.GAME_SNAKE_SPEED,  ns, this._evSnakeSpeed.bind(this));
     },
 
     _evSpawn: function(data) {

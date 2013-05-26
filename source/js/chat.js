@@ -17,6 +17,7 @@ function Chat(index, names) {
 
     this.index = index;
     this.names = names;
+    this.shapes = {};
 
     /**
      * @type {Array.<XSS.ChatMessage>}
@@ -26,11 +27,7 @@ function Chat(index, names) {
         {body: 'Press ' + XSS.UC_ENTER_KEY + ' to chat'}
     ];
 
-    this._chatFocusBound = this._chatFocus.bind(this);
     this._hasFocus = false;
-
-    this.shapes = {};
-
     this._adding = false;
     this._queue = [];
 
@@ -49,11 +46,12 @@ Chat.prototype = {
     animDuration: 200,
 
     destruct: function() {
-        var events = XSS.events;
-        XSS.pubsub.off(events.CHAT_MESSAGE);
-        XSS.pubsub.off(events.CHAT_NOTICE);
-        XSS.off.keydown(this._chatFocusBound);
+        XSS.pubsub.off(XSS.events.CHAT_MESSAGE, XSS.NS_CHAT);
+        XSS.pubsub.off(XSS.events.CHAT_NOTICE, XSS.NS_CHAT);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_CHAT);
+
         this._deleteShapes();
+
         if (this.field) {
             this.field.destruct();
         }
@@ -107,16 +105,15 @@ Chat.prototype = {
         return this;
     },
 
-
     send: function(str) {
         XSS.socket.emit(XSS.events.CHAT_MESSAGE, str);
     },
 
     _bindEvents: function() {
-        var events = XSS.events, pubsub = XSS.pubsub, ns = XSS.NS_GAME;
-        pubsub.on(events.CHAT_MESSAGE, ns, this._chatMessage.bind(this));
-        pubsub.on(events.CHAT_NOTICE, ns, this._chatNotice.bind(this));
-        XSS.on.keydown(this._chatFocusBound);
+        var events = XSS.events, ns = XSS.NS_GAME;
+        XSS.pubsub.on(events.CHAT_MESSAGE, ns, this._chatMessage.bind(this));
+        XSS.pubsub.on(events.CHAT_NOTICE, ns, this._chatNotice.bind(this));
+        XSS.pubsub.on(events.KEYDOWN, ns, this._chatFocus.bind(this));
     },
 
     /**

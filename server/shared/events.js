@@ -30,4 +30,7 @@ module.exports = {
 
 if (typeof XSS !== 'undefined') {
     XSS.events = module.exports;
+    XSS.events.KEYPRESS = 'keypress';
+    XSS.events.KEYDOWN = 'keydown';
+    XSS.events.KEYUP = 'keyup';
 }

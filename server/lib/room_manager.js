@@ -23,9 +23,10 @@ RoomManager.ROOM_KEY_LENGTH = 5;
 RoomManager.prototype = {
 
     bindEvents: function() {
-        this.server.pubsub.on(events.ROOM_STATUS, this._evRoomStatus.bind(this));
-        this.server.pubsub.on(events.ROOM_JOIN, this._evJoinRoom.bind(this));
-        this.server.pubsub.on(events.ROOM_MATCH, this._evMatchRoom.bind(this));
+        var pubsub = this.server.pubsub;
+        pubsub.on(events.ROOM_STATUS, this._evRoomStatus.bind(this));
+        pubsub.on(events.ROOM_JOIN, this._evJoinRoom.bind(this));
+        pubsub.on(events.ROOM_MATCH, this._evMatchRoom.bind(this));
     },
 
     /**

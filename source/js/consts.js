@@ -39,12 +39,14 @@
 /** @const */ XSS.HASH_ROOM = 'room';
 
 /** @const */ XSS.NS_FLOW = 'FLW';
-/** @const */ XSS.NS_SCORE = 'SCR';
 /** @const */ XSS.NS_CHAT = 'CHT';
+/** @const */ XSS.NS_DIALOG = 'DLG';
+/** @const */ XSS.NS_INPUT = 'INP';
 /** @const */ XSS.NS_GAME = 'GAM';
 /** @const */ XSS.NS_ROOM = 'ROM';
-/** @const */ XSS.NS_SOCKET = 'SOK';
+/** @const */ XSS.NS_SCORE = 'SCR';
 /** @const */ XSS.NS_SNAKE = 'SNK';
+/** @const */ XSS.NS_SOCKET = 'SOK';
 /** @const */ XSS.NS_SPAWN = 'SPN';
 /** @const */ XSS.NS_STAGES = 'STG';
 

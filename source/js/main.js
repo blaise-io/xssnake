@@ -13,10 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /** @type {Object.<string, Shape>} */
     XSS.shapes = {};
 
-    // Shortcuts
-    XSS.on   = XSS.util.addListener;
-    XSS.off  = XSS.util.removeListener;
-
+    // Global instances
     XSS.pubsub    = new PublishSubscribe();
     XSS.font      = new Font();
     XSS.canvas    = new Canvas();

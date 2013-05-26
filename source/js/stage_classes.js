@@ -46,8 +46,6 @@ function InputStage(name, nextStage, header, label) {
     this.maxValWidth = 0; // Passed to InputField
     this.displayWidth = 0;
 
-    this._handleKeysBound = this.handleKeys.bind(this);
-
     this._val = XSS.util.storage(name);
     this._inputTop = XSS.MENU_TOP + 17;
     this._shape = this._getShape(true);
@@ -64,7 +62,7 @@ InputStage.prototype = {
     },
 
     construct: function() {
-        XSS.on.keydown(this._handleKeysBound);
+        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys.bind(this));
 
         this.input = new InputField(XSS.MENU_LEFT, this._inputTop, this.label);
         this.input.maxValWidth = this.maxValWidth || this.input.maxValWidth;
@@ -83,7 +81,7 @@ InputStage.prototype = {
     },
 
     destruct: function() {
-        XSS.off.keydown(this._handleKeysBound);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
         XSS.shapes.message = null;
         this._shape = this._getShape(true);
         this.input.destruct();
@@ -100,20 +98,19 @@ InputStage.prototype = {
                 value = this._val.trim();
                 labelHeight = XSS.font.height(this.label);
                 top = labelHeight + XSS.MENU_TOP + XSS.MENU_TITLE_HEIGHT - 3;
-                this.inputSubmit(this, this._getInputError(value), value, top);
+                this.inputSubmit(this._getInputError(value), value, top);
         }
     },
 
     /**
-     * @param {InputStage} scope
      * @param {string} error
      * @param {string} value
      * @param {number} top
      */
-    inputSubmit: function(scope, error, value, top) {
+    inputSubmit: function(error, value, top) {
         if (!error && value && top) {
-            XSS.flow.switchStage(scope.nextStage);
-            XSS.off.keydown(scope._handleKeysBound);
+            XSS.flow.switchStage(this.nextStage);
+            XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_INPUT);
         } else {
             XSS.shapes.message = XSS.font.shape(error, XSS.MENU_LEFT, top);
             XSS.shapes.message.lifetime(0, 500);
@@ -187,7 +184,7 @@ ScreenStage.prototype = {
     },
 
     construct: function() {
-        XSS.on.keydown(this.handleKeys);
+        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys);
     },
 
     handleKeys: function(e) {
@@ -199,7 +196,7 @@ ScreenStage.prototype = {
     },
 
     destruct: function() {
-        XSS.off.keydown(this.handleKeys);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
         XSS.shapes.stage = null;
     }
 
@@ -215,7 +212,6 @@ ScreenStage.prototype = {
  */
 function SelectStage(menu) {
     this.menu = menu;
-    this._handleKeysBound = this.handleKeys.bind(this);
 }
 
 SelectStage.prototype = {
@@ -225,11 +221,11 @@ SelectStage.prototype = {
     },
 
     construct: function() {
-        XSS.on.keydown(this._handleKeysBound);
+        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys.bind(this));
     },
 
     destruct: function() {
-        XSS.off.keydown(this._handleKeysBound);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
         XSS.shapes.stage = null;
     },
 
@@ -272,7 +268,6 @@ SelectStage.prototype = {
  */
 function FormStage(form) {
     this.form = form;
-    this._handleKeysBound = this.handleKeys.bind(this);
 }
 
 FormStage.prototype = {
@@ -282,11 +277,11 @@ FormStage.prototype = {
     },
 
     construct: function() {
-        XSS.on.keydown(this._handleKeysBound);
+        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys.bind(this));
     },
 
     destruct: function() {
-        XSS.off.keydown(this._handleKeysBound);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
         XSS.shapes.stage = null;
     },
 
@@ -352,12 +347,11 @@ GameStage.prototype = {
     },
 
     destruct: function() {
-        XSS.off.keydown(this._exitKeysBound);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
     },
 
     _bindKeys: function() {
-        this._exitKeysBound = this._exitKeys.bind(this);
-        XSS.on.keydown(this._exitKeysBound);
+        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this._exitKeys.bind(this));
     },
 
     _exitKeys: function(e) {

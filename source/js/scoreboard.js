@@ -24,7 +24,7 @@ ScoreBoard.prototype = {
     animDuration: 200,
 
     destruct: function() {
-        XSS.pubsub.on(XSS.events.SCORE_UPDATE, XSS.NS_SCORE);
+        XSS.pubsub.off(XSS.events.SCORE_UPDATE, XSS.NS_SCORE);
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
                 XSS.shapes[k] = null;
@@ -62,8 +62,7 @@ ScoreBoard.prototype = {
      * @private
      */
     _bindEvents: function() {
-        var ns = XSS.NS_SCORE;
-        XSS.pubsub.on(XSS.events.SCORE_UPDATE, ns, this.updateScore.bind(this));
+        XSS.pubsub.on(XSS.events.SCORE_UPDATE, XSS.NS_SCORE, this.updateScore.bind(this));
     },
 
     /**

@@ -56,42 +56,6 @@ XSS.util.extend(XSS.util, {
         });
     },
 
-    addListener: {
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keydown: function(listener) {
-            return document.addEventListener('keydown', listener, false);
-        },
-
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keyup: function(listener) {
-            return document.addEventListener('keyup', listener, false);
-        }
-    },
-
-    removeListener: {
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keydown: function(listener) {
-            return document.removeEventListener('keydown', listener, false);
-        },
-
-        /**
-         * @param {Function} listener
-         * @return {*}
-         */
-        keyup: function(listener) {
-            return document.removeEventListener('keyup', listener, false);
-        }
-    },
-
     /**
      * Simple wrapper for localStorage
      * @param {string} key

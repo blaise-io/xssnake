@@ -29,7 +29,8 @@ StageFlow.prototype = {
             XSS.socket.destruct();
         }
         this._prevStages = [];
-        XSS.off.keydown(this._handleKeysBound);
+        window.onhashchange = null;
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_FLOW);
     },
 
     restart: function() {
@@ -118,8 +119,7 @@ StageFlow.prototype = {
      */
     _bindGlobalEvents: function() {
         window.onhashchange = this._hashChange.bind(this);
-        this._handleKeysBound = this.handleKeys.bind(this);
-        XSS.on.keydown(this._handleKeysBound);
+        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_FLOW, this.handleKeys.bind(this));
     },
 
     /**

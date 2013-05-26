@@ -32,7 +32,7 @@ Room.prototype = {
     },
 
     unbindKeys: function() {
-        XSS.off.keydown(this._bindKeysBound);
+        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_ROOM);
     },
 
     destructDialog: function() {
@@ -86,11 +86,8 @@ Room.prototype = {
      * @private
      */
     _bindEvents: function() {
-        this._bindKeysBound = this._bindKeys.bind(this);
-        XSS.on.keydown(this._bindKeysBound);
-
-        var ns = XSS.NS_ROOM;
-        XSS.pubsub.on(XSS.events.ROOM_INDEX, ns, this._initRoom.bind(this));
+        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_ROOM, this._handleKeys.bind(this));
+        XSS.pubsub.on(XSS.events.ROOM_INDEX, XSS.NS_ROOM, this._initRoom.bind(this));
     },
 
     /**
@@ -103,17 +100,16 @@ Room.prototype = {
     /**
      * @private
      */
-    _bindKeys: function(e) {
-        if (XSS.keysBlocked) {
-            return;
-        }
-        switch (e.keyCode) {
-            case XSS.KEY_ESCAPE:
-                this._handleExitKey();
-                break;
-            case XSS.KEY_START:
-                this._handleStartKey();
-                break;
+    _handleKeys: function(e) {
+        if (!XSS.keysBlocked) {
+            switch (e.keyCode) {
+                case XSS.KEY_ESCAPE:
+                    this._handleExitKey();
+                    break;
+                case XSS.KEY_START:
+                    this._handleStartKey();
+                    break;
+            }
         }
     },
 

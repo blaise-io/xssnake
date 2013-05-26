@@ -29,21 +29,20 @@ InputField.prototype = {
      * @param {string} value
      */
     setValue: function(value) {
-        if (!this._updateShapesBound) {
-            this._bindEvents();
-        }
         this.input.value = ''; // Empty first puts caret at end
         this.input.value = value;
+        this._bindEvents();
         this._updateShapes();
     },
 
     destruct: function() {
+        var ns = XSS.NS_INPUT;
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        XSS.off.keydown(this._playMenuAlt);
-        XSS.off.keydown(this._updateShapesBound);
-        XSS.off.keyup(this._updateShapesBound);
+        XSS.pubsub.off(XSS.events.KEYPRESS, ns);
+        XSS.pubsub.off(XSS.events.KEYDOWN, ns);
+        XSS.pubsub.off(XSS.events.KEYUP, ns);
         XSS.shapes.caret = null;
         XSS.shapes.inputval = null;
         XSS.keysBlocked = false;
@@ -53,22 +52,10 @@ InputField.prototype = {
      * @private
      */
     _bindEvents: function() {
-        this._updateShapesBound = this._updateShapes.bind(this);
-        XSS.on.keydown(this._playMenuAlt);
-        XSS.on.keydown(this._updateShapesBound);
-        XSS.on.keyup(this._updateShapesBound);
-    },
-
-    /**
-     * @param {Event} e
-     * @private
-     */
-    _playMenuAlt: function(e) {
-        // Silent keys: enter, shift, ctrl, alt, meta
-        var silentKey = -1 === [13, 16, 17, 18, 91].indexOf(Number(e.keyCode));
-        if (!XSS.keysBlocked && !silentKey) {
-            XSS.play.menu_alt();
-        }
+        var ns = XSS.NS_INPUT;
+        XSS.pubsub.on(XSS.events.KEYPRESS, ns, XSS.play.menu_alt);
+        XSS.pubsub.on(XSS.events.KEYDOWN, ns, this._updateShapes.bind(this));
+        XSS.pubsub.on(XSS.events.KEYUP, ns, this._updateShapes.bind(this));
     },
 
     /**

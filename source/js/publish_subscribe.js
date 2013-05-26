@@ -1,4 +1,5 @@
-/*jshint globalstrict:true */
+/*jshint globalstrict:true, es5:true, sub:true*/
+/*globals XSS*/
 'use strict';
 
 /**
@@ -6,7 +7,7 @@
  * @constructor
  */
 function PublishSubscribe() {
-    this._subscriptions = {};
+    this._topics = {};
 }
 
 PublishSubscribe.prototype = {
@@ -15,12 +16,11 @@ PublishSubscribe.prototype = {
      * @param {string} topic
      */
     publish: function(topic) {
-        var args = [].slice.call(arguments, 1),
-            subscriptions = this._subscriptions[topic];
-        if (subscriptions) {
-            for (var key in subscriptions) {
-                if (subscriptions.hasOwnProperty(key)) {
-                    this._exec(subscriptions[key], args);
+        var topics = this._topics[topic];
+        if (topics) {
+            for (var key in topics) {
+                if (topics.hasOwnProperty(key)) {
+                    topics[key].apply(topics[key], [].slice.call(arguments, 1));
                 }
             }
         }
@@ -29,19 +29,22 @@ PublishSubscribe.prototype = {
     /**
      * @param {string} topic
      * @param {string} key
-     * @param {Object} callback
+     * @param {function((Event|null))} callback
      */
     on: function(topic, key, callback) {
-        if (!this._subscriptions[topic]) {
-            this._subscriptions[topic] = [];
+        if (!this._topics[topic]) {
+            this._topics[topic] = {};
         }
-        this._subscriptions[topic][key] = callback;
+        this._topics[topic][key] = callback;
+        if ('on' + topic in document) {
+            document.addEventListener(topic, callback, false);
+        }
     },
 
     /**
      * @param {string} topic
      * @param {string} key
-     * @param {Object} callback
+     * @param {function((Event|null))} callback
      */
     once: function(topic, key, callback) {
         var callbackAndOff = function() {
@@ -56,22 +59,18 @@ PublishSubscribe.prototype = {
      * @param {string=} key
      */
     off: function(topic, key) {
-        if (topic in this._subscriptions) {
+        var callback;
+        if (topic in this._topics) {
             if (typeof key !== 'undefined') {
-                delete this._subscriptions[topic][key];
+                if ('on' + topic in document) {
+                    callback = this._topics[topic][key];
+                    document.removeEventListener(topic, callback, false);
+                }
+                delete this._topics[topic][key];
             } else {
-                delete this._subscriptions[topic];
+                delete this._topics[topic];
             }
         }
-    },
-
-    /**
-     * @param {Object} func
-     * @param {Array} args
-     * @private
-     */
-    _exec: function(func, args) {
-        func.apply(func, args);
     }
 
 };
