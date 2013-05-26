@@ -52,9 +52,7 @@ StageFlow.prototype = {
      */
     getStage: function(stage) {
         var key = XSS.util.getKey(XSS.stages, stage);
-        if (!this.stageInstances[key]) {
-            this.stageInstances[key] = stage();
-        }
+        this.stageInstances[key] = stage();
         return this.stageInstances[key];
     },
 

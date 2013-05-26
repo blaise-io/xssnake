@@ -54,6 +54,7 @@
 
 /** @const */ XSS.STORAGE_MUTE = 'MUT';
 /** @const */ XSS.STORAGE_NAME = 'NME';
+/** @const */ XSS.STORAGE_XSS = 'XSS';
 /** @const */ XSS.STORAGE_COLOR = 'CLR';
 
 /** @const */ XSS.UC_ARR_LEFT = '\u2190';

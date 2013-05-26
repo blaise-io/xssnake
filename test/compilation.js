@@ -11,7 +11,7 @@ describe('XSSNAKE Compilation', function() {
         var json;
 
         before(function(done) {
-            this.timeout(10 * 1000);
+            this.timeout(10 * 3000); // Google Closure can be slow
             gccClient.compilePassJson(function(result) {
                 json = result;
                 done();
@@ -19,10 +19,11 @@ describe('XSSNAKE Compilation', function() {
         });
 
         it('should produce compiled code', function() {
-            assert(json.compiledCode);
+            assert(typeof json.compiledCode === 'string');
+            assert(json.compiledCode.length > 1024);
         });
 
-        it('should produce not produce errors', function() {
+        it('should not produce errors', function() {
             assert(typeof json.errors === 'undefined');
         });
 
@@ -44,10 +45,11 @@ describe('XSSNAKE Compilation', function() {
         });
 
         it('should produce compiled code', function() {
-            assert(json.compiledCode);
+            assert(typeof json.compiledCode === 'string');
+            assert(json.compiledCode.length > 1024);
         });
 
-        it('should produce not produce errors', function() {
+        it('should not produce errors', function() {
             assert(typeof json.errors === 'undefined');
         });
 

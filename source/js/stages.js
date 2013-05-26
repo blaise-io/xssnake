@@ -31,59 +31,48 @@ XSS.stages = {
         if (XSS.util.hash(XSS.HASH_ROOM)) {
             XSS.stages._autoJoinRoom();
         } else {
-            window.setTimeout(XSS.stages._menuSnake, 1e3);
+            XSS.stages._launchMenuSnake();
         }
 
         return new SelectStage(menu);
     },
 
-    _menuSnake: function() {
-        var snake;
+    _launchMenuSnake: function() {
+        var snake, isCrash, update;
 
-        if (XSS.room) {
+        if (XSS.room || XSS.menuSnake) {
             return;
         }
 
-        snake = new ClientSnake(0, true, '', [1, 1], 2);
+        snake = XSS.menuSnake = new ClientSnake(-1, true, '', [1, 1], 2);
         snake.addToShapes();
         snake.addControls();
         snake.showDirection();
+        snake.removeNameAndDirection();
 
-        XSS.menuSnake = snake;
-
-        var isPixel = function(nextpos) {
-            var snakeShape, intersect = false;
-            snakeShape = XSS.shapes[snake.shapes.snake];
+        isCrash = function(nextpos) {
+            var snakeShape = snake.getShape(), crash = false;
             if (nextpos[0] < 0 || nextpos[1] < 0) {
-                intersect = true;
-            } else {
+                crash = true;
+            } else if (snakeShape) {
                 snakeShape.pixels.each(function(x, y) {
                     if (x % 2 || y % 2) {
                         if (snakeShape.pixels.hasMultiple(XSS.shapes, x, y)) {
-                            intersect = true;
+                            crash = true;
                         }
                     }
                 });
             }
-            return intersect;
+            return crash;
         };
 
-        var update = function() {
-            var nextpos;
-            if (XSS.room || !XSS.shapes[snake.shapes.snake]) {
-                if (snake.destruct) {
-                    snake.destruct();
-                }
-                return;
-            }
-            snake.removeNameAndDirection();
-            nextpos = snake.getNextPosition();
-            if (isPixel(nextpos)) {
+        update = function() {
+            var nextpos = snake.getNextPosition();
+            if (isCrash(nextpos)) {
                 snake.crash();
                 snake.showAction('CRASH!');
                 window.setTimeout(snake.destruct.bind(snake), 1000);
-                 // Pay for killing the snake
-                window.setTimeout(XSS.stages._menuSnake, 1e5);
+                window.setTimeout(XSS.stages._launchMenuSnake, 1000 * 15);
             } else {
                 snake.move(nextpos);
                 snake.updateShape();
@@ -91,7 +80,7 @@ XSS.stages = {
             }
         };
 
-        window.setTimeout(update, 1e3);
+        window.setTimeout(update, 1000);
     },
 
     _autoJoinRoom: function() {
@@ -124,7 +113,7 @@ XSS.stages = {
      * @return {InputStage}
      */
     autoJoin: function() {
-        var diffs, bools, field, options, players, sep, label, next, stage;
+        var diffs, bools, field, options, players, br, label, next, stage;
 
         diffs = {
             '1': 'Worm',
@@ -140,14 +129,22 @@ XSS.stages = {
         field = XSS.map.FIELD;
         options = XSS.stages.autoJoinData[1];
         players = XSS.stages.autoJoinData[2];
-        sep = '\n';
+        br = '\n';
 
         label = '' +
-            'Players ' + players.length + '/' + options[field.MAX_PLAYERS] +
-                        ': ' + players.join(', ') + sep +
-            'Difficulty: ' + diffs[options[field.DIFFICULTY]] + sep +
-            'Power-Ups: ' + bools[options[field.POWERUPS]] + sep +
-            'XSS ' + XSS.UC_SKULL + ': ' + bools[options[field.XSS]] + '\n\n' +
+            'Players ' +
+            players.length + '/' + options[field.MAX_PLAYERS] + ': ' +
+            players.join(', ') +
+            br +
+            'Difficulty: ' +
+            diffs[options[field.DIFFICULTY]] +
+            br +
+            'Power-Ups: ' +
+            bools[options[field.POWERUPS]] +
+            br +
+            'XSS ' + XSS.UC_SKULL + ': ' +
+            bools[options[field.XSS]] +
+            br + br +
             'Enter your name to join: ';
 
         if (options[field.XSS]) {
@@ -156,7 +153,7 @@ XSS.stages = {
             next = XSS.stages.startGame;
         }
 
-        stage = new InputStage('name', next, 'JOiN GAME', label);
+        stage = new InputStage(XSS.STORAGE_NAME, next, 'JOiN GAME', label);
 
         stage.minChars = 2;
         stage.maxValWidth = XSS.UI_WIDTH_NAME;
@@ -268,7 +265,8 @@ XSS.stages = {
 
         stage = new InputStage(null, nextstage, 'DANGER DANGER', intro);
         stage.maxValWidth = 50;
-        stage.inputSubmit = function(error, value, top) {
+        stage.inputSubmit = function(scope, error, value, top) {
+            XSS.off.keydown(scope._handleKeysBound);
             XSS.stages._challengeSubmit.call(stage, value, challenge, top);
         };
 
@@ -285,14 +283,14 @@ XSS.stages = {
                 'Line breaks will be removed.\n\n' +
                 '> ';
 
-        stage = new InputStage('xurl', next, 'ENTER XSS', intro);
+        if (!XSS.util.storage(XSS.STORAGE_XSS)) {
+            XSS.util.storage(XSS.STORAGE_XSS, 'window.alert("LOSERRRRR");');
+        }
+
+        stage = new InputStage(XSS.STORAGE_XSS, next, 'ENTER XSS', intro);
         stage.minChars = 2;
         stage.maxChars = 256;
         stage.displayWidth = XSS.MENU_WIDTH - XSS.font.width('> ');
-
-        if (!stage.val) {
-            stage.val = 'window.alert("LOSERRRRR");';
-        }
 
         return stage;
     },
@@ -348,7 +346,7 @@ XSS.stages = {
     inputName: function() {
         var stage, next = XSS.stages.multiplayer;
 
-        stage = new InputStage('name', next, 'HELLO', 'My name is ');
+        stage = new InputStage(XSS.STORAGE_NAME, next, 'HELLO', 'My name is ');
 
         stage.minChars = 2;
         stage.maxValWidth = XSS.UI_WIDTH_NAME;
@@ -391,13 +389,14 @@ XSS.stages = {
     },
 
     /**
+     * @param {InputStage} scope
      * @param {string} error
      * @param {string} value
      * @param {number} top
      * @this {InputStage}
      * @private
      */
-    _inputNameSubmit: function(error, value, top) {
+    _inputNameSubmit: function(scope, error, value, top) {
         var wits, shape, text, duration = 500;
 
         wits = [
@@ -429,9 +428,10 @@ XSS.stages = {
         if (error) {
             text = error;
         } else {
+            XSS.off.keydown(scope._handleKeysBound);
             text = XSS.util.randomItem(wits);
             text = text.replace(/%s/g, value);
-            duration = Math.max(text.length * 30, 300);
+            duration = Math.min(text.length * 30, 500);
             setTimeout(function() {
                 XSS.flow.switchStage(this.nextStage);
             }.bind(this), duration + 50);

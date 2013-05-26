@@ -37,85 +37,86 @@ StageInterface.prototype = {
 function InputStage(name, nextStage, header, label) {
     this.name = name;
     this.nextStage = nextStage;
+    this.header = header;
     this.label = label;
 
-    this.val = XSS.util.storage(name);
     this.minChars = 0;
     this.maxChars = 0;
 
     this.maxValWidth = 0; // Passed to InputField
     this.displayWidth = 0;
 
-    this.inputTop = XSS.MENU_TOP + 17;
-
-    this.header = this._headerStrToShape(header);
-    this.headerAndValue = this._getHeaderAndValue();
-    this.shape = this.headerAndValue;
-
     this._handleKeysBound = this.handleKeys.bind(this);
+
+    this._val = XSS.util.storage(name);
+    this._inputTop = XSS.MENU_TOP + 17;
+    this._shape = this._getShape(true);
 }
 
 InputStage.prototype = {
 
     getShape: function() {
-        return this.shape;
+        return this._shape;
+    },
+
+    getValue: function() {
+        return this._val;
     },
 
     construct: function() {
         XSS.on.keydown(this._handleKeysBound);
 
-        this.input = new InputField(XSS.MENU_LEFT, this.inputTop, this.label);
-        this.input.setValue(this.val);
+        this.input = new InputField(XSS.MENU_LEFT, this._inputTop, this.label);
         this.input.maxValWidth = this.maxValWidth || this.input.maxValWidth;
         this.input.displayWidth = this.displayWidth || this.input.displayWidth;
 
         this.input.callback = function(value) {
-            this.val = value;
             XSS.util.storage(this.name, value);
-            this.shape = this.header;
+            this._val = value;
         }.bind(this);
 
         // Apply properties
-        this.input.setValue(this.val);
+        this.input.setValue(this._val);
 
-        // Input handled by InputField
-        XSS.shapes.stage = this.header;
+        // Label and input are rendered separately by InputField
+        XSS.shapes.stage = this._getShape(false);
     },
 
     destruct: function() {
-        this.shape = this.headerAndValue;
         XSS.off.keydown(this._handleKeysBound);
         XSS.shapes.message = null;
+        this._shape = this._getShape(true);
         this.input.destruct();
     },
 
     handleKeys: function(e) {
+        var value, labelHeight, top;
         switch (e.keyCode) {
             case XSS.KEY_ESCAPE:
                 XSS.flow.previousStage();
+                e.preventDefault();
                 break;
             case XSS.KEY_ENTER:
-                var val = this.val.trim(),
-                    top = XSS.font.height(this.label) +
-                        XSS.MENU_TOP +
-                        XSS.MENU_TITLE_HEIGHT +
-                        -3;
-                this.inputSubmit(this._getInputError(val), val, top);
+                value = this._val.trim();
+                labelHeight = XSS.font.height(this.label);
+                top = labelHeight + XSS.MENU_TOP + XSS.MENU_TITLE_HEIGHT - 3;
+                this.inputSubmit(this, this._getInputError(value), value, top);
         }
     },
 
     /**
+     * @param {InputStage} scope
      * @param {string} error
      * @param {string} value
      * @param {number} top
      */
-    inputSubmit: function(error, value, top) {
+    inputSubmit: function(scope, error, value, top) {
         if (!error && value && top) {
-            XSS.flow.switchStage(this.nextStage);
+            XSS.flow.switchStage(scope.nextStage);
+            XSS.off.keydown(scope._handleKeysBound);
         } else {
-            var shape = XSS.font.shape(error, XSS.MENU_LEFT, top);
-            shape.lifetime(0, 500);
-            XSS.shapes.message = shape;
+            XSS.shapes.message = XSS.font.shape(error, XSS.MENU_LEFT, top);
+            XSS.shapes.message.lifetime(0, 500);
         }
     },
 
@@ -134,12 +135,24 @@ InputStage.prototype = {
     },
 
     /**
-     * @param {string} str
+     * @param {boolean} includeValue
+     * @returns {Shape}
+     * @private
+     */
+    _getShape: function(includeValue) {
+        var shape = this._getHeaderShape();
+        if (includeValue) {
+            shape.add(this._getValueShape().pixels);
+        }
+        return shape;
+    },
+
+    /**
      * @return {Shape}
      * @private
      */
-    _headerStrToShape: function(str) {
-        var pixels = XSS.font.pixels(str);
+    _getHeaderShape: function() {
+        var pixels = XSS.font.pixels(this.header);
         pixels = XSS.transform.zoomX2(pixels, XSS.MENU_LEFT, XSS.MENU_TOP, true);
         return new Shape(pixels);
     },
@@ -148,11 +161,9 @@ InputStage.prototype = {
      * @return {Shape}
      * @private
      */
-    _getHeaderAndValue: function() {
-        var shape, value = this.label + this.val;
-        shape = new Shape(XSS.font.pixels(value, XSS.MENU_LEFT, this.inputTop));
-        shape.add(this.header.pixels);
-        return shape;
+    _getValueShape: function() {
+        var value = this.label + this._val;
+        return new Shape(XSS.font.pixels(value, XSS.MENU_LEFT, this._inputTop));
     }
 
 };
@@ -350,7 +361,7 @@ GameStage.prototype = {
     },
 
     _exitKeys: function(e) {
-        if (!XSS.keysBlocked && e.keyCode === XSS.KEY_ESCAPE) {
+        if (!XSS.keysBlocked && e.keyCode === XSS.KEY_ESCAPE && XSS.room) {
             this.dialog = new Dialog(
                 'LEAVING GAME',
                 'Are you sure you want to leave this game?', {
@@ -390,7 +401,7 @@ GameStage.prototype = {
 
         XSS.socket.emit(
             XSS.events.ROOM_JOIN,
-            [key, stages.autoJoin.val]
+            [key, stages.autoJoin.getValue()]
         );
     },
 
@@ -399,7 +410,7 @@ GameStage.prototype = {
 
         stages = XSS.flow.stageInstances;
         data = stages.multiplayer.form.getValues();
-        data[XSS.map.FIELD.NAME] = stages.inputName.val;
+        data[XSS.map.FIELD.NAME] = stages.inputName.getValue();
 
         XSS.socket = new Socket(function() {
             XSS.socket.emit(XSS.events.ROOM_MATCH, data);

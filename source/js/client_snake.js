@@ -46,12 +46,16 @@ ClientSnake.prototype = Object.create(Snake.prototype);
 XSS.util.extend(ClientSnake.prototype, {
 
     destruct: function() {
-        this.removeControls();
+        this.crash();
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
                 XSS.shapes[this.shapes[k]] = null;
             }
         }
+    },
+
+    getShape: function() {
+        return XSS.shapes[this.shapes.snake];
     },
 
     showName: function() {
