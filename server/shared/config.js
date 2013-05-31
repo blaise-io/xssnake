@@ -3,8 +3,8 @@
 'use strict';
 
 module.exports = {
-    SERVER_PORT        : 80,
-    SERVER_ENDPOINT    : 'http://localhost/xssnake',
+    SERVER_PORT        : 8080,
+    SERVER_ENDPOINT    : 'http://localhost:8080/xssnake',
 
     ROOM_CAPACITY      : 6,
     ROOM_ROUNDS        : 3,

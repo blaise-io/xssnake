@@ -15,6 +15,7 @@ function Snake(location, direction, size, speed) {
     this.size = size;
     this.speed = speed;
     this.crashed = false;
+    this.limbo = null;
 }
 
 module.exports = Snake;

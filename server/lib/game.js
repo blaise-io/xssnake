@@ -89,7 +89,7 @@ Game.prototype = {
      * @param {number} direction
      */
     updateSnake: function(client, clientParts, direction) {
-        var sync, serverParts, common, snake = client.snake;
+        var sync, serverParts, common, mismatches, snake = client.snake;
 
         // Always allow a new direction
         client.snake.direction = direction;
@@ -115,7 +115,8 @@ Game.prototype = {
         }
 
         // Check if client-server delta does not exceed limit
-        if (serverParts.length - 1 - common[1] > this._maxMismatches(client)) {
+        mismatches = serverParts.length - common[1] - 1;
+        if (mismatches > this._maxMismatches(client)) {
             this._emitSnakeRoom(client);
             return;
         }
@@ -129,7 +130,7 @@ Game.prototype = {
 
         // Handle new location
         if (this._isCrash(client, snake.parts)) {
-            this._setSnakeCrashed(client, snake.parts);
+            this._crashSnake(client, snake.parts);
         } else {
             client.snake.limbo = false;
             this.spawner.handleHits(client, client.snake.head());
@@ -162,7 +163,7 @@ Game.prototype = {
      * @param client
      */
     clientDisconnect: function(client) {
-        this._setSnakeCrashed(client, client.snake.parts);
+        this._crashSnake(client, client.snake.parts);
     },
 
     /**
@@ -288,7 +289,8 @@ Game.prototype = {
      * @private
      */
     _maxMismatches: function(client) {
-        return Math.ceil(client.latency / client.snake.speed);
+        var rtt = Math.min(map.NETCODE_SYNC_MS, client.rtt);
+        return Math.ceil((rtt + 20) / client.snake.speed);
     },
 
     /**
@@ -338,10 +340,9 @@ Game.prototype = {
      * @private
      */
     _isCrash: function(client, parts) {
-        var eq, limbo, clients, level;
+        var eq, clients, level;
 
         eq = Util.eq;
-        limbo = client.snake.limbo;
         clients = this.room.clients;
         level = this.level;
 
@@ -356,11 +357,6 @@ Game.prototype = {
             // Self
             if (m > 4) {
                 if (m - 1 !== i && eq(part, parts[m - 1])) {
-                    return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
-                }
-
-                // Limbo: check neck tile because head has already crashed.
-                else if (limbo && m - 2 !== i && eq(part, parts[m - 2])) {
                     return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
                 }
             }
@@ -381,7 +377,7 @@ Game.prototype = {
      * @param {Array.<Array>} parts
      * @private
      */
-    _setSnakeCrashed: function(client, parts) {
+    _crashSnake: function(client, parts) {
         client.snake.crashed = true;
         var clientIndex = client.index;
         this.room.emit(events.GAME_SNAKE_CRASH, [clientIndex, parts]);
@@ -488,32 +484,32 @@ Game.prototype = {
 
         predictParts = snake.parts.slice(1);
         predictParts.push(predict);
-        crash = this._isCrash(client, predictParts);
 
-        if (crash) {
-            // A snake is in limbo when the server predicts that a snake has
-            // crashed. The prediction is wrong when the client made a turn
-            // just in time but that message was received too late by the server
-            // because of network latency. When the turn message is received by
-            // the server, and it seems like the server made a wrong prediction,
-            // the snake returns back to life.
-            if (snake.limbo) {
-                this._emitCrashMessage(crash);
-                this._setSnakeCrashed(client, snake.limbo);
-            } else {
-                snake.limbo = snake.parts.slice();
+        // A snake is in limbo when the server predicts that a snake has
+        // crashed. The prediction is wrong when the client made a turn
+        // in time but that message was received too late by the server
+        // because of network latency. When the turn message is received by
+        // the server, and it seems like the server made a wrong prediction,
+        // the snake returns back to life. The snake will be crashed When the
+        // limbo time exceeds the latency.
+
+        if (client.snake.limbo) {
+            if (+new Date() - snake.limbo.start >= client.rtt) {
+                this._emitCrashMessage(snake.limbo.crash);
+                this._crashSnake(client, snake.limbo.parts);
             }
-        }
-
-        // Apply move
-        if (!snake.crashed) {
-            snake.move(predict);
-        }
-
-        // Cannot hit apples and powerups when in limbo;
-        // Snake is either dead or made a turn to prevent death.
-        if (!snake.limbo) {
-            this.spawner.handleHits(client, predict);
+        } else {
+            crash = this._isCrash(client, predictParts);
+            if (crash) {
+                snake.limbo = {
+                    parts: snake.parts.slice(),
+                    crash: crash,
+                    start: +new Date()
+                };
+            } else {
+                snake.move(predict);
+                this.spawner.handleHits(client, predict);
+            }
         }
     },
 

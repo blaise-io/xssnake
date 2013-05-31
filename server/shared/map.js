@@ -26,6 +26,7 @@ module.exports = {
         IN_PROGRESS: 4
     },
 
+    NETCODE_PING_INTERVAL: 3000,
     NETCODE_SYNC_MS: 500,
 
     SPAWN_APPLE  : 0,

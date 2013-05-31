@@ -12,8 +12,10 @@ var map = require('../shared/map.js');
 function EventHandler(client) {
     this.client = client;
 
-    this._pingHeartBeat();
+    this._startPingInterval();
+
     this._map = this._getMap();
+    this._pingSent = -1;
 
     client.connection.on('data', this._handleMessage.bind(this));
     client.connection.on('close', this._disconnect.bind(this));
@@ -97,20 +99,25 @@ EventHandler.prototype = {
     /**
      * @private
      */
-    _pingHeartBeat: function() {
+    _startPingInterval: function() {
         this._pingInterval = setInterval(function() {
-            this.client.emit(events.PING, +new Date());
-        }.bind(this), 2000);
+            this._pingSent = +new Date();
+            this.client.emit(events.PING);
+        }.bind(this), map.NETCODE_PING_INTERVAL);
     },
 
     /**
-     * @param {number} sendTime
      * @private
      */
-    _pong: function(sendTime) {
-        this.client.latency = new Validate((+new Date()) - sendTime)
-            .assertRange(0, 1000)
-            .value(0);
+    _pong: function() {
+        var rtt, now = +new Date();
+        if (this._pingSent) {
+            rtt = now - new Validate(this._pingSent)
+                            .assertRange(now - map.NETCODE_PING_INTERVAL, now)
+                            .value(now - 50);
+            this.client.rtt = rtt;
+            this._pingSent = 0;
+        }
     },
 
     /**

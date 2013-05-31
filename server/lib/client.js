@@ -20,7 +20,7 @@ function Client(id, server, connection) {
     this._buffer = [];
 
     /** @type {number} */
-    this.latency = 0;
+    this.rtt = 0;
     /** @type {number} */
     this.index = -1;
     /** @type {boolean} */
