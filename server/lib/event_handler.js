@@ -2,8 +2,7 @@
 'use strict';
 
 var Validate = require('./validate.js');
-var events = require('../shared/events.js');
-var map = require('../shared/map.js');
+var CONST = require('../shared/const.js');
 
 /**
  * @param {Client} client
@@ -77,11 +76,11 @@ EventHandler.prototype = {
 
     _getMap: function() {
         var map = {};
-        map[events.PONG]              = this._pong.bind(this);
-        map[events.ROOM_START]        = this._roomStart.bind(this);
-        map[events.CHAT_MESSAGE]      = this._chat.bind(this);
-        map[events.GAME_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
-        map[events.GAME_STATE]        = this._gameState.bind(this);
+        map[CONST.EVENT_PONG]         = this._pong.bind(this);
+        map[CONST.EVENT_ROOM_START]   = this._roomStart.bind(this);
+        map[CONST.EVENT_CHAT_MESSAGE] = this._chat.bind(this);
+        map[CONST.EVENT_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
+        map[CONST.EVENT_GAME_STATE]   = this._gameState.bind(this);
         return map;
     },
 
@@ -102,8 +101,8 @@ EventHandler.prototype = {
     _startPingInterval: function() {
         this._pingInterval = setInterval(function() {
             this._pingSent = +new Date();
-            this.client.emit(events.PING);
-        }.bind(this), map.NETCODE_PING_INTERVAL);
+            this.client.emit(CONST.EVENT_PING);
+        }.bind(this), CONST.NETCODE_PING_INTERVAL);
     },
 
     /**
@@ -112,9 +111,9 @@ EventHandler.prototype = {
     _pong: function() {
         var rtt, now = +new Date();
         if (this._pingSent) {
-            rtt = now - new Validate(this._pingSent)
-                            .assertRange(now - map.NETCODE_PING_INTERVAL, now)
-                            .value(now - 50);
+            rtt = now - Number(new Validate(this._pingSent)
+                .assertRange(now - CONST.NETCODE_PING_INTERVAL, now)
+                .value(now - 50));
             this.client.rtt = rtt;
             this._pingSent = 0;
         }
@@ -156,8 +155,8 @@ EventHandler.prototype = {
 
         if (room && validMessage.valid()) {
             index = this.client.index;
-            this.client.broadcast(events.CHAT_MESSAGE, [index, message]);
-            room.emit(events.GAME_SNAKE_ACTION, [index, 'Blah']);
+            this.client.broadcast(CONST.EVENT_CHAT_MESSAGE, [index, message]);
+            room.emit(CONST.EVENT_SNAKE_ACTION, [index, 'Blah']);
         }
     },
 

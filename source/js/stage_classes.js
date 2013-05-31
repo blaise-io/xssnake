@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Dialog, Shape, Socket, InputField, Font, Room, StageFlow*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Dialog, Shape, Socket, InputField, Font, Room, StageFlow*/
 'use strict';
 
 
@@ -47,7 +47,7 @@ function InputStage(name, nextStage, header, label) {
     this.displayWidth = 0;
 
     this._val = XSS.util.storage(name);
-    this._inputTop = XSS.MENU_TOP + 17;
+    this._inputTop = CONST.MENU_TOP + 17;
     this._shape = this._getShape(true);
 }
 
@@ -62,9 +62,9 @@ InputStage.prototype = {
     },
 
     construct: function() {
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this.handleKeys.bind(this));
 
-        this.input = new InputField(XSS.MENU_LEFT, this._inputTop, this.label);
+        this.input = new InputField(CONST.MENU_LEFT, this._inputTop, this.label);
         this.input.maxValWidth = this.maxValWidth || this.input.maxValWidth;
         this.input.displayWidth = this.displayWidth || this.input.displayWidth;
 
@@ -81,7 +81,7 @@ InputStage.prototype = {
     },
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
         XSS.shapes.message = null;
         this._shape = this._getShape(true);
         this.input.destruct();
@@ -90,14 +90,14 @@ InputStage.prototype = {
     handleKeys: function(e) {
         var value, labelHeight, top;
         switch (e.keyCode) {
-            case XSS.KEY_ESCAPE:
+            case CONST.KEY_ESCAPE:
                 XSS.flow.previousStage();
                 e.preventDefault();
                 break;
-            case XSS.KEY_ENTER:
+            case CONST.KEY_ENTER:
                 value = this._val.trim();
                 labelHeight = XSS.font.height(this.label);
-                top = labelHeight + XSS.MENU_TOP + XSS.MENU_TITLE_HEIGHT - 3;
+                top = labelHeight + CONST.MENU_TOP + CONST.MENU_TITLE_HEIGHT - 3;
                 this.inputSubmit(this._getInputError(value), value, top);
         }
     },
@@ -110,9 +110,9 @@ InputStage.prototype = {
     inputSubmit: function(error, value, top) {
         if (!error && value && top) {
             XSS.flow.switchStage(this.nextStage);
-            XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_INPUT);
+            XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
         } else {
-            XSS.shapes.message = XSS.font.shape(error, XSS.MENU_LEFT, top);
+            XSS.shapes.message = XSS.font.shape(error, CONST.MENU_LEFT, top);
             XSS.shapes.message.lifetime(0, 500);
         }
     },
@@ -150,7 +150,7 @@ InputStage.prototype = {
      */
     _getHeaderShape: function() {
         var pixels = XSS.font.pixels(this.header);
-        pixels = XSS.transform.zoomX2(pixels, XSS.MENU_LEFT, XSS.MENU_TOP, true);
+        pixels = XSS.transform.zoomX2(pixels, CONST.MENU_LEFT, CONST.MENU_TOP, true);
         return new Shape(pixels);
     },
 
@@ -160,7 +160,7 @@ InputStage.prototype = {
      */
     _getValueShape: function() {
         var value = this.label + this._val;
-        return new Shape(XSS.font.pixels(value, XSS.MENU_LEFT, this._inputTop));
+        return new Shape(XSS.font.pixels(value, CONST.MENU_LEFT, this._inputTop));
     }
 
 };
@@ -184,19 +184,19 @@ ScreenStage.prototype = {
     },
 
     construct: function() {
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys);
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this.handleKeys);
     },
 
     handleKeys: function(e) {
         switch (e.keyCode) {
-            case XSS.KEY_BACKSPACE:
-            case XSS.KEY_ESCAPE:
+            case CONST.KEY_BACKSPACE:
+            case CONST.KEY_ESCAPE:
                 XSS.flow.previousStage();
         }
     },
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
         XSS.shapes.stage = null;
     }
 
@@ -221,11 +221,11 @@ SelectStage.prototype = {
     },
 
     construct: function() {
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this.handleKeys.bind(this));
     },
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
         XSS.shapes.stage = null;
     },
 
@@ -234,11 +234,11 @@ SelectStage.prototype = {
             return;
         }
         switch (e.keyCode) {
-            case XSS.KEY_BACKSPACE:
-            case XSS.KEY_ESCAPE:
+            case CONST.KEY_BACKSPACE:
+            case CONST.KEY_ESCAPE:
                 XSS.flow.previousStage();
                 break;
-            case XSS.KEY_ENTER:
+            case CONST.KEY_ENTER:
                 var nextStage = this.menu.getNextStage();
                 if (nextStage) {
                     XSS.flow.switchStage(nextStage);
@@ -246,12 +246,12 @@ SelectStage.prototype = {
                     XSS.flow.previousStage();
                 }
                 break;
-            case XSS.KEY_UP:
+            case CONST.KEY_UP:
                 this.menu.select(-1);
                 XSS.play.menu();
                 XSS.flow.setStageShapes();
                 break;
-            case XSS.KEY_DOWN:
+            case CONST.KEY_DOWN:
                 this.menu.select(1);
                 XSS.play.menu();
                 XSS.flow.setStageShapes();
@@ -277,11 +277,11 @@ FormStage.prototype = {
     },
 
     construct: function() {
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this.handleKeys.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this.handleKeys.bind(this));
     },
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
         XSS.shapes.stage = null;
     },
 
@@ -290,30 +290,30 @@ FormStage.prototype = {
             return;
         }
         switch (e.keyCode) {
-            case XSS.KEY_BACKSPACE:
-            case XSS.KEY_ESCAPE:
+            case CONST.KEY_BACKSPACE:
+            case CONST.KEY_ESCAPE:
                 XSS.flow.previousStage();
                 break;
-            case XSS.KEY_ENTER:
+            case CONST.KEY_ENTER:
                 var nextStage = this.form.getNextStage();
                 XSS.flow.switchStage(nextStage);
                 break;
-            case XSS.KEY_UP:
+            case CONST.KEY_UP:
                 this.form.selectField(-1);
                 XSS.play.menu();
                 XSS.flow.setStageShapes();
                 break;
-            case XSS.KEY_DOWN:
+            case CONST.KEY_DOWN:
                 this.form.selectField(1);
                 XSS.play.menu();
                 XSS.flow.setStageShapes();
                 break;
-            case XSS.KEY_LEFT:
+            case CONST.KEY_LEFT:
                 this.form.selectOption(-1);
                 XSS.play.menu_alt();
                 XSS.flow.setStageShapes();
                 break;
-            case XSS.KEY_RIGHT:
+            case CONST.KEY_RIGHT:
                 this.form.selectOption(1);
                 XSS.play.menu_alt();
                 XSS.flow.setStageShapes();
@@ -347,15 +347,15 @@ GameStage.prototype = {
     },
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_STAGES);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
     },
 
     _bindKeys: function() {
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_STAGES, this._exitKeys.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._exitKeys.bind(this));
     },
 
     _exitKeys: function(e) {
-        if (!XSS.keysBlocked && e.keyCode === XSS.KEY_ESCAPE && XSS.room) {
+        if (!XSS.keysBlocked && e.keyCode === CONST.KEY_ESCAPE && XSS.room) {
             this.dialog = new Dialog(
                 'LEAVING GAME',
                 'Are you sure you want to leave this game?', {
@@ -376,7 +376,7 @@ GameStage.prototype = {
 
     _joinGame: function() {
         if (XSS.stages.autoJoinData) {
-            var room = XSS.util.hash(XSS.HASH_ROOM);
+            var room = XSS.util.hash(CONST.HASH_ROOM);
             this._autoJoin(room);
             delete XSS.stages.autoJoinData;
         } else {
@@ -387,14 +387,14 @@ GameStage.prototype = {
     _autoJoin: function(key) {
         var stages = XSS.flow.stageInstances;
 
-        XSS.pubsub.once(XSS.events.ROOM_STATUS, XSS.NS_STAGES, function(data) {
+        XSS.pubsub.once(CONST.EVENT_ROOM_STATUS, CONST.NS_STAGES, function(data) {
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             }
         });
 
         XSS.socket.emit(
-            XSS.events.ROOM_JOIN,
+            CONST.EVENT_ROOM_JOIN,
             [key, stages.autoJoin.getValue()]
         );
     },
@@ -404,10 +404,10 @@ GameStage.prototype = {
 
         stages = XSS.flow.stageInstances;
         data = stages.multiplayer.form.getValues();
-        data[XSS.map.FIELD.NAME] = stages.inputName.getValue();
+        data[CONST.FIELD_NAME] = stages.inputName.getValue();
 
         XSS.socket = new Socket(function() {
-            XSS.socket.emit(XSS.events.ROOM_MATCH, data);
+            XSS.socket.emit(CONST.EVENT_ROOM_MATCH, data);
         });
     }
 

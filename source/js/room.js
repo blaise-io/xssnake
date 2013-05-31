@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Game, Chat, Dialog, ScoreBoard*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Game, Chat, Dialog, ScoreBoard*/
 'use strict';
 
 /**
@@ -20,7 +20,7 @@ function Room() {
 Room.prototype = {
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.ROOM_INDEX, XSS.NS_ROOM);
+        XSS.pubsub.off(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM);
         XSS.util.hash();
         this.unbindKeys();
         this.destructDialog();
@@ -32,7 +32,7 @@ Room.prototype = {
     },
 
     unbindKeys: function() {
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_ROOM);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_ROOM);
     },
 
     destructDialog: function() {
@@ -64,7 +64,7 @@ Room.prototype = {
 
         this.game = new Game(index, level, names);
 
-        XSS.util.hash(XSS.HASH_ROOM, key);
+        XSS.util.hash(CONST.HASH_ROOM, key);
 
         this.index = index;
         this.capacity = capacity;
@@ -86,8 +86,8 @@ Room.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_ROOM, this._handleKeys.bind(this));
-        XSS.pubsub.on(XSS.events.ROOM_INDEX, XSS.NS_ROOM, this._initRoom.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_ROOM, this._handleKeys.bind(this));
+        XSS.pubsub.on(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM, this._initRoom.bind(this));
     },
 
     /**
@@ -103,10 +103,10 @@ Room.prototype = {
     _handleKeys: function(e) {
         if (!XSS.keysBlocked) {
             switch (e.keyCode) {
-                case XSS.KEY_ESCAPE:
+                case CONST.KEY_ESCAPE:
                     this._handleExitKey();
                     break;
-                case XSS.KEY_START:
+                case CONST.KEY_START:
                     this._handleStartKey();
                     break;
             }
@@ -136,7 +136,7 @@ Room.prototype = {
     _handleStartKey: function() {
         var settings = {
             type  : Dialog.TYPE.CONFIRM,
-            ok    : function() { XSS.socket.emit(XSS.events.ROOM_START); },
+            ok    : function() { XSS.socket.emit(CONST.EVENT_ROOM_START); },
             cancel: this._restoreDialog.bind(this)
         };
         
@@ -192,13 +192,13 @@ Room.prototype = {
      */
     errorCodeToStr: function(error) {
         switch (error) {
-            case XSS.map.ROOM.INVALID:
+            case CONST.ROOM_INVALID:
                 return 'INVALID ROOM KEY';
-            case XSS.map.ROOM.NOT_FOUND:
+            case CONST.ROOM_NOT_FOUND:
                 return 'ROOM NOT FOUND';
-            case XSS.map.ROOM.FULL:
+            case CONST.ROOM_FULL:
                 return 'LE ROOM IS FULL!';
-            case XSS.map.ROOM.IN_PROGRESS:
+            case CONST.ROOM_IN_PROGRESS:
                 return 'GAME IN PROGRESS';
             default:
                 return 'UNKNOWN ERROROOSHIII';
@@ -212,7 +212,7 @@ Room.prototype = {
      */
     _sanitizeNames: function(names) {
         for (var i = 0, m = names.length; i < m; i++) {
-            while (XSS.font.width(names[i]) > XSS.UI_WIDTH_NAME) {
+            while (XSS.font.width(names[i]) > CONST.UI_WIDTH_NAME) {
                 names[i] = names[i].slice(0, -1);
             }
         }

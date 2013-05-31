@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Shape*/
 'use strict';
 
 /**
@@ -14,7 +14,7 @@ function InputField(x, y, prefix) {
     this.prefix = prefix || '';
 
     this.maxValWidth = 0;
-    this.displayWidth = XSS.WIDTH - x - 8;
+    this.displayWidth = CONST.WIDTH - x - 8;
     this.maxlength = 156;
 
     this.input = this._createInput();
@@ -36,13 +36,13 @@ InputField.prototype = {
     },
 
     destruct: function() {
-        var ns = XSS.NS_INPUT;
+        var ns = CONST.NS_INPUT;
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        XSS.pubsub.off(XSS.events.KEYPRESS, ns);
-        XSS.pubsub.off(XSS.events.KEYDOWN, ns);
-        XSS.pubsub.off(XSS.events.KEYUP, ns);
+        XSS.pubsub.off(CONST.EVENT_KEYPRESS, ns);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, ns);
+        XSS.pubsub.off(CONST.EVENT_KEYUP, ns);
         XSS.shapes.caret = null;
         XSS.shapes.inputval = null;
         XSS.keysBlocked = false;
@@ -52,10 +52,10 @@ InputField.prototype = {
      * @private
      */
     _bindEvents: function() {
-        var ns = XSS.NS_INPUT;
-        XSS.pubsub.on(XSS.events.KEYPRESS, ns, XSS.play.menu_alt);
-        XSS.pubsub.on(XSS.events.KEYDOWN, ns, this._updateShapes.bind(this));
-        XSS.pubsub.on(XSS.events.KEYUP, ns, this._updateShapes.bind(this));
+        var ns = CONST.NS_INPUT;
+        XSS.pubsub.on(CONST.EVENT_KEYPRESS, ns, XSS.play.menu_alt);
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYUP, ns, this._updateShapes.bind(this));
     },
 
     /**

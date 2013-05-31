@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, LevelData*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, LevelData*/
 'use strict';
 
 /**

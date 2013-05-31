@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Client, Room, Game, Spawnable, Powerup, Shape, StageFlow, SockJS*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Client, Room, Game, Spawnable, Powerup, Shape, StageFlow, SockJS*/
 'use strict';
 
 /**
@@ -11,7 +11,7 @@ function Socket(callback) {
     this.callback = callback;
     this.connected = false;
 
-    this.connection = new SockJS(XSS.config.SERVER_ENDPOINT);
+    this.connection = new SockJS(CONST.SERVER_ENDPOINT);
     this.connection.onopen = this._connect.bind(this);
     this.connection.onclose = this._disconnect.bind(this);
     this.connection.onmessage = this.handleMessage.bind(this);
@@ -22,8 +22,8 @@ function Socket(callback) {
 Socket.prototype = {
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.PING, XSS.NS_SOCKET);
-        XSS.pubsub.off(XSS.events.COMBI, XSS.NS_SOCKET);
+        XSS.pubsub.off(CONST.EVENT_PING, CONST.NS_SOCKET);
+        XSS.pubsub.off(CONST.EVENT_COMBI, CONST.NS_SOCKET);
         if (XSS.room) {
             XSS.room.destruct();
             XSS.room = null;
@@ -55,11 +55,15 @@ Socket.prototype = {
     },
 
     /**
-     * @param {string} type
+     * @param {string} name
      * @param {*=} data
      */
-    emit: function(type, data) {
-        this.connection.send(JSON.stringify([type, data]));
+    emit: function(name, data) {
+        var emit = [name];
+        if (data) {
+            emit.push(data);
+        }
+        this.connection.send(JSON.stringify(emit));
     },
 
     /**
@@ -67,6 +71,7 @@ Socket.prototype = {
      */
     handleMessage: function(ev) {
         var data = JSON.parse(ev.data);
+        console.log(data);
         XSS.pubsub.publish(data[0], data[1]);
     },
 
@@ -74,15 +79,15 @@ Socket.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.pubsub.on(XSS.events.PING,  XSS.NS_SOCKET, this.clientPing.bind(this));
-        XSS.pubsub.on(XSS.events.COMBI, XSS.NS_SOCKET, this.combinedEvents.bind(this));
+        XSS.pubsub.on(CONST.EVENT_PING,  CONST.NS_SOCKET, this.clientPing.bind(this));
+        XSS.pubsub.on(CONST.EVENT_COMBI, CONST.NS_SOCKET, this.combinedEvents.bind(this));
     },
 
     /**
      * @param {number} time
      */
     clientPing: function(time) {
-        XSS.socket.emit(XSS.events.PONG, time);
+        XSS.socket.emit(CONST.EVENT_PONG, time);
     },
 
     /**

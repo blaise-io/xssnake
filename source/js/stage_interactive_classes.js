@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, Font*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Shape, Font*/
 'use strict';
 
 
@@ -72,17 +72,17 @@ SelectMenu.prototype = {
     getShape: function() {
         var x, y, header, footer, font, shape, desc;
 
-        x = XSS.MENU_LEFT;
-        y = XSS.MENU_TOP;
+        x = CONST.MENU_LEFT;
+        y = CONST.MENU_TOP;
 
         // Header
         header = XSS.transform.zoomX2(XSS.font.pixels(this.header), x, y, true);
         shape = new Shape(header);
-        y += XSS.MENU_TITLE_HEIGHT;
+        y += CONST.MENU_TITLE_HEIGHT;
 
         // Footer
         footer = XSS.font.pixels(
-            this.footer, x, XSS.HEIGHT - 3 - XSS.font.height(this.footer)
+            this.footer, x, CONST.HEIGHT - 3 - XSS.font.height(this.footer)
         );
         shape.add(footer);
 
@@ -98,7 +98,7 @@ SelectMenu.prototype = {
         // Help text line(s)
         desc = this.getFocusedOption().description;
         y += Font.LINE_HEIGHT;
-        font = XSS.font.pixels(desc, x, y, {wrap: XSS.MENU_WRAP});
+        font = XSS.font.pixels(desc, x, y, {wrap: CONST.MENU_WRAP});
         shape.add(font);
 
         return shape;
@@ -187,16 +187,16 @@ Form.prototype = {
     getShape: function() {
         var x, optionX, y, shape;
 
-        x = XSS.MENU_LEFT;
-        y = XSS.MENU_TOP;
+        x = CONST.MENU_LEFT;
+        y = CONST.MENU_TOP;
 
-        optionX = XSS.MENU_LEFT + 2 + XSS.MENU_WIDTH -
-                  this._optionMaxWidth - XSS.font.width(' ' + XSS.UC_TR_LEFT);
+        optionX = CONST.MENU_LEFT + 2 + CONST.MENU_WIDTH -
+                  this._optionMaxWidth - XSS.font.width(' ' + CONST.UC_TR_LEFT);
 
         shape = new Shape();
         shape.add(this._getHeaderPixels(x, y));
 
-        y += XSS.MENU_TITLE_HEIGHT;
+        y += CONST.MENU_TITLE_HEIGHT;
 
         // Draw options
         for (var i = 0, m = this.fields.length; i < m; i++) {
@@ -272,12 +272,12 @@ Form.prototype = {
         pixels = XSS.font.pixels(value, xx.option, y);
         shape.add(pixels);
 
-        xx.left = col2X - XSS.font.width(XSS.UC_TR_LEFT + ' ');
+        xx.left = col2X - XSS.font.width(CONST.UC_TR_LEFT + ' ');
         xx.right = col2X + this._optionMaxWidth + XSS.font.width(' ');
 
         shape.add(
-            XSS.font.pixels(active ? XSS.UC_TR_LEFT : '<', xx.left, y),
-            XSS.font.pixels(active ? XSS.UC_TR_RIGHT : '>', xx.right, y)
+            XSS.font.pixels(active ? CONST.UC_TR_LEFT : '<', xx.left, y),
+            XSS.font.pixels(active ? CONST.UC_TR_RIGHT : '>', xx.right, y)
         );
 
         return shape;

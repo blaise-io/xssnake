@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST*/
 'use strict';
 
 /**
@@ -12,7 +12,7 @@ function StageFlow(stageRef) {
     if (XSS.font.loaded) {
         this.initUI();
     } else {
-        XSS.pubsub.once(XSS.PUB_FONT_LOAD, XSS.NS_FLOW, this.initUI.bind(this));
+        XSS.pubsub.once(CONST.PUB_FONT_LOAD, CONST.NS_FLOW, this.initUI.bind(this));
     }
 }
 
@@ -30,7 +30,7 @@ StageFlow.prototype = {
         }
         this._prevStages = [];
         window.onhashchange = null;
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_FLOW);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_FLOW);
     },
 
     restart: function() {
@@ -119,14 +119,14 @@ StageFlow.prototype = {
      */
     _bindGlobalEvents: function() {
         window.onhashchange = this._hashChange.bind(this);
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_FLOW, this.handleKeys.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_FLOW, this.handleKeys.bind(this));
     },
 
     /**
      * @private
      */
     _hashChange: function() {
-        if (XSS.util.hash(XSS.HASH_ROOM) && !XSS.room) {
+        if (XSS.util.hash(CONST.HASH_ROOM) && !XSS.room) {
             XSS.stages._autoJoinRoom();
         }
     },
@@ -139,17 +139,17 @@ StageFlow.prototype = {
         var mute, instruct;
 
         // Firefox disconnects websocket on Esc. Disable that.
-        if (e.keyCode === XSS.KEY_ESCAPE) {
+        if (e.keyCode === CONST.KEY_ESCAPE) {
             e.preventDefault();
         }
 
         // Global mute key.
         // Ignore key when user is in input field. Start screen might
         // contain a dialog, so do not use XSS.keysBlocked here.
-        if (!XSS.shapes.caret && e.keyCode === XSS.KEY_MUTE) {
-            mute = !XSS.util.storage(XSS.STORAGE_MUTE);
+        if (!XSS.shapes.caret && e.keyCode === CONST.KEY_MUTE) {
+            mute = !XSS.util.storage(CONST.STORAGE_MUTE);
             instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
-            XSS.util.storage(XSS.STORAGE_MUTE, mute);
+            XSS.util.storage(CONST.STORAGE_MUTE, mute);
             XSS.util.instruct(instruct, 1e3);
             XSS.play.menu_alt();
         }
@@ -163,7 +163,7 @@ StageFlow.prototype = {
      * @private
      */
     _switchStageAnimate: function(oldStage, newStage, back, callback) {
-        var oldStageAnim, newStageAnim, width = XSS.WIDTH;
+        var oldStageAnim, newStageAnim, width = CONST.WIDTH;
 
         if (back) {
             oldStageAnim = {to: [width, 0]};

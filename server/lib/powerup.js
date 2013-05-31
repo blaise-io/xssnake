@@ -1,10 +1,9 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var events = require('../shared/events.js');
 var Room = require('./room.js');
 var Util = require('../shared/util.js');
-var map = require('../shared/map.js');
+var CONST = require('../shared/const.js');
 
 /**
  * Powerup
@@ -125,8 +124,8 @@ Powerup.prototype = {
             index = this._clientIndex(),
             snake = this.client.snake;
         snake.speed -= 15;
-        room.buffer(events.GAME_SNAKE_SPEED, [index, snake.speed]);
-        room.buffer(events.GAME_SNAKE_ACTION, [index, '+Speed']).flush();
+        room.buffer(CONST.EVENT_SNAKE_SPEED, [index, snake.speed]);
+        room.buffer(CONST.EVENT_SNAKE_ACTION, [index, '+Speed']).flush();
     },
 
     _speedBoostSelf: function() {
@@ -158,8 +157,8 @@ Powerup.prototype = {
             var index = clients[i].index,
                 snake = clients[i].snake;
             snake.speed += delta;
-            room.buffer(events.GAME_SNAKE_SPEED, [index, snake.speed]);
-            room.buffer(events.GAME_SNAKE_ACTION, [index, label]);
+            room.buffer(CONST.EVENT_SNAKE_SPEED, [index, snake.speed]);
+            room.buffer(CONST.EVENT_SNAKE_ACTION, [index, label]);
         }
         room.flush();
 
@@ -168,7 +167,7 @@ Powerup.prototype = {
                 var index = clients[i].index,
                     snake = clients[i].snake;
                 snake.speed -= delta;
-                room.buffer(events.GAME_SNAKE_SPEED, [index, snake.speed]);
+                room.buffer(CONST.EVENT_SNAKE_SPEED, [index, snake.speed]);
             }
             room.flush();
         });
@@ -176,12 +175,12 @@ Powerup.prototype = {
 
     _spawnApples: function() {
         var r = Util.randomBetween(3, 10);
-        this._spawn(map.SPAWN_APPLE, r, '+Apples');
+        this._spawn(CONST.SPAWN_APPLE, r, '+Apples');
     },
 
     _spawnPowerups: function() {
         var r = Util.randomBetween(2, 5);
-        this._spawn(map.SPAWN_POWERUP, r, '+Power-ups');
+        this._spawn(CONST.SPAWN_POWERUP, r, '+Power-ups');
     },
 
     /**
@@ -198,7 +197,7 @@ Powerup.prototype = {
             game.spawner.spawn(type);
         };
 
-        game.room.emit(events.GAME_SNAKE_ACTION, [index, message]);
+        game.room.emit(CONST.EVENT_SNAKE_ACTION, [index, message]);
 
         for (var i = 0; i < amount; i++) {
             setTimeout(spawn, i * 100);
@@ -221,7 +220,7 @@ Powerup.prototype = {
         var room = this.game.room;
         for (var i = 0, m = clients.length; i < m; i++) {
             var index = clients[i].index;
-            room.buffer(events.GAME_SNAKE_ACTION, [index, 'Reverse']);
+            room.buffer(CONST.EVENT_SNAKE_ACTION, [index, 'Reverse']);
             this.game.reverseSnake(index);
         }
         room.flush();
@@ -255,8 +254,8 @@ Powerup.prototype = {
             var index = clients[i].index,
                 snake = clients[i].snake;
             snake.size = Math.max(1, snake.size + delta);
-            room.buffer(events.GAME_SNAKE_ACTION, [index, message]);
-            room.buffer(events.GAME_SNAKE_SIZE, [index, snake.size]);
+            room.buffer(CONST.EVENT_SNAKE_ACTION, [index, message]);
+            room.buffer(CONST.EVENT_SNAKE_SIZE, [index, snake.size]);
         }
         room.flush();
     }

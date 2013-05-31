@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, ShapePixels*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Shape, ShapePixels*/
 'use strict';
 
 /**
@@ -106,12 +106,12 @@ Font.prototype = {
      * @private
      */
     _detectFontLoad: function() {
-        var props = this._getChrProperties(XSS.UC_HOURGLASS);
+        var props = this._getChrProperties(CONST.UC_HOURGLASS);
         if (props.width !== 8) {
             window.setTimeout(this._detectFontLoad.bind(this), 0);
         } else {
             this.loaded = true;
-            XSS.pubsub.publish(XSS.PUB_FONT_LOAD);
+            XSS.pubsub.publish(CONST.PUB_FONT_LOAD);
         }
     },
 
@@ -123,7 +123,7 @@ Font.prototype = {
     _chrProperties: function(chr) {
         if (!this._cache[chr]) {
             var chrProperties = this._getChrProperties(chr);
-            this._cache[chr] = chrProperties || this._chrProperties(XSS.UC_SQUARE);
+            this._cache[chr] = chrProperties || this._chrProperties(CONST.UC_SQUARE);
         }
         return this._cache[chr];
     },

@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, ShapePixels*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, ShapePixels*/
 'use strict';
 
 /**
@@ -40,8 +40,8 @@ Transform.prototype = {
     center: function(pixels, width, height) {
         var x, y, bbox = pixels.bbox();
 
-        width = width || XSS.WIDTH;
-        height = height || XSS.HEIGHT;
+        width = width || CONST.WIDTH;
+        height = height || CONST.HEIGHT;
 
         x = Math.round((width - bbox.width) / 2);
         y = Math.round((height - bbox.height) / 2);
@@ -144,7 +144,7 @@ Transform.prototype = {
      * @return {ShapePixels}
      */
     zoomGame: function(pixels) {
-        return this.zoomX4(pixels, XSS.GAME_LEFT, XSS.GAME_TOP);
+        return this.zoomX4(pixels, CONST.GAME_LEFT, CONST.GAME_TOP);
     },
 
     /**

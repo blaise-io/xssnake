@@ -1,7 +1,7 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
 'use strict';
 
-var events = require('../shared/events.js');
+var CONST = require('../shared/const.js');
 var EventHandler = require('./event_handler.js');
 
 /**
@@ -58,7 +58,11 @@ Client.prototype = {
      * @param {*=} data
      */
     emit: function(name, data) {
-        this.connection.write(JSON.stringify([name, data]));
+        var emit = [name];
+        if (data) {
+            emit.push(data);
+        }
+        this.connection.write(JSON.stringify(emit));
     },
 
     /**
@@ -92,7 +96,7 @@ Client.prototype = {
      * @return {Client}
      */
     flush: function() {
-        this.emit(events.COMBI, this._buffer);
+        this.emit(CONST.EVENT_COMBI, this._buffer);
         this._buffer = [];
         return this;
     }

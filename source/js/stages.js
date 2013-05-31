@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true, evil:true*/
-/*globals XSS, ClientLevel, ClientSnake, Dialog, ShapePixels, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Room, Shape, Socket*/
+/*globals XSS, CONST, ClientLevel, ClientSnake, Dialog, ShapePixels, SelectMenu, SelectStage, ScreenStage, InputStage, Font, FormStage, Form, GameStage, Room, Shape, Socket*/
 
 'use strict';
 
@@ -13,14 +13,14 @@ XSS.stages = {
     main: function() {
         var menu, name, header, footer;
 
-        name = XSS.util.storage(XSS.STORAGE_NAME);
+        name = XSS.util.storage(CONST.STORAGE_NAME);
         header = name ?
                   'WLCM BCK ' + name.toUpperCase() + '!' :
                   'WELCOME STRANGER!!';
 
         footer = '' +
             'Press M to mute/unmute sounds.\n' +
-            'Use arrow keys, Esc and ' + XSS.UC_ENTER_KEY + ' to navigate.';
+            'Use arrow keys, Esc and ' + CONST.UC_ENTER_KEY + ' to navigate.';
 
         menu = new SelectMenu('main', header, footer);
         menu.addOption(null, XSS.stages.inputName, 'MULTIPLAYER');
@@ -28,7 +28,7 @@ XSS.stages = {
         menu.addOption(null, XSS.stages.colorScheme, 'COLOR SCHEME');
         menu.addOption(null, XSS.stages.credits, 'CREDITS');
 
-        if (XSS.util.hash(XSS.HASH_ROOM)) {
+        if (XSS.util.hash(CONST.HASH_ROOM)) {
             XSS.stages._autoJoinRoom();
         } else {
             XSS.stages._launchMenuSnake();
@@ -86,7 +86,7 @@ XSS.stages = {
     _autoJoinRoom: function() {
         var dialog = new Dialog('AUTO-JOIN ROOM', 'Connecting to server...');
 
-        XSS.pubsub.once(XSS.events.ROOM_STATUS, XSS.NS_STAGES, function(data) {
+        XSS.pubsub.once(CONST.EVENT_ROOM_STATUS, CONST.NS_STAGES, function(data) {
             dialog.destruct();
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
@@ -101,8 +101,8 @@ XSS.stages = {
                 dialog.setBody('Getting room properties...');
                 window.setTimeout(function() {
                     XSS.socket.emit(
-                        XSS.events.ROOM_STATUS,
-                        XSS.util.hash(XSS.HASH_ROOM)
+                        CONST.EVENT_ROOM_STATUS,
+                        XSS.util.hash(CONST.HASH_ROOM)
                     );
                 }, 500);
             }, 500);
@@ -126,37 +126,36 @@ XSS.stages = {
             'true' : 'Yes'
         };
 
-        field = XSS.map.FIELD;
         options = XSS.stages.autoJoinData[1];
         players = XSS.stages.autoJoinData[2];
         br = '\n';
 
         label = '' +
             'Players ' +
-            players.length + '/' + options[field.MAX_PLAYERS] + ': ' +
+            players.length + '/' + options[CONST.FIELD_MAX_PLAYERS] + ': ' +
             players.join(', ') +
             br +
             'Difficulty: ' +
-            diffs[options[field.DIFFICULTY]] +
+            diffs[options[CONST.FIELD_DIFFICULTY]] +
             br +
             'Power-Ups: ' +
-            bools[options[field.POWERUPS]] +
+            bools[options[CONST.FIELD_POWERUPS]] +
             br +
-            'XSS ' + XSS.UC_SKULL + ': ' +
-            bools[options[field.XSS]] +
+            'XSS ' + CONST.UC_SKULL + ': ' +
+            bools[options[CONST.FIELD_XSS]] +
             br + br +
             'Enter your name to join: ';
 
-        if (options[field.XSS]) {
+        if (options[CONST.FIELD_XSS]) {
             next = XSS.stages.challenge;
         } else {
             next = XSS.stages.startGame;
         }
 
-        stage = new InputStage(XSS.STORAGE_NAME, next, 'JOiN GAME', label);
+        stage = new InputStage(CONST.STORAGE_NAME, next, 'JOiN GAME', label);
 
         stage.minChars = 2;
-        stage.maxValWidth = XSS.UI_WIDTH_NAME;
+        stage.maxValWidth = CONST.UI_WIDTH_NAME;
 
         return stage;
     },
@@ -165,10 +164,10 @@ XSS.stages = {
      * @return {FormStage}
      */
     multiplayer: function() {
-        var form, next, field = XSS.map.FIELD, value = XSS.map.VALUE;
+        var form, next;
 
         next = function(values) {
-            if (values[field.XSS]) {
+            if (values[CONST.FIELD_XSS]) {
                 return XSS.stages.challenge;
             }
             return XSS.stages.startGame;
@@ -176,13 +175,13 @@ XSS.stages = {
 
         form = new Form('GAME OPTIONS', next);
 
-        form.addField(field.DIFFICULTY, 'LEVEL DIFFICULTY', [
-            [value.MEDIUM, 'SNAKE'],
-            [value.HARD, 'PYTHON'],
-            [value.EASY, 'WORM']
+        form.addField(CONST.FIELD_DIFFICULTY, 'LEVEL DIFFICULTY', [
+            [CONST.FIELD_VALUE_MEDIUM, 'SNAKE'],
+            [CONST.FIELD_VALUE_HARD, 'PYTHON'],
+            [CONST.FIELD_VALUE_EASY, 'WORM']
         ]);
 
-        form.addField(field.POWERUPS, 'POWER-UPS', [
+        form.addField(CONST.FIELD_POWERUPS, 'POWER-UPS', [
             [true, 'YES'],
             [false, 'NO']
         ]);
@@ -198,17 +197,17 @@ XSS.stages = {
             ['OUI!']
         ]);
 
-        form.addField(field.PRIVATE, 'PRIVATE', [
+        form.addField(CONST.FIELD_PRIVATE, 'PRIVATE', [
             [false, 'NO'],
             [true, 'YES']
         ]);
 
-        form.addField(field.XSS, 'XSS ' + XSS.UC_SKULL, [
+        form.addField(CONST.FIELD_XSS, 'XSS ' + CONST.UC_SKULL, [
             [false, 'NO'],
             [true, 'YES']
         ]);
 
-        form.addField(field.MAX_PLAYERS, 'MAX PLAYERS', [
+        form.addField(CONST.FIELD_MAX_PLAYERS, 'MAX PLAYERS', [
             [6],
             [1],
             [2],
@@ -266,7 +265,7 @@ XSS.stages = {
         stage = new InputStage(null, nextstage, 'DANGER DANGER', intro);
         stage.maxValWidth = 50;
         stage.inputSubmit = function(error, value, top) {
-            XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_INPUT);
+            XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
             XSS.stages._challengeSubmit.call(stage, value, challenge, top);
         };
 
@@ -283,14 +282,14 @@ XSS.stages = {
                 'Line breaks will be removed.\n\n' +
                 '> ';
 
-        if (!XSS.util.storage(XSS.STORAGE_XSS)) {
-            XSS.util.storage(XSS.STORAGE_XSS, 'window.alert("LOSERRRRR");');
+        if (!XSS.util.storage(CONST.STORAGE_XSS)) {
+            XSS.util.storage(CONST.STORAGE_XSS, 'window.alert("LOSERRRRR");');
         }
 
-        stage = new InputStage(XSS.STORAGE_XSS, next, 'ENTER XSS', intro);
+        stage = new InputStage(CONST.STORAGE_XSS, next, 'ENTER XSS', intro);
         stage.minChars = 2;
         stage.maxChars = 256;
-        stage.displayWidth = XSS.MENU_WIDTH - XSS.font.width('> ');
+        stage.displayWidth = CONST.MENU_WIDTH - XSS.font.width('> ');
 
         return stage;
     },
@@ -301,12 +300,12 @@ XSS.stages = {
     colorScheme: function() {
         var setColor, menu = new SelectMenu('color', 'COLOR SCHEME');
 
-        menu.selected = XSS.util.storage(XSS.STORAGE_COLOR);
+        menu.selected = XSS.util.storage(CONST.STORAGE_COLOR);
         menu.selected = parseInt(menu.selected, 10) || 0;
 
         setColor = function(index) {
             XSS.canvas.setColor(XSS.colors[index]);
-            XSS.util.storage(XSS.STORAGE_COLOR, index);
+            XSS.util.storage(CONST.STORAGE_COLOR, index);
         };
 
         for (var i = 0, m = XSS.colors.length; i < m; i++) {
@@ -324,17 +323,17 @@ XSS.stages = {
     credits: function() {
         var screen, left, top;
 
-        left = XSS.MENU_LEFT;
-        top = XSS.MENU_TOP;
+        left = CONST.MENU_LEFT;
+        top = CONST.MENU_TOP;
 
         screen = new Shape(
             XSS.transform.zoomX2(XSS.font.pixels('CREDITS'), left, top, true),
             XSS.font.pixels('' +
-                'Concept, Code, Bugs, Font & ' + XSS.UC_SKULL + ':\n' +
+                'Concept, Code, Bugs, Font & ' + CONST.UC_SKULL + ':\n' +
                 'Blaise Kal, 2012-2013.\n\n' +
                 'Website: www.blaise.io\n' +
                 'Email: blaisekal@gmail.com\n\n' +
-                'Thank you for playing!', left, top + XSS.MENU_TITLE_HEIGHT)
+                'Thank you for playing!', left, top + CONST.MENU_TITLE_HEIGHT)
         );
 
         return new ScreenStage(screen);
@@ -346,10 +345,10 @@ XSS.stages = {
     inputName: function() {
         var stage, next = XSS.stages.multiplayer;
 
-        stage = new InputStage(XSS.STORAGE_NAME, next, 'HELLO', 'My name is ');
+        stage = new InputStage(CONST.STORAGE_NAME, next, 'HELLO', 'My name is ');
 
         stage.minChars = 2;
-        stage.maxValWidth = XSS.UI_WIDTH_NAME;
+        stage.maxValWidth = CONST.UI_WIDTH_NAME;
         stage.inputSubmit = XSS.stages._inputNameSubmit;
 
         return stage;
@@ -381,7 +380,7 @@ XSS.stages = {
 
         shape = XSS.font.shape(
             text,
-            XSS.MENU_LEFT,
+            CONST.MENU_LEFT,
             top
         );
         shape.lifetime(0, 1000);
@@ -401,8 +400,8 @@ XSS.stages = {
         wits = [
             '%s%s%s',
             'You have the same name as my mom',
-            'LOVELY ' + new Array(4).join(XSS.UC_HEART),
-            XSS.UC_SKULL,
+            'LOVELY ' + new Array(4).join(CONST.UC_HEART),
+            CONST.UC_SKULL,
             'Lamest name EVER',
             'Clever name!',
             'Mmm I love the way you handled that keyboard',
@@ -427,7 +426,7 @@ XSS.stages = {
         if (error) {
             text = error;
         } else {
-            XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_INPUT);
+            XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
             text = XSS.util.randomItem(wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(function() {
@@ -435,7 +434,7 @@ XSS.stages = {
             }.bind(this), duration);
         }
 
-        shape = XSS.font.shape(text, XSS.MENU_LEFT, top);
+        shape = XSS.font.shape(text, CONST.MENU_LEFT, top);
         shape.lifetime(0, duration);
         XSS.shapes.message = shape;
     }

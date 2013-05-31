@@ -39,8 +39,8 @@ gcc.header(util.format(
     compile.coreModules.join(',\n    ')
 ));
 
-// DEBUG: Uncomment next lien to write inlined code to file before compilation.
-// fs.writeFileSync(__dirname + '/precompiled.js', compile.code);
+// DEBUG: Uncomment next line to write inlined code to file before compilation.
+// fs.writeFileSync(__dirname + '/precompiled-server.js', compile.code);
 
 gcc.addCode(compile.code);
 

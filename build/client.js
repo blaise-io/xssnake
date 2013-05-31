@@ -31,11 +31,14 @@ gcc.params({
 });
 
 gcc.addFile(home + 'source/js/main.js');
-gcc.addDir(home + 'server/shared');
+gcc.addFile(home + 'server/shared/const.js');
+gcc.addDir(home + 'server/shared', ['const.js']);
 gcc.addDir(home + 'source/js', ['main.js']);
 
 gcc.replace(/'use strict';/g, '');
 
+// DEBUG: Uncomment next line to write inlined code to file before compilation.
+// fs.writeFileSync(__dirname + '/precompiled-client.js', gcc._reqParam.js_code);
 
 if (module.parent) {
     // Test

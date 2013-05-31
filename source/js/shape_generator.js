@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, ShapePixels*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Shape, ShapePixels*/
 'use strict';
 
 /**
@@ -156,8 +156,8 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     innerBorder: function() {
-        var w = XSS.WIDTH - 1,
-            h = XSS.HEIGHT - 1;
+        var w = CONST.WIDTH - 1,
+            h = CONST.HEIGHT - 1;
         return new Shape(
             this.line(2, h - 25, w - 2, h - 25),
             this.line(2, h - 26, w - 2, h - 26)
@@ -169,8 +169,8 @@ ShapeGenerator.prototype = {
      */
     outerBorder: function() {
         var shapes = {},
-            w = XSS.WIDTH - 1,
-            h = XSS.HEIGHT - 1;
+            w = CONST.WIDTH - 1,
+            h = CONST.HEIGHT - 1;
 
         // Splitting this up or it spans too big of an area
         shapes.top = new Shape(
@@ -214,13 +214,13 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     header: function() {
-        var x, y, shape, welcome = XSS.font.pixels('<XSSNAKE>');
+        var x, y, shape, welcome = XSS.font.pixels('<CONST.AKE>');
 
-        x = XSS.MENU_LEFT;
-        y = XSS.MENU_TOP - 34;
+        x = CONST.MENU_LEFT;
+        y = CONST.MENU_TOP - 34;
 
         shape = new Shape(XSS.transform.zoomX4(welcome, x, y, true));
-        shape.add(this.line(x, y + 28, x + XSS.MENU_WIDTH, y + 28));
+        shape.add(this.line(x, y + 28, x + CONST.MENU_WIDTH, y + 28));
 
         return shape;
     }

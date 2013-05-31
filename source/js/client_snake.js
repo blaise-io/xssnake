@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, ShapePixels, Snake*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Shape, ShapePixels, Snake*/
 'use strict';
 
 /**
@@ -14,8 +14,8 @@
 function ClientSnake(index, local, name, location, direction) {
     var size, speed;
 
-    size  = XSS.config.SNAKE_SIZE;
-    speed = XSS.config.SNAKE_SPEED;
+    size  = CONST.SNAKE_SIZE;
+    speed = CONST.SNAKE_SPEED;
 
     Snake.call(this, location, direction, size, speed);
 
@@ -34,9 +34,9 @@ function ClientSnake(index, local, name, location, direction) {
 
     /** @type {Object.<string,string>} */
     this.shapes = {
-        snake    : XSS.NS_SNAKE + index,
-        name     : XSS.NS_SNAKE + 'TAG' + index,
-        direction: XSS.NS_SNAKE + 'DIR' + index
+        snake    : CONST.NS_SNAKE + index,
+        name     : CONST.NS_SNAKE + 'TAG' + index,
+        direction: CONST.NS_SNAKE + 'DIR' + index
     };
 }
 
@@ -91,7 +91,7 @@ XSS.util.extend(ClientSnake.prototype, {
         for (var i = 0; i <= duration * amount; i += duration) {
             var shape, name, h = this.head();
             shape = XSS.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
-            name = XSS.NS_SNAKE + XSS.util.randomStr();
+            name = CONST.NS_SNAKE + XSS.util.randomStr();
             XSS.shapes[name] = shape.lifetime(i, duration + i);
         }
     },
@@ -117,11 +117,11 @@ XSS.util.extend(ClientSnake.prototype, {
     },
 
     addControls: function() {
-        XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_SNAKE, this._handleKeys.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE, this._handleKeys.bind(this));
     },
 
     removeControls: function() {
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_SNAKE);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE);
     },
 
     addToShapes: function() {
@@ -150,9 +150,9 @@ XSS.util.extend(ClientSnake.prototype, {
      */
     _emitSnake: function(direction) {
         var data, sync;
-        sync = Math.round(XSS.map.NETCODE_SYNC_MS / this.speed);
+        sync = Math.round(CONST.NETCODE_SYNC_MS / this.speed);
         data = [this.parts.slice(-sync), direction];
-        XSS.socket.emit(XSS.events.GAME_SNAKE_UPDATE, data);
+        XSS.socket.emit(CONST.EVENT_SNAKE_UPDATE, data);
     },
 
     /** @private */
@@ -181,17 +181,17 @@ XSS.util.extend(ClientSnake.prototype, {
             return;
         }
         switch (e.keyCode) {
-            case XSS.KEY_LEFT:
-                this._changeDirection(XSS.DIRECTION_LEFT);
+            case CONST.KEY_LEFT:
+                this._changeDirection(CONST.DIRECTION_LEFT);
                 break;
-            case XSS.KEY_UP:
-                this._changeDirection(XSS.DIRECTION_UP);
+            case CONST.KEY_UP:
+                this._changeDirection(CONST.DIRECTION_UP);
                 break;
-            case XSS.KEY_RIGHT:
-                this._changeDirection(XSS.DIRECTION_RIGHT);
+            case CONST.KEY_RIGHT:
+                this._changeDirection(CONST.DIRECTION_RIGHT);
                 break;
-            case XSS.KEY_DOWN:
-                this._changeDirection(XSS.DIRECTION_DOWN);
+            case CONST.KEY_DOWN:
+                this._changeDirection(CONST.DIRECTION_DOWN);
                 break;
         }
     },

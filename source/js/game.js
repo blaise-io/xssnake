@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, ClientSnake, Level, Dialog, Shape, Spawnable */
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, ClientSnake, Level, Dialog, Shape, Spawnable */
 'use strict';
 
 /***
@@ -38,10 +38,10 @@ function Game(index, levelID, names) {
 Game.prototype = {
 
     start: function() {
-        var ns = XSS.NS_GAME;
+        var ns = CONST.NS_GAME;
 
-        XSS.pubsub.on(XSS.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
-        XSS.pubsub.on(XSS.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
+        XSS.pubsub.on(CONST.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
+        XSS.pubsub.on(CONST.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
@@ -52,19 +52,18 @@ Game.prototype = {
     },
 
     destruct: function() {
-        var i, m, border, events, ns;
+        var i, m, border, ns;
 
-        events = XSS.events;
-        ns = XSS.NS_GAME;
+        ns = CONST.NS_GAME;
 
-        XSS.pubsub.off(events.GAME_COUNTDOWN, ns);
-        XSS.pubsub.off(events.GAME_START, ns);
-        XSS.pubsub.off(events.GAME_SPAWN, ns);
-        XSS.pubsub.off(events.GAME_SNAKE_UPDATE, ns);
-        XSS.pubsub.off(events.GAME_SNAKE_SIZE, ns);
-        XSS.pubsub.off(events.GAME_SNAKE_CRASH, ns);
-        XSS.pubsub.off(events.GAME_SNAKE_ACTION, ns);
-        XSS.pubsub.off(events.GAME_SNAKE_SPEED, ns);
+        XSS.pubsub.off(CONST.EVENT_GAME_COUNTDOWN, ns);
+        XSS.pubsub.off(CONST.EVENT_GAME_START, ns);
+        XSS.pubsub.off(CONST.EVENT_GAME_SPAWN, ns);
+        XSS.pubsub.off(CONST.EVENT_SNAKE_UPDATE, ns);
+        XSS.pubsub.off(CONST.EVENT_SNAKE_SIZE, ns);
+        XSS.pubsub.off(CONST.EVENT_SNAKE_CRASH, ns);
+        XSS.pubsub.off(CONST.EVENT_SNAKE_ACTION, ns);
+        XSS.pubsub.off(CONST.EVENT_SNAKE_SPEED, ns);
 
         for (i = 0, m = this.snakes.length; i < m; i++) {
             if (this.snakes[i]) {
@@ -103,7 +102,7 @@ Game.prototype = {
 
         XSS.room.unbindKeys();
 
-        from = XSS.config.TIME_COUNTDOWN_FROM;
+        from = CONST.TIME_COUNTDOWN_FROM;
         body = 'Game starting in: %d';
 
         dialog = new Dialog('GET READY!', body.replace('%d', from));
@@ -121,16 +120,16 @@ Game.prototype = {
     },
 
     _bindEvents: function() {
-        var events = XSS.events, ns = XSS.NS_GAME;
-        XSS.pubsub.on(events.GAME_COUNTDOWN,    ns, this.countdown.bind(this));
-        XSS.pubsub.on(events.GAME_START,        ns, this.start.bind(this));
-        XSS.pubsub.on(events.GAME_SPAWN,        ns, this._evSpawn.bind(this));
-        XSS.pubsub.on(events.GAME_DESPAWN,      ns, this._evSpawnHit.bind(this));
-        XSS.pubsub.on(events.GAME_SNAKE_UPDATE, ns, this._evSnakeUpdate.bind(this));
-        XSS.pubsub.on(events.GAME_SNAKE_SIZE,   ns, this._evSnakeSize.bind(this));
-        XSS.pubsub.on(events.GAME_SNAKE_CRASH,  ns, this._evSnakeCrash.bind(this));
-        XSS.pubsub.on(events.GAME_SNAKE_ACTION, ns, this._evSnakeAction.bind(this));
-        XSS.pubsub.on(events.GAME_SNAKE_SPEED,  ns, this._evSnakeSpeed.bind(this));
+        var ns = CONST.NS_GAME;
+        XSS.pubsub.on(CONST.EVENT_GAME_COUNTDOWN, ns, this.countdown.bind(this));
+        XSS.pubsub.on(CONST.EVENT_GAME_START,     ns, this.start.bind(this));
+        XSS.pubsub.on(CONST.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
+        XSS.pubsub.on(CONST.EVENT_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
+        XSS.pubsub.on(CONST.EVENT_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
+        XSS.pubsub.on(CONST.EVENT_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
+        XSS.pubsub.on(CONST.EVENT_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
+        XSS.pubsub.on(CONST.EVENT_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
+        XSS.pubsub.on(CONST.EVENT_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
     },
 
     _evSpawn: function(data) {
@@ -254,7 +253,7 @@ Game.prototype = {
      */
     _handleFocus: function(focus) {
         if (focus) {
-            XSS.socket.emit(XSS.events.GAME_STATE);
+            XSS.socket.emit(CONST.EVENT_GAME_STATE);
         }
     },
 

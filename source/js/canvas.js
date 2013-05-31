@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, BoundingBox, ShapePixels*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, BoundingBox, ShapePixels*/
 'use strict';
 
 /**
@@ -7,7 +7,7 @@
  * @constructor
  */
 function Canvas() {
-    var color = XSS.util.storage(XSS.STORAGE_COLOR);
+    var color = XSS.util.storage(CONST.STORAGE_COLOR);
 
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
@@ -52,7 +52,7 @@ Canvas.prototype = {
      */
     paint: function(delta) {
         // Abuse this loop to trigger game tick
-        XSS.pubsub.publish(XSS.PUB_GAME_TICK, delta, this.focus);
+        XSS.pubsub.publish(CONST.PUB_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this._clear();
@@ -150,7 +150,7 @@ Canvas.prototype = {
         // of focus, we don't want animations. Also we do not want anims
         // if a browser is "catching up" frames after being focused after
         // a blur, where it tries to make up for slow frames.
-        if (delta > XSS.MIN_FRAME_DELTA && delta < XSS.MAX_FRAME_DELTA) {
+        if (delta > CONST.MIN_FRAME_DELTA && delta < CONST.MAX_FRAME_DELTA) {
             shape.applyEffects(delta);
         }
 
@@ -220,7 +220,7 @@ Canvas.prototype = {
 
     /**
      * @param {Shape} shape
-     * @return {XSS.ShapeCache}
+     * @return {CONST.ShapeCache}
      * @private
      */
     _paintShapeOffscreen: function(shape) {
@@ -243,8 +243,8 @@ Canvas.prototype = {
      */
     _getTileSize: function() {
         return Math.floor(Math.min(
-            window.innerWidth / XSS.WIDTH,
-            window.innerHeight / XSS.HEIGHT
+            window.innerWidth / CONST.WIDTH,
+            window.innerHeight / CONST.HEIGHT
         )) || 1;
     },
 
@@ -274,7 +274,7 @@ Canvas.prototype = {
      */
     _handleFocusChange: function(ev) {
         this.focus = (ev.type !== 'blur');
-        XSS.pubsub.publish(XSS.PUB_FOCUS_CHANGE, this.focus);
+        XSS.pubsub.publish(CONST.PUB_FOCUS_CHANGE, this.focus);
     },
 
     /**
@@ -304,8 +304,8 @@ Canvas.prototype = {
             this.pixelSize = this.tileSize - 0.6;
         }
 
-        this.canvasWidth = this.tileSize * XSS.WIDTH;
-        this.canvasHeight = this.tileSize * XSS.HEIGHT;
+        this.canvasWidth = this.tileSize * CONST.WIDTH;
+        this.canvasHeight = this.tileSize * CONST.HEIGHT;
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
     },

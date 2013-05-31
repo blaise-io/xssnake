@@ -1,9 +1,9 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Shape*/
 'use strict';
 
 /** @typedef {Array.<Object>} */
-XSS.Score = null;
+CONST.Score;
 
 /**
  * @param {Array.<string>} names
@@ -24,7 +24,7 @@ ScoreBoard.prototype = {
     animDuration: 200,
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.SCORE_UPDATE, XSS.NS_SCORE);
+        XSS.pubsub.off(CONST.EVENT_SCORE_UPDATE, CONST.NS_SCORE);
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
                 XSS.shapes[k] = null;
@@ -35,7 +35,7 @@ ScoreBoard.prototype = {
     /**
      * @param {Array.<string>} names
      * @param {Array.<number>} points
-     * @return {XSS.Score}
+     * @return {CONST.Score}
      */
     initScore: function(names, points) {
         var score = [];
@@ -62,11 +62,11 @@ ScoreBoard.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.pubsub.on(XSS.events.SCORE_UPDATE, XSS.NS_SCORE, this.updateScore.bind(this));
+        XSS.pubsub.on(CONST.EVENT_SCORE_UPDATE, CONST.NS_SCORE, this.updateScore.bind(this));
     },
 
     /**
-     * @param {XSS.Score} score
+     * @param {CONST.Score} score
      * @param {number} id
      * @return {number}
      * @private
@@ -81,7 +81,7 @@ ScoreBoard.prototype = {
     },
 
     /**
-     * @return {XSS.Score}
+     * @return {CONST.Score}
      * @private
      */
     _sortScore: function() {
@@ -97,7 +97,7 @@ ScoreBoard.prototype = {
      * @private
      */
     _podiumIndexToXY: function(index) {
-        var top = XSS.HEIGHT - 24,
+        var top = CONST.HEIGHT - 24,
             lefts = [5, 64];
         return [
             (index % 2) ? lefts[1] : lefts[0],

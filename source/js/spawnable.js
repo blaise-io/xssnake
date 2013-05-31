@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST*/
 'use strict';
 
 /**
@@ -10,10 +10,10 @@
  */
 function Spawnable(type, index, location) {
     this.type = type;
-    this.x = location[0] * XSS.GAME_TILE + XSS.GAME_LEFT;
-    this.y = location[1] * XSS.GAME_TILE + XSS.GAME_TOP;
+    this.x = location[0] * CONST.GAME_TILE + CONST.GAME_LEFT;
+    this.y = location[1] * CONST.GAME_TILE + CONST.GAME_TOP;
 
-    this._shapeName = XSS.NS_SPAWN + index;
+    this._shapeName = CONST.NS_SPAWN + index;
     XSS.shapes[this._shapeName] = this._getShape();
 }
 
@@ -31,11 +31,11 @@ Spawnable.prototype = {
         var shape, x = this.x, y = this.y;
 
         switch (this.type) {
-            case XSS.map.SPAWN_APPLE:
-                shape = XSS.font.shape(XSS.UC_BULLSEYE, x - 1,  y - 2);
+            case CONST.SPAWN_APPLE:
+                shape = XSS.font.shape(CONST.UC_BULLSEYE, x - 1,  y - 2);
                 break;
-            case XSS.map.SPAWN_POWERUP:
-                shape = XSS.font.shape(XSS.UC_ELECTRIC, x - 1,  y - 1);
+            case CONST.SPAWN_POWERUP:
+                shape = XSS.font.shape(CONST.UC_ELECTRIC, x - 1,  y - 1);
                 break;
         }
 

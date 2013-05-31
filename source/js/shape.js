@@ -1,12 +1,12 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, BoundingBox, ShapePixels*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, BoundingBox, ShapePixels*/
 'use strict';
 
 /** @typedef {Array.<number>} */
-XSS.ShapePixel = null;
+CONST.ShapePixel;
 
 /** @typedef {{canvas: *, bbox: BoundingBox}} */
-XSS.ShapeCache = null;
+CONST.ShapeCache;
 
 /**
  * Shape
@@ -29,7 +29,7 @@ function Shape(varArgs) {
     /** @type {Object.<string,*>} */
     this.effects = {};
 
-    /** @type {?XSS.ShapeCache} */
+    /** @type {?CONST.ShapeCache} */
     this.cache = null;
 
     /**

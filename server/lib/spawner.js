@@ -2,8 +2,7 @@
 'use strict';
 
 var Util = require('../shared/util.js');
-var events = require('../shared/events.js');
-var map = require('../shared/map.js');
+var CONST = require('../shared/const.js');
 
 /**
  * Spawner
@@ -55,7 +54,7 @@ Spawner.prototype = {
         this.spawns[index] = spawn;
         this.locations[index] = spawn.location;
 
-        game.room.emit(events.GAME_SPAWN, [type, index, spawn.location]);
+        game.room.emit(CONST.EVENT_GAME_SPAWN, [type, index, spawn.location]);
 
         return spawn;
     },
@@ -68,10 +67,10 @@ Spawner.prototype = {
         var spawn = this.spawns[index];
 
         switch (spawn.type) {
-            case map.SPAWN_APPLE:
+            case CONST.SPAWN_APPLE:
                 this.game.hitApple(client, index);
                 break;
-            case map.SPAWN_POWERUP:
+            case CONST.SPAWN_POWERUP:
                 this.game.hitPowerup(client, index);
                 break;
         }

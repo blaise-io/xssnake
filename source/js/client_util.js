@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Dialog, StageFlow*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Dialog, StageFlow*/
 'use strict';
 
 /**
@@ -13,10 +13,10 @@ XSS.util.extend(XSS.util, {
      * @param {boolean=} flash
      */
     instruct: function(str, duration, flash) {
-        var shape, left = XSS.WIDTH - XSS.font.width(str) - 3;
+        var shape, left = CONST.WIDTH - XSS.font.width(str) - 3;
 
         shape = XSS.font.shape(
-            str, left, XSS.HEIGHT - 3 - XSS.font.height(str), {invert: true}
+            str, left, CONST.HEIGHT - 3 - XSS.font.height(str), {invert: true}
         );
         shape.clearBBox = true;
 
@@ -50,7 +50,7 @@ XSS.util.extend(XSS.util, {
             XSS.flow.restart();
         };
 
-        dialog = new Dialog(str, 'Press ' + XSS.UC_ENTER_KEY + ' to continue', {
+        dialog = new Dialog(str, 'Press ' + CONST.UC_ENTER_KEY + ' to continue', {
             type: Dialog.TYPE.ALERT,
             ok  : exit
         });

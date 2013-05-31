@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
-/*globals XSS*/
+/*globals CONST:true*/
 'use strict';
 
 module.exports = {

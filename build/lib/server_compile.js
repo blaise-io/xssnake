@@ -202,7 +202,7 @@ ServerCompile.prototype = {
      */
     cleanCode: function() {
         this.code = this.code.replace(/'use strict';/g, '');
-        this.code = this.code.replace(/XSS\.[\w]+ = module\.exports;/g, '');
+        this.code = this.code.replace(/(XSS|CONST)\.([\w\.]+)* =/g, '// $1$2 =');
         this.code = this.code.replace(/\/\*\* @type [\w{}\.]+ \*\//g, '');
     },
 

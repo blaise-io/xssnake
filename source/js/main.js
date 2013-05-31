@@ -1,8 +1,8 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
 /*globals PublishSubscribe, Font, Canvas, LevelCache, ShapeGenerator, Transform, AudioPlay, StageFlow */
 'use strict';
 
-var XSS = {}, module = {};
+var XSS = {}, CONST = {}, module = {};
 
 window.onerror = function() {
     XSS.error = true;

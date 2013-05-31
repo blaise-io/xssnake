@@ -4,8 +4,7 @@
 var Room = require('./room.js');
 var Validate = require('./validate.js');
 var Util = require('../shared/util.js');
-var map = require('../shared/map.js');
-var events = require('../shared/events.js');
+var CONST = require('../shared/const.js');
 
 /**
  * @constructor
@@ -24,9 +23,9 @@ RoomManager.prototype = {
 
     bindEvents: function() {
         var pubsub = this.server.pubsub;
-        pubsub.on(events.ROOM_STATUS, this._evRoomStatus.bind(this));
-        pubsub.on(events.ROOM_JOIN, this._evJoinRoom.bind(this));
-        pubsub.on(events.ROOM_MATCH, this._evMatchRoom.bind(this));
+        pubsub.on(CONST.EVENT_ROOM_STATUS, this._evRoomStatus.bind(this));
+        pubsub.on(CONST.EVENT_ROOM_JOIN, this._evJoinRoom.bind(this));
+        pubsub.on(CONST.EVENT_ROOM_MATCH, this._evMatchRoom.bind(this));
     },
 
     /**
@@ -82,7 +81,7 @@ RoomManager.prototype = {
      * @private
      */
     _evMatchRoom: function(preferences, client) {
-        client.name = this._cleanUsername(preferences[map.FIELD.NAME]);
+        client.name = this._cleanUsername(preferences[CONST.FIELD_NAME]);
         this.getPreferredRoom(preferences).join(client);
     },
 
@@ -92,7 +91,7 @@ RoomManager.prototype = {
      */
     _evRoomStatus: function(key, client) {
         var data = this._getRoomJoinData(key);
-        client.emit(events.ROOM_STATUS, data);
+        client.emit(CONST.EVENT_ROOM_STATUS, data);
     },
 
     /**
@@ -107,7 +106,7 @@ RoomManager.prototype = {
                 room = this.rooms[key];
                 room.join(client); // Room can be joined
             } else {
-                client.emit(events.ROOM_STATUS, data); // Nope
+                client.emit(CONST.EVENT_ROOM_STATUS, data); // Nope
             }
         }
     },
@@ -161,15 +160,15 @@ RoomManager.prototype = {
     _getRoomJoinData: function(key) {
         var room, data = [0];
         if (!this._validRoomKey(key)) {
-            data.push(map.ROOM.INVALID);
+            data.push(CONST.ROOM_INVALID);
         } else {
             room = this.rooms[key];
             if (!room) {
-                data.push(map.ROOM.NOT_FOUND);
+                data.push(CONST.ROOM_NOT_FOUND);
             } else if (room.isFull()) {
-                data.push(map.ROOM.FULL);
+                data.push(CONST.ROOM_FULL);
             } else if (room.round) {
-                data.push(map.ROOM.IN_PROGRESS);
+                data.push(CONST.ROOM_IN_PROGRESS);
             } else {
                 data = [1, room.options, room.names()];
             }
@@ -185,15 +184,15 @@ RoomManager.prototype = {
      * @private
      */
     _isFilterMatch: function(reqOptions, room) {
-        var field = map.FIELD, options = room.options;
+        var options = room.options;
         switch (true) {
             case room.isFull():
             case !!room.round:
-            case options[field.PRIVATE]:
-            case options[field.DIFFICULTY] !== reqOptions[field.DIFFICULTY]:
-            case options[field.POWERUPS]   !== reqOptions[field.POWERUPS]:
-            case options[field.XSS]        !== reqOptions[field.XSS]:
-            case options[field.MAX_PLAYERS]  > reqOptions[field.MAX_PLAYERS]:
+            case options[CONST.FIELD_PRIVATE]:
+            case options[CONST.FIELD_DIFFICULTY] !== reqOptions[CONST.FIELD_DIFFICULTY]:
+            case options[CONST.FIELD_POWERUPS]   !== reqOptions[CONST.FIELD_POWERUPS]:
+            case options[CONST.FIELD_XSS]        !== reqOptions[CONST.FIELD_XSS]:
+            case options[CONST.FIELD_MAX_PLAYERS]  > reqOptions[CONST.FIELD_MAX_PLAYERS]:
                 return false;
             default:
                 return true;

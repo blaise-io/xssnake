@@ -1,12 +1,12 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, InputField*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, InputField*/
 'use strict';
 
 /** @typedef {{
     author: (string|undefined),
     body: string}}
 */
-XSS.ChatMessage = null;
+CONST.ChatMessage;
 
 /**
  * @param {number} index
@@ -20,16 +20,19 @@ function Chat(index, names) {
     this.shapes = {};
 
     /**
-     * @type {Array.<XSS.ChatMessage>}
+     * @type {Array.<CONST.ChatMessage>}
      * @private
      */
     this._messages = [
-        {body: 'Press ' + XSS.UC_ENTER_KEY + ' to chat'}
+        {body: 'Press ' + CONST.UC_ENTER_KEY + ' to chat'}
     ];
 
     this._hasFocus = false;
     this._adding = false;
     this._queue = [];
+
+    this.top = CONST.HEIGHT - (7 * 3) - 3;
+    this.left = 126;
 
     this._bindEvents();
     this._updateShapes();
@@ -37,18 +40,14 @@ function Chat(index, names) {
 
 Chat.prototype = {
 
-    top: XSS.HEIGHT - (7 * 3) - 3,
-
-    left: 126,
-
     maxMessages: 3,
 
     animDuration: 200,
 
     destruct: function() {
-        XSS.pubsub.off(XSS.events.CHAT_MESSAGE, XSS.NS_CHAT);
-        XSS.pubsub.off(XSS.events.CHAT_NOTICE, XSS.NS_CHAT);
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_CHAT);
+        XSS.pubsub.off(CONST.EVENT_CHAT_MESSAGE, CONST.NS_CHAT);
+        XSS.pubsub.off(CONST.EVENT_CHAT_NOTICE, CONST.NS_CHAT);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_CHAT);
 
         this._deleteShapes();
 
@@ -58,7 +57,7 @@ Chat.prototype = {
     },
 
     /**
-     * @param {XSS.ChatMessage} message
+     * @param {CONST.ChatMessage} message
      * @return {Chat}
      */
     add: function(message) {
@@ -106,14 +105,14 @@ Chat.prototype = {
     },
 
     send: function(str) {
-        XSS.socket.emit(XSS.events.CHAT_MESSAGE, str);
+        XSS.socket.emit(CONST.EVENT_CHAT_MESSAGE, str);
     },
 
     _bindEvents: function() {
-        var events = XSS.events, ns = XSS.NS_GAME;
-        XSS.pubsub.on(events.CHAT_MESSAGE, ns, this._chatMessage.bind(this));
-        XSS.pubsub.on(events.CHAT_NOTICE, ns, this._chatNotice.bind(this));
-        XSS.pubsub.on(events.KEYDOWN, ns, this._chatFocus.bind(this));
+        var ns = CONST.NS_GAME;
+        XSS.pubsub.on(CONST.EVENT_CHAT_MESSAGE, ns, this._chatMessage.bind(this));
+        XSS.pubsub.on(CONST.EVENT_CHAT_NOTICE, ns, this._chatNotice.bind(this));
+        XSS.pubsub.on(CONST.EVENT_KEYDOWN, ns, this._chatFocus.bind(this));
     },
 
     /**
@@ -140,11 +139,11 @@ Chat.prototype = {
      */
     _chatFocus: function(e) {
         switch (e.keyCode) {
-            case XSS.KEY_ESCAPE:
+            case CONST.KEY_ESCAPE:
                 this._focusInput(false);
                 e.preventDefault();
                 break;
-            case XSS.KEY_ENTER:
+            case CONST.KEY_ENTER:
                 e.preventDefault();
                 if (this._hasFocus) {
                     this._sendMessage(this.field.value.trim());
@@ -163,11 +162,11 @@ Chat.prototype = {
     _focusInput: function(focus) {
         var left = 126, prefix, maxValWidth;
         prefix = this.names[this.index] + ': ';
-        maxValWidth = XSS.WIDTH - XSS.font.width(prefix) - left - 8;
+        maxValWidth = CONST.WIDTH - XSS.font.width(prefix) - left - 8;
         this._hasFocus = focus;
         this._updateShapes();
         if (focus) {
-            this.field = new InputField(left, XSS.HEIGHT - 10, prefix);
+            this.field = new InputField(left, CONST.HEIGHT - 10, prefix);
             this.field.maxValWidth = maxValWidth;
             this.field.setValue('');
         } else if (this.field) {
@@ -193,8 +192,8 @@ Chat.prototype = {
     },
 
     _sentIndication: function() {
-        var shape, x = XSS.WIDTH - XSS.font.width(XSS.UC_ENTER_KEY) - 2;
-        shape = XSS.font.shape(XSS.UC_ENTER_KEY, x, XSS.HEIGHT - 10);
+        var shape, x = CONST.WIDTH - XSS.font.width(CONST.UC_ENTER_KEY) - 2;
+        shape = XSS.font.shape(CONST.UC_ENTER_KEY, x, CONST.HEIGHT - 10);
         shape.flash(150, 150).lifetime(0, 150 * 3);
         XSS.shapes.msgsent = shape;
     },

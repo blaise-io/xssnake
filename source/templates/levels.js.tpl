@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
-/*globals XSS*/
+/*globals XSS:true*/
 'use strict';
 
 // Generated on %%DATE%%

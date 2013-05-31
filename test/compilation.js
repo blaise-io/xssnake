@@ -18,16 +18,16 @@ describe('XSSNAKE Compilation', function() {
             });
         });
 
-        it('should produce compiled code', function() {
+        it('produces compiled code', function() {
             assert(typeof json.compiledCode === 'string');
             assert(json.compiledCode.length > 1024);
         });
 
-        it('should not produce errors', function() {
+        it('does not produce errors', function() {
             assert(typeof json.errors === 'undefined');
         });
 
-        it('should not produce warnings', function() {
+        it('does not produce warnings', function() {
             assert(typeof json.warnings === 'undefined');
         });
 
@@ -44,16 +44,16 @@ describe('XSSNAKE Compilation', function() {
             });
         });
 
-        it('should produce compiled code', function() {
+        it('produces compiled code', function() {
             assert(typeof json.compiledCode === 'string');
             assert(json.compiledCode.length > 1024);
         });
 
-        it('should not produce errors', function() {
+        it('does not produce errors', function() {
             assert(typeof json.errors === 'undefined');
         });
 
-        it('should not produce warnings', function() {
+        it('does not produce warnings', function() {
             assert(typeof json.warnings === 'undefined');
         });
 

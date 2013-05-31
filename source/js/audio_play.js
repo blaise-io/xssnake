@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST*/
 'use strict';
 
 /**
@@ -45,7 +45,7 @@ AudioPlay.prototype = {
 
     _setupFile: function(key, mime, data) {
         this[key] = function() {
-            if (!XSS.util.storage(XSS.STORAGE_MUTE) && XSS.canvas.focus) {
+            if (!XSS.util.storage(CONST.STORAGE_MUTE) && XSS.canvas.focus) {
                 new Audio('data:' + mime + ';base64,' + data).play();
             }
         }.bind(this);

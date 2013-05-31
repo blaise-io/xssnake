@@ -1,5 +1,5 @@
-/*jshint globalstrict:true, es5:true, sub:true*/
-/*globals XSS, Shape, ShapePixels, Font*/
+/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*globals XSS, CONST, Shape, ShapePixels, Font*/
 'use strict';
 
 /** @typedef {{
@@ -51,7 +51,7 @@ Dialog.prototype = {
     destruct: function() {
         XSS.shapes.dialog = null;
         XSS.keysBlocked = false;
-        XSS.pubsub.off(XSS.events.KEYDOWN, XSS.NS_DIALOG);
+        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG);
     },
 
     restore: function() {
@@ -93,7 +93,7 @@ Dialog.prototype = {
     _bindEvents: function() {
         XSS.keysBlocked = this.settings.keysBlocked;
         if (this.settings.type !== Dialog.TYPE.INFO) {
-            XSS.pubsub.on(XSS.events.KEYDOWN, XSS.NS_DIALOG, this._handleKeys.bind(this));
+            XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG, this._handleKeys.bind(this));
         }
         if (this.settings.type === Dialog.TYPE.ALERT) {
             this._okSelected = true;
@@ -108,25 +108,25 @@ Dialog.prototype = {
      */
     _handleKeys: function(ev) {
         switch (ev.keyCode) {
-            case XSS.KEY_LEFT:
-            case XSS.KEY_UP:
-            case XSS.KEY_DOWN:
-            case XSS.KEY_RIGHT:
+            case CONST.KEY_LEFT:
+            case CONST.KEY_UP:
+            case CONST.KEY_DOWN:
+            case CONST.KEY_RIGHT:
                 if (this.settings.type === Dialog.TYPE.CONFIRM) {
                     XSS.play.menu_alt();
                     this._okSelected = !this._okSelected;
                     this._updateShape();
                 }
                 break;
-            case XSS.KEY_BACKSPACE:
-            case XSS.KEY_ESCAPE:
+            case CONST.KEY_BACKSPACE:
+            case CONST.KEY_ESCAPE:
                 if (this.settings.type === Dialog.TYPE.CONFIRM) {
                     this.cancel();
                 } else {
                     this.ok();
                 }
                 break;
-            case XSS.KEY_ENTER:
+            case CONST.KEY_ENTER:
                 if (this._okSelected) {
                     this.ok();
                 } else {
@@ -149,9 +149,9 @@ Dialog.prototype = {
      * @private
      */
     _getAreaHeight: function() {
-        var height = XSS.HEIGHT, level = XSS.level.levelData(0);
+        var height = CONST.HEIGHT, level = XSS.level.levelData(0);
         if (this._isIngame() && level) {
-            height = level.height * XSS.GAME_TILE;
+            height = level.height * CONST.GAME_TILE;
         }
         return height;
     },

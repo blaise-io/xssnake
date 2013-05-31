@@ -3,9 +3,7 @@
 
 var Game = require('./game.js');
 var Validate = require('./validate.js');
-var map = require('../shared/map.js');
-var events = require('../shared/events.js');
-var config = require('../shared/config.js');
+var CONST = require('../shared/const.js');
 
 /**
  * @param {Server} server
@@ -61,13 +59,13 @@ Room.prototype = {
     },
 
     emitState: function() {
-        var capacity = this.options[map.FIELD.MAX_PLAYERS];
+        var capacity = this.options[CONST.FIELD_MAX_PLAYERS];
         for (var i = 0, m = this.clients.length; i < m; i++) {
             var data = [
                 i, capacity, this.round, this.key,
                 this.level, this.names(), this.points
             ];
-            this.clients[i].emit(events.ROOM_INDEX, data);
+            this.clients[i].emit(CONST.EVENT_ROOM_INDEX, data);
         }
     },
 
@@ -84,25 +82,25 @@ Room.prototype = {
      * @return {Object}
      */
     cleanOptions: function(options) {
-        var field = map.FIELD, clean = {};
+        var clean = {};
 
-        clean[field.MAX_PLAYERS] = new Validate(options[field.MAX_PLAYERS])
-            .assertRange(1, config.ROOM_CAPACITY)
-            .value(config.ROOM_CAPACITY);
+        clean[CONST.FIELD_MAX_PLAYERS] = new Validate(options[CONST.FIELD_MAX_PLAYERS])
+            .assertRange(1, CONST.ROOM_CAPACITY)
+            .value(CONST.ROOM_CAPACITY);
 
-        clean[field.DIFFICULTY] = new Validate(options[field.DIFFICULTY])
-            .assertInArray([map.VALUE.EASY, map.VALUE.MEDIUM, map.VALUE.HARD])
-            .value(map.VALUE.MEDIUM);
+        clean[CONST.FIELD_DIFFICULTY] = new Validate(options[CONST.FIELD_DIFFICULTY])
+            .assertInArray([CONST.FIELD_VALUE_EASY, CONST.FIELD_VALUE_MEDIUM, CONST.FIELD_VALUE_HARD])
+            .value(CONST.FIELD_VALUE_MEDIUM);
 
-        clean[field.POWERUPS] = new Validate(options[field.POWERUPS])
+        clean[CONST.FIELD_POWERUPS] = new Validate(options[CONST.FIELD_POWERUPS])
             .assertType('boolean')
             .value(true);
 
-        clean[field.PRIVATE] = new Validate(options[field.PRIVATE])
+        clean[CONST.FIELD_PRIVATE] = new Validate(options[CONST.FIELD_PRIVATE])
             .assertType('boolean')
             .value(false);
 
-        clean[field.XSS] = new Validate(options[field.XSS])
+        clean[CONST.FIELD_XSS] = new Validate(options[CONST.FIELD_XSS])
             .assertType('boolean')
             .value(false);
 
@@ -121,7 +119,7 @@ Room.prototype = {
 
         this.emitState();
 
-        client.broadcast(events.CHAT_NOTICE, '{' + index + '} joined');
+        client.broadcast(CONST.EVENT_CHAT_NOTICE, '{' + index + '} joined');
 
         this.points[index] = 0;
 
@@ -149,7 +147,7 @@ Room.prototype = {
 
         if (this.clients.length) {
             // Emit chat notice first or client cannot replace index with name.
-            this.emit(events.CHAT_NOTICE, '{' + index + '} left');
+            this.emit(CONST.EVENT_CHAT_NOTICE, '{' + index + '} left');
             this.updateIndices();
             this.emitState();
         } else {
@@ -178,9 +176,9 @@ Room.prototype = {
      * @return {boolean}
      */
     hasWinner: function() {
-        if (this.round + 1 >= config.ROOM_ROUNDS && this.points.length > 1) {
+        if (this.round + 1 >= CONST.ROOM_ROUNDS && this.points.length > 1) {
             var sorted = this.points.slice().sort().reverse();
-            if (sorted[0] - config.ROOM_WIN_BY_MIN > sorted[1]) {
+            if (sorted[0] - CONST.ROOM_WIN_BY_MIN > sorted[1]) {
                 return true;
             }
         }
@@ -188,7 +186,7 @@ Room.prototype = {
     },
 
     roundsEnded: function() {
-        if (this.options[map.FIELD.XSS]) {
+        if (this.options[CONST.FIELD_XSS]) {
             // TODO: Implement this.game.fireXSS
             console.log('this.game.fireXSS()');
         } else {
@@ -208,7 +206,7 @@ Room.prototype = {
      * @return {boolean}
      */
     isFull: function() {
-        return (this.clients.length === this.options[map.FIELD.MAX_PLAYERS]);
+        return (this.clients.length === this.options[CONST.FIELD_MAX_PLAYERS]);
     },
 
     /**
@@ -249,7 +247,7 @@ Room.prototype = {
      * @return {Room}
      */
     flush: function() {
-        this.emit(events.COMBI, this._buffer);
+        this.emit(CONST.EVENT_COMBI, this._buffer);
         this._buffer = [];
         return this;
     },
