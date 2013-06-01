@@ -26,7 +26,7 @@ module.exports = {
      * @param {number} max
      * @return {number}
      */
-    randomBetween: function(min, max) {
+    randomRange: function(min, max) {
         return min + Math.floor(Math.random() * (max - min + 1));
     },
 

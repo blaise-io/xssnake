@@ -70,7 +70,6 @@ XSS.stages = {
             var nextpos = snake.getNextPosition();
             if (isCrash(nextpos)) {
                 snake.crash();
-                snake.showAction('CRASH!');
                 window.setTimeout(snake.destruct.bind(snake), 1000);
                 window.setTimeout(XSS.stages._launchMenuSnake, 1000 * 15);
             } else {
@@ -227,7 +226,7 @@ XSS.stages = {
             nextstage = XSS.stages.inputXSS;
 
         str = XSS.util.randomStr().substr(0, 3).toUpperCase();
-        digit = String(XSS.util.randomBetween(0, 5));
+        digit = String(XSS.util.randomRange(0, 5));
 
         challenges = [
             'document.scripts[0].tagName',

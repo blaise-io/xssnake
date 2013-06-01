@@ -297,7 +297,7 @@ Game.prototype = {
     _delaySpawnPowerup: function() {
         var timer, range, delay;
         range = CONST.TIME_SPAWN_POWERUP;
-        delay = Util.randomBetween(range[0] * 1000, range[1] * 1000);
+        delay = Util.randomRange(range[0] * 1000, range[1] * 1000);
         timer = setTimeout(function() {
             this.spawner.spawn(CONST.SPAWN_POWERUP);
             this._delaySpawnPowerup();

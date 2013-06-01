@@ -255,30 +255,30 @@ Shape.prototype = {
      * @private
      */
     _animateEffect: function(options) {
-        var from, to, duration, clone, progress = 0;
+        var from, to, duration, callback, clone, progress = 0;
 
         options  = options || {};
         from     = options.from || [0, 0];
         to       = options.to || [0, 0];
         duration = options.duration || 200;
+        callback = options.callback || XSS.util.dummy;
         clone    = this.clone();
 
         /** @this {Shape} */
         return function(delta) {
             var x, y;
             progress += delta;
+            var progressx = Math.sqrt(Math.sqrt(progress / duration));
             if (progress < duration) {
-                x = from[0] - ((from[0] - to[0]) * progress / duration);
+                x = from[0] - ((from[0] - to[0]) * progressx);
                 x = Math.round(x);
-                y = from[1] - ((from[1] - to[1]) * progress / duration);
+                y = from[1] - ((from[1] - to[1]) * progressx);
                 y = Math.round(y);
                 this.set(XSS.transform.shift(clone.pixels, x, y));
             } else {
                 delete this.effects.animate;
                 this.set(clone.shift(to[0], to[1]).pixels);
-                if (options.callback) {
-                    options.callback();
-                }
+                callback();
             }
         }.bind(this);
     }

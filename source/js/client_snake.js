@@ -19,6 +19,7 @@ function ClientSnake(index, local, name, location, direction) {
 
     Snake.call(this, location, direction, size, speed);
 
+    this.index   = index;
     this.local   = local;
     this.name    = name;
     this.elapsed = 0;
@@ -85,7 +86,7 @@ XSS.util.extend(ClientSnake.prototype, {
         amount = amount || 3;
 
         var rand = function() {
-            return XSS.util.randomBetween(-12, 12);
+            return XSS.util.randomRange(-12, 12);
         };
 
         for (var i = 0; i <= duration * amount; i += duration) {
@@ -142,6 +143,21 @@ XSS.util.extend(ClientSnake.prototype, {
         this.crashed = true;
         this.removeControls();
         this.updateShape();
+        this.explodeParticles();
+    },
+
+    explodeParticles: function() {
+        var x, y, head = this.head();
+        x = head[0] * CONST.GAME_TILE + CONST.GAME_LEFT;
+        y = head[1] * CONST.GAME_TILE + CONST.GAME_TOP;
+        if (!this._exploded) {
+            this._exploded = true;
+            XSS.shapegen.explosion(
+                x + XSS.util.randomRange(0,3),
+                y + XSS.util.randomRange(0,3),
+                this.direction, 32
+            );
+        }
     },
 
     /**

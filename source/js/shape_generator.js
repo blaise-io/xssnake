@@ -214,7 +214,7 @@ ShapeGenerator.prototype = {
      * @return {Shape}
      */
     header: function() {
-        var x, y, shape, welcome = XSS.font.pixels('<CONST.AKE>');
+        var x, y, shape, welcome = XSS.font.pixels('<XSSNAKE>');
 
         x = CONST.MENU_LEFT;
         y = CONST.MENU_TOP - 34;
@@ -223,6 +223,41 @@ ShapeGenerator.prototype = {
         shape.add(this.line(x, y + 28, x + CONST.MENU_WIDTH, y + 28));
 
         return shape;
+    },
+
+    explosion: function(x, y, direction, intensity) {
+        var pixel, shape, to, duration, animation, d = 10, ds = 20,
+            r = XSS.util.randomRange;
+        while (intensity--) {
+            switch (direction) {
+                case CONST.DIRECTION_LEFT:
+                    to = [r(-d,ds), r(-d,d)];
+                    break;
+                case CONST.DIRECTION_UP:
+                    to = [r(-d,d), r(-ds,d)];
+                    break;
+                case CONST.DIRECTION_RIGHT:
+                    to = [r(-ds,d), r(-d,d)];
+                    break;
+                case CONST.DIRECTION_DOWN:
+                    to = [r(-d,d), r(-d,ds)];
+                    break;
+                default:
+                    to = [r(-ds,ds), r(-ds,ds)];
+            }
+
+            pixel = new ShapePixels().add(x, y);
+
+            duration = Math.pow(r(1, 10), 3);
+            animation = {
+                to      : to,
+                duration: duration
+            };
+
+            shape = new Shape(pixel);
+            shape.animate(animation).lifetime(0, duration);
+            XSS.shapes[XSS.util.randomStr(5)] = shape;
+        }
     }
 
 };

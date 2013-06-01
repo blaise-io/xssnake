@@ -174,12 +174,12 @@ Powerup.prototype = {
     },
 
     _spawnApples: function() {
-        var r = Util.randomBetween(3, 10);
+        var r = Util.randomRange(3, 10);
         this._spawn(CONST.SPAWN_APPLE, r, '+Apples');
     },
 
     _spawnPowerups: function() {
-        var r = Util.randomBetween(2, 5);
+        var r = Util.randomRange(2, 5);
         this._spawn(CONST.SPAWN_POWERUP, r, '+Power-ups');
     },
 
