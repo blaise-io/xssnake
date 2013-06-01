@@ -155,7 +155,7 @@ XSS.util.extend(ClientSnake.prototype, {
             XSS.shapegen.explosion(
                 x + XSS.util.randomRange(0,3),
                 y + XSS.util.randomRange(0,3),
-                this.direction, 32
+                this.direction, 16
             );
         }
     },
