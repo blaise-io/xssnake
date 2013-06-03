@@ -12,7 +12,7 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setColor(XSS.colors[color] || XSS.colors[0]);
+    this.setColor(CONST.COLORS[color] || CONST.COLORS[0]);
 
     if (!window.requestAnimationFrame) {
         this._vendorRequestAnimationFrame();
@@ -52,7 +52,7 @@ Canvas.prototype = {
      */
     paint: function(delta) {
         // Abuse this loop to trigger game tick
-        XSS.pubsub.publish(CONST.PUB_GAME_TICK, delta, this.focus);
+        XSS.event.trigger(CONST.PUB_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this._clear();
@@ -274,7 +274,7 @@ Canvas.prototype = {
      */
     _handleFocusChange: function(ev) {
         this.focus = (ev.type !== 'blur');
-        XSS.pubsub.publish(CONST.PUB_FOCUS_CHANGE, this.focus);
+        XSS.event.trigger(CONST.PUB_FOCUS_CHANGE, this.focus);
     },
 
     /**
@@ -377,7 +377,7 @@ Canvas.prototype = {
      */
     _getCanvasBBox: function(shape, ignoreExpand) {
         var bbox = (ignoreExpand) ? shape.pixels.bbox() : shape.bbox();
-        bbox = XSS.util.extend({}, bbox);
+        bbox = XSS.util.clone(bbox);
 
         for (var k in bbox) {
             if (bbox.hasOwnProperty(k)) {

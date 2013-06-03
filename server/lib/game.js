@@ -53,11 +53,9 @@ Game.prototype = {
 
         this.server.pubsub.on('tick', this._tickBound);
 
-        var respawnAfter = CONST.TIME_RESPAWN_APPLE * 1000;
-        this.spawner.spawn(CONST.SPAWN_APPLE, undefined, true, respawnAfter);
-
+        this.spawner.spawn(CONST.SPAWN_APPLE);
         if (this.options[CONST.FIELD_POWERUPS]) {
-            this._delaySpawnPowerup();
+            this._spawnSomethingAfterDelay();
         }
     },
 
@@ -137,27 +135,6 @@ Game.prototype = {
     },
 
     /**
-     * Reverse Snake (powerup)
-     * @param {number} index
-     */
-    reverseSnake: function(index) {
-        var data, dx, dy, snake = this.snakes[index];
-
-        dx = snake.parts[0][0] - snake.parts[1][0];
-        dy = snake.parts[0][1] - snake.parts[1][1];
-
-        if (dx !== 0) {
-            snake.direction = (dx === -1) ? 0 : 2;
-        } else {
-            snake.direction = (dy === -1) ? 1 : 3;
-        }
-
-        snake.parts.reverse();
-        data = [index, snake.parts, snake.direction];
-        this.room.buffer(CONST.EVENT_SNAKE_UPDATE, data);
-    },
-
-    /**
      * @param client
      */
     clientDisconnect: function(client) {
@@ -206,17 +183,21 @@ Game.prototype = {
      * @param {number} index
      */
     hitApple: function(client, index) {
-        var clientIndex, size, score;
+        var size, score;
 
-        clientIndex = client.index;
         size = client.snake.size += 3;
-        score = ++this.room.points[clientIndex];
+        score = ++this.room.points[client.index];
 
         this.room.buffer(CONST.EVENT_GAME_DESPAWN, index);
-        this.room.buffer(CONST.EVENT_SNAKE_SIZE, [clientIndex, size]);
-        this.room.buffer(CONST.EVENT_SNAKE_ACTION, [clientIndex, 'Nom']);
-        this.room.buffer(CONST.EVENT_SCORE_UPDATE, [clientIndex, score]);
+        this.room.buffer(CONST.EVENT_SNAKE_SIZE, [client.index, size]);
+        this.room.buffer(CONST.EVENT_SNAKE_ACTION, [client.index, 'Nom']);
+        this.room.buffer(CONST.EVENT_SCORE_UPDATE, [client.index, score]);
         this.room.flush();
+
+        // Respawn apple if we're out of apples
+        if (0 === this.spawner.numOfType(CONST.SPAWN_APPLE)) {
+            this.spawner.spawn(CONST.SPAWN_APPLE);
+        }
     },
 
     /**
@@ -292,15 +273,18 @@ Game.prototype = {
     },
 
     /**
+     * Spanw apple or powerup
      * @private
      */
-    _delaySpawnPowerup: function() {
+    _spawnSomethingAfterDelay: function() {
         var timer, range, delay;
-        range = CONST.TIME_SPAWN_POWERUP;
+        range = CONST.SPAWN_SOMETHING_EVERY;
         delay = Util.randomRange(range[0] * 1000, range[1] * 1000);
         timer = setTimeout(function() {
-            this.spawner.spawn(CONST.SPAWN_POWERUP);
-            this._delaySpawnPowerup();
+            var type = Math.random <= CONST.SPAWN_CHANCE_APPLE ?
+                CONST.SPAWN_APPLE : CONST.SPAWN_POWERUP;
+            this.spawner.spawn(type);
+            this._spawnSomethingAfterDelay();
         }.bind(this), delay);
         this.timers.push(timer);
     },
@@ -310,11 +294,7 @@ Game.prototype = {
      * @private
      */
     _emitSnakeRoom: function(client) {
-        var data = [
-            client.index,
-            client.snake.parts,
-            client.snake.direction
-        ];
+        var data = [client.index, client.snake.parts, client.snake.direction];
         this.room.emit(CONST.EVENT_SNAKE_UPDATE, data);
     },
 
@@ -377,8 +357,7 @@ Game.prototype = {
      */
     _crashSnake: function(client, parts) {
         client.snake.crashed = true;
-        var clientIndex = client.index;
-        this.room.emit(CONST.EVENT_SNAKE_CRASH, [clientIndex, parts]);
+        this.room.emit(CONST.EVENT_SNAKE_CRASH, [client.index, parts]);
         this._checkRoundEnded();
     },
 

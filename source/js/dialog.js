@@ -22,13 +22,15 @@ function Dialog(header, body, settings) {
     this._body = body;
 
     /** @type {DialogSettings} */
-    this.settings = XSS.util.extend({
+    this.settings = {
         keysBlocked: true,
         type       : Dialog.TYPE.INFO,
         width      : Dialog.MIN_WIDTH,
         ok         : XSS.util.dummy,
         cancel     : XSS.util.dummy
-    }, settings);
+    };
+
+    XSS.util.extend(this.settings, settings);
 
     this._bindEvents();
     this._updateShape();
@@ -51,7 +53,7 @@ Dialog.prototype = {
     destruct: function() {
         XSS.shapes.dialog = null;
         XSS.keysBlocked = false;
-        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG);
+        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG);
     },
 
     restore: function() {
@@ -69,14 +71,14 @@ Dialog.prototype = {
         this.settings.cancel();
     },
 
-    /**
-     * @param {string} header
-     */
-    setHeader: function(header) {
-        XSS.play.menu_alt();
-        this._header = header;
-        this._updateShape();
-    },
+//    /**
+//     * @param {string} header
+//     */
+//    setHeader: function(header) {
+//        XSS.play.menu_alt();
+//        this._header = header;
+//        this._updateShape();
+//    },
 
     /**
      * @param {string} body
@@ -93,7 +95,7 @@ Dialog.prototype = {
     _bindEvents: function() {
         XSS.keysBlocked = this.settings.keysBlocked;
         if (this.settings.type !== Dialog.TYPE.INFO) {
-            XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG, this._handleKeys.bind(this));
+            XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG, this._handleKeys.bind(this));
         }
         if (this.settings.type === Dialog.TYPE.ALERT) {
             this._okSelected = true;

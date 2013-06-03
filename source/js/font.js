@@ -111,7 +111,7 @@ Font.prototype = {
             window.setTimeout(this._detectFontLoad.bind(this), 0);
         } else {
             this.loaded = true;
-            XSS.pubsub.publish(CONST.PUB_FONT_LOAD);
+            XSS.event.trigger(CONST.PUB_FONT_LOAD);
         }
     },
 

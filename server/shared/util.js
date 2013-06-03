@@ -8,17 +8,33 @@ module.exports = {
     },
 
     /**
-     * @param {*} destination
-     * @param {*} source
-     * @return {*}
+     * @param {Object} obj Object to clone.
+     * @return {!Object} Clone of the input object.
+     * @template K,V
      */
-    extend: function(destination, source) {
-        for (var property in source) {
-            if (source.hasOwnProperty(property)) {
-                destination[property] = source[property];
+    clone: function(obj) {
+        var res = {};
+        for (var k in obj) {
+            if (obj.hasOwnProperty(k)) {
+                res[k] = obj[k];
             }
         }
-        return destination;
+        return res;
+    },
+
+    /**
+     * @param {Object} target
+     * @param {...Object} varArgs
+     */
+    extend: function(target, varArgs) {
+        for (var i = 1; i < arguments.length; i++) {
+            var source = arguments[i];
+            for (var k in source) {
+                if (source.hasOwnProperty(k)) {
+                    target[k] = source[k];
+                }
+            }
+        }
     },
 
     /**

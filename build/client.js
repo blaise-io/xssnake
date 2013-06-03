@@ -34,6 +34,9 @@ gcc.addFile(home + 'source/js/main.js');
 gcc.addFile(home + 'server/shared/const.js');
 gcc.addDir(home + 'server/shared', ['const.js']);
 gcc.addDir(home + 'source/js', ['main.js']);
+gcc.addDir(home + 'source/js/abstract_stage');
+gcc.addDir(home + 'source/js/stage_class_helper');
+gcc.addDir(home + 'source/js/stages');
 
 gcc.replace(/'use strict';/g, '');
 

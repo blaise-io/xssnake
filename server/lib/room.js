@@ -134,20 +134,18 @@ Room.prototype = {
      * @param {Client} client
      */
     disconnect: function(client) {
-        var index = client.index;
-
         // Wait until round end if user is playing with others.
         if (this.round && this.clients.length > 1) {
             this.game.clientDisconnect(client);
             this._disconnected.push(client);
         } else {
-            this.clients.splice(index, 1);
+            this.clients.splice(client.index, 1);
             this.server.removeClient(client);
         }
 
         if (this.clients.length) {
             // Emit chat notice first or client cannot replace index with name.
-            this.emit(CONST.EVENT_CHAT_NOTICE, '{' + index + '} left');
+            this.emit(CONST.EVENT_CHAT_NOTICE, '{' + client.index + '} left');
             this.updateIndices();
             this.emitState();
         } else {

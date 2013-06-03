@@ -32,8 +32,9 @@ module.exports = {
 
     TIME_GLOAT         : 5,
     TIME_COUNTDOWN_FROM: 3,
-    TIME_RESPAWN_APPLE : 30,
-    TIME_SPAWN_POWERUP : [10, 30],
+
+    SPAWN_SOMETHING_EVERY: [10, 30],
+    SPAWN_CHANCE_APPLE   : 0.9,
 
     SNAKE_SPEED: 120,
     SNAKE_SIZE : 4,

@@ -40,9 +40,9 @@ InputField.prototype = {
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        XSS.pubsub.off(CONST.EVENT_KEYPRESS, ns);
-        XSS.pubsub.off(CONST.EVENT_KEYDOWN, ns);
-        XSS.pubsub.off(CONST.EVENT_KEYUP, ns);
+        XSS.event.off(CONST.EVENT_KEYPRESS, ns);
+        XSS.event.off(CONST.EVENT_KEYDOWN, ns);
+        XSS.event.off(CONST.EVENT_KEYUP, ns);
         XSS.shapes.caret = null;
         XSS.shapes.inputval = null;
         XSS.keysBlocked = false;
@@ -53,9 +53,9 @@ InputField.prototype = {
      */
     _bindEvents: function() {
         var ns = CONST.NS_INPUT;
-        XSS.pubsub.on(CONST.EVENT_KEYPRESS, ns, XSS.play.menu_alt);
-        XSS.pubsub.on(CONST.EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
-        XSS.pubsub.on(CONST.EVENT_KEYUP, ns, this._updateShapes.bind(this));
+        XSS.event.on(CONST.EVENT_KEYPRESS, ns, XSS.play.menu_alt);
+        XSS.event.on(CONST.EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
+        XSS.event.on(CONST.EVENT_KEYUP, ns, this._updateShapes.bind(this));
     },
 
     /**

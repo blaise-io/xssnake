@@ -6,16 +6,16 @@
  * Pubsub
  * @constructor
  */
-function PublishSubscribe() {
+function EventHandler() {
     this._topics = {};
 }
 
-PublishSubscribe.prototype = {
+EventHandler.prototype = {
 
     /**
      * @param {string} topic
      */
-    publish: function(topic) {
+    trigger: function(topic) {
         var topics = this._topics[topic];
         if (topics) {
             for (var key in topics) {

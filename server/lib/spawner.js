@@ -12,7 +12,7 @@ var CONST = require('../shared/const.js');
 function Spawner(game) {
     this.game = game;
     this.spawns = [];
-    this.locations = []; // Keep separate list for speed
+    this.locations = []; // Keep separate list for getEmptyLocation speed
 }
 
 module.exports = Spawner;
@@ -27,30 +27,17 @@ Spawner.prototype = {
 
     /**
      * @param {number} type
-     * @param {number=} index
-     * @param {boolean=} respawn
-     * @param {number=} respawnAfter
      * @return {Object}
      */
-    spawn: function(type, index, respawn, respawnAfter) {
-        var spawn, game = this.game;
+    spawn: function(type) {
+        var spawn, index, game = this.game;
 
         spawn = {
-            location    : game.getEmptyLocation(),
-            type        : type,
-            respawn     : !!respawn,
-            respawnAfter: respawnAfter
+            location: game.getEmptyLocation(),
+            type    : type
         };
 
-        index = (typeof index === 'number') ? index : this.spawns.length;
-
-        if (respawnAfter) {
-            spawn.timer = setTimeout(function() {
-                this._destructSpawn(index);
-                this.spawn(type, index, respawn, respawnAfter);
-            }.bind(this), respawnAfter);
-        }
-
+        index = this.spawns.length;
         this.spawns[index] = spawn;
         this.locations[index] = spawn.location;
 
@@ -75,12 +62,7 @@ Spawner.prototype = {
                 break;
         }
 
-        if (spawn.respawn) {
-            this._destructSpawn(index);
-            this.spawn(spawn.type, index, true, spawn.respawnAfter);
-        } else {
-            this._destructSpawn(index);
-        }
+        this._destructSpawn(index);
     },
 
     /**
@@ -91,7 +73,7 @@ Spawner.prototype = {
     handleHits: function(client, location) {
         var hits = [];
         for (var i = 0, m = this.spawns.length; i < m; i++) {
-            if (null !== this.spawns[i] && Util.eq(this.spawns[i].location, location)) {
+            if (this.spawns[i] && Util.eq(this.spawns[i].location, location)) {
                 hits.push(i);
                 this.hit(client, i);
             }
@@ -100,14 +82,24 @@ Spawner.prototype = {
     },
 
     /**
+     * @param {number} type
+     * @returns {number}
+     */
+    numOfType: function(type) {
+        var num = 0;
+        for (var i = 0, m = this.spawns.length; i < m; i++) {
+            if (this.spawn[i] && this.spawns[i].type === type) {
+                num++;
+            }
+        }
+        return num;
+    },
+
+    /**
      * @param {number} index
      * @private
      */
     _destructSpawn: function(index) {
-        var spawn = this.spawns[index];
-        if (spawn && spawn.timer) {
-            clearTimeout(spawn.timer);
-        }
         this.spawns[index] = null;
         this.locations[index] = null;
     }

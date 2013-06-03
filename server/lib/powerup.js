@@ -53,8 +53,8 @@ Powerup.prototype = {
 
         chance = this.game.room.rank(
             this.client,
-            // Y-axis: Leading, Neutral, Losing
             // X-axis: Beneficial, Neutral, Harmful
+            // Y-axis: Leading, Neutral, Losing
             [0.1, 0.3, 0.6],
             [0.4, 0.4, 0.2],
             [0.7, 0.3, 0.0]
@@ -97,16 +97,8 @@ Powerup.prototype = {
      */
     _others: function() {
         var clients = this.game.room.clients.slice();
-        clients.splice(this._clientIndex(), 1);
+        clients.splice(this.client.index, 1);
         return clients;
-    },
-
-    /**
-     * @return {number}
-     * @private
-     */
-    _clientIndex: function() {
-        return this.client.index;
     },
 
     /**
@@ -121,7 +113,7 @@ Powerup.prototype = {
 
     _speedIncPerm: function() {
         var room = this.game.room,
-            index = this._clientIndex(),
+            index = this.client.index,
             snake = this.client.snake;
         snake.speed -= 15;
         room.buffer(CONST.EVENT_SNAKE_SPEED, [index, snake.speed]);
@@ -192,7 +184,7 @@ Powerup.prototype = {
     _spawn: function(type, amount, message) {
         var index, spawn, game = this.game;
 
-        index = this._clientIndex();
+        index = this.client.index;
         spawn = function() {
             game.spawner.spawn(type);
         };
@@ -217,11 +209,12 @@ Powerup.prototype = {
      * @private
      */
     _reverse: function(clients) {
-        var room = this.game.room;
+        var snake, room = this.game.room;
         for (var i = 0, m = clients.length; i < m; i++) {
-            var index = clients[i].index;
-            room.buffer(CONST.EVENT_SNAKE_ACTION, [index, 'Reverse']);
-            this.game.reverseSnake(index);
+            snake = clients[i].snake;
+            snake.reverse();
+            room.buffer(CONST.EVENT_SNAKE_ACTION, [i, 'Reverse']);
+            room.buffer(CONST.EVENT_SNAKE_UPDATE, [i, snake.parts, snake.direction]);
         }
         room.flush();
     },

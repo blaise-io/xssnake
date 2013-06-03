@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, expr:true, sub:true*/
-/*globals XSS, CONST*/
+/*globals XSS, CONST, MainStage*/
 'use strict';
 
 /**
@@ -8,70 +8,53 @@
  * @constructor
  */
 function StageFlow(stageRef) {
-    this._prevStages.push(stageRef || XSS.stages.main);
+    this._history = [stageRef || MainStage];
+    this.data = {};
     if (XSS.font.loaded) {
         this.initUI();
     } else {
-        XSS.pubsub.once(CONST.PUB_FONT_LOAD, CONST.NS_FLOW, this.initUI.bind(this));
+        XSS.event.once(CONST.PUB_FONT_LOAD, CONST.NS_FLOW, this.initUI.bind(this));
     }
 }
 
 StageFlow.prototype = {
 
-    /** @type {Array} */
-    _prevStages: [],
-
-    /** @type {Object} */
-    stageInstances: {},
-
     destruct: function() {
+        this.stage.destruct();
         if (XSS.socket) {
             XSS.socket.destruct();
         }
-        this._prevStages = [];
-        window.onhashchange = null;
-        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_FLOW);
+        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_FLOW);
+        XSS.canvas.garbageCollect();
     },
 
     restart: function() {
-        XSS.socket.destruct();
         this.destruct();
-        this._prevStages = [XSS.stages.main];
         this.initUI();
     },
 
     initUI: function() {
         XSS.shapes = {};
         this._bindGlobalEvents();
-        this.setupMenuSkeletton();
-        this.newStage(this._prevStages[0]);
+        this._setupMenuSkeletton();
+        this.constructStage(this._history[0]);
     },
 
     /**
-     * @param {function()} stage
-     * @return {StageInterface}
+     * @param {Function} Stage
      */
-    getStage: function(stage) {
-        var key = XSS.util.getKey(XSS.stages, stage);
-        this.stageInstances[key] = stage();
-        return this.stageInstances[key];
-    },
-
-    /**
-     * @param {function()} stageRef
-     */
-    newStage: function(stageRef) {
-        this.stage = this.getStage(stageRef);
-        this.setStageShapes();
+    constructStage: function(Stage) {
+        this.stage = new Stage();
         this.stage.construct();
+        this.setStageShapes();
     },
 
     /**
-     * @param {function()} newStageRef
+     * @param {Function} NewStageRef
      * @param {Object=} options
      */
-    switchStage: function(newStageRef, options) {
-        var newStage = this.getStage(newStageRef);
+    switchStage: function(NewStageRef, options) {
+        var newStage = new NewStageRef();
 
         options = options || {};
 
@@ -87,20 +70,20 @@ StageFlow.prototype = {
             newStage.getShape(),
             options.back,
             function() {
-                this._animateCallback(newStageRef, options.back);
+                this._animateCallback(NewStageRef, options.back);
             }.bind(this)
         );
     },
 
     previousStage: function() {
-        var prevs = this._prevStages;
+        var prevs = this._history;
         if (prevs.length > 1) {
             var previous = prevs[prevs.length - 2];
             this.switchStage(previous, {back: true});
         }
     },
 
-    setupMenuSkeletton: function() {
+    _setupMenuSkeletton: function() {
         var border = XSS.shapegen.outerBorder();
         for (var k in border) {
             if (border.hasOwnProperty(k)) {
@@ -119,15 +102,15 @@ StageFlow.prototype = {
      */
     _bindGlobalEvents: function() {
         window.onhashchange = this._hashChange.bind(this);
-        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_FLOW, this.handleKeys.bind(this));
+        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_FLOW, this.handleKeys.bind(this));
     },
 
     /**
      * @private
      */
     _hashChange: function() {
-        if (XSS.util.hash(CONST.HASH_ROOM) && !XSS.room) {
-            XSS.stages._autoJoinRoom();
+        if (XSS.util.hash(CONST.HASH_ROOM) && 1 === this._history.length) {
+            XSS.flow.restart();
         }
     },
 
@@ -163,7 +146,7 @@ StageFlow.prototype = {
      * @private
      */
     _switchStageAnimate: function(oldStage, newStage, back, callback) {
-        var oldStageAnim, newStageAnim, width = CONST.WIDTH;
+        var oldStageAnim, newStageAnim, width = CONST.WIDTH - CONST.MENU_LEFT;
 
         if (back) {
             oldStageAnim = {to: [width, 0]};
@@ -196,14 +179,14 @@ StageFlow.prototype = {
         delete XSS.shapes.newstage;
 
         // Load new stage
-        this.newStage(newStageRef);
+        this.constructStage(newStageRef);
 
         // Log states
         if (back) {
             XSS.util.hash();
-            this._prevStages.pop();
+            this._history.pop();
         } else {
-            this._prevStages.push(newStageRef);
+            this._history.push(newStageRef);
         }
     }
 

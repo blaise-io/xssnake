@@ -41,10 +41,9 @@ function ClientSnake(index, local, name, location, direction) {
     };
 }
 
-ClientSnake.prototype = Object.create(Snake.prototype);
-
 /** @lends {ClientSnake.prototype} */
-XSS.util.extend(ClientSnake.prototype, {
+XSS.util.extend(ClientSnake.prototype, Snake.prototype);
+XSS.util.extend(ClientSnake.prototype, /** @lends ClientSnake.prototype */ {
 
     destruct: function() {
         this.crash();
@@ -118,11 +117,11 @@ XSS.util.extend(ClientSnake.prototype, {
     },
 
     addControls: function() {
-        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE, this._handleKeys.bind(this));
+        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE, this._handleKeys.bind(this));
     },
 
     removeControls: function() {
-        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE);
+        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE);
     },
 
     addToShapes: function() {

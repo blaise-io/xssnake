@@ -80,6 +80,24 @@ Snake.prototype = {
      */
     directionToShift: function(direction) {
         return [[-1, 0], [0, -1], [1, 0], [0, 1]][direction];
+    },
+
+    /**
+     * head-tail switch
+     */
+    reverse: function() {
+        var dx, dy;
+
+        dx = this.parts[0][0] - this.parts[1][0];
+        dy = this.parts[0][1] - this.parts[1][1];
+
+        if (dx !== 0) {
+            this.direction = (dx === -1) ? 0 : 2;
+        } else {
+            this.direction = (dy === -1) ? 1 : 3;
+        }
+
+        this.parts.reverse();
     }
 
 };

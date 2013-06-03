@@ -268,7 +268,7 @@ Shape.prototype = {
         return function(delta) {
             var x, y;
             progress += delta;
-            var progressx = Math.sqrt(Math.sqrt(progress / duration));
+            var progressx = Math.sqrt(progress / duration);
             if (progress < duration) {
                 x = from[0] - ((from[0] - to[0]) * progressx);
                 x = Math.round(x);

@@ -256,7 +256,7 @@ ShapeGenerator.prototype = {
 
             shape = new Shape(pixel);
             shape.animate(animation).lifetime(0, duration);
-            XSS.shapes[XSS.util.randomStr(5)] = shape;
+            XSS.shapes['xpl'+XSS.util.randomStr(5)] = shape;
         }
     }
 

@@ -20,7 +20,7 @@ function Room() {
 Room.prototype = {
 
     destruct: function() {
-        XSS.pubsub.off(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM);
+        XSS.event.off(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM);
         XSS.util.hash();
         this.unbindKeys();
         this.destructDialog();
@@ -32,7 +32,7 @@ Room.prototype = {
     },
 
     unbindKeys: function() {
-        XSS.pubsub.off(CONST.EVENT_KEYDOWN, CONST.NS_ROOM);
+        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_ROOM);
     },
 
     destructDialog: function() {
@@ -86,8 +86,8 @@ Room.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.pubsub.on(CONST.EVENT_KEYDOWN, CONST.NS_ROOM, this._handleKeys.bind(this));
-        XSS.pubsub.on(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM, this._initRoom.bind(this));
+        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_ROOM, this._handleKeys.bind(this));
+        XSS.event.on(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM, this._initRoom.bind(this));
     },
 
     /**

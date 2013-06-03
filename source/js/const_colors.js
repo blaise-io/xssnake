@@ -2,24 +2,24 @@
 /*globals XSS, CONST*/
 'use strict';
 
-XSS.colors = [
+CONST.COLORS = [
     {
         title: 'Public Transport',
-        desc : 'Better stick to this color scheme\nif you don’t want to get epilepsified.',
+        desc : 'TAXIIIIIII',
         bg   : '#111',
         off  : '#222',
         on   : '#dc0'
     },
     {
         title: 'Vampire Campfire',
-        desc : 'Bloody pixels!',
+        desc : 'Bloody pixels',
         bg   : '#000',
         off  : '#300',
         on   : '#f00'
     },
     {
         title: 'My First LED Screen',
-        desc : 'Without backlight.',
+        desc : 'Without backlight',
         bg   : '#798',
         off  : '#687',
         on   : '#121'

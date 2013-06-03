@@ -22,8 +22,8 @@ function Socket(callback) {
 Socket.prototype = {
 
     destruct: function() {
-        XSS.pubsub.off(CONST.EVENT_PING, CONST.NS_SOCKET);
-        XSS.pubsub.off(CONST.EVENT_COMBI, CONST.NS_SOCKET);
+        XSS.event.off(CONST.EVENT_PING, CONST.NS_SOCKET);
+        XSS.event.off(CONST.EVENT_COMBI, CONST.NS_SOCKET);
         if (XSS.room) {
             XSS.room.destruct();
             XSS.room = null;
@@ -71,16 +71,15 @@ Socket.prototype = {
      */
     handleMessage: function(ev) {
         var data = JSON.parse(ev.data);
-        console.log(data);
-        XSS.pubsub.publish(data[0], data[1]);
+        XSS.event.trigger(data[0], data[1]);
     },
 
     /**
      * @private
      */
     _bindEvents: function() {
-        XSS.pubsub.on(CONST.EVENT_PING,  CONST.NS_SOCKET, this.clientPing.bind(this));
-        XSS.pubsub.on(CONST.EVENT_COMBI, CONST.NS_SOCKET, this.combinedEvents.bind(this));
+        XSS.event.on(CONST.EVENT_PING,  CONST.NS_SOCKET, this.clientPing.bind(this));
+        XSS.event.on(CONST.EVENT_COMBI, CONST.NS_SOCKET, this.combinedEvents.bind(this));
     },
 
     /**
@@ -96,7 +95,7 @@ Socket.prototype = {
      */
     combinedEvents: function(data) {
         for (var i = 0, m = data.length; i < m; i++) {
-            XSS.pubsub.publish(data[i][0], data[i][1]);
+            XSS.event.trigger(data[i][0], data[i][1]);
         }
     }
 

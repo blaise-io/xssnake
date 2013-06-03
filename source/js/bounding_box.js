@@ -17,6 +17,7 @@ BoundingBox.prototype = {
     x2: 0,
     y1: 0,
     y2: 0,
+
     width: 0,
     height: 0,
 
