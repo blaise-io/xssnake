@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, expr:true, sub:true*/
-/*globals XSS, CONST*/
+/*globals XSS, CONST, SelectMenu*/
 'use strict';
 
 /**
@@ -8,7 +8,8 @@
  * @implements {StageInterface}
  * @constructor
  */
-function SelectStage() {}
+function SelectStage() {
+}
 
 SelectStage.prototype = {
 
@@ -27,32 +28,32 @@ SelectStage.prototype = {
         XSS.shapes.stage = null;
     },
 
-    handleKeys: function(e) {
+    handleKeys: function(ev) {
         if (XSS.keysBlocked) {
             return;
         }
-        switch (e.keyCode) {
+        switch (ev.keyCode) {
             case CONST.KEY_BACKSPACE:
             case CONST.KEY_ESCAPE:
                 XSS.flow.previousStage();
                 break;
             case CONST.KEY_ENTER:
-                var nextStage = this.menu.getNextStage();
-                if (nextStage) {
-                    XSS.flow.switchStage(nextStage);
+                var next = this.menu.getNextStage();
+                if (next) {
+                    XSS.flow.switchStage(next);
                 } else {
                     XSS.flow.previousStage();
                 }
                 break;
             case CONST.KEY_UP:
-                this.menu.select(-1);
+                this.menu.prev();
                 XSS.play.menu();
-                XSS.flow.setStageShapes();
+                XSS.flow.refreshShapes();
                 break;
             case CONST.KEY_DOWN:
-                this.menu.select(1);
+                this.menu.next();
                 XSS.play.menu();
-                XSS.flow.setStageShapes();
+                XSS.flow.refreshShapes();
         }
     }
 

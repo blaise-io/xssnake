@@ -31,8 +31,8 @@ GameStage.prototype = {
         XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._exitKeys.bind(this));
     },
 
-    _exitKeys: function(e) {
-        if (!XSS.keysBlocked && e.keyCode === CONST.KEY_ESCAPE && XSS.room) {
+    _exitKeys: function(ev) {
+        if (!XSS.keysBlocked && ev.keyCode === CONST.KEY_ESCAPE && XSS.room) {
             this.dialog = new Dialog(
                 'LEAVING GAME',
                 'Are you sure you want to leave this game?', {

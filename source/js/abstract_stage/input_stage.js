@@ -11,7 +11,7 @@
 function InputStage() {
     this._val = XSS.util.storage(this.name) || '';
     this._inputTop = CONST.MENU_TOP + 17;
-    this._shape = this._getShape(true);
+    this._shape = this._getShape();
 }
 
 InputStage.prototype = {
@@ -19,7 +19,7 @@ InputStage.prototype = {
     name: '',
     header: '',
     label: '',
-    nextStage: InputStage,
+    next: InputStage,
 
     minChars: 0,
     maxChars: 0,
@@ -35,44 +35,30 @@ InputStage.prototype = {
     },
 
     construct: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this.handleKeys.bind(this));
+        var input = new InputField(CONST.MENU_LEFT, this._inputTop, this.label);
+        this.input = input;
 
-        this.input = new InputField(CONST.MENU_LEFT, this._inputTop, this.label);
-        this.input.maxValWidth = this.maxValWidth || this.input.maxValWidth;
-        this.input.displayWidth = this.displayWidth || this.input.displayWidth;
+        input.maxValWidth = this.maxValWidth || input.maxValWidth;
+        input.displayWidth = this.displayWidth || input.displayWidth;
 
-        this.input.callback = function(value) {
+        input.callback = function(value) {
             XSS.util.storage(this.name, value);
             this._val = value;
         }.bind(this);
 
         // Apply properties
-        this.input.setValue(this._val);
+        input.setValue(this._val);
 
         // Label and input are rendered separately by InputField
-        XSS.shapes.stage = this._getShape(false);
+        this._shape = this._getShapeExcludeValue();
+        this._bindEvents();
     },
 
     destruct: function() {
         XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
         XSS.shapes.message = null;
-        this._shape = this._getShape(true);
+        this._shape = this._getShape();
         this.input.destruct();
-    },
-
-    handleKeys: function(e) {
-        var value, labelHeight, top;
-        switch (e.keyCode) {
-            case CONST.KEY_ESCAPE:
-                XSS.flow.previousStage();
-                e.preventDefault();
-                break;
-            case CONST.KEY_ENTER:
-                value = this._val.trim();
-                labelHeight = XSS.font.height(this.label);
-                top = labelHeight + CONST.MENU_TOP + CONST.MENU_TITLE_HEIGHT - 3;
-                this.inputSubmit(this._getInputError(value), value, top);
-        }
     },
 
     /**
@@ -82,11 +68,36 @@ InputStage.prototype = {
      */
     inputSubmit: function(error, value, top) {
         if (!error && value && top) {
-            XSS.flow.switchStage(this.nextStage);
+            XSS.flow.switchStage(this.next);
             XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
         } else {
             XSS.shapes.message = XSS.font.shape(error, CONST.MENU_LEFT, top);
             XSS.shapes.message.lifetime(0, 500);
+        }
+    },
+
+    /**
+     * @private
+     */
+    _bindEvents: function() {
+        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._handleKeys.bind(this));
+    },
+
+    /**
+     * @private
+     */
+    _handleKeys: function(ev) {
+        var value, labelHeight, top;
+        switch (ev.keyCode) {
+            case CONST.KEY_ESCAPE:
+                XSS.flow.previousStage();
+                ev.preventDefault();
+                break;
+            case CONST.KEY_ENTER:
+                value = this._val.trim();
+                labelHeight = XSS.font.height(this.label);
+                top = labelHeight + CONST.MENU_TOP + CONST.MENU_TITLE_HEIGHT - 3;
+                this.inputSubmit(this._getInputError(value), value, top);
         }
     },
 
@@ -105,15 +116,12 @@ InputStage.prototype = {
     },
 
     /**
-     * @param {boolean} includeValue
      * @returns {Shape}
      * @private
      */
-    _getShape: function(includeValue) {
-        var shape = this._getHeaderShape();
-        if (includeValue) {
-            shape.add(this._getValueShape().pixels);
-        }
+    _getShape: function() {
+        var shape = this._getShapeExcludeValue();
+        shape.add(this._getValueShape().pixels);
         return shape;
     },
 
@@ -121,7 +129,7 @@ InputStage.prototype = {
      * @return {Shape}
      * @private
      */
-    _getHeaderShape: function() {
+    _getShapeExcludeValue: function() {
         var pixels = XSS.font.pixels(this.header);
         pixels = XSS.transform.zoomX2(pixels, CONST.MENU_LEFT, CONST.MENU_TOP, true);
         return new Shape(pixels);

@@ -28,8 +28,8 @@ ScreenStage.prototype = {
         XSS.shapes.stage = null;
     },
 
-    _handleKeys: function(e) {
-        switch (e.keyCode) {
+    _handleKeys: function(ev) {
+        switch (ev.keyCode) {
             case CONST.KEY_BACKSPACE:
             case CONST.KEY_ESCAPE:
             case CONST.KEY_ENTER:

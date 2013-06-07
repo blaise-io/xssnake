@@ -188,14 +188,14 @@ XSS.util.extend(ClientSnake.prototype, /** @lends ClientSnake.prototype */ {
     },
 
     /**
-     * @param {Event} e
+     * @param {Event} ev
      * @private
      */
-    _handleKeys: function(e) {
+    _handleKeys: function(ev) {
         if (XSS.keysBlocked) {
             return;
         }
-        switch (e.keyCode) {
+        switch (ev.keyCode) {
             case CONST.KEY_LEFT:
                 this._changeDirection(CONST.DIRECTION_LEFT);
                 break;

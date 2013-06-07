@@ -1,5 +1,5 @@
 /*jshint globalstrict:true, es5:true, sub:true, evil:true*/
-/*globals XSS, CONST, StageInterface, SelectStage, SelectMenu, Dialog, Room, Socket, ClientSnake, NameStage, StartGameStage, ColorStage, CreditsStage, AutoJoinStage */
+/*globals XSS, CONST, SelectStage, SelectMenu, Dialog, Room, Socket, ClientSnake, NameStage, StartGameStage, ColorStage, CreditsStage, AutoJoinStage */
 'use strict';
 
 /**
@@ -53,19 +53,18 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
      * @private
      */
     _getMenu: function() {
-        var name, menu, header, footer;
+        var menu, header, footer;
 
-        name = XSS.util.storage(CONST.STORAGE_NAME);
-
-        header = name ?
-            'WLCM BCK ' + name.toUpperCase() + '!' :
-            'WELCOME STRANGER!!';
+        header = function() {
+            var name = XSS.util.storage(CONST.STORAGE_NAME).toUpperCase();
+            return name ? 'WLCM BCK ' + name + '!' : 'WELCOME STRANGER!!';
+        };
 
         footer = '' +
             'Press M to mute/unmute sounds.\n' +
             'Use arrow keys, Esc and ' + CONST.UC_ENTER_KEY + ' to navigate.';
 
-        menu = new SelectMenu('main', header, footer);
+        menu = new SelectMenu(header, footer);
         menu.addOption(null, NameStage, 'MULTIPLAYER');
         menu.addOption(null, StartGameStage, 'SINGLE PLAYER');
         menu.addOption(null, ColorStage, 'COLOR SCHEME');

@@ -36,7 +36,7 @@ XSS.util.extend(NameStage.prototype, /** @lends NameStage.prototype */ {
             text = XSS.util.randomItem(this._wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(function() {
-                XSS.flow.switchStage(this.nextStage);
+                XSS.flow.switchStage(this.next);
             }.bind(this), duration);
         }
 

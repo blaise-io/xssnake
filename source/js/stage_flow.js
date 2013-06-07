@@ -4,20 +4,26 @@
 
 /**
  * StageFlow instantiation, stage switching
- * @param {Function=} stageRef
+ * @param {Function=} Stage
  * @constructor
  */
-function StageFlow(stageRef) {
-    this._history = [stageRef || MainStage];
-    this.data = {};
+function StageFlow(Stage) {
+    this._FirstStage = Stage || MainStage;
+
     if (XSS.font.loaded) {
-        this.initUI();
+        this.start();
     } else {
-        XSS.event.once(CONST.PUB_FONT_LOAD, CONST.NS_FLOW, this.initUI.bind(this));
+        XSS.event.once(
+            CONST.PUB_FONT_LOAD,
+            CONST.NS_FLOW,
+            this.start.bind(this)
+        );
     }
 }
 
 StageFlow.prototype = {
+
+    _history: [],
 
     destruct: function() {
         this.stage.destruct();
@@ -30,57 +36,56 @@ StageFlow.prototype = {
 
     restart: function() {
         this.destruct();
-        this.initUI();
+        this.start();
     },
 
-    initUI: function() {
+    start: function() {
         XSS.shapes = {};
         this._bindGlobalEvents();
         this._setupMenuSkeletton();
-        this.constructStage(this._history[0]);
+        this._setStage(new this._FirstStage(), false);
     },
 
     /**
      * @param {Function} Stage
-     */
-    constructStage: function(Stage) {
-        this.stage = new Stage();
-        this.stage.construct();
-        this.setStageShapes();
-    },
-
-    /**
-     * @param {Function} NewStageRef
      * @param {Object=} options
      */
-    switchStage: function(NewStageRef, options) {
-        var newStage = new NewStageRef();
+    switchStage: function(Stage, options) {
+        var switchToStage;
 
         options = options || {};
+
+        if (Stage && !options.back) {
+            switchToStage = new Stage();
+        } else {
+            switchToStage = this._history[this._history.length - 2];
+        }
 
         // Unload old stage
         this.stage.destruct();
 
         // Remove everything
-        delete XSS.shapes.stage;
+        XSS.shapes.stage = null;
 
         // Replace by animation
         this._switchStageAnimate(
             this.stage.getShape(),
-            newStage.getShape(),
+            switchToStage.getShape(),
             options.back,
             function() {
-                this._animateCallback(NewStageRef, options.back);
+                this._setStage(switchToStage, options.back);
             }.bind(this)
         );
     },
 
     previousStage: function() {
-        var prevs = this._history;
-        if (prevs.length > 1) {
-            var previous = prevs[prevs.length - 2];
-            this.switchStage(previous, {back: true});
+        if (this._history.length > 1) {
+            this.switchStage(null, {back: true});
         }
+    },
+
+    refreshShapes: function() {
+        XSS.shapes.stage = this.stage.getShape();
     },
 
     _setupMenuSkeletton: function() {
@@ -93,16 +98,12 @@ StageFlow.prototype = {
         XSS.shapes.header = XSS.shapegen.header();
     },
 
-    setStageShapes: function() {
-        XSS.shapes.stage = this.stage.getShape();
-    },
-
     /**
      * @private
      */
     _bindGlobalEvents: function() {
         window.onhashchange = this._hashChange.bind(this);
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_FLOW, this.handleKeys.bind(this));
+        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_FLOW, this._handleKeys.bind(this));
     },
 
     /**
@@ -115,21 +116,21 @@ StageFlow.prototype = {
     },
 
     /**
-     * @param {Event} e
+     * @param {Event} ev
      * @private
      */
-    handleKeys: function(e) {
+    _handleKeys: function(ev) {
         var mute, instruct;
 
         // Firefox disconnects websocket on Esc. Disable that.
-        if (e.keyCode === CONST.KEY_ESCAPE) {
-            e.preventDefault();
+        if (ev.keyCode === CONST.KEY_ESCAPE) {
+            ev.preventDefault();
         }
 
         // Global mute key.
         // Ignore key when user is in input field. Start screen might
         // contain a dialog, so do not use XSS.keysBlocked here.
-        if (!XSS.shapes.caret && e.keyCode === CONST.KEY_MUTE) {
+        if (!XSS.shapes.caret && ev.keyCode === CONST.KEY_MUTE) {
             mute = !XSS.util.storage(CONST.STORAGE_MUTE);
             instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
             XSS.util.storage(CONST.STORAGE_MUTE, mute);
@@ -169,24 +170,24 @@ StageFlow.prototype = {
     },
 
     /**
-     * @param {function()} newStageRef
+     * @param {StageInterface} stage
      * @param {boolean} back
      * @private
      */
-    _animateCallback: function(newStageRef, back) {
+    _setStage: function(stage, back) {
         // Remove old stages
-        delete XSS.shapes.oldstage;
-        delete XSS.shapes.newstage;
+        XSS.shapes.oldstage = null;
+        XSS.shapes.newstage = null;
 
-        // Load new stage
-        this.constructStage(newStageRef);
+        this.stage = stage;
+        this.stage.construct();
+        this.refreshShapes();
 
-        // Log states
         if (back) {
-            XSS.util.hash();
             this._history.pop();
+            XSS.util.hash();
         } else {
-            this._history.push(newStageRef);
+            this._history.push(stage);
         }
     }
 

@@ -100,9 +100,9 @@ Room.prototype = {
     /**
      * @private
      */
-    _handleKeys: function(e) {
+    _handleKeys: function(ev) {
         if (!XSS.keysBlocked) {
-            switch (e.keyCode) {
+            switch (ev.keyCode) {
                 case CONST.KEY_ESCAPE:
                     this._handleExitKey();
                     break;

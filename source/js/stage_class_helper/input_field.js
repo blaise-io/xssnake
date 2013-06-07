@@ -13,6 +13,7 @@ function InputField(x, y, prefix) {
     this.y = y;
     this.prefix = prefix || '';
 
+    this.callback = XSS.util.dummy;
     this.maxValWidth = 0;
     this.displayWidth = CONST.WIDTH - x - 8;
     this.maxlength = 156;
@@ -68,9 +69,7 @@ InputField.prototype = {
 
         this._applyMaxWidth();
         this.value = this.input.value;
-        if (this.callback) {
-            this.callback(this.input.value);
-        }
+        this.callback(this.input.value);
         XSS.shapes.caret = this._caretShape();
         XSS.shapes.inputval = this._valueShape();
     },

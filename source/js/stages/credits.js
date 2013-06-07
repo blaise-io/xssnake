@@ -4,6 +4,7 @@
 
 /**
  * @extends {ScreenStage}
+ * @implements {StageInterface}
  * @constructor
  */
 function CreditsStage() {

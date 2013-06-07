@@ -4,6 +4,7 @@
 
 /**
  * @extends {InputStage}
+ * @implements {StageInterface}
  * @constructor
  */
 function AutoJoinStage() {

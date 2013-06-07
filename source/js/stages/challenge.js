@@ -20,7 +20,7 @@ function ChallengeStage() {
         'result of this statement:\n\n> ' +
         this._challenge + '\n> ';
 
-    this.nextStage = InputXssStage;
+    this.next = InputXssStage;
 
     InputStage.call(this);
 }
@@ -36,7 +36,7 @@ XSS.util.extend(ChallengeStage.prototype, /** @lends {ChallengeStage.prototype} 
             text = '> bleep!';
             XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
             setTimeout(function() {
-                XSS.flow.switchStage(this.nextStage);
+                XSS.flow.switchStage(this.next);
             }.bind(this), 1000);
         }
 

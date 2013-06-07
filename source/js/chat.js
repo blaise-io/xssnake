@@ -134,17 +134,17 @@ Chat.prototype = {
     },
 
     /**
-     * @param {Event} e
+     * @param {Event} ev
      * @private
      */
-    _chatFocus: function(e) {
-        switch (e.keyCode) {
+    _chatFocus: function(ev) {
+        switch (ev.keyCode) {
             case CONST.KEY_ESCAPE:
                 this._focusInput(false);
-                e.preventDefault();
+                ev.preventDefault();
                 break;
             case CONST.KEY_ENTER:
-                e.preventDefault();
+                ev.preventDefault();
                 if (this._hasFocus) {
                     this._sendMessage(this.field.value.trim());
                     this._focusInput(false);

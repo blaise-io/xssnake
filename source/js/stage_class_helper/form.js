@@ -12,9 +12,9 @@ function Form(header, next) {
     this.header = header;
     this.next = next;
 
-    this.focus = 0;
-    this.fields = [];
-    this.selected = [];
+    this._selectedV = 0;
+    this._selectedH = [];
+    this._fields = [];
     this._optionMaxWidth = 0;
 }
 
@@ -26,13 +26,13 @@ Form.prototype = {
      * @param {Array.<Array>} options
      */
     addField: function(name, label, options) {
-        this.fields.push({
+        this._fields.push({
             name   : name,
             label  : label,
             options: options
         });
 
-        this.selected.push(0);
+        this._selectedH.push(0);
 
         for (var i = 0, m = options.length; i < m; i++) {
             this._optionMaxWidth = Math.max(
@@ -46,17 +46,17 @@ Form.prototype = {
      * @param {number} delta
      */
     selectField: function(delta) {
-        this.focus = XSS.util.normArrIndex(this.focus + delta, this.fields);
+        this._selectedV = XSS.util.normArrIndex(this._selectedV + delta, this._fields);
     },
 
     /**
      * @param {number} delta
      */
     selectOption: function(delta) {
-        var focusField = this.fields[this.focus];
+        var focusField = this._fields[this._selectedV];
         if (focusField) {
-            this.selected[this.focus] = XSS.util.normArrIndex(
-                this.selected[this.focus] + delta,
+            this._selectedH[this._selectedV] = XSS.util.normArrIndex(
+                this._selectedH[this._selectedV] + delta,
                 focusField.options
             );
         }
@@ -80,8 +80,8 @@ Form.prototype = {
         y += CONST.MENU_TITLE_HEIGHT;
 
         // Draw options
-        for (var i = 0, m = this.fields.length; i < m; i++) {
-            var option, bbox, active = (this.focus === i);
+        for (var i = 0, m = this._fields.length; i < m; i++) {
+            var option, bbox, active = (this._selectedV === i);
 
             option = this._getOptionsShape(i, x, optionX, y, active);
 
@@ -103,9 +103,9 @@ Form.prototype = {
 
     getValues: function() {
         var values = {};
-        for (var i = 0, m = this.fields.length; i < m; i++) {
-            var field = this.fields[i],
-                optionIndex = this.selected[i];
+        for (var i = 0, m = this._fields.length; i < m; i++) {
+            var field = this._fields[i],
+                optionIndex = this._selectedH[i];
             if (field.name) {
                 values[field.name] = field.options[optionIndex][0];
             }
@@ -141,10 +141,10 @@ Form.prototype = {
     _getOptionsShape: function(i, x, col2X, y, active) {
         var label, shape, value, option, pixels, xx = {};
 
-        label = this.fields[i].label;
+        label = this._fields[i].label;
         shape = XSS.font.shape(label, x, y);
 
-        option = this.fields[i].options[this.selected[i] || 0];
+        option = this._fields[i].options[this._selectedH[i] || 0];
         value = option[1] || String(option[0]);
 
         xx.option = col2X + (this._optionMaxWidth - XSS.font.width(value)) / 2;

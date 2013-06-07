@@ -311,13 +311,13 @@ Canvas.prototype = {
     },
 
     /**
-     * @param {Event=} e
+     * @param {Event=} ev
      * @private
      */
-    _positionCanvas: function(e) {
+    _positionCanvas: function(ev) {
         var windowCenter, windowMiddle, left, top, style;
 
-        if (e) {
+        if (ev) {
             this._setCanvasDimensions();
             this._setPatterns();
             this.flushShapeCache();

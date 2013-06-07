@@ -30,38 +30,38 @@ FormStage.prototype = {
         XSS.shapes.stage = null;
     },
 
-    handleKeys: function(e) {
+    handleKeys: function(ev) {
         if (XSS.keysBlocked) {
             return;
         }
-        switch (e.keyCode) {
+        switch (ev.keyCode) {
             case CONST.KEY_BACKSPACE:
             case CONST.KEY_ESCAPE:
                 XSS.flow.previousStage();
                 break;
             case CONST.KEY_ENTER:
-                var nextStage = this.form.getNextStage();
-                XSS.flow.switchStage(nextStage);
+                var next = this.form.getNextStage();
+                XSS.flow.switchStage(next);
                 break;
             case CONST.KEY_UP:
                 this.form.selectField(-1);
                 XSS.play.menu();
-                XSS.flow.setStageShapes();
+                XSS.flow.refreshShapes();
                 break;
             case CONST.KEY_DOWN:
                 this.form.selectField(1);
                 XSS.play.menu();
-                XSS.flow.setStageShapes();
+                XSS.flow.refreshShapes();
                 break;
             case CONST.KEY_LEFT:
                 this.form.selectOption(-1);
                 XSS.play.menu_alt();
-                XSS.flow.setStageShapes();
+                XSS.flow.refreshShapes();
                 break;
             case CONST.KEY_RIGHT:
                 this.form.selectOption(1);
                 XSS.play.menu_alt();
-                XSS.flow.setStageShapes();
+                XSS.flow.refreshShapes();
                 break;
         }
     }

@@ -5,16 +5,14 @@
 /**
  * SelectMenu
  * Creates a single navigatable verticle menu
- * @param {string} name
- * @param {string=} header
+ * @param {(string|Function)=} header
  * @param {string=} footer
  * @constructor
  */
-function SelectMenu(name, header, footer) {
-    this.name = name;
-    this.header = header || '';
-    this.footer = footer || '';
-    this.selected = 0;
+function SelectMenu(header, footer) {
+    this._header = header || '';
+    this._footer = footer || '';
+    this._selected = 0;
     this._options = [];
 }
 
@@ -33,88 +31,91 @@ SelectMenu.prototype = {
             next       : next,
             title      : title,
             description: description || '',
-            callback   : callback
+            callback   : callback || XSS.util.dummy
         });
     },
 
     /**
-     * @param {number} delta
+     * @returns {number}
      */
-    select: function(delta) {
-        var index, option;
-        this.selected += delta;
-        index = this.getSelected();
-        option = this.getFocusedOption();
-        if (option.callback) {
-            option.callback(index);
+    prev: function() {
+        return this.select(this._selected - 1);
+    },
+
+    /**
+     * @returns {number}
+     */
+    next: function() {
+        return this.select(this._selected + 1);
+    },
+
+    /**
+     * @param {number} select
+     * @returns {number}
+     */
+    select: function(select) {
+        var max = this._options.length - 1;
+
+        if (select < 0) {
+            select = max;
+        } else if (select > max) {
+            select = 0;
         }
+
+        this._selected = select;
+        this.getSelectedOption().callback(this._selected);
+        return select;
     },
 
     /**
      * @return {Object}
      */
-    getFocusedOption: function() {
-        var selected = this.getSelected();
-        return this._options[selected];
+    getSelectedOption: function() {
+        return this._options[this._selected];
     },
 
     /**
-     * @return {function()}
+     * @return {StageInterface}
      */
     getNextStage: function() {
-        return this.getFocusedOption().next;
+        return this.getSelectedOption().next;
     },
 
     /**
      * @return {Shape}
      */
     getShape: function() {
-        var x, y, header, footer, font, shape, desc;
+        var x, y, header, headerPixels, shape, desc;
 
         x = CONST.MENU_LEFT;
         y = CONST.MENU_TOP;
 
         // Header
-        header = XSS.transform.zoomX2(XSS.font.pixels(this.header), x, y, true);
-        shape = new Shape(header);
+        header = (typeof this._header === 'string') ? this._header : this._header();
+        headerPixels = XSS.font.pixels(header);
+        headerPixels = XSS.transform.zoomX2(headerPixels, x, y, true);
+        shape = new Shape(headerPixels);
         y += CONST.MENU_TITLE_HEIGHT;
 
         // Footer
-        footer = XSS.font.pixels(
-            this.footer, x, CONST.HEIGHT - 3 - XSS.font.height(this.footer)
-        );
-        shape.add(footer);
+        shape.add(XSS.font.pixels(
+            this._footer, x, CONST.HEIGHT - 3 - XSS.font.height(this._footer)
+        ));
 
         // Draw options
         for (var i = 0, m = this._options.length; i < m; i++) {
-            var title, active = (this.getSelected() === i);
+            var title, active = (this._selected === i);
             title = this._options[i].title;
-            font = XSS.font.pixels(title, x, y, {invert: active});
+            shape.add(XSS.font.pixels(title, x, y, {invert: active}));
             y += Font.LINE_HEIGHT_MENU;
-            shape.add(font);
         }
 
         // Help text line(s)
-        desc = this.getFocusedOption().description;
+        desc = this.getSelectedOption().description;
         y += Font.LINE_HEIGHT;
-        font = XSS.font.pixels(desc, x, y, {wrap: CONST.MENU_WRAP});
-        shape.add(font);
+        shape.add(XSS.font.pixels(desc, x, y, {wrap: CONST.MENU_WRAP}));
 
         return shape;
-    },
-
-    /**
-     * @return {number}
-     */
-    getSelected: function() {
-        if (typeof this.selected === 'undefined') {
-            this.selected = 0;
-        } else if (this.selected < 0) {
-            this.selected = this._options.length - 1;
-        } else if (this.selected > this._options.length - 1) {
-            this.selected = 0;
-        }
-        return this.selected;
     }
 
 };

@@ -1,11 +1,14 @@
 /*jshint globalstrict:true, es5:true, node:true, sub:true*/
-/*globals CONST:true*/
+/*globals XSS:true, CONST:true*/
 'use strict';
 
 module.exports = {
 
-    dummy: function() {
-    },
+    /**
+     * Dummy callback function to reduce if statements.
+     * @example this.callback = optionalCallbackParam || XSS.util.dummy;
+     */
+    dummy: function() {},
 
     /**
      * @param {Object} obj Object to clone.
