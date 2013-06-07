@@ -19,7 +19,7 @@ function SelectMenu(header, footer) {
 SelectMenu.prototype = {
 
     /**
-     * @param {?(boolean|string)} value
+     * @param {?(boolean|string|number)} value
      * @param {function()|null} next
      * @param {string} title
      * @param {string=} description
@@ -56,7 +56,9 @@ SelectMenu.prototype = {
     select: function(select) {
         var max = this._options.length - 1;
 
-        if (select < 0) {
+        if (typeof select !== 'number') {
+            select = 0;
+        } if (select < 0) {
             select = max;
         } else if (select > max) {
             select = 0;
@@ -75,7 +77,7 @@ SelectMenu.prototype = {
     },
 
     /**
-     * @return {StageInterface}
+     * @return {Function}
      */
     getNextStage: function() {
         return this.getSelectedOption().next;
@@ -111,9 +113,11 @@ SelectMenu.prototype = {
         }
 
         // Help text line(s)
-        desc = this.getSelectedOption().description;
-        y += Font.LINE_HEIGHT;
-        shape.add(XSS.font.pixels(desc, x, y, {wrap: CONST.MENU_WRAP}));
+        if (this._options.length) {
+            desc = this.getSelectedOption().description;
+            y += Font.LINE_HEIGHT;
+            shape.add(XSS.font.pixels(desc, x, y, {wrap: CONST.MENU_WRAP}));
+        }
 
         return shape;
     }

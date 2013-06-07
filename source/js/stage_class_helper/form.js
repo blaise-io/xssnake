@@ -5,13 +5,10 @@
 /**
  * Form with choice fields
  * @param {string} header
- * @param {function(string)} next
  * @constructor
  */
-function Form(header, next) {
+function Form(header) {
     this.header = header;
-    this.next = next;
-
     this._selectedV = 0;
     this._selectedH = [];
     this._fields = [];
@@ -101,7 +98,7 @@ Form.prototype = {
         return shape;
     },
 
-    getValues: function() {
+    getData: function() {
         var values = {};
         for (var i = 0, m = this._fields.length; i < m; i++) {
             var field = this._fields[i],
@@ -111,11 +108,6 @@ Form.prototype = {
             }
         }
         return values;
-    },
-
-    getNextStage: function() {
-        var values = this.getValues();
-        return this.next(values);
     },
 
     /**

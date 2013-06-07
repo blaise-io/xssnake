@@ -32,6 +32,7 @@ XSS.util.extend(ChallengeStage.prototype, /** @lends {ChallengeStage.prototype} 
         var shape, text = '> ACCESS DENIED!!';
 
         // Evalevaleval!!!
+        // Tolerate answers where user is quoting strings.
         if (value.replace(/['"]/g, '') === String(eval(this._challenge))) {
             text = '> bleep!';
             XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
@@ -50,10 +51,9 @@ XSS.util.extend(ChallengeStage.prototype, /** @lends {ChallengeStage.prototype} 
         'document.scripts[0].tagName',
         'document.documentElement.tagName',
         'location.protocol.split(\'\').reverse().join()[0]',
-        '\'ouimerci!\'.charAt(Math.ceil(Math.random())*%d)',
+        '\'OUIMERCI!\'.charAt(Math.ceil(Math.random())*%d)',
         'Array(%d).join(encodeURI(\' \'))',
         'String(parseInt(\'FF\', 16))',
-        'JSON.stringify({A:\'%s\'})',
         'String([1,2,3][3]).charAt(%d)',
         'String(typeof []).charAt(%d)',
         'String(typeof (5%2)).charAt(%d)',
@@ -61,11 +61,12 @@ XSS.util.extend(ChallengeStage.prototype, /** @lends {ChallengeStage.prototype} 
         '\'%s%s\'.replace(/%s/, \'mew\')',
         '\'012345\'.lastIndexOf(\'%d\')',
         '\'%s\'+\'A\'+Math.pow(%d,2)',
-        'String(new Date(\'2013-0%d-0%d\').getMonth())',
+        'new Date(\'2013,0%d,0%d\').getMonth()',
         'var A=%d,B=3;do{A++}while(B--); A;',
         'var A=3,B=%d;do{A++}while(B--); B;',
         'var A=%d;A++;++A;A+=1; A;',
-        'var A=%d;A--;--A;A-=1; A;'
+        'var A=%d;A--;--A;A-=1; A;',
+        '"%d"+%d'
     ],
 
     _getRandomChallenge: function() {

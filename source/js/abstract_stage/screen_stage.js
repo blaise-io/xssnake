@@ -19,6 +19,10 @@ ScreenStage.prototype = {
         return this.screen;
     },
 
+    getData: function() {
+        return {};
+    },
+
     construct: function() {
         XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._handleKeys);
     },

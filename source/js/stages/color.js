@@ -9,6 +9,7 @@
  */
 function ColorStage() {
     this.menu = this._getMenu();
+    this.menu.select(XSS.util.storage(CONST.STORAGE_COLOR));
     SelectStage.call(this);
 }
 
@@ -20,22 +21,21 @@ XSS.util.extend(ColorStage.prototype, /** @lends ColorStage.prototype */ {
      * @private
      */
     _getMenu: function() {
-        var menu, setColor, colorIndex = XSS.util.storage(CONST.STORAGE_COLOR);
-
-        menu = new SelectMenu('COLOR SCHEME');
-        menu._selected = parseInt(colorIndex, 10);
-
-        setColor = function(index) {
-            XSS.canvas.setColor(CONST.COLORS[index]);
-            XSS.util.storage(CONST.STORAGE_COLOR, index);
-        };
-
+        var menu = new SelectMenu('COLOR SCHEME');
         for (var i = 0, m = CONST.COLORS.length; i < m; i++) {
             var title = CONST.COLORS[i].title, desc = CONST.COLORS[i].desc;
-            menu.addOption(true, null, title, desc, setColor);
+            menu.addOption(null, null, title, desc, this._setColor.bind(this));
         }
-
         return menu;
+    },
+
+    /**
+     * @param {number} index
+     * @private
+     */
+    _setColor: function(index) {
+        XSS.canvas.setColor(CONST.COLORS[index]);
+        XSS.util.storage(CONST.STORAGE_COLOR, index);
     }
 
 });

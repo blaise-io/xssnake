@@ -8,19 +8,28 @@
  * @extends {FormStage}
  */
 function MultiplayerStage() {
-    this.form = this._getForm();
     FormStage.call(this);
+    this.form = this._getForm();
 }
 
 XSS.util.extend(MultiplayerStage.prototype, FormStage.prototype);
 XSS.util.extend(MultiplayerStage.prototype, /** @lends MultiplayerStage.prototype */ {
 
     /**
+     * @return {Object}
+     */
+    getData: function() {
+        return {
+            multiplayer: this.form.getData()
+        };
+    },
+
+    /**
      * @param values
      * @returns {Function}
      * @private
      */
-    _getNext: function(values) {
+    getNextStage: function(values) {
         if (values[CONST.FIELD_XSS]) {
             return ChallengeStage;
         } else {
@@ -33,7 +42,7 @@ XSS.util.extend(MultiplayerStage.prototype, /** @lends MultiplayerStage.prototyp
      * @private
      */
     _getForm: function() {
-        var form = new Form('GAME OPTIONS', this._getNext);
+        var form = new Form('GAME OPTIONS');
 
         form.addField(CONST.FIELD_DIFFICULTY, 'LEVEL DIFFICULTY', [
             [CONST.FIELD_VALUE_MEDIUM, 'SNAKE'],

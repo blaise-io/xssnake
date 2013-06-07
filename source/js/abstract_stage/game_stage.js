@@ -7,7 +7,9 @@
  * @implements {StageInterface}
  * @constructor
  */
-function GameStage() {}
+function GameStage() {
+    this.data = XSS.flow.getData();
+}
 
 GameStage.prototype = {
 
@@ -15,12 +17,14 @@ GameStage.prototype = {
         return new Shape();
     },
 
+    getData: function() {
+        return {};
+    },
+
     construct: function() {
         this._destructMenu();
         this._joinGame();
         this._bindKeys();
-
-        XSS.room = new Room();
     },
 
     destruct: function() {
@@ -52,7 +56,8 @@ GameStage.prototype = {
     },
 
     _joinGame: function() {
-        if (XSS.flow.data.autoJoin) {
+        XSS.room = new Room();
+        if (this.data.autoJoin) {
             this._autoJoin(XSS.util.hash(CONST.HASH_ROOM));
         } else {
             this._matchRoom();
@@ -73,10 +78,8 @@ GameStage.prototype = {
     },
 
     _matchRoom: function() {
-        var emit, data = XSS.flow.data;
-
-        emit = {}; // data.gameprefs;
-        emit[CONST.FIELD_NAME] = data.name;
+        var emit = this.data.multiplayer;
+        emit[CONST.FIELD_NAME] = this.data.name;
 
         XSS.socket = new Socket(function() {
             XSS.socket.emit(CONST.EVENT_ROOM_MATCH, emit);

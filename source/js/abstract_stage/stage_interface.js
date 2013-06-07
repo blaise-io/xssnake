@@ -14,6 +14,11 @@ StageInterface.prototype = {
         return new Shape();
     },
 
+    /** @returns {Object} */
+    getData: function() {
+        return {};
+    },
+
     /** @return */
     construct: function() {},
 

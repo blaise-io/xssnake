@@ -14,23 +14,33 @@ FormStage.prototype = {
     /** @type {Form} */
     form: null,
 
-    storageKey: null,
-
     getShape: function() {
         return this.form.getShape();
     },
 
+    getData: function() {
+        return {};
+    },
+
+    /**
+     * @param {Object} data
+     * @returns {Object|null}
+     * @private
+     */
+    getNextStage: function(data) {
+        return data;
+    },
+
     construct: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this.handleKeys.bind(this));
+        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._handleKeys.bind(this));
     },
 
     destruct: function() {
-        XSS.util.storage(this.storageKey, this.form.getValues());
         XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
         XSS.shapes.stage = null;
     },
 
-    handleKeys: function(ev) {
+    _handleKeys: function(ev) {
         if (XSS.keysBlocked) {
             return;
         }
@@ -40,7 +50,7 @@ FormStage.prototype = {
                 XSS.flow.previousStage();
                 break;
             case CONST.KEY_ENTER:
-                var next = this.form.getNextStage();
+                var next = this.getNextStage(this.form.getData());
                 XSS.flow.switchStage(next);
                 break;
             case CONST.KEY_UP:

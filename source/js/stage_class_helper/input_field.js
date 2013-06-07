@@ -68,7 +68,6 @@ InputField.prototype = {
         if (!XSS.keysBlocked) { return; }
 
         this._applyMaxWidth();
-        this.value = this.input.value;
         this.callback(this.input.value);
         XSS.shapes.caret = this._caretShape();
         XSS.shapes.inputval = this._valueShape();

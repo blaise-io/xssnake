@@ -23,8 +23,6 @@ function StageFlow(Stage) {
 
 StageFlow.prototype = {
 
-    _history: [],
-
     destruct: function() {
         this.stage.destruct();
         if (XSS.socket) {
@@ -41,9 +39,18 @@ StageFlow.prototype = {
 
     start: function() {
         XSS.shapes = {};
+        this._history = [];
         this._bindGlobalEvents();
         this._setupMenuSkeletton();
         this._setStage(new this._FirstStage(), false);
+    },
+
+    getData: function() {
+        var value = {};
+        for (var i = 0, m = this._history.length; i < m; i++) {
+            XSS.util.extend(value, this._history[i].getData());
+        }
+        return value;
     },
 
     /**
@@ -140,13 +147,13 @@ StageFlow.prototype = {
     },
 
     /**
-     * @param {Shape} oldStage
-     * @param {Shape} newStage
+     * @param {Shape} oldShape
+     * @param {Shape} newShape
      * @param {boolean} back
      * @param {function()} callback
      * @private
      */
-    _switchStageAnimate: function(oldStage, newStage, back, callback) {
+    _switchStageAnimate: function(oldShape, newShape, back, callback) {
         var oldStageAnim, newStageAnim, width = CONST.WIDTH - CONST.MENU_LEFT;
 
         if (back) {
@@ -165,8 +172,8 @@ StageFlow.prototype = {
             XSS.play.swoosh();
         }
 
-        XSS.shapes.oldstage = oldStage.clone().animate(oldStageAnim);
-        XSS.shapes.newstage = newStage.clone().animate(newStageAnim);
+        XSS.shapes.oldstage = oldShape.clone().animate(oldStageAnim);
+        XSS.shapes.newstage = newShape.clone().animate(newStageAnim);
     },
 
     /**

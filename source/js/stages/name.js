@@ -8,10 +8,10 @@
  * @constructor
  */
 function NameStage() {
+    this.next = MultiplayerStage;
     this.name = CONST.STORAGE_NAME;
     this.header = 'HELLO';
     this.label = 'My name is ';
-    this.next = MultiplayerStage;
     this.minChars = 2;
     this.maxValWidth = CONST.UI_WIDTH_NAME;
 
@@ -20,6 +20,15 @@ function NameStage() {
 
 XSS.util.extend(NameStage.prototype, InputStage.prototype);
 XSS.util.extend(NameStage.prototype, /** @lends NameStage.prototype */ {
+
+    /**
+     * @return {Object}
+     */
+    getData: function() {
+        return {
+            name: this.getValue()
+        };
+    },
 
     /**
      * @param {string} error
@@ -57,6 +66,7 @@ XSS.util.extend(NameStage.prototype, /** @lends NameStage.prototype */ {
         'asdasdasdasd',
         'Please dont touch anything',
         'Hello %s',
+        'ARE YOU READY TO PARTY???',
         'Is that your real name?',
         'You dont look like a %s...',
         'Are you new here?',

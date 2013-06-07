@@ -8,8 +8,7 @@
  * @implements {StageInterface}
  * @constructor
  */
-function SelectStage() {
-}
+function SelectStage() {}
 
 SelectStage.prototype = {
 
@@ -17,6 +16,10 @@ SelectStage.prototype = {
 
     getShape: function() {
         return this.menu.getShape();
+    },
+
+    getData: function() {
+        return {};
     },
 
     construct: function() {

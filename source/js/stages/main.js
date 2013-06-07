@@ -9,6 +9,7 @@
  */
 function MainStage() {
     this.menu = this._getMenu();
+    this.data = {};
 
     if (XSS.util.hash(CONST.HASH_ROOM)) {
         this.autoJoinRoom();
@@ -22,6 +23,13 @@ function MainStage() {
 XSS.util.extend(MainStage.prototype, SelectStage.prototype);
 XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
 
+    /**
+     * @returns {Object}
+     */
+    getData: function() {
+        return this.data;
+    },
+
     autoJoinRoom: function() {
         var dialog = new Dialog('AUTO-JOIN ROOM', 'Connecting to server...');
 
@@ -30,7 +38,7 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
             if (!data[0]) {
                 XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
             } else {
-                XSS.flow.data.autoJoin = data;
+                this.data = {autoJoin: data};
                 XSS.flow.switchStage(AutoJoinStage);
             }
         });
@@ -56,8 +64,10 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
         var menu, header, footer;
 
         header = function() {
-            var name = XSS.util.storage(CONST.STORAGE_NAME).toUpperCase();
-            return name ? 'WLCM BCK ' + name + '!' : 'WELCOME STRANGER!!';
+            var name = XSS.util.storage(CONST.STORAGE_NAME);
+            return name ?
+                'WLCM BCK ' + name.toUpperCase() + '!' :
+                'WELCOME STRANGER!!';
         };
 
         footer = '' +
@@ -79,6 +89,10 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
     _launchMenuSnake: function() {
         var snake;
 
+        if (XSS.room) {
+            return;
+        }
+
         window.setTimeout(this._updateMenuSnake.bind(this), 1000);
 
         snake = new ClientSnake(-1, true, '', [1, 1], 2);
@@ -96,7 +110,9 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
     _updateMenuSnake: function() {
         var nextpos, snake = XSS.menuSnake;
         nextpos = snake.getNextPosition();
-        if (this._isMenuSnakeCrash(snake, nextpos)) {
+        if (XSS.room) {
+            snake.destruct();
+        } else if (this._isMenuSnakeCrash(snake, nextpos)) {
             snake.crash();
             window.setTimeout(snake.destruct.bind(snake), 1000);
             window.setTimeout(this._launchMenuSnake.bind(this), 1000 * 15);

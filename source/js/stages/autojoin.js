@@ -8,7 +8,7 @@
  * @constructor
  */
 function AutoJoinStage() {
-    var isXSS, autoJoinData = XSS.flow.data.autoJoin;
+    var isXSS, autoJoinData = XSS.flow.getData().autoJoin;
 
     this.header = 'JOiN GAME';
     this.label = this._getLabel();
@@ -28,6 +28,12 @@ function AutoJoinStage() {
 
 XSS.util.extend(AutoJoinStage.prototype, InputStage.prototype);
 XSS.util.extend(AutoJoinStage.prototype, /** @lends AutoJoinStage.prototype */ {
+
+    getData: function() {
+        return {
+            name: this.getValue()
+        };
+    },
 
     _getLabel: function() {
         var diffs, bools, label, options, players, br = '\n';
