@@ -51,8 +51,8 @@ Chat.prototype = {
 
         this._deleteShapes();
 
-        if (this.field) {
-            this.field.destruct();
+        if (this.input) {
+            this.input.destruct();
         }
     },
 
@@ -147,7 +147,7 @@ Chat.prototype = {
             case CONST.KEY_ENTER:
                 ev.preventDefault();
                 if (this._hasFocus) {
-                    this._sendMessage(this.field.value.trim());
+                    this._sendMessage(this.input.getValue());
                     this._focusInput(false);
                 } else if (!XSS.keysBlocked) {
                     this._focusInput(true);
@@ -167,12 +167,12 @@ Chat.prototype = {
         this._hasFocus = focus;
         this._updateShapes();
         if (focus) {
-            this.field = new InputField(left, CONST.HEIGHT - 10, prefix);
-            this.field.maxValWidth = maxValWidth;
-            this.field.setValue('');
-        } else if (this.field) {
-            this.field.destruct();
-            delete this.field;
+            this.input = new InputField(left, CONST.HEIGHT - 10, prefix);
+            this.input.maxValWidth = maxValWidth;
+            this.input.setValue('');
+        } else if (this.input) {
+            this.input.destruct();
+            delete this.input;
         }
     },
 

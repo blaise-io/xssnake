@@ -10,12 +10,12 @@
 function AutoJoinStage() {
     var isXSS, autoJoinData = XSS.flow.getData().autoJoin;
 
+    this._options = autoJoinData[1];
+    this._players = autoJoinData[2];
+
     this.header = 'JOiN GAME';
     this.label = this._getLabel();
     this.name = CONST.STORAGE_NAME;
-
-    this._options = autoJoinData[1];
-    this._players = autoJoinData[2];
 
     isXSS = this._options[CONST.FIELD_XSS];
     this.next = (isXSS) ? ChallengeStage : StartGameStage;

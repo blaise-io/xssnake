@@ -26,16 +26,6 @@ function InputField(x, y, prefix) {
 
 InputField.prototype = {
 
-    /**
-     * @param {string} value
-     */
-    setValue: function(value) {
-        this.input.value = ''; // Empty first puts caret at end
-        this.input.value = value;
-        this._bindEvents();
-        this._updateShapes();
-    },
-
     destruct: function() {
         var ns = CONST.NS_INPUT;
         if (this.input && this.input.parentNode) {
@@ -47,6 +37,23 @@ InputField.prototype = {
         XSS.shapes.caret = null;
         XSS.shapes.inputval = null;
         XSS.keysBlocked = false;
+    },
+
+    /**
+     * @param {string} value
+     */
+    setValue: function(value) {
+        this.input.value = ''; // Empty first puts caret at end
+        this.input.value = value;
+        this._bindEvents();
+        this._updateShapes();
+    },
+
+    /**
+     * @returns {string}
+     */
+    getValue: function() {
+        return this.input.value;
     },
 
     /**

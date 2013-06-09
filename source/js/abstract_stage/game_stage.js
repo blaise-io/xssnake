@@ -73,7 +73,7 @@ GameStage.prototype = {
 
         XSS.socket.emit(
             CONST.EVENT_ROOM_JOIN,
-            [key, XSS.flow.data.name]
+            [key, this.data.name]
         );
     },
 

@@ -33,16 +33,6 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
     autoJoinRoom: function() {
         var dialog = new Dialog('AUTO-JOIN ROOM', 'Connecting to server...');
 
-        XSS.event.once(CONST.EVENT_ROOM_STATUS, CONST.NS_STAGES, function(data) {
-            dialog.destruct();
-            if (!data[0]) {
-                XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
-            } else {
-                this.data = {autoJoin: data};
-                XSS.flow.switchStage(AutoJoinStage);
-            }
-        });
-
         XSS.socket = new Socket(function() {
             window.setTimeout(function() {
                 dialog.setBody('Getting room properties...');
@@ -54,6 +44,16 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
                 }, 500);
             }, 500);
         });
+
+        XSS.event.once(CONST.EVENT_ROOM_STATUS, CONST.NS_STAGES, function(data) {
+            dialog.destruct();
+            if (!data[0]) {
+                XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
+            } else {
+                this.data = {autoJoin: data};
+                XSS.flow.switchStage(AutoJoinStage);
+            }
+        }.bind(this));
     },
 
     /**
