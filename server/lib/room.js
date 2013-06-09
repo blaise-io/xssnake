@@ -89,7 +89,10 @@ Room.prototype = {
             .value(CONST.ROOM_CAPACITY);
 
         clean[CONST.FIELD_DIFFICULTY] = new Validate(options[CONST.FIELD_DIFFICULTY])
-            .assertInArray([CONST.FIELD_VALUE_EASY, CONST.FIELD_VALUE_MEDIUM, CONST.FIELD_VALUE_HARD])
+            .assertInArray([
+                CONST.FIELD_VALUE_EASY,
+                CONST.FIELD_VALUE_MEDIUM,
+                CONST.FIELD_VALUE_HARD])
             .value(CONST.FIELD_VALUE_MEDIUM);
 
         clean[CONST.FIELD_POWERUPS] = new Validate(options[CONST.FIELD_POWERUPS])
@@ -119,7 +122,7 @@ Room.prototype = {
 
         this.emitState();
 
-        client.broadcast(CONST.EVENT_CHAT_NOTICE, '{' + index + '} joined');
+        client.broadcast(CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_JOIN, index]);
 
         this.points[index] = 0;
 
@@ -145,7 +148,7 @@ Room.prototype = {
 
         if (this.clients.length) {
             // Emit chat notice first or client cannot replace index with name.
-            this.emit(CONST.EVENT_CHAT_NOTICE, '{' + client.index + '} left');
+            this.emit(CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_LEAVE, client.index]);
             this.updateIndices();
             this.emitState();
         } else {

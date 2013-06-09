@@ -127,6 +127,28 @@ XSS.util.extend(XSS.util, {
                 location.replace('#' + newhash.replace(/;$/, ''));
                 return value;
         }
+    },
+
+    /**
+     * @param {number} num
+     * @param {string=} single
+     * @param {string=} plural
+     * @returns {string}
+     */
+    pluralize: function(num, single, plural) {
+        return (num === 1) ? (single || '') : (plural || 's');
+    },
+
+    /**
+     * @param {string} str
+     * @param {...(string|number)} varArgs
+     * @returns {string}
+     */
+    format: function(str, varArgs) {
+        var args = arguments;
+        return args[0].replace(/\{(\d+)\}/g, function(match, number) {
+            return typeof args[number] !== 'undefined' ? args[number] : match;
+        });
     }
 
 });

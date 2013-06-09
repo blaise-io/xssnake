@@ -2,7 +2,7 @@
 /*globals XSS, CONST*/
 'use strict';
 
-CONST.COLORS = [
+CONST.COLOR = [
     {
         title: 'Public Transport',
         desc : 'TAXIIIIIII',

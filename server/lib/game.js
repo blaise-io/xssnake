@@ -4,6 +4,7 @@
 var util = require('util');
 var Spawner = require('./spawner.js');
 var Powerup = require('./powerup.js');
+var Crash = require('./crash.js');
 var Level = require('../shared/level.js');
 var Snake = require('../shared/snake.js');
 var Util = require('../shared/util.js');
@@ -32,12 +33,6 @@ function Game(room, levelID) {
 module.exports = Game;
 
 Game.prototype = {
-
-    CRASH_OBJECTS: {
-        WALL    : 0,
-        SELF    : 1,
-        OPPONENT: 2
-    },
 
     countdown: function() {
         var delay = CONST.TIME_COUNTDOWN_FROM * 1000;
@@ -85,7 +80,7 @@ Game.prototype = {
      * @param {number} direction
      */
     updateSnake: function(client, clientParts, direction) {
-        var sync, serverParts, common, mismatches, snake = client.snake;
+        var crash, sync, serverParts, common, mismatches, snake = client.snake;
 
         // Always allow a new direction
         client.snake.direction = direction;
@@ -125,11 +120,14 @@ Game.prototype = {
         );
 
         // Handle new location
-        if (this._isCrash(client, snake.parts)) {
+        crash = this._isCrash(client, snake.parts);
+        snake.limbo = crash;
+
+        if (crash) {
             this._crashSnake(client, snake.parts);
+            this._checkRoundEnded();
         } else {
-            client.snake.limbo = false;
-            this.spawner.handleHits(client, client.snake.head());
+            this.spawner.handleHits(client, snake.head());
             this._broadcastSnakeRoom(client);
         }
     },
@@ -138,7 +136,8 @@ Game.prototype = {
      * @param client
      */
     clientDisconnect: function(client) {
-        this._crashSnake(client, client.snake.parts);
+        this._crashSnake(client);
+        this._checkRoundEnded();
     },
 
     /**
@@ -314,7 +313,7 @@ Game.prototype = {
     /**
      * @param {Client} client
      * @param {Array.<Array>} parts
-     * @return {Array.<number>}
+     * @return {Crash}
      * @private
      */
     _isCrash: function(client, parts) {
@@ -329,20 +328,20 @@ Game.prototype = {
 
             // Wall
             if (level.isWall(part[0], part[1])) {
-                return [this.CRASH_OBJECTS.WALL, clients.indexOf(client)];
+                return new Crash(CONST.CRASH_WALL, client);
             }
 
             // Self
             if (m > 4) {
                 if (m - 1 !== i && eq(part, parts[m - 1])) {
-                    return [this.CRASH_OBJECTS.SELF, clients.indexOf(client)];
+                    return new Crash(CONST.CRASH_SELF, client);
                 }
             }
 
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
-                    return [this.CRASH_OBJECTS.OPPONENT, client.index, ii];
+                    return new Crash(CONST.CRASH_OPPONENT, client, clients[ii]);
                 }
             }
         }
@@ -352,18 +351,27 @@ Game.prototype = {
 
     /**
      * @param {Client} client
-     * @param {Array.<Array>} parts
+     * @param {Array.<Array>=} parts
+     * @param {boolean=} noEmit
      * @private
      */
-    _crashSnake: function(client, parts) {
-        client.snake.crashed = true;
+    _crashSnake: function(client, parts, noEmit) {
+        var snake = client.snake;
+        if (snake.limbo) {
+            if (!noEmit) {
+                snake.limbo.emitNotice();
+            }
+            parts = snake.limbo.parts;
+        }
+        parts = parts || snake.parts;
+        snake.crashed = true;
         this.room.emit(CONST.EVENT_SNAKE_CRASH, [client.index, parts]);
-        this._checkRoundEnded();
     },
 
     /**
      * @private
      */
+
     _checkRoundEnded: function() {
         var clients, numcrashed, alive;
 
@@ -377,12 +385,14 @@ Game.prototype = {
                 alive = clients[i];
 
                 // Knockout system points
-                this.room.emit(
+                this.room.buffer(
                     CONST.EVENT_SCORE_UPDATE,
                     [i, this.room.points[i] += 2]
                 );
             }
         }
+
+        this.room.flush();
 
         if (numcrashed >= clients.length -1 && !this._roundEnded) {
             this._endRound();
@@ -394,10 +404,7 @@ Game.prototype = {
      */
     _endRound: function() {
         this._roundEnded = true;
-        this.room.emit(
-            CONST.EVENT_CHAT_NOTICE,
-            'New round starting in ' + CONST.TIME_GLOAT + ' seconds'
-        );
+        this.room.emit(CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_NEW_ROUND, CONST.TIME_GLOAT]);
         setTimeout(this._startNewRound.bind(this), CONST.TIME_GLOAT * 1000);
     },
 
@@ -430,7 +437,7 @@ Game.prototype = {
         if (!snake.crashed) {
             if (snake.elapsed >= snake.speed) {
                 snake.elapsed -= snake.speed;
-                this._applyPredictedPosition(client);
+                this._applyNewPosition(client);
                 snake.trim();
             }
             snake.elapsed += delta;
@@ -453,8 +460,8 @@ Game.prototype = {
      * @param {Client} client
      * @private
      */
-    _applyPredictedPosition: function(client) {
-        var predict, predictParts, snake, crash;
+    _applyNewPosition: function(client) {
+        var predict, predictParts, snake, crash, opponent;
 
         snake = client.snake;
         predict = this._getPredictPosition(snake);
@@ -470,40 +477,22 @@ Game.prototype = {
         // the snake returns back to life. The snake will be crashed When the
         // limbo time exceeds the latency.
 
-        if (client.snake.limbo) {
-            if (+new Date() - snake.limbo.start >= client.rtt) {
-                this._emitCrashMessage(snake.limbo.crash);
-                this._crashSnake(client, snake.limbo.parts);
+        if (snake.limbo && +new Date() - snake.limbo.time >= client.rtt) {
+            this._crashSnake(client);
+            opponent = snake.limbo.opponent;
+            if (opponent && snake.limbo.draw) {
+                this._crashSnake(opponent, null, true);
             }
+            this._checkRoundEnded();
         } else {
             crash = this._isCrash(client, predictParts);
             if (crash) {
-                snake.limbo = {
-                    parts: snake.parts.slice(),
-                    crash: crash,
-                    start: +new Date()
-                };
+                snake.limbo = crash;
             } else {
                 snake.move(predict);
                 this.spawner.handleHits(client, predict);
             }
         }
-    },
-
-    /**
-     * @param {Array.<number>} crash
-     * @private
-     */
-    _emitCrashMessage: function(crash) {
-        var message, object = crash[0];
-        if (object === this.CRASH_OBJECTS.WALL) {
-            message = util.format('{%d} crashed into a wall', crash[1]);
-        } else if (object === this.CRASH_OBJECTS.SELF) {
-            message = util.format('{%d} crashed into own tail', crash[1]);
-        } else if (object === this.CRASH_OBJECTS.OPPONENT) {
-            message = util.format('{%d} crashed into {%d}', crash[1], crash[2]);
-        }
-        this.room.emit(CONST.EVENT_CHAT_NOTICE, message);
     },
 
     /**

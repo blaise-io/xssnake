@@ -12,7 +12,7 @@ function Canvas() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setColor(CONST.COLORS[color] || CONST.COLORS[0]);
+    this.setColor(CONST.COLOR[color] || CONST.COLOR[0]);
 
     if (!window.requestAnimationFrame) {
         this._vendorRequestAnimationFrame();

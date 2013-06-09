@@ -92,8 +92,8 @@ Chat.prototype = {
         // Animation
         else {
             anim = {to: [0, -7], duration: this.animDuration, callback: callback};
-            this.shapes['CM0'] = null;
-            XSS.shapes['CM0'] = null;
+            this.shapes[CONST.NS_CHAT + 0] = null;
+            XSS.shapes[CONST.NS_CHAT + 0] = null; // TODO: Can I remove this?
             for (var k in this.shapes) {
                 if (this.shapes.hasOwnProperty(k) && XSS.shapes[k]) {
                     XSS.shapes[k].animate(anim);
@@ -109,7 +109,7 @@ Chat.prototype = {
     },
 
     _bindEvents: function() {
-        var ns = CONST.NS_GAME;
+        var ns = CONST.NS_CHAT;
         XSS.event.on(CONST.EVENT_CHAT_MESSAGE, ns, this._chatMessage.bind(this));
         XSS.event.on(CONST.EVENT_CHAT_NOTICE, ns, this._chatNotice.bind(this));
         XSS.event.on(CONST.EVENT_KEYDOWN, ns, this._chatFocus.bind(this));
@@ -123,10 +123,11 @@ Chat.prototype = {
     },
 
     /**
-     * @param {string} notice
+     * @param {Array} notice
      */
     _chatNotice: function(notice) {
-        this.add({body: notice});
+        var body = this._notice.format(notice);
+        this.add({body: body});
     },
 
     _updateShapes: function() {
@@ -202,6 +203,7 @@ Chat.prototype = {
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
                 XSS.shapes[k] = null;
+                this.shapes[k] = null;
             }
         }
     },
@@ -236,7 +238,7 @@ Chat.prototype = {
         messages = messages.slice(-slice);
 
         for (var i = 0, m = messages.length; i < m; i++) {
-            shapes['CM' + i] = this._getMessageShape(i, messages[i]);
+            shapes[CONST.NS_CHAT + i] = this._getMessageShape(i, messages[i]);
         }
 
         XSS.util.extend(XSS.shapes, shapes);

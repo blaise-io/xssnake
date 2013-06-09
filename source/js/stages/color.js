@@ -22,8 +22,8 @@ XSS.util.extend(ColorStage.prototype, /** @lends ColorStage.prototype */ {
      */
     _getMenu: function() {
         var menu = new SelectMenu('COLOR SCHEME');
-        for (var i = 0, m = CONST.COLORS.length; i < m; i++) {
-            var title = CONST.COLORS[i].title, desc = CONST.COLORS[i].desc;
+        for (var i = 0, m = CONST.COLOR.length; i < m; i++) {
+            var title = CONST.COLOR[i].title, desc = CONST.COLOR[i].desc;
             menu.addOption(null, null, title, desc, this._setColor.bind(this));
         }
         return menu;
@@ -34,7 +34,7 @@ XSS.util.extend(ColorStage.prototype, /** @lends ColorStage.prototype */ {
      * @private
      */
     _setColor: function(index) {
-        XSS.canvas.setColor(CONST.COLORS[index]);
+        XSS.canvas.setColor(CONST.COLOR[index]);
         XSS.util.storage(CONST.STORAGE_COLOR, index);
     }
 

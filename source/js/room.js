@@ -57,6 +57,7 @@ Room.prototype = {
      */
     update: function(index, capacity, round, key, level, names, score) {
         names = this._sanitizeNames(names);
+
         this.score = new ScoreBoard(names, score);
         if (this.game) {
             this.game.destruct();

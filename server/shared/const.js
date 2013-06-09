@@ -2,6 +2,7 @@
 /*globals CONST:true*/
 'use strict';
 
+/** @lends CONST */
 module.exports = {
 
     EVENT_COMBI         : 'C',
@@ -55,11 +56,22 @@ module.exports = {
     ROOM_NOT_FOUND  : 3,
     ROOM_IN_PROGRESS: 4,
 
+    CRASH_WALL         : 1,
+    CRASH_SELF         : 2,
+    CRASH_OPPONENT     : 3,
+    CRASH_OPPONENT_DRAW: 4,
+
     NETCODE_PING_INTERVAL: 3000,
     NETCODE_SYNC_MS      : 500,
 
     SPAWN_APPLE  : 1,
-    SPAWN_POWERUP: 2
+    SPAWN_POWERUP: 2,
+
+    NOTICE_CRASH    : 1,
+    NOTICE_JOIN     : 2,
+    NOTICE_LEAVE    : 3,
+    NOTICE_NEW_ROUND: 4
+
 };
 
 if (typeof XSS !== 'undefined') {
