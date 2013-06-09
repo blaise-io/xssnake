@@ -83,8 +83,10 @@ RoomManager.prototype = {
      * @private
      */
     _evMatchRoom: function(preferences, client) {
-        client.name = this._cleanUsername(preferences[CONST.FIELD_NAME]);
-        this.getPreferredRoom(preferences).join(client);
+        if (preferences) {
+            client.name = this._cleanUsername(preferences[CONST.FIELD_NAME]);
+            this.getPreferredRoom(preferences).join(client);
+        }
     },
 
     /**
