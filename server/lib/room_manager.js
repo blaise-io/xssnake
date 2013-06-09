@@ -71,8 +71,10 @@ RoomManager.prototype = {
      * @private
      */
     _evJoinRoom: function(data, client) {
-        client.name = this._cleanUsername(data[1]);
-        this._attemptJoinRoom(client, data[0]);
+        if (new Validate(data).assertArrayOfLength(2, 2).valid()) {
+            client.name = this._cleanUsername(data[1]);
+            this._attemptJoinRoom(client, data[0]);
+        }
     },
 
     /**
