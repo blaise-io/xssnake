@@ -117,7 +117,10 @@ StageFlow.prototype = {
      * @private
      */
     _hashChange: function() {
-        if (XSS.util.hash(CONST.HASH_ROOM) && 1 === this._history.length) {
+        if (
+            XSS.util.hash(CONST.HASH_ROOM).length === CONST.ROOM_KEY_LENGTH &&
+            1 === this._history.length
+        ) {
             XSS.flow.restart();
         }
     },

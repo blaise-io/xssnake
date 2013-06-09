@@ -27,6 +27,7 @@ module.exports = {
     EVENT_SNAKE_SPEED   : 'SS2',
     EVENT_SNAKE_UPDATE  : 'S',
 
+    ROOM_KEY_LENGTH: 5,
     ROOM_CAPACITY  : 6,
     ROOM_ROUNDS    : 3,
     ROOM_WIN_BY_MIN: 2,

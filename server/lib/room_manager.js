@@ -17,8 +17,6 @@ function RoomManager(server) {
 
 module.exports = RoomManager;
 
-RoomManager.ROOM_KEY_LENGTH = 5;
-
 RoomManager.prototype = {
 
     bindEvents: function() {
@@ -49,7 +47,7 @@ RoomManager.prototype = {
      * @return {boolean}
      */
     _validRoomKey: function(key) {
-        var len = RoomManager.ROOM_KEY_LENGTH;
+        var len = CONST.ROOM_KEY_LENGTH;
         return new Validate(key).assertStringOfLength(len, len).valid();
     },
 
@@ -132,7 +130,7 @@ RoomManager.prototype = {
      * @return {Room}
      */
     createRoom: function(gameOptions) {
-        var room, id = Util.randomStr(RoomManager.ROOM_KEY_LENGTH);
+        var room, id = Util.randomStr(CONST.ROOM_KEY_LENGTH);
         room = new Room(this.server, id, gameOptions);
         this.rooms[room.key] = room;
         return room;

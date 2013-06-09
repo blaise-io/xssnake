@@ -114,7 +114,7 @@ XSS.util.extend(XSS.util, {
                 }
                 return;
             case 1: // Return value
-                return dict[key];
+                return dict[key] || '';
             case 2: // Set value
                 dict[key] = value;
                 for (var k in dict) {
