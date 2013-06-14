@@ -6,38 +6,41 @@ var CONST = require('../shared/const.js');
 
 /**
  * @param {Client} client
+ * @param {EventEmitter} pubsub
  * @constructor
  */
-function EventHandler(client) {
+function EventHandler(client, pubsub) {
     this.client = client;
-
-    this._startPingInterval();
-
-    this._map = this._getMap();
-    this._pingSent = -1;
+    this.pubsub = pubsub;
 
     client.connection.on('data', this._handleMessage.bind(this));
     client.connection.on('close', this._disconnect.bind(this));
+
+    this._startPingInterval();
 }
 
 module.exports = EventHandler;
 
 EventHandler.prototype = {
 
+    _eventMap: null,
+    _pingSent: -1,
+
     destruct: function() {
-        this.client.connection.on('data', function(){});
         clearInterval(this._pingInterval);
-        delete this.client;
+        this.client.connection.on('data', function(){});
+        this.client = null;
+        this.pubsub = null;
+        this._eventMap = null;
     },
 
     /**
      * @private
      */
     _handleMessage: function(message) {
-        var cleanMessage, pubsub = this.client.server.pubsub;
-        cleanMessage = this._cleanMessage(message);
+        var cleanMessage = this._cleanMessage(message);
         if (cleanMessage) {
-            pubsub.emit(cleanMessage.event, cleanMessage.data, this.client);
+            this.pubsub.emit(cleanMessage.event, cleanMessage.data, this.client);
             this._handleClientEvent(cleanMessage.event, cleanMessage.data);
         }
     },
@@ -74,21 +77,20 @@ EventHandler.prototype = {
         };
     },
 
-    _getMap: function() {
-        var map = {};
-        map[CONST.EVENT_PONG]         = this._pong.bind(this);
-        map[CONST.EVENT_ROOM_START]   = this._roomStart.bind(this);
-        map[CONST.EVENT_CHAT_MESSAGE] = this._chat.bind(this);
-        map[CONST.EVENT_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
-        map[CONST.EVENT_GAME_STATE]   = this._gameState.bind(this);
-        return map;
-    },
-
     /**
      * @private
      */
     _handleClientEvent: function(event, data) {
-        var map = this._map;
+        var map = this._eventMap;
+        if (!map) {
+            map = {};
+            map[CONST.EVENT_PONG]         = this._pong.bind(this);
+            map[CONST.EVENT_ROOM_START]   = this._roomStart.bind(this);
+            map[CONST.EVENT_CHAT_MESSAGE] = this._chat.bind(this);
+            map[CONST.EVENT_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
+            map[CONST.EVENT_GAME_STATE]   = this._gameState.bind(this);
+            this._eventMap = map;
+        }
 
         if (map[event]) {
             map[event](data);
@@ -125,13 +127,9 @@ EventHandler.prototype = {
     _disconnect: function() {
         var client = this.client, room = client.room;
         if (room) {
-            // If client is in a room, we cannot clean up immediately
-            // because we need data to remove the client from the room
-            // gracefully.
-            room.disconnect(client);
-        } else {
-            this.client.server.removeClient(client);
+            room.removeClient(client);
         }
+        client.destruct();
     },
 
     /**
@@ -139,8 +137,8 @@ EventHandler.prototype = {
      */
     _roomStart: function() {
         var client = this.client, room = client.room;
-        if (room.isHost(client) && !room.round && room.clients.length > 1) {
-            room.game.countdown();
+        if (room.isHost(client) && !room.rounds.started && room.clients.length > 1) {
+            room.rounds.round.countdown();
         }
     },
 
@@ -164,14 +162,24 @@ EventHandler.prototype = {
      * @param data [<Array>,<number>] 0: parts, 1: direction
      */
     _snakeUpdate: function(data) {
-        var parts, direction, game, client = this.client;
+        var parts, direction, partsValidate, directionValidate, game, client = this.client;
 
-        parts = new Validate(data[0]).assertArray();
-        direction = new Validate(data[1]).assertRange(0, 3);
+        partsValidate = new Validate(data[0]).assertArray();
+        directionValidate = new Validate(data[1]).assertRange(0, 3);
 
-        if (client.playing() && parts.valid() && direction.valid()) {
-            game = client.room.game;
-            game.updateSnake(client, parts.value(), direction.value());
+        if (client.playing() && partsValidate.valid()) {
+            parts = (
+                /** @type {Array.<Array.<number>>} */
+                partsValidate.value()
+            );
+
+            direction = (
+                /** @type {number} */
+                directionValidate.value(0)
+            );
+
+            game = client.room.rounds.round.game;
+            game.updateSnake(client, parts, direction);
         }
     },
 
@@ -181,7 +189,7 @@ EventHandler.prototype = {
     _gameState: function() {
         var client = this.client;
         if (client.playing()) {
-            client.room.game.emitState(client);
+            client.room.rounds.round.game.emitState(client);
         }
     }
 

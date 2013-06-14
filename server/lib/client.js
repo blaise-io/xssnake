@@ -2,45 +2,40 @@
 'use strict';
 
 var CONST = require('../shared/const.js');
-var EventHandler = require('./event_handler.js');
 
 /**
- * @param {number} id
- * @param {Server} server
  * @param {Object} connection
  * @constructor
  */
-function Client(id, server, connection) {
-    this.id = id;
-    this.server = server;
+function Client(connection) {
     this.connection = connection;
-
-    /** @type {EventHandler} */
-    this.eventHandler = new EventHandler(this);
-    this._buffer = [];
-
-    /** @type {number} */
-    this.rtt = 0;
-    /** @type {number} */
-    this.index = -1;
-    /** @type {boolean} */
-    this.limbo = false;
-    /** @type {string} */
-    this.name = '';
-    /** @type {Snake} */
-    this.snake = null;
-    /** @type {string} */
-    this.room = null;
 }
 
 module.exports = Client;
 
 Client.prototype = {
 
+    connected: true,
+    rtt      : 0,
+    index    : -1,
+    limbo    : false,
+    name     : '',
+
+    /** @type {EventHandler} */
+    eventHandler: null,
+
+    /** @type {Snake} */
+    snake: null,
+
+    /** @type {Room} */
+    room: null,
+
+    _emitBuffer: [],
+
     destruct: function() {
         this.eventHandler.destruct();
-        this.eventHandler = null;
         this.connection = null;
+        this.eventHandler = null;
         this.snake = null;
         this.room = null;
     },
@@ -49,7 +44,7 @@ Client.prototype = {
      * @return {boolean}
      */
     playing: function() {
-        return !!(this.room && this.room.game && this.room.round);
+        return !!(this.room && this.room.rounds.started);
     },
 
     /**
@@ -87,7 +82,7 @@ Client.prototype = {
      * @return {Client}
      */
     buffer: function(type, data) {
-        this._buffer.push([type, data]);
+        this._emitBuffer.push([type, data]);
         return this;
     },
 
@@ -96,8 +91,8 @@ Client.prototype = {
      * @return {Client}
      */
     flush: function() {
-        this.emit(CONST.EVENT_COMBI, this._buffer);
-        this._buffer = [];
+        this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+        this._emitBuffer = [];
         return this;
     }
 

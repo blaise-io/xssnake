@@ -13,6 +13,7 @@ var CONST = require('../shared/const.js');
  */
 function Powerup(game, client) {
     this.game = game;
+    this.room = game.room;
     this.client = client;
     this._triggerPowerup();
 }
@@ -49,29 +50,37 @@ Powerup.prototype = {
      * @private
      */
     _getPowerups: function() {
-        var chance, beneficial, neutral, harmful;
+        var rank, gainful, neutral, harmful, rounds;
 
-        chance = this.game.room.rank(
-            this.client,
-            // X-axis: Beneficial, Neutral, Harmful
-            // Y-axis: Leading, Neutral, Losing
-            [0.1, 0.3, 0.6],
-            [0.4, 0.4, 0.2],
-            [0.7, 0.3, 0.0]
-        );
+        rounds = this.room.rounds;
+        rank = rounds.score.rank(this.client);
 
-        beneficial = chance[0];
-        neutral    = chance[1];
-        harmful    = chance[2];
+        switch (rank) {
+            case CONST.SCORE_LEADING:
+                gainful = 0.1;
+                neutral = 0.3;
+                harmful = 0.6;
+                break;
+            case CONST.SCORE_NEUTRAL:
+                gainful = 0.4;
+                neutral = 0.4;
+                harmful = 0.2;
+                break;
+            case CONST.SCORE_BEHIND:
+                gainful = 0.7;
+                neutral = 0.3;
+                harmful = 0.0;
+                break;
+        }
 
         return [
-            // [Rareness * Beneficial Weight, Powerup]
-            [1.5 * beneficial, this._speedIncPerm],
-            [0.8 * beneficial, this._reverseOthers],
-            [1.2 * beneficial, this._speedBoostOthers],
-            [1.1 * beneficial, this._speedDownOthers],
-            [1.1 * beneficial, this._IncTailSelf],
-            [0.7 * beneficial, this._cutTailOthers],
+            // Rareness * Weight, Powerup
+            [1.5 * gainful, this._speedIncPerm],
+            [0.8 * gainful, this._reverseOthers],
+            [1.2 * gainful, this._speedBoostOthers],
+            [1.1 * gainful, this._speedDownOthers],
+            [1.1 * gainful, this._IncTailSelf],
+            [0.7 * gainful, this._cutTailOthers],
 
             [1.5 * neutral, this._spawnApples],
             [1.1 * neutral, this._spawnPowerups],
@@ -96,7 +105,7 @@ Powerup.prototype = {
      * @private
      */
     _others: function() {
-        var clients = this.game.room.clients.slice();
+        var clients = this.room.clients.slice();
         clients.splice(this.client.index, 1);
         return clients;
     },
@@ -112,7 +121,7 @@ Powerup.prototype = {
     },
 
     _speedIncPerm: function() {
-        var room = this.game.room,
+        var room = this.room,
             index = this.client.index,
             snake = this.client.snake;
         snake.speed -= 15;
@@ -144,7 +153,7 @@ Powerup.prototype = {
      * @private
      */
     _speed: function(clients, delta, label, duration) {
-        var room = this.game.room;
+        var room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
             var index = clients[i].index,
                 snake = clients[i].snake;
@@ -209,7 +218,7 @@ Powerup.prototype = {
      * @private
      */
     _reverse: function(clients) {
-        var snake, room = this.game.room;
+        var snake, room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
             snake = clients[i].snake;
             snake.reverse();
@@ -242,7 +251,7 @@ Powerup.prototype = {
      * @private
      */
     _tail: function(clients, delta, message) {
-        var room = this.game.room;
+        var room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
             var index = clients[i].index,
                 snake = clients[i].snake;

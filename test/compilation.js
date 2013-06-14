@@ -3,7 +3,7 @@
 
 var assert = require('assert');
 var gccClient = require(__dirname + '/../build/client.js');
-var gccServer = require(__dirname + '/../build/client.js');
+var gccServer = require(__dirname + '/../build/server.js');
 
 describe('XSSNAKE Compilation', function() {
 

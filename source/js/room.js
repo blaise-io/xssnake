@@ -11,7 +11,6 @@ function Room() {
     this.chat = null;
 
     this.capacity = 0;
-    this.round = 0;
     this.players = 0;
 
     this._bindEvents();
@@ -49,13 +48,13 @@ Room.prototype = {
      * TODO: Split up in multiple functions
      * @param {number} index
      * @param {number} capacity
-     * @param {number} round
+     * @param {number} started
      * @param {string} key
      * @param {number} level
      * @param {Array.<string>} names
      * @param {Array.<number>} score
      */
-    update: function(index, capacity, round, key, level, names, score) {
+    update: function(index, capacity, started, key, level, names, score) {
         names = this._sanitizeNames(names);
 
         this.score = new ScoreBoard(names, score);
@@ -78,7 +77,7 @@ Room.prototype = {
             this.chat = new Chat(index, names);
         }
 
-        if (round === 0) {
+        if (!started) {
             this._updateAwaitingMessage();
         }
     },

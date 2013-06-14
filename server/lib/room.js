@@ -2,6 +2,7 @@
 'use strict';
 
 var Game = require('./game.js');
+var RoundManager = require('./round_manager.js');
 var Validate = require('./validate.js');
 var CONST = require('../shared/const.js');
 
@@ -16,40 +17,22 @@ function Room(server, key, options) {
 
     this.key = key;
     this.clients = [];
-    this.points = [];
-    this.round = 0;
-    this.level = 0;
 
     this.options = this.cleanOptions(options);
-    this.game = new Game(this, this.level);
+    this.rounds = new RoundManager(this);
 
-    this._disconnected = [];
-    this._buffer = [];
+    this._emitBuffer = [];
 }
 
 module.exports = Room;
 
-/**
- * @enum {number}
- */
-Room.RANK = {
-    LEADING: 0,
-    NEUTRAL: 1,
-    LOSING : 2
-};
-
 Room.prototype = {
 
     destruct: function() {
-        if (this.game) {
-            this.game.destruct();
-            this.game = null;
-        }
-        if (this._disconnected.length) {
-            this._removeDisconnectedClients(this._disconnected);
-        }
         this.clients = [];
-        this.points = [];
+        this.rounds.destruct();
+        this.server = null;
+        this.rounds = null;
     },
 
     updateIndices: function() {
@@ -62,11 +45,20 @@ Room.prototype = {
         var capacity = this.options[CONST.FIELD_MAX_PLAYERS];
         for (var i = 0, m = this.clients.length; i < m; i++) {
             var data = [
-                i, capacity, this.round, this.key,
-                this.level, this.names(), this.points
+                i,
+                capacity,
+                this.rounds.started,
+                this.key,
+                this.rounds.level,
+                this.names(),
+                this.rounds.score.points
             ];
             this.clients[i].emit(CONST.EVENT_ROOM_INDEX, data);
         }
+    },
+
+    requestXSS: function(winner) {
+        winner.emit(CONST.EVENT_ROOM_XSS);
     },
 
     /**
@@ -112,102 +104,46 @@ Room.prototype = {
 
     /**
      * @param {Client} client
-     * @return {Room}
      */
-    join: function(client) {
-        var index = this.clients.push(client) - 1;
-
+    addClient: function(client) {
         client.room = this;
-        client.index = index;
+        client.index = this.clients.push(client) - 1;
 
         this.emitState();
 
-        client.broadcast(CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_JOIN, index]);
+        client.broadcast(CONST.EVENT_CHAT_NOTICE, [
+            CONST.NOTICE_JOIN, client.index
+        ]);
 
-        this.points[index] = 0;
-
-        if (this.isFull()) {
-            this.game.countdown();
-        }
-
-        return this;
+        this.rounds.addClient(client);
+        this.rounds.detectStart();
     },
 
     /**
      * @param {Client} client
      */
-    disconnect: function(client) {
-        // Wait until round end if user is playing with others.
-        if (this.round && this.clients.length > 1) {
-            this.game.clientDisconnect(client);
-            this._disconnected.push(client);
-        } else {
-            this.clients.splice(client.index, 1);
-            this.server.removeClient(client);
-        }
+    removeClient: function(client) {
+        this.emit(CONST.EVENT_CHAT_NOTICE, [
+            CONST.NOTICE_DISCONNECT, client.index
+        ]);
 
-        if (this.clients.length) {
-            // Emit chat notice first or client cannot replace index with name.
-            this.emit(CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_LEAVE, client.index]);
-            this.updateIndices();
-            this.emitState();
-        } else {
-            this.server.roomManager.remove(this);
-        }
-    },
+        this.rounds.removeClient(client);
 
-    nextRound: function() {
+        this.clients.splice(client.index, 1);
 
-        this._removeDisconnectedClients(this._disconnected);
-
-        if (this.clients.length) {
-            this.level++;
-
-            if (this.hasWinner()) {
-                this.roundsEnded();
-            } else {
-                this.nextRoundStart();
-            }
-        } else {
-            this.server.roomManager.remove(this);
-        }
-    },
-
-    /**
-     * @return {boolean}
-     */
-    hasWinner: function() {
-        if (this.round + 1 >= CONST.ROOM_ROUNDS && this.points.length > 1) {
-            var sorted = this.points.slice().sort().reverse();
-            if (sorted[0] - CONST.ROOM_WIN_BY_MIN > sorted[1]) {
-                return true;
-            }
-        }
-        return false;
-    },
-
-    roundsEnded: function() {
-        if (this.options[CONST.FIELD_XSS]) {
-            // TODO: Implement this.game.fireXSS
-            console.log('this.game.fireXSS()');
-        } else {
-            // TODO: Implement this.game.showHeaven
-            console.log('this.game.showHeaven()');
-        }
-    },
-
-    nextRoundStart: function() {
-        this.game.destruct();
-        this.game = new Game(this, this.level);
-        this.game.countdown();
+        this.updateIndices();
         this.emitState();
+
+        if (!this.clients) {
+            this.server.roomManager.remove(this);
+        }
     },
 
     /**
      * @return {boolean}
      */
     isFull: function() {
-        return (this.clients.length === this.options[CONST.FIELD_MAX_PLAYERS]);
+        return this.clients.length === this.options[CONST.FIELD_MAX_PLAYERS];
     },
 
     /**
@@ -239,7 +175,7 @@ Room.prototype = {
      * @return {Room}
      */
     buffer: function(type, data) {
-        this._buffer.push([type, data]);
+        this._emitBuffer.push([type, data]);
         return this;
     },
 
@@ -248,54 +184,9 @@ Room.prototype = {
      * @return {Room}
      */
     flush: function() {
-        this.emit(CONST.EVENT_COMBI, this._buffer);
-        this._buffer = [];
+        this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+        this._emitBuffer = [];
         return this;
-    },
-
-    /**
-     * @param client
-     * @param {*} losing
-     * @param {*} leading
-     * @param {*} neutral
-     * @return {*}
-     */
-    rank: function(client, leading, neutral, losing) {
-        var clientPoints, rankTmp = 0;
-        if (this.clients.length === 1) {
-            return neutral;
-        } else {
-            clientPoints = this.points[client.index];
-            for (var i = 0, m = this.points.length; i < m; i++) {
-                if (clientPoints > this.points[i]) {
-                    rankTmp++;
-                } else if (clientPoints < this.points[i]) {
-                    rankTmp--;
-                }
-            }
-            if (rankTmp > 0) {
-                return leading;
-            } else if (rankTmp === 0) {
-                return neutral;
-            } else {
-                return losing;
-            }
-        }
-    },
-
-    /**
-     * @param {Array.<Client>} clients
-     * @private
-     */
-    _removeDisconnectedClients: function(clients) {
-        if (clients) {
-            for (var i = 0, m = clients.length; i < m; i++) {
-                this.clients.splice(clients[i].index, 1);
-                this.updateIndices();
-                this.server.removeClient(clients[i]);
-            }
-        }
-        this._disconnected = [];
     }
 
 };

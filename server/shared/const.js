@@ -20,6 +20,7 @@ module.exports = {
     EVENT_ROOM_INDEX    : 'RI',
     EVENT_ROOM_START    : 'RS',
     EVENT_ROOM_STATUS   : 'RS2',
+    EVENT_ROOM_XSS      : 'XSS',
     EVENT_SCORE_UPDATE  : 'SU',
     EVENT_SNAKE_ACTION  : 'SA',
     EVENT_SNAKE_CRASH   : 'SC',
@@ -29,13 +30,15 @@ module.exports = {
 
     ROOM_KEY_LENGTH: 5,
     ROOM_CAPACITY  : 6,
-    ROOM_ROUNDS    : 3,
+
+    ROUNDS_MAX     : 3,
     ROOM_WIN_BY_MIN: 2,
 
-    TIME_GLOAT         : 5,
+    TIME_GLOAT         : 6,
+    TIME_ROUND_DELAY   : 2,
     TIME_COUNTDOWN_FROM: 3,
 
-    SPAWN_SOMETHING_EVERY: [10, 30],
+    SPAWN_SOMETHING_EVERY: [20, 60],
     SPAWN_CHANCE_APPLE   : 0.9,
 
     SNAKE_SPEED: 120,
@@ -65,13 +68,17 @@ module.exports = {
     NETCODE_PING_INTERVAL: 3000,
     NETCODE_SYNC_MS      : 500,
 
+    SCORE_LEADING: 1,
+    SCORE_NEUTRAL: 2,
+    SCORE_BEHIND : 3,
+
     SPAWN_APPLE  : 1,
     SPAWN_POWERUP: 2,
 
-    NOTICE_CRASH    : 1,
-    NOTICE_JOIN     : 2,
-    NOTICE_LEAVE    : 3,
-    NOTICE_NEW_ROUND: 4
+    NOTICE_CRASH     : 1,
+    NOTICE_JOIN      : 2,
+    NOTICE_DISCONNECT: 3,
+    NOTICE_NEW_ROUND : 4
 
 };
 

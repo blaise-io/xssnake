@@ -16,7 +16,7 @@ Chat.prototype._notice = {
                 return this.crash(notice[1], notice[2], notice[3]);
             case CONST.NOTICE_JOIN:
                 return format(CONST.MSG_JOINED_GAME, this.names[notice[1]]);
-            case CONST.NOTICE_LEAVE:
+            case CONST.NOTICE_DISCONNECT:
                 return format(CONST.MSG_LEFT_GAME, this.names[notice[1]]);
             case CONST.NOTICE_NEW_ROUND:
                 return format(CONST.MSG_NEW_ROUND, notice[1]);

@@ -156,5 +156,5 @@ Validate.prototype = {
         var args = Array.prototype.slice.call(arguments, 2);
         console.log('Validation Error', message, JSON.stringify(value), args);
     }
-    
+
 };

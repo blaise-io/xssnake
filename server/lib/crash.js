@@ -7,7 +7,7 @@ var CONST = require('../shared/const.js');
 /**
  * @param {number} type
  * @param {Client} client
- * @param {Client} opponent
+ * @param {Client=} opponent
  * @constructor
  */
 function Crash(type, client, opponent) {

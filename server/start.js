@@ -2,4 +2,8 @@
 'use strict';
 
 var Server = require('./lib/server.js');
-global.server = new Server();
+var server = new Server();
+
+server.preloadLevels(function(levels) {
+    server.start(levels);
+});

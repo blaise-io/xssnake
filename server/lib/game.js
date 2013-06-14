@@ -11,22 +11,20 @@ var Util = require('../shared/util.js');
 var CONST = require('../shared/const.js');
 
 /**
- * @param {Room} room
+ * @param {Round} round
  * @param {number} levelID
  * @constructor
  */
-function Game(room, levelID) {
-    this.room = room;
-    this.server = room.server;
+function Game(round, levelID) {
+    this.round = round;
+    this.room = round.room;
+
+    this.server = this.room.server;
+    this.options = this.room.options;
 
     this.level = new Level(this.server.levels[levelID]);
     this.spawner = new Spawner(this);
-    this.options = this.room.options;
 
-    this.snakes = [];
-    this.timers = [];
-
-    this._roundEnded = false;
     this._tickBound = this._tick.bind(this);
 }
 
@@ -34,44 +32,37 @@ module.exports = Game;
 
 Game.prototype = {
 
-    countdown: function() {
-        var delay = CONST.TIME_COUNTDOWN_FROM * 1000;
-        this.timers.push(setTimeout(this.start.bind(this), delay));
-        this.room.emit(CONST.EVENT_GAME_COUNTDOWN);
-        this._setupClients();
+    timers: [],
+    snakes: [],
+
+    destruct: function() {
+        this.stop();
+        this.spawner.destruct();
+
+        for (var i = 0, m = this.timers.length; i < m; i++) {
+            clearTimeout(this.timers[i]);
+        }
+
+        this.round = null;
+        this.room = null;
+        this.level = null;
+        this.spawner = null;
+        this.snakes = [];
     },
 
     start: function() {
-        console.log('___ NEW ROUND IN ROOM ' + this.room.key + ' ___');
-        this.room.emit(CONST.EVENT_GAME_START, []);
-        this.room.round++;
-
         this.server.pubsub.on('tick', this._tickBound);
-
         this.spawner.spawn(CONST.SPAWN_APPLE);
         if (this.options[CONST.FIELD_POWERUPS]) {
             this._spawnSomethingAfterDelay();
         }
     },
 
-    destruct: function() {
-        var ticker = this.server.pubsub;
-
-        if (ticker.listeners('tick')) {
-            ticker.removeListener('tick', this._tickBound);
+    stop: function() {
+        var pubsub = this.server.pubsub;
+        if (pubsub.listeners('tick')) {
+            pubsub.removeListener('tick', this._tickBound);
         }
-
-        for (var i = 0, m = this.timers.length; i < m; i++) {
-            clearTimeout(this.timers[i]);
-        }
-
-        if (this.spawner) {
-            this.spawner.destruct();
-            this.spawner = null;
-        }
-
-        this.snakes = null;
-        this.level = null;
     },
 
     /**
@@ -125,7 +116,7 @@ Game.prototype = {
 
         if (crash) {
             this._crashSnake(client, snake.parts);
-            this._checkRoundEnded();
+            this.room.rounds.delegateCrash();
         } else {
             this.spawner.handleHits(client, snake.head());
             this._broadcastSnakeRoom(client);
@@ -135,9 +126,11 @@ Game.prototype = {
     /**
      * @param client
      */
-    clientDisconnect: function(client) {
-        this._crashSnake(client);
-        this._checkRoundEnded();
+    removeClient: function(client) {
+        if (client.snake) {
+            this._crashSnake(client);
+            this.snakes.splice(client.index, 1);
+        }
     },
 
     /**
@@ -182,18 +175,15 @@ Game.prototype = {
      * @param {number} index
      */
     hitApple: function(client, index) {
-        var size, score;
-
-        size = client.snake.size += 3;
-        score = ++this.room.points[client.index];
+        var size = client.snake.size += 3;
 
         this.room.buffer(CONST.EVENT_GAME_DESPAWN, index);
         this.room.buffer(CONST.EVENT_SNAKE_SIZE, [client.index, size]);
         this.room.buffer(CONST.EVENT_SNAKE_ACTION, [client.index, 'Nom']);
-        this.room.buffer(CONST.EVENT_SCORE_UPDATE, [client.index, score]);
+        this.room.rounds.score.dealApplePoints(client);
         this.room.flush();
 
-        // Respawn apple if we're out of apples
+        // There should always be at least one apple in the game.
         if (0 === this.spawner.numOfType(CONST.SPAWN_APPLE)) {
             this.spawner.spawn(CONST.SPAWN_APPLE);
         }
@@ -220,6 +210,15 @@ Game.prototype = {
             }
         }
         return this.level.getEmptyLocation(locations);
+    },
+
+    spawnSnakes: function() {
+        var clients = this.room.clients;
+        for (var i = 0, m = clients.length; i < m; i++) {
+            var snake = this._spawnSnake(i);
+            this.snakes[i] = snake;
+            clients[i].snake = snake;
+        }
     },
 
     /**
@@ -272,20 +271,24 @@ Game.prototype = {
     },
 
     /**
-     * Spanw apple or powerup
      * @private
      */
     _spawnSomethingAfterDelay: function() {
-        var timer, range, delay;
-        range = CONST.SPAWN_SOMETHING_EVERY;
+        var delay, range = CONST.SPAWN_SOMETHING_EVERY;
         delay = Util.randomRange(range[0] * 1000, range[1] * 1000);
-        timer = setTimeout(function() {
-            var type = Math.random <= CONST.SPAWN_CHANCE_APPLE ?
-                CONST.SPAWN_APPLE : CONST.SPAWN_POWERUP;
-            this.spawner.spawn(type);
-            this._spawnSomethingAfterDelay();
-        }.bind(this), delay);
-        this.timers.push(timer);
+        this.timers.push(
+            setTimeout(this._spawnSomething.bind(this), delay)
+        );
+    },
+
+    /**
+     * @private
+     */
+    _spawnSomething: function() {
+        var type = Math.random() <= CONST.SPAWN_CHANCE_APPLE ?
+            CONST.SPAWN_APPLE : CONST.SPAWN_POWERUP;
+        this.spawner.spawn(type);
+        this._spawnSomethingAfterDelay();
     },
 
     /**
@@ -369,54 +372,6 @@ Game.prototype = {
     },
 
     /**
-     * @private
-     */
-
-    _checkRoundEnded: function() {
-        var clients, numcrashed, alive;
-
-        clients = this.room.clients;
-        numcrashed = 0;
-
-        for (var i = 0, m = clients.length; i < m; i++) {
-            if (clients[i].snake.crashed) {
-                numcrashed++;
-            } else {
-                alive = clients[i];
-
-                // Knockout system points
-                this.room.buffer(
-                    CONST.EVENT_SCORE_UPDATE,
-                    [i, this.room.points[i] += 2]
-                );
-            }
-        }
-
-        this.room.flush();
-
-        if (numcrashed >= clients.length -1 && !this._roundEnded) {
-            this._endRound();
-        }
-    },
-
-    /**
-     * @private
-     */
-    _endRound: function() {
-        this._roundEnded = true;
-        this.room.emit(CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_NEW_ROUND, CONST.TIME_GLOAT]);
-        setTimeout(this._startNewRound.bind(this), CONST.TIME_GLOAT * 1000);
-    },
-
-    /**
-     * @private
-     */
-    _startNewRound: function() {
-        this.server.pubsub.removeListener('tick', this._tickBound);
-        this.room.nextRound();
-    },
-
-    /**
      * @param {number} delta
      * @private
      */
@@ -483,7 +438,7 @@ Game.prototype = {
             if (opponent && snake.limbo.draw) {
                 this._crashSnake(opponent, null, true);
             }
-            this._checkRoundEnded();
+            this.room.rounds.delegateCrash();
         } else {
             crash = this._isCrash(client, predictParts);
             if (crash) {
@@ -492,18 +447,6 @@ Game.prototype = {
                 snake.move(predict);
                 this.spawner.handleHits(client, predict);
             }
-        }
-    },
-
-    /**
-     * @private
-     */
-    _setupClients: function() {
-        var clients = this.room.clients;
-        for (var i = 0, m = clients.length; i < m; i++) {
-            var snake = this._spawnSnake(i);
-            this.snakes[i] = snake;
-            clients[i].snake = snake;
         }
     },
 

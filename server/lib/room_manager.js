@@ -81,9 +81,11 @@ RoomManager.prototype = {
      * @private
      */
     _evMatchRoom: function(preferences, client) {
+        var room;
         if (preferences) {
             client.name = this._cleanUsername(preferences[CONST.FIELD_NAME]);
-            this.getPreferredRoom(preferences).join(client);
+            room = this.getOrCreateRoom(preferences);
+            room.addClient(client);
         }
     },
 
@@ -117,7 +119,7 @@ RoomManager.prototype = {
      * @param {Object.<string, number|boolean>} gameOptions
      * @return {Room}
      */
-    getPreferredRoom: function(gameOptions) {
+    getOrCreateRoom: function(gameOptions) {
         var room = this._findRoom(gameOptions);
         if (!room) {
             room = this.createRoom(gameOptions);
@@ -169,7 +171,7 @@ RoomManager.prototype = {
                 data.push(CONST.ROOM_NOT_FOUND);
             } else if (room.isFull()) {
                 data.push(CONST.ROOM_FULL);
-            } else if (room.round) {
+            } else if (room.rounds.started) {
                 data.push(CONST.ROOM_IN_PROGRESS);
             } else {
                 data = [1, room.options, room.names()];
@@ -189,7 +191,7 @@ RoomManager.prototype = {
         var options = room.options;
         switch (true) {
             case room.isFull():
-            case !!room.round:
+            case !!room.rounds.started:
             case options[CONST.FIELD_PRIVATE]:
             case options[CONST.FIELD_DIFFICULTY] !== reqOptions[CONST.FIELD_DIFFICULTY]:
             case options[CONST.FIELD_POWERUPS]   !== reqOptions[CONST.FIELD_POWERUPS]:

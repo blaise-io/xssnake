@@ -10,14 +10,12 @@ var RoomManager = require('./room_manager.js');
 var Client = require('./client.js');
 var levels = require('../shared/levels.js');
 var LevelData = require('../shared/level_data.js');
-
+var EventHandler = require('./event_handler.js');
 
 /**
  * @constructor
  */
-function Server() {
-    this.preloadLevels(this.init.bind(this));
-}
+function Server() {}
 
 module.exports = Server;
 
@@ -39,20 +37,13 @@ Server.prototype = {
         }
     },
 
-    init: function(levels) {
+    start: function(levels) {
         this.levels = levels;
-
-        /** @typedef {number} */
-        this.inc = 0;
-        /** @typedef {Object.<number, {Client}>} */
-        this.clients = {};
 
         this.pubsub = this.setupPubSub();
 
         this.roomManager = new RoomManager(this);
         this.listen(config.SERVER_PORT);
-
-        console.log('XSSNAKE server is running...');
     },
 
     /**
@@ -78,33 +69,19 @@ Server.prototype = {
      * @param {number} port
      */
     listen: function(port) {
-        var xssnake, server;
-
-        xssnake = sockjs.createServer();
-        xssnake.on('connection', function(conn) {
-            this.addClient(conn);
-        }.bind(this));
+        var server, xssnake;
 
         server = http.createServer();
-        xssnake.installHandlers(server, {prefix: '/xssnake'});
         server.listen(port, '0.0.0.0');
-    },
 
-    /**
-     * @param {Object} conn
-     */
-    addClient: function(conn) {
-        var client, id = ++this.inc;
-        client = new Client(id, this, conn);
-        this.clients[id] = client;
-    },
+        xssnake = sockjs.createServer();
+        xssnake.on('connection', function(connection) {
+            var client;
+            client = new Client(connection);
+            client.eventHandler = new EventHandler(client, this.pubsub);
+        }.bind(this));
 
-    /**
-     * @param {Client} client
-     */
-    removeClient: function(client) {
-        client.destruct();
-        delete this.clients[client.id];
+        xssnake.installHandlers(server, {prefix: '/xssnake'});
     }
 
 };
