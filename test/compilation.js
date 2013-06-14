@@ -2,8 +2,6 @@
 'use strict';
 
 var assert = require('assert');
-var gccClient = require(__dirname + '/../build/client.js');
-var gccServer = require(__dirname + '/../build/server.js');
 
 describe('XSSNAKE Compilation', function() {
 
@@ -12,7 +10,8 @@ describe('XSSNAKE Compilation', function() {
 
         before(function(done) {
             this.timeout(10 * 3000); // Google Closure can be slow
-            gccClient.compilePassJson(function(result) {
+            var gcc = require(__dirname + '/../build/client.js');
+            gcc.compilePassJson(function(result) {
                 json = result;
                 done();
             });
@@ -37,8 +36,9 @@ describe('XSSNAKE Compilation', function() {
         var json;
 
         before(function(done) {
-            this.timeout(10 * 1000);
-            gccServer.compilePassJson(function(result) {
+            this.timeout(10 * 3000); // Google Closure can be slow
+            var gcc = require(__dirname + '/../build/server.js');
+            gcc.compilePassJson(function(result) {
                 json = result;
                 done();
             });
