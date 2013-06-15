@@ -37,6 +37,12 @@ Room.prototype = {
         this.rounds = null;
     },
 
+    restartRounds: function() {
+        this.rounds.destruct();
+        this.rounds = new RoundManager(this);
+        // TODO: Notify clients
+    },
+
     updateIndices: function() {
         for (var i = 0, m = this.clients.length; i < m; i++) {
             this.clients[i].index = i;

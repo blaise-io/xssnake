@@ -23,9 +23,11 @@ module.exports = RoundManager;
 
 RoundManager.prototype = {
 
+    _restartTimer: null,
     _nextRoundTimer: null,
 
     destruct: function() {
+        clearTimeout(this._restartTimer);
         clearTimeout(this._nextRoundTimer);
         this._xssRemoveListener();
         this.round.destruct();
@@ -88,7 +90,7 @@ RoundManager.prototype = {
 
     nextRoundStartDelay: function() {
         var delay = this.round.allCrashed() ?
-            CONST.TIME_ROUND_DELAY : CONST.TIME_GLOAT;
+            CONST.TIME_ROUND_PAUSE : CONST.TIME_ROUND_GLOAT;
 
         this.room.emit(
             CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_NEW_ROUND, delay]
@@ -118,8 +120,12 @@ RoundManager.prototype = {
         if (this.room.options[CONST.FIELD_XSS]) {
             this._xssFetch(winner);
         } else {
-            console.log('this.game.showHeaven(winner)');
+            this.round.game.showLotsOfApples();
         }
+        this._restartTimer = setTimeout(
+            this.room.restartRounds.bind(this.room),
+            CONST.TIME_ALL_ROUNDS_GLOAT * 1000
+        );
     },
 
     /**
@@ -135,16 +141,16 @@ RoundManager.prototype = {
             }
         }.bind(this);
 
-        setTimeout(this._xssRemoveListener.bind(this), 1000);
-
         pubsub.on(CONST.EVENT_XSS_REQ, this._xssListener);
         winner.emit(CONST.EVENT_XSS_REQ);
     },
 
     _xssRemoveListener: function() {
-        this.room.server.pubsub.removeListener(
-            CONST.EVENT_XSS_REQ, this._xssListener
-        );
+        if (this._xssListener) {
+            this.room.server.pubsub.removeListener(
+                CONST.EVENT_XSS_REQ, this._xssListener
+            );
+        }
     },
 
     /**

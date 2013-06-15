@@ -27,13 +27,14 @@ Spawner.prototype = {
 
     /**
      * @param {number} type
+     * @param {Array.<number>=} location
      * @return {Object}
      */
-    spawn: function(type) {
+    spawn: function(type, location) {
         var spawn, index, game = this.game;
 
         spawn = {
-            location: game.getEmptyLocation(),
+            location: location || game.getEmptyLocation(),
             type    : type
         };
 
@@ -88,7 +89,7 @@ Spawner.prototype = {
     numOfType: function(type) {
         var num = 0;
         for (var i = 0, m = this.spawns.length; i < m; i++) {
-            if (this.spawn[i] && this.spawns[i].type === type) {
+            if (this.spawns[i] && this.spawns[i].type === type) {
                 num++;
             }
         }

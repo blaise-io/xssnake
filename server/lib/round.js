@@ -33,7 +33,7 @@ Round.prototype = {
         this.game.spawnSnakes();
         this._countDownTimer = setTimeout(
             this.start.bind(this),
-            CONST.TIME_COUNTDOWN_FROM * 1000
+            CONST.TIME_ROUND_COUNTDOWN * 1000
         );
     },
 

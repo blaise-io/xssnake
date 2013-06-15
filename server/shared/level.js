@@ -45,36 +45,36 @@ Level.prototype = {
     },
 
     /**
-     * @param {Array.<Array>} locations
+     * @param {Array.<Array>} nonEmptyLocations
      * @return {Array.<number>}
      */
-    getEmptyLocation: function(locations) {
+    getEmptyLocation: function(nonEmptyLocations) {
         while (true) {
             var location = [
                 Math.floor(Math.random() * this.levelData.width),
                 Math.floor(Math.random() * this.levelData.height)
             ];
-            if (this.isEmptyLocation(locations, location)) {
+            if (this.isEmptyLocation(nonEmptyLocations, location)) {
                 return location;
             }
         }
     },
 
     /**
-     * @param {Array.<Array>} locations
+     * @param {Array.<Array>} nonEmptyLocations
      * @param {Array.<number>} location
      * @return {boolean}
      */
-    isEmptyLocation: function(locations, location) {
+    isEmptyLocation: function(nonEmptyLocations, location) {
         if (this.isWall(location[0], location[1])) {
             return false;
         }
         if (this.isUnreachable(location[0], location[1])) {
             return false;
         }
-        for (var i = 0, m = locations.length; i < m; i++) {
-            var iloc = locations[i];
-            if (iloc && iloc[0] === location[0] && iloc[1] === location[1]) {
+        for (var i = 0, m = nonEmptyLocations.length; i < m; i++) {
+            var nonE = nonEmptyLocations[i];
+            if (nonE && nonE[0] === location[0] && nonE[1] === location[1]) {
                 return false;
             }
         }

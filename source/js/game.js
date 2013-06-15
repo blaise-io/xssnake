@@ -100,7 +100,7 @@ Game.prototype = {
 
         XSS.room.unbindKeys();
 
-        from = CONST.TIME_COUNTDOWN_FROM;
+        from = CONST.TIME_ROUND_COUNTDOWN;
         body = 'Game starting in: %d';
 
         dialog = new Dialog('GET READY!', body.replace('%d', from));

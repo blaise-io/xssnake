@@ -35,9 +35,10 @@ module.exports = {
     ROUNDS_MAX     : 3,
     ROOM_WIN_BY_MIN: 2,
 
-    TIME_GLOAT         : 6,
-    TIME_ROUND_DELAY   : 2,
-    TIME_COUNTDOWN_FROM: 3,
+    TIME_ROUND_PAUSE     : 2,
+    TIME_ROUND_GLOAT     : 5,
+    TIME_ALL_ROUNDS_GLOAT: 10,
+    TIME_ROUND_COUNTDOWN : 3,
 
     SPAWN_SOMETHING_EVERY: [20, 60],
     SPAWN_CHANCE_APPLE   : 0.9,

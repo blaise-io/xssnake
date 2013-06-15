@@ -38,10 +38,7 @@ Game.prototype = {
     destruct: function() {
         this.stop();
         this.spawner.destruct();
-
-        for (var i = 0, m = this.timers.length; i < m; i++) {
-            clearTimeout(this.timers[i]);
-        }
+        this._clearTimers();
 
         this.round = null;
         this.room = null;
@@ -199,9 +196,9 @@ Game.prototype = {
     },
 
     /**
-     * @return {Array.<number>}
+     * @return {Array.<Array.<number>>}
      */
-    getEmptyLocation: function() {
+    getNonEmptyLocations: function() {
         var locations = this.spawner.locations.slice();
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var parts = this.snakes[i].parts;
@@ -209,6 +206,14 @@ Game.prototype = {
                 locations.push(parts[ii]);
             }
         }
+        return locations;
+    },
+
+    /**
+     * @return {Array.<number>}
+     */
+    getEmptyLocation: function() {
+        var locations = this.getNonEmptyLocations();
         return this.level.getEmptyLocation(locations);
     },
 
@@ -219,6 +224,29 @@ Game.prototype = {
             this.snakes[i] = snake;
             clients[i].snake = snake;
         }
+    },
+
+    showLotsOfApples: function() {
+        var locations, levelData, spawnAt;
+
+        locations = this.getNonEmptyLocations();
+        levelData = this.level.levelData;
+
+        spawnAt = function(x, y) {
+            setTimeout(function() {
+                this.spawner.spawn(CONST.SPAWN_APPLE, [x, y]);
+            }.bind(this), x * 5); // Delay creates animation
+        }.bind(this);
+
+        for (var y = 1, m = levelData.height; y < m; y += 3) {
+            for (var x = y % 4, mm = levelData.width; x < mm; x += 4) {
+                if (this.level.isEmptyLocation(locations, [x, y])) {
+                    spawnAt(x, y);
+                }
+            }
+        }
+
+        this._spawnSomething = Util.dummy;
     },
 
     /**
@@ -285,10 +313,25 @@ Game.prototype = {
      * @private
      */
     _spawnSomething: function() {
-        var type = Math.random() <= CONST.SPAWN_CHANCE_APPLE ?
+        var powerupsEnabled, randomResultApple, type;
+
+        powerupsEnabled = this.options[CONST.FIELD_POWERUPS];
+        randomResultApple = Math.random() <= CONST.SPAWN_CHANCE_APPLE;
+
+        type = (!powerupsEnabled || randomResultApple) ?
             CONST.SPAWN_APPLE : CONST.SPAWN_POWERUP;
+
         this.spawner.spawn(type);
         this._spawnSomethingAfterDelay();
+    },
+
+    /**
+     * @private
+     */
+    _clearTimers: function() {
+        for (var i = 0, m = this.timers.length; i < m; i++) {
+            clearTimeout(this.timers[i]);
+        }
     },
 
     /**
