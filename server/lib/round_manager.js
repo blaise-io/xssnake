@@ -17,7 +17,6 @@ function RoundManager(room) {
     this.started = false;
 
     this.roundsPlayed = 0;
-    this.maxRounds = CONST.ROUNDS_MAX;
 }
 
 module.exports = RoundManager;
@@ -28,11 +27,17 @@ RoundManager.prototype = {
 
     destruct: function() {
         clearTimeout(this._nextRoundTimer);
+        this._xssRemoveListener();
         this.round.destruct();
         this.score.destruct();
         this.room = null;
         this.round = null;
         this.score = null;
+    },
+
+    start: function() {
+        this.round.countdown();
+        this.started = true;
     },
 
     addClient: function(client) {
@@ -44,16 +49,23 @@ RoundManager.prototype = {
         this.score.removeClient(client);
     },
 
-    detectStart: function() {
+    clientStart: function(client) {
+        var room = this.room;
+        if (room.isHost(client) && !this.started && room.clients.length > 1) {
+            this.start();
+        }
+    },
+
+    detectAutoStart: function() {
         if (this.room.isFull()) {
-            this.round.countdown();
-            this.started = true;
+            this.start();
         }
     },
 
     delegateCrash: function() {
         this.score.dealKnockoutPoints(this.room);
-        if (this.round.isEnded()) {
+        if (this.round.hasEnded() && !this.round.beingEnded) {
+            this.round.beingEnded = true;
             this.endCurrentRound();
         }
     },
@@ -62,26 +74,15 @@ RoundManager.prototype = {
      * @return {boolean}
      */
     allRoundsPlayed: function() {
-        return (this.roundsPlayed >= this.maxRounds);
+        return (this.roundsPlayed + 1 >= CONST.ROUNDS_MAX);
     },
 
     endCurrentRound: function() {
         var winner = this.score.getWinner();
         if (this.allRoundsPlayed() && winner) {
-            this.allRoundsEnded(winner);
+            this.endAllRounds(winner);
         } else {
             this.nextRoundStartDelay();
-        }
-    },
-
-    /**
-     * @param {Client} winner
-     */
-    allRoundsEnded: function(winner) {
-        if (this.room.options[CONST.FIELD_XSS]) {
-            this.room.requestXSS(winner);
-        } else {
-            console.log('this.game.showHeaven(winner)');
         }
     },
 
@@ -108,6 +109,50 @@ RoundManager.prototype = {
 
     getNextLevel: function() {
         return ++this.level;
+    },
+
+    /**
+     * @param {Client} winner
+     */
+    endAllRounds: function(winner) {
+        if (this.room.options[CONST.FIELD_XSS]) {
+            this._xssFetch(winner);
+        } else {
+            console.log('this.game.showHeaven(winner)');
+        }
+    },
+
+    /**
+     * @param {Client} winner
+     */
+    _xssFetch: function(winner) {
+        var pubsub = this.room.server.pubsub;
+
+        this._xssListener = function(xss, client) {
+            if (client === winner) {
+                this._xssFire(winner, xss);
+                this._xssRemoveListener();
+            }
+        }.bind(this);
+
+        setTimeout(this._xssRemoveListener.bind(this), 1000);
+
+        pubsub.on(CONST.EVENT_XSS_REQ, this._xssListener);
+        winner.emit(CONST.EVENT_XSS_REQ);
+    },
+
+    _xssRemoveListener: function() {
+        this.room.server.pubsub.removeListener(
+            CONST.EVENT_XSS_REQ, this._xssListener
+        );
+    },
+
+    /**
+     * @param {Client} winner
+     * @param {string} xss
+     */
+    _xssFire: function(winner, xss) {
+        winner.broadcast(CONST.EVENT_XSS_RES, xss);
     }
 
 };

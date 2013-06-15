@@ -117,11 +117,19 @@ XSS.util.extend(ClientSnake.prototype, /** @lends ClientSnake.prototype */ {
     },
 
     addControls: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE, this._handleKeys.bind(this));
+        if (this.local) {
+            XSS.event.on(
+                CONST.EVENT_KEYDOWN,
+                CONST.NS_SNAKE,
+                this._handleKeys.bind(this)
+            );
+        }
     },
 
     removeControls: function() {
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE);
+        if (this.local) {
+            XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_SNAKE);
+        }
     },
 
     addToShapes: function() {

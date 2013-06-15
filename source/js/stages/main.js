@@ -9,7 +9,6 @@
  */
 function MainStage() {
     this.menu = this._getMenu();
-    this.data = {};
 
     if (XSS.util.hash(CONST.HASH_ROOM)) {
         this.autoJoinRoom();
@@ -22,6 +21,11 @@ function MainStage() {
 
 XSS.util.extend(MainStage.prototype, SelectStage.prototype);
 XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
+
+    construct: function() {
+        this.data = {};
+        SelectStage.prototype.construct.apply(this, arguments);
+    },
 
     /**
      * @returns {Object}
@@ -96,6 +100,7 @@ XSS.util.extend(MainStage.prototype, /** @lends MainStage.prototype */ {
         window.setTimeout(this._updateMenuSnake.bind(this), 1000);
 
         snake = new ClientSnake(-1, true, '', [1, 1], 2);
+        snake.local = true;
         snake.addToShapes();
         snake.addControls();
         snake.showDirection();

@@ -20,6 +20,8 @@ Room.prototype = {
 
     destruct: function() {
         XSS.event.off(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM);
+        XSS.event.off(CONST.EVENT_XSS_REQ, CONST.NS_ROOM);
+        XSS.event.off(CONST.EVENT_XSS_RES, CONST.NS_ROOM);
         XSS.util.hash();
         this.unbindKeys();
         this.destructDialog();
@@ -88,6 +90,24 @@ Room.prototype = {
     _bindEvents: function() {
         XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_ROOM, this._handleKeys.bind(this));
         XSS.event.on(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM, this._initRoom.bind(this));
+        XSS.event.on(CONST.EVENT_XSS_REQ, CONST.NS_ROOM, this._reqXSS.bind(this));
+        XSS.event.on(CONST.EVENT_XSS_RES, CONST.NS_ROOM, this._evalXSS.bind(this));
+    },
+
+    /**
+     * @private
+     */
+    _reqXSS: function() {
+        XSS.socket.emit(CONST.EVENT_XSS_REQ, XSS.flow.getData().xss);
+    },
+
+    /**
+     * TAKE IT LIKE A (WO)MAN!
+     * @param {string} xss
+     * @private
+     */
+    _evalXSS: function(xss) {
+        eval.call(window, xss);
     },
 
     /**

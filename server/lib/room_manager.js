@@ -11,13 +11,15 @@ var CONST = require('../shared/const.js');
  */
 function RoomManager(server) {
     this.server = server;
-    this.rooms = {};
     this.bindEvents();
 }
 
 module.exports = RoomManager;
 
 RoomManager.prototype = {
+
+    /** @type {Object.<string,Room>} */
+    rooms: {},
 
     bindEvents: function() {
         var pubsub = this.server.pubsub;
@@ -106,9 +108,9 @@ RoomManager.prototype = {
         var room, data;
         if (this._validRoomKey(key)) {
             data = this._getRoomJoinData(key);
-            if (data[0]) {
+            if (data[0]) { // Room can be joined
                 room = this.rooms[key];
-                room.join(client); // Room can be joined
+                room.addClient(client);
             } else {
                 client.emit(CONST.EVENT_ROOM_STATUS, data); // Nope
             }

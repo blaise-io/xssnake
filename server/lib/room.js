@@ -14,19 +14,21 @@ var CONST = require('../shared/const.js');
  */
 function Room(server, key, options) {
     this.server = server;
-
     this.key = key;
-    this.clients = [];
 
     this.options = this.cleanOptions(options);
     this.rounds = new RoundManager(this);
-
-    this._emitBuffer = [];
 }
 
 module.exports = Room;
 
 Room.prototype = {
+
+    /** type {Array.<Client>} */
+    clients: [],
+
+    /** type {Array.<Array>} */
+    _emitBuffer: [],
 
     destruct: function() {
         this.clients = [];
@@ -55,10 +57,6 @@ Room.prototype = {
             ];
             this.clients[i].emit(CONST.EVENT_ROOM_INDEX, data);
         }
-    },
-
-    requestXSS: function(winner) {
-        winner.emit(CONST.EVENT_ROOM_XSS);
     },
 
     /**
@@ -116,7 +114,7 @@ Room.prototype = {
         ]);
 
         this.rounds.addClient(client);
-        this.rounds.detectStart();
+        this.rounds.detectAutoStart();
     },
 
     /**
@@ -184,7 +182,11 @@ Room.prototype = {
      * @return {Room}
      */
     flush: function() {
-        this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+        if (this._emitBuffer.length > 1) {
+            this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+        } else if (this._emitBuffer.length) {
+            this.emit(this._emitBuffer[0][0], this._emitBuffer[0][1]);
+        }
         this._emitBuffer = [];
         return this;
     }

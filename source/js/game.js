@@ -91,9 +91,7 @@ Game.prototype = {
 
     addControls: function() {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            if (this.snakes[i].local) {
-                this.snakes[i].addControls();
-            }
+            this.snakes[i].addControls();
         }
     },
 

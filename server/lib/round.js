@@ -18,6 +18,8 @@ module.exports = Round;
 
 Round.prototype = {
 
+    beingEnded: false,
+
     _countDownTimer: null,
 
     destruct: function() {
@@ -63,7 +65,7 @@ Round.prototype = {
     /**
      * @returns {boolean}
      */
-    isEnded: function() {
+    hasEnded: function() {
         return (this.numCrashed() + 1 >= this.room.clients.length);
     },
 

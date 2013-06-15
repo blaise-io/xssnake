@@ -30,6 +30,7 @@ Client.prototype = {
     /** @type {Room} */
     room: null,
 
+    /** @type {Array.<Array>} */
     _emitBuffer: [],
 
     destruct: function() {
@@ -91,7 +92,11 @@ Client.prototype = {
      * @return {Client}
      */
     flush: function() {
-        this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+        if (this._emitBuffer.length > 1) {
+            this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+        } else if (this._emitBuffer.length) {
+            this.emit(this._emitBuffer[0][0], this._emitBuffer[0][1]);
+        }
         this._emitBuffer = [];
         return this;
     }
