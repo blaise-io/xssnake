@@ -18,17 +18,17 @@ function Room(server, key, options) {
 
     this.options = this.cleanOptions(options);
     this.rounds = new RoundManager(this);
+
+    /** type {Array.<Client>} */
+    this.clients = [];
+
+    /** type {Array.<Array>} */
+    this._emitBuffer = [];
 }
 
 module.exports = Room;
 
 Room.prototype = {
-
-    /** type {Array.<Client>} */
-    clients: [],
-
-    /** type {Array.<Array>} */
-    _emitBuffer: [],
 
     destruct: function() {
         this.clients = [];
@@ -40,7 +40,7 @@ Room.prototype = {
     restartRounds: function() {
         this.rounds.destruct();
         this.rounds = new RoundManager(this);
-        // TODO: Notify clients
+        this.emitState();
     },
 
     updateIndices: function() {
@@ -57,7 +57,7 @@ Room.prototype = {
                 capacity,
                 this.rounds.started,
                 this.key,
-                this.rounds.level,
+                this.rounds.levelIndex,
                 this.names(),
                 this.rounds.score.points
             ];
@@ -138,7 +138,7 @@ Room.prototype = {
         this.updateIndices();
         this.emitState();
 
-        if (!this.clients) {
+        if (!this.clients.length) {
             this.server.roomManager.remove(this);
         }
     },

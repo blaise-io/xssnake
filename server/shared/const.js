@@ -70,6 +70,11 @@ module.exports = {
     NETCODE_PING_INTERVAL: 3000,
     NETCODE_SYNC_MS      : 500,
 
+    UPDATE_ERR_GAP       : 1,
+    UPDATE_ERR_NO_COMMON : 2,
+    UPDATE_ERR_MISMATCHES: 3,
+    UPDATE_SUCCES        : 4,
+
     SCORE_LEADING: 1,
     SCORE_NEUTRAL: 2,
     SCORE_BEHIND : 3,

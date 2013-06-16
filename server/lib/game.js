@@ -12,18 +12,24 @@ var CONST = require('../shared/const.js');
 
 /**
  * @param {Round} round
- * @param {number} levelID
+ * @param {number} levelIndex
  * @constructor
  */
-function Game(round, levelID) {
+function Game(round, levelIndex) {
     this.round = round;
     this.room = round.room;
-
     this.server = this.room.server;
+
     this.options = this.room.options;
 
-    this.level = new Level(this.server.levels[levelID]);
+    this.level = new Level(this.server.levels[levelIndex]);
     this.spawner = new Spawner(this);
+
+    /** @type {Array.<number>} */
+    this.timers = [];
+
+    /** @type {Array.<Snake>} */
+    this.snakes = [];
 
     this._tickBound = this._tick.bind(this);
 }
@@ -32,22 +38,21 @@ module.exports = Game;
 
 Game.prototype = {
 
-    timers: [],
-    snakes: [],
-
     destruct: function() {
         this.stop();
         this.spawner.destruct();
         this._clearTimers();
 
-        this.round = null;
         this.room = null;
+        this.round = null;
+        this.server = null;
         this.level = null;
         this.spawner = null;
         this.snakes = [];
     },
 
     start: function() {
+        this.spawnSnakes();
         this.server.pubsub.on('tick', this._tickBound);
         this.spawner.spawn(CONST.SPAWN_APPLE);
         if (this.options[CONST.FIELD_POWERUPS]) {
@@ -66,6 +71,7 @@ Game.prototype = {
      * @param {Client} client
      * @param {Array.<Array>} clientParts
      * @param {number} direction
+     * @returns {number}
      */
     updateSnake: function(client, clientParts, direction) {
         var crash, sync, serverParts, common, mismatches, snake = client.snake;
@@ -80,7 +86,7 @@ Game.prototype = {
         // Don't allow gaps in the snake
         if (this._containsGaps(clientParts)) {
             this._emitSnakeRoom(client);
-            return;
+            return CONST.UPDATE_ERR_GAP;
         }
 
         // Find latest tile where client and server matched
@@ -90,14 +96,14 @@ Game.prototype = {
         // Reject if there was no common
         if (!common) {
             this._emitSnakeRoom(client);
-            return;
+            return CONST.UPDATE_ERR_NO_COMMON;
         }
 
         // Check if client-server delta does not exceed limit
-        mismatches = serverParts.length - common[1] - 1;
+        mismatches = Math.abs(common[1] - common[0]);
         if (mismatches > this._maxMismatches(client)) {
             this._emitSnakeRoom(client);
-            return;
+            return CONST.UPDATE_ERR_MISMATCHES;
         }
 
         // Glue snake back together
@@ -106,6 +112,7 @@ Game.prototype = {
             serverParts.slice(0, common[1] + 1),
             clientParts.slice(common[0] + 1)
         );
+        snake.trim();
 
         // Handle new location
         crash = this._isCrash(client, snake.parts);
@@ -118,6 +125,8 @@ Game.prototype = {
             this.spawner.handleHits(client, snake.head());
             this._broadcastSnakeRoom(client);
         }
+
+        return CONST.UPDATE_SUCCES;
     },
 
     /**
@@ -134,26 +143,26 @@ Game.prototype = {
      * @param client
      */
     emitState: function(client) {
-        this.emitSnakes(client);
-        this.emitSpawns(client);
+        this.bufferSnakesState(client);
+        this.bufferSpawnsState(client);
+        client.flush();
     },
 
     /**
      * @param client
      */
-    emitSnakes: function(client) {
+    bufferSnakesState: function(client) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var data = [i, this.snakes[i].parts, this.snakes[i].direction];
             client.buffer(CONST.EVENT_SNAKE_UPDATE, data);
         }
-        client.flush();
     },
 
     /**
      * Send all apples and powerups
      * @param client
      */
-    emitSpawns: function(client) {
+    bufferSpawnsState: function(client) {
         var spawner = this.spawner,
             spawns = spawner.spawns;
         for (var i = 0, m = spawns.length; i < m; i++) {
@@ -164,7 +173,6 @@ Game.prototype = {
                 ]);
             }
         }
-        client.flush();
     },
 
     /**
@@ -177,7 +185,7 @@ Game.prototype = {
         this.room.buffer(CONST.EVENT_GAME_DESPAWN, index);
         this.room.buffer(CONST.EVENT_SNAKE_SIZE, [client.index, size]);
         this.room.buffer(CONST.EVENT_SNAKE_ACTION, [client.index, 'Nom']);
-        this.room.rounds.score.dealApplePoints(client);
+        this.room.rounds.score.bufferApplePoints(client);
         this.room.flush();
 
         // There should always be at least one apple in the game.
@@ -227,26 +235,27 @@ Game.prototype = {
     },
 
     showLotsOfApples: function() {
-        var locations, levelData, spawnAt;
+        var locations, levelData, spawnRow, y = 1;
+
+        this._spawnSomething = Util.dummy;
 
         locations = this.getNonEmptyLocations();
         levelData = this.level.levelData;
 
-        spawnAt = function(x, y) {
-            setTimeout(function() {
-                this.spawner.spawn(CONST.SPAWN_APPLE, [x, y]);
-            }.bind(this), x * 5); // Delay creates animation
-        }.bind(this);
-
-        for (var y = 1, m = levelData.height; y < m; y += 3) {
+        spawnRow = function() {
             for (var x = y % 4, mm = levelData.width; x < mm; x += 4) {
                 if (this.level.isEmptyLocation(locations, [x, y])) {
-                    spawnAt(x, y);
+                    this.spawner.spawn(CONST.SPAWN_APPLE, [x, y], true);
                 }
             }
-        }
+            this.room.flush();
+            y += 3;
+            if (y < levelData.height) {
+                setTimeout(spawnRow, 50);
+            }
+        }.bind(this);
 
-        this._spawnSomething = Util.dummy;
+        spawnRow();
     },
 
     /**

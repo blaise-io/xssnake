@@ -3,7 +3,7 @@
 
 var assert = require('assert');
 
-describe('XSSNAKE Compilation', function() {
+describe('Google Closure Compiling', function() {
 
     describe('Client', function() {
         var json;
@@ -17,16 +17,16 @@ describe('XSSNAKE Compilation', function() {
             });
         });
 
-        it('produces compiled code', function() {
+        it('Produces compiled code', function() {
             assert(typeof json.compiledCode === 'string');
             assert(json.compiledCode.length > 1024);
         });
 
-        it('does not produce errors', function() {
+        it('Does not produce errors', function() {
             assert(typeof json.errors === 'undefined');
         });
 
-        it('does not produce warnings', function() {
+        it('Does not produce warnings', function() {
             assert(typeof json.warnings === 'undefined');
         });
 
@@ -44,16 +44,16 @@ describe('XSSNAKE Compilation', function() {
             });
         });
 
-        it('produces compiled code', function() {
+        it('Produces compiled code', function() {
             assert(typeof json.compiledCode === 'string');
             assert(json.compiledCode.length > 1024);
         });
 
-        it('does not produce errors', function() {
+        it('Does not produce errors', function() {
             assert(typeof json.errors === 'undefined');
         });
 
-        it('does not produce warnings', function() {
+        it('Does not produce warnings', function() {
             assert(typeof json.warnings === 'undefined');
         });
 

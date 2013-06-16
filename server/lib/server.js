@@ -6,6 +6,7 @@ var png = require('pngparse');
 var sockjs = require('sockjs');
 var nodeEvents = require('events');
 var config = require('../shared/config.js');
+var Util = require('../shared/util.js');
 var RoomManager = require('./room_manager.js');
 var Client = require('./client.js');
 var levels = require('../shared/levels.js');
@@ -15,12 +16,33 @@ var EventHandler = require('./event_handler.js');
 /**
  * @constructor
  */
-function Server() {}
+function Server() {
+    this.pubsub = this.setupPubSub();
+    this.roomManager = new RoomManager(this);
+    this._server = null;
+}
 
 module.exports = Server;
 
 Server.prototype = {
 
+    destruct: function() {
+        if (this._server) {
+            this._server.close();
+        }
+    },
+
+    /**
+     * @param {Array.<LevelData>} levels
+     */
+    start: function(levels) {
+        this.levels = levels;
+        this.listen(config.SERVER_PORT);
+    },
+
+    /**
+     * @param {function(Array.<LevelData>)} callback
+     */
     preloadLevels: function(callback) {
         var i, m, buffer, appendLevel, parsed = [];
 
@@ -35,15 +57,6 @@ Server.prototype = {
             buffer = new Buffer(levels[i], 'base64');
             png.parse(buffer, appendLevel.bind(i));
         }
-    },
-
-    start: function(levels) {
-        this.levels = levels;
-
-        this.pubsub = this.setupPubSub();
-
-        this.roomManager = new RoomManager(this);
-        this.listen(config.SERVER_PORT);
     },
 
     /**
@@ -81,7 +94,9 @@ Server.prototype = {
             client.eventHandler = new EventHandler(client, this.pubsub);
         }.bind(this));
 
-        xssnake.installHandlers(server, {prefix: '/xssnake'});
+        xssnake.installHandlers(server, {prefix: '/xssnake', log: Util.dummy});
+
+        this._server = server;
     }
 
 };

@@ -12,14 +12,14 @@ var CONST = require('../shared/const.js');
 function RoomManager(server) {
     this.server = server;
     this.bindEvents();
+
+    /** @type {Object.<string,Room>} */
+    this.rooms = {};
 }
 
 module.exports = RoomManager;
 
 RoomManager.prototype = {
-
-    /** @type {Object.<string,Room>} */
-    rooms: {},
 
     bindEvents: function() {
         var pubsub = this.server.pubsub;
@@ -45,66 +45,10 @@ RoomManager.prototype = {
     },
 
     /**
-     * @param {*} key
-     * @return {boolean}
-     */
-    _validRoomKey: function(key) {
-        var len = CONST.ROOM_KEY_LENGTH;
-        return new Validate(key).assertStringOfLength(len, len).valid();
-    },
-
-    /**
-     * @param {*} name
-     * @return {string}
-     */
-    _cleanUsername: function(name) {
-        if (new Validate(name).assertStringOfLength(2, 20).valid()) {
-            return String(name);
-        } else {
-            return 'Idiot' + Util.randomStr(3);
-        }
-    },
-
-    /**
-     * @param {Array} data [roomKey, name]
-     * @param {Client} client
-     * @private
-     */
-    _evJoinRoom: function(data, client) {
-        if (new Validate(data).assertArrayOfLength(2, 2).valid()) {
-            client.name = this._cleanUsername(data[1]);
-            this._attemptJoinRoom(client, data[0]);
-        }
-    },
-
-    /**
-     * @param {Object} preferences
-     * @param {Client} client
-     * @private
-     */
-    _evMatchRoom: function(preferences, client) {
-        var room;
-        if (preferences) {
-            client.name = this._cleanUsername(preferences[CONST.FIELD_NAME]);
-            room = this.getOrCreateRoom(preferences);
-            room.addClient(client);
-        }
-    },
-
-    /**
-     * @param {string} key
-     * @param {Client} client
-     */
-    _evRoomStatus: function(key, client) {
-        var data = this._getRoomJoinData(key);
-        client.emit(CONST.EVENT_ROOM_STATUS, data);
-    },
-
-    /**
      * @param {Client} client
      * @param {string} key
      */
-    _attemptJoinRoom: function(client, key) {
+    joinRoomByKey: function(client, key) {
         var room, data;
         if (this._validRoomKey(key)) {
             data = this._getRoomJoinData(key);
@@ -141,8 +85,86 @@ RoomManager.prototype = {
     },
 
     /**
+     * @param {Object.<string, number|boolean>} reqOptions
+     * @param {Room} room
+     * @return {boolean}
+     */
+    gameOptionsMatch: function(reqOptions, room) {
+        var options = room.options;
+        switch (true) {
+            case room.isFull():
+            case !!room.rounds.started:
+            case options[CONST.FIELD_PRIVATE]:
+            case reqOptions[CONST.FIELD_PRIVATE]:
+            case options[CONST.FIELD_DIFFICULTY] !== reqOptions[CONST.FIELD_DIFFICULTY]:
+            case options[CONST.FIELD_POWERUPS]   !== reqOptions[CONST.FIELD_POWERUPS]:
+            case options[CONST.FIELD_XSS]        !== reqOptions[CONST.FIELD_XSS]:
+            case options[CONST.FIELD_MAX_PLAYERS]  > reqOptions[CONST.FIELD_MAX_PLAYERS]:
+                return false;
+            default:
+                return true;
+        }
+    },
+
+    /**
+     * @param {*} key
+     * @return {boolean}
+     */
+    _validRoomKey: function(key) {
+        var len = CONST.ROOM_KEY_LENGTH;
+        return new Validate(key).assertStringOfLength(len, len).valid();
+    },
+
+    /**
+     * @param {*} name
+     * @return {string}
+     */
+    _cleanUsername: function(name) {
+        if (new Validate(name).assertStringOfLength(2, 20).valid()) {
+            return String(name);
+        } else {
+            return 'Idiot' + Util.randomStr(3);
+        }
+    },
+
+    /**
+     * @param {Array} data [roomKey, name]
+     * @param {Client} client
+     * @private
+     */
+    _evJoinRoom: function(data, client) {
+        if (new Validate(data).assertArrayOfLength(2, 2).valid()) {
+            client.name = this._cleanUsername(data[1]);
+            this.joinRoomByKey(client, data[0]);
+        }
+    },
+
+    /**
+     * @param {Object} preferences
+     * @param {Client} client
+     * @private
+     */
+    _evMatchRoom: function(preferences, client) {
+        var room;
+        if (preferences) {
+            client.name = this._cleanUsername(preferences[CONST.FIELD_NAME]);
+            room = this.getOrCreateRoom(preferences);
+            room.addClient(client);
+        }
+    },
+
+    /**
+     * @param {string} key
+     * @param {Client} client
+     */
+    _evRoomStatus: function(key, client) {
+        var data = this._getRoomJoinData(key);
+        client.emit(CONST.EVENT_ROOM_STATUS, data);
+    },
+
+    /**
      * @param {Object.<string, number|boolean>} gameOptions
-     * @return {?Room}
+     * @return {Room}
      * @private
      */
     _findRoom: function(gameOptions) {
@@ -150,7 +172,7 @@ RoomManager.prototype = {
         for (var k in rooms) {
             if (rooms.hasOwnProperty(k)) {
                 var room = rooms[k];
-                if (this._isFilterMatch(gameOptions, room)) {
+                if (this.gameOptionsMatch(gameOptions, room)) {
                     return room;
                 }
             }
@@ -181,28 +203,6 @@ RoomManager.prototype = {
         }
 
         return data;
-    },
-
-    /**
-     * @param {Object.<string, number|boolean>} reqOptions
-     * @param {Room} room
-     * @return {boolean}
-     * @private
-     */
-    _isFilterMatch: function(reqOptions, room) {
-        var options = room.options;
-        switch (true) {
-            case room.isFull():
-            case !!room.rounds.started:
-            case options[CONST.FIELD_PRIVATE]:
-            case options[CONST.FIELD_DIFFICULTY] !== reqOptions[CONST.FIELD_DIFFICULTY]:
-            case options[CONST.FIELD_POWERUPS]   !== reqOptions[CONST.FIELD_POWERUPS]:
-            case options[CONST.FIELD_XSS]        !== reqOptions[CONST.FIELD_XSS]:
-            case options[CONST.FIELD_MAX_PLAYERS]  > reqOptions[CONST.FIELD_MAX_PLAYERS]:
-                return false;
-            default:
-                return true;
-        }
     }
 
 };

@@ -5,11 +5,11 @@
 /***
  * Game
  * @param {number} index
- * @param {number} levelID
+ * @param {number} levelIndex
  * @param {Array.<string>} names
  * @constructor
  */
-function Game(index, levelID, names) {
+function Game(index, levelIndex, names) {
 
     // Remove old snakes, spawnables
     // Don't do this during gameplay, might affects fps
@@ -21,7 +21,7 @@ function Game(index, levelID, names) {
     XSS.shapes.border = null;
 
     /** @type {Level} */
-    this.level = this._setupLevel(levelID);
+    this.level = this._setupLevel(levelIndex);
 
     /** @type {Array.<ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
@@ -188,14 +188,14 @@ Game.prototype = {
     },
 
     /**
-     * @param {number} levelID
+     * @param {number} levelIndex
      * @return {Level}
      * @private
      */
-    _setupLevel: function(levelID) {
+    _setupLevel: function(levelIndex) {
         var data, border;
 
-        data = XSS.level.levelData(levelID);
+        data = XSS.level.levelData(levelIndex);
         XSS.shapes.level = XSS.shapegen.level(data);
 
         border = XSS.shapegen.outerBorder();

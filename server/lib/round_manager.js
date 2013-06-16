@@ -11,30 +11,31 @@ var CONST = require('../shared/const.js');
  */
 function RoundManager(room) {
     this.room = room;
-    this.level = 0;
-    this.round = new Round(room, this.level);
-    this.score = new Score(room);
-    this.started = false;
+    this.levelIndex = 0;
 
+    this.score = new Score(room);
+    this.round = new Round(room, this.levelIndex);
+
+    this.started = false;
     this.roundsPlayed = 0;
+
+    this._restartTimer = 0;
+    this._nextRoundTimer = 0;
 }
 
 module.exports = RoundManager;
 
 RoundManager.prototype = {
 
-    _restartTimer: null,
-    _nextRoundTimer: null,
-
     destruct: function() {
         clearTimeout(this._restartTimer);
         clearTimeout(this._nextRoundTimer);
         this._xssRemoveListener();
-        this.round.destruct();
         this.score.destruct();
-        this.room = null;
-        this.round = null;
+        this.round.destruct();
         this.score = null;
+        this.round = null;
+        this.room = null;
     },
 
     start: function() {
@@ -65,7 +66,7 @@ RoundManager.prototype = {
     },
 
     delegateCrash: function() {
-        this.score.dealKnockoutPoints(this.room);
+        this.score.emitKnockoutPoints(this.room);
         if (this.round.hasEnded() && !this.round.beingEnded) {
             this.round.beingEnded = true;
             this.endCurrentRound();
@@ -110,7 +111,7 @@ RoundManager.prototype = {
     },
 
     getNextLevel: function() {
-        return ++this.level;
+        return ++this.levelIndex;
     },
 
     /**

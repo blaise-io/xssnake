@@ -16,15 +16,15 @@ function EventHandler(client, pubsub) {
     client.connection.on('data', this._handleMessage.bind(this));
     client.connection.on('close', this._disconnect.bind(this));
 
+    this._eventMap = null;
+    this._pingSent = -1;
+
     this._startPingInterval();
 }
 
 module.exports = EventHandler;
 
 EventHandler.prototype = {
-
-    _eventMap: null,
-    _pingSent: -1,
 
     destruct: function() {
         clearInterval(this._pingInterval);
@@ -159,24 +159,20 @@ EventHandler.prototype = {
      * @param data [<Array>,<number>] 0: parts, 1: direction
      */
     _snakeUpdate: function(data) {
-        var parts, direction, partsValidate, directionValidate, game, client = this.client;
+        var client, game, parts, direction;
 
-        partsValidate = new Validate(data[0]).assertArray();
-        directionValidate = new Validate(data[1]).assertRange(0, 3);
+        client = this.client;
+        game = client.getGame();
 
-        if (client.playing() && partsValidate.valid()) {
-            parts = (
-                /** @type {Array.<Array.<number>>} */
-                partsValidate.value()
+        parts = new Validate(data[0]).assertArray();
+        direction = new Validate(data[1]).assertRange(0, 3);
+
+        if (game && parts.valid()) {
+            game.updateSnake(
+                this.client,
+                (/** @type {Array.<Array.<number>>} */ parts.value()),
+                (/** @type {number} */ direction.value(0))
             );
-
-            direction = (
-                /** @type {number} */
-                directionValidate.value(0)
-            );
-
-            game = client.room.rounds.round.game;
-            game.updateSnake(client, parts, direction);
         }
     },
 
@@ -184,9 +180,10 @@ EventHandler.prototype = {
      * @private
      */
     _gameState: function() {
-        var client = this.client;
-        if (client.playing()) {
-            client.room.rounds.round.game.emitState(client);
+        var game, client = this.client;
+        game = client.getGame();
+        if (game) {
+            game.emitState(client);
         }
     }
 

@@ -28,10 +28,11 @@ Spawner.prototype = {
     /**
      * @param {number} type
      * @param {Array.<number>=} location
+     * @param {boolean=} buffer
      * @return {Object}
      */
-    spawn: function(type, location) {
-        var spawn, index, game = this.game;
+    spawn: function(type, location, buffer) {
+        var spawn, index, data, game = this.game;
 
         spawn = {
             location: location || game.getEmptyLocation(),
@@ -42,7 +43,13 @@ Spawner.prototype = {
         this.spawns[index] = spawn;
         this.locations[index] = spawn.location;
 
-        game.room.emit(CONST.EVENT_GAME_SPAWN, [type, index, spawn.location]);
+        data = [type, index, spawn.location];
+
+        if (buffer) {
+            game.room.buffer(CONST.EVENT_GAME_SPAWN, data);
+        } else {
+            game.room.emit(CONST.EVENT_GAME_SPAWN, data);
+        }
 
         return spawn;
     },
@@ -53,6 +60,7 @@ Spawner.prototype = {
      */
     hit: function(client, index) {
         var spawn = this.spawns[index];
+        this._destructSpawn(index);
 
         switch (spawn.type) {
             case CONST.SPAWN_APPLE:
@@ -62,8 +70,6 @@ Spawner.prototype = {
                 this.game.hitPowerup(client, index);
                 break;
         }
-
-        this._destructSpawn(index);
     },
 
     /**

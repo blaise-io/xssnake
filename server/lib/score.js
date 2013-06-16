@@ -52,7 +52,7 @@ Score.prototype = {
     /**
      * @param {Room} room
      */
-    dealKnockoutPoints: function(room) {
+    emitKnockoutPoints: function(room) {
         var clients = room.clients;
         for (var i = 0, m = clients.length; i < m; i++) {
             if (!clients[i].snake.crashed) {
@@ -66,7 +66,7 @@ Score.prototype = {
     /**
      * @param {Client} client
      */
-    dealApplePoints: function(client) {
+    bufferApplePoints: function(client) {
         var points = ++this.points[client.index];
         this.room.buffer(
             CONST.EVENT_SCORE_UPDATE, [client.index, points]

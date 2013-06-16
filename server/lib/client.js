@@ -9,29 +9,29 @@ var CONST = require('../shared/const.js');
  */
 function Client(connection) {
     this.connection = connection;
+
+    this.name = '';
+    this.connected = true;
+    this.rtt = 0;
+    this.index = -1;
+    this.limbo = false;
+
+    /** @type {EventHandler} */
+    this.eventHandler = null;
+
+    /** @type {Snake} */
+    this.snake = null;
+
+    /** @type {Room} */
+    this.room = null;
+
+    /** @type {Array.<Array>} */
+    this._emitBuffer = [];
 }
 
 module.exports = Client;
 
 Client.prototype = {
-
-    connected: true,
-    rtt      : 0,
-    index    : -1,
-    limbo    : false,
-    name     : '',
-
-    /** @type {EventHandler} */
-    eventHandler: null,
-
-    /** @type {Snake} */
-    snake: null,
-
-    /** @type {Room} */
-    room: null,
-
-    /** @type {Array.<Array>} */
-    _emitBuffer: [],
 
     destruct: function() {
         this.eventHandler.destruct();
@@ -42,10 +42,11 @@ Client.prototype = {
     },
 
     /**
-     * @return {boolean}
+     * @return {Game}
      */
-    playing: function() {
-        return !!(this.room && this.room.rounds.started);
+    getGame: function() {
+        var room = this.room, rounds = room.rounds;
+        return (room && rounds.started) ? rounds.round.game : null;
     },
 
     /**
