@@ -13,14 +13,13 @@ var CONST = require('../shared/const.js');
  * @constructor
  */
 function Room(server, key, options) {
-    this.server = server;
-    this.key = key;
-
+    this.server  = server;
+    this.key     = key;
     this.options = this.cleanOptions(options);
-    this.rounds = new RoundManager(this);
 
     /** type {Array.<Client>} */
     this.clients = [];
+    this.rounds  = new RoundManager(this);
 
     /** type {Array.<Array>} */
     this._emitBuffer = [];
@@ -40,6 +39,7 @@ Room.prototype = {
     restartRounds: function() {
         this.rounds.destruct();
         this.rounds = new RoundManager(this);
+        this.rounds.detectAutoStart();
         this.emitState();
     },
 
@@ -50,18 +50,22 @@ Room.prototype = {
     },
 
     emitState: function() {
-        var capacity = this.options[CONST.FIELD_MAX_PLAYERS];
-        for (var i = 0, m = this.clients.length; i < m; i++) {
-            var data = [
+        var rounds, clients, capacity;
+
+        rounds = this.rounds;
+        clients = this.clients;
+        capacity = this.options[CONST.FIELD_MAX_PLAYERS];
+
+        for (var i = 0, m = clients.length; i < m; i++) {
+            clients[i].emit(CONST.EVENT_ROOM_INDEX, [
                 i,
-                capacity,
-                this.rounds.started,
                 this.key,
-                this.rounds.levelIndex,
                 this.names(),
-                this.rounds.score.points
-            ];
-            this.clients[i].emit(CONST.EVENT_ROOM_INDEX, data);
+                capacity,
+                rounds.levelIndex,
+                rounds.started,
+                rounds.score.points
+            ]);
         }
     },
 

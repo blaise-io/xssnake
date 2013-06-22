@@ -10,6 +10,9 @@ var CONST = require('../shared/const.js');
 function Score(room) {
     this.room = room;
     this.points = [];
+    for (var i = 0, m = room.clients.length; i < m; i++) {
+        this.points.push(0);
+    }
 }
 
 module.exports = Score;
@@ -18,7 +21,6 @@ Score.prototype = {
 
     destruct: function() {
         this.room = null;
-        this.points = [];
     },
 
     /**

@@ -51,7 +51,7 @@ RoomManager.prototype = {
     joinRoomByKey: function(client, key) {
         var room, data;
         if (this._validRoomKey(key)) {
-            data = this._getRoomJoinData(key);
+            data = this.getRoomData(key);
             if (data[0]) { // Room can be joined
                 room = this.rooms[key];
                 room.addClient(client);
@@ -158,7 +158,7 @@ RoomManager.prototype = {
      * @param {Client} client
      */
     _evRoomStatus: function(key, client) {
-        var data = this._getRoomJoinData(key);
+        var data = this.getRoomData(key);
         client.emit(CONST.EVENT_ROOM_STATUS, data);
     },
 
@@ -185,7 +185,7 @@ RoomManager.prototype = {
      * @return {Array}
      * @private
      */
-    _getRoomJoinData: function(key) {
+    getRoomData: function(key) {
         var room, data = [0];
         if (!this._validRoomKey(key)) {
             data.push(CONST.ROOM_INVALID);

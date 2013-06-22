@@ -47,40 +47,57 @@ Room.prototype = {
     },
 
     /**
-     * TODO: Split up in multiple functions
      * @param {number} index
-     * @param {number} capacity
-     * @param {number} started
      * @param {string} key
-     * @param {number} level
      * @param {Array.<string>} names
+     * @param {number} capacity
+     * @param {number} level
+     * @param {number} started
      * @param {Array.<number>} score
      */
-    update: function(index, capacity, started, key, level, names, score) {
+    update: function(index, key, names, capacity, level, started, score) {
+        XSS.util.hash(CONST.HASH_ROOM, key);
         names = this._sanitizeNames(names);
 
-        this.score = new ScoreBoard(names, score);
-        if (this.game) {
-            this.game.destruct();
-        }
-
-        this.game = new Game(index, level, names);
-
-        XSS.util.hash(CONST.HASH_ROOM, key);
+        console.log(
+            'score', score
+        );
 
         this.index = index;
         this.capacity = capacity;
         this.players = names.length;
 
-        if (this.chat) {
-            this.chat.index = index;
-            this.chat.names = names;
-        } else {
-            this.chat = new Chat(index, names);
-        }
+        this.game  = this._updateGame(index, level, names);
+        this.score = this._updateScore(names, score);
+        this.chat  = this._updateChat(index, names);
 
         if (!started) {
             this._updateAwaitingMessage();
+        }
+    },
+
+    _updateGame: function(index, level, names) {
+        if (this.game) {
+            this.game.destruct();
+        }
+        return new Game(index, level, names);
+    },
+
+    _updateScore: function(names, score) {
+        if (this.score) {
+            this.score.destruct();
+        }
+        return new ScoreBoard(names, score);
+    },
+
+    _updateChat: function(index, names) {
+        var chat = this.chat;
+        if (chat) {
+            chat.index = index;
+            chat.names = names;
+            return chat;
+        } else {
+            return new Chat(index, names);
         }
     },
 

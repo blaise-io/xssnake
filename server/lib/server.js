@@ -34,10 +34,12 @@ Server.prototype = {
 
     /**
      * @param {Array.<LevelData>} levels
+     * @param {number=} port
      */
-    start: function(levels) {
+    start: function(levels, port) {
+        this.port = port || config.SERVER_PORT;
         this.levels = levels;
-        this.listen(config.SERVER_PORT);
+        this.listen(this.port);
     },
 
     /**

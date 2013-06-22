@@ -3,7 +3,6 @@
 
 var assert = require('assert');
 var Server = require('../server/lib/server.js');
-var RoomManager = require('../server/lib/room_manager.js');
 var Client = require('../server/lib/client.js');
 var Util = require('../server/shared/util.js');
 var CONST = require('../server/shared/const.js');
@@ -34,7 +33,8 @@ describe('Rooms', function() {
         gameOptions[CONST.FIELD_PRIVATE] = false;
         gameOptions[CONST.FIELD_XSS] = false;
 
-        roomManager = new RoomManager(server);
+        roomManager = server.roomManager;
+
         room = roomManager.createRoom(gameOptions);
         client = new Client(connectionDummy);
 
@@ -48,14 +48,38 @@ describe('Rooms', function() {
         });
 
         it('Removes room', function() {
-            var roomKey = room.key;
+            var key = room.key;
             roomManager.remove(room);
-            assert(typeof roomManager.rooms[roomKey] === 'undefined');
+            assert(typeof roomManager.rooms[key] === 'undefined');
         });
 
         it('Join room by key', function() {
             roomManager.joinRoomByKey(client, room.key);
             assert(room.clients.length === 1);
+        });
+
+    });
+
+    describe('Room', function() {
+
+        it('Remove when last client leaves', function() {
+            room = roomManager.createRoom(gameOptions);
+            var key = room.key;
+            room.addClient(client);
+            room.removeClient(client);
+            assert(typeof roomManager.rooms[key] === 'undefined');
+        });
+
+        it('Restarting', function() {
+            var otherClient = new Client(connectionDummy);
+            room.addClient(otherClient);
+            room.addClient(client);
+            room.restartRounds();
+            assert(!!room.rounds, 'Rounds');
+            assert(!!room.rounds.round, 'Round');
+            assert(!!room.rounds.round.game, 'Game');
+            assert(!!room.rounds.score, 'Score');
+            assert(room.rounds.score.points[1] === 0, 'Points');
         });
 
     });
@@ -89,23 +113,29 @@ describe('Rooms', function() {
 
     describe('Client', function() {
 
-        it('Add to a room', function() {
+        beforeEach(function(done) {
             room.addClient(client);
+            done();
+        });
+
+        it('Add to a room', function() {
             assert(room.clients.length === 1);
         });
 
         it('Remove from a room', function() {
-            room.addClient(client);
             room.removeClient(client);
             assert(room.clients.length === 0);
         });
 
         it('Become host when previous host leaves', function() {
             var otherClient = new Client(connectionDummy);
-            room.addClient(client);
             room.addClient(otherClient);
             room.removeClient(client);
             assert(room.isHost(otherClient));
+        });
+
+        it('Has points', function() {
+            assert(room.rounds.score.points[0] === 0);
         });
 
     });
