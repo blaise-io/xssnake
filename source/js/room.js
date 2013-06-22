@@ -59,10 +59,6 @@ Room.prototype = {
         XSS.util.hash(CONST.HASH_ROOM, key);
         names = this._sanitizeNames(names);
 
-        console.log(
-            'score', score
-        );
-
         this.index = index;
         this.capacity = capacity;
         this.players = names.length;
