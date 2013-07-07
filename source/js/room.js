@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, expr:true, sub:true*/
+/*jshint globalstrict:true, expr:true, sub:true*/
 /*globals XSS, CONST, Game, Chat, Dialog, ScoreBoard*/
 'use strict';
 

@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, node:true, sub:true*/
+/*jshint globalstrict:true, node:true, sub:true*/
 /*globals XSS:true*/
 'use strict';
 

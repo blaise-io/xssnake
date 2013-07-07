@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, es5:true, sub:true, evil:true*/
+/*jshint globalstrict:true, sub:true, evil:true*/
 /*globals XSS, CONST, SelectStage, SelectMenu, Dialog, Room, Socket, ClientSnake, NameStage, StartGameStage, ColorStage, CreditsStage, AutoJoinStage */
 'use strict';
 
