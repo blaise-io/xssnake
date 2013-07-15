@@ -168,11 +168,7 @@ EventHandler.prototype = {
         direction = new Validate(data[1]).assertRange(0, 3);
 
         if (game && parts.valid()) {
-            game.updateSnake(
-                this.client,
-                (/** @type {Array.<Array.<number>>} */ parts.value()),
-                (/** @type {number} */ direction.value(0))
-            );
+            game.updateSnake(this.client, parts.value(), direction.value(0));
         }
     },
 

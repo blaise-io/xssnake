@@ -1,5 +1,5 @@
 {
-    "name"           : "XSSNAKE",
+    "name"           : "xssnake",
     "description"    : "Online multiplayer Snake where the winner of a game is allowed to execute Javascript in the browser of other players.",
     "keywords"       : ["game", "snake", "multiplayer"],
     "homepage"       : "https://github.com/blaise-io/xssnake",

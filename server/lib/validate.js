@@ -4,7 +4,7 @@
 /**
  * Validate / Sanitize user input.
  * Example usage: new Validate(str).assertType('string').valid(); // true|false
- * @param {*} value
+ * @param {?} value
  * @constructor
  */
 function Validate(value) {
@@ -132,7 +132,7 @@ Validate.prototype = {
 
     /**
      * @param {*=} def
-     * @return {*}
+     * @return {?}
      */
     value: function(def) {
         return (this._valid) ? this._value : def;
@@ -140,7 +140,7 @@ Validate.prototype = {
 
     /**
      * @param {*=} def
-     * @return {*}
+     * @return {?}
      */
     json: function(def) {
         return (this._valid) ? this._json : def;
