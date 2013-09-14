@@ -1,6 +1,3 @@
-/*jshint globalstrict:true, node:true, sub:true*/
-'use strict';
-
 var assert = require('assert');
 
 describe('Google Closure Compiling', function() {

@@ -1,7 +1,3 @@
-/*jshint globalstrict:true, expr:true, sub:true*/
-/*globals XSS, CONST*/
-'use strict';
-
 // Generated on Sat, 13 Apr 2013 17:38:56 GMT
 // Generate file: `node build/audio.js`
 // Template file: source/templates/audio.js.tpl

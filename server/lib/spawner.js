@@ -1,4 +1,3 @@
-/*jshint globalstrict:true, node:true, sub:true*/
 'use strict';
 
 var Util = require('../shared/util.js');

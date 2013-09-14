@@ -1,6 +1,3 @@
-/*jshint globalstrict:true, node:true, sub:true*/
-'use strict';
-
 var assert = require('assert');
 var Server = require('../server/lib/server.js');
 var Client = require('../server/lib/client.js');

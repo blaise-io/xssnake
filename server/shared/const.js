@@ -1,7 +1,3 @@
-/*jshint globalstrict:true, node:true, sub:true*/
-/*globals CONST:true*/
-'use strict';
-
 /** @lends CONST */
 module.exports = {
 

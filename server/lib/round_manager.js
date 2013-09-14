@@ -1,4 +1,3 @@
-/*jshint globalstrict:true, node:true, sub:true*/
 'use strict';
 
 var Score = require('./score.js');

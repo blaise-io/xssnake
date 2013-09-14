@@ -1,5 +1,3 @@
-/*jshint globalstrict:true, node:true, sub:true*/
-/*globals XSS:true, CONST:true*/
 'use strict';
 
 module.exports = {

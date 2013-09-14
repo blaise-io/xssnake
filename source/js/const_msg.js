@@ -1,7 +1,3 @@
-/*jshint globalstrict:true, expr:true, sub:true*/
-/*globals XSS, CONST*/
-'use strict';
-
 CONST.MSG_CRASH_WALL = '{1} crashed into a wall';
 CONST.MSG_CRASH_SELF = '{1} crashed into itself';
 CONST.MSG_CRASH_OPPONENT = '{1} crashed into {2}';

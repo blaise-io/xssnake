@@ -1,7 +1,3 @@
-/*jshint globalstrict:true, expr:true, sub:true*/
-/*globals XSS, CONST*/
-'use strict';
-
 CONST.COLOR = [
     {
         title: 'Public Transport',

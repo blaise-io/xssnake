@@ -1,5 +1,4 @@
-/*jshint globalstrict:true, sub:true, evil:true*/
-/*globals XSS, CONST, ScreenStage, Shape */
+/*globals ScreenStage, Shape */
 'use strict';
 
 /**

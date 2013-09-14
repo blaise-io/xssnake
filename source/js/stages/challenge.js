@@ -1,5 +1,4 @@
-/*jshint globalstrict:true, sub:true, evil:true*/
-/*globals XSS, CONST, InputStage, InputXssStage, MultiplayerStage*/
+/*globals InputStage, InputXssStage, MultiplayerStage*/
 'use strict';
 
 /**

@@ -1,4 +1,4 @@
-/*jshint globalstrict:true, expr:true, sub:true*/
+/*jshint -W079*/
 /*globals EventHandler, Font, Canvas, LevelCache, ShapeGenerator, Transform, AudioPlay, StageFlow */
 'use strict';
 

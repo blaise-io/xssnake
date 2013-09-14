@@ -1,7 +1,3 @@
-/*jshint globalstrict:true, expr:true, sub:true*/
-/*globals XSS, CONST*/
-'use strict';
-
 // Client-only extension of server/shared/const.js
 
 CONST.WIDTH = 256;

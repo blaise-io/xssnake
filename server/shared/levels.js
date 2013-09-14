@@ -1,7 +1,3 @@
-/*jshint globalstrict:true, node:true, sub:true*/
-/*globals CONST:true*/
-'use strict';
-
 // Generated on Sun, 10 Feb 2013 19:51:03 GMT
 // Generate file: `node build/levels.js`
 // Template file: source/templates/levels.js.tpl

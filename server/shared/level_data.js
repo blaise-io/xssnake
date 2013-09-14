@@ -1,4 +1,3 @@
-/*jshint globalstrict:true, node:true */
 'use strict';
 
 /**

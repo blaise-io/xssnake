@@ -1,0 +1,8 @@
+{
+    "browser": true,
+    "globalstrict": true,
+    "evil": true,
+    "expr": true,
+    "sub": true,
+    "predef": ["XSS", "CONST"]
+}

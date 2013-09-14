@@ -1,5 +1,4 @@
-/*jshint globalstrict:true, sub:true*/
-/*globals XSS, CONST, SelectMenu, SelectStage*/
+/*globals SelectMenu, SelectStage*/
 'use strict';
 
 /**

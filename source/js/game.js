@@ -1,5 +1,4 @@
-/*jshint globalstrict:true, expr:true, sub:true*/
-/*globals XSS, CONST, ClientSnake, Level, Dialog, Shape, Spawnable */
+/*globals ClientSnake, Level, Dialog, Shape, Spawnable */
 'use strict';
 
 /***

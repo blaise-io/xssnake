@@ -1,6 +1,4 @@
-/*jshint globalstrict:true, node:true, sub:true*/
 /*globals XSS:true*/
-'use strict';
 
 // Generated on %%DATE%%
 // Generate file: `node build/levels.js`

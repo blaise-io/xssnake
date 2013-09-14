@@ -1,5 +1,4 @@
-/*jshint globalstrict:true, expr:true, sub:true*/
-/*globals XSS, CONST, Client, Room, Game, Spawnable, Powerup, Shape, StageFlow, SockJS*/
+/*globals Client, Room, Game, Spawnable, Powerup, Shape, StageFlow, SockJS*/
 'use strict';
 
 /**
