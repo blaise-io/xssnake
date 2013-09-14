@@ -35,7 +35,7 @@ XSS.util.extend(XSS.util, {
      * @param {Function=} callback
      */
     error: function(str, callback) {
-        var exit, dialog;
+        var exit, dialog, body;
 
         XSS.util.hash();
 
@@ -49,9 +49,10 @@ XSS.util.extend(XSS.util, {
             XSS.flow.restart();
         };
 
-        dialog = new Dialog(str, 'Press ' + CONST.UC_ENTER_KEY + ' to continue', {
+        body = 'Press ' + CONST.UC_ENTER_KEY + ' to continue';
+        dialog = new Dialog(str, body, {
             type: Dialog.TYPE.ALERT,
-            ok  : exit
+            ok: exit
         });
     },
 

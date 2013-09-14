@@ -11,12 +11,7 @@
  * @constructor
  */
 function ClientSnake(index, local, name, location, direction) {
-    var size, speed;
-
-    size  = CONST.SNAKE_SIZE;
-    speed = CONST.SNAKE_SPEED;
-
-    Snake.call(this, location, direction, size, speed);
+    Snake.call(this, location, direction, CONST.SNAKE_SIZE, CONST.SNAKE_SPEED);
 
     this.index   = index;
     this.local   = local;
@@ -24,6 +19,10 @@ function ClientSnake(index, local, name, location, direction) {
     this.elapsed = 0;
     this.limbo   = false;
 
+    /**
+     * @type {Shape}
+     * @private
+     */
     this._shape = new Shape();
 
     /**

@@ -1,5 +1,6 @@
 {
     "globalstrict": true,
     "node": true,
-    "sub": true
+    "sub": true,
+    "predef": ["XSS", "CONST"]
 }
