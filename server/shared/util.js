@@ -52,7 +52,7 @@ module.exports = {
      * @return {*}
      */
     randomItem: function(arr) {
-        return arr[Math.floor(Math.random() * (arr.length - 1))];
+        return arr[Math.floor(Math.random() * arr.length)];
     },
 
     /**
