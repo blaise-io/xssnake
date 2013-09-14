@@ -1,10 +1,3 @@
-# System - and IDE generated files
-.idea
-.DS_Store
-.Trashes
-Thumbs.db
-desktop.ini
-
 # Build or install these files yourself. See README.md
 node_modules
 server/compiled_start.js
