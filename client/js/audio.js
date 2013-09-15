@@ -1,6 +1,6 @@
 // Generated on Sat, 13 Apr 2013 17:38:56 GMT
 // Generate file: `node build/audio.js`
-// Template file: source/templates/audio.js.tpl
+// Template file: client/templates/audio.js.tpl
 
 XSS.audio = {
     mp3: {

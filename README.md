@@ -41,7 +41,7 @@ decrease server load a little, but it will also make debugging painful.
 ## Developing and Testing
 
  * Run the game server: `npm start`
- * Access the game by opening `source/source.html` in your browser
+ * Access the game by opening `client/client.html` in your browser
  * Check if the client and server still compile: `npm test`
  * Current build status: [![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
 
@@ -49,9 +49,9 @@ decrease server load a little, but it will also make debugging painful.
 
 If you adjust one of the level images, you have to rebuild
 `server/shared/levels.js` by running `node build/levels.js`.
-This is documented in [`source/levels/README.md`](https://github.com/blaise-io/xssnake/tree/master/source/levels).
+This is documented in [`client/levels/README.md`](https://github.com/blaise-io/xssnake/tree/master/client/levels).
 
 ## Creating/Updating Audio Files
 
 If you adjust one of the audio files, you have to rebuild
-`source/js/audio.js` by running `node build/audio.js`.
+`client/js/audio.js` by running `node build/audio.js`.

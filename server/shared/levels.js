@@ -1,6 +1,6 @@
 // Generated on Sun, 10 Feb 2013 19:51:03 GMT
 // Generate file: `node build/levels.js`
-// Template file: source/templates/levels.js.tpl
+// Template file: client/templates/levels.js.tpl
 
 module.exports = [
     'iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhCAYAAABug3M0AAAATklEQVR4Xu3XsQ0AMAgDQe/K/jMQKWOY+47y5Irs4eDh/5WdmS3suxLLw8PD9wcPDw8PDw+f7X5sLA8PD38heHh4eHh4+JQ/Nrm+PDz8A9XeSXZnpGoTAAAAAElFTkSuQmCC',

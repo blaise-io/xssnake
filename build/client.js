@@ -29,13 +29,13 @@ gcc.params({
     warning_level             : 'VERBOSE'
 });
 
-gcc.addFile(home + 'source/js/main.js');
+gcc.addFile(home + 'client/js/main.js');
 gcc.addFile(home + 'server/shared/const.js');
 gcc.addDir(home + 'server/shared', ['const.js']);
-gcc.addDir(home + 'source/js', ['main.js']);
-gcc.addDir(home + 'source/js/abstract_stage');
-gcc.addDir(home + 'source/js/stage_class_helper');
-gcc.addDir(home + 'source/js/stages');
+gcc.addDir(home + 'client/js', ['main.js']);
+gcc.addDir(home + 'client/js/abstract_stage');
+gcc.addDir(home + 'client/js/stage_class_helper');
+gcc.addDir(home + 'client/js/stages');
 
 gcc.replace(/'use strict';/g, '');
 
@@ -52,14 +52,14 @@ if (module.parent) {
 
         js = js.replace(/\n/g, '');
 
-        cssFile = home + 'source/xssnake.css';
+        cssFile = home + 'client/xssnake.css';
         css = fs.readFileSync(cssFile, 'utf-8');
         css = minCSS(css);
 
-        sockJSFile = home + 'source/lib/sockjs-0.3.min.js';
+        sockJSFile = home + 'client/lib/sockjs-0.3.min.js';
         sockJS = fs.readFileSync(sockJSFile, 'utf-8').trim();
 
-        tplFile = home + 'source/templates/index.html.tpl';
+        tplFile = home + 'client/templates/index.html.tpl';
 
         template = fs.readFileSync(tplFile, 'utf-8');
         template = template.replace('%%STYLE%%', css);

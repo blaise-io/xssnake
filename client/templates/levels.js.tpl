@@ -2,7 +2,7 @@
 
 // Generated on %%DATE%%
 // Generate file: `node build/levels.js`
-// Template file: source/templates/levels.js.tpl
+// Template file: client/templates/levels.js.tpl
 
 module.exports = %%LEVELS%%;
 
