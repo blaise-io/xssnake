@@ -1,20 +1,19 @@
-/*globals BoundingBox, ShapePixels*/
 'use strict';
 
 /** @typedef {Array.<number>} */
-CONST.ShapePixel;
+xss.ShapePixel;
 
-/** @typedef {{canvas: *, bbox: BoundingBox}} */
-CONST.ShapeCache;
+/** @typedef {{canvas: *, bbox: xss.BoundingBox}} */
+xss.ShapeCache;
 
 /**
- * Shape
+ * xss.Shape
  * @constructor
- * @param {...ShapePixels} varArgs
+ * @param {...xss.ShapePixels} varArgs
  */
-function Shape(varArgs) {
-    /** @type {ShapePixels} */
-    this.pixels = new ShapePixels();
+xss.Shape = function(varArgs) {
+    /** @type {xss.ShapePixels} */
+    this.pixels = new xss.ShapePixels();
 
     /** @type {boolean} */
     this.enabled = true;
@@ -28,7 +27,7 @@ function Shape(varArgs) {
     /** @type {Object.<string,*>} */
     this.effects = {};
 
-    /** @type {?CONST.ShapeCache} */
+    /** @type {?xss.ShapeCache} */
     this.cache = null;
 
     /**
@@ -38,14 +37,14 @@ function Shape(varArgs) {
     this._expand = 0;
 
     this.add.apply(this, arguments);
-}
+};
 
-Shape.prototype = {
+xss.Shape.prototype = {
 
     /**
      * @param {number=} on Visible duration
      * @param {number=} off Invisible duration
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     flash: function(on, off) {
         this.effects.flash = this._flashEffect.apply(this, arguments);
@@ -55,7 +54,7 @@ Shape.prototype = {
     /**
      * @param {number} start
      * @param {number} end
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     lifetime: function(start, end) {
         this.effects.lifetime = this._lifetimeEffect.apply(this, arguments);
@@ -64,7 +63,7 @@ Shape.prototype = {
 
     /**
      * @param {Object=} options
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     animate: function(options) {
         this.effects.animate = this._animateEffect.apply(this, arguments);
@@ -83,48 +82,48 @@ Shape.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     clone: function() {
-        return new Shape(this.pixels);
+        return new xss.Shape(this.pixels);
     },
 
     /**
      * @param {number} x
      * @param {number} y
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     shift: function(x, y) {
-        return this.set(XSS.transform.shift(this.pixels, x, y));
+        return this.set(xss.transform.shift(this.pixels, x, y));
     },
 
     /**
      * @param {number} width
      * @param {number} height
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     center: function(width, height) {
-        return this.set(XSS.transform.center(this.pixels, width, height));
+        return this.set(xss.transform.center(this.pixels, width, height));
     },
 
     /**
      * @param {number=} hPadding
      * @param {number=} vPadding
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     outline: function(hPadding, vPadding) {
-        XSS.transform.outline(this, hPadding, vPadding);
+        xss.transform.outline(this, hPadding, vPadding);
         return this;
     },
 
     /**
-     * @param {BoundingBox=} bbox
-     * @return {Shape}
+     * @param {xss.BoundingBox=} bbox
+     * @return {xss.Shape}
      */
     invert: function(bbox) {
         var pixels = this.pixels, inverted;
 
-        inverted = new ShapePixels();
+        inverted = new xss.ShapePixels();
         bbox = bbox || this.bbox();
 
         for (var x = bbox.x1; x <= bbox.x2; x++) {
@@ -139,7 +138,7 @@ Shape.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     uncache: function() {
         this.cache = null;
@@ -148,17 +147,17 @@ Shape.prototype = {
     },
 
     /**
-     * @param {...ShapePixels} varArgs
-     * @return {Shape}
+     * @param {...xss.ShapePixels} varArgs
+     * @return {xss.Shape}
      */
     set: function(varArgs) {
-        this.pixels = new ShapePixels();
+        this.pixels = new xss.ShapePixels();
         return this.add.apply(this, arguments);
     },
 
     /**
-     * @param {...ShapePixels} varArgs
-     * @return {Shape}
+     * @param {...xss.ShapePixels} varArgs
+     * @return {xss.Shape}
      */
     add: function(varArgs) {
         var add = this.pixels.add.bind(this.pixels);
@@ -169,8 +168,8 @@ Shape.prototype = {
     },
 
     /**
-     * @param {...ShapePixels} pixels
-     * @return {Shape}
+     * @param {...xss.ShapePixels} pixels
+     * @return {xss.Shape}
      */
     remove: function(pixels) {
         var remove = this.pixels.remove.bind(this.pixels);
@@ -182,7 +181,7 @@ Shape.prototype = {
 
     /**
      * @param {number=} expand
-     * @return {BoundingBox}
+     * @return {xss.BoundingBox}
      */
     bbox: function(expand) {
         if (typeof expand === 'undefined') {
@@ -240,9 +239,9 @@ Shape.prototype = {
 
             // Stop time reached
             if (end && progress >= end) {
-                key = XSS.util.getKey(XSS.shapes, this);
+                key = xss.util.getKey(xss.shapes, this);
                 if (key) {
-                    XSS.shapes[key] = null;
+                    xss.shapes[key] = null;
                 }
             }
         };
@@ -260,10 +259,10 @@ Shape.prototype = {
         from     = options.from || [0, 0];
         to       = options.to || [0, 0];
         duration = options.duration || 200;
-        callback = options.callback || XSS.util.dummy;
+        callback = options.callback || xss.util.dummy;
         clone    = this.clone();
 
-        /** @this {Shape} */
+        /** @this {xss.Shape} */
         return function(delta) {
             var x, y;
             progress += delta;
@@ -273,7 +272,7 @@ Shape.prototype = {
                 x = Math.round(x);
                 y = from[1] - ((from[1] - to[1]) * progressx);
                 y = Math.round(y);
-                this.set(XSS.transform.shift(clone.pixels, x, y));
+                this.set(xss.transform.shift(clone.pixels, x, y));
             } else {
                 delete this.effects.animate;
                 this.set(clone.shift(to[0], to[1]).pixels);

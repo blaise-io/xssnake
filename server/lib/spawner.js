@@ -1,22 +1,17 @@
 'use strict';
 
-var Util = require('../shared/util.js');
-var CONST = require('../shared/const.js');
-
 /**
  * Spawner
- * @param {Game} game
+ * @param {xss.Game} game
  * @constructor
  */
-function Spawner(game) {
+xss.Spawner = function(game) {
     this.game = game;
     this.spawns = [];
     this.locations = []; // Keep separate list for getEmptyLocation speed
-}
+};
 
-module.exports = Spawner;
-
-Spawner.prototype = {
+xss.Spawner.prototype = {
 
     destruct: function() {
         for (var i = 0, m = this.spawns.length; i < m; i++) {
@@ -45,16 +40,16 @@ Spawner.prototype = {
         data = [type, index, spawn.location];
 
         if (buffer) {
-            game.room.buffer(CONST.EVENT_GAME_SPAWN, data);
+            game.room.buffer(xss.EVENT_GAME_SPAWN, data);
         } else {
-            game.room.emit(CONST.EVENT_GAME_SPAWN, data);
+            game.room.emit(xss.EVENT_GAME_SPAWN, data);
         }
 
         return spawn;
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {number} index
      */
     hit: function(client, index) {
@@ -62,24 +57,24 @@ Spawner.prototype = {
         this._destructSpawn(index);
 
         switch (spawn.type) {
-            case CONST.SPAWN_APPLE:
+            case xss.SPAWN_APPLE:
                 this.game.hitApple(client, index);
                 break;
-            case CONST.SPAWN_POWERUP:
+            case xss.SPAWN_POWERUP:
                 this.game.hitPowerup(client, index);
                 break;
         }
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {Array.<number>} location
      * @return {Array}
      */
     handleHits: function(client, location) {
         var hits = [];
         for (var i = 0, m = this.spawns.length; i < m; i++) {
-            if (this.spawns[i] && Util.eq(this.spawns[i].location, location)) {
+            if (this.spawns[i] && xss.util.eq(this.spawns[i].location, location)) {
                 hits.push(i);
                 this.hit(client, i);
             }

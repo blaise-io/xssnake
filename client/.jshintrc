@@ -4,5 +4,5 @@
     "evil": true,
     "expr": true,
     "sub": true,
-    "predef": ["XSS", "CONST"]
+    "predef": ["xss"]
 }

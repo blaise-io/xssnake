@@ -1,16 +1,17 @@
 'use strict';
 
 /**
- * BaseScreenStage
+ * Basexss.ScreenStage
  * Stage with static content
- * @implements {StageInterface}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function ScreenStage() {}
+xss.ScreenStage = function() {
+};
 
-ScreenStage.prototype = {
+xss.ScreenStage.prototype = {
 
-    /** @type {Shape} */
+    /** @type {xss.Shape} */
     screen: null,
 
     getShape: function() {
@@ -22,20 +23,20 @@ ScreenStage.prototype = {
     },
 
     construct: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._handleKeys);
+        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys);
     },
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
-        XSS.shapes.stage = null;
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.shapes.stage = null;
     },
 
     _handleKeys: function(ev) {
         switch (ev.keyCode) {
-            case CONST.KEY_BACKSPACE:
-            case CONST.KEY_ESCAPE:
-            case CONST.KEY_ENTER:
-                XSS.flow.previousStage();
+            case xss.KEY_BACKSPACE:
+            case xss.KEY_ESCAPE:
+            case xss.KEY_ENTER:
+                xss.flow.previousStage();
         }
     }
 

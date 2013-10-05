@@ -1,15 +1,15 @@
-/*globals SelectMenu*/
 'use strict';
 
 /**
- * SelectStage
+ * xss.SelectStage
  * Stage with a vertical select menu
- * @implements {StageInterface}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function SelectStage() {}
+xss.SelectStage = function() {
+};
 
-SelectStage.prototype = {
+xss.SelectStage.prototype = {
 
     menu: null,
 
@@ -22,40 +22,40 @@ SelectStage.prototype = {
     },
 
     construct: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this.handleKeys.bind(this));
+        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this.handleKeys.bind(this));
     },
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
-        XSS.shapes.stage = null;
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.shapes.stage = null;
     },
 
     handleKeys: function(ev) {
-        if (XSS.keysBlocked) {
+        if (xss.keysBlocked) {
             return;
         }
         switch (ev.keyCode) {
-            case CONST.KEY_BACKSPACE:
-            case CONST.KEY_ESCAPE:
-                XSS.flow.previousStage();
+            case xss.KEY_BACKSPACE:
+            case xss.KEY_ESCAPE:
+                xss.flow.previousStage();
                 break;
-            case CONST.KEY_ENTER:
+            case xss.KEY_ENTER:
                 var next = this.menu.getNextStage();
                 if (next) {
-                    XSS.flow.switchStage(next);
+                    xss.flow.switchStage(next);
                 } else {
-                    XSS.flow.previousStage();
+                    xss.flow.previousStage();
                 }
                 break;
-            case CONST.KEY_UP:
+            case xss.KEY_UP:
                 this.menu.prev();
-                XSS.play.menu();
-                XSS.flow.refreshShapes();
+                xss.play.menu();
+                xss.flow.refreshShapes();
                 break;
-            case CONST.KEY_DOWN:
+            case xss.KEY_DOWN:
                 this.menu.next();
-                XSS.play.menu();
-                XSS.flow.refreshShapes();
+                xss.play.menu();
+                xss.flow.refreshShapes();
         }
     }
 

@@ -1,4 +1,4 @@
-CONST.COLOR = [
+xss.COLOR = [
     {
         title: 'Public Transport',
         desc : 'TAXIIIIIII',

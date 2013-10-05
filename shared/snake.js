@@ -8,18 +8,16 @@
  * @param {number} speed
  * @constructor
  */
-function Snake(location, direction, size, speed) {
+xss.Snake = function(location, direction, size, speed) {
     this.parts = [location];
     this.direction = direction;
     this.size = size;
     this.speed = speed;
     this.crashed = false;
     this.limbo = null;
-}
+};
 
-module.exports = Snake;
-
-Snake.prototype = {
+xss.Snake.prototype = {
 
     /**
      * @param {Array.<number>} position

@@ -1,4 +1,3 @@
-/*globals Shape, ShapePixels, Font*/
 'use strict';
 
 /** @typedef {{
@@ -8,51 +7,51 @@
      ok         : (Function|undefined),
      cancel     : (Function|undefined)
    }} */
-var DialogSettings;
+xss.DialogSettings;
 
 /**
  * @param {string} header
  * @param {string} body
- * @param {DialogSettings|Object=} settings
+ * @param {xss.DialogSettings|Object=} settings
  * @constructor
  */
-function Dialog(header, body, settings) {
+xss.Dialog = function(header, body, settings) {
     this._header = header;
     this._body = body;
 
-    /** @type {DialogSettings} */
+    /** @type {xss.DialogSettings} */
     this.settings = {
         keysBlocked: true,
-        type       : Dialog.TYPE.INFO,
-        width      : Dialog.MIN_WIDTH,
-        ok         : XSS.util.dummy,
-        cancel     : XSS.util.dummy
+        type       : xss.Dialog.TYPE.INFO,
+        width      : xss.Dialog.MIN_WIDTH,
+        ok         : xss.util.dummy,
+        cancel     : xss.util.dummy
     };
 
-    XSS.util.extend(this.settings, settings);
+    xss.util.extend(this.settings, settings);
 
     this._bindEvents();
     this._updateShape();
     // TODO: Play a bubble sound
-}
+};
 
-Dialog.MIN_WIDTH = 80;
-Dialog.STR_OK = 'OK';
-Dialog.STR_CANCEL = 'CANCEL';
+xss.Dialog.MIN_WIDTH = 80;
+xss.Dialog.STR_OK = 'OK';
+xss.Dialog.STR_CANCEL = 'CANCEL';
 
 /** @enum {number} */
-Dialog.TYPE = {
+xss.Dialog.TYPE = {
     INFO   : 0, // No buttons, not closable
     ALERT  : 1, // OK button, closable
     CONFIRM: 2  // OK and CANCEL button
 };
 
-Dialog.prototype = {
+xss.Dialog.prototype = {
 
     destruct: function() {
-        XSS.shapes.dialog = null;
-        XSS.keysBlocked = false;
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG);
+        xss.shapes.dialog = null;
+        xss.keysBlocked = false;
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_DIALOG);
     },
 
     restore: function() {
@@ -74,7 +73,7 @@ Dialog.prototype = {
 //     * @param {string} header
 //     */
 //    setHeader: function(header) {
-//        XSS.play.menu_alt();
+//        xss.play.menu_alt();
 //        this._header = header;
 //        this._updateShape();
 //    },
@@ -83,7 +82,7 @@ Dialog.prototype = {
      * @param {string} body
      */
     setBody: function(body) {
-        XSS.play.menu_alt();
+        xss.play.menu_alt();
         this._body = body;
         this._updateShape();
     },
@@ -92,13 +91,13 @@ Dialog.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.keysBlocked = this.settings.keysBlocked;
-        if (this.settings.type !== Dialog.TYPE.INFO) {
-            XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_DIALOG, this._handleKeys.bind(this));
+        xss.keysBlocked = this.settings.keysBlocked;
+        if (this.settings.type !== xss.Dialog.TYPE.INFO) {
+            xss.event.on(xss.EVENT_KEYDOWN, xss.NS_DIALOG, this._handleKeys.bind(this));
         }
-        if (this.settings.type === Dialog.TYPE.ALERT) {
+        if (this.settings.type === xss.Dialog.TYPE.ALERT) {
             this._okSelected = true;
-        } else if (this.settings.type === Dialog.TYPE.CONFIRM) {
+        } else if (this.settings.type === xss.Dialog.TYPE.CONFIRM) {
             this._okSelected = false;
         }
     },
@@ -109,25 +108,25 @@ Dialog.prototype = {
      */
     _handleKeys: function(ev) {
         switch (ev.keyCode) {
-            case CONST.KEY_LEFT:
-            case CONST.KEY_UP:
-            case CONST.KEY_DOWN:
-            case CONST.KEY_RIGHT:
-                if (this.settings.type === Dialog.TYPE.CONFIRM) {
-                    XSS.play.menu_alt();
+            case xss.KEY_LEFT:
+            case xss.KEY_UP:
+            case xss.KEY_DOWN:
+            case xss.KEY_RIGHT:
+                if (this.settings.type === xss.Dialog.TYPE.CONFIRM) {
+                    xss.play.menu_alt();
                     this._okSelected = !this._okSelected;
                     this._updateShape();
                 }
                 break;
-            case CONST.KEY_BACKSPACE:
-            case CONST.KEY_ESCAPE:
-                if (this.settings.type === Dialog.TYPE.CONFIRM) {
+            case xss.KEY_BACKSPACE:
+            case xss.KEY_ESCAPE:
+                if (this.settings.type === xss.Dialog.TYPE.CONFIRM) {
                     this.cancel();
                 } else {
                     this.ok();
                 }
                 break;
-            case CONST.KEY_ENTER:
+            case xss.KEY_ENTER:
                 if (this._okSelected) {
                     this.ok();
                 } else {
@@ -142,7 +141,7 @@ Dialog.prototype = {
      * @private
      */
     _isIngame: function() {
-        return !!XSS.shapes.level;
+        return !!xss.shapes.level;
     },
 
     /**
@@ -150,9 +149,9 @@ Dialog.prototype = {
      * @private
      */
     _getAreaHeight: function() {
-        var height = CONST.HEIGHT, level = XSS.level.levelData(0);
+        var height = xss.HEIGHT, level = xss.level.levelData(0);
         if (this._isIngame() && level) {
-            height = level.height * CONST.GAME_TILE;
+            height = level.height * xss.GAME_TILE;
         }
         return height;
     },
@@ -164,7 +163,7 @@ Dialog.prototype = {
     _getContentWidth: function() {
         return Math.max(
             this.settings.width,
-            -2 + XSS.font.width(this._header) * 2
+            -2 + xss.font.width(this._header) * 2
         );
     },
 
@@ -174,63 +173,63 @@ Dialog.prototype = {
      */
     _getButtonPosition: function() {
         var bodyBBox = this._getBodyPixels().bbox();
-        return Font.MAX_HEIGHT * 3 + bodyBBox.height + 4;
+        return xss.Font.MAX_HEIGHT * 3 + bodyBBox.height + 4;
     },
 
     /**
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getHeaderPixels: function() {
         var header;
-        header = XSS.font.pixels(this._header, 0, 0);
-        header = XSS.transform.zoomX2(header, 0, 0, true);
+        header = xss.font.pixels(this._header, 0, 0);
+        header = xss.transform.zoomX2(header, 0, 0, true);
         return header;
     },
 
     /**
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getBodyPixels: function() {
         var y, settings = {wrap: this._getContentWidth()};
-        y = 1 + Font.MAX_HEIGHT * 2;
-        return XSS.font.pixels(this._body, 0, y, settings);
+        y = 1 + xss.Font.MAX_HEIGHT * 2;
+        return xss.font.pixels(this._body, 0, y, settings);
     },
 
     /**
      * @param {number} y
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getLine: function(y) {
-        return XSS.shapegen.line(0, y - 5, this._getContentWidth(), y - 5);
+        return xss.shapegen.line(0, y - 5, this._getContentWidth(), y - 5);
     },
 
     /**
      * @param {number} x
      * @param {number} y
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getCancelButton: function(x, y) {
         var settings = {invert: !this._okSelected};
-        return XSS.font.pixels(Dialog.STR_CANCEL, x, y, settings);
+        return xss.font.pixels(xss.Dialog.STR_CANCEL, x, y, settings);
     },
 
     /**
      * @param {number} x
      * @param {number} y
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getOkButton: function(x, y) {
         var settings = {invert: this._okSelected};
-        return XSS.font.pixels(Dialog.STR_OK, x, y, settings);
+        return xss.font.pixels(xss.Dialog.STR_OK, x, y, settings);
     },
 
     /**
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getAlertPixels: function() {
@@ -240,50 +239,50 @@ Dialog.prototype = {
         ok = this._getOkButton(1, y);
         line = this._getLine(y);
 
-        return new Shape(ok, line).pixels;
+        return new xss.Shape(ok, line).pixels;
     },
 
     /**
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getConfirmPixels: function() {
         var x, y, cancel, ok, line;
 
-        x = XSS.font.width(Dialog.STR_CANCEL) + 5;
+        x = xss.font.width(xss.Dialog.STR_CANCEL) + 5;
         y = this._getButtonPosition();
         cancel = this._getCancelButton(1, y);
         ok = this._getOkButton(x, y);
         line = this._getLine(y);
 
-        return new Shape(ok, cancel, line).pixels;
+        return new xss.Shape(ok, cancel, line).pixels;
     },
 
     /**
      * @private
      */
     _updateShape: function() {
-        var shape, header, body, buttons = new ShapePixels();
+        var shape, header, body, buttons = new xss.ShapePixels();
 
         header = this._getHeaderPixels();
         body = this._getBodyPixels();
 
         switch (this.settings.type) {
-            case Dialog.TYPE.ALERT:
+            case xss.Dialog.TYPE.ALERT:
                 buttons = this._getAlertPixels();
                 break;
-            case Dialog.TYPE.CONFIRM:
+            case xss.Dialog.TYPE.CONFIRM:
                 buttons = this._getConfirmPixels();
                 break;
         }
 
-        shape = new Shape(header, body, buttons);
+        shape = new xss.Shape(header, body, buttons);
         shape.clearBBox = true;
 
         shape.outline();
         shape.center(0, this._getAreaHeight());
 
-        XSS.shapes.dialog = shape;
+        xss.shapes.dialog = shape;
     }
 
 };

@@ -1,32 +1,31 @@
-/*globals InputStage, ChallengeStage, StartGameStage */
 'use strict';
 
 /**
- * @extends {InputStage}
- * @implements {StageInterface}
+ * @extends {xss.InputStage}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function AutoJoinStage() {
-    var isXSS, autoJoinData = XSS.flow.getData().autoJoin;
+xss.AutoJoinStage = function() {
+    var isxss, autoJoinData = xss.flow.getData().autoJoin;
 
     this._options = autoJoinData[1];
     this._players = autoJoinData[2];
 
     this.header = 'JOiN GAME';
     this.label = this._getLabel();
-    this.name = CONST.STORAGE_NAME;
+    this.name = xss.STORAGE_NAME;
 
-    isXSS = this._options[CONST.FIELD_XSS];
-    this.next = (isXSS) ? ChallengeStage : StartGameStage;
+    isxss = this._options[xss.FIELD_xss];
+    this.next = (isxss) ? xss.ChallengeStage : xss.StartGameStage;
 
     this.minChars = 2;
-    this.maxValWidth = CONST.UI_WIDTH_NAME;
+    this.maxValWidth = xss.UI_WIDTH_NAME;
 
-    InputStage.call(this);
-}
+    xss.InputStage.call(this);
+};
 
-XSS.util.extend(AutoJoinStage.prototype, InputStage.prototype);
-XSS.util.extend(AutoJoinStage.prototype, /** @lends AutoJoinStage.prototype */ {
+xss.util.extend(xss.AutoJoinStage.prototype, xss.InputStage.prototype);
+xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.prototype */ {
 
     getData: function() {
         return {
@@ -51,11 +50,11 @@ XSS.util.extend(AutoJoinStage.prototype, /** @lends AutoJoinStage.prototype */ {
 
         label = '' +
             'Players ' +
-            players.length + '/' + options[CONST.FIELD_MAX_PLAYERS] + ': ' +
+            players.length + '/' + options[xss.FIELD_MAX_PLAYERS] + ': ' +
             players.join(', ') + br +
-            'Difficulty: ' + diffs[options[CONST.FIELD_DIFFICULTY]] + br +
-            'Power-Ups: ' + bools[options[CONST.FIELD_POWERUPS]] + br +
-            'XSS ' + CONST.UC_SKULL + ': ' + bools[options[CONST.FIELD_XSS]] +
+            'Difficulty: ' + diffs[options[xss.FIELD_DIFFICULTY]] + br +
+            'Power-Ups: ' + bools[options[xss.FIELD_POWERUPS]] + br +
+            'xss ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_xss]] +
             br + br +
             'Enter your name to join: ';
 

@@ -1,19 +1,18 @@
-/*globals Dialog, Room, Shape, Socket*/
 'use strict';
 
 /**
  * Game Stage
- * @implements {StageInterface}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function GameStage() {
-    this.data = XSS.flow.getData();
-}
+xss.GameStage = function() {
+    this.data = xss.flow.getData();
+};
 
-GameStage.prototype = {
+xss.GameStage.prototype = {
 
     getShape: function() {
-        return new Shape();
+        return new xss.Shape();
     },
 
     getData: function() {
@@ -27,20 +26,20 @@ GameStage.prototype = {
     },
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
     },
 
     _bindKeys: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._exitKeys.bind(this));
+        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._exitKeys.bind(this));
     },
 
     _exitKeys: function(ev) {
-        if (!XSS.keysBlocked && ev.keyCode === CONST.KEY_ESCAPE && XSS.room) {
-            this.dialog = new Dialog(
+        if (!xss.keysBlocked && ev.keyCode === xss.KEY_ESCAPE && xss.room) {
+            this.dialog = new xss.Dialog(
                 'LEAVING GAME',
                 'Are you sure you want to leave this game?', {
                     ok: function() {
-                        XSS.flow.restart();
+                        xss.flow.restart();
                     }
                 }
             );
@@ -48,40 +47,40 @@ GameStage.prototype = {
     },
 
     _destructMenu: function() {
-        if (XSS.menuSnake) {
-            XSS.menuSnake.destruct();
+        if (xss.menuSnake) {
+            xss.menuSnake.destruct();
         }
-        XSS.shapes.header = null;
+        xss.shapes.header = null;
     },
 
     _joinGame: function() {
-        XSS.room = new Room();
+        xss.room = new xss.Room();
         if (this.data.autoJoin) {
-            this._autoJoin(XSS.util.hash(CONST.HASH_ROOM));
+            this._autoJoin(xss.util.hash(xss.HASH_ROOM));
         } else {
             this._matchRoom();
         }
     },
 
     _autoJoin: function(key) {
-        XSS.event.once(CONST.EVENT_ROOM_STATUS, CONST.NS_STAGES, function(data) {
+        xss.event.once(xss.EVENT_ROOM_STATUS, xss.NS_STAGES, function(data) {
             if (!data[0]) {
-                XSS.util.error(Room.prototype.errorCodeToStr(data[1]));
+                xss.util.error(xss.Room.prototype.errorCodeToStr(data[1]));
             }
         });
 
-        XSS.socket.emit(
-            CONST.EVENT_ROOM_JOIN,
+        xss.socket.emit(
+            xss.EVENT_ROOM_JOIN,
             [key, this.data.name]
         );
     },
 
     _matchRoom: function() {
         var emit = this.data.multiplayer;
-        emit[CONST.FIELD_NAME] = this.data.name;
+        emit[xss.FIELD_NAME] = this.data.name;
 
-        XSS.socket = new Socket(function() {
-            XSS.socket.emit(CONST.EVENT_ROOM_MATCH, emit);
+        xss.socket = new xss.Socket(function() {
+            xss.socket.emit(xss.EVENT_ROOM_MATCH, emit);
         });
     }
 

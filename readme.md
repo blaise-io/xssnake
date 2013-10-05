@@ -20,10 +20,7 @@ optimized code.
  * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
  * Adjust the contents of `server/shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)
- * Install [SockJS](https://npmjs.org/package/sockjs) by running
-   `npm install sockjs`
- * Install [gcc-rest](https://github.com/blaise-io/gcc-rest) by running
-   `npm install gcc-rest`
+ * Install dependencies: `npm install`
 
 ## Production
 

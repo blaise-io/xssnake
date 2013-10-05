@@ -1,31 +1,30 @@
-/*globals InputStage, InputXssStage, MultiplayerStage*/
 'use strict';
 
 /**
- * @extends {InputStage}
- * @implements {StageInterface}
+ * @extends {xss.InputStage}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function ChallengeStage() {
+xss.ChallengeStage = function() {
     this._challenge = this._getRandomChallenge();
 
     this.maxValWidth = 50;
     this.header = 'DANGER DANGER';
     this.label = '' +
-        'XSS mode allows the winner of a game to execute\n' +
+        'xss mode allows the winner of a game to execute\n' +
         'Javascript in the browser of every loser. This may\n' +
         'damage you and/or your computer. To confirm that\n' +
         'you know Javascript and accept the risk, enter the\n' +
         'result of this statement:\n\n> ' +
         this._challenge + '\n> ';
 
-    this.next = InputXssStage;
+    this.next = xss.InputXssStage;
 
-    InputStage.call(this);
-}
+    xss.InputStage.call(this);
+};
 
-XSS.util.extend(ChallengeStage.prototype, InputStage.prototype);
-XSS.util.extend(ChallengeStage.prototype, /** @lends {ChallengeStage.prototype} */ {
+xss.util.extend(xss.ChallengeStage.prototype, xss.InputStage.prototype);
+xss.util.extend(xss.ChallengeStage.prototype, /** @lends {xss.ChallengeStage.prototype} */ {
 
     inputSubmit: function(error, value, top) {
         var shape, text = '> ACCESS DENIED!!';
@@ -34,16 +33,16 @@ XSS.util.extend(ChallengeStage.prototype, /** @lends {ChallengeStage.prototype} 
         // Tolerate answers where user is quoting strings.
         if (value.replace(/['"]/g, '') === String(eval(this._challenge))) {
             text = '> bleep!';
-            XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
+            xss.event.off(xss.EVENT_KEYDOWN, xss.NS_INPUT);
             setTimeout(function() {
-                XSS.flow.switchStage(this.next);
+                xss.flow.switchStage(this.next);
             }.bind(this), 1000);
         }
 
-        shape = XSS.font.shape(text, CONST.MENU_LEFT, top);
+        shape = xss.font.shape(text, xss.MENU_LEFT, top);
         shape.lifetime(0, 1000);
 
-        XSS.shapes.message = shape;
+        xss.shapes.message = shape;
     },
 
     _challenges: [
@@ -71,14 +70,14 @@ XSS.util.extend(ChallengeStage.prototype, /** @lends {ChallengeStage.prototype} 
     _getRandomChallenge: function() {
         var randomStr, randomDigit, challenge;
 
-        randomStr = XSS.util.randomStr().substr(0, 3).toUpperCase();
-        randomDigit = String(XSS.util.randomRange(0, 5));
+        randomStr = xss.util.randomStr().substr(0, 3).toUpperCase();
+        randomDigit = String(xss.util.randomRange(0, 5));
 
-        challenge = String(XSS.util.randomItem(this._challenges));
+        challenge = String(xss.util.randomItem(this._challenges));
         challenge = challenge.replace(/%s/g, randomStr);
         challenge = challenge.replace(/%d/g, randomDigit);
 
         return challenge;
     }
-
 });
+

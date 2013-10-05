@@ -13,7 +13,8 @@
     "dependencies"   : {
         "sockjs"  : "0.3.x",
         "pngparse": "1.x",
-        "gcc-rest": "0.1.x"
+        "grunt-gcc-rest": "0.1.x",
+        "grunt-contrib-concat": "0.3.x"
     },
     "devDependencies": {
         "mocha": "1.x"
@@ -23,6 +24,6 @@
     },
     "scripts"        : {
         "start": "node server/start.js",
-        "test" : "mocha -R spec"
+        "test" : "grunt testsuite; mocha -R spec dist/testsuite.js"
     }
 }

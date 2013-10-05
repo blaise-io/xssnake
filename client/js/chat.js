@@ -1,52 +1,51 @@
-/*globals InputField*/
 'use strict';
 
 /** @typedef {{
     author: (string|undefined),
     body: string}}
 */
-CONST.ChatMessage;
+xss.ChatMessage;
 
 /**
  * @param {number} index
  * @param {Array.<string>} names
  * @constructor
  */
-function Chat(index, names) {
+xss.Chat = function(index, names) {
 
     this.index = index;
     this.names = names;
     this.shapes = {};
 
     /**
-     * @type {Array.<CONST.ChatMessage>}
+     * @type {Array.<xss.ChatMessage>}
      * @private
      */
     this._messages = [
-        {body: 'Press ' + CONST.UC_ENTER_KEY + ' to chat'}
+        {body: 'Press ' + xss.UC_ENTER_KEY + ' to chat'}
     ];
 
     this._hasFocus = false;
     this._adding = false;
     this._queue = [];
 
-    this.top = CONST.HEIGHT - (7 * 3) - 3;
+    this.top = xss.HEIGHT - (7 * 3) - 3;
     this.left = 126;
 
     this._bindEvents();
     this._updateShapes();
-}
+};
 
-Chat.prototype = {
+xss.Chat.prototype = {
 
     maxMessages: 3,
 
     animDuration: 200,
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_CHAT_MESSAGE, CONST.NS_CHAT);
-        XSS.event.off(CONST.EVENT_CHAT_NOTICE, CONST.NS_CHAT);
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_CHAT);
+        xss.event.off(xss.EVENT_CHAT_MESSAGE, xss.NS_CHAT);
+        xss.event.off(xss.EVENT_CHAT_NOTICE, xss.NS_CHAT);
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_CHAT);
 
         this._deleteShapes();
 
@@ -56,8 +55,8 @@ Chat.prototype = {
     },
 
     /**
-     * @param {CONST.ChatMessage} message
-     * @return {Chat}
+     * @param {xss.ChatMessage} message
+     * @return {xss.Chat}
      */
     add: function(message) {
         var anim, callback;
@@ -91,11 +90,11 @@ Chat.prototype = {
         // Animation
         else {
             anim = {to: [0, -7], duration: this.animDuration, callback: callback};
-            this.shapes[CONST.NS_CHAT + 0] = null;
-            XSS.shapes[CONST.NS_CHAT + 0] = null; // TODO: Can I remove this?
+            this.shapes[xss.NS_CHAT + 0] = null;
+            xss.shapes[xss.NS_CHAT + 0] = null; // TODO: Can I remove this?
             for (var k in this.shapes) {
-                if (this.shapes.hasOwnProperty(k) && XSS.shapes[k]) {
-                    XSS.shapes[k].animate(anim);
+                if (this.shapes.hasOwnProperty(k) && xss.shapes[k]) {
+                    xss.shapes[k].animate(anim);
                 }
             }
         }
@@ -104,14 +103,14 @@ Chat.prototype = {
     },
 
     send: function(str) {
-        XSS.socket.emit(CONST.EVENT_CHAT_MESSAGE, str);
+        xss.socket.emit(xss.EVENT_CHAT_MESSAGE, str);
     },
 
     _bindEvents: function() {
-        var ns = CONST.NS_CHAT;
-        XSS.event.on(CONST.EVENT_CHAT_MESSAGE, ns, this._chatMessage.bind(this));
-        XSS.event.on(CONST.EVENT_CHAT_NOTICE, ns, this._chatNotice.bind(this));
-        XSS.event.on(CONST.EVENT_KEYDOWN, ns, this._chatFocus.bind(this));
+        var ns = xss.NS_CHAT;
+        xss.event.on(xss.EVENT_CHAT_MESSAGE, ns, this._chatMessage.bind(this));
+        xss.event.on(xss.EVENT_CHAT_NOTICE, ns, this._chatNotice.bind(this));
+        xss.event.on(xss.EVENT_KEYDOWN, ns, this._chatFocus.bind(this));
     },
 
     /**
@@ -139,16 +138,16 @@ Chat.prototype = {
      */
     _chatFocus: function(ev) {
         switch (ev.keyCode) {
-            case CONST.KEY_ESCAPE:
+            case xss.KEY_ESCAPE:
                 this._focusInput(false);
                 ev.preventDefault();
                 break;
-            case CONST.KEY_ENTER:
+            case xss.KEY_ENTER:
                 ev.preventDefault();
                 if (this._hasFocus) {
                     this._sendMessage(this.input.getValue());
                     this._focusInput(false);
-                } else if (!XSS.keysBlocked) {
+                } else if (!xss.keysBlocked) {
                     this._focusInput(true);
                 }
                 break;
@@ -162,11 +161,11 @@ Chat.prototype = {
     _focusInput: function(focus) {
         var left = 126, prefix, maxValWidth;
         prefix = this.names[this.index] + ': ';
-        maxValWidth = CONST.WIDTH - XSS.font.width(prefix) - left - 8;
+        maxValWidth = xss.WIDTH - xss.font.width(prefix) - left - 8;
         this._hasFocus = focus;
         this._updateShapes();
         if (focus) {
-            this.input = new InputField(left, CONST.HEIGHT - 10, prefix);
+            this.input = new xss.InputField(left, xss.HEIGHT - 10, prefix);
             this.input.maxValWidth = maxValWidth;
             this.input.setValue('');
         } else if (this.input) {
@@ -192,16 +191,16 @@ Chat.prototype = {
     },
 
     _sentIndication: function() {
-        var shape, x = CONST.WIDTH - XSS.font.width(CONST.UC_ENTER_KEY) - 2;
-        shape = XSS.font.shape(CONST.UC_ENTER_KEY, x, CONST.HEIGHT - 10);
+        var shape, x = xss.WIDTH - xss.font.width(xss.UC_ENTER_KEY) - 2;
+        shape = xss.font.shape(xss.UC_ENTER_KEY, x, xss.HEIGHT - 10);
         shape.flash(150, 150).lifetime(0, 150 * 3);
-        XSS.shapes.msgsent = shape;
+        xss.shapes.msgsent = shape;
     },
 
     _deleteShapes: function() {
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
-                XSS.shapes[k] = null;
+                xss.shapes[k] = null;
                 this.shapes[k] = null;
             }
         }
@@ -217,9 +216,9 @@ Chat.prototype = {
                 message.body = message.body.replace(re, this.names[i]);
             }
             messageStr = '>' + message.body;
-            left -= XSS.font.width('>');
+            left -= xss.font.width('>');
         }
-        return XSS.font.shape(messageStr, left, top);
+        return xss.font.shape(messageStr, left, top);
     },
 
     /**
@@ -237,10 +236,10 @@ Chat.prototype = {
         messages = messages.slice(-slice);
 
         for (var i = 0, m = messages.length; i < m; i++) {
-            shapes[CONST.NS_CHAT + i] = this._getMessageShape(i, messages[i]);
+            shapes[xss.NS_CHAT + i] = this._getMessageShape(i, messages[i]);
         }
 
-        XSS.util.extend(XSS.shapes, shapes);
+        xss.util.extend(xss.shapes, shapes);
         return shapes;
     }
 

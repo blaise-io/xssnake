@@ -1,16 +1,16 @@
 'use strict';
 
 /**
- * @param {ShapePixels=} pixels
+ * @param {xss.ShapePixels=} pixels
  * @constructor
  */
-function BoundingBox(pixels) {
+xss.BoundingBox = function(pixels) {
     if (pixels) {
         this._calculateFromPixels(pixels);
     }
-}
+};
 
-BoundingBox.prototype = {
+xss.BoundingBox.prototype = {
 
     x1: 0,
     x2: 0,
@@ -22,7 +22,7 @@ BoundingBox.prototype = {
 
     /**
      * @param {number} expand
-     * @return {BoundingBox}
+     * @return {xss.BoundingBox}
      */
     expand: function(expand) {
         this.x1 -= expand;
@@ -34,8 +34,8 @@ BoundingBox.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
-     * @return {BoundingBox}
+     * @param {xss.ShapePixels} pixels
+     * @return {xss.BoundingBox}
      * @private
      */
     _calculateFromPixels: function(pixels) {
@@ -62,7 +62,7 @@ BoundingBox.prototype = {
     },
 
     /**
-     * @return {BoundingBox}
+     * @return {xss.BoundingBox}
      * @private
      */
     _calculateDimensions: function() {

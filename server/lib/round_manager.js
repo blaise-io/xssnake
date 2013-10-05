@@ -1,30 +1,24 @@
 'use strict';
 
-var Score = require('./score.js');
-var Round = require('./round.js');
-var CONST = require('../shared/const.js');
-
 /**
- * @param {Room} room
+ * @param {xss.Room} room
  * @constructor
  */
-function RoundManager(room) {
+xss.RoundManager = function(room) {
     this.room = room;
     this.levelIndex = 0;
 
-    this.score = new Score(room);
-    this.round = new Round(room, this.levelIndex);
+    this.score = new xss.Score(room);
+    this.round = new xss.Round(room, this.levelIndex);
 
     this.started = false;
     this.roundsPlayed = 0;
 
     this._restartTimer = 0;
     this._nextRoundTimer = 0;
-}
+};
 
-module.exports = RoundManager;
-
-RoundManager.prototype = {
+xss.RoundManager.prototype = {
 
     destruct: function() {
         clearTimeout(this._restartTimer);
@@ -76,7 +70,7 @@ RoundManager.prototype = {
      * @return {boolean}
      */
     allRoundsPlayed: function() {
-        return (this.roundsPlayed + 1 >= CONST.ROUNDS_MAX);
+        return (this.roundsPlayed + 1 >= xss.ROUNDS_MAX);
     },
 
     endCurrentRound: function() {
@@ -90,10 +84,10 @@ RoundManager.prototype = {
 
     nextRoundStartDelay: function() {
         var delay = this.round.allCrashed() ?
-            CONST.TIME_ROUND_PAUSE : CONST.TIME_ROUND_GLOAT;
+            xss.TIME_ROUND_PAUSE : xss.TIME_ROUND_GLOAT;
 
         this.room.emit(
-            CONST.EVENT_CHAT_NOTICE, [CONST.NOTICE_NEW_ROUND, delay]
+            xss.EVENT_CHAT_NOTICE, [xss.NOTICE_NEW_ROUND, delay]
         );
 
         this._nextRoundTimer = setTimeout(
@@ -104,7 +98,7 @@ RoundManager.prototype = {
     nextRoundStart: function() {
         this.roundsPlayed++;
         this.round.destruct();
-        this.round = new Round(this.room, this.getNextLevel());
+        this.round = new xss.Round(this.room, this.getNextLevel());
         this.round.countdown();
         this.room.emitState();
     },
@@ -114,22 +108,22 @@ RoundManager.prototype = {
     },
 
     /**
-     * @param {Client} winner
+     * @param {xss.Client} winner
      */
     endAllRounds: function(winner) {
-        if (this.room.options[CONST.FIELD_XSS]) {
+        if (this.room.options[xss.FIELD_xss]) {
             this._xssFetch(winner);
         } else {
             this.round.game.showLotsOfApples();
         }
         this._restartTimer = setTimeout(
             this.room.restartRounds.bind(this.room),
-            CONST.TIME_ALL_ROUNDS_GLOAT * 1000
+            xss.TIME_ALL_ROUNDS_GLOAT * 1000
         );
     },
 
     /**
-     * @param {Client} winner
+     * @param {xss.Client} winner
      */
     _xssFetch: function(winner) {
         var pubsub = this.room.server.pubsub;
@@ -141,24 +135,24 @@ RoundManager.prototype = {
             }
         }.bind(this);
 
-        pubsub.on(CONST.EVENT_XSS_REQ, this._xssListener);
-        winner.emit(CONST.EVENT_XSS_REQ);
+        pubsub.on(xss.EVENT_XSS_REQ, this._xssListener);
+        winner.emit(xss.EVENT_XSS_REQ);
     },
 
     _xssRemoveListener: function() {
         if (this._xssListener) {
             this.room.server.pubsub.removeListener(
-                CONST.EVENT_XSS_REQ, this._xssListener
+                xss.EVENT_XSS_REQ, this._xssListener
             );
         }
     },
 
     /**
-     * @param {Client} winner
-     * @param {string} xss
+     * @param {xss.Client} winner
+     * @param {string} code
      */
-    _xssFire: function(winner, xss) {
-        winner.broadcast(CONST.EVENT_XSS_RES, xss);
+    _xssFire: function(winner, code) {
+        winner.broadcast(xss.EVENT_XSS_RES, code);
     }
 
 };

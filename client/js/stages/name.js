@@ -1,24 +1,23 @@
-/*globals InputStage, MultiplayerStage*/
 'use strict';
 
 /**
- * @extends {InputStage}
- * @implements {StageInterface}
+ * @extends {xss.InputStage}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function NameStage() {
-    this.next = MultiplayerStage;
-    this.name = CONST.STORAGE_NAME;
+xss.NameStage = function() {
+    this.next = xss.MultiplayerStage;
+    this.name = xss.STORAGE_NAME;
     this.header = 'HELLO';
     this.label = 'My name is ';
     this.minChars = 2;
-    this.maxValWidth = CONST.UI_WIDTH_NAME;
+    this.maxValWidth = xss.UI_WIDTH_NAME;
 
-    InputStage.call(this);
-}
+    xss.InputStage.call(this);
+};
 
-XSS.util.extend(NameStage.prototype, InputStage.prototype);
-XSS.util.extend(NameStage.prototype, /** @lends NameStage.prototype */ {
+xss.util.extend(xss.NameStage.prototype, xss.InputStage.prototype);
+xss.util.extend(xss.NameStage.prototype, /** @lends xss.NameStage.prototype */ {
 
     /**
      * @return {Object}
@@ -40,25 +39,25 @@ XSS.util.extend(NameStage.prototype, /** @lends NameStage.prototype */ {
         if (error) {
             text = error;
         } else {
-            XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
-            text = XSS.util.randomItem(this._wits).replace(/%s/g, value);
+            xss.event.off(xss.EVENT_KEYDOWN, xss.NS_INPUT);
+            text = xss.util.randomItem(this._wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(function() {
-                XSS.flow.switchStage(this.next);
+                xss.flow.switchStage(this.next);
             }.bind(this), duration);
         }
 
-        shape = XSS.font.shape(text, CONST.MENU_LEFT, top);
+        shape = xss.font.shape(text, xss.MENU_LEFT, top);
         shape.lifetime(0, duration);
 
-        XSS.shapes.message = shape;
+        xss.shapes.message = shape;
     },
 
     _wits: [
         '%s%s%s!!!',
         'You have the same name as my mom',
-        'LOVELY ' + new Array(4).join(CONST.UC_HEART),
-        CONST.UC_SKULL,
+        'LOVELY ' + new Array(4).join(xss.UC_HEART),
+        xss.UC_SKULL,
         'Lamest name EVER',
         'Clever name!',
         'Mmm I love the way you handled that keyboard',
@@ -82,5 +81,5 @@ XSS.util.extend(NameStage.prototype, /** @lends NameStage.prototype */ {
         'Your soul is beautiful!',
         'Your soul is delicous'
     ]
-
 });
+

@@ -1,4 +1,3 @@
-/*globals MainStage*/
 'use strict';
 
 /**
@@ -6,29 +5,29 @@
  * @param {Function=} Stage
  * @constructor
  */
-function StageFlow(Stage) {
-    this._FirstStage = Stage || MainStage;
+xss.StageFlow = function(Stage) {
+    this._FirstStage = Stage || xss.MainStage;
 
-    if (XSS.font.loaded) {
+    if (xss.font.loaded) {
         this.start();
     } else {
-        XSS.event.once(
-            CONST.PUB_FONT_LOAD,
-            CONST.NS_FLOW,
+        xss.event.once(
+            xss.PUB_FONT_LOAD,
+            xss.NS_FLOW,
             this.start.bind(this)
         );
     }
-}
+};
 
-StageFlow.prototype = {
+xss.StageFlow.prototype = {
 
     destruct: function() {
         this.stage.destruct();
-        if (XSS.socket) {
-            XSS.socket.destruct();
+        if (xss.socket) {
+            xss.socket.destruct();
         }
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_FLOW);
-        XSS.canvas.garbageCollect();
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_FLOW);
+        xss.canvas.garbageCollect();
     },
 
     restart: function() {
@@ -37,7 +36,7 @@ StageFlow.prototype = {
     },
 
     start: function() {
-        XSS.shapes = {};
+        xss.shapes = {};
         this._history = [];
         this._bindGlobalEvents();
         this._setupMenuSkeletton();
@@ -47,7 +46,7 @@ StageFlow.prototype = {
     getData: function() {
         var value = {};
         for (var i = 0, m = this._history.length; i < m; i++) {
-            XSS.util.extend(value, this._history[i].getData());
+            xss.util.extend(value, this._history[i].getData());
         }
         return value;
     },
@@ -71,7 +70,7 @@ StageFlow.prototype = {
         this.stage.destruct();
 
         // Remove everything
-        XSS.shapes.stage = null;
+        xss.shapes.stage = null;
 
         // Replace by animation
         this._switchStageAnimate(
@@ -91,17 +90,17 @@ StageFlow.prototype = {
     },
 
     refreshShapes: function() {
-        XSS.shapes.stage = this.stage.getShape();
+        xss.shapes.stage = this.stage.getShape();
     },
 
     _setupMenuSkeletton: function() {
-        var border = XSS.shapegen.outerBorder();
+        var border = xss.shapegen.outerBorder();
         for (var k in border) {
             if (border.hasOwnProperty(k)) {
-                XSS.shapes[k] = border[k];
+                xss.shapes[k] = border[k];
             }
         }
-        XSS.shapes.header = XSS.shapegen.header();
+        xss.shapes.header = xss.shapegen.header();
     },
 
     /**
@@ -109,7 +108,7 @@ StageFlow.prototype = {
      */
     _bindGlobalEvents: function() {
         window.onhashchange = this._hashChange.bind(this);
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_FLOW, this._handleKeys.bind(this));
+        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_FLOW, this._handleKeys.bind(this));
     },
 
     /**
@@ -117,10 +116,10 @@ StageFlow.prototype = {
      */
     _hashChange: function() {
         if (
-            XSS.util.hash(CONST.HASH_ROOM).length === CONST.ROOM_KEY_LENGTH &&
+            xss.util.hash(xss.HASH_ROOM).length === xss.ROOM_KEY_LENGTH &&
             1 === this._history.length
         ) {
-            XSS.flow.restart();
+            xss.flow.restart();
         }
     },
 
@@ -132,31 +131,31 @@ StageFlow.prototype = {
         var mute, instruct;
 
         // Firefox disconnects websocket on Esc. Disable that.
-        if (ev.keyCode === CONST.KEY_ESCAPE) {
+        if (ev.keyCode === xss.KEY_ESCAPE) {
             ev.preventDefault();
         }
 
         // Global mute key.
         // Ignore key when user is in input field. Start screen might
-        // contain a dialog, so do not use XSS.keysBlocked here.
-        if (!XSS.shapes.caret && ev.keyCode === CONST.KEY_MUTE) {
-            mute = !XSS.util.storage(CONST.STORAGE_MUTE);
+        // contain a dialog, so do not use xss.keysBlocked here.
+        if (!xss.shapes.caret && ev.keyCode === xss.KEY_MUTE) {
+            mute = !xss.util.storage(xss.STORAGE_MUTE);
             instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
-            XSS.util.storage(CONST.STORAGE_MUTE, mute);
-            XSS.util.instruct(instruct, 1e3);
-            XSS.play.menu_alt();
+            xss.util.storage(xss.STORAGE_MUTE, mute);
+            xss.util.instruct(instruct, 1e3);
+            xss.play.menu_alt();
         }
     },
 
     /**
-     * @param {Shape} oldShape
-     * @param {Shape} newShape
+     * @param {xss.Shape} oldShape
+     * @param {xss.Shape} newShape
      * @param {boolean} back
      * @param {function()} callback
      * @private
      */
     _switchStageAnimate: function(oldShape, newShape, back, callback) {
-        var oldStageAnim, newStageAnim, width = CONST.WIDTH - CONST.MENU_LEFT;
+        var oldStageAnim, newStageAnim, width = xss.WIDTH - xss.MENU_LEFT;
 
         if (back) {
             oldStageAnim = {to: [width, 0]};
@@ -169,24 +168,24 @@ StageFlow.prototype = {
         newStageAnim.callback = callback;
 
         if (back) {
-            XSS.play.swoosh_rev();
+            xss.play.swoosh_rev();
         } else {
-            XSS.play.swoosh();
+            xss.play.swoosh();
         }
 
-        XSS.shapes.oldstage = oldShape.clone().animate(oldStageAnim);
-        XSS.shapes.newstage = newShape.clone().animate(newStageAnim);
+        xss.shapes.oldstage = oldShape.clone().animate(oldStageAnim);
+        xss.shapes.newstage = newShape.clone().animate(newStageAnim);
     },
 
     /**
-     * @param {StageInterface} stage
+     * @param {xss.StageInterface} stage
      * @param {boolean} back
      * @private
      */
     _setStage: function(stage, back) {
         // Remove old stages
-        XSS.shapes.oldstage = null;
-        XSS.shapes.newstage = null;
+        xss.shapes.oldstage = null;
+        xss.shapes.newstage = null;
 
         this.stage = stage;
         this.stage.construct();
@@ -194,7 +193,7 @@ StageFlow.prototype = {
 
         if (back) {
             this._history.pop();
-            XSS.util.hash();
+            xss.util.hash();
         } else {
             this._history.push(stage);
         }

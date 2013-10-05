@@ -1,12 +1,11 @@
 'use strict';
 
-var CONST = require('../shared/const.js');
 
 /**
  * @param {Object} connection
  * @constructor
  */
-function Client(connection) {
+xss.Client = function(connection) {
     this.connection = connection;
 
     this.name = '';
@@ -15,22 +14,20 @@ function Client(connection) {
     this.index = -1;
     this.limbo = false;
 
-    /** @type {EventHandler} */
+    /** @type {xss.EventHandler} */
     this.eventHandler = null;
 
-    /** @type {Snake} */
+    /** @type {xss.Snake} */
     this.snake = null;
 
-    /** @type {Room} */
+    /** @type {xss.Room} */
     this.room = null;
 
     /** @type {Array.<Array>} */
     this._emitBuffer = [];
-}
+};
 
-module.exports = Client;
-
-Client.prototype = {
+xss.Client.prototype = {
 
     destruct: function() {
         this.eventHandler.destruct();
@@ -41,7 +38,7 @@ Client.prototype = {
     },
 
     /**
-     * @return {Game}
+     * @return {xss.Game}
      */
     getGame: function() {
         var room = this.room, rounds = room.rounds;
@@ -80,7 +77,7 @@ Client.prototype = {
      * Buffer events to be sent later using flush()
      * @param {string} type
      * @param {*} data
-     * @return {Client}
+     * @return {xss.Client}
      */
     buffer: function(type, data) {
         this._emitBuffer.push([type, data]);
@@ -89,11 +86,11 @@ Client.prototype = {
 
     /**
      * Send buffer
-     * @return {Client}
+     * @return {xss.Client}
      */
     flush: function() {
         if (this._emitBuffer.length > 1) {
-            this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+            this.emit(xss.EVENT_COMBI, this._emitBuffer);
         } else if (this._emitBuffer.length) {
             this.emit(this._emitBuffer[0][0], this._emitBuffer[0][1]);
         }

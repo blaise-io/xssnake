@@ -4,7 +4,7 @@
  * @param {ImageData} imagedata
  * @constructor
  */
-function LevelData(imagedata) {
+xss.LevelData = function(imagedata) {
     this.width = imagedata.width;
     this.height = imagedata.height;
 
@@ -14,11 +14,9 @@ function LevelData(imagedata) {
     this.walls = [];
 
     this._parseImagedata(imagedata.data);
-}
+};
 
-module.exports = LevelData;
-
-LevelData.prototype = {
+xss.LevelData.prototype = {
 
     /**
      * @param {Object} imagedata

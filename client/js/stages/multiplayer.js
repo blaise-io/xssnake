@@ -1,18 +1,17 @@
-/*globals FormStage, Form, ChallengeStage, StartGameStage*/
 'use strict';
 
 /**
  * @constructor
- * @implements {StageInterface}
- * @extends {FormStage}
+ * @implements {xss.StageInterface}
+ * @extends {xss.FormStage}
  */
-function MultiplayerStage() {
-    FormStage.call(this);
+xss.MultiplayerStage = function() {
+    xss.FormStage.call(this);
     this.form = this._getForm();
-}
+};
 
-XSS.util.extend(MultiplayerStage.prototype, FormStage.prototype);
-XSS.util.extend(MultiplayerStage.prototype, /** @lends MultiplayerStage.prototype */ {
+xss.util.extend(xss.MultiplayerStage.prototype, xss.FormStage.prototype);
+xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.prototype */ {
 
     /**
      * @return {Object}
@@ -29,27 +28,27 @@ XSS.util.extend(MultiplayerStage.prototype, /** @lends MultiplayerStage.prototyp
      * @private
      */
     getNextStage: function(values) {
-        if (values[CONST.FIELD_XSS]) {
-            return ChallengeStage;
+        if (values[xss.FIELD_xss]) {
+            return xss.ChallengeStage;
         } else {
-            return StartGameStage;
+            return xss.StartGameStage;
         }
     },
 
     /**
-     * @returns {Form}
+     * @returns {xss.Form}
      * @private
      */
     _getForm: function() {
-        var form = new Form('GAME OPTIONS');
+        var form = new xss.Form('GAME OPTIONS');
 
-        form.addField(CONST.FIELD_DIFFICULTY, 'LEVEL DIFFICULTY', [
-            [CONST.FIELD_VALUE_MEDIUM, 'SNAKE'],
-            [CONST.FIELD_VALUE_HARD, 'PYTHON'],
-            [CONST.FIELD_VALUE_EASY, 'WORM']
+        form.addField(xss.FIELD_DIFFICULTY, 'LEVEL DIFFICULTY', [
+            [xss.FIELD_VALUE_MEDIUM, 'SNAKE'],
+            [xss.FIELD_VALUE_HARD, 'PYTHON'],
+            [xss.FIELD_VALUE_EASY, 'WORM']
         ]);
 
-        form.addField(CONST.FIELD_POWERUPS, 'POWER-UPS', [
+        form.addField(xss.FIELD_POWERUPS, 'POWER-UPS', [
             [true, 'YES'],
             [false, 'NO']
         ]);
@@ -59,21 +58,21 @@ XSS.util.extend(MultiplayerStage.prototype, /** @lends MultiplayerStage.prototyp
             ['YES'],['OK'],['TRUE'],['ACCEPT'],['ENABLE'],['HAO'],['OUI!']
         ]);
 
-        form.addField(CONST.FIELD_PRIVATE, 'PRIVATE', [
+        form.addField(xss.FIELD_PRIVATE, 'PRIVATE', [
             [false, 'NO'],
             [true, 'YES']
         ]);
 
-        form.addField(CONST.FIELD_XSS, 'XSS ' + CONST.UC_SKULL, [
+        form.addField(xss.FIELD_xss, 'xss ' + xss.UC_SKULL, [
             [false, 'NO'],
             [true, 'YES']
         ]);
 
-        form.addField(CONST.FIELD_MAX_PLAYERS, 'MAX PLAYERS', [
+        form.addField(xss.FIELD_MAX_PLAYERS, 'MAX PLAYERS', [
             [6],[1],[2],[3],[4],[5]
         ]);
 
         return form;
     }
-
 });
+

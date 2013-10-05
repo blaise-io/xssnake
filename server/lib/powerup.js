@@ -1,25 +1,19 @@
 'use strict';
 
-var Room = require('./room.js');
-var Util = require('../shared/util.js');
-var CONST = require('../shared/const.js');
-
 /**
  * Powerup
- * @param {Game} game
- * @param {Client} client
+ * @param {xss.Game} game
+ * @param {xss.Client} client
  * @constructor
  */
-function Powerup(game, client) {
+xss.Powerup = function(game, client) {
     this.game = game;
     this.room = game.room;
     this.client = client;
     this._triggerPowerup();
-}
+};
 
-module.exports = Powerup;
-
-Powerup.prototype = {
+xss.Powerup.prototype = {
 
     /**
      * @private
@@ -55,17 +49,17 @@ Powerup.prototype = {
         rank = rounds.score.rank(this.client);
 
         switch (rank) {
-            case CONST.SCORE_LEADING:
+            case xss.SCORE_LEADING:
                 gainful = 0.1;
                 neutral = 0.3;
                 harmful = 0.6;
                 break;
-            case CONST.SCORE_NEUTRAL:
+            case xss.SCORE_NEUTRAL:
                 gainful = 0.4;
                 neutral = 0.4;
                 harmful = 0.2;
                 break;
-            case CONST.SCORE_BEHIND:
+            case xss.SCORE_BEHIND:
                 gainful = 0.7;
                 neutral = 0.3;
                 harmful = 0.0;
@@ -100,7 +94,7 @@ Powerup.prototype = {
     },
 
     /**
-     * @return {Array.<Client>}
+     * @return {Array.<xss.Client>}
      * @private
      */
     _others: function() {
@@ -124,8 +118,8 @@ Powerup.prototype = {
             index = this.client.index,
             snake = this.client.snake;
         snake.speed -= 15;
-        room.buffer(CONST.EVENT_SNAKE_SPEED, [index, snake.speed]);
-        room.buffer(CONST.EVENT_SNAKE_ACTION, [index, '+Speed']).flush();
+        room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
+        room.buffer(xss.EVENT_SNAKE_ACTION, [index, '+Speed']).flush();
     },
 
     _speedBoostSelf: function() {
@@ -145,7 +139,7 @@ Powerup.prototype = {
     },
 
     /**
-     * @param {Array.<Client>} clients
+     * @param {Array.<xss.Client>} clients
      * @param {number} delta
      * @param {string} label
      * @param {number} duration
@@ -157,8 +151,8 @@ Powerup.prototype = {
             var index = clients[i].index,
                 snake = clients[i].snake;
             snake.speed += delta;
-            room.buffer(CONST.EVENT_SNAKE_SPEED, [index, snake.speed]);
-            room.buffer(CONST.EVENT_SNAKE_ACTION, [index, label]);
+            room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
+            room.buffer(xss.EVENT_SNAKE_ACTION, [index, label]);
         }
         room.flush();
 
@@ -167,20 +161,20 @@ Powerup.prototype = {
                 var index = clients[i].index,
                     snake = clients[i].snake;
                 snake.speed -= delta;
-                room.buffer(CONST.EVENT_SNAKE_SPEED, [index, snake.speed]);
+                room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
             }
             room.flush();
         });
     },
 
     _spawnApples: function() {
-        var r = Util.randomRange(3, 10);
-        this._spawn(CONST.SPAWN_APPLE, r, '+Apples');
+        var r = xss.util.randomRange(3, 10);
+        this._spawn(xss.SPAWN_APPLE, r, '+Apples');
     },
 
     _spawnPowerups: function() {
-        var r = Util.randomRange(2, 5);
-        this._spawn(CONST.SPAWN_POWERUP, r, '+Power-ups');
+        var r = xss.util.randomRange(2, 5);
+        this._spawn(xss.SPAWN_POWERUP, r, '+Power-ups');
     },
 
     /**
@@ -197,7 +191,7 @@ Powerup.prototype = {
             game.spawner.spawn(type);
         };
 
-        game.room.emit(CONST.EVENT_SNAKE_ACTION, [index, message]);
+        game.room.emit(xss.EVENT_SNAKE_ACTION, [index, message]);
 
         for (var i = 0; i < amount; i++) {
             setTimeout(spawn, i * 100);
@@ -213,7 +207,7 @@ Powerup.prototype = {
     },
 
     /**
-     * @param {Array.<Client>} clients
+     * @param {Array.<xss.Client>} clients
      * @private
      */
     _reverse: function(clients) {
@@ -221,8 +215,8 @@ Powerup.prototype = {
         for (var i = 0, m = clients.length; i < m; i++) {
             snake = clients[i].snake;
             snake.reverse();
-            room.buffer(CONST.EVENT_SNAKE_ACTION, [i, 'Reverse']);
-            room.buffer(CONST.EVENT_SNAKE_UPDATE, [i, snake.parts, snake.direction]);
+            room.buffer(xss.EVENT_SNAKE_ACTION, [i, 'Reverse']);
+            room.buffer(xss.EVENT_SNAKE_UPDATE, [i, snake.parts, snake.direction]);
         }
         room.flush();
     },
@@ -244,7 +238,7 @@ Powerup.prototype = {
     },
 
     /**
-     * @param {Array.<Client>} clients
+     * @param {Array.<xss.Client>} clients
      * @param {number} delta
      * @param {string} message
      * @private
@@ -255,8 +249,8 @@ Powerup.prototype = {
             var index = clients[i].index,
                 snake = clients[i].snake;
             snake.size = Math.max(1, snake.size + delta);
-            room.buffer(CONST.EVENT_SNAKE_ACTION, [index, message]);
-            room.buffer(CONST.EVENT_SNAKE_SIZE, [index, snake.size]);
+            room.buffer(xss.EVENT_SNAKE_ACTION, [index, message]);
+            room.buffer(xss.EVENT_SNAKE_SIZE, [index, snake.size]);
         }
         room.flush();
     }

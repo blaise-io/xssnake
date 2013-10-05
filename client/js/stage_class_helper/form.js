@@ -1,4 +1,3 @@
-/*globals Shape, Font*/
 'use strict';
 
 /**
@@ -6,15 +5,15 @@
  * @param {string} header
  * @constructor
  */
-function Form(header) {
+xss.Form = function(header) {
     this.header = header;
     this._selectedV = 0;
     this._selectedH = [];
     this._fields = [];
     this._optionMaxWidth = 0;
-}
+};
 
-Form.prototype = {
+xss.Form.prototype = {
 
     /**
      * @param {string} name
@@ -33,7 +32,7 @@ Form.prototype = {
         for (var i = 0, m = options.length; i < m; i++) {
             this._optionMaxWidth = Math.max(
                 this._optionMaxWidth,
-                XSS.font.width(options[i][1] || String(options[i][0]))
+                xss.font.width(options[i][1] || String(options[i][0]))
             );
         }
     },
@@ -42,7 +41,7 @@ Form.prototype = {
      * @param {number} delta
      */
     selectField: function(delta) {
-        this._selectedV = XSS.util.normArrIndex(this._selectedV + delta, this._fields);
+        this._selectedV = xss.util.normArrIndex(this._selectedV + delta, this._fields);
     },
 
     /**
@@ -51,7 +50,7 @@ Form.prototype = {
     selectOption: function(delta) {
         var focusField = this._fields[this._selectedV];
         if (focusField) {
-            this._selectedH[this._selectedV] = XSS.util.normArrIndex(
+            this._selectedH[this._selectedV] = xss.util.normArrIndex(
                 this._selectedH[this._selectedV] + delta,
                 focusField.options
             );
@@ -59,21 +58,21 @@ Form.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     getShape: function() {
         var x, optionX, y, shape;
 
-        x = CONST.MENU_LEFT;
-        y = CONST.MENU_TOP;
+        x = xss.MENU_LEFT;
+        y = xss.MENU_TOP;
 
-        optionX = CONST.MENU_LEFT + 2 + CONST.MENU_WIDTH -
-                  this._optionMaxWidth - XSS.font.width(' ' + CONST.UC_TR_LEFT);
+        optionX = xss.MENU_LEFT + 2 + xss.MENU_WIDTH -
+                  this._optionMaxWidth - xss.font.width(' ' + xss.UC_TR_LEFT);
 
-        shape = new Shape();
+        shape = new xss.Shape();
         shape.add(this._getHeaderPixels(x, y));
 
-        y += CONST.MENU_TITLE_HEIGHT;
+        y += xss.MENU_TITLE_HEIGHT;
 
         // Draw options
         for (var i = 0, m = this._fields.length; i < m; i++) {
@@ -86,12 +85,12 @@ Form.prototype = {
                 bbox.x1 -= 1;
                 bbox.x2 += 1;
                 bbox.y1 = y - 1;
-                bbox.y2 = y + Font.LINE_HEIGHT;
+                bbox.y2 = y + xss.Font.LINE_HEIGHT;
                 option.invert();
             }
 
             shape.add(option.pixels);
-            y += Font.LINE_HEIGHT_MENU;
+            y += xss.Font.LINE_HEIGHT_MENU;
         }
 
         return shape;
@@ -112,12 +111,12 @@ Form.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _getHeaderPixels: function(x, y) {
-        var header = XSS.font.pixels(this.header);
-        return XSS.transform.zoomX2(header, x, y, true);
+        var header = xss.font.pixels(this.header);
+        return xss.transform.zoomX2(header, x, y, true);
     },
 
     /**
@@ -126,30 +125,30 @@ Form.prototype = {
      * @param {number} col2X
      * @param {number} y
      * @param {boolean} active
-     * @return {Shape}
+     * @return {xss.Shape}
      * @private
      */
     _getOptionsShape: function(i, x, col2X, y, active) {
         var label, shape, value, option, pixels, xx = {};
 
         label = this._fields[i].label;
-        shape = XSS.font.shape(label, x, y);
+        shape = xss.font.shape(label, x, y);
 
         option = this._fields[i].options[this._selectedH[i] || 0];
         value = option[1] || String(option[0]);
 
-        xx.option = col2X + (this._optionMaxWidth - XSS.font.width(value)) / 2;
+        xx.option = col2X + (this._optionMaxWidth - xss.font.width(value)) / 2;
         xx.option = Math.floor(xx.option);
 
-        pixels = XSS.font.pixels(value, xx.option, y);
+        pixels = xss.font.pixels(value, xx.option, y);
         shape.add(pixels);
 
-        xx.left = col2X - XSS.font.width(CONST.UC_TR_LEFT + ' ');
-        xx.right = col2X + this._optionMaxWidth + XSS.font.width(' ');
+        xx.left = col2X - xss.font.width(xss.UC_TR_LEFT + ' ');
+        xx.right = col2X + this._optionMaxWidth + xss.font.width(' ');
 
         shape.add(
-            XSS.font.pixels(active ? CONST.UC_TR_LEFT : '<', xx.left, y),
-            XSS.font.pixels(active ? CONST.UC_TR_RIGHT : '>', xx.right, y)
+            xss.font.pixels(active ? xss.UC_TR_LEFT : '<', xx.left, y),
+            xss.font.pixels(active ? xss.UC_TR_RIGHT : '>', xx.right, y)
         );
 
         return shape;

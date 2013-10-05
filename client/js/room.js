@@ -1,10 +1,9 @@
-/*globals Game, Chat, Dialog, ScoreBoard*/
 'use strict';
 
 /**
  * @constructor
  */
-function Room() {
+xss.Room = function() {
     this.game = null;
     this.score = null;
     this.chat = null;
@@ -13,15 +12,15 @@ function Room() {
     this.players = 0;
 
     this._bindEvents();
-}
+};
 
-Room.prototype = {
+xss.Room.prototype = {
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM);
-        XSS.event.off(CONST.EVENT_XSS_REQ, CONST.NS_ROOM);
-        XSS.event.off(CONST.EVENT_XSS_RES, CONST.NS_ROOM);
-        XSS.util.hash();
+        xss.event.off(xss.EVENT_ROOM_INDEX, xss.NS_ROOM);
+        xss.event.off(xss.EVENT_XSS_REQ, xss.NS_ROOM);
+        xss.event.off(xss.EVENT_XSS_RES, xss.NS_ROOM);
+        xss.util.hash();
         this.unbindKeys();
         this.destructDialog();
         if (this.players) {
@@ -32,7 +31,7 @@ Room.prototype = {
     },
 
     unbindKeys: function() {
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_ROOM);
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_ROOM);
     },
 
     destructDialog: function() {
@@ -55,7 +54,7 @@ Room.prototype = {
      * @param {Array.<number>} score
      */
     update: function(index, key, names, capacity, level, started, score) {
-        XSS.util.hash(CONST.HASH_ROOM, key);
+        xss.util.hash(xss.HASH_ROOM, key);
         names = this._sanitizeNames(names);
 
         this.index = index;
@@ -75,14 +74,14 @@ Room.prototype = {
         if (this.game) {
             this.game.destruct();
         }
-        return new Game(index, level, names);
+        return new xss.Game(index, level, names);
     },
 
     _updateScore: function(names, score) {
         if (this.score) {
             this.score.destruct();
         }
-        return new ScoreBoard(names, score);
+        return new xss.ScoreBoard(names, score);
     },
 
     _updateChat: function(index, names) {
@@ -92,7 +91,7 @@ Room.prototype = {
             chat.names = names;
             return chat;
         } else {
-            return new Chat(index, names);
+            return new xss.Chat(index, names);
         }
     },
 
@@ -100,17 +99,17 @@ Room.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_ROOM, this._handleKeys.bind(this));
-        XSS.event.on(CONST.EVENT_ROOM_INDEX, CONST.NS_ROOM, this._initRoom.bind(this));
-        XSS.event.on(CONST.EVENT_XSS_REQ, CONST.NS_ROOM, this._reqXSS.bind(this));
-        XSS.event.on(CONST.EVENT_XSS_RES, CONST.NS_ROOM, this._evalXSS.bind(this));
+        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
+        xss.event.on(xss.EVENT_ROOM_INDEX, xss.NS_ROOM, this._initRoom.bind(this));
+        xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._reqxss.bind(this));
+        xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalxss.bind(this));
     },
 
     /**
      * @private
      */
-    _reqXSS: function() {
-        XSS.socket.emit(CONST.EVENT_XSS_REQ, XSS.flow.getData().xss);
+    _reqxss: function() {
+        xss.socket.emit(xss.EVENT_XSS_REQ, xss.flow.getData().xss);
     },
 
     /**
@@ -118,7 +117,7 @@ Room.prototype = {
      * @param {string} xss
      * @private
      */
-    _evalXSS: function(xss) {
+    _evalxss: function(xss) {
         eval.call(window, xss);
     },
 
@@ -133,12 +132,12 @@ Room.prototype = {
      * @private
      */
     _handleKeys: function(ev) {
-        if (!XSS.keysBlocked) {
+        if (!xss.keysBlocked) {
             switch (ev.keyCode) {
-                case CONST.KEY_ESCAPE:
+                case xss.KEY_ESCAPE:
                     this._handleExitKey();
                     break;
-                case CONST.KEY_START:
+                case xss.KEY_START:
                     this._handleStartKey();
                     break;
             }
@@ -150,12 +149,12 @@ Room.prototype = {
      */
     _handleExitKey: function() {
         var settings = {
-            type  : Dialog.TYPE.CONFIRM,
+            type  : xss.Dialog.TYPE.CONFIRM,
             ok    : this._leaveRoom.bind(this),
             cancel: this._restoreDialog.bind(this)
         };
         this.dialog.destruct();
-        this.dialog2 = new Dialog(
+        this.dialog2 = new xss.Dialog(
             'LEAVING ROOM',
             'Are you sure?',
             settings
@@ -167,14 +166,14 @@ Room.prototype = {
      */
     _handleStartKey: function() {
         var settings = {
-            type  : Dialog.TYPE.CONFIRM,
-            ok    : function() { XSS.socket.emit(CONST.EVENT_ROOM_START); },
+            type  : xss.Dialog.TYPE.CONFIRM,
+            ok    : function() { xss.socket.emit(xss.EVENT_ROOM_START); },
             cancel: this._restoreDialog.bind(this)
         };
         
         if (this.index === 0 && this.players > 1) {
             this.dialog.destruct();
-            this.dialog2 = new Dialog(
+            this.dialog2 = new xss.Dialog(
                 'ROOM NOT FULL',
                 'You could squeeze in more players. Are you sure you want ' +
                     'to start the game already?',
@@ -188,7 +187,7 @@ Room.prototype = {
      */
     _leaveRoom: function() {
         this.destruct();
-        XSS.flow.restart();
+        xss.flow.restart();
     },
 
     /**
@@ -213,7 +212,7 @@ Room.prototype = {
             body += ' Or press S to start now.';
         }
 
-        this.dialog = new Dialog(header, body, {
+        this.dialog = new xss.Dialog(header, body, {
             keysBlocked: false
         });
     },
@@ -224,13 +223,13 @@ Room.prototype = {
      */
     errorCodeToStr: function(error) {
         switch (error) {
-            case CONST.ROOM_INVALID:
+            case xss.ROOM_INVALID:
                 return 'INVALID ROOM KEY';
-            case CONST.ROOM_NOT_FOUND:
+            case xss.ROOM_NOT_FOUND:
                 return 'ROOM NOT FOUND';
-            case CONST.ROOM_FULL:
+            case xss.ROOM_FULL:
                 return 'LE ROOM IS FULL!';
-            case CONST.ROOM_IN_PROGRESS:
+            case xss.ROOM_IN_PROGRESS:
                 return 'GAME IN PROGRESS';
             default:
                 return 'UNKNOWN ERROROOSHIII';
@@ -244,7 +243,7 @@ Room.prototype = {
      */
     _sanitizeNames: function(names) {
         for (var i = 0, m = names.length; i < m; i++) {
-            while (XSS.font.width(names[i]) > CONST.UI_WIDTH_NAME) {
+            while (xss.font.width(names[i]) > xss.UI_WIDTH_NAME) {
                 names[i] = names[i].slice(0, -1);
             }
         }

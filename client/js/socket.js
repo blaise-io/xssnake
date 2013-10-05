@@ -1,4 +1,3 @@
-/*globals Client, Room, Game, Spawnable, Powerup, Shape, StageFlow, SockJS*/
 'use strict';
 
 /**
@@ -6,30 +5,30 @@
  * @param callback {function({Socket})}
  * @constructor
  */
-function Socket(callback) {
+xss.Socket = function(callback) {
     this.callback = callback;
     this.connected = false;
 
-    this.connection = new SockJS(CONST.SERVER_ENDPOINT);
+    this.connection = new SockJS(xss.SERVER_ENDPOINT);
     this.connection.onopen = this._connect.bind(this);
     this.connection.onclose = this._disconnect.bind(this);
     this.connection.onmessage = this.handleMessage.bind(this);
 
     this._bindEvents();
-}
+};
 
-Socket.prototype = {
+xss.Socket.prototype = {
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_PING, CONST.NS_SOCKET);
-        XSS.event.off(CONST.EVENT_COMBI, CONST.NS_SOCKET);
-        if (XSS.room) {
-            XSS.room.destruct();
-            XSS.room = null;
+        xss.event.off(xss.EVENT_PING, xss.NS_SOCKET);
+        xss.event.off(xss.EVENT_COMBI, xss.NS_SOCKET);
+        if (xss.room) {
+            xss.room.destruct();
+            xss.room = null;
         }
         if (this.connection.readyState <= 1) {
-            this.connection.onclose = XSS.util.dummy;
-            this.connection.onmessage = XSS.util.dummy;
+            this.connection.onclose = xss.util.dummy;
+            this.connection.onmessage = xss.util.dummy;
             this.connection.close();
         }
     },
@@ -41,15 +40,15 @@ Socket.prototype = {
 
     _disconnect: function() {
         var callback = function() {
-            if (XSS.room) {
-                XSS.room.destruct();
-                XSS.room = null;
+            if (xss.room) {
+                xss.room.destruct();
+                xss.room = null;
             }
         };
         if (this.connected) {
-            XSS.util.error('CONNECTION LOST', callback);
+            xss.util.error('CONNECTION LOST', callback);
         } else {
-            XSS.util.error('CANNOT CONNECT');
+            xss.util.error('CANNOT CONNECT');
         }
     },
 
@@ -70,22 +69,22 @@ Socket.prototype = {
      */
     handleMessage: function(ev) {
         var data = JSON.parse(ev.data);
-        XSS.event.trigger(data[0], data[1]);
+        xss.event.trigger(data[0], data[1]);
     },
 
     /**
      * @private
      */
     _bindEvents: function() {
-        XSS.event.on(CONST.EVENT_PING,  CONST.NS_SOCKET, this.clientPing.bind(this));
-        XSS.event.on(CONST.EVENT_COMBI, CONST.NS_SOCKET, this.combinedEvents.bind(this));
+        xss.event.on(xss.EVENT_PING,  xss.NS_SOCKET, this.clientPing.bind(this));
+        xss.event.on(xss.EVENT_COMBI, xss.NS_SOCKET, this.combinedEvents.bind(this));
     },
 
     /**
      * @param {number} time
      */
     clientPing: function(time) {
-        XSS.socket.emit(CONST.EVENT_PONG, time);
+        xss.socket.emit(xss.EVENT_PONG, time);
     },
 
     /**
@@ -94,7 +93,7 @@ Socket.prototype = {
      */
     combinedEvents: function(data) {
         for (var i = 0, m = data.length; i < m; i++) {
-            XSS.event.trigger(data[i][0], data[i][1]);
+            xss.event.trigger(data[i][0], data[i][1]);
         }
     }
 

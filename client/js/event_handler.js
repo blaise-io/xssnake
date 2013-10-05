@@ -4,11 +4,11 @@
  * Pubsub
  * @constructor
  */
-function EventHandler() {
+xss.EventHandler = function() {
     this._topics = {};
-}
+};
 
-EventHandler.prototype = {
+xss.EventHandler.prototype = {
 
     /**
      * @param {string} topic

@@ -4,26 +4,18 @@ var http = require('http');
 var png = require('pngparse');
 var sockjs = require('sockjs');
 var nodeEvents = require('events');
-var config = require('../shared/config.js');
-var Util = require('../shared/util.js');
-var RoomManager = require('./room_manager.js');
-var Client = require('./client.js');
-var levels = require('../shared/levels.js');
-var LevelData = require('../shared/level_data.js');
-var EventHandler = require('./event_handler.js');
+
 
 /**
  * @constructor
  */
-function Server() {
+xss.Server = function() {
     this.pubsub = this.setupPubSub();
-    this.roomManager = new RoomManager(this);
+    this.roomManager = new xss.RoomManager(this);
     this._server = null;
-}
+};
 
-module.exports = Server;
-
-Server.prototype = {
+xss.Server.prototype = {
 
     destruct: function() {
         if (this._server) {
@@ -32,30 +24,30 @@ Server.prototype = {
     },
 
     /**
-     * @param {Array.<LevelData>} levels
+     * @param {Array.<xss.LevelData>} levels
      * @param {number=} port
      */
     start: function(levels, port) {
-        this.port = port || config.SERVER_PORT;
+        this.port = port || xss.SERVER_PORT;
         this.levels = levels;
         this.listen(this.port);
     },
 
     /**
-     * @param {function(Array.<LevelData>)} callback
+     * @param {function(Array.<xss.LevelData>)} callback
      */
     preloadLevels: function(callback) {
         var i, m, buffer, appendLevel, parsed = [];
 
         appendLevel = function(err, data) {
-            parsed[this] = new LevelData(data);
+            parsed[this] = new xss.LevelData(data);
             if (this + 1 === m) {
                 callback(parsed);
             }
         };
 
-        for (i = 0, m = levels.length; i < m; i++) {
-            buffer = new Buffer(levels[i], 'base64');
+        for (i = 0, m = xss.levels.length; i < m; i++) {
+            buffer = new Buffer(xss.levels[i], 'base64');
             png.parse(buffer, appendLevel.bind(i));
         }
     },
@@ -91,11 +83,11 @@ Server.prototype = {
         xssnake = sockjs.createServer();
         xssnake.on('connection', function(connection) {
             var client;
-            client = new Client(connection);
-            client.eventHandler = new EventHandler(client, this.pubsub);
+            client = new xss.Client(connection);
+            client.eventHandler = new xss.EventHandler(client, this.pubsub);
         }.bind(this));
 
-        xssnake.installHandlers(server, {prefix: '/xssnake', log: Util.dummy});
+        xssnake.installHandlers(server, {prefix: '/xssnake', log: xss.util.dummy});
 
         this._server = server;
     }

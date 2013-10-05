@@ -1,17 +1,13 @@
 var assert = require('assert');
-var Server = require('../server/lib/server.js');
-var Client = require('../server/lib/client.js');
-var Util = require('../server/shared/util.js');
-var CONST = require('../server/shared/const.js');
 
 describe('Rooms', function() {
 
     var server, roomManager, room, client, gameOptions, connectionDummy;
 
-    connectionDummy = {write: Util.dummy};
+    connectionDummy = {write: xss.util.dummy};
 
     before(function(done) {
-        server = new Server();
+        server = new xss.Server();
         server.preloadLevels(function(levels) {
             server.start(levels);
             done();
@@ -24,16 +20,16 @@ describe('Rooms', function() {
 
     beforeEach(function(done) {
         gameOptions = {};
-        gameOptions[CONST.FIELD_MAX_PLAYERS] = 6;
-        gameOptions[CONST.FIELD_DIFFICULTY] = CONST.FIELD_VALUE_MEDIUM;
-        gameOptions[CONST.FIELD_POWERUPS] = true;
-        gameOptions[CONST.FIELD_PRIVATE] = false;
-        gameOptions[CONST.FIELD_XSS] = false;
+        gameOptions[xss.FIELD_MAX_PLAYERS] = 6;
+        gameOptions[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_MEDIUM;
+        gameOptions[xss.FIELD_POWERUPS] = true;
+        gameOptions[xss.FIELD_PRIVATE] = false;
+        gameOptions[xss.FIELD_xss] = false;
 
         roomManager = server.roomManager;
 
         room = roomManager.createRoom(gameOptions);
-        client = new Client(connectionDummy);
+        client = new xss.Client(connectionDummy);
 
         done();
     });
@@ -68,7 +64,7 @@ describe('Rooms', function() {
         });
 
         it('Restarting', function() {
-            var otherClient = new Client(connectionDummy);
+            var otherClient = new xss.Client(connectionDummy);
             room.addClient(otherClient);
             room.addClient(client);
             room.restartRounds();
@@ -88,20 +84,20 @@ describe('Rooms', function() {
         });
 
         it('Not matching when not equal', function() {
-            var notEqualGameOptions = Util.clone(gameOptions);
-            notEqualGameOptions[CONST.FIELD_DIFFICULTY] = CONST.FIELD_VALUE_EASY;
+            var notEqualGameOptions = xss.util.clone(gameOptions);
+            notEqualGameOptions[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_EASY;
             assert(!roomManager.gameOptionsMatch(notEqualGameOptions, room));
         });
 
         it('Not matching when requesting private room', function() {
-            var gameOptionsPrivate = Util.clone(gameOptions);
-            gameOptionsPrivate[CONST.FIELD_PRIVATE] = true;
+            var gameOptionsPrivate = xss.util.clone(gameOptions);
+            gameOptionsPrivate[xss.FIELD_PRIVATE] = true;
             assert(!roomManager.gameOptionsMatch(gameOptionsPrivate, room));
         });
 
         it('Not matching when existing room is private', function() {
-            var privateGameoptions = Util.clone(gameOptions);
-            privateGameoptions[CONST.FIELD_PRIVATE] = true;
+            var privateGameoptions = xss.util.clone(gameOptions);
+            privateGameoptions[xss.FIELD_PRIVATE] = true;
             room = roomManager.createRoom(privateGameoptions);
             assert(!roomManager.gameOptionsMatch(gameOptions, room));
         });
@@ -125,7 +121,7 @@ describe('Rooms', function() {
         });
 
         it('Become host when previous host leaves', function() {
-            var otherClient = new Client(connectionDummy);
+            var otherClient = new xss.Client(connectionDummy);
             room.addClient(otherClient);
             room.removeClient(client);
             assert(room.isHost(otherClient));

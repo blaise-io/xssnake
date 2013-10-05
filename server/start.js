@@ -1,9 +1,8 @@
 'use strict';
 
-var Server = require('./lib/server.js');
-var server = new Server();
+xss.server = new xss.Server();
 
-server.preloadLevels(function(levels) {
-    server.start(levels);
-    console.log('Snake server running on port ' + server.port);
+xss.server.preloadLevels(function(levels) {
+    xss.server.start(levels);
+    console.log('Snake server running on port ' + xss.server.port);
 });

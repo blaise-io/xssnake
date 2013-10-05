@@ -3,15 +3,13 @@
 /**
  * Collisions and levels
  * @constructor
- * @param {LevelData} levelData
+ * @param {xss.LevelData} levelData
  */
-function Level(levelData) {
+xss.Level = function(levelData) {
     this.levelData = levelData;
-}
+};
 
-module.exports = Level;
-
-Level.prototype = {
+xss.Level.prototype = {
 
     /**
      * @param {number} x

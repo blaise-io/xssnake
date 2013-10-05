@@ -2,14 +2,15 @@
 
 /**
  * Stage with a vertical form
- * @implements {StageInterface}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function FormStage() {}
+xss.FormStage = function() {
+};
 
-FormStage.prototype = {
+xss.FormStage.prototype = {
 
-    /** @type {Form} */
+    /** @type {xss.Form} */
     form: null,
 
     getShape: function() {
@@ -30,46 +31,46 @@ FormStage.prototype = {
     },
 
     construct: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._handleKeys.bind(this));
+        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys.bind(this));
     },
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
-        XSS.shapes.stage = null;
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.shapes.stage = null;
     },
 
     _handleKeys: function(ev) {
-        if (XSS.keysBlocked) {
+        if (xss.keysBlocked) {
             return;
         }
         switch (ev.keyCode) {
-            case CONST.KEY_BACKSPACE:
-            case CONST.KEY_ESCAPE:
-                XSS.flow.previousStage();
+            case xss.KEY_BACKSPACE:
+            case xss.KEY_ESCAPE:
+                xss.flow.previousStage();
                 break;
-            case CONST.KEY_ENTER:
+            case xss.KEY_ENTER:
                 var next = this.getNextStage(this.form.getData());
-                XSS.flow.switchStage(next);
+                xss.flow.switchStage(next);
                 break;
-            case CONST.KEY_UP:
+            case xss.KEY_UP:
                 this.form.selectField(-1);
-                XSS.play.menu();
-                XSS.flow.refreshShapes();
+                xss.play.menu();
+                xss.flow.refreshShapes();
                 break;
-            case CONST.KEY_DOWN:
+            case xss.KEY_DOWN:
                 this.form.selectField(1);
-                XSS.play.menu();
-                XSS.flow.refreshShapes();
+                xss.play.menu();
+                xss.flow.refreshShapes();
                 break;
-            case CONST.KEY_LEFT:
+            case xss.KEY_LEFT:
                 this.form.selectOption(-1);
-                XSS.play.menu_alt();
-                XSS.flow.refreshShapes();
+                xss.play.menu_alt();
+                xss.flow.refreshShapes();
                 break;
-            case CONST.KEY_RIGHT:
+            case xss.KEY_RIGHT:
                 this.form.selectOption(1);
-                XSS.play.menu_alt();
-                XSS.flow.refreshShapes();
+                xss.play.menu_alt();
+                xss.flow.refreshShapes();
                 break;
         }
     }

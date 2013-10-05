@@ -1,24 +1,23 @@
-/*globals Shape, ShapePixels*/
 'use strict';
 
 /**
- * Font
+ * xss.Font
  * Write texts and draw icons
  * @constructor
  */
-function Font() {
+xss.Font = function() {
     this._ctx = this._getContext();
     this._detectFontLoad();
-}
+};
 
-/** @const */ Font.MAX_WIDTH = 9;
-/** @const */ Font.MAX_HEIGHT = 7;
-/** @const */ Font.BASELINE = 6;
-/** @const */ Font.LINE_HEIGHT = 8;
-/** @const */ Font.LINE_HEIGHT_MENU = 9;
-/** @const */ Font.BLURRY_TRESHOLD = 3;
+/** @const */ xss.Font.MAX_WIDTH = 9;
+/** @const */ xss.Font.MAX_HEIGHT = 7;
+/** @const */ xss.Font.BASELINE = 6;
+/** @const */ xss.Font.LINE_HEIGHT = 8;
+/** @const */ xss.Font.LINE_HEIGHT_MENU = 9;
+/** @const */ xss.Font.BLURRY_TRESHOLD = 3;
 
-Font.prototype = {
+xss.Font.prototype = {
 
     _cache: {},
 
@@ -27,10 +26,10 @@ Font.prototype = {
      * @param {number=} x
      * @param {number=} y
      * @param {Object=} options
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     shape: function(str, x, y, options) {
-        var chrs, pointer, shape = new Shape();
+        var chrs, pointer, shape = new xss.Shape();
 
         x = x || 0;
         y = y || 0;
@@ -50,7 +49,7 @@ Font.prototype = {
 
             if (chr === '\n' || !nextWordFit) {
                 pointer.x = 0;
-                pointer.y += Font.LINE_HEIGHT;
+                pointer.y += xss.Font.LINE_HEIGHT;
             } else {
                 pointer.x += width + 2;
             }
@@ -68,14 +67,14 @@ Font.prototype = {
      * @param {number=} x
      * @param {number=} y
      * @param {Object=} options
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     pixels: function(str, x, y, options) {
         return this.shape.apply(this, arguments).pixels;
     },
 
     height: function(str) {
-        return str.split(/\n/g).length * Font.LINE_HEIGHT;
+        return str.split(/\n/g).length * xss.Font.LINE_HEIGHT;
     },
 
     /**
@@ -98,19 +97,19 @@ Font.prototype = {
      * @return {Array}
      */
     endPos: function(str) {
-        return [this.width(str), this.height(str) - Font.LINE_HEIGHT];
+        return [this.width(str), this.height(str) - xss.Font.LINE_HEIGHT];
     },
 
     /**
      * @private
      */
     _detectFontLoad: function() {
-        var props = this._getChrProperties(CONST.UC_HOURGLASS);
+        var props = this._getChrProperties(xss.UC_HOURGLASS);
         if (props.width !== 8) {
             window.setTimeout(this._detectFontLoad.bind(this), 0);
         } else {
             this.loaded = true;
-            XSS.event.trigger(CONST.PUB_FONT_LOAD);
+            xss.event.trigger(xss.PUB_FONT_LOAD);
         }
     },
 
@@ -122,7 +121,7 @@ Font.prototype = {
     _chrProperties: function(chr) {
         if (!this._cache[chr]) {
             var chrProperties = this._getChrProperties(chr);
-            this._cache[chr] = chrProperties || this._chrProperties(CONST.UC_SQUARE);
+            this._cache[chr] = chrProperties || this._chrProperties(xss.UC_SQUARE);
         }
         return this._cache[chr];
     },
@@ -130,7 +129,7 @@ Font.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @param {Shape} shape
+     * @param {xss.Shape} shape
      * @param {string} chr
      * @param {Object.<string,number>} pointer
      * @return {number}
@@ -141,7 +140,7 @@ Font.prototype = {
 
         chrProperties = this._chrProperties(chr);
 
-        shiftedPixels = XSS.transform.shift(
+        shiftedPixels = xss.transform.shift(
             chrProperties.pixels,
             pointer.x + x,
             pointer.y + y
@@ -166,7 +165,7 @@ Font.prototype = {
     },
 
     /**
-     * @param {Shape} shape
+     * @param {xss.Shape} shape
      * @param {number} y
      * @private
      */
@@ -174,7 +173,7 @@ Font.prototype = {
         var bbox = shape.bbox();
         bbox.expand(1);
         bbox.y1 = y - 1;
-        bbox.y2 = y + Font.LINE_HEIGHT;
+        bbox.y2 = y + xss.Font.LINE_HEIGHT;
         shape.invert(bbox);
     },
 
@@ -186,8 +185,8 @@ Font.prototype = {
         var canvas, context, font;
 
         canvas = document.createElement('canvas');
-        canvas.width = Font.MAX_WIDTH;
-        canvas.height = Font.MAX_HEIGHT;
+        canvas.width = xss.Font.MAX_WIDTH;
+        canvas.height = xss.Font.MAX_HEIGHT;
 
         context = canvas.getContext('2d');
 
@@ -203,13 +202,13 @@ Font.prototype = {
 
     /**
      * @param {string} chr
-     * @return {{width: number, pixels: ShapePixels}|null}
+     * @return {{width: number, pixels: xss.ShapePixels}|null}
      * @private
      */
     _getChrProperties: function(chr) {
-        var data, pixels = new ShapePixels(), width = 0, len = 0, blurry = 0, valid,
-            w = Font.MAX_WIDTH,
-            h = Font.MAX_HEIGHT;
+        var data, pixels = new xss.ShapePixels(), width = 0, len = 0, blurry = 0, valid,
+            w = xss.Font.MAX_WIDTH,
+            h = xss.Font.MAX_HEIGHT;
 
         // Handle whitespace characters
         if (chr.match(/\s/)) {
@@ -220,7 +219,7 @@ Font.prototype = {
         this._ctx.fillRect(0, 0, w, h);
 
         this._ctx.fillStyle = '#fff';
-        this._ctx.fillText(chr, 0, Font.BASELINE);
+        this._ctx.fillText(chr, 0, xss.Font.BASELINE);
 
         data = this._ctx.getImageData(0, 0, w, h).data;
         for (var i = 0, m = data.length; i < m; i += 4) {
@@ -236,7 +235,7 @@ Font.prototype = {
             }
         }
 
-        valid = len && blurry / len <= Font.BLURRY_TRESHOLD;
+        valid = len && blurry / len <= xss.Font.BLURRY_TRESHOLD;
         return (valid) ? {width: width, pixels: pixels} : null;
     }
 

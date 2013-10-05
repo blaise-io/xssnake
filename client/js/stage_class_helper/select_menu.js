@@ -1,4 +1,3 @@
-/*globals Font, Shape*/
 'use strict';
 
 /**
@@ -8,14 +7,14 @@
  * @param {string=} footer
  * @constructor
  */
-function SelectMenu(header, footer) {
+xss.SelectMenu = function(header, footer) {
     this._header = header || '';
     this._footer = footer || '';
     this._selected = 0;
     this._options = [];
-}
+};
 
-SelectMenu.prototype = {
+xss.SelectMenu.prototype = {
 
     /**
      * @param {?(boolean|string|number)} value
@@ -30,7 +29,7 @@ SelectMenu.prototype = {
             next       : next,
             title      : title,
             description: description || '',
-            callback   : callback || XSS.util.dummy
+            callback   : callback || xss.util.dummy
         });
     },
 
@@ -83,39 +82,39 @@ SelectMenu.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     getShape: function() {
         var x, y, header, headerPixels, shape, desc;
 
-        x = CONST.MENU_LEFT;
-        y = CONST.MENU_TOP;
+        x = xss.MENU_LEFT;
+        y = xss.MENU_TOP;
 
         // Header
         header = (typeof this._header === 'string') ? this._header : this._header();
-        headerPixels = XSS.font.pixels(header);
-        headerPixels = XSS.transform.zoomX2(headerPixels, x, y, true);
-        shape = new Shape(headerPixels);
-        y += CONST.MENU_TITLE_HEIGHT;
+        headerPixels = xss.font.pixels(header);
+        headerPixels = xss.transform.zoomX2(headerPixels, x, y, true);
+        shape = new xss.Shape(headerPixels);
+        y += xss.MENU_TITLE_HEIGHT;
 
         // Footer
-        shape.add(XSS.font.pixels(
-            this._footer, x, CONST.HEIGHT - 3 - XSS.font.height(this._footer)
+        shape.add(xss.font.pixels(
+            this._footer, x, xss.HEIGHT - 3 - xss.font.height(this._footer)
         ));
 
         // Draw options
         for (var i = 0, m = this._options.length; i < m; i++) {
             var title, active = (this._selected === i);
             title = this._options[i].title;
-            shape.add(XSS.font.pixels(title, x, y, {invert: active}));
-            y += Font.LINE_HEIGHT_MENU;
+            shape.add(xss.font.pixels(title, x, y, {invert: active}));
+            y += xss.Font.LINE_HEIGHT_MENU;
         }
 
         // Help text line(s)
         if (this._options.length) {
             desc = this.getSelectedOption().description;
-            y += Font.LINE_HEIGHT;
-            shape.add(XSS.font.pixels(desc, x, y, {wrap: CONST.MENU_WRAP}));
+            y += xss.Font.LINE_HEIGHT;
+            shape.add(xss.font.pixels(desc, x, y, {wrap: xss.MENU_WRAP}));
         }
 
         return shape;

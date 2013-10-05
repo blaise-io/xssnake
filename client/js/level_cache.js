@@ -1,19 +1,18 @@
-/*globals LevelData*/
 'use strict';
 
 /**
  * @constructor
  */
-function LevelCache() {
-    /** @type {Array.<LevelData>} */
+xss.LevelCache = function() {
+    /** @type {Array.<xss.LevelData>} */
     this._cache = [];
     this._generateLevelCache();
-}
+};
 
-LevelCache.prototype = {
+xss.LevelCache.prototype = {
 
     /**
-     * @return {LevelData}
+     * @return {xss.LevelData}
      */
     levelData: function(id) {
         return this._cache[id];
@@ -23,7 +22,7 @@ LevelCache.prototype = {
      * @private
      */
     _generateLevelCache: function() {
-        for (var i = 0, m = XSS.levels.length; i < m; i++) {
+        for (var i = 0, m = xss.levels.length; i < m; i++) {
             this._loadImage(i);
         }
     },
@@ -34,7 +33,7 @@ LevelCache.prototype = {
      */
     _loadImage: function(index) {
         var img = new Image();
-         img.src = 'data:image/png;base64,' + XSS.levels[index];
+         img.src = 'data:image/png;base64,' + xss.levels[index];
          img.onload = function() {
              this._cache[index] = this._onImageLoad(index, img);
          }.bind(this);
@@ -43,7 +42,7 @@ LevelCache.prototype = {
     /**
      * @param {number} index
      * @param {HTMLImageElement} img
-     * @return {LevelData}
+     * @return {xss.LevelData}
      * @private
      */
     _onImageLoad: function(index, img) {
@@ -57,6 +56,6 @@ LevelCache.prototype = {
         ctx.drawImage(img, 0, 0);
 
         imagedata = ctx.getImageData(0, 0, img.width, img.height);
-        return new LevelData(imagedata);
+        return new xss.LevelData(imagedata);
     }
 };

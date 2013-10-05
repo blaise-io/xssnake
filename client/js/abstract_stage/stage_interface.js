@@ -1,16 +1,16 @@
-/*globals Shape*/
 'use strict';
 
 /**
  * @interface
  */
-function StageInterface() {}
+xss.StageInterface = function() {
+};
 
-StageInterface.prototype = {
+xss.StageInterface.prototype = {
 
-    /** @return {Shape} */
+    /** @return {xss.Shape} */
     getShape: function() {
-        return new Shape();
+        return new xss.Shape();
     },
 
     /** @returns {Object} */

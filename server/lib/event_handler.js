@@ -1,14 +1,11 @@
 'use strict';
 
-var Validate = require('./validate.js');
-var CONST = require('../shared/const.js');
-
 /**
- * @param {Client} client
+ * @param {xss.Client} client
  * @param {EventEmitter} pubsub
  * @constructor
  */
-function EventHandler(client, pubsub) {
+xss.EventHandler = function(client, pubsub) {
     this.client = client;
     this.pubsub = pubsub;
 
@@ -19,11 +16,9 @@ function EventHandler(client, pubsub) {
     this._pingSent = -1;
 
     this._startPingInterval();
-}
+};
 
-module.exports = EventHandler;
-
-EventHandler.prototype = {
+xss.EventHandler.prototype = {
 
     destruct: function() {
         clearInterval(this._pingInterval);
@@ -52,7 +47,7 @@ EventHandler.prototype = {
     _cleanMessage: function(dirtyMessage) {
         var messageValidate, json, jsonValidate, eventValidate;
 
-        messageValidate = new Validate(dirtyMessage)
+        messageValidate = new xss.Validate(dirtyMessage)
             .assertStringOfLength(6, 512)
             .assertJSON();
         if (!messageValidate.valid()) {
@@ -60,12 +55,12 @@ EventHandler.prototype = {
         }
 
         json = messageValidate.json();
-        jsonValidate = new Validate(json).assertArrayOfLength(1, 2);
+        jsonValidate = new xss.Validate(json).assertArrayOfLength(1, 2);
         if (!jsonValidate.valid()) {
             return null;
         }
 
-        eventValidate = new Validate(json[0]).assertStringOfLength(1, 20);
+        eventValidate = new xss.Validate(json[0]).assertStringOfLength(1, 20);
         if (!eventValidate.valid()) {
             return null;
         }
@@ -83,11 +78,11 @@ EventHandler.prototype = {
         var map = this._eventMap;
         if (!map) {
             map = {};
-            map[CONST.EVENT_PONG]         = this._pong.bind(this);
-            map[CONST.EVENT_ROOM_START]   = this._roomStart.bind(this);
-            map[CONST.EVENT_CHAT_MESSAGE] = this._chat.bind(this);
-            map[CONST.EVENT_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
-            map[CONST.EVENT_GAME_STATE]   = this._gameState.bind(this);
+            map[xss.EVENT_PONG]         = this._pong.bind(this);
+            map[xss.EVENT_ROOM_START]   = this._roomStart.bind(this);
+            map[xss.EVENT_CHAT_MESSAGE] = this._chat.bind(this);
+            map[xss.EVENT_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
+            map[xss.EVENT_GAME_STATE]   = this._gameState.bind(this);
             this._eventMap = map;
         }
 
@@ -102,8 +97,8 @@ EventHandler.prototype = {
     _startPingInterval: function() {
         this._pingInterval = setInterval(function() {
             this._pingSent = +new Date();
-            this.client.emit(CONST.EVENT_PING);
-        }.bind(this), CONST.NETCODE_PING_INTERVAL);
+            this.client.emit(xss.EVENT_PING);
+        }.bind(this), xss.NETCODE_PING_INTERVAL);
     },
 
     /**
@@ -112,8 +107,8 @@ EventHandler.prototype = {
     _pong: function() {
         var rtt, now = +new Date();
         if (this._pingSent) {
-            rtt = now - Number(new Validate(this._pingSent)
-                .assertRange(now - CONST.NETCODE_PING_INTERVAL, now)
+            rtt = now - Number(new xss.Validate(this._pingSent)
+                .assertRange(now - xss.NETCODE_PING_INTERVAL, now)
                 .value(now - 50));
             this.client.rtt = rtt;
             this._pingSent = 0;
@@ -145,12 +140,12 @@ EventHandler.prototype = {
     _chat: function(message) {
         var index, validMessage, room = this.client.room;
 
-        validMessage = new Validate(message).assertStringOfLength(1, 30);
+        validMessage = new xss.Validate(message).assertStringOfLength(1, 30);
 
         if (room && validMessage.valid()) {
             index = this.client.index;
-            this.client.broadcast(CONST.EVENT_CHAT_MESSAGE, [index, message]);
-            room.emit(CONST.EVENT_SNAKE_ACTION, [index, 'Blah']);
+            this.client.broadcast(xss.EVENT_CHAT_MESSAGE, [index, message]);
+            room.emit(xss.EVENT_SNAKE_ACTION, [index, 'Blah']);
         }
     },
 
@@ -163,8 +158,8 @@ EventHandler.prototype = {
         client = this.client;
         game = client.getGame();
 
-        parts = new Validate(data[0]).assertArray();
-        direction = new Validate(data[1]).assertRange(0, 3);
+        parts = new xss.Validate(data[0]).assertArray();
+        direction = new xss.Validate(data[1]).assertRange(0, 3);
 
         if (game && parts.valid()) {
             game.updateSnake(this.client, parts.value(), direction.value(0));

@@ -1,4 +1,3 @@
-/*globals ShapePixels*/
 'use strict';
 
 /**
@@ -6,22 +5,22 @@
  * Pixel transformations
  * @constructor
  */
-function Transform() {}
+xss.Transform = function() {};
 
-Transform.prototype = {
+xss.Transform.prototype = {
 
     /**
-     * @param {ShapePixels} pixels
+     * @param {xss.ShapePixels} pixels
      * @param {number=} xshift
      * @param {number=} yshift
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     shift: function(pixels, xshift, yshift) {
         if (xshift === 0 && yshift === 0) {
             return pixels; // No shift
         }
 
-        var ret = new ShapePixels();
+        var ret = new xss.ShapePixels();
 
         pixels.each(function(x, y) {
             ret.add(x + xshift, y + yshift);
@@ -31,16 +30,16 @@ Transform.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
+     * @param {xss.ShapePixels} pixels
      * @param {number=} width
      * @param {number=} height
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     center: function(pixels, width, height) {
         var x, y, bbox = pixels.bbox();
 
-        width = width || CONST.WIDTH;
-        height = height || CONST.HEIGHT;
+        width = width || xss.WIDTH;
+        height = height || xss.HEIGHT;
 
         x = Math.round((width - bbox.width) / 2);
         y = Math.round((height - bbox.height) / 2);
@@ -48,15 +47,15 @@ Transform.prototype = {
         x -= bbox.x1;
         y -= bbox.y1;
 
-        return XSS.transform.shift(pixels, x, y);
+        return xss.transform.shift(pixels, x, y);
     },
 
     /**
-     * @param {Shape} shape
+     * @param {xss.Shape} shape
      * @param {number=} hPadding
      * @param {number=} vPadding
      * @param {boolean=} round
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     outline: function(shape, hPadding, vPadding, round) {
         var r, x1, x2, y1, y2, bbox = shape.bbox();
@@ -79,11 +78,11 @@ Transform.prototype = {
         }
 
         shape.add(
-            XSS.shapegen.line(x1, y1+1, x1, y2),      // Left
-            XSS.shapegen.line(x1+r, y1, x2-r, y1),    // Top
-            XSS.shapegen.line(x2, y1+1, x2, y2),      // Right
-            XSS.shapegen.line(x1, y2, x2, y2),        // Bottom
-            XSS.shapegen.line(x1+r, y2+1, x2-r, y2+1) // Bottom 2
+            xss.shapegen.line(x1, y1+1, x1, y2),      // Left
+            xss.shapegen.line(x1+r, y1, x2-r, y1),    // Top
+            xss.shapegen.line(x2, y1+1, x2, y2),      // Right
+            xss.shapegen.line(x1, y2, x2, y2),        // Bottom
+            xss.shapegen.line(x1+r, y2+1, x2-r, y2+1) // Bottom 2
         );
 
         // Don't clear the missing pixel in the corners
@@ -94,14 +93,14 @@ Transform.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
+     * @param {xss.ShapePixels} pixels
      * @param {number=} xshift
      * @param {number=} yshift
      * @param {boolean=} antiAlias
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     zoomX2: function(pixels, xshift, yshift, antiAlias) {
-        var ret = new ShapePixels();
+        var ret = new xss.ShapePixels();
 
         xshift = xshift || 0;
         yshift = yshift || 0;
@@ -123,11 +122,11 @@ Transform.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
+     * @param {xss.ShapePixels} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
      * @param {boolean=} antiAlias
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     zoomX4: function(pixels, shiftX, shiftY, antiAlias) {
         return this.zoomX2(
@@ -139,19 +138,19 @@ Transform.prototype = {
     },
 
     /**
-     * @param {ShapePixels} pixels
-     * @return {ShapePixels}
+     * @param {xss.ShapePixels} pixels
+     * @return {xss.ShapePixels}
      */
     zoomGame: function(pixels) {
-        return this.zoomX4(pixels, CONST.GAME_LEFT, CONST.GAME_TOP);
+        return this.zoomX4(pixels, xss.GAME_LEFT, xss.GAME_TOP);
     },
 
     /**
-     * @param {ShapePixels} x1Pixels
-     * @param {ShapePixels} x2Pixels
+     * @param {xss.ShapePixels} x1Pixels
+     * @param {xss.ShapePixels} x2Pixels
      * @param {number=} xshift
      * @param {number=} yshift
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      * @private
      */
     _antiAlias: function(x1Pixels, x2Pixels, xshift, yshift) {

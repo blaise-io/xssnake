@@ -1,4 +1,3 @@
-/*globals Shape*/
 'use strict';
 
 /**
@@ -7,35 +6,35 @@
  * @param {string=} prefix
  * @constructor
  */
-function InputField(x, y, prefix) {
+xss.InputField = function(x, y, prefix) {
     this.x = x;
     this.y = y;
     this.prefix = prefix || '';
 
-    this.callback = XSS.util.dummy;
+    this.callback = xss.util.dummy;
     this.maxValWidth = 0;
-    this.displayWidth = CONST.WIDTH - x - 8;
+    this.displayWidth = xss.WIDTH - x - 8;
     this.maxlength = 156;
 
     this.input = this._createInput();
     this.input.focus();
 
-    XSS.keysBlocked = true;
-}
+    xss.keysBlocked = true;
+};
 
-InputField.prototype = {
+xss.InputField.prototype = {
 
     destruct: function() {
-        var ns = CONST.NS_INPUT;
+        var ns = xss.NS_INPUT;
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        XSS.event.off(CONST.EVENT_KEYPRESS, ns);
-        XSS.event.off(CONST.EVENT_KEYDOWN, ns);
-        XSS.event.off(CONST.EVENT_KEYUP, ns);
-        XSS.shapes.caret = null;
-        XSS.shapes.inputval = null;
-        XSS.keysBlocked = false;
+        xss.event.off(xss.EVENT_KEYPRESS, ns);
+        xss.event.off(xss.EVENT_KEYDOWN, ns);
+        xss.event.off(xss.EVENT_KEYUP, ns);
+        xss.shapes.caret = null;
+        xss.shapes.inputval = null;
+        xss.keysBlocked = false;
     },
 
     /**
@@ -59,10 +58,10 @@ InputField.prototype = {
      * @private
      */
     _bindEvents: function() {
-        var ns = CONST.NS_INPUT;
-        XSS.event.on(CONST.EVENT_KEYPRESS, ns, XSS.play.menu_alt);
-        XSS.event.on(CONST.EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
-        XSS.event.on(CONST.EVENT_KEYUP, ns, this._updateShapes.bind(this));
+        var ns = xss.NS_INPUT;
+        xss.event.on(xss.EVENT_KEYPRESS, ns, xss.play.menu_alt);
+        xss.event.on(xss.EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
+        xss.event.on(xss.EVENT_KEYUP, ns, this._updateShapes.bind(this));
     },
 
     /**
@@ -71,12 +70,12 @@ InputField.prototype = {
     _updateShapes: function() {
         // IE9 workaround for issue where _updateShapes executes
         // after event listeners are removed.
-        if (!XSS.keysBlocked) { return; }
+        if (!xss.keysBlocked) { return; }
 
         this._applyMaxWidth();
         this.callback(this.input.value);
-        XSS.shapes.caret = this._caretShape();
-        XSS.shapes.inputval = this._valueShape();
+        xss.shapes.caret = this._caretShape();
+        xss.shapes.inputval = this._valueShape();
     },
 
     /**
@@ -93,7 +92,7 @@ InputField.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      * @private
      */
     _caretShape: function() {
@@ -102,41 +101,41 @@ InputField.prototype = {
 
         if (!segments[1]) {
             untilCaretStr = segments[0] + segments[1];
-            endPos = XSS.font.endPos(this.prefix + untilCaretStr);
+            endPos = xss.font.endPos(this.prefix + untilCaretStr);
             caret = [this.x + endPos[0] - 1, this.y + endPos[1]];
 
-            caretShape = XSS.shapegen.lineShape(
+            caretShape = xss.shapegen.lineShape(
                 caret[0], caret[1] - 1,
                 caret[0], caret[1] + 7
             );
 
             caretShape.flash(300, 300);
         } else {
-            caretShape = new Shape();
+            caretShape = new xss.Shape();
         }
 
         return caretShape;
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      * @private
      */
     _valueShape: function() {
         var pos, shape, values = this._getValueSegments(), endpos;
 
-        shape = new Shape();
-        shape.add(XSS.font.pixels(this.prefix + values[0], this.x, this.y));
+        shape = new xss.Shape();
+        shape.add(xss.font.pixels(this.prefix + values[0], this.x, this.y));
 
         if (values[1]) { // Selection
-            endpos = XSS.font.endPos(this.prefix + values[0]);
+            endpos = xss.font.endPos(this.prefix + values[0]);
             pos = [this.x + endpos[0], this.y + endpos[1]];
-            shape.add(XSS.font.pixels(values[1], pos[0], pos[1], {invert: true}));
+            shape.add(xss.font.pixels(values[1], pos[0], pos[1], {invert: true}));
         }
 
-        endpos = XSS.font.endPos(this.prefix + values[0] + values[1]);
+        endpos = xss.font.endPos(this.prefix + values[0] + values[1]);
         shape.add(
-            XSS.font.pixels(values[2],
+            xss.font.pixels(values[2],
             this.x + endpos[0],
             this.y + endpos[1])
         );
@@ -153,7 +152,7 @@ InputField.prototype = {
             end = input.selectionEnd;
 
         // Handle situation where input value is wider than display width
-        while (XSS.font.width(value) > this.displayWidth) {
+        while (xss.font.width(value) > this.displayWidth) {
             if (start === 0) {
                 value = value.substring(0, value.length - 2);
             } else {
@@ -172,7 +171,7 @@ InputField.prototype = {
 
     _applyMaxWidth: function() {
         if (this.maxValWidth) {
-            while (XSS.font.width(this.input.value) > this.maxValWidth) {
+            while (xss.font.width(this.input.value) > this.maxValWidth) {
                 this.input.value = this.input.value.slice(0, -1);
             }
         }

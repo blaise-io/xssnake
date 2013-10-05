@@ -6,34 +6,34 @@
  * @param {Array.<number>} location
  * @constructor
  */
-function Spawnable(type, index, location) {
+xss.Spawnable = function(type, index, location) {
     this.type = type;
-    this.x = location[0] * CONST.GAME_TILE + CONST.GAME_LEFT;
-    this.y = location[1] * CONST.GAME_TILE + CONST.GAME_TOP;
+    this.x = location[0] * xss.GAME_TILE + xss.GAME_LEFT;
+    this.y = location[1] * xss.GAME_TILE + xss.GAME_TOP;
 
-    this._shapeName = CONST.NS_SPAWN + index;
-    XSS.shapes[this._shapeName] = this._getShape();
-}
+    this._shapeName = xss.NS_SPAWN + index;
+    xss.shapes[this._shapeName] = this._getShape();
+};
 
-Spawnable.prototype = {
+xss.Spawnable.prototype = {
 
     destruct: function() {
-        XSS.shapes[this._shapeName] = null;
+        xss.shapes[this._shapeName] = null;
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      * @private
      */
     _getShape: function() {
         var shape, x = this.x, y = this.y;
 
         switch (this.type) {
-            case CONST.SPAWN_APPLE:
-                shape = XSS.font.shape(CONST.UC_BULLSEYE, x - 1,  y - 2);
+            case xss.SPAWN_APPLE:
+                shape = xss.font.shape(xss.UC_BULLSEYE, x - 1,  y - 2);
                 break;
-            case CONST.SPAWN_POWERUP:
-                shape = XSS.font.shape(CONST.UC_ELECTRIC, x - 1,  y - 1);
+            case xss.SPAWN_POWERUP:
+                shape = xss.font.shape(xss.UC_ELECTRIC, x - 1,  y - 1);
                 break;
         }
 

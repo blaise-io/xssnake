@@ -2,5 +2,5 @@
     "globalstrict": true,
     "node": true,
     "sub": true,
-    "predef": ["XSS", "CONST"]
+    "predef": ["xss"]
 }

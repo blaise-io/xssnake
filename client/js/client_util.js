@@ -1,10 +1,9 @@
-/*globals Dialog, StageFlow*/
 'use strict';
 
 /**
- * Client XSS.util extension
+ * Client xss.util extension
  */
-XSS.util.extend(XSS.util, {
+xss.util.extend(xss.util, {
 
     /**
      * @param {string} str
@@ -12,10 +11,10 @@ XSS.util.extend(XSS.util, {
      * @param {boolean=} flash
      */
     instruct: function(str, duration, flash) {
-        var shape, left = CONST.WIDTH - XSS.font.width(str) - 3;
+        var shape, left = xss.WIDTH - xss.font.width(str) - 3;
 
-        shape = XSS.font.shape(
-            str, left, CONST.HEIGHT - 3 - XSS.font.height(str), {invert: true}
+        shape = xss.font.shape(
+            str, left, xss.HEIGHT - 3 - xss.font.height(str), {invert: true}
         );
         shape.clearBBox = true;
 
@@ -27,7 +26,7 @@ XSS.util.extend(XSS.util, {
             shape.flash();
         }
 
-        XSS.shapes.instruction = shape;
+        xss.shapes.instruction = shape;
     },
 
     /**
@@ -37,7 +36,7 @@ XSS.util.extend(XSS.util, {
     error: function(str, callback) {
         var exit, dialog, body;
 
-        XSS.util.hash();
+        xss.util.hash();
 
         exit = function() {
             dialog.destruct();
@@ -46,12 +45,12 @@ XSS.util.extend(XSS.util, {
                 callback();
             }
 
-            XSS.flow.restart();
+            xss.flow.restart();
         };
 
-        body = 'Press ' + CONST.UC_ENTER_KEY + ' to continue';
-        dialog = new Dialog(str, body, {
-            type: Dialog.TYPE.ALERT,
+        body = 'Press ' + xss.UC_ENTER_KEY + ' to continue';
+        dialog = new xss.Dialog(str, body, {
+            type: xss.Dialog.TYPE.ALERT,
             ok: exit
         });
     },

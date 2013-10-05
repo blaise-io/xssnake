@@ -1,25 +1,24 @@
-/*globals BoundingBox*/
 'use strict';
 
 /**
- * Shape pixels stored in a multi-dimensional array.
+ * xss.Shape pixels stored in a multi-dimensional array.
  * @param {Array.<Array.<number>>=} pixels
  * @constructor
  */
-function ShapePixels(pixels) {
+xss.ShapePixels = function(pixels) {
     /**
      * @type {Array.<Array.<number>>}
      */
     this.pixels = pixels || [];
-}
+};
 
 
-ShapePixels.prototype = {
+xss.ShapePixels.prototype = {
 
     /**
      * @param {number} x
      * @param {number} y
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     add: function(x, y) {
         var pixels = this.pixels;
@@ -34,15 +33,15 @@ ShapePixels.prototype = {
     },
 
     /**
-     * @return {BoundingBox}
+     * @return {xss.BoundingBox}
      */
     bbox: function() {
-        return new BoundingBox(this);
+        return new xss.BoundingBox(this);
     },
 
     /**
      * @param {Array.<Array.<number>>} pairs
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     pairs: function(pairs) {
         for (var i = 0, m = pairs.length; i < m; i++) {
@@ -53,7 +52,7 @@ ShapePixels.prototype = {
     },
 
     /**
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     sort: function() {
         var sort, pixels = this.pixels;
@@ -139,7 +138,7 @@ ShapePixels.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     remove: function(x, y) {
         var index = this.index(x, y);

@@ -1,43 +1,39 @@
 'use strict';
 
-var CONST = require('../shared/const.js');
-
 /**
- * @param {Room} room
+ * @param {xss.Room} room
  * @constructor
  */
-function Score(room) {
+xss.Score = function(room) {
     this.room = room;
     this.points = [];
     for (var i = 0, m = room.clients.length; i < m; i++) {
         this.points.push(0);
     }
-}
+};
 
-module.exports = Score;
-
-Score.prototype = {
+xss.Score.prototype = {
 
     destruct: function() {
         this.room = null;
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      */
     addClient: function(client) {
         this.points[client.index] = 0;
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      */
     removeClient: function(client) {
         this.points.splice(client.index, 1);
     },
 
     /**
-     * @returns {Client}
+     * @returns {xss.Client}
      */
     getWinner: function() {
         var sorted, last, index;
@@ -46,43 +42,43 @@ Score.prototype = {
         last = sorted.length - 1;
         index = this.points.indexOf(sorted[last]);
 
-        return (sorted[last] - CONST.ROOM_WIN_BY_MIN >= sorted[last - 1]) ?
+        return (sorted[last] - xss.ROOM_WIN_BY_MIN >= sorted[last - 1]) ?
             this.room.clients[index] : null;
     },
 
     /**
-     * @param {Room} room
+     * @param {xss.Room} room
      */
     emitKnockoutPoints: function(room) {
         var clients = room.clients;
         for (var i = 0, m = clients.length; i < m; i++) {
             if (!clients[i].snake.crashed) {
                 this.points[i] += 2;
-                room.buffer(CONST.EVENT_SCORE_UPDATE, [i, this.points[i]]);
+                room.buffer(xss.EVENT_SCORE_UPDATE, [i, this.points[i]]);
             }
         }
         room.flush();
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      */
     bufferApplePoints: function(client) {
         var points = ++this.points[client.index];
         this.room.buffer(
-            CONST.EVENT_SCORE_UPDATE, [client.index, points]
+            xss.EVENT_SCORE_UPDATE, [client.index, points]
         );
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @return {number}
      */
     rank: function(client) {
         var clientPoints, points = this.points, position = 0;
 
         if (points.length === 1) {
-            return CONST.SCORE_NEUTRAL;
+            return xss.SCORE_NEUTRAL;
         }
 
         clientPoints = points[client.index];
@@ -95,9 +91,9 @@ Score.prototype = {
         }
 
         if (position === 0) {
-            return CONST.SCORE_NEUTRAL;
+            return xss.SCORE_NEUTRAL;
         } else {
-            return position > 0 ? CONST.SCORE_LEADING : CONST.SCORE_BEHIND;
+            return position > 0 ? xss.SCORE_LEADING : xss.SCORE_BEHIND;
         }
     }
 };

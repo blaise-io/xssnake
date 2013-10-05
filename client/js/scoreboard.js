@@ -1,32 +1,31 @@
-/*globals Shape*/
 'use strict';
 
 /** @typedef {Array.<Object>} */
-CONST.Score;
+xss.Score;
 
 /**
  * @param {Array.<string>} names
  * @param {?Array.<number>} points
  * @constructor
  */
-function ScoreBoard(names, points) {
+xss.ScoreBoard = function(names, points) {
     this.score = this.initScore(names, points);
     this._bindEvents();
     this._sortScore();
     this.shapes = this._updateShapes();
-}
+};
 
-ScoreBoard.prototype = {
+xss.ScoreBoard.prototype = {
 
     podiumSize: 6,
 
     animDuration: 200,
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_SCORE_UPDATE, CONST.NS_SCORE);
+        xss.event.off(xss.EVENT_SCORE_UPDATE, xss.NS_SCORE);
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
-                XSS.shapes[k] = null;
+                xss.shapes[k] = null;
             }
         }
     },
@@ -34,7 +33,7 @@ ScoreBoard.prototype = {
     /**
      * @param {Array.<string>} names
      * @param {Array.<number>} points
-     * @return {CONST.Score}
+     * @return {xss.Score}
      */
     initScore: function(names, points) {
         var score = [];
@@ -61,11 +60,11 @@ ScoreBoard.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.event.on(CONST.EVENT_SCORE_UPDATE, CONST.NS_SCORE, this.updateScore.bind(this));
+        xss.event.on(xss.EVENT_SCORE_UPDATE, xss.NS_SCORE, this.updateScore.bind(this));
     },
 
     /**
-     * @param {CONST.Score} score
+     * @param {xss.Score} score
      * @param {number} id
      * @return {number}
      * @private
@@ -80,7 +79,7 @@ ScoreBoard.prototype = {
     },
 
     /**
-     * @return {CONST.Score}
+     * @return {xss.Score}
      * @private
      */
     _sortScore: function() {
@@ -96,7 +95,7 @@ ScoreBoard.prototype = {
      * @private
      */
     _podiumIndexToXY: function(index) {
-        var top = CONST.HEIGHT - 24,
+        var top = xss.HEIGHT - 24,
             lefts = [5, 64];
         return [
             (index % 2) ? lefts[1] : lefts[0],
@@ -105,7 +104,7 @@ ScoreBoard.prototype = {
     },
 
     /**
-     * @return {Object.<Shape>}
+     * @return {Object.<xss.Shape>}
      * @private
      */
     _updateShapes: function() {
@@ -123,12 +122,12 @@ ScoreBoard.prototype = {
             oldPos = this._podiumIndexToXY(oldPodium);
 
             score = String(newScore[newPodium].score);
-            width = XSS.font.width(score);
+            width = xss.font.width(score);
 
-            shape = new Shape();
+            shape = new xss.Shape();
             shape.add(
-                XSS.font.pixels(newScore[newPodium].name, oldPos[0], oldPos[1]),
-                XSS.font.pixels(score, oldPos[0] - width + 55, oldPos[1])
+                xss.font.pixels(newScore[newPodium].name, oldPos[0], oldPos[1]),
+                xss.font.pixels(score, oldPos[0] - width + 55, oldPos[1])
             );
 
             if (oldPodium !== newPodium) {
@@ -142,7 +141,7 @@ ScoreBoard.prototype = {
             shapes['SB' + i] = shape;
         }
 
-        XSS.util.extend(XSS.shapes, shapes);
+        xss.util.extend(xss.shapes, shapes);
 
         return shapes;
     }

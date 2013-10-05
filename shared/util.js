@@ -1,16 +1,17 @@
 'use strict';
 
-module.exports = {
+xss.util = {
 
     /**
      * Dummy callback function to reduce if statements.
-     * @example this.callback = optionalCallbackParam || XSS.util.dummy;
+     * @example this.callback = optionalCallbackParam || xss.util.dummy;
+     * @param varArgs {...?}
      */
-    dummy: function() {},
+    dummy: function(varArgs) {},
 
     /**
      * @param {Object} obj Object to clone.
-     * @return {!Object} Clone of the input object.
+     * @return {?} Clone of the input object.
      * @template K,V
      */
     clone: function(obj) {
@@ -112,7 +113,3 @@ module.exports = {
     }
 
 };
-
-if (typeof XSS !== 'undefined') {
-    XSS.util = module.exports;
-}

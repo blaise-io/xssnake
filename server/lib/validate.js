@@ -2,22 +2,20 @@
 
 /**
  * Validate / Sanitize user input.
- * Example usage: new Validate(str).assertType('string').valid(); // true|false
+ * Example usage: new xss.Validate(str).assertType('string').valid(); // true|false
  * @param {?} value
  * @constructor
  */
-function Validate(value) {
+xss.Validate = function(value) {
     this._value = value;
     this._valid = true;
-}
+};
 
-module.exports = Validate;
-
-Validate.prototype = {
+xss.Validate.prototype = {
 
     /**
      * @param {string} type
-     * @return {Validate}
+     * @return {xss.Validate}
      */
     assertType: function(type) {
         if (typeof this._value !== type) {
@@ -28,7 +26,7 @@ Validate.prototype = {
     },
 
     /**
-     * @returns {Validate}
+     * @returns {xss.Validate}
      */
     assertArray: function() {
         if (!(this._value instanceof Array)) {
@@ -39,7 +37,7 @@ Validate.prototype = {
     },
 
     /**
-     * @returns {Validate}
+     * @returns {xss.Validate}
      */
     assertJSON: function() {
         if (this._valid) { // Don't parse if already invalid
@@ -55,7 +53,7 @@ Validate.prototype = {
 
     /**
      * @param {Array} arr
-     * @return {Validate}
+     * @return {xss.Validate}
      */
     assertInArray: function(arr) {
         if (-1 === arr.indexOf(this._value)) {
@@ -68,7 +66,7 @@ Validate.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {Validate}
+     * @return {xss.Validate}
      */
     assertRange: function(min, max) {
         if (typeof this._value !== 'number') {
@@ -84,7 +82,7 @@ Validate.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {Validate}
+     * @return {xss.Validate}
      */
     assertStringOfLength: function(min, max) {
         if (typeof this._value !== 'string') {
@@ -100,7 +98,7 @@ Validate.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {Validate}
+     * @return {xss.Validate}
      */
     assertArrayOfLength: function(min, max) {
         if (!(this._value instanceof Array)) {

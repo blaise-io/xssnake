@@ -1,24 +1,19 @@
 'use strict';
 
-var CONST = require('../shared/const.js');
-var Game = require('./game.js');
-
 /**
- * @param {Room} room
+ * @param {xss.Room} room
  * @param {number} levelIndex
  * @constructor
  */
-function Round(room, levelIndex) {
+xss.Round = function(room, levelIndex) {
     this.room = room;
-    this.game = new Game(this, levelIndex);
+    this.game = new xss.Game(this, levelIndex);
 
     this.beingEnded = false;
     this._countDownTimer = 0;
-}
+};
 
-module.exports = Round;
-
-Round.prototype = {
+xss.Round.prototype = {
 
     destruct: function() {
         clearTimeout(this._countDownTimer);
@@ -28,15 +23,15 @@ Round.prototype = {
     },
 
     countdown: function() {
-        this.room.emit(CONST.EVENT_GAME_COUNTDOWN);
+        this.room.emit(xss.EVENT_GAME_COUNTDOWN);
         this._countDownTimer = setTimeout(
             this.start.bind(this),
-            CONST.TIME_ROUND_COUNTDOWN * 1000
+            xss.TIME_ROUND_COUNTDOWN * 1000
         );
     },
 
     start: function() {
-        this.room.emit(CONST.EVENT_GAME_START);
+        this.room.emit(xss.EVENT_GAME_START);
         this.game.start();
     },
 
@@ -68,7 +63,7 @@ Round.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      */
     removeClient: function(client) {
         this.game.removeClient(client);

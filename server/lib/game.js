@@ -1,41 +1,30 @@
 'use strict';
 
-var util = require('util');
-var Spawner = require('./spawner.js');
-var Powerup = require('./powerup.js');
-var Crash = require('./crash.js');
-var Level = require('../shared/level.js');
-var Snake = require('../shared/snake.js');
-var Util = require('../shared/util.js');
-var CONST = require('../shared/const.js');
-
 /**
- * @param {Round} round
+ * @param {xss.Round} round
  * @param {number} levelIndex
  * @constructor
  */
-function Game(round, levelIndex) {
+xss.Game = function(round, levelIndex) {
     this.round = round;
     this.room = round.room;
     this.server = this.room.server;
 
     this.options = this.room.options;
 
-    this.level = new Level(this.server.levels[levelIndex]);
-    this.spawner = new Spawner(this);
+    this.level = new xss.Level(this.server.levels[levelIndex]);
+    this.spawner = new xss.Spawner(this);
 
     /** @type {Array.<number>} */
     this.timers = [];
 
-    /** @type {Array.<Snake>} */
+    /** @type {Array.<xss.Snake>} */
     this.snakes = [];
 
     this._tickBound = this._tick.bind(this);
-}
+};
 
-module.exports = Game;
-
-Game.prototype = {
+xss.Game.prototype = {
 
     destruct: function() {
         this.stop();
@@ -53,8 +42,8 @@ Game.prototype = {
     start: function() {
         this.spawnSnakes();
         this.server.pubsub.on('tick', this._tickBound);
-        this.spawner.spawn(CONST.SPAWN_APPLE);
-        if (this.options[CONST.FIELD_POWERUPS]) {
+        this.spawner.spawn(xss.SPAWN_APPLE);
+        if (this.options[xss.FIELD_POWERUPS]) {
             this._spawnSomethingAfterDelay();
         }
     },
@@ -67,7 +56,7 @@ Game.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {Array.<Array>} clientParts
      * @param {number} direction
      * @returns {number}
@@ -79,13 +68,13 @@ Game.prototype = {
         client.snake.direction = direction;
 
         // Crop client snake because we don't trust the length the client sent
-        sync = CONST.NETCODE_SYNC_MS / client.snake.speed;
+        sync = xss.NETCODE_SYNC_MS / client.snake.speed;
         clientParts = clientParts.slice(-sync);
 
         // Don't allow gaps in the snake
         if (this._containsGaps(clientParts)) {
             this._emitSnakeRoom(client);
-            return CONST.UPDATE_ERR_GAP;
+            return xss.UPDATE_ERR_GAP;
         }
 
         // Find latest tile where client and server matched
@@ -95,14 +84,14 @@ Game.prototype = {
         // Reject if there was no common
         if (!common) {
             this._emitSnakeRoom(client);
-            return CONST.UPDATE_ERR_NO_COMMON;
+            return xss.UPDATE_ERR_NO_COMMON;
         }
 
         // Check if client-server delta does not exceed limit
         mismatches = Math.abs(common[1] - common[0]);
         if (mismatches > this._maxMismatches(client)) {
             this._emitSnakeRoom(client);
-            return CONST.UPDATE_ERR_MISMATCHES;
+            return xss.UPDATE_ERR_MISMATCHES;
         }
 
         // Glue snake back together
@@ -125,7 +114,7 @@ Game.prototype = {
             this._broadcastSnakeRoom(client);
         }
 
-        return CONST.UPDATE_SUCCES;
+        return xss.UPDATE_SUCCES;
     },
 
     /**
@@ -153,7 +142,7 @@ Game.prototype = {
     bufferSnakesState: function(client) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var data = [i, this.snakes[i].parts, this.snakes[i].direction];
-            client.buffer(CONST.EVENT_SNAKE_UPDATE, data);
+            client.buffer(xss.EVENT_SNAKE_UPDATE, data);
         }
     },
 
@@ -167,7 +156,7 @@ Game.prototype = {
         for (var i = 0, m = spawns.length; i < m; i++) {
             var spawn = spawns[i];
             if (null !== spawn) {
-                client.buffer(CONST.EVENT_GAME_SPAWN, [
+                client.buffer(xss.EVENT_GAME_SPAWN, [
                     spawn.type, i, spawn.location
                 ]);
             }
@@ -175,31 +164,31 @@ Game.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {number} index
      */
     hitApple: function(client, index) {
         var size = client.snake.size += 3;
 
-        this.room.buffer(CONST.EVENT_GAME_DESPAWN, index);
-        this.room.buffer(CONST.EVENT_SNAKE_SIZE, [client.index, size]);
-        this.room.buffer(CONST.EVENT_SNAKE_ACTION, [client.index, 'Nom']);
+        this.room.buffer(xss.EVENT_GAME_DESPAWN, index);
+        this.room.buffer(xss.EVENT_SNAKE_SIZE, [client.index, size]);
+        this.room.buffer(xss.EVENT_SNAKE_ACTION, [client.index, 'Nom']);
         this.room.rounds.score.bufferApplePoints(client);
         this.room.flush();
 
         // There should always be at least one apple in the game.
-        if (0 === this.spawner.numOfType(CONST.SPAWN_APPLE)) {
-            this.spawner.spawn(CONST.SPAWN_APPLE);
+        if (0 === this.spawner.numOfType(xss.SPAWN_APPLE)) {
+            this.spawner.spawn(xss.SPAWN_APPLE);
         }
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {number} index
      */
     hitPowerup: function(client, index) {
-        this.room.emit(CONST.EVENT_GAME_DESPAWN, index);
-        return new Powerup(this, client);
+        this.room.emit(xss.EVENT_GAME_DESPAWN, index);
+        return new xss.Powerup(this, client);
     },
 
     /**
@@ -236,7 +225,7 @@ Game.prototype = {
     showLotsOfApples: function() {
         var locations, levelData, spawnRow, y = 1;
 
-        this._spawnSomething = Util.dummy;
+        this._spawnPause = true;
 
         locations = this.getNonEmptyLocations();
         levelData = this.level.levelData;
@@ -244,7 +233,7 @@ Game.prototype = {
         spawnRow = function() {
             for (var x = y % 4, mm = levelData.width; x < mm; x += 4) {
                 if (this.level.isEmptyLocation(locations, [x, y])) {
-                    this.spawner.spawn(CONST.SPAWN_APPLE, [x, y], true);
+                    this.spawner.spawn(xss.SPAWN_APPLE, [x, y], true);
                 }
             }
             this.room.flush();
@@ -272,7 +261,7 @@ Game.prototype = {
                 return false;
             }
             // Delta must be 1
-            if (Util.delta(parts[i], parts[i - 1]) !== 1) {
+            if (xss.util.delta(parts[i], parts[i - 1]) !== 1) {
                 return true;
             }
         }
@@ -288,7 +277,7 @@ Game.prototype = {
     _findCommon: function(clientParts, serverParts) {
         for (var i = clientParts.length - 1; i >= 0; i--) {
             for (var ii = serverParts.length - 1; ii >= 0; ii--) {
-                if (Util.eq(clientParts[i], serverParts[ii])) {
+                if (xss.util.eq(clientParts[i], serverParts[ii])) {
                     return [i, ii];
                 }
             }
@@ -297,12 +286,12 @@ Game.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @return {number}
      * @private
      */
     _maxMismatches: function(client) {
-        var rtt = Math.min(CONST.NETCODE_SYNC_MS, client.rtt);
+        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.rtt);
         return Math.ceil((rtt + 20) / client.snake.speed);
     },
 
@@ -310,8 +299,8 @@ Game.prototype = {
      * @private
      */
     _spawnSomethingAfterDelay: function() {
-        var delay, range = CONST.SPAWN_SOMETHING_EVERY;
-        delay = Util.randomRange(range[0] * 1000, range[1] * 1000);
+        var delay, range = xss.SPAWN_SOMETHING_EVERY;
+        delay = xss.util.randomRange(range[0] * 1000, range[1] * 1000);
         this.timers.push(
             setTimeout(this._spawnSomething.bind(this), delay)
         );
@@ -323,11 +312,15 @@ Game.prototype = {
     _spawnSomething: function() {
         var powerupsEnabled, randomResultApple, type;
 
-        powerupsEnabled = this.options[CONST.FIELD_POWERUPS];
-        randomResultApple = Math.random() <= CONST.SPAWN_CHANCE_APPLE;
+        if (this._spawnPause) {
+            return;
+        }
+
+        powerupsEnabled = this.options[xss.FIELD_POWERUPS];
+        randomResultApple = Math.random() <= xss.SPAWN_CHANCE_APPLE;
 
         type = (!powerupsEnabled || randomResultApple) ?
-            CONST.SPAWN_APPLE : CONST.SPAWN_POWERUP;
+            xss.SPAWN_APPLE : xss.SPAWN_POWERUP;
 
         this.spawner.spawn(type);
         this._spawnSomethingAfterDelay();
@@ -343,16 +336,16 @@ Game.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @private
      */
     _emitSnakeRoom: function(client) {
         var data = [client.index, client.snake.parts, client.snake.direction];
-        this.room.emit(CONST.EVENT_SNAKE_UPDATE, data);
+        this.room.emit(xss.EVENT_SNAKE_UPDATE, data);
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @private
      */
     _broadcastSnakeRoom: function(client) {
@@ -361,19 +354,19 @@ Game.prototype = {
             client.snake.parts,
             client.snake.direction
         ];
-        client.broadcast(CONST.EVENT_SNAKE_UPDATE, data);
+        client.broadcast(xss.EVENT_SNAKE_UPDATE, data);
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {Array.<Array>} parts
-     * @return {Crash}
+     * @return {xss.Crash}
      * @private
      */
     _isCrash: function(client, parts) {
         var eq, clients, level;
 
-        eq = Util.eq;
+        eq = xss.util.eq;
         clients = this.room.clients;
         level = this.level;
 
@@ -382,20 +375,20 @@ Game.prototype = {
 
             // Wall
             if (level.isWall(part[0], part[1])) {
-                return new Crash(CONST.CRASH_WALL, client);
+                return new xss.Crash(xss.CRASH_WALL, client);
             }
 
             // Self
             if (m > 4) {
                 if (m - 1 !== i && eq(part, parts[m - 1])) {
-                    return new Crash(CONST.CRASH_SELF, client);
+                    return new xss.Crash(xss.CRASH_SELF, client);
                 }
             }
 
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
-                    return new Crash(CONST.CRASH_OPPONENT, client, clients[ii]);
+                    return new xss.Crash(xss.CRASH_OPPONENT, client, clients[ii]);
                 }
             }
         }
@@ -404,7 +397,7 @@ Game.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {Array.<Array>=} parts
      * @param {boolean=} noEmit
      * @private
@@ -419,7 +412,7 @@ Game.prototype = {
         }
         parts = parts || snake.parts;
         snake.crashed = true;
-        this.room.emit(CONST.EVENT_SNAKE_CRASH, [client.index, parts]);
+        this.room.emit(xss.EVENT_SNAKE_CRASH, [client.index, parts]);
     },
 
     /**
@@ -434,7 +427,7 @@ Game.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @param {number} delta
      * @private
      */
@@ -451,7 +444,7 @@ Game.prototype = {
     },
 
     /**
-     * @param {Snake} snake
+     * @param {xss.Snake} snake
      * @return {Array.<number>}
      * @private
      */
@@ -463,7 +456,7 @@ Game.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @private
      */
     _applyNewPosition: function(client) {
@@ -503,7 +496,7 @@ Game.prototype = {
 
     /**
      * @param {number} index
-     * @return {Snake}
+     * @return {xss.Snake}
      * @private
      */
     _spawnSnake: function(index) {
@@ -511,10 +504,10 @@ Game.prototype = {
 
         spawn = this.level.getSpawn(index);
         direction = this.level.getSpawnDirection(index);
-        size = CONST.SNAKE_SIZE;
-        speed = CONST.SNAKE_SPEED;
+        size = xss.SNAKE_SIZE;
+        speed = xss.SNAKE_SPEED;
 
-        snake = new Snake(spawn, direction, size, speed);
+        snake = new xss.Snake(spawn, direction, size, speed);
         snake.elapsed = 0;
 
         return snake;

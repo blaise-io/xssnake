@@ -1,26 +1,22 @@
-/*jshint -W079*/
-/*globals EventHandler, Font, Canvas, LevelCache, ShapeGenerator, Transform, AudioPlay, StageFlow */
 'use strict';
 
-var XSS = {}, CONST = {}, module = {};
-
 window.onerror = function() {
-    XSS.error = true;
+    xss.error = true;
 };
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    /** @type {Object.<string, Shape>} */
-    XSS.shapes = {};
+    /** @type {Object.<string, xss.Shape>} */
+    xss.shapes = {};
 
     // Global instances
-    XSS.event     = new EventHandler();
-    XSS.font      = new Font();
-    XSS.canvas    = new Canvas();
-    XSS.level     = new LevelCache();
-    XSS.shapegen  = new ShapeGenerator();
-    XSS.transform = new Transform();
-    XSS.play      = new AudioPlay();
-    XSS.flow      = new StageFlow();
+    xss.event     = new xss.EventHandler();
+    xss.font      = new xss.Font();
+    xss.canvas    = new xss.Canvas();
+    xss.level     = new xss.LevelCache();
+    xss.shapegen  = new xss.ShapeGenerator();
+    xss.transform = new xss.Transform();
+    xss.play      = new xss.AudioPlay();
+    xss.flow      = new xss.StageFlow();
 
 }, false);

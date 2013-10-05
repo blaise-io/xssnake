@@ -1,26 +1,25 @@
-/*globals Shape, ShapePixels*/
 'use strict';
 
 /**
 * Generates shapes
 * @constructor
 */
-function ShapeGenerator() {
+xss.ShapeGenerator = function() {
     /** @private */
     this._cache = {};
-}
+};
 
-ShapeGenerator.prototype = {
+xss.ShapeGenerator.prototype = {
 
     /**
      * @param {number} x0
      * @param {number} y0
      * @param {number} x1
      * @param {number} y1
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     lineShape: function(x0, y0, x1, y1) {
-        return new Shape(
+        return new xss.Shape(
             this.line.apply(this, arguments)
         );
     },
@@ -30,12 +29,12 @@ ShapeGenerator.prototype = {
      * @param {number} y1
      * @param {number} x2
      * @param {number} y2
-     * @return {ShapePixels}
+     * @return {xss.ShapePixels}
      */
     line: function(x1, y1, x2, y2) {
         var pixels, dx, dy, sx, sy, err, errTmp;
 
-        pixels = new ShapePixels();
+        pixels = new xss.ShapePixels();
 
         dx = Math.abs(x2 - x1);
         dy = Math.abs(y2 - y1);
@@ -68,16 +67,16 @@ ShapeGenerator.prototype = {
      * @param {number} x
      * @param {number} y
      * @param {number} side
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     tooltip: function(text, x, y, side) {
-        var width, shape, hw, line = XSS.shapegen.line;
+        var width, shape, hw, line = xss.shapegen.line;
 
-        width = XSS.font.width(text);
+        width = xss.font.width(text);
 
         switch (side) {
             case 0:
-                shape = XSS.font.shape(text, x - width - 6, y - 4);
+                shape = xss.font.shape(text, x - width - 6, y - 4);
                 // Left
                 shape.add(line(x - width - 9, y - 5, x - width - 9, y + 3));
                 // Top
@@ -94,7 +93,7 @@ ShapeGenerator.prototype = {
                 break;
             case 1:
                 hw = Math.ceil(width / 2);
-                shape = XSS.font.shape(text, x - hw, y - 13);
+                shape = xss.font.shape(text, x - hw, y - 13);
                 // Top
                 shape.add(line(x - hw - 2, y - 15, x + hw + 1, y - 15));
                 // Left
@@ -113,7 +112,7 @@ ShapeGenerator.prototype = {
                 shape.remove(line(x - 3, y - 5, x + 3, y - 5));
                 break;
             case 2:
-                shape = XSS.font.shape(text, x + 8, y - 4);
+                shape = xss.font.shape(text, x + 8, y - 4);
                 // Right
                 shape.add(line(x + width + 9, y - 5, x + width + 9, y + 3));
                 // Top
@@ -130,7 +129,7 @@ ShapeGenerator.prototype = {
                 break;
             case 3:
                 hw = Math.ceil(width / 2);
-                shape = XSS.font.shape(text, x - hw, y + 6);
+                shape = xss.font.shape(text, x - hw, y + 6);
                 // Top
                 shape.add(line(x + -hw - 2, y + 4, x + hw + 1, y + 4));
                 // Left
@@ -152,42 +151,42 @@ ShapeGenerator.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     innerBorder: function() {
-        var w = CONST.WIDTH - 1,
-            h = CONST.HEIGHT - 1;
-        return new Shape(
+        var w = xss.WIDTH - 1,
+            h = xss.HEIGHT - 1;
+        return new xss.Shape(
             this.line(2, h - 25, w - 2, h - 25),
             this.line(2, h - 26, w - 2, h - 26)
         );
     },
 
     /**
-     * @return {Object.<string, Shape>}
+     * @return {Object.<string, xss.Shape>}
      */
     outerBorder: function() {
         var shapes = {},
-            w = CONST.WIDTH - 1,
-            h = CONST.HEIGHT - 1;
+            w = xss.WIDTH - 1,
+            h = xss.HEIGHT - 1;
 
         // Splitting this up or it spans too big of an area
-        shapes.top = new Shape(
+        shapes.top = new xss.Shape(
             this.line(1, 0, w - 1, 0),
             this.line(0, 1, w, 1)
         );
 
-        shapes.right = new Shape(
+        shapes.right = new xss.Shape(
             this.line(w, 2, w, h - 2),
             this.line(w - 1, 2, w - 1, h - 2)
         );
 
-        shapes.bottom = new Shape(
+        shapes.bottom = new xss.Shape(
             this.line(1, h, w - 1, h),
             this.line(0, h - 1, w, h - 1)
         );
 
-        shapes.left = new Shape(
+        shapes.left = new xss.Shape(
             this.line(0, 2, 0, h - 2),
             this.line(1, 2, 1, h - 2)
         );
@@ -196,56 +195,56 @@ ShapeGenerator.prototype = {
     },
 
     /**
-     * @param {LevelData} data
-     * @return {Shape}
+     * @param {xss.LevelData} data
+     * @return {xss.Shape}
      */
     level: function(data) {
         var shape, walls;
 
-        walls = new ShapePixels(data.walls);
-        shape = new Shape(XSS.transform.zoomGame(walls));
-        shape.add(XSS.shapegen.innerBorder().pixels);
+        walls = new xss.ShapePixels(data.walls);
+        shape = new xss.Shape(xss.transform.zoomGame(walls));
+        shape.add(xss.shapegen.innerBorder().pixels);
 
         return shape;
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      */
     header: function() {
-        var x, y, shape, welcome = XSS.font.pixels('<XSSNAKE>');
+        var x, y, shape, welcome = xss.font.pixels('<XSSNAKE>');
 
-        x = CONST.MENU_LEFT;
-        y = CONST.MENU_TOP - 34;
+        x = xss.MENU_LEFT;
+        y = xss.MENU_TOP - 34;
 
-        shape = new Shape(XSS.transform.zoomX4(welcome, x, y, true));
-        shape.add(this.line(x, y + 28, x + CONST.MENU_WIDTH, y + 28));
+        shape = new xss.Shape(xss.transform.zoomX4(welcome, x, y, true));
+        shape.add(this.line(x, y + 28, x + xss.MENU_WIDTH, y + 28));
 
         return shape;
     },
 
     explosion: function(x, y, direction, intensity) {
         var pixel, shape, to, duration, animation, d = 10, ds = 20,
-            r = XSS.util.randomRange;
+            r = xss.util.randomRange;
         while (intensity--) {
             switch (direction) {
-                case CONST.DIRECTION_LEFT:
+                case xss.DIRECTION_LEFT:
                     to = [r(-d,ds), r(-d,d)];
                     break;
-                case CONST.DIRECTION_UP:
+                case xss.DIRECTION_UP:
                     to = [r(-d,d), r(-ds,d)];
                     break;
-                case CONST.DIRECTION_RIGHT:
+                case xss.DIRECTION_RIGHT:
                     to = [r(-ds,d), r(-d,d)];
                     break;
-                case CONST.DIRECTION_DOWN:
+                case xss.DIRECTION_DOWN:
                     to = [r(-d,d), r(-d,ds)];
                     break;
                 default:
                     to = [r(-ds,ds), r(-ds,ds)];
             }
 
-            pixel = new ShapePixels().add(x, y);
+            pixel = new xss.ShapePixels().add(x, y);
 
             duration = Math.pow(r(1, 10), 3);
             animation = {
@@ -253,9 +252,9 @@ ShapeGenerator.prototype = {
                 duration: duration
             };
 
-            shape = new Shape(pixel);
+            shape = new xss.Shape(pixel);
             shape.animate(animation).lifetime(0, duration);
-            XSS.shapes['xpl'+XSS.util.randomStr(5)] = shape;
+            xss.shapes['xpl'+xss.util.randomStr(5)] = shape;
         }
     }
 

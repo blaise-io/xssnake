@@ -1,14 +1,13 @@
-/*globals InputStage, StartGameStage*/
 'use strict';
 
 /**
- * @extends {InputStage}
- * @implements {StageInterface}
+ * @extends {xss.InputStage}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function InputXssStage() {
+xss.InputXssStage = function() {
 
-    this.name = CONST.STORAGE_XSS;
+    this.name = xss.STORAGE_xss;
     this.header = 'ENTER YOUR EVAL';
     this.label = '' +
         'Paste your JS. Keep it short; max 256 chars.\n' +
@@ -17,21 +16,21 @@ function InputXssStage() {
 
     this.minChars = 2;
     this.maxChars = 256;
-    this.displayWidth = CONST.MENU_WIDTH - XSS.font.width('> ');
-    this.next = StartGameStage;
+    this.displayWidth = xss.MENU_WIDTH - xss.font.width('> ');
+    this.next = xss.StartGameStage;
 
-    InputStage.call(this);
+    xss.InputStage.call(this);
 
     this.value = this.value || 'document.title = "LOSER!!"';
 }
 
-XSS.util.extend(InputXssStage.prototype, InputStage.prototype);
-XSS.util.extend(InputXssStage.prototype, /** @lends InputXssStage.prototype */ {
+xss.util.extend(xss.InputXssStage.prototype, xss.InputStage.prototype);
+xss.util.extend(xss.InputXssStage.prototype, /** @lends xss.InputXssStage.prototype */ {
 
     getData: function() {
         return {
             xss: this.getValue()
         };
     }
-
 });
+

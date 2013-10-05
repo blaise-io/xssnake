@@ -1,13 +1,12 @@
-/*globals GameStage*/
 'use strict';
 
 /**
- * @extends {GameStage}
- * @implements {StageInterface}
+ * @extends {xss.GameStage}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function StartGameStage() {
-    GameStage.call(this);
-}
+xss.StartGameStage = function() {
+    xss.GameStage.call(this);
+};
 
-XSS.util.extend(StartGameStage.prototype, GameStage.prototype);
+xss.util.extend(xss.StartGameStage.prototype, xss.GameStage.prototype);

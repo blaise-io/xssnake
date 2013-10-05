@@ -1,32 +1,25 @@
 'use strict';
 
-var Game = require('./game.js');
-var RoundManager = require('./round_manager.js');
-var Validate = require('./validate.js');
-var CONST = require('../shared/const.js');
-
 /**
- * @param {Server} server
+ * @param {xss.Server} server
  * @param {string} key
  * @param {Object} options
  * @constructor
  */
-function Room(server, key, options) {
+xss.Room = function(server, key, options) {
     this.server  = server;
     this.key     = key;
     this.options = this.cleanOptions(options);
 
-    /** type {Array.<Client>} */
+    /** type {Array.<xss.Client>} */
     this.clients = [];
-    this.rounds  = new RoundManager(this);
+    this.rounds  = new xss.RoundManager(this);
 
     /** type {Array.<Array>} */
     this._emitBuffer = [];
-}
+};
 
-module.exports = Room;
-
-Room.prototype = {
+xss.Room.prototype = {
 
     destruct: function() {
         this.clients = [];
@@ -37,7 +30,7 @@ Room.prototype = {
 
     restartRounds: function() {
         this.rounds.destruct();
-        this.rounds = new RoundManager(this);
+        this.rounds = new xss.RoundManager(this);
         this.rounds.detectAutoStart();
         this.emitState();
     },
@@ -53,10 +46,10 @@ Room.prototype = {
 
         rounds = this.rounds;
         clients = this.clients;
-        capacity = this.options[CONST.FIELD_MAX_PLAYERS];
+        capacity = this.options[xss.FIELD_MAX_PLAYERS];
 
         for (var i = 0, m = clients.length; i < m; i++) {
-            clients[i].emit(CONST.EVENT_ROOM_INDEX, [
+            clients[i].emit(xss.EVENT_ROOM_INDEX, [
                 i,
                 this.key,
                 this.names(),
@@ -69,7 +62,7 @@ Room.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      * @return {boolean}
      */
     isHost: function(client) {
@@ -83,26 +76,26 @@ Room.prototype = {
     cleanOptions: function(options) {
         var clean = {};
 
-        clean[CONST.FIELD_MAX_PLAYERS] = new Validate(options[CONST.FIELD_MAX_PLAYERS])
-            .assertRange(1, CONST.ROOM_CAPACITY)
-            .value(CONST.ROOM_CAPACITY);
+        clean[xss.FIELD_MAX_PLAYERS] = new xss.Validate(options[xss.FIELD_MAX_PLAYERS])
+            .assertRange(1, xss.ROOM_CAPACITY)
+            .value(xss.ROOM_CAPACITY);
 
-        clean[CONST.FIELD_DIFFICULTY] = new Validate(options[CONST.FIELD_DIFFICULTY])
+        clean[xss.FIELD_DIFFICULTY] = new xss.Validate(options[xss.FIELD_DIFFICULTY])
             .assertInArray([
-                CONST.FIELD_VALUE_EASY,
-                CONST.FIELD_VALUE_MEDIUM,
-                CONST.FIELD_VALUE_HARD])
-            .value(CONST.FIELD_VALUE_MEDIUM);
+                xss.FIELD_VALUE_EASY,
+                xss.FIELD_VALUE_MEDIUM,
+                xss.FIELD_VALUE_HARD])
+            .value(xss.FIELD_VALUE_MEDIUM);
 
-        clean[CONST.FIELD_POWERUPS] = new Validate(options[CONST.FIELD_POWERUPS])
+        clean[xss.FIELD_POWERUPS] = new xss.Validate(options[xss.FIELD_POWERUPS])
             .assertType('boolean')
             .value(true);
 
-        clean[CONST.FIELD_PRIVATE] = new Validate(options[CONST.FIELD_PRIVATE])
+        clean[xss.FIELD_PRIVATE] = new xss.Validate(options[xss.FIELD_PRIVATE])
             .assertType('boolean')
             .value(false);
 
-        clean[CONST.FIELD_XSS] = new Validate(options[CONST.FIELD_XSS])
+        clean[xss.FIELD_xss] = new xss.Validate(options[xss.FIELD_xss])
             .assertType('boolean')
             .value(false);
 
@@ -110,7 +103,7 @@ Room.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      */
     addClient: function(client) {
         client.room = this;
@@ -118,8 +111,8 @@ Room.prototype = {
 
         this.emitState();
 
-        client.broadcast(CONST.EVENT_CHAT_NOTICE, [
-            CONST.NOTICE_JOIN, client.index
+        client.broadcast(xss.EVENT_CHAT_NOTICE, [
+            xss.NOTICE_JOIN, client.index
         ]);
 
         this.rounds.addClient(client);
@@ -127,11 +120,11 @@ Room.prototype = {
     },
 
     /**
-     * @param {Client} client
+     * @param {xss.Client} client
      */
     removeClient: function(client) {
-        this.emit(CONST.EVENT_CHAT_NOTICE, [
-            CONST.NOTICE_DISCONNECT, client.index
+        this.emit(xss.EVENT_CHAT_NOTICE, [
+            xss.NOTICE_DISCONNECT, client.index
         ]);
 
         this.rounds.removeClient(client);
@@ -150,7 +143,7 @@ Room.prototype = {
      * @return {boolean}
      */
     isFull: function() {
-        return this.clients.length === this.options[CONST.FIELD_MAX_PLAYERS];
+        return this.clients.length === this.options[xss.FIELD_MAX_PLAYERS];
     },
 
     /**
@@ -179,7 +172,7 @@ Room.prototype = {
      * Buffer events to be sent later using flush()
      * @param {string} type
      * @param {*} data
-     * @return {Room}
+     * @return {xss.Room}
      */
     buffer: function(type, data) {
         this._emitBuffer.push([type, data]);
@@ -188,11 +181,11 @@ Room.prototype = {
 
     /**
      * Send buffer
-     * @return {Room}
+     * @return {xss.Room}
      */
     flush: function() {
         if (this._emitBuffer.length > 1) {
-            this.emit(CONST.EVENT_COMBI, this._emitBuffer);
+            this.emit(xss.EVENT_COMBI, this._emitBuffer);
         } else if (this._emitBuffer.length) {
             this.emit(this._emitBuffer[0][0], this._emitBuffer[0][1]);
         }

@@ -1,17 +1,16 @@
-/*globals BoundingBox, ShapePixels*/
 'use strict';
 
 /**
  * Canvas drawing
  * @constructor
  */
-function Canvas() {
-    var color = XSS.util.storage(CONST.STORAGE_COLOR);
+xss.Canvas = function() {
+    var color = xss.util.storage(xss.STORAGE_COLOR);
 
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
-    this.setColor(CONST.COLOR[color] || CONST.COLOR[0]);
+    this.setColor(xss.COLOR[color] || xss.COLOR[0]);
 
     if (!window.requestAnimationFrame) {
         this._vendorRequestAnimationFrame();
@@ -25,16 +24,16 @@ function Canvas() {
     this._frameBound = this._frame.bind(this);
 
     window.requestAnimationFrame(this._frameBound, this.canvas);
-}
+};
 
 /**
  * Level of ghosting. 0 = no ghosting, 1 = permanent on
  * @const
  * @type {number}
  */
-Canvas.GHOSTING = 0.6;
+xss.Canvas.GHOSTING = 0.6;
 
-Canvas.prototype = {
+xss.Canvas.prototype = {
 
     /**
      * @param {Object} color
@@ -51,13 +50,13 @@ Canvas.prototype = {
      */
     paint: function(delta) {
         // Abuse this loop to trigger game tick
-        XSS.event.trigger(CONST.PUB_GAME_TICK, delta, this.focus);
+        xss.event.trigger(xss.PUB_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this._clear();
 
         // Paint all layers
-        this._paintShapes(delta, XSS.shapes);
+        this._paintShapes(delta, xss.shapes);
     },
 
     /**
@@ -66,7 +65,7 @@ Canvas.prototype = {
      * which may affect framerate negatively.
      */
     garbageCollect: function() {
-        var shapes = XSS.shapes;
+        var shapes = xss.shapes;
         for (var k in shapes) {
             if (shapes.hasOwnProperty(k) && null === shapes[k]) {
                 delete shapes[k];
@@ -75,7 +74,7 @@ Canvas.prototype = {
     },
 
     flushShapeCache: function() {
-        var shapes = XSS.shapes;
+        var shapes = xss.shapes;
         for (var k in shapes) {
             if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
                 shapes[k].uncache();
@@ -86,7 +85,7 @@ Canvas.prototype = {
     _clear: function() {
         this.ctx.save();
         this.ctx.fillStyle = this.tileOff;
-        this.ctx.globalAlpha = 1 - Canvas.GHOSTING;
+        this.ctx.globalAlpha = 1 - xss.Canvas.GHOSTING;
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.restore();
     },
@@ -121,7 +120,7 @@ Canvas.prototype = {
         var delta;
 
         // Make appointment for next paint. Quit on error.
-        if (!XSS.error) {
+        if (!xss.error) {
             window.requestAnimationFrame(this._frameBound, this.canvas);
         }
 
@@ -138,7 +137,7 @@ Canvas.prototype = {
 
     /**
      * @param {string} name
-     * @param {Shape} shape
+     * @param {xss.Shape} shape
      * @param {number} delta
      * @private
      */
@@ -149,7 +148,7 @@ Canvas.prototype = {
         // of focus, we don't want animations. Also we do not want anims
         // if a browser is "catching up" frames after being focused after
         // a blur, where it tries to make up for slow frames.
-        if (delta > CONST.MIN_FRAME_DELTA && delta < CONST.MAX_FRAME_DELTA) {
+        if (delta > xss.MIN_FRAME_DELTA && delta < xss.MAX_FRAME_DELTA) {
             shape.applyEffects(delta);
         }
 
@@ -180,8 +179,8 @@ Canvas.prototype = {
 
     /**
      * @param {Object} context
-     * @param {Shape} shape
-     * @param {BoundingBox} bbox
+     * @param {xss.Shape} shape
+     * @param {xss.BoundingBox} bbox
      */
     _paintShapePixels: function(context, shape, bbox) {
         var i, m, tileSize = this.tileSize,
@@ -218,8 +217,8 @@ Canvas.prototype = {
     },
 
     /**
-     * @param {Shape} shape
-     * @return {CONST.ShapeCache}
+     * @param {xss.Shape} shape
+     * @return {xss.ShapeCache}
      * @private
      */
     _paintShapeOffscreen: function(shape) {
@@ -242,8 +241,8 @@ Canvas.prototype = {
      */
     _getTileSize: function() {
         return Math.floor(Math.min(
-            window.innerWidth / CONST.WIDTH,
-            window.innerHeight / CONST.HEIGHT
+            window.innerWidth / xss.WIDTH,
+            window.innerHeight / xss.HEIGHT
         )) || 1;
     },
 
@@ -273,7 +272,7 @@ Canvas.prototype = {
      */
     _handleFocusChange: function(ev) {
         this.focus = (ev.type !== 'blur');
-        XSS.event.trigger(CONST.PUB_FOCUS_CHANGE, this.focus);
+        xss.event.trigger(xss.PUB_FOCUS_CHANGE, this.focus);
     },
 
     /**
@@ -284,7 +283,7 @@ Canvas.prototype = {
         if (Number(ev.which) !== 1) { // Only LMB
             return;
         }
-        XSS.util.instruct(
+        xss.util.instruct(
             'No mousing please',
             4000
         );
@@ -303,8 +302,8 @@ Canvas.prototype = {
             this.pixelSize = this.tileSize - 0.6;
         }
 
-        this.canvasWidth = this.tileSize * CONST.WIDTH;
-        this.canvasHeight = this.tileSize * CONST.HEIGHT;
+        this.canvasWidth = this.tileSize * xss.WIDTH;
+        this.canvasHeight = this.tileSize * xss.HEIGHT;
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
     },
@@ -369,14 +368,14 @@ Canvas.prototype = {
     },
 
     /**
-     * @param {Shape} shape
+     * @param {xss.Shape} shape
      * @param {boolean=} ignoreExpand
-     * @return {BoundingBox}
+     * @return {xss.BoundingBox}
      * @private
      */
     _getCanvasBBox: function(shape, ignoreExpand) {
         var bbox = (ignoreExpand) ? shape.pixels.bbox() : shape.bbox();
-        bbox = XSS.util.clone(bbox);
+        bbox = xss.util.clone(bbox);
 
         for (var k in bbox) {
             if (bbox.hasOwnProperty(k)) {

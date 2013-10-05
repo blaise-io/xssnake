@@ -1,24 +1,23 @@
-/*globals Shape, InputField */
 'use strict';
 
 /**
  * BaseInputStage
  * Stage with a form input
- * @implements {StageInterface}
+ * @implements {xss.StageInterface}
  * @constructor
  */
-function InputStage() {
-    this.value = XSS.util.storage(this.name) || '';
-    this._inputTop = CONST.MENU_TOP + 17;
+xss.InputStage = function() {
+    this.value = xss.util.storage(this.name) || '';
+    this._inputTop = xss.MENU_TOP + 17;
     this._shape = this._getShape();
-}
+};
 
-InputStage.prototype = {
+xss.InputStage.prototype = {
 
     name: '',
     header: '',
     label: '',
-    next: InputStage,
+    next: xss.InputStage,
 
     minChars: 0,
     maxChars: 0,
@@ -26,7 +25,7 @@ InputStage.prototype = {
     displayWidth: 0,
 
     /**
-     * @returns {Shape}
+     * @returns {xss.Shape}
      */
     getShape: function() {
         return this._shape;
@@ -53,12 +52,12 @@ InputStage.prototype = {
     },
 
     destruct: function() {
-        XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_STAGES);
-        XSS.shapes.message = null;
+        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.shapes.message = null;
         this._shape = this._getShape();
         this.input.destruct();
         if (this.name) {
-            XSS.util.storage(this.name, this.value);
+            xss.util.storage(this.name, this.value);
         }
     },
 
@@ -69,16 +68,16 @@ InputStage.prototype = {
      */
     inputSubmit: function(error, value, top) {
         if (!error && value && top) {
-            XSS.flow.switchStage(this.next);
-            XSS.event.off(CONST.EVENT_KEYDOWN, CONST.NS_INPUT);
+            xss.flow.switchStage(this.next);
+            xss.event.off(xss.EVENT_KEYDOWN, xss.NS_INPUT);
         } else {
-            XSS.shapes.message = XSS.font.shape(error, CONST.MENU_LEFT, top);
-            XSS.shapes.message.lifetime(0, 500);
+            xss.shapes.message = xss.font.shape(error, xss.MENU_LEFT, top);
+            xss.shapes.message.lifetime(0, 500);
         }
     },
 
     _setupInputField: function() {
-        var input = new InputField(CONST.MENU_LEFT, this._inputTop, this.label);
+        var input = new xss.InputField(xss.MENU_LEFT, this._inputTop, this.label);
 
         input.maxValWidth = this.maxValWidth || input.maxValWidth;
         input.displayWidth = this.displayWidth || input.displayWidth;
@@ -96,7 +95,7 @@ InputStage.prototype = {
      * @private
      */
     _bindEvents: function() {
-        XSS.event.on(CONST.EVENT_KEYDOWN, CONST.NS_STAGES, this._handleKeys.bind(this));
+        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys.bind(this));
     },
 
     /**
@@ -105,14 +104,14 @@ InputStage.prototype = {
     _handleKeys: function(ev) {
         var value, labelHeight, top;
         switch (ev.keyCode) {
-            case CONST.KEY_ESCAPE:
-                XSS.flow.previousStage();
+            case xss.KEY_ESCAPE:
+                xss.flow.previousStage();
                 ev.preventDefault();
                 break;
-            case CONST.KEY_ENTER:
+            case xss.KEY_ENTER:
                 value = this.value.trim();
-                labelHeight = XSS.font.height(this.label);
-                top = labelHeight + CONST.MENU_TOP + CONST.MENU_TITLE_HEIGHT - 3;
+                labelHeight = xss.font.height(this.label);
+                top = labelHeight + xss.MENU_TOP + xss.MENU_TITLE_HEIGHT - 3;
                 this.inputSubmit(this._getInputError(value), value, top);
         }
     },
@@ -132,7 +131,7 @@ InputStage.prototype = {
     },
 
     /**
-     * @returns {Shape}
+     * @returns {xss.Shape}
      * @private
      */
     _getShape: function() {
@@ -142,22 +141,22 @@ InputStage.prototype = {
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      * @private
      */
     _getShapeExcludeValue: function() {
-        var pixels = XSS.font.pixels(this.header);
-        pixels = XSS.transform.zoomX2(pixels, CONST.MENU_LEFT, CONST.MENU_TOP, true);
-        return new Shape(pixels);
+        var pixels = xss.font.pixels(this.header);
+        pixels = xss.transform.zoomX2(pixels, xss.MENU_LEFT, xss.MENU_TOP, true);
+        return new xss.Shape(pixels);
     },
 
     /**
-     * @return {Shape}
+     * @return {xss.Shape}
      * @private
      */
     _getDataShape: function() {
         var value = this.label + this.value;
-        return new Shape(XSS.font.pixels(value, CONST.MENU_LEFT, this._inputTop));
+        return new xss.Shape(xss.font.pixels(value, xss.MENU_LEFT, this._inputTop));
     }
 
 };
