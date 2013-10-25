@@ -1,5 +1,3 @@
-exports = {};
-
 exports.concat = {
     src: [
         'shared/namespace.js',
