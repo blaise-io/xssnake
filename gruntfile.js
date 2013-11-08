@@ -27,5 +27,5 @@ module.exports = function(grunt) {
     grunt.registerTask('client', ['concat:client', 'gcc_rest:client']);
     grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
     grunt.registerTask('testsuite', ['concat:testsuite']);
-    grunt.registerTask('default', []);
+    grunt.registerTask('default', ['client', 'server']);
 };
