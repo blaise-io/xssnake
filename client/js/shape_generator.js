@@ -25,6 +25,27 @@ xss.ShapeGenerator.prototype = {
     },
 
     /**
+     * @param x1
+     * @param y1
+     * @param radian
+     * @param length
+     * @returns {xss.ShapePixels}
+     */
+    radianLine: function(x1, y1, radian, length) {
+        var x2, y2;
+
+        x2 = x1 + length / 2 * Math.cos(radian);
+        y2 = y1 + length / 2 * Math.sin(radian);
+
+        return this.line(
+            x1,
+            y1,
+            Math.round(x2),
+            Math.round(y2)
+        );
+    },
+
+    /**
      * @param {number} x1
      * @param {number} y1
      * @param {number} x2

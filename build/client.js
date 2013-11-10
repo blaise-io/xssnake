@@ -8,6 +8,7 @@ exports.concat = {
     },
     src: [
         'shared/namespace.js',
+        'shared/levels/*.js',
         'shared/*.js',
         'client/js/*.js',
         'client/js/abstract_stage/*.js',

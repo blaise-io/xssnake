@@ -1,8 +1,8 @@
 'use strict';
 
-var client = require('./grunt/client.js');
-var server = require('./grunt/server.js');
-var testsuite = require('./grunt/testsuite.js');
+var client = require('./build/client.js');
+var server = require('./build/server.js');
+var testsuite = require('./build/testsuite.js');
 
 
 module.exports = function(grunt) {

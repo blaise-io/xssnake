@@ -22,7 +22,7 @@ xss.InputXssStage = function() {
     xss.InputStage.call(this);
 
     this.value = this.value || 'document.title = "LOSER!!"';
-}
+};
 
 xss.util.extend(xss.InputXssStage.prototype, xss.InputStage.prototype);
 xss.util.extend(xss.InputXssStage.prototype, /** @lends xss.InputXssStage.prototype */ {
