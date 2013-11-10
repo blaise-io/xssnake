@@ -29,9 +29,4 @@ xss.debugLevel = function() {
         }
         time += elapsed;
     });
-
-    console.profile(1);
-    window.setTimeout(function() {
-        console.profileEnd(1);
-    }, 2000);
 };
