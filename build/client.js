@@ -40,7 +40,6 @@ exports.scriptlinker = {
       endTag: '<!-- /grunt client_scriptlinker -->',
       fileTmpl: '<script src="../%s"></script>\n'
     },
-    files: {
-      'client/client.html': ['client/vendor/sockjs-0.3.js'].concat(src)
-    }
+    src: ['client/vendor/sockjs-0.3.js'].concat(src),
+    dest: 'client/client.html'
 };
