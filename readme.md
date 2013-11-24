@@ -18,7 +18,7 @@ optimized code.
 ## Initial Setup
 
  * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
- * Adjust the contents of `server/shared/config.js` to match your environment
+ * Adjust the contents of `shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)
  * Install dependencies: `npm install`
 
@@ -42,13 +42,20 @@ decrease server load a little, but it will also make debugging painful.
  * Check if the client and server still compile: `npm test`
  * Current build status: [![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
 
+If you add any files, make sure to include them in `build/client.js`, then
+run `grunt client_scriptlinker` to update client/client.html.
+
 ## Creating/Updating Levels
 
 If you adjust one of the level images, you have to rebuild
 `server/shared/levels.js` by running `node build/levels.js`.
 This is documented in [`client/levels/README.md`](https://github.com/blaise-io/xssnake/tree/master/client/levels).
 
+(To do: convert to grunt task)
+
 ## Creating/Updating Audio Files
 
 If you adjust one of the audio files, you have to rebuild
 `client/js/audio.js` by running `node build/audio.js`.
+
+(To do: convert to grunt task)

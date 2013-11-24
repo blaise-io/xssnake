@@ -18,13 +18,18 @@ module.exports = function(grunt) {
         gcc_rest: {
             client: client.gcc_rest,
             server: server.gcc_rest
+        },
+        scriptlinker: {
+            client: client.scriptlinker
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-gcc-rest');
+    grunt.loadNpmTasks('grunt-scriptlinker');
 
     grunt.registerTask('client', ['concat:client', 'gcc_rest:client']);
+    grunt.registerTask('client_scriptlinker', ['scriptlinker:client']);
     grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
     grunt.registerTask('testsuite', ['concat:testsuite']);
     grunt.registerTask('default', ['client', 'server']);
