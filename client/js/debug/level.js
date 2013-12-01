@@ -1,5 +1,7 @@
 'use strict';
 
+xss.DEBUG_NS = 'DEBUG';
+
 // Debug URL: client.html?level=0
 var levelIndex = location.search.match(/level=([0-9]+)/);
 if (levelIndex) {
@@ -18,7 +20,7 @@ xss.debugLevel = function() {
     xss.shapes.level = xss.shapegen.level(data);
     xss.menuSnake.addToShapes();
 
-    xss.event.on(xss.PUB_GAME_TICK, '', function(elapsed) {
+    xss.event.on(xss.PUB_GAME_TICK, xss.DEBUG_NS, function(elapsed) {
         var ns = 'ANIMRL_';
         var pixelObjects = rotatingLine.update(time);
         if (pixelObjects) {

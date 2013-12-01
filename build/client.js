@@ -3,20 +3,20 @@ var helper = require('./helper.js');
 
 var src = [
     'shared/namespace.js',
-    'shared/levels/*.js',
-    'shared/*.js',
-    'client/js/*.js',
-    'client/js/abstract_stage/*.js',
-    'client/js/stage_class_helper/*.js',
-    'client/js/stages/*.js'
+    'shared/**/*.js',
+    'client/js/**/*.js',
 ];
+
+var srcCompile = src.slice().concat(['!client/js/debug/*.js']);
+var srcDebug = ['client/vendor/sockjs-0.3.js'].concat(src);
+
 
 exports.concat = {
     options: {
         banner: "'use strict';\n",
         process: helper.replaceStrict
     },
-    src: src,
+    src: srcCompile,
     dest: 'dist/client.js'
 };
 
@@ -40,6 +40,6 @@ exports.scriptlinker = {
       endTag: '<!-- /grunt client_scriptlinker -->',
       fileTmpl: '<script src="../%s"></script>\n'
     },
-    src: ['client/vendor/sockjs-0.3.js'].concat(src),
+    src: srcDebug,
     dest: 'client/client.html'
 };

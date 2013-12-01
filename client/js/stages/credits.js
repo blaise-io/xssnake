@@ -27,4 +27,3 @@ xss.util.extend(xss.CreditsStage.prototype, /** @lends xss.CreditsStage.prototyp
         );
     }
 });
-
