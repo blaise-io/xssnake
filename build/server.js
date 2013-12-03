@@ -8,8 +8,8 @@ exports.concat = {
     },
     src: [
         'shared/namespace.js',
-        'shared/*.js',
-        'server/lib/*.js',
+        'shared/**/*.js',
+        'server/**/*.js',
         'server/start.js'
     ],
     dest: 'dist/server.js'

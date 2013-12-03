@@ -63,7 +63,7 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
             [true, 'YES']
         ]);
 
-        form.addField(xss.FIELD_xss, 'xss ' + xss.UC_SKULL, [
+        form.addField(xss.FIELD_xss, 'XSS ' + xss.UC_SKULL, [
             [false, 'NO'],
             [true, 'YES']
         ]);

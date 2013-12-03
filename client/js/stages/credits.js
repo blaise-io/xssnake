@@ -15,9 +15,9 @@ xss.util.extend(xss.CreditsStage.prototype, /** @lends xss.CreditsStage.prototyp
     getShape: function() {
         var body, left = xss.MENU_LEFT, top = xss.MENU_TOP;
 
-        body = 'Concept, Code, Bugs, xss.Font & ' + xss.UC_SKULL + ':\n' +
+        body = 'Concept, Code, Bugs, Font & ' + xss.UC_SKULL + ':\n' +
             'Blaise Kal, 2012-2013.\n\n' +
-            'Website: www.blaise.io\n' +
+            'WWW: blaise.io\n' +
             'Email: blaisekal@gmail.com\n\n' +
             'Thank you for playing!';
 

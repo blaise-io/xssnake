@@ -11,11 +11,11 @@ xss.ChallengeStage = function() {
     this.maxValWidth = 50;
     this.header = 'DANGER DANGER';
     this.label = '' +
-        'xss mode allows the winner of a game to execute\n' +
-        'Javascript in the browser of every loser. This may\n' +
+        'XSS mode allows the winner of a game to execute\n' +
+        'JavaScript in the browser of every loser. This may\n' +
         'damage you and/or your computer. To confirm that\n' +
-        'you know Javascript and accept the risk, enter the\n' +
-        'result of this statement:\n\n> ' +
+        'you know JavaScript and accept the risk, enter the\n' +
+        'result of the following statement:\n\n> ' +
         this._challenge + '\n> ';
 
     this.next = xss.InputXssStage;

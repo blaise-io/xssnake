@@ -1,13 +1,9 @@
 'use strict';
 
 /**
- * Transform
- * Pixel transformations
- * @constructor
+ * Extend Transform wirh client-only methods.
  */
-xss.Transform = function() {};
-
-xss.Transform.prototype = {
+xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
 
     /**
      * @param {xss.ShapePixels} pixels
@@ -227,4 +223,4 @@ xss.Transform.prototype = {
         return x2Pixels;
     }
 
-};
+});

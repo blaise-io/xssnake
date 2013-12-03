@@ -54,7 +54,7 @@ xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.protot
             players.join(', ') + br +
             'Difficulty: ' + diffs[options[xss.FIELD_DIFFICULTY]] + br +
             'Power-Ups: ' + bools[options[xss.FIELD_POWERUPS]] + br +
-            'xss ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_xss]] +
+            'XSS ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_xss]] +
             br + br +
             'Enter your name to join: ';
 

@@ -1,40 +1,14 @@
 'use strict';
 
-// TODO: Move to separate file
-xss.animations = {};
-
-
-/**
- * @interface
- * @todo: Move to separate file
- */
-xss.animations.Interface = function() {};
-xss.animations.Interface.prototype = {
-    /**
-     * For predictable randomness.
-     * @type string
-     */
-    seed: '',
-
-    /**
-     * Return one or more ShapePixel objects.
-     * Return null if animation was not updated.
-     * @param ms
-     * @return {Array.<xss.ShapePixels>}
-     */
-    update: function(ms) {}
-};
-
-
 /**
  * @param {number} x
  * @param {number} y
  * @param {number} len
  * @param {number=} speed
- * @implements {xss.animations.Interface}
+ * @implements {xss.animation.Interface}
  * @constructor
  */
-xss.animations.RotatingLine = function(x, y, len, speed) {
+xss.animation.RotatingLine = function(x, y, len, speed) {
     this.x = x;
     this.y = y;
     this.len = len;
@@ -42,7 +16,7 @@ xss.animations.RotatingLine = function(x, y, len, speed) {
     this.speed = speed || 0.5;
 };
 
-xss.animations.RotatingLine.prototype = {
+xss.animation.RotatingLine.prototype = {
 
     /**
      * @param {number} ms

@@ -2,8 +2,8 @@
 
 xss.DEBUG_NS = 'DEBUG';
 
-// Debug URL: client.html?level=0
-var levelIndex = location.search.match(/level=([0-9]+)/);
+// Debug URL: client.html?debug=level:1
+var levelIndex = location.search.match(/debug=level:([0-9]+)/);
 if (levelIndex) {
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(xss.debugLevel, 100);
@@ -13,7 +13,7 @@ if (levelIndex) {
 xss.debugLevel = function() {
     var time = 0;
     var data = xss.level.levelData(levelIndex[1]);
-    var rotatingLine = new xss.animations.RotatingLine(31, 16, 12);
+    var rotatingLine = new xss.animation.RotatingLine(31, 16, 12);
 
     xss.flow.destruct();
     xss.shapes = xss.shapegen.outerBorder();
