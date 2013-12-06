@@ -27,6 +27,9 @@ xss.Shape = function(varArgs) {
     /** @type {Object.<string,*>} */
     this.effects = {};
 
+    /** @type {{x: number, y: number}} */
+    this.shift = {x: 0, y: 0};
+
     /** @type {?xss.ShapeCache} */
     this.cache = null;
 
@@ -46,24 +49,6 @@ xss.Shape.prototype = {
      */
     clone: function() {
         return new xss.Shape(this.pixels);
-    },
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {xss.Shape}
-     */
-    shift: function(x, y) {
-        return this.set(xss.transform.shift(this.pixels, x, y));
-    },
-
-    /**
-     * @param {number} width
-     * @param {number} height
-     * @return {xss.Shape}
-     */
-    center: function(width, height) {
-        return this.set(xss.transform.center(this.pixels, width, height));
     },
 
     /**

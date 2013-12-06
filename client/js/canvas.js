@@ -10,14 +10,15 @@ xss.Canvas = function() {
     this.canvas = this._setupCanvas();
     this.ctx = this.canvas.getContext('2d');
 
+    this._setCanvasDimensions();
+    this._positionCanvas();
+    this._bindEvents();
+
     this.setColor(xss.COLOR[color] || xss.COLOR[0]);
 
     if (!window.requestAnimationFrame) {
         this._vendorRequestAnimationFrame();
     }
-
-    this._positionCanvas();
-    this._bindEvents();
 
     this.focus = true;
     this._prevFrame = new Date();
@@ -40,7 +41,6 @@ xss.Canvas.prototype = {
      */
     setColor: function(color) {
         this.color = color;
-        this._setCanvasDimensions();
         this._setPatterns();
         this.flushShapeCache();
     },
@@ -172,8 +172,8 @@ xss.Canvas.prototype = {
         // Paint cached image on canvas
         ctx.drawImage(
             shape.cache.canvas,
-            shape.cache.bbox.x1,
-            shape.cache.bbox.y1
+            shape.cache.bbox.x1 + (shape.shift.x * this.tileSize),
+            shape.cache.bbox.y1 + (shape.shift.y * this.tileSize)
         );
     },
 

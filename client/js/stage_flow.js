@@ -173,8 +173,8 @@ xss.StageFlow.prototype = {
             xss.play.swoosh();
         }
 
-        xss.shapes.oldstage = oldShape.clone().animate(oldStageAnim);
-        xss.shapes.newstage = newShape.clone().animate(newStageAnim);
+        xss.shapes.oldstage = oldShape.animate(oldStageAnim);
+        xss.shapes.newstage = newShape.animate(newStageAnim);
     },
 
     /**
@@ -183,7 +183,7 @@ xss.StageFlow.prototype = {
      * @private
      */
     _setStage: function(stage, back) {
-        // Remove old stages
+        // Remove animated stages
         xss.shapes.oldstage = null;
         xss.shapes.newstage = null;
 

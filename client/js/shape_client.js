@@ -6,6 +6,29 @@
 xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
 
     /**
+     * @param {number=} width
+     * @param {number=} height
+     * @return {xss.Shape}
+     */
+    center: function(width, height) {
+        var x, y, bbox = this.bbox();
+
+        width = width || xss.WIDTH;
+        height = height || xss.HEIGHT;
+
+        x = Math.round((width - bbox.width) / 2);
+        y = Math.round((height - bbox.height) / 2);
+
+        x -= bbox.x1;
+        y -= bbox.y1;
+
+        this.shift.x = x;
+        this.shift.y = y;
+
+        return this;
+    },
+
+    /**
      * @param {number=} on Visible duration
      * @param {number=} off Invisible duration
      * @return {xss.Shape}
@@ -102,29 +125,26 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
      * @private
      */
     _animateEffect: function(options) {
-        var from, to, duration, callback, clone, progress = 0;
+        var from, to, duration, callback, progress = 0;
 
         options  = options || {};
         from     = options.from || [0, 0];
         to       = options.to || [0, 0];
         duration = options.duration || 200;
         callback = options.callback || xss.util.dummy;
-        clone    = this.clone();
 
         /** @this {xss.Shape} */
         return function(delta) {
-            var x, y;
+            var x, y, percent;
             progress += delta;
-            var progressx = Math.sqrt(progress / duration);
+            percent = Math.sqrt(progress / duration);
             if (progress < duration) {
-                x = from[0] - ((from[0] - to[0]) * progressx);
-                x = Math.round(x);
-                y = from[1] - ((from[1] - to[1]) * progressx);
-                y = Math.round(y);
-                this.set(xss.transform.shift(clone.pixels, x, y));
+                x = from[0] - ((from[0] - to[0]) * percent);
+                y = from[1] - ((from[1] - to[1]) * percent);
+                this.shift.x = Math.round(x);
+                this.shift.y = Math.round(y);
             } else {
                 delete this.effects.animate;
-                this.set(clone.shift(to[0], to[1]).pixels);
                 callback();
             }
         }.bind(this);

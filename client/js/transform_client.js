@@ -16,34 +16,13 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
             return pixels; // No shift
         }
 
-        var ret = new xss.ShapePixels();
+        var shiftedPixels = new xss.ShapePixels();
 
         pixels.each(function(x, y) {
-            ret.add(x + xshift, y + yshift);
+            shiftedPixels.add(x + xshift, y + yshift);
         });
 
-        return ret;
-    },
-
-    /**
-     * @param {xss.ShapePixels} pixels
-     * @param {number=} width
-     * @param {number=} height
-     * @return {xss.ShapePixels}
-     */
-    center: function(pixels, width, height) {
-        var x, y, bbox = pixels.bbox();
-
-        width = width || xss.WIDTH;
-        height = height || xss.HEIGHT;
-
-        x = Math.round((width - bbox.width) / 2);
-        y = Math.round((height - bbox.height) / 2);
-
-        x -= bbox.x1;
-        y -= bbox.y1;
-
-        return xss.transform.shift(pixels, x, y);
+        return shiftedPixels;
     },
 
     /**
@@ -66,10 +45,8 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
         y1 = bbox.y1 - vPadding;
         y2 = bbox.y2 + vPadding;
 
-        // Cannot add negative Y pixels, shift to y=0 position.
+        // Cannot add negative Y pixels
         if (y1 < 0) {
-            shape.shift(0, Math.abs(y1));
-            y2 += Math.abs(y1);
             y1 = 0;
         }
 
