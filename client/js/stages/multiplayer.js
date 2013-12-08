@@ -28,7 +28,7 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
      * @private
      */
     getNextStage: function(values) {
-        if (values[xss.FIELD_xss]) {
+        if (values[xss.FIELD_XSS]) {
             return xss.ChallengeStage;
         } else {
             return xss.StartGameStage;
@@ -63,7 +63,7 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
             [true, 'YES']
         ]);
 
-        form.addField(xss.FIELD_xss, 'XSS ' + xss.UC_SKULL, [
+        form.addField(xss.FIELD_XSS, 'XSS ' + xss.UC_SKULL, [
             [false, 'NO'],
             [true, 'YES']
         ]);

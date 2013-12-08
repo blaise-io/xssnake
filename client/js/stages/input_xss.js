@@ -7,7 +7,7 @@
  */
 xss.InputXssStage = function() {
 
-    this.name = xss.STORAGE_xss;
+    this.name = xss.STORAGE_XSS;
     this.header = 'ENTER YOUR EVAL';
     this.label = '' +
         'Paste your JS. Keep it short; max 256 chars.\n' +

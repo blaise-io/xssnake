@@ -46,8 +46,8 @@ xss.Server.prototype = {
             }
         };
 
-        for (i = 0, m = xss.levels.length; i < m; i++) {
-            buffer = new Buffer(xss.levels[i], 'base64');
+        for (i = 0, m = xss.data.levels.length; i < m; i++) {
+            buffer = new Buffer(xss.data.levels[i][0], 'base64');
             png.parse(buffer, appendLevel.bind(i));
         }
     },

@@ -58,7 +58,7 @@ xss.PUB_FONT_LOAD = 'FLD';
 
 xss.STORAGE_MUTE = 'MUT';
 xss.STORAGE_NAME = 'NME';
-xss.STORAGE_xss = 'xss';
+xss.STORAGE_XSS = 'XSS';
 xss.STORAGE_COLOR = 'CLR';
 xss.STORAGE_PREFS = 'PRF';
 

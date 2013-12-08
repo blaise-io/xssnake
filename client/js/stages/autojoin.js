@@ -6,7 +6,7 @@
  * @constructor
  */
 xss.AutoJoinStage = function() {
-    var isxss, autoJoinData = xss.flow.getData().autoJoin;
+    var isXSS, autoJoinData = xss.flow.getData().autoJoin;
 
     this._options = autoJoinData[1];
     this._players = autoJoinData[2];
@@ -15,8 +15,8 @@ xss.AutoJoinStage = function() {
     this.label = this._getLabel();
     this.name = xss.STORAGE_NAME;
 
-    isxss = this._options[xss.FIELD_xss];
-    this.next = (isxss) ? xss.ChallengeStage : xss.StartGameStage;
+    isXSS = this._options[xss.FIELD_XSS];
+    this.next = (isXSS) ? xss.ChallengeStage : xss.StartGameStage;
 
     this.minChars = 2;
     this.maxValWidth = xss.UI_WIDTH_NAME;
@@ -54,7 +54,7 @@ xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.protot
             players.join(', ') + br +
             'Difficulty: ' + diffs[options[xss.FIELD_DIFFICULTY]] + br +
             'Power-Ups: ' + bools[options[xss.FIELD_POWERUPS]] + br +
-            'XSS ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_xss]] +
+            'XSS ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_XSS]] +
             br + br +
             'Enter your name to join: ';
 

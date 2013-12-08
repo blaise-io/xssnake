@@ -95,7 +95,7 @@ xss.Room.prototype = {
             .assertType('boolean')
             .value(false);
 
-        clean[xss.FIELD_xss] = new xss.Validate(options[xss.FIELD_xss])
+        clean[xss.FIELD_XSS] = new xss.Validate(options[xss.FIELD_XSS])
             .assertType('boolean')
             .value(false);
 

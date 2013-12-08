@@ -26,7 +26,7 @@ describe('Game', function() {
         gameOptions[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_MEDIUM;
         gameOptions[xss.FIELD_POWERUPS] = true;
         gameOptions[xss.FIELD_PRIVATE] = false;
-        gameOptions[xss.FIELD_xss] = false;
+        gameOptions[xss.FIELD_XSS] = false;
 
         roomManager = new xss.RoomManager(server);
 

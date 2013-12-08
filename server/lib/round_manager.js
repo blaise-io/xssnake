@@ -111,7 +111,7 @@ xss.RoundManager.prototype = {
      * @param {xss.Client} winner
      */
     endAllRounds: function(winner) {
-        if (this.room.options[xss.FIELD_xss]) {
+        if (this.room.options[xss.FIELD_XSS]) {
             this._xssFetch(winner);
         } else {
             this.round.game.showLotsOfApples();

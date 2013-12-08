@@ -13,7 +13,7 @@ var srcDebug = ['client/vendor/sockjs-0.3.js'].concat(src);
 
 exports.concat = {
     options: {
-        banner: "'use strict';\n",
+        banner: '\'use strict\';\n',
         process: helper.replaceStrict
     },
     src: srcCompile,
@@ -36,10 +36,10 @@ exports.gcc_rest = {
 
 exports.scriptlinker = {
     options: {
-      startTag: '<!-- grunt client_scriptlinker -->\n',
-      endTag: '<!-- /grunt client_scriptlinker -->',
+      startTag: '<!-- scripts start -->\n',
+      endTag: '<!-- scripts end -->',
       fileTmpl: '<script src="../%s"></script>\n'
     },
     src: srcDebug,
-    dest: 'client/client.html'
+    dest: 'client/debug.html'
 };

@@ -1,23 +1,39 @@
 'use strict';
 
 var fs = require('fs');
+var helper = require('./helper.js');
 
-var dir = __dirname + '/../client/levels/';
-var files = fs.readdirSync(dir);
-var data = [];
+var banner = '', footer = '';
 
-for (var i = 0, m = files.length; i < m; i++) {
-    if (/\.png$/.test(files[i])) {
-        var buffer = fs.readFileSync(dir + files[i]);
-        data.push(buffer.toString('base64'));
-    }
-}
+banner += '\'use strict\';\n\n';
+banner += '// This file was generated using `grunt source`\n';
+banner += 'xss.data = xss.data || {};\n';
+banner += 'xss.data.levels = [\n';
 
-var json = JSON.stringify(data, null, 4).replace(/"/gi, '\'');
-var contents, template = __dirname + '/../client/templates/levels.js.tpl';
+footer += '\n];\n';
 
-contents = fs.readFileSync(template, 'utf-8');
-contents = contents.replace('%%LEVELS%%', json);
-contents = contents.replace('%%DATE%%', new Date().toUTCString());
+exports.concat = {
+    options: {
+        separator: ',\n',
+        banner: banner,
+        footer: footer,
+        process: function(src, path) {
+            var str,  animfile = path.replace(/.png$/, '.js');
 
-fs.writeFile(__dirname + '/../server/shared/levels.js', contents);
+            str = '    [\'';
+            str += fs.readFileSync(path).toString('base64');
+            str += '\'';
+
+            if (fs.existsSync(animfile)) {
+                str += ',function(){return [';
+                str += helper.readFileSync(animfile).replace(/;\n/g, ',').replace(';', '');
+                str += '];}';
+            }
+
+            str += ']';
+            return str;
+        }
+    },
+    src: ['build/levels/*.png'],
+    dest: 'shared/data/levels.js'
+};

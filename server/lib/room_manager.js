@@ -90,7 +90,7 @@ xss.RoomManager.prototype = {
             case reqOptions[xss.FIELD_PRIVATE]:
             case options[xss.FIELD_DIFFICULTY] !== reqOptions[xss.FIELD_DIFFICULTY]:
             case options[xss.FIELD_POWERUPS]   !== reqOptions[xss.FIELD_POWERUPS]:
-            case options[xss.FIELD_xss]        !== reqOptions[xss.FIELD_xss]:
+            case options[xss.FIELD_XSS]        !== reqOptions[xss.FIELD_XSS]:
             case options[xss.FIELD_MAX_PLAYERS]  > reqOptions[xss.FIELD_MAX_PLAYERS]:
                 return false;
             default:

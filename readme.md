@@ -3,6 +3,8 @@
 Online multiplayer Snake where the winner of a game is allowed to execute
 JavaScript in the browser of other players.
 
+[![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
+
 XSSNAKE is currently in development. The beta release is planned around 2014.
 
 ![XSSNAKE](http://i.imgur.com/h4BTxp1.png)
@@ -18,44 +20,23 @@ optimized code.
 ## Initial Setup
 
  * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
- * Adjust the contents of `shared/config.js` to match your environment
  * Download and install [node.js](http://nodejs.org/)
  * Install dependencies: `npm install`
+ * Configure hostname and port in `shared/config.js`
+ * Run `npm start`
 
 ## Production
 
- * Compile the client source: `node build/client.js`.  
-   This will create the file `index.html` in the `www` dir.
- * Make sure the `www` dir is accessible by browsers
- * Make sure the `server` dir is accessible by node.js
- * Run the game server: `npm start`
- * Access the game by navigating your browser to the `www` dir's public address
-
-Optionally you can compile the server code using `node build/server.js` and
-start the compiled server using `node server/compiled_start.js`. This may have
-decrease server load a little, but it will also make debugging painful.
+XSSNAKE is not production-ready yet.
 
 ## Developing and Testing
 
  * Run the game server: `npm start`
- * Access the game by opening `client/client.html` in your browser
- * Check if the client and server still compile: `npm test`
- * Current build status: [![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
+ * Access the game by opening `client/debug.html` in your browser
 
-If you add any files, make sure to include them in `build/client.js`, then
-run `grunt client_scriptlinker` to update client/client.html.
+If you add .js files, add/modify levels or add/modify audio, you need to rebuild
+files by running `grunt source`.
 
-## Creating/Updating Levels
+## Levels
 
-If you adjust one of the level images, you have to rebuild
-`server/shared/levels.js` by running `node build/levels.js`.
-This is documented in [`client/levels/README.md`](https://github.com/blaise-io/xssnake/tree/master/client/levels).
-
-(To do: convert to grunt task)
-
-## Creating/Updating Audio Files
-
-If you adjust one of the audio files, you have to rebuild
-`client/js/audio.js` by running `node build/audio.js`.
-
-(To do: convert to grunt task)
+Documented in [`build/levels/readme.md`](build/levels/readme.md).

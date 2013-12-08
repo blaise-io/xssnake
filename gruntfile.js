@@ -2,6 +2,7 @@
 
 var client = require('./build/client.js');
 var server = require('./build/server.js');
+var levels = require('./build/levels.js');
 var testsuite = require('./build/testsuite.js');
 
 
@@ -11,9 +12,9 @@ module.exports = function(grunt) {
         concat: {
             client: client.concat,
             server: server.concat,
+            levels: levels.concat,
             testsuite: testsuite.concat
             // TODO: audio
-            // TODO: levels
         },
         gcc_rest: {
             client: client.gcc_rest,
@@ -28,8 +29,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-gcc-rest');
     grunt.loadNpmTasks('grunt-scriptlinker');
 
+    grunt.registerTask('source', ['scriptlinker:client', 'concat:levels']);
     grunt.registerTask('client', ['concat:client', 'gcc_rest:client']);
-    grunt.registerTask('client_scriptlinker', ['scriptlinker:client']);
     grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
     grunt.registerTask('testsuite', ['concat:testsuite']);
     grunt.registerTask('default', ['client', 'server']);

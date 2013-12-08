@@ -1,4 +1,3 @@
-var fs = require('fs');
 var helper = require('./helper.js');
 
 exports.concat = {

@@ -44,7 +44,7 @@ xss.FIELD_MAX_PLAYERS = 'MP';
 xss.FIELD_DIFFICULTY = 'LD';
 xss.FIELD_POWERUPS = 'PU';
 xss.FIELD_PRIVATE = 'PV';
-xss.FIELD_xss = 'XS';
+xss.FIELD_XSS = 'XS';
 
 xss.FIELD_VALUE_EASY = 1;
 xss.FIELD_VALUE_MEDIUM = 2;

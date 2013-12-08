@@ -22,7 +22,7 @@ xss.LevelCache.prototype = {
      * @private
      */
     _generateLevelCache: function() {
-        for (var i = 0, m = xss.levels.length; i < m; i++) {
+        for (var i = 0, m = xss.data.levels.length; i < m; i++) {
             this._loadImage(i);
         }
     },
@@ -33,7 +33,7 @@ xss.LevelCache.prototype = {
      */
     _loadImage: function(index) {
         var img = new Image();
-         img.src = 'data:image/png;base64,' + xss.levels[index];
+         img.src = 'data:image/png;base64,' + xss.data.levels[index][0];
          img.onload = function() {
              this._cache[index] = this._onImageLoad(index, img);
          }.bind(this);
