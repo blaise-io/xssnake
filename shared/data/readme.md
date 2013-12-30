@@ -9,6 +9,11 @@ animated objects to levels.
 If you change one of the images, you have to rebuild `shared/data/level_images.js`
 by running `grunt source`. You should not edit `level_images.js` directly.
 
+| Example (zoomed in)
+|---
+| <img src="level_images/poles.png" height="99"/>
+
+
 ## Pixel color table
 
 Every pixel translates to a tile.
