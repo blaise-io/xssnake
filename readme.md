@@ -39,4 +39,4 @@ files by running `grunt source`.
 
 ## Levels
 
-Documented in [`build/levels/readme.md`](build/levels/readme.md).
+Documented in [`shared/data/readme.md`](shared/data/readme.md).
