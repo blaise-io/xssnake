@@ -1,6 +1,6 @@
 'use strict';
 
-xss.debug = xss.debug || {NS: 'DEBUG'};
+xss.debug.NS = 'DEBUG';
 
 // Debug URL: client.html?debug=level:1
 xss.debug.levelIndex = location.search.match(/debug=level:([0-9]+)/);

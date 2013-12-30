@@ -161,7 +161,12 @@ xss.Canvas.prototype = {
         if (shape.clearBBox) {
             bbox = this._getCanvasBBox(shape);
             ctx.fillStyle = this.tileOff;
-            ctx.fillRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
+            ctx.fillRect(
+                bbox.x1 + (shape.shift.x * this.tileSize),
+                bbox.y1 + (shape.shift.y * this.tileSize),
+                bbox.width,
+                bbox.height
+            );
         }
 
         // Create cache

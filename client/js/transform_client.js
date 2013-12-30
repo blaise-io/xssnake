@@ -40,15 +40,16 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
         hPadding = (hPadding || 6);
         vPadding = (vPadding || 4);
 
+        // Keep in viewport
+        if (bbox.y1 - vPadding < 0) {
+            shape.set(this.shift(shape.pixels, 0, vPadding - bbox.y1));
+            bbox = shape.bbox();
+        }
+
         x1 = bbox.x1 - hPadding;
         x2 = bbox.x2 + hPadding;
         y1 = bbox.y1 - vPadding;
         y2 = bbox.y2 + vPadding;
-
-        // Cannot add negative Y pixels
-        if (y1 < 0) {
-            y1 = 0;
-        }
 
         shape.add(
             xss.shapegen.line(x1, y1+1, x1, y2),      // Left
