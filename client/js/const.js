@@ -40,6 +40,7 @@ xss.GAME_TILE = 4;
 
 xss.HASH_ROOM = 'room';
 
+xss.NS_ANIM = 'ANM';
 xss.NS_FLOW = 'FLW';
 xss.NS_CHAT = 'CHT';
 xss.NS_DIALOG = 'DLG';
@@ -53,7 +54,7 @@ xss.NS_SPAWN = 'SPN';
 xss.NS_STAGES = 'STG';
 
 xss.PUB_GAME_TICK = 'TIK';
-xss.PUB_FOCUS_CHANGE = 'FCH';
+xss.PUB_WIN_FOCUS_CHANGE = 'WFC';
 xss.PUB_FONT_LOAD = 'FLD';
 
 xss.STORAGE_MUTE = 'MUT';

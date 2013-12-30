@@ -24,6 +24,9 @@ xss.Game = function(index, levelIndex, names) {
     /** @type {Array.<xss.ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
 
+    /** @type {xss.LevelAnimation} */
+    this.animation = new xss.LevelAnimation(this.level.levelData.animation);
+
     /** @type {Array.<xss.Spawnable>} */
     this.spawnables = [];
 
@@ -36,10 +39,11 @@ xss.Game = function(index, levelIndex, names) {
 xss.Game.prototype = {
 
     start: function() {
-        var ns = xss.NS_GAME;
-
-        xss.event.on(xss.PUB_GAME_TICK, ns, this._moveSnakes.bind(this));
-        xss.event.on(xss.PUB_FOCUS_CHANGE, ns, this._handleFocus.bind(this));
+        xss.event.on(
+            xss.PUB_WIN_FOCUS_CHANGE,
+            xss.NS_GAME,
+            this._handleFocus.bind(this)
+        );
 
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].removeNameAndDirection();
@@ -54,6 +58,7 @@ xss.Game.prototype = {
 
         ns = xss.NS_GAME;
 
+        xss.event.off(xss.PUB_GAME_TICK, ns);
         xss.event.off(xss.EVENT_GAME_COUNTDOWN, ns);
         xss.event.off(xss.EVENT_GAME_START, ns);
         xss.event.off(xss.EVENT_GAME_SPAWN, ns);
@@ -74,6 +79,8 @@ xss.Game.prototype = {
                 this.spawnables[i].destruct();
             }
         }
+
+        this.animation.destruct();
 
         this.spawnables = [];
 
@@ -117,6 +124,7 @@ xss.Game.prototype = {
 
     _bindEvents: function() {
         var ns = xss.NS_GAME;
+        xss.event.on(xss.PUB_GAME_TICK,        ns, this._moveThings.bind(this));
         xss.event.on(xss.EVENT_GAME_COUNTDOWN, ns, this.countdown.bind(this));
         xss.event.on(xss.EVENT_GAME_START,     ns, this.start.bind(this));
         xss.event.on(xss.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
@@ -253,6 +261,18 @@ xss.Game.prototype = {
         if (focus) {
             xss.socket.emit(xss.EVENT_GAME_STATE);
         }
+    },
+
+    /**
+     * Runs ~ every 16 ms (60 fps)
+     * @param {number} delta
+     * @private
+     */
+    _moveThings: function(delta) {
+        if (this.started) {
+            this._moveSnakes(delta);
+        }
+        this.animation.update(delta);
     },
 
     /**

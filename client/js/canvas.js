@@ -277,7 +277,7 @@ xss.Canvas.prototype = {
      */
     _handleFocusChange: function(ev) {
         this.focus = (ev.type !== 'blur');
-        xss.event.trigger(xss.PUB_FOCUS_CHANGE, this.focus);
+        xss.event.trigger(xss.PUB_WIN_FOCUS_CHANGE, this.focus);
     },
 
     /**
