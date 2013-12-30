@@ -1,23 +1,51 @@
 'use strict';
 
 /**
+ * @typedef {{
+ *   animation: (Function|undefined),
+ *   width: number,
+ *   height: number,
+ *   spawns: Array,
+ *   directions: Array,
+ *   unreachables: Array,
+ *   walls: Array
+ * }}
+ */
+xss.LevelData;
+
+/**
  * @param {ImageData} imagedata
+ * @param {Function=} animation
  * @constructor
  */
-xss.LevelData = function(imagedata) {
-    this.width = imagedata.width;
-    this.height = imagedata.height;
+xss.LevelParser = function(imagedata, animation) {
 
-    this.spawns = [];
-    this.directions = [];
-    this.unreachables = [];
-    this.walls = [];
+    /**
+     * @type {xss.LevelData}
+     * @private
+     */
+    this._levelData = {
+        animation   : animation,
+        width       : imagedata.width,
+        height      : imagedata.height,
+        spawns      : [],
+        directions  : [],
+        unreachables: [],
+        walls       : []
+    };
 
     this._parseImagedata(imagedata.data);
 };
 
-xss.LevelData.prototype = {
+xss.LevelParser.prototype = {
 
+    /**
+     * @returns {xss.LevelData}
+     */
+    getParsedLevel: function() {
+        return this._levelData;
+    },
+    
     /**
      * @param {Object} imagedata
      * @private
@@ -41,31 +69,31 @@ xss.LevelData.prototype = {
             case '255,255,255':
                 break;
             case '0,0,0':
-                this._addTo(this.walls, x, y);
+                this._addToArr(this._levelData.walls, x, y);
                 break;
             case '222,222,222':
-                this._addTo(this.unreachables, x, y);
+                this._addToArr(this._levelData.unreachables, x, y);
                 break;
             case '99,99,99':
-                this.directions.push([x, y]);
+                this._levelData.directions.push([x, y]);
                 break;
             case '255,0,0':
-                this.spawns[0] = [x, y];
+                this._levelData.spawns[0] = [x, y];
                 break;
             case '0,255,0':
-                this.spawns[1] = [x, y];
+                this._levelData.spawns[1] = [x, y];
                 break;
             case '0,0,255':
-                this.spawns[2] = [x, y];
+                this._levelData.spawns[2] = [x, y];
                 break;
             case '255,255,0':
-                this.spawns[3] = [x, y];
+                this._levelData.spawns[3] = [x, y];
                 break;
             case '255,0,255':
-                this.spawns[4] = [x, y];
+                this._levelData.spawns[4] = [x, y];
                 break;
             case '0,255,255':
-                this.spawns[5] = [x, y];
+                this._levelData.spawns[5] = [x, y];
                 break;
             default:
                 throw new Error(
@@ -81,7 +109,7 @@ xss.LevelData.prototype = {
      * @param {number} y
      * @private
      */
-    _addTo: function(obj, x, y) {
+    _addToArr: function(obj, x, y) {
         obj[y] = obj[y] || [];
         obj[y].push(x);
     },
@@ -93,22 +121,22 @@ xss.LevelData.prototype = {
      */
     _seqToXY: function(seq) {
         return [
-            seq % this.width,
-            Math.floor(seq / this.width)
+            seq % this._levelData.width,
+            Math.floor(seq / this._levelData.width)
         ];
     },
 
     _detectMissingSpawns: function() {
-        for (var i = 0, m = this.spawns.length; i < m; i++) {
-            if (!this.spawns[i]) {
+        for (var i = 0, m = this._levelData.spawns.length; i < m; i++) {
+            if (!this._levelData.spawns[i]) {
                 throw new Error('Missing spawn with index: ' + i);
             }
         }
     },
 
     _detectMissingDirections: function() {
-        for (var i = 0, m = this.directions.length; i < m; i++) {
-            if (!this.spawns[i]) {
+        for (var i = 0, m = this._levelData.directions.length; i < m; i++) {
+            if (!this._levelData.spawns[i]) {
                 throw new Error('Missing direction with index: ' + i);
             }
         }
@@ -117,12 +145,12 @@ xss.LevelData.prototype = {
     _processDirections: function() {
         var directions = [];
 
-        for (var i = 0, m = this.spawns.length; i < m; i++) {
-            for (var ii = 0, mm = this.directions.length; ii < mm; ii++) {
+        for (var i = 0, m = this._levelData.spawns.length; i < m; i++) {
+            for (var ii = 0, mm = this._levelData.directions.length; ii < mm; ii++) {
                 var delta = {}, spawn, direction;
 
-                spawn = this.spawns[i];
-                direction = this.directions[ii];
+                spawn = this._levelData.spawns[i];
+                direction = this._levelData.directions[ii];
 
                 delta.x = spawn[0] - direction[0];
                 delta.y = spawn[1] - direction[1];
@@ -138,7 +166,7 @@ xss.LevelData.prototype = {
             }
         }
 
-        this.directions = directions;
+        this._levelData.directions = directions;
     }
 
 };

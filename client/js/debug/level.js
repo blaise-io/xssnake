@@ -1,32 +1,41 @@
 'use strict';
 
-xss.DEBUG_NS = 'DEBUG';
+xss.debug = xss.debug || {NS: 'DEBUG'};
 
 // Debug URL: client.html?debug=level:1
-var levelIndex = location.search.match(/debug=level:([0-9]+)/);
-if (levelIndex) {
+xss.debug.levelIndex = location.search.match(/debug=level:([0-9]+)/);
+if (xss.debug.levelIndex) {
     document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(xss.debugLevel, 100);
+        window.setTimeout(function() {
+            xss.levels.allImagesLoaded = xss.debug.level;
+        }, 0);
     });
 }
 
-xss.debugLevel = function() {
+xss.debug.level = function() {
     var time = 0;
-    var data = xss.level.levelData(levelIndex[1]);
-    var rotatingLine = new xss.animation.RotatingLine(31, 16, 12);
+    var levelData = xss.levels.getLevelData(xss.debug.levelIndex[1]);
 
     xss.flow.destruct();
     xss.shapes = xss.shapegen.outerBorder();
-    xss.shapes.level = xss.shapegen.level(data);
+    xss.shapes.level = xss.shapegen.level(levelData);
     xss.menuSnake.addToShapes();
 
-    xss.event.on(xss.PUB_GAME_TICK, xss.DEBUG_NS, function(elapsed) {
-        var ns = 'ANIMRL_';
-        var pixelObjects = rotatingLine.update(time);
-        if (pixelObjects) {
-            for (var i = 0, m = pixelObjects.length; i < m; i++) {
-                var pixels = xss.transform.zoomGame(pixelObjects[i]);
-                xss.shapes[ns + i] = new xss.Shape(pixels);
+    if (!levelData.animation) {
+        console.info('No animation in level.');
+        return;
+    }
+
+    var animatedObjects = levelData.animation();
+    xss.event.on(xss.PUB_GAME_TICK, xss.debug.NS, function(elapsed) {
+        var ns = 'ANIM';
+        for (var i = 0, m = animatedObjects.length; i < m; i++) {
+            var animations = animatedObjects[i].update(time);
+            if (animations) {
+                for (var ii = 0, mm = animations.length; ii < mm; ii++) {
+                    var pixels = xss.transform.zoomGame(animations[ii]);
+                    xss.shapes[ns + (i*1000) + ii] = new xss.Shape(pixels);
+                }
             }
         }
         time += elapsed;

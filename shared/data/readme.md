@@ -4,11 +4,6 @@ The PNG images in this directory contain the raw data for levels.
 If you change one of the images, you have to rebuild `server/shared/levels.js`.
 You should not edit levels.js directly.
 
-## Build `server/shared/levels.js`
-
- 1. Run `npm install pngparse` to install [pngparse](https://npmjs.org/package/pngparse)
- 1. Run `node build/levels.js`
-
 ## Pixel Color Legend
 
     Black        rgb(0,0,0)         Wall

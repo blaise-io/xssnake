@@ -12,7 +12,8 @@ xss.Game = function(round, levelIndex) {
 
     this.options = this.room.options;
 
-    this.level = new xss.Level(this.server.levels[levelIndex]);
+    var levelData = xss.levels.getLevelData(levelIndex);
+    this.level = new xss.Level(levelData);
     this.spawner = new xss.Spawner(this);
 
     /** @type {Array.<number>} */

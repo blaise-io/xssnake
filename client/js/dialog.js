@@ -137,21 +137,13 @@ xss.Dialog.prototype = {
     },
 
     /**
-     * @return {boolean}
-     * @private
-     */
-    _isIngame: function() {
-        return !!xss.shapes.level;
-    },
-
-    /**
      * @return {number}
      * @private
      */
     _getAreaHeight: function() {
-        var height = xss.HEIGHT, level = xss.level.levelData(0);
-        if (this._isIngame() && level) {
-            height = level.height * xss.GAME_TILE;
+        var height = xss.HEIGHT;
+        if (xss.shapes.level) {
+            height = xss.shapes.level.bbox().height / xss.GAME_TILE;
         }
         return height;
     },

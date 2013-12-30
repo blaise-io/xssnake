@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('assert');
 
 
@@ -10,10 +12,11 @@ describe('Game', function() {
 
     before(function(done) {
         server = new xss.Server();
-        server.preloadLevels(function(levels) {
-            server.start(levels);
+        xss.levels = new xss.LevelRegistry();
+        xss.levels.allImagesLoaded = function() {
+            server.start();
             done();
-        });
+        };
     });
 
     after(function() {

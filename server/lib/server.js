@@ -1,7 +1,6 @@
 'use strict';
 
 var http = require('http');
-var png = require('pngparse');
 var sockjs = require('sockjs');
 var nodeEvents = require('events');
 
@@ -24,32 +23,11 @@ xss.Server.prototype = {
     },
 
     /**
-     * @param {Array.<xss.LevelData>} levels
      * @param {number=} port
      */
-    start: function(levels, port) {
+    start: function(port) {
         this.port = port || xss.SERVER_PORT;
-        this.levels = levels;
         this.listen(this.port);
-    },
-
-    /**
-     * @param {function(Array.<xss.LevelData>)} callback
-     */
-    preloadLevels: function(callback) {
-        var i, m, buffer, appendLevel, parsed = [];
-
-        appendLevel = function(err, data) {
-            parsed[this] = new xss.LevelData(data);
-            if (this + 1 === m) {
-                callback(parsed);
-            }
-        };
-
-        for (i = 0, m = xss.data.levels.length; i < m; i++) {
-            buffer = new Buffer(xss.data.levels[i][0], 'base64');
-            png.parse(buffer, appendLevel.bind(i));
-        }
     },
 
     /**

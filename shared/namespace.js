@@ -1,4 +1,7 @@
 /*jshint -W079*/
 'use strict';
 
-var xss = {};
+var xss = {
+    data: {},
+    debug: {}
+};

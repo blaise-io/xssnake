@@ -186,15 +186,15 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {number} levelIndex
+     * @param {number} index
      * @return {xss.Level}
      * @private
      */
-    _setupLevel: function(levelIndex) {
-        var data, border;
+    _setupLevel: function(index) {
+        var levelData, border;
 
-        data = xss.level.levelData(levelIndex);
-        xss.shapes.level = xss.shapegen.level(data);
+        levelData = xss.levels.getLevelData(index);
+        xss.shapes.level = xss.shapegen.level(levelData);
 
         border = xss.shapegen.outerBorder();
         for (var k in border) {
@@ -203,7 +203,7 @@ xss.Game.prototype = {
             }
         }
 
-        return new xss.Level(data);
+        return new xss.Level(levelData);
     },
 
     /**
