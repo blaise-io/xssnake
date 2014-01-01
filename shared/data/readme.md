@@ -7,7 +7,7 @@ Levels are registered in `levels.js`. This file is also the place for adding
 animated objects to levels.
 
 If you change one of the images, you have to rebuild `shared/data/level_images.js`
-by running `grunt source`. You should not edit `level_images.js` directly.
+by running `grunt levels`. You should not edit `level_images.js` directly.
 
 | Example (zoomed in)
 |---

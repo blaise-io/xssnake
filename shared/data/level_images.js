@@ -1,6 +1,4 @@
-'use strict';
-
-// This file was generated using `grunt source`
+// This file was generated using `grunt levels`
 xss.data.levelImages = {
     blank: 'iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhCAYAAABug3M0AAAATklEQVR4Xu3XsQ0AMAgDQe/K/jMQKWOY+47y5Irs4eDh/5WdmS3suxLLw8PD9wcPDw8PDw+f7X5sLA8PD38heHh4eHh4+JQ/Nrm+PDz8A9XeSXZnpGoTAAAAAElFTkSuQmCC',
     borobudur: 'iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEX///8AAABjY2P/AP///wD/AAAA//8A/wAAAP/e3t6UsGDPAAAAt0lEQVR4XoVUwQpDIQxredvdHL152va7Hvu3o1b6VoZEqoQQQl6tT0RVdHqt1Zufm1FdGGcBgjwKYj3HWfChDiUDAEhvCqBlhhBHdbPpAjNrSW4BlsAd4A69JSmSZ+TbQTZZT6QAVXC7KeC7khnSoU3flUy8jN0h0L9gR0sUdTcqeiSSqF5Wdhlto7vV1/gV9CJ4UQeagXwF6wPtJL8Lfpt8HvhE8ZnkU83fxWOcBW/uwF83/T98AR09bCcOuGr0AAAAAElFTkSuQmCC',

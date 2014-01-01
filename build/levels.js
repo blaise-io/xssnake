@@ -6,8 +6,7 @@ var path = require('path');
 
 var banner = '', footer = '';
 
-banner += '\'use strict\';\n\n';
-banner += '// This file was generated using `grunt source`\n';
+banner += '// This file was generated using `grunt levels`\n';
 banner += 'xss.data.levelImages = {\n';
 
 footer += '\n};\n';

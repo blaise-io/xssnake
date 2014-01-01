@@ -3,8 +3,8 @@
 var client = require('./build/client.js');
 var server = require('./build/server.js');
 var levels = require('./build/levels.js');
+var audio = require('./build/audio.js');
 var testsuite = require('./build/testsuite.js');
-
 
 module.exports = function(grunt) {
 
@@ -13,8 +13,9 @@ module.exports = function(grunt) {
             client: client.concat,
             server: server.concat,
             levels: levels.concat,
+            audio_mp3: audio.concat.mp3,
+            audio_ogg: audio.concat.ogg,
             testsuite: testsuite.concat
-            // TODO: audio
         },
         gcc_rest: {
             client: client.gcc_rest,
@@ -27,12 +28,14 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-gcc-rest');
-    grunt.loadNpmTasks('grunt-scriptlinker');
     grunt.loadNpmTasks('grunt-sails-linker');
 
-    grunt.registerTask('source', ['sails-linker:client', 'concat:levels']);
-    grunt.registerTask('client', ['concat:client', 'gcc_rest:client']);
-    grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
     grunt.registerTask('testsuite', ['concat:testsuite']);
-    grunt.registerTask('default', ['client', 'server']);
+    grunt.registerTask('scripts', ['sails-linker:client']);
+    grunt.registerTask('audio', ['concat:audio_mp3', 'concat:audio_ogg']);
+    grunt.registerTask('levels', ['concat:levels']);
+    grunt.registerTask('source', ['scripts', 'levels', 'audio']);
+    grunt.registerTask('client', ['source', 'concat:client', 'gcc_rest:client']);
+    grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
+    grunt.registerTask('default', ['source', 'client', 'server']);
 };

@@ -1,28 +1,51 @@
 'use strict';
 
+var util = require('util');
 var fs = require('fs');
+var path = require('path');
 
-var dir = __dirname + '/../client/audio/';
-var files = fs.readdirSync(dir);
-var data = {mp3: {}, ogg: {}};
+var banner = '', footer = '';
 
-for (var i = 0, m = files.length; i < m; i++) {
-    var ext, buffer, key, file = files[i];
-    ext = file.replace(/^[\w_-]+\./gi, '');
-    if (data[ext]) {
-        buffer = fs.readFileSync(dir + file);
-        key = file.replace(new RegExp('.' + ext + '$'), '');
-        data[ext][key] = buffer.toString('base64');
-    }
-}
+banner += '// This file was generated using `grunt audio`\n';
 
-var json = JSON.stringify(data, null, 4).replace(/"/gi, '\'');
-var contents, template = __dirname + '/../client/templates/audio.js.tpl';
+footer += '\n};\n';
 
-json = json.replace(/'([\w_]+)'/g, '$1');
+exports.concat = {};
 
-contents = fs.readFileSync(template, 'utf-8');
-contents = contents.replace('%%AUDIO%%', json);
-contents = contents.replace('%%DATE%%', new Date().toUTCString());
+exports.concat.mp3 = {
+    options: {
+        separator: ',\n',
+        banner: banner + 'xss.data.mp3 = {\n',
+        footer: footer,
+        process: function(data, file) {
+            return util.format(
+                '    %s: \'%s\'',
+                path.basename(file, '.mp3'),
+                // grunt-contrib-concat file-to-string breaks binary files,
+                // read binary file ourselves.
+                fs.readFileSync(file).toString('base64')
+            );
+        }
+    },
+    src: ['client/data/audio/*.mp3'],
+    dest: 'client/data/mp3.js'
+};
 
-fs.writeFile(__dirname + '/../client/js/audio.js', contents);
+exports.concat.ogg = {
+    options: {
+        separator: ',\n',
+        banner: banner + 'xss.data.ogg = {\n',
+        footer: footer,
+        process: function(data, file) {
+            return util.format(
+                '    %s: \'%s\'',
+                path.basename(file, '.ogg'),
+                // grunt-contrib-concat file-to-string breaks binary files,
+                // read binary file ourselves.
+                fs.readFileSync(file).toString('base64')
+            );
+        }
+    },
+    src: ['client/data/audio/*.ogg'],
+    dest: 'client/data/ogg.js'
+};

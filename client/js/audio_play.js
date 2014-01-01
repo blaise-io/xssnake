@@ -20,9 +20,9 @@ xss.AudioPlay.prototype = {
             // Prefer ogg over mp3 because of this Firefox bug:
             // https://bugzilla.mozilla.org/show_bug.cgi?id=849264
             if (el.canPlayType(this._mimetypes.ogg).replace(/no/, '')) {
-                return {mime: this._mimetypes.ogg, files: xss.audio.ogg};
+                return {mime: this._mimetypes.ogg, files: xss.data.ogg};
             } else if (el.canPlayType(this._mimetypes.mp3).replace(/no/, '')) {
-                return {mime: this._mimetypes.mp3, files: xss.audio.mp3};
+                return {mime: this._mimetypes.mp3, files: xss.data.mp3};
             }
         }
         return null;
@@ -51,8 +51,8 @@ xss.AudioPlay.prototype = {
 
     _setupDummyFiles: function() {
         var dummy = function(){};
-        for (var k in xss.audio.mp3) {
-            if (xss.audio.mp3.hasOwnProperty(k)) {
+        for (var k in xss.data.mp3) {
+            if (xss.data.mp3.hasOwnProperty(k)) {
                 this[k] = dummy;
             }
         }
