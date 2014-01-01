@@ -1,10 +1,9 @@
-var fs = require('fs');
 var helper = require('./helper.js');
 
 var src = [
     'shared/namespace.js',
     'shared/**/*.js',
-    'client/js/**/*.js',
+    'client/js/**/*.js'
 ];
 
 var srcCompile = src.slice().concat(['!client/js/debug/*.js']);
@@ -36,9 +35,9 @@ exports.gcc_rest = {
 
 exports.scriptlinker = {
     options: {
-      startTag: '<!-- scripts start -->\n',
+      startTag: '<!-- scripts start -->',
       endTag: '<!-- scripts end -->',
-      fileTmpl: '<script src="../%s"></script>\n'
+      fileTmpl: '<script src="../%s"></script>'
     },
     src: srcDebug,
     dest: 'client/debug.html'

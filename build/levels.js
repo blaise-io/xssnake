@@ -3,7 +3,6 @@
 var util = require('util');
 var fs = require('fs');
 var path = require('path');
-var helper = require('./helper.js');
 
 var banner = '', footer = '';
 
@@ -22,7 +21,8 @@ exports.concat = {
             return util.format(
                 '    %s: \'%s\'',
                 path.basename(file, '.png'),
-                // grunt-contrib-concat breaks binary files, read ourselves.
+                // grunt-contrib-concat file-to-string breaks binary files,
+                // read binary file ourselves.
                 fs.readFileSync(file).toString('base64')
             );
         }

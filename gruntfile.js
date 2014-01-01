@@ -20,7 +20,7 @@ module.exports = function(grunt) {
             client: client.gcc_rest,
             server: server.gcc_rest
         },
-        scriptlinker: {
+        'sails-linker': {
             client: client.scriptlinker
         }
     });
@@ -28,8 +28,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-gcc-rest');
     grunt.loadNpmTasks('grunt-scriptlinker');
+    grunt.loadNpmTasks('grunt-sails-linker');
 
-    grunt.registerTask('source', ['scriptlinker:client', 'concat:levels']);
+    grunt.registerTask('source', ['sails-linker:client', 'concat:levels']);
     grunt.registerTask('client', ['concat:client', 'gcc_rest:client']);
     grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
     grunt.registerTask('testsuite', ['concat:testsuite']);

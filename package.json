@@ -12,13 +12,13 @@
     },
     "dependencies": {
         "sockjs": "0.3.x",
-        "pngparse": "1.x",
-        "grunt-scriptlinker": "0.1.x",
-        "grunt-gcc-rest": "0.1.x",
-        "grunt-contrib-concat": "0.3.x"
+        "pngparse": "1.x"
     },
     "devDependencies": {
-        "mocha": "1.x"
+        "mocha": "1.x",
+        "grunt-sails-linker": "0.9.5",
+        "grunt-gcc-rest": "0.1.x",
+        "grunt-contrib-concat": "0.3.x"
     },
     "engines": {
         "node": ">= 0.6"
