@@ -10,7 +10,6 @@ var src = [
 var srcCompile = src.slice().concat(['!client/js/debug/*.js']);
 var srcDebug = ['client/vendor/sockjs-0.3.js'].concat(src);
 
-
 exports.concat = {
     options: {
         banner: '\'use strict\';\n',
@@ -32,6 +31,22 @@ exports.gcc_rest = {
     },
     src: 'dist/client.js',
     dest: 'dist/client.min.js'
+};
+
+exports.cssmin = {
+    src: 'client/xssnake.css',
+    dest: 'dist/client.min.css'
+};
+
+exports.index = {
+    options: {
+        inline: {
+            css: 'dist/client.min.css',
+            js: 'dist/client.min.js'
+        }
+    },
+    src: 'build/index.tpl',
+    dest: 'www/index.html'
 };
 
 exports.scriptlinker = {

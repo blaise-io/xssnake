@@ -34,8 +34,8 @@ XSSNAKE is not production-ready yet.
  * Run the game server: `npm start`
  * Access the game by opening `client/debug.html` in your browser
 
-If you add client .js files, modify levels or audio, you need to rebuild
-files by running `grunt source`.
+If you add client JavaScript files, or add/modify levels or audio, you need
+to rebuild files by running `grunt source`.
 
 ## Levels
 

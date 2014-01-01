@@ -35,6 +35,8 @@ input {
     position: absolute;
     top: 0;
     left: -100px; /* Hide caret IE */
+    right: 0;
+    bottom: 0;
     opacity: 0;
     z-index: 1;
     border: none;
