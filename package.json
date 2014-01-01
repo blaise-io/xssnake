@@ -18,7 +18,8 @@
         "mocha": "1.x",
         "grunt-sails-linker": "0.9.5",
         "grunt-gcc-rest": "0.1.x",
-        "grunt-contrib-concat": "0.3.x"
+        "grunt-contrib-concat": "0.3.x",
+        "grunt-contrib-cssmin": "0.7.0"
     },
     "engines": {
         "node": ">= 0.6"

@@ -38,7 +38,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-gcc-rest');
     grunt.loadNpmTasks('grunt-sails-linker');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('testsuite', ['concat:testsuite']);
     grunt.registerTask('scripts', ['sails-linker:client']);
