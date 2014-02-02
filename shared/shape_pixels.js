@@ -119,7 +119,7 @@ xss.ShapePixels.prototype = {
     },
 
     /**
-     * @param {*} shapes
+     * @param {Array.<xss.Shape>} shapes
      * @param {number} x
      * @param {number} y
      * @return {boolean}

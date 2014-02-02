@@ -6,7 +6,11 @@ xss.data.levels = [
             new xss.animation.RotatingLine(31, 16, 12)
         ];
     }},
-    {image: xss.data.levelImages.lines},
+    {image: xss.data.levelImages.lines, animation: function() {
+        return [
+            new xss.animation.RotatingLine(31, 16, 12)
+        ];
+    }},
     {image: xss.data.levelImages.crosshair},
     {image: xss.data.levelImages.poles},
     {image: xss.data.levelImages.traps},

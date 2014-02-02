@@ -331,13 +331,12 @@ xss.Game.prototype = {
     _moveSnake: function(snake) {
         var position = snake.getNextPosition();
 
-        snake.move(position);
-
         // Don't show a snake moving inside a wall, which is caused by latency.
         // Server wil update snake on whether it crashed or made a turn in time.
         if (this._isCrash(snake, position)) {
             snake.limbo = true;
         } else if (!snake.limbo) {
+            snake.move(position);
             snake.updateShape();
         }
     },
@@ -350,16 +349,24 @@ xss.Game.prototype = {
      */
     _isCrash: function(snake, position) {
 
+        // Walls.
         if (this.level.isWall(position[0], position[1])) {
             return true;
         }
 
+        // Animating object.
+        if (this._isCrashIntoAnimated(snake, position)) {
+            return true;
+        }
+
+        // Own tail.
         if (snake.parts.length >= 5 && snake.hasPartPredict(position)) {
             if (snake.partIndex(position) !== snake.parts.length - 1) {
                 return true;
             }
         }
 
+        // Other snake.
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var opponent = this.snakes[i];
             if (opponent !== snake && opponent.hasPartPredict(position)) {
@@ -367,6 +374,25 @@ xss.Game.prototype = {
             }
         }
 
+        return false;
+    },
+
+    /**
+     * @param {xss.ClientSnake} snake
+     * @param {Array.<number>} position
+     * @returns {boolean}
+     * @private
+     */
+    _isCrashIntoAnimated: function(snake, position) {
+        var parts = snake.parts.slice();
+        // Append predicted position, remove where tail will no longer be.
+        parts[parts.length - 1] = position;
+        for (var i = 0, m = parts.length; i < m; i++) {
+            var part = parts[i];
+            if (this.level.isAnimatedObject(part[0], part[1])) {
+                return true;
+            }
+        }
         return false;
     }
 

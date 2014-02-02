@@ -8,6 +8,8 @@
 xss.Level = function(levelData) {
     this.levelData = levelData;
     this.animation = new xss.LevelAnimation(levelData.animation);
+    /** @type {Array.<Array.<xss.ShapePixels>>} */
+    this.animated = [];
 };
 
 xss.Level.prototype = {
@@ -17,7 +19,13 @@ xss.Level.prototype = {
      * @return {Array.<Array.<xss.ShapePixels>>} shapePixelsArr
      */
     updateAnimateds: function(delta) {
-        return this.animation.update(delta);
+        var animated = this.animation.update(delta);
+        for (var i = 0, m = animated.length; i < m; i++) {
+            if (animated[i]) {
+                this.animated[i] = animated[i];
+            }
+        }
+        return animated;
     },
 
     /**
@@ -30,6 +38,37 @@ xss.Level.prototype = {
             return true;
         } else if (this.innerWall(x, y)) {
             return true;
+        }
+        return false;
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @returns {boolean}
+     */
+    isAnimatedObject: function(x, y) {
+        for (var i = 0, m = this.animated.length; i < m; i++) {
+            if (this.inShapePixelsArr(this.animated[i], x, y)) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * @param {Array.<xss.ShapePixels>} objects
+     * @param {number} x
+     * @param {number} y
+     * @returns {boolean}
+     */
+    inShapePixelsArr: function(objects, x, y) {
+        for (var i = 0, m = objects.length; i < m; i++) {
+            if (objects[i]) {
+                if (objects[i].has(x, y)) {
+                    return true;
+                }
+            }
         }
         return false;
     },
