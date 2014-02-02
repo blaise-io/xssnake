@@ -24,14 +24,18 @@ xss.Game = function(index, levelIndex, names) {
     /** @type {Array.<xss.ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
 
-    /** @type {xss.LevelAnimation} */
-    this.animation = new xss.LevelAnimation(this.level.levelData.animation);
-
     /** @type {Array.<xss.Spawnable>} */
     this.spawnables = [];
 
     /** @type {boolean} */
     this.started = false;
+
+    /**
+     * Keys used for animated shapes.
+     * @type {Object.<string, boolean>}
+     * @private
+     */
+    this._animKeys = {};
 
     this._bindEvents();
 };
@@ -54,7 +58,7 @@ xss.Game.prototype = {
     },
 
     destruct: function() {
-        var i, m, border, ns;
+        var i, m, border, ns, k;
 
         ns = xss.NS_GAME;
 
@@ -80,17 +84,20 @@ xss.Game.prototype = {
             }
         }
 
-        this.animation.destruct();
-
-        this.spawnables = [];
+        for (k in this._animKeys) {
+            if (this._animKeys.hasOwnProperty(k)) {
+                xss.shapes[k] = null;
+            }
+        }
 
         border = xss.shapegen.outerBorder();
-        for (var k in border) {
+        for (k in border) {
             if (border.hasOwnProperty(k)) {
                 xss.shapes[k] = null;
             }
         }
 
+        this.spawnables = [];
         xss.shapes.level = null;
     },
 
@@ -269,10 +276,37 @@ xss.Game.prototype = {
      * @private
      */
     _moveThings: function(delta) {
+        this._updateAnimatedShapes(this.level.updateAnimateds(delta));
         if (this.started) {
             this._moveSnakes(delta);
         }
-        this.animation.update(delta);
+    },
+
+    /**
+     * @param {Array.<Array.<xss.ShapePixels>>} ShapePixelsArrArr
+     * @private
+     */
+    _updateAnimatedShapes: function(ShapePixelsArrArr) {
+        for (var i = 0, m = ShapePixelsArrArr.length; i < m; i++) {
+            if (ShapePixelsArrArr[i]) {
+                this._updateShapes(i, ShapePixelsArrArr[i]);
+            }
+        }
+    },
+
+    /**
+     * @param {number} index
+     * @param {Array.<xss.ShapePixels>} shapePixelsArr
+     * @private
+     */
+    _updateShapes: function(index, shapePixelsArr) {
+        var pixels, key;
+        for (var i = 0, m = shapePixelsArr.length; i < m; i++) {
+            pixels = xss.transform.zoomGame(shapePixelsArr[i]);
+            key = xss.NS_ANIM + index + '_' + i;
+            this._animKeys[key] = true;
+            xss.shapes[key] = new xss.Shape(pixels);
+        }
     },
 
     /**

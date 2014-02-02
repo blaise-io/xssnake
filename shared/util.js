@@ -12,7 +12,6 @@ xss.util = {
     /**
      * @param {Object} obj Object to clone.
      * @return {?} Clone of the input object.
-     * @template K,V
      */
     clone: function(obj) {
         var res = {};

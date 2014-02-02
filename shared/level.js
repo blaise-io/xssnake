@@ -7,9 +7,18 @@
  */
 xss.Level = function(levelData) {
     this.levelData = levelData;
+    this.animation = new xss.LevelAnimation(levelData.animation);
 };
 
 xss.Level.prototype = {
+
+    /**
+     * @param {number} delta
+     * @return {Array.<Array.<xss.ShapePixels>>} shapePixelsArr
+     */
+    updateAnimateds: function(delta) {
+        return this.animation.update(delta);
+    },
 
     /**
      * @param {number} x
