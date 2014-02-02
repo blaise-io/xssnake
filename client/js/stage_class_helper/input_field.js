@@ -11,7 +11,7 @@ xss.InputField = function(x, y, prefix) {
     this.y = y;
     this.prefix = prefix || '';
 
-    this.callback = xss.util.dummy;
+    this.callback = xss.util.noop;
     this.maxValWidth = 0;
     this.displayWidth = xss.WIDTH - x - 8;
     this.maxlength = 156;

@@ -6,7 +6,7 @@ describe('Rooms', function() {
 
     var server, roomManager, room, client, gameOptions, connectionDummy;
 
-    connectionDummy = {write: xss.util.dummy};
+    connectionDummy = {write: xss.util.noop};
 
     before(function(done) {
         server = new xss.Server();

@@ -65,7 +65,7 @@ xss.Server.prototype = {
             client.eventHandler = new xss.EventHandler(client, this.pubsub);
         }.bind(this));
 
-        xssnake.installHandlers(server, {prefix: '/xssnake', log: xss.util.dummy});
+        xssnake.installHandlers(server, {prefix: '/xssnake', log: xss.util.noop});
 
         this._server = server;
     }

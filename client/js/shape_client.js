@@ -131,7 +131,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
         from     = options.from || [0, 0];
         to       = options.to || [0, 0];
         duration = options.duration || 200;
-        callback = options.callback || xss.util.dummy;
+        callback = options.callback || xss.util.noop;
 
         /** @this {xss.Shape} */
         return function(delta) {

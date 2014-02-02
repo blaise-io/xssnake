@@ -27,8 +27,8 @@ xss.Socket.prototype = {
             xss.room = null;
         }
         if (this.connection.readyState <= 1) {
-            this.connection.onclose = xss.util.dummy;
-            this.connection.onmessage = xss.util.dummy;
+            this.connection.onclose = xss.util.noop;
+            this.connection.onmessage = xss.util.noop;
             this.connection.close();
         }
     },

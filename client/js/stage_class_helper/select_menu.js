@@ -29,7 +29,7 @@ xss.SelectMenu.prototype = {
             next       : next,
             title      : title,
             description: description || '',
-            callback   : callback || xss.util.dummy
+            callback   : callback || xss.util.noop
         });
     },
 

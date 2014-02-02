@@ -24,8 +24,8 @@ xss.Dialog = function(header, body, settings) {
         keysBlocked: true,
         type       : xss.Dialog.TYPE.INFO,
         width      : xss.Dialog.MIN_WIDTH,
-        ok         : xss.util.dummy,
-        cancel     : xss.util.dummy
+        ok         : xss.util.noop,
+        cancel     : xss.util.noop
     };
 
     xss.util.extend(this.settings, settings);

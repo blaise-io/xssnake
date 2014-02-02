@@ -8,7 +8,7 @@ xss.LevelRegistry = function() {
     this._numLevelsRegistered = 0;
     this._numLevelsLoaded = 0;
 
-    this.allImagesLoaded = xss.util.dummy;
+    this.allImagesLoaded = xss.util.noop;
 
     /**
      * @type {Array.<xss.LevelData>}
