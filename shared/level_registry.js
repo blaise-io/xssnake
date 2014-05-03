@@ -8,7 +8,7 @@ xss.LevelRegistry = function() {
     this._numLevelsRegistered = 0;
     this._numLevelsLoaded = 0;
 
-    this.allImagesLoaded = xss.util.noop;
+    this.onload = xss.util.noop;
 
     /**
      * @type {Array.<xss.LevelData>}
@@ -36,7 +36,7 @@ xss.LevelRegistry.prototype = {
 
             // All finished loading
             if (this._numLevelsRegistered === ++this._numLevelsLoaded) {
-                this.allImagesLoaded();
+                this.onload();
             }
         }.bind(this));
     },

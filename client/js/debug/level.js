@@ -8,7 +8,7 @@ xss.debug.levelIndex = location.search.match(/debug=level:([0-9]+)$/)[1];
 if (xss.debug.levelIndex) {
     document.addEventListener('DOMContentLoaded', function() {
         window.setTimeout(function() {
-            xss.levels.allImagesLoaded = xss.debug.level;
+            xss.levels.onload = xss.debug.level;
         }, 0);
     });
 }

@@ -13,7 +13,7 @@ describe('Game', function() {
     before(function(done) {
         server = new xss.Server();
         xss.levels = new xss.LevelRegistry();
-        xss.levels.allImagesLoaded = function() {
+        xss.levels.onload = function() {
             server.start();
             done();
         };
