@@ -172,8 +172,8 @@ xss.Font.prototype = {
     _invert: function(shape, y) {
         var bbox = shape.bbox();
         bbox.expand(1);
-        bbox.y1 = y - 1;
-        bbox.y2 = y + xss.Font.LINE_HEIGHT;
+        bbox.y0 = y - 1;
+        bbox.y1 = y + xss.Font.LINE_HEIGHT;
         shape.invert(bbox);
     },
 

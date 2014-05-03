@@ -19,8 +19,8 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
         x = Math.round((width - bbox.width) / 2);
         y = Math.round((height - bbox.height) / 2);
 
-        x -= bbox.x1;
-        y -= bbox.y1;
+        x -= bbox.x0;
+        y -= bbox.y0;
 
         this.shift.x = x;
         this.shift.y = y;

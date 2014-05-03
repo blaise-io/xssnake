@@ -12,10 +12,10 @@ xss.BoundingBox = function(pixels) {
 
 xss.BoundingBox.prototype = {
 
+    x0: 0,
     x1: 0,
-    x2: 0,
+    y0: 0,
     y1: 0,
-    y2: 0,
 
     width: 0,
     height: 0,
@@ -25,10 +25,10 @@ xss.BoundingBox.prototype = {
      * @return {xss.BoundingBox}
      */
     expand: function(expand) {
-        this.x1 -= expand;
-        this.y1 -= expand;
-        this.x2 += expand;
-        this.y2 += expand;
+        this.x0 -= expand;
+        this.y0 -= expand;
+        this.x1 += expand;
+        this.y1 += expand;
         this._calculateDimensions();
         return this;
     },
@@ -39,22 +39,22 @@ xss.BoundingBox.prototype = {
      * @private
      */
     _calculateFromPixels: function(pixels) {
-        var x1 = null,
-            x2 = null,
-            y1 = null,
-            y2 = null;
+        var x0 = null,
+            x1 = null,
+            y0 = null,
+            y1 = null;
 
         pixels.each(function(x, y) {
-            x1 = (x1 === null || x1 > x) ? x : x1;
-            x2 = (x2 === null || x2 < x) ? x : x2;
-            y1 = (y1 === null || y1 > y) ? y : y1;
-            y2 = (y2 === null || y2 < y) ? y : y2;
+            x0 = (x0 === null || x0 > x) ? x : x0;
+            x1 = (x1 === null || x1 < x) ? x : x1;
+            y0 = (y0 === null || y0 > y) ? y : y0;
+            y1 = (y1 === null || y1 < y) ? y : y1;
         });
 
+        this.x0 = Number(x0);
         this.x1 = Number(x1);
-        this.x2 = Number(x2);
+        this.y0 = Number(y0);
         this.y1 = Number(y1);
-        this.y2 = Number(y2);
 
         this._calculateDimensions();
 
@@ -66,8 +66,8 @@ xss.BoundingBox.prototype = {
      * @private
      */
     _calculateDimensions: function() {
-        this.width = this.x2 - this.x1;
-        this.height = this.y2 - this.y1;
+        this.width = this.x1 - this.x0;
+        this.height = this.y1 - this.y0;
         return this;
     }
 

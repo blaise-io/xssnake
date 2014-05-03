@@ -162,8 +162,8 @@ xss.Canvas.prototype = {
             bbox = this._getCanvasBBox(shape);
             ctx.fillStyle = this.tileOff;
             ctx.fillRect(
-                bbox.x1 + (shape.shift.x * this.tileSize),
-                bbox.y1 + (shape.shift.y * this.tileSize),
+                bbox.x0 + (shape.shift.x * this.tileSize),
+                bbox.y0 + (shape.shift.y * this.tileSize),
                 bbox.width,
                 bbox.height
             );
@@ -177,8 +177,8 @@ xss.Canvas.prototype = {
         // Paint cached image on canvas
         ctx.drawImage(
             shape.cache.canvas,
-            shape.cache.bbox.x1 + (shape.shift.x * this.tileSize),
-            shape.cache.bbox.y1 + (shape.shift.y * this.tileSize)
+            shape.cache.bbox.x0 + (shape.shift.x * this.tileSize),
+            shape.cache.bbox.y0 + (shape.shift.y * this.tileSize)
         );
     },
 
@@ -213,8 +213,8 @@ xss.Canvas.prototype = {
 
         for (i = 0, m = hlines.length; i < m; i+=3) {
             context.fillRect(
-                hlines[i + 0] * tileSize - bbox.x1,
-                hlines[i + 1] * tileSize - bbox.y1,
+                hlines[i + 0] * tileSize - bbox.x0,
+                hlines[i + 1] * tileSize - bbox.y0,
                 hlines[i + 2] * tileSize,
                 tileSize
             );

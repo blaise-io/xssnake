@@ -82,10 +82,10 @@ xss.Form.prototype = {
 
             if (active) {
                 bbox = option.bbox();
-                bbox.x1 -= 1;
-                bbox.x2 += 1;
-                bbox.y1 = y - 1;
-                bbox.y2 = y + xss.Font.LINE_HEIGHT;
+                bbox.x0 -= 1;
+                bbox.x1 += 1;
+                bbox.y0 = y - 1;
+                bbox.y1 = y + xss.Font.LINE_HEIGHT;
                 option.invert();
             }
 

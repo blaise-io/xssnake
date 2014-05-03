@@ -25,58 +25,52 @@ xss.ShapeGenerator.prototype = {
     },
 
     /**
-     * @param x1
-     * @param y1
+     * @param x0
+     * @param y0
      * @param radian
      * @param length
      * @returns {xss.ShapePixels}
      */
-    radianLine: function(x1, y1, radian, length) {
-        var x2, y2;
+    radianLine: function(x0, y0, radian, length) {
+        var x1, y1;
 
-        x2 = x1 + length / 2 * Math.cos(radian);
-        y2 = y1 + length / 2 * Math.sin(radian);
+        x1 = x0 + length / 2 * Math.cos(radian);
+        y1 = y0 + length / 2 * Math.sin(radian);
 
-        return this.line(
-            x1,
-            y1,
-            Math.round(x2),
-            Math.round(y2)
-        );
+        return this.line(x0, y0, Math.round(x1), Math.round(y1));
     },
 
     /**
+     * rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#JavaScript
+     *
+     * @param {number} x0
+     * @param {number} y0
      * @param {number} x1
      * @param {number} y1
-     * @param {number} x2
-     * @param {number} y2
-     * @return {xss.ShapePixels}
+     * @returns {xss.ShapePixels}
      */
-    line: function(x1, y1, x2, y2) {
-        var pixels, dx, dy, sx, sy, err, errTmp;
+    line: function bline(x0, y0, x1, y1) {
+        var pixels, dx, sx, dy, sy, err;
 
         pixels = new xss.ShapePixels();
 
-        dx = Math.abs(x2 - x1);
-        dy = Math.abs(y2 - y1);
-        sx = x1 < x2 ? 1 : -1;
-        sy = y1 < y2 ? 1 : -1;
-
-        err = dx - dy;
+        dx = Math.abs(x1 - x0);
+        sx = x0 < x1 ? 1 : -1;
+        dy = Math.abs(y1 - y0);
+        sy = y0 < y1 ? 1 : -1;
+        err = (dx > dy ? dx : -dy) / 2;
 
         while (true) {
-            pixels.add(x1, y1);
-            if (x1 === x2 && y1 === y2) {
-                break;
-            }
-            errTmp = err;
-            if (errTmp > -dx) {
+            pixels.add(x0, y0);
+            if (x0 === x1 && y0 === y1) break;
+            var e2 = err;
+            if (e2 > -dx) {
                 err -= dy;
-                x1 += sx;
+                x0 += sx;
             }
-            if (errTmp < dy) {
+            if (e2 < dy) {
                 err += dx;
-                y1 += sy;
+                y0 += sy;
             }
         }
 

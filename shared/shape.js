@@ -71,8 +71,8 @@ xss.Shape.prototype = {
         inverted = new xss.ShapePixels();
         bbox = bbox || this.bbox();
 
-        for (var x = bbox.x1; x <= bbox.x2; x++) {
-            for (var y = bbox.y1; y < bbox.y2; y++) {
+        for (var x = bbox.x0; x <= bbox.x1; x++) {
+            for (var y = bbox.y0; y < bbox.y1; y++) {
                 if (!pixels.has(x, y)) {
                     inverted.add(x, y);
                 }
