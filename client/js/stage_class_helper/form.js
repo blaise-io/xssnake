@@ -3,10 +3,12 @@
 /**
  * Form with choice fields
  * @param {string} header
+ * @param {string=} footer
  * @constructor
  */
-xss.Form = function(header) {
-    this.header = header;
+xss.Form = function(header, footer) {
+    this._header = header;
+    this._footer = footer || '';
     this._selectedV = 0;
     this._selectedH = [];
     this._fields = [];
@@ -71,6 +73,7 @@ xss.Form.prototype = {
 
         shape = new xss.Shape();
         shape.add(this._getHeaderPixels(x, y));
+        shape.add(this._getFooterPixels(x));
 
         y += xss.MENU_TITLE_HEIGHT;
 
@@ -115,8 +118,18 @@ xss.Form.prototype = {
      * @private
      */
     _getHeaderPixels: function(x, y) {
-        var header = xss.font.pixels(this.header);
+        var header = xss.font.pixels(this._header);
         return xss.transform.zoomX2(header, x, y, true);
+    },
+
+    /**
+     * @param {number} x
+     * @returns {xss.ShapePixels}
+     * @private
+     */
+    _getFooterPixels: function(x) {
+        var height = xss.font.height(this._footer);
+        return xss.font.pixels(this._footer, x, xss.HEIGHT - 3 - height);
     },
 
     /**

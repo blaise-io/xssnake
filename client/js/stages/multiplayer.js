@@ -40,7 +40,12 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
      * @private
      */
     _getForm: function() {
-        var form = new xss.Form('GAME OPTIONS');
+        var footer, form;
+
+        footer = 'Use arrow keys to select and change options.\n' +
+                 'When you’re done, press ' + xss.UC_ENTER_KEY + ' to continue.';
+
+        form = new xss.Form('GAME OPTIONS', footer);
 
         form.addField(xss.FIELD_DIFFICULTY, 'LEVEL DIFFICULTY', [
             [xss.FIELD_VALUE_MEDIUM, 'SNAKE'],
@@ -55,10 +60,17 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
 
         // Trololol
         form.addField('', 'WEIRD BUGS', [
-            ['YES'],['OK'],['TRUE'],['ACCEPT'],['ENABLE'],['HAO'],['OUI!']
+            ['YES'],
+            ['ENABLE'],
+            ['OK'],
+            ['TRUE'],
+            ['ACCEPT'],
+            ['HAO'],
+            ['OUI!'],
+            ['SI SENOR']
         ]);
 
-        form.addField(xss.FIELD_PRIVATE, 'PRIVATE', [
+        form.addField(xss.FIELD_PRIVATE, 'PRIVATE GAME', [
             [false, 'NO'],
             [true, 'YES']
         ]);
