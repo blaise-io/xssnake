@@ -67,8 +67,8 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
         header = function() {
             var name = xss.util.storage(xss.STORAGE_NAME);
             return name ?
-                'WLCM BCK ' + name.toUpperCase() + '!' :
-                'WELCOME STRANGER!!';
+                'YAY ' + name.toUpperCase() + ' IS BACK!' :
+                'PLAY SNAKE ONLINE!!';
         };
 
         footer = '' +

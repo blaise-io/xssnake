@@ -2,14 +2,14 @@ xss.COLOR = [
     {
         title   : 'My First LED Screen',
         desc    : 'Without backlight in the sun',
-        bg      : '#462',
-        off     : '#697',
+        bg      : '#787',
+        off     : '#797',
         on      : '#000',
-        ghosting: 0.4
+        ghosting: 0.6
     },
     {
         title   : 'Public Transport',
-        desc    : 'TAXIIIIIII',
+        desc    : 'I’m a bus',
         bg      : '#111',
         off     : '#222',
         on      : '#dc0',

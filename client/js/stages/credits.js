@@ -16,10 +16,11 @@ xss.util.extend(xss.CreditsStage.prototype, /** @lends xss.CreditsStage.prototyp
         var body, left = xss.MENU_LEFT, top = xss.MENU_TOP;
 
         body = 'Concept, Code, Bugs, Font & ' + xss.UC_SKULL + ':\n' +
-            'Blaise Kal, 2012-2013.\n\n' +
-            'WWW: blaise.io\n' +
-            'Email: blaisekal@gmail.com\n\n' +
-            'Thank you for playing!';
+            'Blaise Kal, 2012-2014.\n\n' +
+            'www.blaise.io\n' +
+            'blaisekal@gmail.com\n\n' +
+            'Thank you for playing!\n' +
+            'KEEP THE SNAKE ALIVE';
 
         return new xss.Shape(
             xss.transform.zoomX2(xss.font.pixels('CREDITS'), left, top, true),

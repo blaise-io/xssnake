@@ -291,8 +291,7 @@ xss.Canvas.prototype = {
     _setCanvasDimensions: function() {
         this.tileSize = this._getTileSize();
 
-        // Attempt to make fat pixels pleasing at all sizes
-        if (this.tileSize >= 4) {
+        if (this.tileSize >= 10) {
             this.pixelSize = this.tileSize - 1;
         } else if (this.tileSize === 1) {
             this.pixelSize = 1;
