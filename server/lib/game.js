@@ -379,6 +379,11 @@ xss.Game.prototype = {
                 return new xss.Crash(xss.CRASH_WALL, client);
             }
 
+            // Moving wall
+            if (level.isMovingWall(part[0], part[1])) {
+                return new xss.Crash(xss.CRASH_MOVING_WALL, client);
+            }
+
             // Self
             if (m > 4) {
                 if (m - 1 !== i && eq(part, parts[m - 1])) {

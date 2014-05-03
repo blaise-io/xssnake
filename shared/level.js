@@ -47,7 +47,7 @@ xss.Level.prototype = {
      * @param {number} y
      * @returns {boolean}
      */
-    isAnimatedObject: function(x, y) {
+    isMovingWall: function(x, y) {
         for (var i = 0, m = this.animated.length; i < m; i++) {
             if (this.inShapePixelsArr(this.animated[i], x, y)) {
                 return true;

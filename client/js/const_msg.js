@@ -1,4 +1,5 @@
 xss.MSG_CRASH_WALL = '{1} crashed into a wall';
+xss.MSG_CRASH_MOVING_WALL = '{1} crashed into a moving wall';
 xss.MSG_CRASH_SELF = '{1} crashed into itself';
 xss.MSG_CRASH_OPPONENT = '{1} crashed into {2}';
 xss.MSG_CRASH_OPPONENT_DRAW = '{1} & {2} kissed';

@@ -389,7 +389,7 @@ xss.Game.prototype = {
         parts[parts.length - 1] = position;
         for (var i = 0, m = parts.length; i < m; i++) {
             var part = parts[i];
-            if (this.level.isAnimatedObject(part[0], part[1])) {
+            if (this.level.isMovingWall(part[0], part[1])) {
                 return true;
             }
         }

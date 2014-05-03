@@ -35,6 +35,9 @@ xss.Chat.prototype._notice = {
             case xss.CRASH_WALL:
                 notice = xss.MSG_CRASH_WALL;
                 break;
+            case xss.CRASH_MOVING_WALL:
+                notice = xss.MSG_CRASH_MOVING_WALL;
+                break;
             case xss.CRASH_SELF:
                 notice = xss.MSG_CRASH_SELF;
                 break;
