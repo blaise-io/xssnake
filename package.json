@@ -26,7 +26,7 @@
         "node": ">= 0.6"
     },
     "scripts": {
-        "start": "node dist/server.js",
+        "start": "grunt concat:server; node dist/server.js",
         "test" : "grunt testsuite; mocha -R spec dist/testsuite.js"
     }
 }
