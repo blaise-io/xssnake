@@ -27,13 +27,6 @@ xss.Canvas = function() {
     window.requestAnimationFrame(this._frameBound, this.canvas);
 };
 
-/**
- * Level of ghosting. 0 = no ghosting, 1 = permanent on
- * @const
- * @type {number}
- */
-xss.Canvas.GHOSTING = 0.6;
-
 xss.Canvas.prototype = {
 
     /**
@@ -85,7 +78,7 @@ xss.Canvas.prototype = {
     _clear: function() {
         this.ctx.save();
         this.ctx.fillStyle = this.tileOff;
-        this.ctx.globalAlpha = 1 - xss.Canvas.GHOSTING;
+        this.ctx.globalAlpha = 1 - this.color.ghosting;
         this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.restore();
     },
