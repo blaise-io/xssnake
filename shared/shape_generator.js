@@ -25,24 +25,30 @@ xss.ShapeGenerator.prototype = {
     },
 
     /**
-     * @param x0
-     * @param y0
-     * @param radian
-     * @param length
+     * @param {number} xc
+     * @param {number} yc
+     * @param {number} radian
+     * @param {number} length
      * @returns {xss.ShapePixels}
      */
-    radianLine: function(x0, y0, radian, length) {
-        var x1, y1;
+    radianLine: function(xc, yc, radian, length) {
+        var x0, y0, x1, y1;
 
-        x1 = x0 + length / 2 * Math.cos(radian);
-        y1 = y0 + length / 2 * Math.sin(radian);
+        x0 = xc + length / 2 * Math.cos(radian);
+        y0 = yc + length / 2 * Math.sin(radian);
+        x1 = xc + length / 2 * Math.cos(radian + Math.PI);
+        y1 = yc + length / 2 * Math.sin(radian + Math.PI);
 
-        return this.line(x0, y0, Math.round(x1), Math.round(y1));
+        return this.line(
+            Math.round(x0),
+            Math.round(y0),
+            Math.round(x1),
+            Math.round(y1)
+        );
     },
 
     /**
-     * rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#JavaScript
-     *
+     * Bresenham's line algorithm
      * @param {number} x0
      * @param {number} y0
      * @param {number} x1
@@ -50,7 +56,7 @@ xss.ShapeGenerator.prototype = {
      * @returns {xss.ShapePixels}
      */
     line: function bline(x0, y0, x1, y1) {
-        var pixels, dx, sx, dy, sy, err;
+        var pixels, dx, sx, dy, sy, err, err2;
 
         pixels = new xss.ShapePixels();
 
@@ -62,13 +68,15 @@ xss.ShapeGenerator.prototype = {
 
         while (true) {
             pixels.add(x0, y0);
-            if (x0 === x1 && y0 === y1) break;
-            var e2 = err;
-            if (e2 > -dx) {
+            if (x0 === x1 && y0 === y1) {
+                break;
+            }
+            err2 = err;
+            if (err2 > -dx) {
                 err -= dy;
                 x0 += sx;
             }
-            if (e2 < dy) {
+            if (err2 < dy) {
                 err += dx;
                 y0 += sy;
             }

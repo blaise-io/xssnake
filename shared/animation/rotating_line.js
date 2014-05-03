@@ -23,7 +23,8 @@ xss.animation.RotatingLine.prototype = {
      * @returns {Array.<xss.ShapePixels>}
      */
     update: function(ms) {
-        var radian = Math.ceil(ms / (300 * this.speed)) / (Math.PI * 2);
+        var radian = ms / Math.pow(1 - this.speed, 1.5) / 2500;
+        radian = Math.round(radian * 20) / 20; // No need for 60 fps.
         if (radian !== this.radian) {
             this.radian = radian;
             return this._update(radian);
@@ -39,8 +40,7 @@ xss.animation.RotatingLine.prototype = {
     _update: function(radian) {
         var shapegen = xss.shapegen;
         return [
-            shapegen.radianLine(this.x, this.y, radian, this.len),
-            shapegen.radianLine(this.x, this.y, radian + Math.PI, this.len)
+            shapegen.radianLine(this.x, this.y, radian, this.len)
         ];
     }
 };
