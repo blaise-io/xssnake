@@ -131,7 +131,7 @@ xss.Game.prototype = {
 
     _bindEvents: function() {
         var ns = xss.NS_GAME;
-        xss.event.on(xss.PUB_GAME_TICK,        ns, this._moveThings.bind(this));
+        xss.event.on(xss.PUB_GAME_TICK,        ns, this._mainGameLoop.bind(this));
         xss.event.on(xss.EVENT_GAME_COUNTDOWN, ns, this.countdown.bind(this));
         xss.event.on(xss.EVENT_GAME_START,     ns, this.start.bind(this));
         xss.event.on(xss.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
@@ -275,8 +275,8 @@ xss.Game.prototype = {
      * @param {number} delta
      * @private
      */
-    _moveThings: function(delta) {
-        this._updateAnimatedShapes(this.level.updateAnimateds(delta));
+    _mainGameLoop: function(delta) {
+        this._updateAnimatedShapes(this.level.updateMovingWalls(delta));
         if (this.started) {
             this._moveSnakes(delta);
         }

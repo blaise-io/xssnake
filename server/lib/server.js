@@ -34,7 +34,7 @@ xss.Server.prototype = {
      * @return {EventEmitter}
      */
     setupPubSub: function() {
-        var emitter, tick;
+        var emitter;
 
         emitter = new nodeEvents.EventEmitter();
         emitter.setMaxListeners(0);

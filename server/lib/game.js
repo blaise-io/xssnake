@@ -22,7 +22,7 @@ xss.Game = function(round, levelIndex) {
     /** @type {Array.<xss.Snake>} */
     this.snakes = [];
 
-    this._tickBound = this._tick.bind(this);
+    this._tickBound = this._mainGameLoop.bind(this);
 };
 
 xss.Game.prototype = {
@@ -425,10 +425,11 @@ xss.Game.prototype = {
      * @param {number} delta
      * @private
      */
-    _tick: function(delta) {
+    _mainGameLoop: function(delta) {
         var clients = this.room.clients;
+        this.level.updateMovingWalls(delta);
         for (var i = 0, m = clients.length; i < m; i++) {
-            this._tickClient(clients[i], delta);
+            this._updateClient(clients[i], delta);
         }
     },
 
@@ -437,7 +438,7 @@ xss.Game.prototype = {
      * @param {number} delta
      * @private
      */
-    _tickClient: function(client, delta) {
+    _updateClient: function(client, delta) {
         var snake = client.snake;
         if (!snake.crashed) {
             if (snake.elapsed >= snake.speed) {

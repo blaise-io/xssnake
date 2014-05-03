@@ -19,7 +19,7 @@ xss.debug.level = function() {
     xss.socket = {emit: xss.util.noop};
     xss.menuSnake.destruct();
 
-    game = new xss.Game(0, xss.debug.debugLevelMatch, ['']);
+    game = new xss.Game(0, xss.debug.debugLevelMatch[1], ['']);
     game.start();
 
     console.info(game.level.levelData);

@@ -18,14 +18,14 @@ xss.Level.prototype = {
      * @param {number} delta
      * @return {Array.<Array.<xss.ShapePixels>>} shapePixelsArr
      */
-    updateAnimateds: function(delta) {
-        var animated = this.animation.update(delta);
-        for (var i = 0, m = animated.length; i < m; i++) {
-            if (animated[i]) {
-                this.animated[i] = animated[i];
+    updateMovingWalls: function(delta) {
+        var movingWalls = this.animation.update(delta);
+        for (var i = 0, m = movingWalls.length; i < m; i++) {
+            if (movingWalls[i]) {
+                this.animated[i] = movingWalls[i];
             }
         }
-        return animated;
+        return movingWalls;
     },
 
     /**
