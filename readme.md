@@ -21,7 +21,9 @@ optimized code.
 
  * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
  * Download and install [node.js](http://nodejs.org/)
- * Install dependencies: `npm install`
+ * Install server dependencies: `npm install`
+ * Download and install bower: `npm install -g bower`
+ * Install client dependencies: `bower install`
  * Configure hostname and port in `shared/config.js`
  * Run `npm start`
 

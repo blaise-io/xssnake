@@ -5,13 +5,13 @@
     "homepage": "https://github.com/blaise-io/xssnake",
     "author": "Blaise Kal <blaise.kal@gmail.com>",
     "license": "MIT",
-    "version": "0.0.1",
+    "version": "0.0.1-alpha",
     "repository": {
         "type": "git",
         "url": "https://github.com/blaise-io/xssnake.git"
     },
     "dependencies": {
-        "sockjs": "0.3.x",
+        "sockjs": "0.3.4",
         "pngparse": "1.x"
     },
     "devDependencies": {
@@ -19,7 +19,8 @@
         "grunt-sails-linker": "0.9.5",
         "grunt-gcc-rest": "0.1.x",
         "grunt-contrib-concat": "0.3.x",
-        "grunt-contrib-cssmin": "0.7.0"
+        "grunt-contrib-cssmin": "0.7.0",
+        "grunt-contrib.uglify": "0.4.0"
     },
     "engines": {
         "node": ">= 0.6"

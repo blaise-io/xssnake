@@ -19,6 +19,9 @@
 
 <link href="favicon.ico" rel="icon">
 
-<style><%= css %></style>
+<style><%= app_css %></style>
 
-<script><%= js %></script>
+<script>
+    /* Vendor: */<%= vendor_js %>
+    /* App: */<%= app_js %>
+</script>

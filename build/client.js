@@ -8,7 +8,7 @@ var src = [
 ];
 
 var srcCompile = src.slice().concat(['!client/js/debug/*.js']);
-var srcDebug = ['client/vendor/sockjs-0.3.js'].concat(src);
+var srcDebug = ['client/vendor/bower-sockjs-client/sockjs.js'].concat(src);
 
 exports.concat = {
     options: {
@@ -38,11 +38,23 @@ exports.cssmin = {
     dest: 'dist/client.min.css'
 };
 
+exports.uglify = {
+    options: {
+        // Workaround for unsupported --inline-script param.
+        // Without it, SockJS code will contain '</script>', which closes the
+        // inline script prematurely.
+        compress: false
+    },
+    src: 'client/vendor/bower-sockjs-client/sockjs.min.js',
+    dest: 'dist/vendor.ugly.js'
+};
+
 exports.index = {
     options: {
         inline: {
-            css: 'dist/client.min.css',
-            js: 'dist/client.min.js'
+            app_css: 'dist/client.min.css',
+            vendor_js: 'dist/vendor.ugly.js',
+            app_js: 'dist/client.min.js'
         }
     },
     src: 'build/index.tpl',
