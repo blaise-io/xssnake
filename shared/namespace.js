@@ -2,6 +2,9 @@
 'use strict';
 
 var xss = {
-    data: {},
-    debug: {}
+    data      : {},
+    debug     : {},
+    model     : {},
+    view      : {},
+    controller: {}
 };

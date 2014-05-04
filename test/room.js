@@ -1,12 +1,16 @@
 'use strict';
 
 var assert = require('assert');
+var nodeEvents = require('events');
+
 
 describe('Rooms', function() {
 
-    var server, roomManager, room, client, gameOptions, connectionDummy;
+    var server, roomManager, room, client, gameOptions, pubsubDummy,
+        connectionDummy;
 
-    connectionDummy = {write: xss.util.noop};
+    pubsubDummy = new nodeEvents.EventEmitter();
+    connectionDummy = {write: xss.util.noop, on: xss.util.noop};
 
     before(function(done) {
         server = new xss.Server();
@@ -32,7 +36,7 @@ describe('Rooms', function() {
         roomManager = server.roomManager;
 
         room = roomManager.createRoom(gameOptions);
-        client = new xss.Client(connectionDummy);
+        client = new xss.Client(pubsubDummy, connectionDummy);
 
         done();
     });
@@ -67,7 +71,7 @@ describe('Rooms', function() {
         });
 
         it('Restarting', function() {
-            var otherClient = new xss.Client(connectionDummy);
+            var otherClient = new xss.Client(pubsubDummy, connectionDummy);
             room.addClient(otherClient);
             room.addClient(client);
             room.restartRounds();
@@ -124,7 +128,7 @@ describe('Rooms', function() {
         });
 
         it('Become host when previous host leaves', function() {
-            var otherClient = new xss.Client(connectionDummy);
+            var otherClient = new xss.Client(pubsubDummy, connectionDummy);
             room.addClient(otherClient);
             room.removeClient(client);
             assert(room.isHost(otherClient));

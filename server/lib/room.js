@@ -37,7 +37,7 @@ xss.Room.prototype = {
 
     updateIndices: function() {
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            this.clients[i].index = i;
+            this.clients[i].model.index = i;
         }
     },
 
@@ -66,7 +66,7 @@ xss.Room.prototype = {
      * @return {boolean}
      */
     isHost: function(client) {
-        return (0 === client.index);
+        return (0 === client.model.index);
     },
 
     /**
@@ -107,12 +107,12 @@ xss.Room.prototype = {
      */
     addClient: function(client) {
         client.room = this;
-        client.index = this.clients.push(client) - 1;
+        client.model.index = this.clients.push(client) - 1;
 
         this.emitState();
 
         client.broadcast(xss.EVENT_CHAT_NOTICE, [
-            xss.NOTICE_JOIN, client.index
+            xss.NOTICE_JOIN, client.model.index
         ]);
 
         this.rounds.addClient(client);
@@ -124,12 +124,11 @@ xss.Room.prototype = {
      */
     removeClient: function(client) {
         this.emit(xss.EVENT_CHAT_NOTICE, [
-            xss.NOTICE_DISCONNECT, client.index
+            xss.NOTICE_DISCONNECT, client.model.index
         ]);
 
         this.rounds.removeClient(client);
-
-        this.clients.splice(client.index, 1);
+        this.clients.splice(client.model.index, 1);
 
         this.updateIndices();
         this.emitState();
@@ -152,7 +151,7 @@ xss.Room.prototype = {
     names: function() {
         var names = [];
         for (var i = 0, m = this.clients.length; i < m; i++) {
-            names.push(this.clients[i].name);
+            names.push(this.clients[i].model.name);
         }
         return names;
     },

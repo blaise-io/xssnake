@@ -124,7 +124,7 @@ xss.Game.prototype = {
     removeClient: function(client) {
         if (client.snake) {
             this._crashSnake(client);
-            this.snakes.splice(client.index, 1);
+            this.snakes.splice(client.model.index, 1);
         }
     },
 
@@ -172,8 +172,8 @@ xss.Game.prototype = {
         var size = client.snake.size += 3;
 
         this.room.buffer(xss.EVENT_GAME_DESPAWN, index);
-        this.room.buffer(xss.EVENT_SNAKE_SIZE, [client.index, size]);
-        this.room.buffer(xss.EVENT_SNAKE_ACTION, [client.index, 'Nom']);
+        this.room.buffer(xss.EVENT_SNAKE_SIZE, [client.model.index, size]);
+        this.room.buffer(xss.EVENT_SNAKE_ACTION, [client.model.index, 'Nom']);
         this.room.rounds.score.bufferApplePoints(client);
         this.room.flush();
 
@@ -292,7 +292,7 @@ xss.Game.prototype = {
      * @private
      */
     _maxMismatches: function(client) {
-        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.rtt);
+        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.socket.model.rtt);
         return Math.ceil((rtt + 20) / client.snake.speed);
     },
 
@@ -341,7 +341,7 @@ xss.Game.prototype = {
      * @private
      */
     _emitSnakeRoom: function(client) {
-        var data = [client.index, client.snake.parts, client.snake.direction];
+        var data = [client.model.index, client.snake.parts, client.snake.direction];
         this.room.emit(xss.EVENT_SNAKE_UPDATE, data);
     },
 
@@ -351,7 +351,7 @@ xss.Game.prototype = {
      */
     _broadcastSnakeRoom: function(client) {
         var data = [
-            client.index,
+            client.model.index,
             client.snake.parts,
             client.snake.direction
         ];
@@ -418,7 +418,7 @@ xss.Game.prototype = {
         }
         parts = parts || snake.parts;
         snake.crashed = true;
-        this.room.emit(xss.EVENT_SNAKE_CRASH, [client.index, parts]);
+        this.room.emit(xss.EVENT_SNAKE_CRASH, [client.model.index, parts]);
     },
 
     /**
@@ -483,7 +483,7 @@ xss.Game.prototype = {
         // the snake returns back to life. The snake will be crashed When the
         // limbo time exceeds the latency.
 
-        if (snake.limbo && +new Date() - snake.limbo.time >= client.rtt) {
+        if (snake.limbo && +new Date() - snake.limbo.time >= client.socket.model.rtt) {
             this._crashSnake(client);
             opponent = snake.limbo.opponent;
             if (opponent && snake.limbo.draw) {

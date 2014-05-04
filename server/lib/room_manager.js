@@ -126,7 +126,7 @@ xss.RoomManager.prototype = {
      */
     _evJoinRoom: function(data, client) {
         if (new xss.Validate(data).assertArrayOfLength(2, 2).valid()) {
-            client.name = this._cleanUsername(data[1]);
+            client.model.name = this._cleanUsername(data[1]);
             this.joinRoomByKey(client, data[0]);
         }
     },
@@ -139,7 +139,7 @@ xss.RoomManager.prototype = {
     _evMatchRoom: function(preferences, client) {
         var room;
         if (preferences) {
-            client.name = this._cleanUsername(preferences[xss.FIELD_NAME]);
+            client.model.name = this._cleanUsername(preferences[xss.FIELD_NAME]);
             room = this.getOrCreateRoom(preferences);
             room.addClient(client);
         }

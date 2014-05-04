@@ -36,10 +36,10 @@ xss.Crash.prototype = {
         var data = [
             xss.NOTICE_CRASH,
             this.type,
-            this.client.index
+            this.client.model.index
         ];
         if (this.opponent) {
-            data.push(this.opponent.index);
+            data.push(this.opponent.model.index);
         }
         this.client.room.emit(xss.EVENT_CHAT_NOTICE, data);
     }

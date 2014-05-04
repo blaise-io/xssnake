@@ -34,19 +34,19 @@ xss.Server.prototype = {
      * @return {EventEmitter}
      */
     setupPubSub: function() {
-        var emitter;
+        var pubsub;
 
-        emitter = new nodeEvents.EventEmitter();
-        emitter.setMaxListeners(0);
+        pubsub = new nodeEvents.EventEmitter();
+        pubsub.setMaxListeners(0);
 
         // Tick every N ms
         this._time = +new Date();
         setInterval(function() {
-            emitter.emit('tick', +new Date() - this._time);
+            pubsub.emit('tick', +new Date() - this._time);
             this._time = +new Date();
         }.bind(this), 50);
 
-        return emitter;
+        return pubsub;
     },
 
     /**
@@ -60,9 +60,7 @@ xss.Server.prototype = {
 
         xssnake = sockjs.createServer();
         xssnake.on('connection', function(connection) {
-            var client;
-            client = new xss.Client(connection);
-            client.eventHandler = new xss.EventHandler(client, this.pubsub);
+            new xss.Client(this.pubsub, connection);
         }.bind(this));
 
         xssnake.installHandlers(server, {prefix: '/xssnake', log: xss.util.noop});

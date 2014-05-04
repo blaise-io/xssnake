@@ -151,7 +151,7 @@ xss.Validate.prototype = {
      */
     _log: function(message, value, varArgs) {
         var args = Array.prototype.slice.call(arguments, 2);
-        console.log('Validation Error', message, JSON.stringify(value), args);
+        console.warn('Validation Error', message, JSON.stringify(value), args);
     }
 
 };

@@ -2,37 +2,26 @@
 
 
 /**
+ * @param {EventEmitter} pubsub
  * @param {Object} connection
  * @constructor
  */
-xss.Client = function(connection) {
-    this.connection = connection;
-
-    this.name = '';
-    this.connected = true;
-    this.rtt = 0;
-    this.index = -1;
-    this.limbo = false;
-
-    /** @type {xss.EventHandler} */
-    this.eventHandler = null;
+xss.Client = function(pubsub, connection) {
+    this.model = new xss.model.Client();
+    this.socket = new xss.Socket(this, pubsub, connection);
 
     /** @type {xss.Snake} */
     this.snake = null;
 
     /** @type {xss.Room} */
     this.room = null;
-
-    /** @type {Array.<Array>} */
-    this._emitBuffer = [];
 };
 
 xss.Client.prototype = {
 
     destruct: function() {
-        this.eventHandler.destruct();
-        this.connection = null;
-        this.eventHandler = null;
+        this.socket.destruct();
+        this.model = null;
         this.snake = null;
         this.room = null;
     },
@@ -55,7 +44,7 @@ xss.Client.prototype = {
         if (data) {
             emit.push(data);
         }
-        this.connection.write(JSON.stringify(emit));
+        this.socket.connection.write(JSON.stringify(emit));
     },
 
     /**
@@ -80,7 +69,7 @@ xss.Client.prototype = {
      * @return {xss.Client}
      */
     buffer: function(type, data) {
-        this._emitBuffer.push([type, data]);
+        this.socket.model.emitBuffer.push([type, data]);
         return this;
     },
 
@@ -89,12 +78,13 @@ xss.Client.prototype = {
      * @return {xss.Client}
      */
     flush: function() {
-        if (this._emitBuffer.length > 1) {
-            this.emit(xss.EVENT_COMBI, this._emitBuffer);
-        } else if (this._emitBuffer.length) {
-            this.emit(this._emitBuffer[0][0], this._emitBuffer[0][1]);
+        var emitBuffer = this.socket.model.emitBuffer;
+        if (emitBuffer.length > 1) {
+            this.emit(xss.EVENT_COMBI, emitBuffer);
+        } else if (emitBuffer.length) {
+            this.emit(emitBuffer[0][0], emitBuffer[0][1]);
         }
-        this._emitBuffer = [];
+        emitBuffer.length = 0;
         return this;
     }
 

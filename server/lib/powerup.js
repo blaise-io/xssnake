@@ -99,7 +99,7 @@ xss.Powerup.prototype = {
      */
     _others: function() {
         var clients = this.room.clients.slice();
-        clients.splice(this.client.index, 1);
+        clients.splice(this.client.model.index, 1);
         return clients;
     },
 
@@ -115,7 +115,7 @@ xss.Powerup.prototype = {
 
     _speedIncPerm: function() {
         var room = this.room,
-            index = this.client.index,
+            index = this.client.model.index,
             snake = this.client.snake;
         snake.speed -= 15;
         room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
@@ -148,7 +148,7 @@ xss.Powerup.prototype = {
     _speed: function(clients, delta, label, duration) {
         var room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
-            var index = clients[i].index,
+            var index = clients[i].model.index,
                 snake = clients[i].snake;
             snake.speed += delta;
             room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
@@ -158,7 +158,7 @@ xss.Powerup.prototype = {
 
         this._resetState(duration, function() {
             for (var i = 0, m = clients.length; i < m; i++) {
-                var index = clients[i].index,
+                var index = clients[i].model.index,
                     snake = clients[i].snake;
                 snake.speed -= delta;
                 room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
@@ -186,7 +186,7 @@ xss.Powerup.prototype = {
     _spawn: function(type, amount, message) {
         var index, spawn, game = this.game;
 
-        index = this.client.index;
+        index = this.client.model.index;
         spawn = function() {
             game.spawner.spawn(type);
         };
@@ -246,7 +246,7 @@ xss.Powerup.prototype = {
     _tail: function(clients, delta, message) {
         var room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
-            var index = clients[i].index,
+            var index = clients[i].model.index,
                 snake = clients[i].snake;
             snake.size = Math.max(1, snake.size + delta);
             room.buffer(xss.EVENT_SNAKE_ACTION, [index, message]);

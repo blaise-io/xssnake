@@ -22,14 +22,14 @@ xss.Score.prototype = {
      * @param {xss.Client} client
      */
     addClient: function(client) {
-        this.points[client.index] = 0;
+        this.points[client.model.index] = 0;
     },
 
     /**
      * @param {xss.Client} client
      */
     removeClient: function(client) {
-        this.points.splice(client.index, 1);
+        this.points.splice(client.model.index, 1);
     },
 
     /**
@@ -64,9 +64,9 @@ xss.Score.prototype = {
      * @param {xss.Client} client
      */
     bufferApplePoints: function(client) {
-        var points = ++this.points[client.index];
+        var points = ++this.points[client.model.index];
         this.room.buffer(
-            xss.EVENT_SCORE_UPDATE, [client.index, points]
+            xss.EVENT_SCORE_UPDATE, [client.model.index, points]
         );
     },
 
@@ -81,7 +81,7 @@ xss.Score.prototype = {
             return xss.SCORE_NEUTRAL;
         }
 
-        clientPoints = points[client.index];
+        clientPoints = points[client.model.index];
         for (var i = 0, m = points.length; i < m; i++) {
             if (clientPoints > points[i]) {
                 position++;

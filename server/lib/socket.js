@@ -3,39 +3,60 @@
 /**
  * @param {xss.Client} client
  * @param {EventEmitter} pubsub
+ * @param {Object} connection
  * @constructor
  */
-xss.EventHandler = function(client, pubsub) {
+xss.Socket = function(client, pubsub, connection) {
     this.client = client;
     this.pubsub = pubsub;
+    this.connection = connection;
 
-    client.connection.on('data', this._handleMessage.bind(this));
-    client.connection.on('close', this._disconnect.bind(this));
+    this.model = new xss.model.Socket();
 
-    this._eventMap = null;
-    this._pingSent = -1;
+    connection.on('data', this.dispatchMessage.bind(this));
+    connection.on('close', this.eventDisconnect.bind(this));
 
-    this._startPingInterval();
+    this.startPingInterval();
 };
 
-xss.EventHandler.prototype = {
+xss.Socket.prototype = {
 
     destruct: function() {
         clearInterval(this._pingInterval);
-        this.client.connection.on('data', function(){});
         this.client = null;
         this.pubsub = null;
-        this._eventMap = null;
+        this.connection = null;
+        this.model = null;
     },
 
     /**
      * @private
      */
-    _handleMessage: function(message) {
-        var cleanMessage = this._cleanMessage(message);
+    dispatchMessage: function(message) {
+        var cleanMessage = this.cleanMessage(message);
         if (cleanMessage) {
             this.pubsub.emit(cleanMessage.event, cleanMessage.data, this.client);
-            this._handleClientEvent(cleanMessage.event, cleanMessage.data);
+            this.dispatchEvent(cleanMessage.event, cleanMessage.data);
+        }
+    },
+
+    /**
+     * @private
+     */
+    dispatchEvent: function(event, data) {
+        var map = this._eventMap;
+        if (!map) {
+            map = {};
+            map[xss.EVENT_PING]         = this.eventPong.bind(this);
+            map[xss.EVENT_ROOM_START]   = this.eventRoomStart.bind(this);
+            map[xss.EVENT_CHAT_MESSAGE] = this.eventChat.bind(this);
+            map[xss.EVENT_SNAKE_UPDATE] = this.eventSnakeUpdate.bind(this);
+            map[xss.EVENT_GAME_STATE]   = this.eventRequestGameState.bind(this);
+            this._eventMap = map;
+        }
+
+        if (map[event]) {
+            map[event](data);
         }
     },
 
@@ -44,11 +65,11 @@ xss.EventHandler.prototype = {
      * @return {Object}
      * @private
      */
-    _cleanMessage: function(dirtyMessage) {
+    cleanMessage: function(dirtyMessage) {
         var messageValidate, json, jsonValidate, eventValidate;
 
         messageValidate = new xss.Validate(dirtyMessage)
-            .assertStringOfLength(6, 512)
+            .assertStringOfLength(5, 512)
             .assertJSON();
         if (!messageValidate.valid()) {
             return null;
@@ -74,51 +95,19 @@ xss.EventHandler.prototype = {
     /**
      * @private
      */
-    _handleClientEvent: function(event, data) {
-        var map = this._eventMap;
-        if (!map) {
-            map = {};
-            map[xss.EVENT_PONG]         = this._pong.bind(this);
-            map[xss.EVENT_ROOM_START]   = this._roomStart.bind(this);
-            map[xss.EVENT_CHAT_MESSAGE] = this._chat.bind(this);
-            map[xss.EVENT_SNAKE_UPDATE] = this._snakeUpdate.bind(this);
-            map[xss.EVENT_GAME_STATE]   = this._gameState.bind(this);
-            this._eventMap = map;
-        }
-
-        if (map[event]) {
-            map[event](data);
-        }
-    },
-
-    /**
-     * @private
-     */
-    _startPingInterval: function() {
+    startPingInterval: function() {
         this._pingInterval = setInterval(function() {
-            this._pingSent = +new Date();
+            this.model.ping();
             this.client.emit(xss.EVENT_PING);
         }.bind(this), xss.NETCODE_PING_INTERVAL);
     },
 
-    /**
-     * @private
-     */
-    _pong: function() {
-        var rtt, now = +new Date();
-        if (this._pingSent) {
-            rtt = now - Number(new xss.Validate(this._pingSent)
-                .assertRange(now - xss.NETCODE_PING_INTERVAL, now)
-                .value(now - 50));
-            this.client.rtt = rtt;
-            this._pingSent = 0;
-        }
+    eventPong: function() {
+        var rtt = this.model.pong();
+        this.client.emit(xss.EVENT_PING_RESULT, [+new Date(), rtt]);
     },
 
-    /**
-     * @private
-     */
-    _disconnect: function() {
+    eventDisconnect: function() {
         var client = this.client, room = client.room;
         if (room) {
             room.removeClient(client);
@@ -126,24 +115,17 @@ xss.EventHandler.prototype = {
         client.destruct();
     },
 
-    /**
-     * @private
-     */
-    _roomStart: function() {
+    eventRoomStart: function() {
         this.client.room.rounds.clientStart(this.client);
     },
 
-    /**
-     * @param {string} message
-     * @private
-     */
-    _chat: function(message) {
+    eventChat: function(message) {
         var index, validMessage, room = this.client.room;
 
         validMessage = new xss.Validate(message).assertStringOfLength(1, 30);
 
         if (room && validMessage.valid()) {
-            index = this.client.index;
+            index = this.client.model.index;
             this.client.broadcast(xss.EVENT_CHAT_MESSAGE, [index, message]);
             room.emit(xss.EVENT_SNAKE_ACTION, [index, 'Blah']);
         }
@@ -152,7 +134,7 @@ xss.EventHandler.prototype = {
     /**
      * @param data [<Array>,<number>] 0: parts, 1: direction
      */
-    _snakeUpdate: function(data) {
+    eventSnakeUpdate: function(data) {
         var client, game, parts, direction;
 
         client = this.client;
@@ -166,10 +148,7 @@ xss.EventHandler.prototype = {
         }
     },
 
-    /**
-     * @private
-     */
-    _gameState: function() {
+    eventRequestGameState: function() {
         var game, client = this.client;
         game = client.getGame();
         if (game) {
