@@ -10,8 +10,8 @@ xss.Socket = function(callback) {
 
     this.connection = new SockJS(xss.SERVER_ENDPOINT);
     this.connection.onopen = this.model.connect.bind(this.model);
-    this.connection.onclose = this.eventDisconnect.bind(this);
-    this.connection.onmessage = this.dispatchMessage.bind(this);
+    this.connection.onclose = this._eventDisconnect.bind(this);
+    this.connection.onmessage = this._dispatchMessage.bind(this);
 
     this._bindEvents();
 };
@@ -21,7 +21,7 @@ xss.Socket.prototype = {
     destruct: function() {
         xss.event.off(xss.EVENT_PING, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_COMBI, xss.NS_SOCKET);
-        xss.event.off(xss.EVENT_PING_RESULT, xss.NS_SOCKET);
+        xss.event.off(xss.EVENT_PONG, xss.NS_SOCKET);
         if (xss.room) {
             xss.room.destruct();
             xss.room = null;
@@ -33,7 +33,7 @@ xss.Socket.prototype = {
         }
     },
 
-    eventDisconnect: function() {
+    _eventDisconnect: function() {
         var callback = function() {
             if (xss.room) {
                 xss.room.destruct();
@@ -62,7 +62,7 @@ xss.Socket.prototype = {
     /**
      * @param {Object} ev
      */
-    dispatchMessage: function(ev) {
+    _dispatchMessage: function(ev) {
         var data = JSON.parse(ev.data);
         xss.event.trigger(data[0], data[1]);
     },
@@ -71,19 +71,22 @@ xss.Socket.prototype = {
      * @private
      */
     _bindEvents: function() {
-        xss.event.on(xss.EVENT_PING,        xss.NS_SOCKET, this.clientPing.bind(this));
-        xss.event.on(xss.EVENT_PING_RESULT, xss.NS_SOCKET, this.clientPingResult.bind(this));
-        xss.event.on(xss.EVENT_COMBI,       xss.NS_SOCKET, this.combinedEvents.bind(this));
+        xss.event.on(xss.EVENT_PING,  xss.NS_SOCKET, this._clientPing.bind(this));
+        xss.event.on(xss.EVENT_PONG,  xss.NS_SOCKET, this._clientPong.bind(this));
+        xss.event.on(xss.EVENT_COMBI, xss.NS_SOCKET, this._combinedEvents.bind(this));
     },
 
-    clientPing: function() {
+    /**
+     * @private
+     */
+    _clientPing: function() {
         xss.socket.emit(xss.EVENT_PING);
     },
 
     /**
      * @param {Array.<number>} data
      */
-    clientPingResult: function(data) {
+    _clientPong: function(data) {
         this.model.time = data[0];
         this.model.rtt = data[1];
     },
@@ -92,7 +95,7 @@ xss.Socket.prototype = {
      * Combined package, delegate.
      * @param {Array.<Array>} data
      */
-    combinedEvents: function(data) {
+    _combinedEvents: function(data) {
         for (var i = 0, m = data.length; i < m; i++) {
             xss.event.trigger(data[i][0], data[i][1]);
         }
