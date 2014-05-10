@@ -117,7 +117,8 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
         } else if (this._isMenuSnakeCrash(snake, nextpos)) {
             snake.crash();
             window.setTimeout(snake.destruct.bind(snake), 1000);
-            window.setTimeout(this._launchMenuSnake.bind(this), 1000 * 15);
+            // Respawn menu snake
+            // window.setTimeout(this._launchMenuSnake.bind(this), 1000 * 15);
         } else {
             snake.move(nextpos);
             snake.updateShape();
