@@ -2,12 +2,13 @@
 
 /**
  * Collisions and levels
- * @constructor
  * @param {xss.LevelData} levelData
+ * @param {number} animProgress
+ * @constructor
  */
-xss.Level = function(levelData) {
+xss.Level = function(levelData, animProgress) {
     this.levelData = levelData;
-    this.animation = new xss.LevelAnimation(levelData.animation);
+    this.animation = new xss.LevelAnimation(levelData.animation, animProgress);
     /** @type {Array.<Array.<xss.ShapePixels>>} */
     this.animated = [];
 };
@@ -16,12 +17,12 @@ xss.Level.prototype = {
 
     /**
      * @param {number} delta
-     * @param {boolean} preGame
+     * @param {boolean} gameStarted
      * @return {Array.<Array.<xss.ShapePixels>>} shapePixelsArr
      */
-    updateMovingWalls: function(delta, preGame) {
-        var movingWalls = this.animation.update(delta, preGame);
-        if (preGame) {
+    updateMovingWalls: function(delta, gameStarted) {
+        var movingWalls = this.animation.update(delta, gameStarted);
+        if (gameStarted) {
             for (var i = 0, m = movingWalls.length; i < m; i++) {
                 if (movingWalls[i]) {
                     this.animated[i] = movingWalls[i];

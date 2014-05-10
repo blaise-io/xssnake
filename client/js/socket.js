@@ -6,7 +6,7 @@
  * @constructor
  */
 xss.Socket = function(callback) {
-    this.model = new xss.model.Socket(callback);
+    this.model = new xss.model.ClientSocket(callback);
 
     this.connection = new SockJS(xss.SERVER_ENDPOINT);
     this.connection.onopen = this.model.connect.bind(this.model);
@@ -87,8 +87,7 @@ xss.Socket.prototype = {
      * @param {Array.<number>} data
      */
     _clientPong: function(data) {
-        this.model.time = data[0];
-        this.model.rtt = data[1];
+        this.model.setPongData(data[0], data[1]);
     },
 
     /**

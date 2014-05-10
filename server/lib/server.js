@@ -40,10 +40,10 @@ xss.Server.prototype = {
         pubsub.setMaxListeners(0);
 
         // Tick every N ms
-        this._time = +new Date();
+        this._time = new Date();
         setInterval(function() {
-            pubsub.emit(xss.SERVER_TICK, +new Date() - this._time);
-            this._time = +new Date();
+            pubsub.emit(xss.SERVER_TICK, new Date() - this._time);
+            this._time = new Date();
         }.bind(this), 50);
 
         return pubsub;

@@ -9,11 +9,10 @@ xss.Game = function(round, levelIndex) {
     this.round = round;
     this.room = round.room;
     this.server = this.room.server;
+    this.levelIndex = levelIndex;
 
     this.options = this.room.options;
 
-    var levelData = xss.levels.getLevelData(levelIndex);
-    this.level = new xss.Level(levelData);
     this.spawner = new xss.Spawner(this);
     this.model = new xss.model.Game();
 
@@ -23,8 +22,7 @@ xss.Game = function(round, levelIndex) {
     /** @type {Array.<xss.Snake>} */
     this.snakes = [];
 
-    this._mainGameLoopBound = this._mainGameLoop.bind(this);
-    this.server.pubsub.on(xss.SERVER_TICK, this._mainGameLoopBound);
+    this._mainGameLoopBound = this._serverGameLoop.bind(this);
 };
 
 xss.Game.prototype = {
@@ -45,7 +43,12 @@ xss.Game.prototype = {
     },
 
     start: function() {
+        var levelData = xss.levels.getLevelData(this.levelIndex);
+        this.level = new xss.Level(levelData, new Date() - this.model.created);
+
         this.spawnSnakes();
+
+        this.server.pubsub.on(xss.SERVER_TICK, this._mainGameLoopBound);
         this.model.started = true;
         this.room.emit(xss.EVENT_GAME_START);
         this.spawner.spawn(xss.SPAWN_APPLE);
@@ -421,13 +424,11 @@ xss.Game.prototype = {
      * @param {number} delta
      * @private
      */
-    _mainGameLoop: function(delta) {
+    _serverGameLoop: function(delta) {
         var clients = this.room.clients;
-        this.level.updateMovingWalls(delta, !this.model.started);
-        if (this.model.started) {
-            for (var i = 0, m = clients.length; i < m; i++) {
-                this._updateClient(clients[i], delta);
-            }
+        this.level.updateMovingWalls(delta, true);
+        for (var i = 0, m = clients.length; i < m; i++) {
+            this._updateClient(clients[i], delta);
         }
     },
 

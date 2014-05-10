@@ -107,7 +107,7 @@ xss.Socket.prototype = {
      */
     _eventPong: function() {
         var rtt = this.model.pong();
-        this.client.emit(xss.EVENT_PONG, [+new Date(), rtt]);
+        this.client.emit(xss.EVENT_PONG, [Number(new Date()), rtt]);
     },
 
     /**

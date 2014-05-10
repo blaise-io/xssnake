@@ -5,9 +5,10 @@
  * @param {number} index
  * @param {number} levelIndex
  * @param {Array.<string>} names
+ * @param {number} created
  * @constructor
  */
-xss.Game = function(index, levelIndex, names) {
+xss.Game = function(index, levelIndex, names, created) {
 
     xss.canvas.garbageCollect();
 
@@ -17,7 +18,7 @@ xss.Game = function(index, levelIndex, names) {
     xss.shapes.header = null;
     xss.shapes.border = null;
 
-    this.model = new xss.model.Game();
+    this.model = new xss.model.ClientGame(created);
 
     /** @type {xss.Level} */
     this.level = this._setupLevel(levelIndex);
@@ -32,6 +33,20 @@ xss.Game = function(index, levelIndex, names) {
 };
 
 xss.Game.prototype = {
+
+    _bindEvents: function() {
+        var ns = xss.NS_GAME;
+        xss.event.on(xss.PUB_GAME_TICK,        ns, this._clientGameLoop.bind(this));
+        xss.event.on(xss.EVENT_GAME_COUNTDOWN, ns, this.countdown.bind(this));
+        xss.event.on(xss.EVENT_GAME_START,     ns, this.start.bind(this));
+        xss.event.on(xss.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
+        xss.event.on(xss.EVENT_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
+        xss.event.on(xss.EVENT_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
+        xss.event.on(xss.EVENT_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
+        xss.event.on(xss.EVENT_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
+        xss.event.on(xss.EVENT_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
+        xss.event.on(xss.EVENT_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
+    },
 
     /**
      * A Game does not start immediately after a new instance of the Game class
@@ -127,20 +142,6 @@ xss.Game.prototype = {
         timer = window.setInterval(updateShape, 1e3);
     },
 
-    _bindEvents: function() {
-        var ns = xss.NS_GAME;
-        xss.event.on(xss.PUB_GAME_TICK,        ns, this._mainGameLoop.bind(this));
-        xss.event.on(xss.EVENT_GAME_COUNTDOWN, ns, this.countdown.bind(this));
-        xss.event.on(xss.EVENT_GAME_START,     ns, this.start.bind(this));
-        xss.event.on(xss.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
-        xss.event.on(xss.EVENT_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
-    },
-
     _evSpawn: function(data) {
         var spawn, type = data[0], index = data[1];
         spawn = new xss.Spawnable(type, index, data[2]);
@@ -216,7 +217,7 @@ xss.Game.prototype = {
             }
         }
 
-        return new xss.Level(levelData);
+        return new xss.Level(levelData, this.model.offsetDelta);
     },
 
     /**
@@ -273,8 +274,10 @@ xss.Game.prototype = {
      * @param {number} delta
      * @private
      */
-    _mainGameLoop: function(delta) {
-        this._updateAnimatedShapes(this.level.updateMovingWalls(delta, true));
+    _clientGameLoop: function(delta) {
+        this._updateAnimatedShapes(this.level.updateMovingWalls(
+            delta + this.model.offsetDelta, this.model.started)
+        );
         if (this.model.started) {
             this._moveSnakes(delta);
         }

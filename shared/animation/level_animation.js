@@ -2,9 +2,10 @@
 
 /**
  * @param {Function=} animation
+ * @param {number=} progress Animation progress (in ms)
  * @constructor
  */
-xss.LevelAnimation = function(animation) {
+xss.LevelAnimation = function(animation, progress) {
     /**
      * List of animations.
      * Each animation has one or more shapes that update every N ms.
@@ -18,7 +19,7 @@ xss.LevelAnimation = function(animation) {
      * @type {number}
      * @private
      */
-    this._progressMs = 0;
+    this._progressMs = progress || 0;
 
     if (animation) {
         this._animations = animation();
@@ -32,18 +33,16 @@ xss.LevelAnimation.prototype = {
      * Every animation is an array of shape pixels, or null
      *
      * @param {number} delta
-     * @param {boolean} preGame
+     * @param {boolean} gameStarted
      * @return {Array.<Array.<xss.ShapePixels>>}
      */
-    update: function(delta, preGame) {
+    update: function(delta, gameStarted) {
         var shapePixelsArrArr = [];
         this._progressMs += delta;
-        if (preGame) {
-            for (var i = 0, m = this._animations.length; i < m; i++) {
-                shapePixelsArrArr.push(
-                    this._animations[i].update(this._progressMs, preGame)
-                );
-            }
+        for (var i = 0, m = this._animations.length; i < m; i++) {
+            shapePixelsArrArr.push(
+                this._animations[i].update(this._progressMs, gameStarted)
+            );
         }
         return shapePixelsArrArr;
     }

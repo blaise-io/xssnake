@@ -17,7 +17,7 @@ xss.Room = function() {
 xss.Room.prototype = {
 
     destruct: function() {
-        xss.event.off(xss.EVENT_ROOM_INDEX, xss.NS_ROOM);
+        xss.event.off(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.EVENT_XSS_REQ, xss.NS_ROOM);
         xss.event.off(xss.EVENT_XSS_RES, xss.NS_ROOM);
         xss.util.hash();
@@ -49,11 +49,12 @@ xss.Room.prototype = {
      * @param {string} key
      * @param {Array.<string>} names
      * @param {number} capacity
+     * @param {number} created
      * @param {number} level
      * @param {number} started
      * @param {Array.<number>} score
      */
-    update: function(index, key, names, capacity, level, started, score) {
+    update: function(index, key, names, capacity, created, level, started, score) {
         xss.util.hash(xss.HASH_ROOM, key);
         names = this._sanitizeNames(names);
 
@@ -61,7 +62,7 @@ xss.Room.prototype = {
         this.capacity = capacity;
         this.players = names.length;
 
-        this.game  = this._updateGame(index, level, names);
+        this.game  = this._updateGame(index, level, names, created);
         this.score = this._updateScore(names, score);
         this.chat  = this._updateChat(index, names);
 
@@ -70,11 +71,11 @@ xss.Room.prototype = {
         }
     },
 
-    _updateGame: function(index, level, names) {
+    _updateGame: function(index, level, names, created) {
         if (this.game) {
             this.game.destruct();
         }
-        return new xss.Game(index, level, names);
+        return new xss.Game(index, level, names, created);
     },
 
     _updateScore: function(names, score) {
@@ -100,7 +101,7 @@ xss.Room.prototype = {
      */
     _bindEvents: function() {
         xss.event.on(xss.EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
-        xss.event.on(xss.EVENT_ROOM_INDEX, xss.NS_ROOM, this._initRoom.bind(this));
+        xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
         xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._reqxss.bind(this));
         xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalxss.bind(this));
     },
