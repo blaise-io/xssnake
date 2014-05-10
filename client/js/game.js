@@ -9,14 +9,15 @@
  */
 xss.Game = function(index, levelIndex, names) {
 
-    // Remove old snakes, spawnables
-    // Don't do this during gameplay, might affects fps
     xss.canvas.garbageCollect();
 
+    // Todo: move to stage
     xss.flow.stage.destruct();
     xss.shapes.stage = null;
     xss.shapes.header = null;
     xss.shapes.border = null;
+
+    this.model = new xss.model.Game();
 
     /** @type {xss.Level} */
     this.level = this._setupLevel(levelIndex);
@@ -27,21 +28,16 @@ xss.Game = function(index, levelIndex, names) {
     /** @type {Array.<xss.Spawnable>} */
     this.spawnables = [];
 
-    /** @type {boolean} */
-    this.started = false;
-
-    /**
-     * Keys used for animated shapes.
-     * @type {Object.<string, boolean>}
-     * @private
-     */
-    this._animKeys = {};
-
     this._bindEvents();
 };
 
 xss.Game.prototype = {
 
+    /**
+     * A Game does not start immediately after a new instance of the Game class
+     * is created. It will show the snakes, level, name labels and directions
+     * until this function is called.
+     */
     start: function() {
         xss.event.on(
             xss.PUB_WIN_FOCUS_CHANGE,
@@ -54,7 +50,7 @@ xss.Game.prototype = {
         }
 
         this.addControls();
-        this.started = true;
+        this.model.started = true;
     },
 
     destruct: function() {
@@ -84,9 +80,11 @@ xss.Game.prototype = {
             }
         }
 
-        for (k in this._animKeys) {
-            if (this._animKeys.hasOwnProperty(k)) {
-                xss.shapes[k] = null;
+        for (k in xss.shapes) {
+            if (xss.shapes.hasOwnProperty(k)) {
+                if (0 === k.indexOf(xss.NS_ANIM)) {
+                    xss.shapes[k] = null;
+                }
             }
         }
 
@@ -276,8 +274,8 @@ xss.Game.prototype = {
      * @private
      */
     _mainGameLoop: function(delta) {
-        this._updateAnimatedShapes(this.level.updateMovingWalls(delta));
-        if (this.started) {
+        this._updateAnimatedShapes(this.level.updateMovingWalls(delta, true));
+        if (this.model.started) {
             this._moveSnakes(delta);
         }
     },
@@ -300,16 +298,14 @@ xss.Game.prototype = {
      * @private
      */
     _updateShapes: function(index, shapePixelsArr) {
-        var pixels, key;
         for (var i = 0, m = shapePixelsArr.length; i < m; i++) {
-            pixels = xss.transform.zoomGame(shapePixelsArr[i]);
-            key = xss.NS_ANIM + index + '_' + i;
-            this._animKeys[key] = true;
-            xss.shapes[key] = new xss.Shape(pixels);
+            var pixels = xss.transform.zoomGame(shapePixelsArr[i]);
+            xss.shapes[xss.NS_ANIM + index + '_' + i] = new xss.Shape(pixels);
         }
     },
 
     /**
+     * @todo Move to Snake class.
      * @param {number} delta
      * @private
      */

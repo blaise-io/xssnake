@@ -7,7 +7,7 @@ xss.EVENT_GAME_START = 'GS';
 xss.EVENT_GAME_STATE = 'GS2';
 xss.EVENT_GAME_SPAWN = 'GS3';
 xss.EVENT_PING = 'P';
-xss.EVENT_PING_RESULT = 'PR';
+xss.EVENT_PONG = 'PR';
 xss.EVENT_ROOM_JOIN = 'RJ';
 xss.EVENT_ROOM_MATCH = 'RM';
 xss.EVENT_ROOM_INDEX = 'RI';
@@ -21,6 +21,8 @@ xss.EVENT_SNAKE_SPEED = 'SS2';
 xss.EVENT_SNAKE_UPDATE = 'S';
 xss.EVENT_XSS_REQ = 'XS?';
 xss.EVENT_XSS_RES = 'XS!';
+
+xss.SERVER_TICK = 'T';
 
 xss.ROOM_KEY_LENGTH = 5;
 xss.ROOM_CAPACITY = 6;

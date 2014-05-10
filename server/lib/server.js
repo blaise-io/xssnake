@@ -42,7 +42,7 @@ xss.Server.prototype = {
         // Tick every N ms
         this._time = +new Date();
         setInterval(function() {
-            pubsub.emit('tick', +new Date() - this._time);
+            pubsub.emit(xss.SERVER_TICK, +new Date() - this._time);
             this._time = +new Date();
         }.bind(this), 50);
 

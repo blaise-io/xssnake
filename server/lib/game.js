@@ -15,6 +15,7 @@ xss.Game = function(round, levelIndex) {
     var levelData = xss.levels.getLevelData(levelIndex);
     this.level = new xss.Level(levelData);
     this.spawner = new xss.Spawner(this);
+    this.model = new xss.model.Game();
 
     /** @type {Array.<number>} */
     this.timers = [];
@@ -22,7 +23,8 @@ xss.Game = function(round, levelIndex) {
     /** @type {Array.<xss.Snake>} */
     this.snakes = [];
 
-    this._tickBound = this._mainGameLoop.bind(this);
+    this._mainGameLoopBound = this._mainGameLoop.bind(this);
+    this.server.pubsub.on(xss.SERVER_TICK, this._mainGameLoopBound);
 };
 
 xss.Game.prototype = {
@@ -30,7 +32,9 @@ xss.Game.prototype = {
     destruct: function() {
         this.stop();
         this.spawner.destruct();
-        this._clearTimers();
+        for (var i = 0, m = this.timers.length; i < m; i++) {
+            clearTimeout(this.timers[i]);
+        }
 
         this.room = null;
         this.round = null;
@@ -42,7 +46,8 @@ xss.Game.prototype = {
 
     start: function() {
         this.spawnSnakes();
-        this.server.pubsub.on('tick', this._tickBound);
+        this.model.started = true;
+        this.room.emit(xss.EVENT_GAME_START);
         this.spawner.spawn(xss.SPAWN_APPLE);
         if (this.options[xss.FIELD_POWERUPS]) {
             this._spawnSomethingAfterDelay();
@@ -51,8 +56,8 @@ xss.Game.prototype = {
 
     stop: function() {
         var pubsub = this.server.pubsub;
-        if (pubsub.listeners('tick')) {
-            pubsub.removeListener('tick', this._tickBound);
+        if (pubsub.listeners(xss.SERVER_TICK)) {
+            pubsub.removeListener(xss.SERVER_TICK, this._mainGameLoopBound);
         }
     },
 
@@ -328,15 +333,6 @@ xss.Game.prototype = {
     },
 
     /**
-     * @private
-     */
-    _clearTimers: function() {
-        for (var i = 0, m = this.timers.length; i < m; i++) {
-            clearTimeout(this.timers[i]);
-        }
-    },
-
-    /**
      * @param {xss.Client} client
      * @private
      */
@@ -427,9 +423,11 @@ xss.Game.prototype = {
      */
     _mainGameLoop: function(delta) {
         var clients = this.room.clients;
-        this.level.updateMovingWalls(delta);
-        for (var i = 0, m = clients.length; i < m; i++) {
-            this._updateClient(clients[i], delta);
+        this.level.updateMovingWalls(delta, !this.model.started);
+        if (this.model.started) {
+            for (var i = 0, m = clients.length; i < m; i++) {
+                this._updateClient(clients[i], delta);
+            }
         }
     },
 

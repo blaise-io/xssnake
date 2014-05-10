@@ -31,7 +31,6 @@ xss.Round.prototype = {
     },
 
     start: function() {
-        this.room.emit(xss.EVENT_GAME_START);
         this.game.start();
     },
 

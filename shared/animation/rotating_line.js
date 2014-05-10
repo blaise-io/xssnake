@@ -20,9 +20,10 @@ xss.animation.RotatingLine.prototype = {
 
     /**
      * @param {number} ms
+     * @param {boolean} preGame
      * @returns {Array.<xss.ShapePixels>}
      */
-    update: function(ms) {
+    update: function(ms, preGame) {
         var radian = ms / Math.pow(1 - this.speed, 1.5) / 2500;
         radian = Math.round(radian * 20) / 20; // No need for 60 fps.
         if (radian !== this.radian) {

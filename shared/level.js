@@ -16,13 +16,16 @@ xss.Level.prototype = {
 
     /**
      * @param {number} delta
+     * @param {boolean} preGame
      * @return {Array.<Array.<xss.ShapePixels>>} shapePixelsArr
      */
-    updateMovingWalls: function(delta) {
-        var movingWalls = this.animation.update(delta);
-        for (var i = 0, m = movingWalls.length; i < m; i++) {
-            if (movingWalls[i]) {
-                this.animated[i] = movingWalls[i];
+    updateMovingWalls: function(delta, preGame) {
+        var movingWalls = this.animation.update(delta, preGame);
+        if (preGame) {
+            for (var i = 0, m = movingWalls.length; i < m; i++) {
+                if (movingWalls[i]) {
+                    this.animated[i] = movingWalls[i];
+                }
             }
         }
         return movingWalls;

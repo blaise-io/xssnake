@@ -5,7 +5,6 @@ xss.animation = {};
 
 /**
  * @interface
- * @todo: Move to separate file
  */
 xss.animation.Interface = function() {};
 xss.animation.Interface.prototype = {
@@ -18,8 +17,9 @@ xss.animation.Interface.prototype = {
     /**
      * Return one or more ShapePixel objects.
      * Return null if animation was not updated.
-     * @param ms
+     * @param {number} ms
+     * @param {boolean} preGame
      * @return {Array.<xss.ShapePixels>}
      */
-    update: function(ms) {}
+    update: function(ms, preGame) { return []; }
 };
