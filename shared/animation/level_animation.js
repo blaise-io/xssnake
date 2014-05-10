@@ -13,17 +13,13 @@ xss.LevelAnimation = function(animation, progress) {
      * @type {Array.<xss.animation.Interface>}
      * @private
      */
-    this._animations = [];
+    this._animations = animation ? animation() : [];
 
     /**
      * @type {number}
      * @private
      */
     this._progressMs = progress || 0;
-
-    if (animation) {
-        this._animations = animation();
-    }
 };
 
 xss.LevelAnimation.prototype = {

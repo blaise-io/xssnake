@@ -275,9 +275,9 @@ xss.Game.prototype = {
      * @private
      */
     _clientGameLoop: function(delta) {
-        this._updateAnimatedShapes(this.level.updateMovingWalls(
-            delta + this.model.offsetDelta, this.model.started)
-        );
+        var movingWalls = this.level.updateMovingWalls(delta, this.model.started);
+        this._updateMovingWalls(movingWalls);
+
         if (this.model.started) {
             this._moveSnakes(delta);
         }
@@ -287,7 +287,7 @@ xss.Game.prototype = {
      * @param {Array.<Array.<xss.ShapePixels>>} ShapePixelsArrArr
      * @private
      */
-    _updateAnimatedShapes: function(ShapePixelsArrArr) {
+    _updateMovingWalls: function(ShapePixelsArrArr) {
         for (var i = 0, m = ShapePixelsArrArr.length; i < m; i++) {
             if (ShapePixelsArrArr[i]) {
                 this._updateShapes(i, ShapePixelsArrArr[i]);
