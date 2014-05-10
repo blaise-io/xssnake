@@ -236,7 +236,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         var emit = function() {
             this._emitSnake(direction);
         }.bind(this);
-        if (xss.room && xss.room.game && xss.room.game.started) {
+        if (xss.room && xss.room.game && xss.room.game.model.started) {
             if (this._snakeTurnCache.length <= 1) {
                 emit();
             } else {
