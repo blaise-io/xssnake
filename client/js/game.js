@@ -5,7 +5,7 @@
  * @param {number} index
  * @param {number} levelIndex
  * @param {Array.<string>} names
- * @param {number} created
+ * @param {number=} created
  * @constructor
  */
 xss.Game = function(index, levelIndex, names, created) {
