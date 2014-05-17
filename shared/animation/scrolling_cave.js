@@ -24,10 +24,10 @@ xss.animation.ScrollingCave = function() {
 
 xss.animation.ScrollingCave.prototype = {
 
-    _SPEED        : 0.8,
+    _SPEED        : 0.97,
 
     _BUMP_WIDTH   : [5, 30],
-    _BUMP_HEIGHT  : [5, 50],
+    _BUMP_HEIGHT  : [5, 30],
     _BUMP_DECREASE: [0, 2],
 
     // To do: get from {xss.LevelData} instance
@@ -52,20 +52,25 @@ xss.animation.ScrollingCave.prototype = {
             return this._shapePixelsArr;
         }
     },
-
     _updateShapes: function(offset) {
-        var i, m, sPixelsArr = this._shapePixelsArr;
-        for (i = 0, m = sPixelsArr.length; i < m; i++) {
+        var sPixelsArr = this._shapePixelsArr;
+        for (var i = 0, m = sPixelsArr.length; i < m; i++) {
             if (sPixelsArr[i]) {
-                sPixelsArr[i] = xss.transform.shift(sPixelsArr[i], offset);
+                if (sPixelsArr[i].meta.x1 < 0) {
+                    sPixelsArr[i] = null;
+                } else if (sPixelsArr[i]) {
+                    var x1 = sPixelsArr[i].meta.x1;
+                    sPixelsArr[i] = xss.transform.shift(sPixelsArr[i], offset);
+                    sPixelsArr[i].meta.x1 = x1 - 1;
+                }
             }
         }
     },
     
     _appendHanging: function() {
-//        while (this._requireNewBump(this._xPointer.hanging)) {
-//            this._generateHangingBump();
-//        }
+        while (this._requireNewBump(this._xPointer.hanging)) {
+            this._generateHangingBump();
+        }
     },
     
     _appendStanding: function() {
@@ -75,7 +80,8 @@ xss.animation.ScrollingCave.prototype = {
     },
 
     _requireNewBump: function(x) {
-        return x - this._scroll < this._LEVEL_WIDTH;
+        // TODO
+        return false;
     },
 
     _scrambleDecimals: function(seed, cutat) {
@@ -108,22 +114,23 @@ xss.animation.ScrollingCave.prototype = {
     _generateStandingBump: function() {
         var xRow0, xRow1;
         xRow0 = this._xPointer.standing;
-        xRow1 = xRow0 + 15; // this._random(this._BUMP_WIDTH);
-        this._xPointer.standing = xRow1 + 2;// + 1;
+        xRow1 = xRow0 + this._random(this._BUMP_WIDTH);
+        this._xPointer.standing = xRow1 + 1;
         this._generateBump(false, xRow0, xRow1);
     },
 
     _generateBump: function(isHanging, xRow0, xRow1) {
-        var maxHeight = 1, shape = new xss.Shape(); // this._random(this._BUMP_HEIGHT);
+        var maxHeight, shape;
+
+        maxHeight = this._random(this._BUMP_HEIGHT);
+        shape = new xss.Shape();
+        shape.pixels.meta.x1 = xRow1;
 
         for (var y = 0; y < maxHeight; y++) {
             var yTop, xRow1Prev = xRow1;
             if (y) {
-                xRow0 += 1; // this._random(this._BUMP_DECREASE);
-                xRow1 -= 1; // this._random(this._BUMP_DECREASE);
-            }
-            if (xRow0 % 2) {
-                y += 1;
+                xRow0 += this._random(this._BUMP_DECREASE);
+                xRow1 -= this._random(this._BUMP_DECREASE);
             }
             yTop = isHanging ? y : this._LEVEL_HEIGHT - y - 1;
             if (xRow0 < xRow1 && xRow1 <= xRow1Prev) {
