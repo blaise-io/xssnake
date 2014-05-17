@@ -19,9 +19,7 @@ xss.ShapeGenerator.prototype = {
      * @return {xss.Shape}
      */
     lineShape: function(x0, y0, x1, y1) {
-        return new xss.Shape(
-            this.line.apply(this, arguments)
-        );
+        return new xss.Shape(this.line(x0, y0, x1, y1));
     },
 
     /**
