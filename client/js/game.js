@@ -13,7 +13,10 @@ xss.Game = function(index, levelIndex, names, created) {
     xss.canvas.garbageCollect();
 
     // Todo: move to stage
-    xss.flow.stage.destruct();
+    if (xss.flow.stage) {
+        xss.flow.stage.destruct();
+    }
+
     xss.shapes.stage = null;
     xss.shapes.header = null;
     xss.shapes.border = null;

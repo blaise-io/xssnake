@@ -105,11 +105,11 @@ xss.Font.prototype = {
      */
     _detectFontLoad: function() {
         var props = this._getChrProperties(xss.UC_HOURGLASS);
-        if (props.width !== 8) {
-            window.setTimeout(this._detectFontLoad.bind(this), 0);
-        } else {
+        if (props && 8 === props.width) {
             this.loaded = true;
             xss.event.trigger(xss.PUB_FONT_LOAD);
+        } else {
+            window.setTimeout(this._detectFontLoad.bind(this), 0);
         }
     },
 

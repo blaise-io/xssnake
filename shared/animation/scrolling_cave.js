@@ -24,7 +24,7 @@ xss.animation.ScrollingCave = function() {
 
 xss.animation.ScrollingCave.prototype = {
 
-    _SPEED        : 0.95,
+    _SPEED        : 0.47,
 
     _BUMP_WIDTH   : [15, 25],
     _BUMP_HEIGHT  : [20, 40],
@@ -40,7 +40,7 @@ xss.animation.ScrollingCave.prototype = {
      * @returns {Array.<xss.ShapePixels>}
      */
     update: function(ms, gameStarted) {
-        this._scroll = Math.round(ms / (1000 - (this._SPEED * 1000)));
+        this._scroll = Math.round(ms / (1000 - (this._SPEED * 2000)));
 
         if (this._scrollPref === this._scroll) {
             return null;
@@ -52,18 +52,18 @@ xss.animation.ScrollingCave.prototype = {
     },
 
     _updateShapePixelsArrs: function(offset) {
-        var maxes = {hanging: 0, standing: 0};
+        var maxes = {hanging: this._LEVEL_WIDTH, standing: this._LEVEL_WIDTH};
         for (var i = 0, m = this._shapePixelsArr.length; i < m; i++) {
             if (this._shapePixelsArr[i]) {
                 this._updateShapePixelsArr(this._shapePixelsArr, i, offset, maxes);
             }
         }
 
-        if (this._scroll > 33 && maxes.hanging < this._LEVEL_WIDTH) {
+        if (maxes.hanging <= this._LEVEL_WIDTH) {
             this._generateHangingBump(maxes.hanging + 1);
         }
 
-        if (this._scroll > 33 && maxes.standing < this._LEVEL_WIDTH) {
+        if (maxes.standing <= this._LEVEL_WIDTH) {
             this._generateStandingBump(maxes.standing + 1);
         }
     },
