@@ -16,18 +16,18 @@ xss.animation.ScrollingCave = function() {
 
     this._scroll = this._scrollPref = 0;
 
-    this._xPointer = {
-        hanging : 0, // Stalactite ‾\/‾
-        standing: -15 // Stalagmite _/\_ - width/2 because want a zigzag tunnel.
-    };
+//    this._xPointer = {
+//        hanging : 0, // Stalactite ‾\/‾
+//        standing: -15 // Stalagmite _/\_ - width/2 because want a zigzag tunnel.
+//    };
 };
 
 xss.animation.ScrollingCave.prototype = {
 
-    _SPEED        : 0.97,
+    _SPEED        : 0.95,
 
-    _BUMP_WIDTH   : [5, 30],
-    _BUMP_HEIGHT  : [5, 30],
+    _BUMP_WIDTH   : [15, 25],
+    _BUMP_HEIGHT  : [20, 40],
     _BUMP_DECREASE: [0, 2],
 
     // To do: get from {xss.LevelData} instance
@@ -45,43 +45,44 @@ xss.animation.ScrollingCave.prototype = {
         if (this._scrollPref === this._scroll) {
             return null;
         } else {
-            this._updateShapes(this._scrollPref - this._scroll);
-            this._appendHanging(); // Stalactite ‾\/‾
-            this._appendStanding(); // Stalagmite _/\_
+            this._updateShapePixelsArrs(this._scrollPref - this._scroll);
             this._scrollPref = this._scroll;
             return this._shapePixelsArr;
         }
     },
-    _updateShapes: function(offset) {
-        var sPixelsArr = this._shapePixelsArr;
-        for (var i = 0, m = sPixelsArr.length; i < m; i++) {
-            if (sPixelsArr[i]) {
-                if (sPixelsArr[i].meta.x1 < 0) {
-                    sPixelsArr[i] = null;
-                } else if (sPixelsArr[i]) {
-                    var x1 = sPixelsArr[i].meta.x1;
-                    sPixelsArr[i] = xss.transform.shift(sPixelsArr[i], offset);
-                    sPixelsArr[i].meta.x1 = x1 - 1;
-                }
+
+    _updateShapePixelsArrs: function(offset) {
+        var maxes = {hanging: 0, standing: 0};
+        for (var i = 0, m = this._shapePixelsArr.length; i < m; i++) {
+            if (this._shapePixelsArr[i]) {
+                this._updateShapePixelsArr(this._shapePixelsArr, i, offset, maxes);
             }
         }
-    },
-    
-    _appendHanging: function() {
-        while (this._requireNewBump(this._xPointer.hanging)) {
-            this._generateHangingBump();
+
+        if (this._scroll > 33 && maxes.hanging < this._LEVEL_WIDTH) {
+            this._generateHangingBump(maxes.hanging + 1);
         }
-    },
-    
-    _appendStanding: function() {
-        while (this._requireNewBump(this._xPointer.standing)) {
-            this._generateStandingBump();
+
+        if (this._scroll > 33 && maxes.standing < this._LEVEL_WIDTH) {
+            this._generateStandingBump(maxes.standing + 1);
         }
     },
 
-    _requireNewBump: function(x) {
-        // TODO
-        return false;
+    _updateShapePixelsArr: function(shapePixelsArr, i, offset, maxes) {
+        if (shapePixelsArr[i].meta.x1 < 0) {
+            shapePixelsArr[i] = null;
+        } else if (shapePixelsArr[i]) {
+            var meta = shapePixelsArr[i].meta;
+            shapePixelsArr[i] = xss.transform.shift(shapePixelsArr[i], offset);
+            shapePixelsArr[i].meta = meta;
+            shapePixelsArr[i].meta.x1 += offset;
+
+            if (shapePixelsArr[i].meta.isHanging) {
+                maxes.hanging = Math.max(maxes.hanging, shapePixelsArr[i].meta.x1);
+            } else {
+                maxes.standing = Math.max(maxes.standing, shapePixelsArr[i].meta.x1);
+            }
+        }
     },
 
     _scrambleDecimals: function(seed, cutat) {
@@ -103,19 +104,15 @@ xss.animation.ScrollingCave.prototype = {
         return range[0] + Math.floor(this.seed * (range[1] - range[0] + 1));
     },
 
-    _generateHangingBump: function() {
-        var xRow0, xRow1;
-        xRow0 = this._xPointer.hanging;
+    _generateHangingBump: function(xRow0) {
+        var xRow1;
         xRow1 = xRow0 + this._random(this._BUMP_WIDTH);
-        this._xPointer.hanging = xRow1;
         this._generateBump(true, xRow0, xRow1);
     },
 
-    _generateStandingBump: function() {
-        var xRow0, xRow1;
-        xRow0 = this._xPointer.standing;
+    _generateStandingBump: function(xRow0) {
+        var xRow1;
         xRow1 = xRow0 + this._random(this._BUMP_WIDTH);
-        this._xPointer.standing = xRow1 + 1;
         this._generateBump(false, xRow0, xRow1);
     },
 
@@ -124,7 +121,9 @@ xss.animation.ScrollingCave.prototype = {
 
         maxHeight = this._random(this._BUMP_HEIGHT);
         shape = new xss.Shape();
+
         shape.pixels.meta.x1 = xRow1;
+        shape.pixels.meta.isHanging = isHanging;
 
         for (var y = 0; y < maxHeight; y++) {
             var yTop, xRow1Prev = xRow1;

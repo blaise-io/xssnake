@@ -68,7 +68,7 @@ xss.InputField.prototype = {
      * @private
      */
     _updateShapes: function() {
-        // IE9 workaround for issue where _updateShapes executes
+        // IE9 workaround for issue where _updateShapePixelsArr executes
         // after event listeners are removed.
         if (!xss.keysBlocked) { return; }
 
