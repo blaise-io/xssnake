@@ -7,7 +7,7 @@ xss.debug.NS = 'DEBUG';
 xss.debug.debugLevelMatch = location.search.match(/debug=level:([0-9]+)$/);
 if (xss.debug.debugLevelMatch) {
     document.addEventListener('DOMContentLoaded', function() {
-        window.setTimeout(xss.debug.level, 150);
+        window.setTimeout(xss.debug.level, 250);
     });
 }
 

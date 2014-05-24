@@ -3,9 +3,6 @@
 /** @typedef {Array.<number>} */
 xss.ShapePixel;
 
-/** @typedef {{canvas: *, bbox: xss.BoundingBox}} */
-xss.ShapeCache;
-
 /**
  * xss.Shape
  * @constructor
@@ -18,11 +15,8 @@ xss.Shape = function(varArgs) {
     /** @type {boolean} */
     this.enabled = true;
 
-    /**
-     * Put at end of painting queue and clear bbox coverage before painting.
-     * @type {boolean}
-     */
-    this.clearBBox = false;
+    /** @type {boolean} */
+    this.isOverlay = false;
 
     /** @type {Object.<string,*>} */
     this.effects = {};
@@ -30,14 +24,11 @@ xss.Shape = function(varArgs) {
     /** @type {{x: number, y: number}} */
     this.shift = {x: 0, y: 0};
 
-    /** @type {?xss.ShapeCache} */
+    /** @type {xss.ShapeCache} */
     this.cache = null;
 
-    /**
-     * @type {number}
-     * @private
-     */
-    this._expand = 0;
+    /** @type {number} */
+    this.expand = 0;
 
     this.add.apply(this, arguments);
 };
@@ -130,15 +121,15 @@ xss.Shape.prototype = {
      */
     bbox: function(expand) {
         if (typeof expand === 'undefined') {
-            expand = this._expand || 0;
+            expand = this.expand || 0;
         }
-        if (!this._bbox || this._expand !== expand) {
+        if (!this._bbox || this.expand !== expand) {
             this._bbox = this.pixels.bbox();
             if (expand) {
                 this._bbox.expand(expand);
             }
         }
-        this._expand = expand;
+        this.expand = expand;
         return this._bbox;
     }
 

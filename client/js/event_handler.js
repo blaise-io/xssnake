@@ -14,9 +14,11 @@ xss.EventHandler.prototype = {
      * @param {string} topic
      */
     trigger: function(topic) {
-        var topics = this._topics[topic];
+        var topicKeys, topics = this._topics[topic];
         if (topics) {
-            for (var key in topics) {
+            topicKeys = Object.keys(topics);
+            for (var i = 0, m = topicKeys.length; i < m; i++) {
+                var key = topicKeys[i];
                 if (topics.hasOwnProperty(key)) {
                     topics[key].apply(topics[key], [].slice.call(arguments, 1));
                 }

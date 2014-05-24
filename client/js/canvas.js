@@ -8,16 +8,15 @@ xss.Canvas = function() {
     var color = xss.util.storage(xss.STORAGE_COLOR);
 
     this.canvas = this._setupCanvas();
-    this.ctx = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext('2d');
+    this.tile = new xss.CanvasTile(xss.COLOR[color] || xss.COLOR[0]);
 
     this._setCanvasDimensions();
     this._positionCanvas();
     this._bindEvents();
 
-    this.setColor(xss.COLOR[color] || xss.COLOR[0]);
-
     if (!window.requestAnimationFrame) {
-        this._vendorRequestAnimationFrame();
+        this._setRequestAnimationFrame();
     }
 
     this.focus = true;
@@ -33,8 +32,7 @@ xss.Canvas.prototype = {
      * @param {Object} color
      */
     setColor: function(color) {
-        this.color = color;
-        this._setPatterns();
+        this.tile.setColor(color);
         this.flushShapeCache();
     },
 
@@ -49,7 +47,7 @@ xss.Canvas.prototype = {
         this._clear();
 
         // Paint all layers
-        this._paintShapes(delta, xss.shapes);
+        this._paintShapes(delta);
     },
 
     /**
@@ -76,35 +74,52 @@ xss.Canvas.prototype = {
     },
 
     _clear: function() {
-        this.ctx.save();
-        this.ctx.fillStyle = this.tileOff;
-        this.ctx.globalAlpha = 1 - this.color.ghosting;
-        this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-        this.ctx.restore();
+        this.context.save();
+        this.context.fillStyle = this.tile.off;
+        this.context.globalAlpha = 1 - this.tile.color.ghosting;
+        this.context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.context.restore();
     },
 
     /**
      * @param {number} delta
-     * @param {*} shapes
      * @private
      */
-    _paintShapes: function(delta, shapes) {
-        var k, overlays = {};
-        for (k in shapes) {
-            if (shapes.hasOwnProperty(k) && shapes[k]) {
-                if (shapes[k].clearBBox) {
-                    overlays[k] = shapes[k];
-                } else {
-                    this._paintShape(k, shapes[k], delta);
-                }
-            }
+    _paintShapes: function(delta) {
+        var overlays = [], shapeKeys = Object.keys(xss.shapes);
+
+        // Avoid looping over an uncached keyval object.
+        for (var i = 0, m = shapeKeys.length; i < m; i++) {
+            this._paintDispatch(delta, overlays, shapeKeys[i]);
         }
 
-        // Overlays are painted at a later time
-        for (k in overlays) {
-            if (overlays.hasOwnProperty(k)) {
-                this._paintShape(k, overlays[k], delta);
+        this._paintOverlays(delta, overlays);
+    },
+
+    /**
+     * @param {number} delta
+     * @param {Array.<xss.Shape>} overlays
+     * @param {string} key
+     * @private
+     */
+    _paintDispatch: function(delta, overlays, key) {
+        if (xss.shapes[key]) {
+            if (xss.shapes[key].isOverlay) {
+                overlays.push(xss.shapes[key]);
+            } else {
+                this._paintShape(xss.shapes[key], delta);
             }
+        }
+    },
+
+    /**
+     * @param {number} delta
+     * @param {Array.<xss.Shape>} overlays
+     * @private
+     */
+    _paintOverlays: function(delta, overlays) {
+        for (var i = 0, m = overlays.length; i < m; i++) {
+            this._paintShape(overlays[i], delta);
         }
     },
 
@@ -122,21 +137,18 @@ xss.Canvas.prototype = {
         this._prevFrame = now;
 
         // Show FPS in title bar
-        // var fps = Math.round(1000 / delta);
-        // document.title = 'XXSNAKE ' + fps;
+        var fps = Math.round(1000 / delta);
+        document.title = 'XXSNAKE ' + fps;
 
         this.paint(delta);
     },
 
     /**
-     * @param {string} name
      * @param {xss.Shape} shape
      * @param {number} delta
      * @private
      */
-    _paintShape: function(name, shape, delta) {
-        var bbox, ctx = this.ctx;
-
+    _paintShape: function(shape, delta) {
         // Apply effects if FPS is in a normal range. If window is out
         // of focus, we don't want animations. Also we do not want anims
         // if a browser is "catching up" frames after being focused after
@@ -150,102 +162,21 @@ xss.Canvas.prototype = {
             return;
         }
 
-        // Clear surface below shape
-        if (shape.clearBBox) {
-            bbox = this._getCanvasBBox(shape);
-            ctx.fillStyle = this.tileOff;
-            ctx.fillRect(
-                bbox.x0 + (shape.shift.x * this.tileSize),
-                bbox.y0 + (shape.shift.y * this.tileSize),
-                bbox.width,
-                bbox.height
-            );
-        }
-
         // Create cache
         if (!shape.cache) {
-            shape.cache = this._paintShapeOffscreen(shape);
+            shape.cache = new xss.ShapeCache(shape, this.tile);
         }
 
         // Paint cached image on canvas
-        ctx.drawImage(
+        this.context.drawImage(
             shape.cache.canvas,
-            shape.cache.bbox.x0 + (shape.shift.x * this.tileSize),
-            shape.cache.bbox.y0 + (shape.shift.y * this.tileSize)
+            shape.cache.bbox.x0 + (shape.shift.x * this.tile.size),
+            shape.cache.bbox.y0 + (shape.shift.y * this.tile.size)
         );
     },
 
-    /**
-     * @param {Object} context
-     * @param {xss.Shape} shape
-     * @param {xss.BoundingBox} bbox
-     */
-    _paintShapePixels: function(context, shape, bbox) {
-        var i, m, tileSize = this.tileSize,
-            shapePixels = shape.pixels,
-            cache = null,
-            hlines = [];
-
-        // Group pixels by horizontal lines to save paint calls.
-        shapePixels.sort().each(function(x, y) {
-            if (cache && x === cache[0] + cache[2] && y === cache[1]) {
-                cache[2]++;
-            } else {
-                if (cache) {
-                    hlines.push(cache[0], cache[1], cache[2]);
-                }
-                cache = [x, y, 1];
-            }
-        });
-
-        if (cache) {
-            hlines.push(cache[0], cache[1], cache[2]);
-        }
-
-        context.fillStyle = this.tileOn;
-
-        for (i = 0, m = hlines.length; i < m; i+=3) {
-            context.fillRect(
-                hlines[i + 0] * tileSize - bbox.x0,
-                hlines[i + 1] * tileSize - bbox.y0,
-                hlines[i + 2] * tileSize,
-                tileSize
-            );
-        }
-    },
-
-    /**
-     * @param {xss.Shape} shape
-     * @return {xss.ShapeCache}
-     * @private
-     */
-    _paintShapeOffscreen: function(shape) {
-        var bbox, canvas;
-
-        bbox = this._getCanvasBBox(shape, true);
-
-        canvas = document.createElement('canvas');
-        canvas.width  = bbox.width + this.tileSize;
-        canvas.height = bbox.height + this.tileSize;
-
-        this._paintShapePixels(canvas.getContext('2d'), shape, bbox);
-
-        return {canvas: canvas, bbox: bbox};
-    },
-
-    /**
-     * @return {number}
-     * @private
-     */
-    _getTileSize: function() {
-        return Math.floor(Math.min(
-            window.innerWidth / xss.WIDTH,
-            window.innerHeight / xss.HEIGHT
-        )) || 1;
-    },
-
     /** @private */
-    _vendorRequestAnimationFrame: function() {
+    _setRequestAnimationFrame: function() {
         window['requestAnimationFrame'] =
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame ||
@@ -281,26 +212,14 @@ xss.Canvas.prototype = {
         if (Number(ev.which) !== 1) { // Only LMB
             return;
         }
-        xss.util.instruct(
-            'No mousing please',
-            4000
-        );
+        xss.util.instruct('No mousing please', 2000);
     },
 
     /** @private */
     _setCanvasDimensions: function() {
-        this.tileSize = this._getTileSize();
-
-        if (this.tileSize >= 10) {
-            this.pixelSize = this.tileSize - 1;
-        } else if (this.tileSize === 1) {
-            this.pixelSize = 1;
-        } else {
-            this.pixelSize = this.tileSize - 0.6;
-        }
-
-        this.canvasWidth = this.tileSize * xss.WIDTH;
-        this.canvasHeight = this.tileSize * xss.HEIGHT;
+        var size = this.tile.updateSize();
+        this.canvasWidth = size * xss.WIDTH;
+        this.canvasHeight = size * xss.HEIGHT;
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
     },
@@ -314,7 +233,6 @@ xss.Canvas.prototype = {
 
         if (ev) {
             this._setCanvasDimensions();
-            this._setPatterns();
             this.flushShapeCache();
         }
 
@@ -330,30 +248,6 @@ xss.Canvas.prototype = {
         style.top = Math.max(0, top) + 'px';
     },
 
-    /** @private */
-    _setPatterns: function() {
-        var canvas, getTile, backgroundImage;
-
-        canvas = document.createElement('canvas');
-        canvas.setAttribute('width', this.tileSize);
-        canvas.setAttribute('height', this.tileSize);
-
-        getTile = function(color) {
-            var context = canvas.getContext('2d');
-            context.fillStyle = this.color.bg;
-            context.fillRect(0, 0, this.tileSize, this.tileSize);
-            context.fillStyle = color;
-            context.fillRect(0, 0, this.pixelSize, this.pixelSize);
-            return this.ctx.createPattern(canvas, 'repeat');
-        }.bind(this);
-
-        this.tileOn = getTile(this.color.on);
-        this.tileOff = getTile(this.color.off);
-
-        backgroundImage = ' url(' + canvas.toDataURL('image/png') + ')';
-        document.body.style.background = this.color.bg + backgroundImage;
-    },
-
     /**
      * @return {Element}
      * @private
@@ -365,31 +259,12 @@ xss.Canvas.prototype = {
     },
 
     /**
-     * @param {xss.Shape} shape
-     * @param {boolean=} ignoreExpand
-     * @return {xss.BoundingBox}
-     * @private
-     */
-    _getCanvasBBox: function(shape, ignoreExpand) {
-        var bbox = (ignoreExpand) ? shape.pixels.bbox() : shape.bbox();
-        bbox = xss.util.clone(bbox);
-
-        for (var k in bbox) {
-            if (bbox.hasOwnProperty(k)) {
-                bbox[k] *= this.tileSize;
-            }
-        }
-
-        return bbox;
-    },
-
-    /**
      * @param {number} num
      * @return {number}
      * @private
      */
     _snapCanvasToTiles: function(num) {
-        return Math.floor(num / this.tileSize) * this.tileSize;
+        return Math.floor(num / this.tile.size) * this.tile.size;
     }
 
 };

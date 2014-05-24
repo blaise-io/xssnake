@@ -16,7 +16,7 @@ xss.util.extend(xss.util, {
         shape = xss.font.shape(
             str, left, xss.HEIGHT - 3 - xss.font.height(str), {invert: true}
         );
-        shape.clearBBox = true;
+        shape.isOverlay = true;
 
         if (duration) {
             shape.lifetime(0, duration);

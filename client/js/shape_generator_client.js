@@ -88,7 +88,7 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
                 shape.remove(line(x - 3, y + 4, x + 3, y + 4));
                 break;
         }
-        shape.clearBBox = true;
+        shape.isOverlay = true;
         shape.bbox();
         return shape;
     },

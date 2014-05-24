@@ -269,7 +269,7 @@ xss.Dialog.prototype = {
         }
 
         shape = new xss.Shape(header, body, buttons);
-        shape.clearBBox = true;
+        shape.isOverlay = true;
 
         shape.outline();
         shape.center(0, this._getAreaHeight());
