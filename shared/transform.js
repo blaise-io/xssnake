@@ -16,11 +16,15 @@ xss.Transform.prototype = {
      * @return {xss.ShapePixels}
      */
     shift: function(pixels, xshift, yshift) {
+        var ret;
+
         if (xshift === 0 && yshift === 0) {
             return pixels; // No shift
         }
 
-        var ret = new xss.ShapePixels();
+        ret = new xss.ShapePixels();
+        xshift = xshift || 0;
+        yshift = yshift || 0;
 
         pixels.each(function(x, y) {
             ret.add(x + xshift, y + yshift);

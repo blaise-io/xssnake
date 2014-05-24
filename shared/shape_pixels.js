@@ -10,6 +10,7 @@ xss.ShapePixels = function(pixels) {
      * @type {Array.<Array.<number>>}
      */
     this.pixels = pixels || [];
+    this.meta = {};
 };
 
 

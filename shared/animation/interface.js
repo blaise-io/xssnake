@@ -10,9 +10,9 @@ xss.animation.Interface = function() {};
 xss.animation.Interface.prototype = {
     /**
      * For deterministic randomness.
-     * @type string
+     * @type number
      */
-    seed: '',
+    seed: 0,
 
     /**
      * Return one or more ShapePixel objects.

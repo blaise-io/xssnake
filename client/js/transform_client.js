@@ -1,29 +1,9 @@
 'use strict';
 
 /**
- * Extend Transform wirh client-only methods.
+ * Extend Transform with client-only methods.
  */
 xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
-
-    /**
-     * @param {xss.ShapePixels} pixels
-     * @param {number=} xshift
-     * @param {number=} yshift
-     * @return {xss.ShapePixels}
-     */
-    shift: function(pixels, xshift, yshift) {
-        if (xshift === 0 && yshift === 0) {
-            return pixels; // No shift
-        }
-
-        var shiftedPixels = new xss.ShapePixels();
-
-        pixels.each(function(x, y) {
-            shiftedPixels.add(x + xshift, y + yshift);
-        });
-
-        return shiftedPixels;
-    },
 
     /**
      * @param {xss.Shape} shape

@@ -1,11 +1,13 @@
 'use strict';
 
 /**
- * @param {number} created
+ * @param {number=} created Time server created the room. Required by Level
+ *                          to sync client-server animations. Not required
+ *                          for offline play.
  * @constructor
  */
 xss.model.ClientGame = function(created) {
-    this.offsetDelta = this.getOffsetDelta(created);
+    this.offsetDelta = created ? this.getOffsetDelta(created) : 0;
     this.started = false;
 };
 

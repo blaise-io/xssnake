@@ -3,7 +3,7 @@
 xss.data.levels = [
     {image: xss.data.levelImages.blank, animation: function() {
         return [
-            new xss.animation.RotatingLine(31, 16, 12)
+            new xss.animation.ScrollingCave()
         ];
     }},
     {image: xss.data.levelImages.lines, animation: function() {
