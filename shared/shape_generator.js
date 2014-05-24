@@ -27,7 +27,7 @@ xss.ShapeGenerator.prototype = {
      * @param {number} yc
      * @param {number} radian
      * @param {number} length
-     * @returns {xss.ShapePixels}
+     * @returns {xss.PixelCollection}
      */
     radianLine: function(xc, yc, radian, length) {
         var x0, y0, x1, y1;
@@ -51,12 +51,12 @@ xss.ShapeGenerator.prototype = {
      * @param {number} y0
      * @param {number} x1
      * @param {number} y1
-     * @returns {xss.ShapePixels}
+     * @returns {xss.PixelCollection}
      */
     line: function bline(x0, y0, x1, y1) {
         var pixels, dx, sx, dy, sy, err, err2;
 
-        pixels = new xss.ShapePixels();
+        pixels = new xss.PixelCollection();
 
         dx = Math.abs(x1 - x0);
         sx = x0 < x1 ? 1 : -1;

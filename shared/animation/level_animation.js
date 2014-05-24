@@ -30,7 +30,7 @@ xss.LevelAnimation.prototype = {
      *
      * @param {number} delta
      * @param {boolean} gameStarted
-     * @return {Array.<Array.<xss.ShapePixels>>}
+     * @return {Array.<Array.<xss.PixelCollection>>}
      */
     update: function(delta, gameStarted) {
         var shapePixelsArrArr = [];

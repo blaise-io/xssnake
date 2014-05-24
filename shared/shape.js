@@ -1,16 +1,13 @@
 'use strict';
 
-/** @typedef {Array.<number>} */
-xss.ShapePixel;
-
 /**
  * xss.Shape
  * @constructor
- * @param {...xss.ShapePixels} varArgs
+ * @param {...xss.PixelCollection} varArgs
  */
 xss.Shape = function(varArgs) {
-    /** @type {xss.ShapePixels} */
-    this.pixels = new xss.ShapePixels();
+    /** @type {xss.PixelCollection} */
+    this.pixels = new xss.PixelCollection();
 
     /** @type {boolean} */
     this.enabled = true;
@@ -59,7 +56,7 @@ xss.Shape.prototype = {
     invert: function(bbox) {
         var pixels = this.pixels, inverted;
 
-        inverted = new xss.ShapePixels();
+        inverted = new xss.PixelCollection();
         bbox = bbox || this.bbox();
 
         for (var x = bbox.x0; x <= bbox.x1; x++) {
@@ -83,16 +80,16 @@ xss.Shape.prototype = {
     },
 
     /**
-     * @param {...xss.ShapePixels} varArgs
+     * @param {...xss.PixelCollection} varArgs
      * @return {xss.Shape}
      */
     set: function(varArgs) {
-        this.pixels = new xss.ShapePixels();
+        this.pixels = new xss.PixelCollection();
         return this.add.apply(this, arguments);
     },
 
     /**
-     * @param {...xss.ShapePixels} varArgs
+     * @param {...xss.PixelCollection} varArgs
      * @return {xss.Shape}
      */
     add: function(varArgs) {
@@ -104,7 +101,7 @@ xss.Shape.prototype = {
     },
 
     /**
-     * @param {...xss.ShapePixels} pixels
+     * @param {...xss.PixelCollection} pixels
      * @return {xss.Shape}
      */
     remove: function(pixels) {

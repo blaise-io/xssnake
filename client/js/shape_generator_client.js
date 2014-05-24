@@ -144,7 +144,7 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
     level: function(data) {
         var shape, walls;
 
-        walls = new xss.ShapePixels(data.walls);
+        walls = new xss.PixelCollection(data.walls);
         shape = new xss.Shape(xss.transform.zoomGame(walls));
         shape.add(xss.shapegen.innerBorder().pixels);
 
@@ -187,7 +187,7 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
                     to = [r(-ds,ds), r(-ds,ds)];
             }
 
-            pixel = new xss.ShapePixels().add(x, y);
+            pixel = new xss.PixelCollection().add(x, y);
 
             duration = Math.pow(r(1, 10), 3);
             animation = {

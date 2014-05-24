@@ -114,7 +114,7 @@ xss.Form.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getHeaderPixels: function(x, y) {
@@ -124,7 +124,7 @@ xss.Form.prototype = {
 
     /**
      * @param {number} x
-     * @returns {xss.ShapePixels}
+     * @returns {xss.PixelCollection}
      * @private
      */
     _getFooterPixels: function(x) {

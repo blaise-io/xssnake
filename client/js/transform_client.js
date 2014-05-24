@@ -47,14 +47,14 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
     },
 
     /**
-     * @param {xss.ShapePixels} pixels
+     * @param {xss.PixelCollection} pixels
      * @param {number=} xshift
      * @param {number=} yshift
      * @param {boolean=} antiAlias
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     zoomX2: function(pixels, xshift, yshift, antiAlias) {
-        var ret = new xss.ShapePixels();
+        var ret = new xss.PixelCollection();
 
         xshift = xshift || 0;
         yshift = yshift || 0;
@@ -76,11 +76,11 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
     },
 
     /**
-     * @param {xss.ShapePixels} pixels
+     * @param {xss.PixelCollection} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
      * @param {boolean=} antiAlias
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     zoomX4: function(pixels, shiftX, shiftY, antiAlias) {
         return this.zoomX2(
@@ -92,19 +92,19 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
     },
 
     /**
-     * @param {xss.ShapePixels} pixels
-     * @return {xss.ShapePixels}
+     * @param {xss.PixelCollection} pixels
+     * @return {xss.PixelCollection}
      */
     zoomGame: function(pixels) {
         return this.zoomX4(pixels, xss.GAME_LEFT, xss.GAME_TOP);
     },
 
     /**
-     * @param {xss.ShapePixels} x0Pixels
-     * @param {xss.ShapePixels} x1Pixels
+     * @param {xss.PixelCollection} x0Pixels
+     * @param {xss.PixelCollection} x1Pixels
      * @param {number=} xshift
      * @param {number=} yshift
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _antiAlias: function(x0Pixels, x1Pixels, xshift, yshift) {

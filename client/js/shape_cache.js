@@ -30,7 +30,7 @@ xss.ShapeCache.prototype = {
 
     /**
      * Group pixels by horizontal lines to save paint calls.
-     * @param {xss.ShapePixels} shapePixels
+     * @param {xss.PixelCollection} shapePixels
      * @returns {Array.<number>} [x0, y0, width0, x1, y1, width1, ...]
      * @private
      */

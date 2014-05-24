@@ -169,7 +169,7 @@ xss.Dialog.prototype = {
     },
 
     /**
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getHeaderPixels: function() {
@@ -180,7 +180,7 @@ xss.Dialog.prototype = {
     },
 
     /**
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getBodyPixels: function() {
@@ -191,7 +191,7 @@ xss.Dialog.prototype = {
 
     /**
      * @param {number} y
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getLine: function(y) {
@@ -201,7 +201,7 @@ xss.Dialog.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getCancelButton: function(x, y) {
@@ -212,7 +212,7 @@ xss.Dialog.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getOkButton: function(x, y) {
@@ -221,7 +221,7 @@ xss.Dialog.prototype = {
     },
 
     /**
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getAlertPixels: function() {
@@ -235,7 +235,7 @@ xss.Dialog.prototype = {
     },
 
     /**
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getConfirmPixels: function() {
@@ -254,7 +254,7 @@ xss.Dialog.prototype = {
      * @private
      */
     _updateShape: function() {
-        var shape, header, body, buttons = new xss.ShapePixels();
+        var shape, header, body, buttons = new xss.PixelCollection();
 
         header = this._getHeaderPixels();
         body = this._getBodyPixels();

@@ -9,7 +9,7 @@ xss.animation.ScrollingCave = function() {
     this.seedIteration = 0;
 
     /**
-     * @type {Array.<xss.ShapePixels>}
+     * @type {Array.<xss.PixelCollection>}
      * @private
      */
     this._shapePixelsArr = [];
@@ -37,7 +37,7 @@ xss.animation.ScrollingCave.prototype = {
     /**
      * @param {number} ms
      * @param {boolean} gameStarted
-     * @returns {Array.<xss.ShapePixels>}
+     * @returns {Array.<xss.PixelCollection>}
      */
     update: function(ms, gameStarted) {
         this._scroll = Math.round(ms / (1000 - (this._SPEED * 2000)));

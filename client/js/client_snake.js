@@ -98,7 +98,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         shift = this.directionToShift(this.direction);
         head = this.head();
 
-        pixels = new xss.ShapePixels();
+        pixels = new xss.PixelCollection();
         pixels.add(head[0] + shift[0], head[1] + shift[1]);
         pixels = xss.transform.zoomGame(pixels);
 
@@ -137,7 +137,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
      * @return {xss.Shape}
      */
     updateShape: function() {
-        var pixels = new xss.ShapePixels();
+        var pixels = new xss.PixelCollection();
         pixels.pairs(this.parts);
         pixels = xss.transform.zoomGame(pixels);
         return this._shape.set(pixels);

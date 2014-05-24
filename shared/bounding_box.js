@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {xss.ShapePixels=} pixels
+ * @param {xss.PixelCollection=} pixels
  * @constructor
  */
 xss.BoundingBox = function(pixels) {
@@ -34,7 +34,7 @@ xss.BoundingBox.prototype = {
     },
 
     /**
-     * @param {xss.ShapePixels} pixels
+     * @param {xss.PixelCollection} pixels
      * @return {xss.BoundingBox}
      * @private
      */

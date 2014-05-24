@@ -10,10 +10,10 @@ xss.Transform = function() {};
 xss.Transform.prototype = {
 
     /**
-     * @param {xss.ShapePixels} pixels
+     * @param {xss.PixelCollection} pixels
      * @param {number=} xshift
      * @param {number=} yshift
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     shift: function(pixels, xshift, yshift) {
         var ret;
@@ -22,7 +22,7 @@ xss.Transform.prototype = {
             return pixels; // No shift
         }
 
-        ret = new xss.ShapePixels();
+        ret = new xss.PixelCollection();
         xshift = xshift || 0;
         yshift = yshift || 0;
 

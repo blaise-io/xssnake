@@ -15,11 +15,11 @@ xss.animation.Interface.prototype = {
     seed: 0,
 
     /**
-     * Return one or more ShapePixel objects.
+     * Return one or more {xss.PixelCollection}'s.
      * Return null if animation was not updated.
      * @param {number} ms
      * @param {boolean} preGame
-     * @return {Array.<xss.ShapePixels>}
+     * @return {Array.<xss.PixelCollection>}
      */
     update: function(ms, preGame) { return []; }
 };

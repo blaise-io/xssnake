@@ -5,7 +5,7 @@
  * @param {Array.<Array.<number>>=} pixels
  * @constructor
  */
-xss.ShapePixels = function(pixels) {
+xss.PixelCollection = function(pixels) {
     /**
      * @type {Array.<Array.<number>>}
      */
@@ -14,12 +14,12 @@ xss.ShapePixels = function(pixels) {
 };
 
 
-xss.ShapePixels.prototype = {
+xss.PixelCollection.prototype = {
 
     /**
      * @param {number} x
      * @param {number} y
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     add: function(x, y) {
         var pixels = this.pixels;
@@ -42,7 +42,7 @@ xss.ShapePixels.prototype = {
 
     /**
      * @param {Array.<Array.<number>>} pairs
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     pairs: function(pairs) {
         for (var i = 0, m = pairs.length; i < m; i++) {
@@ -53,7 +53,7 @@ xss.ShapePixels.prototype = {
     },
 
     /**
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     sort: function() {
         var sort, pixels = this.pixels;
@@ -139,7 +139,7 @@ xss.ShapePixels.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     remove: function(x, y) {
         var index = this.index(x, y);

@@ -287,7 +287,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {Array.<Array.<xss.ShapePixels>>} ShapePixelsArrArr
+     * @param {Array.<Array.<xss.PixelCollection>>} ShapePixelsArrArr
      * @private
      */
     _updateMovingWalls: function(ShapePixelsArrArr) {
@@ -300,7 +300,7 @@ xss.Game.prototype = {
 
     /**
      * @param {number} index
-     * @param {Array.<xss.ShapePixels>} shapePixelsArr
+     * @param {Array.<xss.PixelCollection>} shapePixelsArr
      * @private
      */
     _updateShapes: function(index, shapePixelsArr) {

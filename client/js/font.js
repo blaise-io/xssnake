@@ -67,7 +67,7 @@ xss.Font.prototype = {
      * @param {number=} x
      * @param {number=} y
      * @param {Object=} options
-     * @return {xss.ShapePixels}
+     * @return {xss.PixelCollection}
      */
     pixels: function(str, x, y, options) {
         return this.shape.apply(this, arguments).pixels;
@@ -202,11 +202,11 @@ xss.Font.prototype = {
 
     /**
      * @param {string} chr
-     * @return {{width: number, pixels: xss.ShapePixels}|null}
+     * @return {{width: number, pixels: xss.PixelCollection}|null}
      * @private
      */
     _getChrProperties: function(chr) {
-        var data, pixels = new xss.ShapePixels(), width = 0, len = 0, blurry = 0, valid,
+        var data, pixels = new xss.PixelCollection(), width = 0, len = 0, blurry = 0, valid,
             w = xss.Font.MAX_WIDTH,
             h = xss.Font.MAX_HEIGHT;
 

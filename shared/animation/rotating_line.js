@@ -21,7 +21,7 @@ xss.animation.RotatingLine.prototype = {
     /**
      * @param {number} ms
      * @param {boolean} gameStarted
-     * @returns {Array.<xss.ShapePixels>}
+     * @returns {Array.<xss.PixelCollection>}
      */
     update: function(ms, gameStarted) {
         var radian = ms / Math.pow(1 - this.speed, 1.5) / 2500;
@@ -35,7 +35,7 @@ xss.animation.RotatingLine.prototype = {
 
     /**
      * @param {number} radian
-     * @returns {Array.<xss.ShapePixels>}
+     * @returns {Array.<xss.PixelCollection>}
      * @private
      */
     _update: function(radian) {

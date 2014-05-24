@@ -9,7 +9,7 @@
 xss.Level = function(levelData, animProgress) {
     this.levelData = levelData;
     this.animation = new xss.LevelAnimation(levelData.animation, animProgress);
-    /** @type {Array.<Array.<xss.ShapePixels>>} */
+    /** @type {Array.<Array.<xss.PixelCollection>>} */
     this.animated = [];
 };
 
@@ -18,7 +18,7 @@ xss.Level.prototype = {
     /**
      * @param {number} delta
      * @param {boolean} gameStarted
-     * @return {Array.<Array.<xss.ShapePixels>>} shapePixelsArr
+     * @return {Array.<Array.<xss.PixelCollection>>} shapePixelsArr
      */
     updateMovingWalls: function(delta, gameStarted) {
         var movingWalls = this.animation.update(delta, gameStarted);
@@ -61,7 +61,7 @@ xss.Level.prototype = {
     },
 
     /**
-     * @param {Array.<xss.ShapePixels>} objects
+     * @param {Array.<xss.PixelCollection>} objects
      * @param {number} x
      * @param {number} y
      * @returns {boolean}
