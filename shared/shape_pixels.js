@@ -34,7 +34,7 @@ xss.ShapePixels.prototype = {
     },
 
     /**
-     * @return {xss.BoundingBox}
+     * @return {!xss.BoundingBox}
      */
     bbox: function() {
         return new xss.BoundingBox(this);

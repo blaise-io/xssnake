@@ -10,7 +10,7 @@ xss.animation.Interface = function() {};
 xss.animation.Interface.prototype = {
     /**
      * For deterministic randomness.
-     * @type number
+     * @type {number}
      */
     seed: 0,
 

@@ -9,7 +9,7 @@ xss.animation.ScrollingCave = function() {
     this.seedIteration = 0;
 
     /**
-     * @type {Array.<xss.Shape>}
+     * @type {Array.<xss.ShapePixels>}
      * @private
      */
     this._shapePixelsArr = [];

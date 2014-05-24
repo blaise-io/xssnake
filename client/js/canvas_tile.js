@@ -1,5 +1,16 @@
 'use strict';
 
+/**
+ * @param {{
+ *     title: string,
+ *     desc: string,
+ *     bg: string,
+ *     off: string,
+ *     on: string,
+ *     ghosting: number
+ * }} color
+ * @constructor
+ */
 xss.CanvasTile = function(color) {
     this.color = color;
 

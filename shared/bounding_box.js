@@ -62,7 +62,7 @@ xss.BoundingBox.prototype = {
     },
 
     /**
-     * @return {xss.BoundingBox}
+     * @return {!xss.BoundingBox}
      * @private
      */
     _calculateDimensions: function() {

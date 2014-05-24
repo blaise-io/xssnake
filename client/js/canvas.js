@@ -83,6 +83,7 @@ xss.Canvas.prototype = {
 
     /**
      * @param {number} delta
+     * @suppress {checkTypes}
      * @private
      */
     _paintShapes: function(delta) {

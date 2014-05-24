@@ -6,7 +6,7 @@ window.onerror = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    /** @type {Object.<string, xss.Shape>} */
+    /** @type {!Object.<string, xss.Shape>} */
     xss.shapes = {};
 
     // Global instances
