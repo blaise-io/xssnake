@@ -15,11 +15,6 @@ xss.animation.ScrollingCave = function() {
     this._shapePixelsArr = [];
 
     this._scroll = this._scrollPref = 0;
-
-//    this._xPointer = {
-//        hanging : 0, // Stalactite ‾\/‾
-//        standing: -15 // Stalagmite _/\_ - width/2 because want a zigzag tunnel.
-//    };
 };
 
 xss.animation.ScrollingCave.prototype = {
@@ -52,7 +47,7 @@ xss.animation.ScrollingCave.prototype = {
     },
 
     _updateShapePixelsArrs: function(offset) {
-        var maxes = {hanging: this._LEVEL_WIDTH, standing: this._LEVEL_WIDTH};
+        var maxes = {hanging: this._LEVEL_WIDTH, standing: this._LEVEL_WIDTH - 15};
         for (var i = 0, m = this._shapePixelsArr.length; i < m; i++) {
             if (this._shapePixelsArr[i]) {
                 this._updateShapePixelsArr(this._shapePixelsArr, i, offset, maxes);
@@ -60,10 +55,12 @@ xss.animation.ScrollingCave.prototype = {
         }
 
         if (maxes.hanging <= this._LEVEL_WIDTH) {
+            // Stalactite ‾\/‾
             this._generateHangingBump(maxes.hanging + 1);
         }
 
         if (maxes.standing <= this._LEVEL_WIDTH) {
+            // Stalagmite _/\_
             this._generateStandingBump(maxes.standing + 1);
         }
     },

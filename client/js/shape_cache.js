@@ -28,31 +28,83 @@ xss.ShapeCache.prototype = {
         return this.canvas.getContext('2d');
     },
 
+
     /**
-     * Group pixels by horizontal lines to save paint calls.
+     * Save paint calls by merging pixels.
+     * First to lines, then combine lines to rectangles.
+     * Belance processing costs with paint saving costs.
+     * 
      * @param {xss.PixelCollection} shapePixels
-     * @returns {Array.<number>} [x0, y0, width0, x1, y1, width1, ...]
+     * @returns {Array.<Array.<number>>}
      * @private
      */
-    _getHorizontalLines: function(shapePixels) {
+    _mergePixels: function(shapePixels) {
+        var lines = this._getLines(shapePixels);
+        return this._getRectangles(lines);
+    },
+
+    /**
+     * Group pixels to horizontal lines.
+     * @param {xss.PixelCollection} shapePixels
+     * @returns {Array.<Array.<number>>}
+     * @private
+     */
+    _getLines: function(shapePixels) {
         var cache = null, lines = [];
 
         shapePixels.sort().each(function(x, y) {
+            // cache: x,y,w
             if (cache && x === cache[0] + cache[2] && y === cache[1]) {
                 cache[2]++;
             } else {
                 if (cache) {
-                    lines.push(cache[0], cache[1], cache[2]);
+                    lines.push(cache);
                 }
                 cache = [x, y, 1];
             }
         });
 
         if (cache) {
-            lines.push(cache[0], cache[1], cache[2]);
+            lines.push(cache);
         }
 
         return lines;
+    },
+
+    /**
+     * Group pixels to rectangles.
+     * @param {Array.<Array.<number>>} lines
+     * @returns {Array.<Array.<number>>}
+     * @private
+     */
+    _getRectangles: function(lines) {
+        var cache = null, rectangles = [];
+
+        lines.sort(function(a, b) {
+            return a[0] - b[0];
+        });
+
+        for (var i = 0, m = lines.length; i < m; i++) {
+            // cache: x,y,w,h
+            if (cache &&
+                lines[i][0] === cache[0] &&
+                lines[i][1] === cache[1] + cache[3] &&
+                lines[i][2] === cache[2]) {
+                cache[3]++;
+            } else {
+                if (cache) {
+                    rectangles.push(cache);
+                }
+                cache = lines[i];
+                cache.push(1);
+            }
+        }
+
+        if (cache) {
+            rectangles.push(cache);
+        }
+
+        return rectangles;
     },
 
     _fillBackground: function() {
@@ -67,22 +119,22 @@ xss.ShapeCache.prototype = {
     },
 
     _paintShapePixels: function() {
-        var size, lines;
+        var size, rectangles;
 
         size = this.tile.size;
-        lines = this._getHorizontalLines(this.shape.pixels);
+        rectangles = this._mergePixels(this.shape.pixels);
 
         if (this.shape.isOverlay) {
             this._fillBackground();
         }
 
         this.context.fillStyle = this.tile.on;
-        for (var i = 0, m = lines.length; i < m; i += 3) {
+        for (var i = 0, m = rectangles.length; i < m; i++) {
             this.context.fillRect(
-                lines[i + 0] * size - this.bbox.x0,
-                lines[i + 1] * size - this.bbox.y0,
-                lines[i + 2] * size,
-                size
+                rectangles[i][0] * size - this.bbox.x0,
+                rectangles[i][1] * size - this.bbox.y0,
+                rectangles[i][2] * size,
+                rectangles[i][3] * size
             );
         }
     },
