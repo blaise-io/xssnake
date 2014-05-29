@@ -7,6 +7,7 @@
 xss.Canvas = function() {
     var color = xss.util.storage(xss.STORAGE_COLOR);
 
+    this.fps = [];
     this.canvas = this._setupCanvas();
     this.context = this.canvas.getContext('2d');
     this.tile = new xss.CanvasTile(xss.COLOR[color] || xss.COLOR[0]);
@@ -137,10 +138,15 @@ xss.Canvas.prototype = {
         this._prevFrame = now;
 
         // Show FPS in title bar
-        var fps = Math.round(1000 / delta);
-        document.title = 'XXSNAKE ' + fps;
+        this.reportFps(1000 / delta);
 
         this.paint(delta);
+    },
+
+    reportFps: function(fps) {
+        this.fps.unshift(fps);
+        this.fps.length = 10;
+        document.title = 'XXSNAKE ' + Math.round(xss.util.average(this.fps));
     },
 
     /**
