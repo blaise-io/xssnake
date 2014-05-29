@@ -43,7 +43,10 @@ xss.Form.prototype = {
      * @param {number} delta
      */
     selectField: function(delta) {
-        this._selectedV = xss.util.normArrIndex(this._selectedV + delta, this._fields);
+        this._selectedV = xss.util.ensureIndexWithinBounds(
+            this._selectedV + delta,
+            this._fields
+        );
     },
 
     /**
@@ -52,7 +55,7 @@ xss.Form.prototype = {
     selectOption: function(delta) {
         var focusField = this._fields[this._selectedV];
         if (focusField) {
-            this._selectedH[this._selectedV] = xss.util.normArrIndex(
+            this._selectedH[this._selectedV] = xss.util.ensureIndexWithinBounds(
                 this._selectedH[this._selectedV] + delta,
                 focusField.options
             );

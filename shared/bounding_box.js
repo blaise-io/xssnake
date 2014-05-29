@@ -5,20 +5,19 @@
  * @constructor
  */
 xss.BoundingBox = function(pixels) {
+    this.x0 = 0;
+    this.x1 = 0;
+    this.y0 = 0;
+    this.y1 = 0;
+    this.width = 0;
+    this.height = 0;
+
     if (pixels) {
-        this._calculateFromPixels(pixels);
+        this.calculate(pixels);
     }
 };
 
 xss.BoundingBox.prototype = {
-
-    x0: 0,
-    x1: 0,
-    y0: 0,
-    y1: 0,
-
-    width: 0,
-    height: 0,
 
     /**
      * @param {number} expand
@@ -29,7 +28,8 @@ xss.BoundingBox.prototype = {
         this.y0 -= expand;
         this.x1 += expand;
         this.y1 += expand;
-        this._calculateDimensions();
+        this.width += expand * 2;
+        this.height += expand * 2;
         return this;
     },
 
@@ -38,36 +38,27 @@ xss.BoundingBox.prototype = {
      * @return {xss.BoundingBox}
      * @private
      */
-    _calculateFromPixels: function(pixels) {
-        var x0 = null,
-            x1 = null,
-            y0 = null,
-            y1 = null;
+    calculate: function(pixels) {
+        var x0 = xss.WIDTH,
+            x1 = 0,
+            y0 = xss.HEIGHT,
+            y1 = 0;
 
         pixels.each(function(x, y) {
-            x0 = (x0 === null || x0 > x) ? x : x0;
-            x1 = (x1 === null || x1 < x) ? x : x1;
-            y0 = (y0 === null || y0 > y) ? y : y0;
-            y1 = (y1 === null || y1 < y) ? y : y1;
+            if (x0 > x) {x0 = x; }
+            if (x1 < x) {x1 = x; }
+            if (y0 > y) {y0 = y; }
+            if (y1 < y) {y1 = y; }
         });
 
-        this.x0 = Number(x0);
-        this.x1 = Number(x1);
-        this.y0 = Number(y0);
-        this.y1 = Number(y1);
+        this.x0 = x0;
+        this.x1 = x1;
+        this.y0 = y0;
+        this.y1 = y1;
 
-        this._calculateDimensions();
+        this.width = x1 - x0;
+        this.height = y1 - y0;
 
-        return this;
-    },
-
-    /**
-     * @return {!xss.BoundingBox}
-     * @private
-     */
-    _calculateDimensions: function() {
-        this.width = this.x1 - this.x0;
-        this.height = this.y1 - this.y0;
         return this;
     }
 

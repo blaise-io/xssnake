@@ -64,12 +64,12 @@ xss.util = {
     },
 
     /**
-     * Normalize an array index.
+     * Ensure an array index is within bounds.
      * @param {number} index
      * @param {Array} arr
      * @return {number}
      */
-    normArrIndex: function(index, arr) {
+    ensureIndexWithinBounds: function(index, arr) {
         var len = arr.length;
         if (index >= len) {
             return 0;
@@ -123,6 +123,37 @@ xss.util = {
             }
         }
         return null;
+    },
+
+    /**
+     * Faster sorting function.
+     * http://jsperf.com/javascript-sort/
+     *
+     * @param {Array.<number>} arr
+     * @returns {Array.<number>}
+     */
+    sort: function(arr) {
+        for (var i = 1; i < arr.length; i++) {
+            var tmp = arr[i], index = i;
+            while (arr[index - 1] > tmp) {
+                arr[index] = arr[index - 1];
+                --index;
+            }
+            arr[index] = tmp;
+        }
+        return arr;
+    },
+
+    /**
+     * @param {number} iterations
+     * @param {Function} fn
+     * @param {string|number=} label
+     */
+    benchmark: function(iterations, fn, label) {
+        var duration, i = iterations, start = +new Date();
+        while (i--) { fn(); }
+        duration = +new Date() - start;
+        console.log(label || 'Benchmark', duration, duration / iterations);
     }
 
 };

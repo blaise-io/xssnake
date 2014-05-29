@@ -142,10 +142,9 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
      * @return {xss.Shape}
      */
     level: function(data) {
-        var shape, walls;
+        var shape;
 
-        walls = new xss.PixelCollection(data.walls);
-        shape = new xss.Shape(xss.transform.zoomGame(walls));
+        shape = new xss.Shape(xss.transform.zoomGame(data.walls));
         shape.add(xss.shapegen.innerBorder().pixels);
 
         return shape;

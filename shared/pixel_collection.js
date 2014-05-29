@@ -2,6 +2,7 @@
 
 /**
  * xss.Shape pixels stored in a multi-dimensional array.
+ * I tried using an Uint8Array, but performance was bad.
  * @param {Array.<Array.<number>>=} pixels
  * @constructor
  */
@@ -23,12 +24,10 @@ xss.PixelCollection.prototype = {
      */
     add: function(x, y) {
         var pixels = this.pixels;
-        if (y >= 0) {
-            if (typeof pixels[y] !== 'undefined') {
-                pixels[y].push(x);
-            } else {
-                pixels[y] = [x];
-            }
+        if (pixels[y]) {
+            pixels[y].push(x);
+        } else {
+            pixels[y] = [x];
         }
         return this;
     },
@@ -44,10 +43,9 @@ xss.PixelCollection.prototype = {
      * @param {Array.<Array.<number>>} pairs
      * @return {xss.PixelCollection}
      */
-    pairs: function(pairs) {
+    addPairs: function(pairs) {
         for (var i = 0, m = pairs.length; i < m; i++) {
-            var pair = pairs[i];
-            this.add(pair[0], pair[1]);
+            this.add(pairs[i][0], pairs[i][1]);
         }
         return this;
     },
@@ -56,15 +54,10 @@ xss.PixelCollection.prototype = {
      * @return {xss.PixelCollection}
      */
     sort: function() {
-        var sort, pixels = this.pixels;
-
-        sort = function(a, b) {
-            return a - b;
-        };
-
+        var pixels = this.pixels, sort = xss.util.sort;
         for (var i = 0, m = pixels.length; i < m; i++) {
             if (pixels[i]) {
-                pixels[i] = pixels[i].sort(sort);
+                pixels[i] = sort(pixels[i]);
             }
         }
         return this;
@@ -77,7 +70,7 @@ xss.PixelCollection.prototype = {
         var pixels = this.pixels;
         for (var y = 0, m = pixels.length; y < m; y++) {
             var row = pixels[y];
-            if (typeof row !== 'undefined') {
+            if (row) {
                 for (var i = 0, mm = row.length; i < mm; i++) {
                     callback(row[i], y);
                 }
@@ -92,7 +85,7 @@ xss.PixelCollection.prototype = {
      */
     index: function(x, y) {
         var row = this.pixels[y];
-        if (typeof row !== 'undefined') {
+        if (row) {
             for (var i = 0, m = row.length; i < m; i++) {
                 if (row[i] === x) {
                     return i;
@@ -108,15 +101,7 @@ xss.PixelCollection.prototype = {
      * @return {boolean}
      */
     has: function(x, y) {
-        var row = this.pixels[y];
-        if (typeof row !== 'undefined') {
-            for (var i = 0, m = row.length; i < m; i++) {
-                if (row[i] === x) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return -1 !== this.index(x, y);
     },
 
     /**

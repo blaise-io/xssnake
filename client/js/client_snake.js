@@ -138,7 +138,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
      */
     updateShape: function() {
         var pixels = new xss.PixelCollection();
-        pixels.pairs(this.parts);
+        pixels.addPairs(this.parts);
         pixels = xss.transform.zoomGame(pixels);
         return this._shape.set(pixels);
     },

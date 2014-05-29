@@ -30,8 +30,8 @@ xss.LevelParser = function(imagedata, animation) {
         height      : imagedata.height,
         spawns      : [],
         directions  : [],
-        unreachables: [],
-        walls       : []
+        unreachables: new xss.PixelCollection(),
+        walls       : new xss.PixelCollection()
     };
 
     this._parseImagedata(imagedata.data);
@@ -69,10 +69,10 @@ xss.LevelParser.prototype = {
             case '255,255,255':
                 break;
             case '0,0,0':
-                this._addToArr(this._levelData.walls, x, y);
+                this._levelData.walls.add(x, y);
                 break;
             case '222,222,222':
-                this._addToArr(this._levelData.unreachables, x, y);
+                this._levelData.unreachables.add(x, y);
                 break;
             case '99,99,99':
                 this._levelData.directions.push([x, y]);
@@ -101,17 +101,6 @@ xss.LevelParser.prototype = {
                     'at ' + x + ',' + y
                 );
         }
-    },
-
-    /**
-     * @param {Object} obj
-     * @param {number} x
-     * @param {number} y
-     * @private
-     */
-    _addToArr: function(obj, x, y) {
-        obj[y] = obj[y] || [];
-        obj[y].push(x);
     },
 
     /**

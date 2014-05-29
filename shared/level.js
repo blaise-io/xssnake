@@ -40,7 +40,7 @@ xss.Level.prototype = {
     isWall: function(x, y) {
         if (this.outOfBounds(x, y)) {
             return true;
-        } else if (this.innerWall(x, y)) {
+        } else if (this.levelData.walls.has(x, y)) {
             return true;
         }
         return false;
@@ -118,7 +118,7 @@ xss.Level.prototype = {
         if (this.isWall(location[0], location[1])) {
             return false;
         }
-        if (this.isUnreachable(location[0], location[1])) {
+        if (this.levelData.unreachables.has(location[0], location[1])) {
             return false;
         }
         for (var i = 0, m = nonEmptyLocations.length; i < m; i++) {
@@ -141,42 +141,6 @@ xss.Level.prototype = {
         } else {
             return x >= this.levelData.width || y >= this.levelData.height;
         }
-    },
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
-     */
-    innerWall: function(x, y) {
-        return this.hasXY(this.levelData.walls, x, y);
-    },
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
-     */
-    isUnreachable: function(x, y) {
-        return this.hasXY(this.levelData.unreachables, x, y);
-    },
-
-    /**
-     * @param {Array.<Array.<number>>} obj
-     * @param x
-     * @param y
-     * @return {boolean}
-     */
-    hasXY: function(obj, x, y) {
-        var row = obj[y];
-        if (typeof row !== 'undefined') {
-            for (var i = 0, m = row.length; i < m; i++) {
-                if (x === row[i]) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 };

@@ -91,6 +91,10 @@ xss.StageFlow.prototype = {
 
     refreshShapes: function() {
         xss.shapes.stage = this.stage.getShape();
+        var it = 1000;
+        while (it--) {
+            xss.shapes.stage.pixels.bbox();
+        }
     },
 
     _setupMenuSkeletton: function() {
