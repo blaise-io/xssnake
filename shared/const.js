@@ -1,3 +1,6 @@
+xss.WIDTH = 256;
+xss.HEIGHT = 161;
+
 xss.EVENT_COMBI = 'C';
 xss.EVENT_CHAT_NOTICE = 'CN';
 xss.EVENT_CHAT_MESSAGE = 'CM';

@@ -7,8 +7,8 @@
  *   height: number,
  *   spawns: Array,
  *   directions: Array,
- *   unreachables: Array,
- *   walls: Array
+ *   unreachables: xss.PixelCollection,
+ *   walls: xss.PixelCollection
  * }}
  */
 xss.LevelData;

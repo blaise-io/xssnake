@@ -1,8 +1,5 @@
 // Client-only extension of server/shared/const.js
 
-xss.WIDTH = 256;
-xss.HEIGHT = 161;
-
 xss.MIN_FRAME_DELTA = 5;
 xss.MAX_FRAME_DELTA = 250;
 
