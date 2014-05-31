@@ -24,6 +24,10 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
         return this;
     },
 
+    setGameScale: function() {
+        this.transform.scale = xss.GAME_TILE;
+    },
+
     /**
      * @param {number=} on Visible duration
      * @param {number=} off Invisible duration

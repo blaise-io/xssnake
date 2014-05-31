@@ -308,7 +308,7 @@ xss.Game.prototype = {
             var key = xss.NS_ANIM + index + '_' + i;
             if (shapePixelsArr[i]) {
                 xss.shapes[key] = new xss.Shape(shapePixelsArr[i]);
-                xss.shapes[key].scale = 4;
+                xss.shapes[key].setGameScale();
             } else {
                 xss.shapes[key] = null;
             }

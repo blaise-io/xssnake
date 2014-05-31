@@ -45,10 +45,10 @@ xss.BoundingBox.prototype = {
             y1 = 0;
 
         pixels.each(function(x, y) {
-            if (x0 > x) {x0 = x; }
-            if (x1 < x) {x1 = x; }
-            if (y0 > y) {y0 = y; }
-            if (y1 < y) {y1 = y; }
+            if (x0 > x) {x0 = x;}
+            if (x1 < x) {x1 = x;}
+            if (y0 > y) {y0 = y;}
+            if (y1 < y) {y1 = y;}
         });
 
         this.x0 = x0;

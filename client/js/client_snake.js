@@ -94,15 +94,13 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
     },
 
     showDirection: function() {
-        var shift, head, pixels, shape;
+        var shift, head, shape;
         shift = this.directionToShift(this.direction);
         head = this.head();
 
-        pixels = new xss.PixelCollection();
-        pixels.add(head[0] + shift[0], head[1] + shift[1]);
-        pixels = xss.transform.zoomGame(pixels);
-
-        shape = new xss.Shape(pixels);
+        shape = new xss.Shape();
+        shape.pixels.add(head[0] + shift[0], head[1] + shift[1]);
+        shape.setGameScale();
         shape.flash();
 
         xss.shapes[this.shapes.direction] = shape;
@@ -140,6 +138,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         var pixels = new xss.PixelCollection();
         pixels.addPairs(this.parts);
         pixels = xss.transform.zoomGame(pixels);
+        this._shape.uncache();
         return this._shape.set(pixels);
     },
 

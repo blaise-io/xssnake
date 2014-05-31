@@ -19,15 +19,14 @@ xss.ShapeCache.prototype = {
 
     _getCanvas: function() {
         var canvas = document.createElement('canvas');
-        canvas.width = this.bbox.width + this.tile.size;
-        canvas.height = this.bbox.height + this.tile.size;
+        canvas.width = this.bbox.width + this._getSize();
+        canvas.height = this.bbox.height + this._getSize();
         return canvas;
     },
 
     _getContext: function() {
         return this.canvas.getContext('2d');
     },
-
 
     /**
      * Save paint calls by merging pixels.
@@ -118,10 +117,13 @@ xss.ShapeCache.prototype = {
         );
     },
 
-    _paintShapePixels: function() {
-        var size, rectangles;
+    _getSize: function() {
+        return this.tile.size * this.shape.transform.scale;
+    },
 
-        size = this.tile.size;
+    _paintShapePixels: function() {
+        var size = this._getSize(), rectangles;
+
         rectangles = this._mergePixels(this.shape.pixels);
 
         if (this.shape.isOverlay) {
@@ -144,15 +146,16 @@ xss.ShapeCache.prototype = {
      * @private
      */
     _getBBox: function() {
-        var pixelBBox, tileBBox, tileBBoxKeys, shape = this.shape;
+        var size, pixelBBox, tileBBox, tileBBoxKeys;
 
-        pixelBBox = shape.pixels.bbox();
+        size = this._getSize();
+        pixelBBox = this.shape.pixels.bbox();
         tileBBox = new xss.BoundingBox();
         tileBBoxKeys = Object.keys(pixelBBox);
 
         for (var i = 0, m = tileBBoxKeys.length; i < m; i++) {
             var k = tileBBoxKeys[i];
-            tileBBox[k] = pixelBBox[k] * this.tile.size;
+            tileBBox[k] = pixelBBox[k] * size;
         }
 
         return tileBBox;
