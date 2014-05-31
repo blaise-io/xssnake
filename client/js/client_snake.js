@@ -19,23 +19,19 @@ xss.ClientSnake = function(index, local, name, location, direction) {
     this.limbo   = false;
 
     /**
-     * @type {xss.Shape}
-     * @private
-     */
-    this._shape = new xss.Shape();
-
-    /**
      * @type {Array}
      * @private
      */
     this._snakeTurnCache = [];
 
     /** @type {Object.<string,string>} */
-    this.shapes = {
+    this.shapeKeys = {
         snake    : xss.NS_SNAKE + index,
         name     : xss.NS_SNAKE + 'TAG' + index,
         direction: xss.NS_SNAKE + 'DIR' + index
     };
+
+    this.updateShape();
 };
 
 /** @lends {xss.ClientSnake.prototype} */
@@ -44,15 +40,15 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
 
     destruct: function() {
         this.crash();
-        for (var k in this.shapes) {
-            if (this.shapes.hasOwnProperty(k)) {
-                xss.shapes[this.shapes[k]] = null;
+        for (var k in this.shapeKeys) {
+            if (this.shapeKeys.hasOwnProperty(k)) {
+                xss.shapes[this.shapeKeys[k]] = null;
             }
         }
     },
 
     getShape: function() {
-        return xss.shapes[this.shapes.snake];
+        return xss.shapes[this.shapeKeys.snake];
     },
 
     showName: function() {
@@ -69,7 +65,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         }
 
         shape = xss.shapegen.tooltip(this.name, x, y, this.direction);
-        xss.shapes[this.shapes.name] = shape;
+        xss.shapes[this.shapeKeys.name] = shape;
     },
 
     /**
@@ -100,15 +96,15 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
 
         shape = new xss.Shape();
         shape.pixels.add(head[0] + shift[0], head[1] + shift[1]);
-        shape.setGameScale();
+        shape.setGameTransform();
         shape.flash();
 
-        xss.shapes[this.shapes.direction] = shape;
+        xss.shapes[this.shapeKeys.direction] = shape;
     },
 
     removeNameAndDirection: function() {
-        xss.shapes[this.shapes.name] = null;
-        xss.shapes[this.shapes.direction] = null;
+        xss.shapes[this.shapeKeys.name] = null;
+        xss.shapes[this.shapeKeys.direction] = null;
     },
 
     addControls: function() {
@@ -127,19 +123,11 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         }
     },
 
-    addToShapes: function() {
-        xss.shapes[this.shapes.snake] = this.updateShape();
-    },
-
-    /**
-     * @return {xss.Shape}
-     */
     updateShape: function() {
-        var pixels = new xss.PixelCollection();
-        pixels.addPairs(this.parts);
-        pixels = xss.transform.zoomGame(pixels);
-        this._shape.uncache();
-        return this._shape.set(pixels);
+        var shape = new xss.Shape();
+        shape.pixels.addPairs(this.parts);
+        shape.setGameTransform();
+        xss.shapes[this.shapeKeys.snake] = shape;
     },
 
     crash: function() {

@@ -2,11 +2,11 @@
 'use strict';
 
 xss.debug.NS = 'DEBUG';
-xss.menuSnake = true; // Prevent spawn.
 
 // Debug URL: debug.html?debug=level:0
 xss.debug.debugLevelMatch = location.search.match(/debug=level:([0-9]+)$/);
 if (xss.debug.debugLevelMatch) {
+    xss.menuSnake = true; // Prevent spawn.
     document.addEventListener('DOMContentLoaded', function() {
         window.setTimeout(xss.debug.level, 300);
     });

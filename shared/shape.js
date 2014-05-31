@@ -25,10 +25,11 @@ xss.Shape = function(varArgs) {
     this.expand = 0;
 
     /**
+     * Transform is applied at paint time, does not affect PixelCollection.
      * @type {{translate: Array.<number>, scale: number}}
      */
     this.transform = {
-        translate: [0, 0],
+        translate: [0, 0], // x,y
         scale: 1
     };
 

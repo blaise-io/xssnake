@@ -98,10 +98,8 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
 
         snake = new xss.ClientSnake(-1, true, '', [1, 1], 2);
         snake.local = true;
-        snake.addToShapes();
         snake.addControls();
         snake.showDirection();
-        snake.removeNameAndDirection();
 
         xss.menuSnake = snake;
     },
@@ -112,6 +110,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
     _updateMenuSnake: function() {
         var nextpos, snake = xss.menuSnake;
         nextpos = snake.getNextPosition();
+        snake.removeNameAndDirection();
         if (xss.room) {
             snake.destruct();
         } else if (this._isMenuSnakeCrash(snake, nextpos)) {
@@ -133,19 +132,38 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
      * @private
      */
     _isMenuSnakeCrash: function(snake, nextpos) {
-        var snakeShape = snake.getShape(), crash = false;
+        var snakeShape = snake.getShape();
         if (nextpos[0] < 0 || nextpos[1] < 0) {
-            crash = true;
+            return true;
         } else if (snakeShape) {
-            snakeShape.pixels.each(function(x, y) {
-                if (x % 2 || y % 2) {
-                    if (snakeShape.pixels.hasMultiple(xss.shapes, x, y)) {
-                        crash = true;
-                    }
+            var pixels = xss.transform.zoomX4(
+                snakeShape.pixels, xss.GAME_LEFT, xss.GAME_TOP
+            );
+            pixels.each(function(x, y) {
+                if (this._overlaysAnyShape(snakeShape, x, y)) {
+                    return true;
                 }
-            });
+            }.bind(this));
         }
-        return crash;
+        return false;
+    },
+
+    /**
+     * @param {xss.Shape} self
+     * @param {number} x
+     * @param {number} y
+     * @return {boolean}
+     */
+    _overlaysAnyShape: function(self, x, y) {
+        for (var k in xss.shapes) {
+            if (xss.shapes.hasOwnProperty(k) && xss.shapes[k] !== self) {
+                if (xss.shapes[k] && xss.shapes[k].pixels.has(x, y)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
+
 });
 

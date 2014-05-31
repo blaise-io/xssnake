@@ -24,7 +24,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
         return this;
     },
 
-    setGameScale: function() {
+    setGameTransform: function() {
         this.transform.scale = xss.GAME_TILE;
         this.transform.translate = [
             xss.GAME_TILE / xss.GAME_LEFT,
@@ -72,7 +72,6 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
         }
     },
 
-
     /**
      * @param {number=} on
      * @param {number=} off
@@ -80,7 +79,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
      * @private
      */
     _flashEffect: function(on, off) {
-        var duration = [on || 500, off || 100], progress = 0;
+        var duration = [on || 400, off || 100], progress = 0;
         return function(delta) {
             progress += delta;
             if (progress > duration[+!this.enabled]) {

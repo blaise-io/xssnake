@@ -92,14 +92,6 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
     },
 
     /**
-     * @param {xss.PixelCollection} pixels
-     * @return {xss.PixelCollection}
-     */
-    zoomGame: function(pixels) {
-        return this.zoomX4(pixels, xss.GAME_LEFT, xss.GAME_TOP);
-    },
-
-    /**
      * @param {xss.PixelCollection} x0Pixels
      * @param {xss.PixelCollection} x1Pixels
      * @param {number=} xshift

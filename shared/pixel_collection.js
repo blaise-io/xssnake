@@ -105,23 +105,6 @@ xss.PixelCollection.prototype = {
     },
 
     /**
-     * @param {Array.<xss.Shape>} shapes
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
-     */
-    hasMultiple: function(shapes, x, y) {
-        for (var k in shapes) {
-            if (shapes.hasOwnProperty(k) && shapes[k]) {
-                if (shapes[k].pixels !== this && shapes[k].pixels.has(x, y)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    },
-
-    /**
      * @param {number} x
      * @param {number} y
      * @return {xss.PixelCollection}

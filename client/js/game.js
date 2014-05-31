@@ -211,7 +211,9 @@ xss.Game.prototype = {
         var levelData, border;
 
         levelData = xss.levels.getLevelData(index);
+
         xss.shapes.level = xss.shapegen.level(levelData);
+        xss.shapes.innerborder = xss.shapegen.innerBorder();
 
         border = xss.shapegen.outerBorder();
         for (var k in border) {
@@ -252,7 +254,6 @@ xss.Game.prototype = {
         direction = this.level.getSpawnDirection(i);
 
         snake = new xss.ClientSnake(i, i === index, name, location, direction);
-        snake.addToShapes();
         snake.showName();
 
         if (i === index) {
@@ -308,7 +309,7 @@ xss.Game.prototype = {
             var key = xss.NS_ANIM + index + '_' + i;
             if (shapePixelsArr[i]) {
                 xss.shapes[key] = new xss.Shape(shapePixelsArr[i]);
-                xss.shapes[key].setGameScale();
+                xss.shapes[key].setGameTransform();
             } else {
                 xss.shapes[key] = null;
             }

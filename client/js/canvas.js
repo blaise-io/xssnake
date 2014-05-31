@@ -166,7 +166,7 @@ xss.Canvas.prototype = {
         }
 
         // Draw on canvas if shape is enabled and visible
-        if (false === shape.enabled) {
+        if (!shape.enabled) {
             return;
         }
 
