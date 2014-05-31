@@ -26,6 +26,10 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
 
     setGameScale: function() {
         this.transform.scale = xss.GAME_TILE;
+        this.transform.translate = [
+            xss.GAME_TILE / xss.GAME_LEFT,
+            xss.GAME_TILE / xss.GAME_TOP
+        ];
     },
 
     /**
