@@ -9,6 +9,9 @@ xss.Shape = function(varArgs) {
     /** @type {xss.PixelCollection} */
     this.pixels = new xss.PixelCollection();
 
+    /** @type {xss.ShapeCache} */
+    this.cache = null;
+
     /** @type {boolean} */
     this.enabled = true;
 
@@ -18,14 +21,16 @@ xss.Shape = function(varArgs) {
     /** @type {Object.<string,*>} */
     this.effects = {};
 
-    /** @type {{x: number, y: number}} */
-    this.shift = {x: 0, y: 0};
-
-    /** @type {xss.ShapeCache} */
-    this.cache = null;
-
     /** @type {number} */
     this.expand = 0;
+
+    /**
+     * @type {{translate: Array.<number>, scale: number}}
+     */
+    this.transform = {
+        translate: [0, 0],
+        scale: 1
+    };
 
     this.add.apply(this, arguments);
 };

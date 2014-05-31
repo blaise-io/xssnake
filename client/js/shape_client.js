@@ -19,11 +19,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
         x = Math.round((width - bbox.width) / 2);
         y = Math.round((height - bbox.height) / 2);
 
-        x -= bbox.x0;
-        y -= bbox.y0;
-
-        this.shift.x = x;
-        this.shift.y = y;
+        this.transform.translate = [x - bbox.x0, y - bbox.y0];
 
         return this;
     },
@@ -141,8 +137,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
             if (progress < duration) {
                 x = from[0] - ((from[0] - to[0]) * percent);
                 y = from[1] - ((from[1] - to[1]) * percent);
-                this.shift.x = Math.round(x);
-                this.shift.y = Math.round(y);
+                this.transform.translate = [Math.round(x), Math.round(y)];
             } else {
                 delete this.effects.animate;
                 callback();

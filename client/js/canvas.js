@@ -155,6 +155,8 @@ xss.Canvas.prototype = {
      * @private
      */
     _paintShape: function(shape, delta) {
+        var translate = shape.transform.translate;
+
         // Apply effects if FPS is in a normal range. If window is out
         // of focus, we don't want animations. Also we do not want anims
         // if a browser is "catching up" frames after being focused after
@@ -176,8 +178,8 @@ xss.Canvas.prototype = {
         // Paint cached image on canvas
         this.context.drawImage(
             shape.cache.canvas,
-            shape.cache.bbox.x0 + (shape.shift.x * this.tile.size),
-            shape.cache.bbox.y0 + (shape.shift.y * this.tile.size)
+            shape.cache.bbox.x0 + (translate[0] * this.tile.size),
+            shape.cache.bbox.y0 + (translate[1] * this.tile.size)
         );
     },
 

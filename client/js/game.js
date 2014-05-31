@@ -305,13 +305,13 @@ xss.Game.prototype = {
      */
     _updateShapes: function(index, shapePixelsArr) {
         for (var i = 0, m = shapePixelsArr.length; i < m; i++) {
+            var key = xss.NS_ANIM + index + '_' + i;
             if (shapePixelsArr[i]) {
-                var pixels = xss.transform.zoomGame(shapePixelsArr[i]);
-                xss.shapes[xss.NS_ANIM + index + '_' + i] = new xss.Shape(pixels);
+                xss.shapes[key] = new xss.Shape(shapePixelsArr[i]);
+                xss.shapes[key].scale = 4;
             } else {
-                xss.shapes[xss.NS_ANIM + index + '_' + i] = null;
+                xss.shapes[key] = null;
             }
-
         }
     },
 
