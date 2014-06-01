@@ -157,7 +157,6 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
     _overlaysAnyShape: function(self, x, y) {
         for (var k in xss.shapes) {
             if (xss.shapes.hasOwnProperty(k) && xss.shapes[k] !== self) {
-                console.log('compare to ', k);
                 if (xss.shapes[k] && xss.shapes[k].pixels.has(x, y)) {
                     return true;
                 }
