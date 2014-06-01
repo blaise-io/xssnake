@@ -132,7 +132,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
      * @private
      */
     _isMenuSnakeCrash: function(snake, nextpos) {
-        var snakeShape = snake.getShape();
+        var snakeShape = snake.getShape(), crash = false;
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
         } else if (snakeShape) {
@@ -141,11 +141,11 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
             );
             pixels.each(function(x, y) {
                 if (this._overlaysAnyShape(snakeShape, x, y)) {
-                    return true;
+                    crash = true;
                 }
             }.bind(this));
         }
-        return false;
+        return crash;
     },
 
     /**
@@ -157,6 +157,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
     _overlaysAnyShape: function(self, x, y) {
         for (var k in xss.shapes) {
             if (xss.shapes.hasOwnProperty(k) && xss.shapes[k] !== self) {
+                console.log('compare to ', k);
                 if (xss.shapes[k] && xss.shapes[k].pixels.has(x, y)) {
                     return true;
                 }
