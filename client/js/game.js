@@ -256,6 +256,10 @@ xss.Game.prototype = {
         snake = new xss.ClientSnake(i, i === index, name, location, direction);
         snake.showName();
 
+        if (this.level.levelData.wind) {
+            snake.wind = new xss.Wind(this.level.levelData.wind);
+        }
+
         if (i === index) {
             snake.showDirection();
         }
@@ -328,6 +332,7 @@ xss.Game.prototype = {
                 snake.elapsed -= snake.speed;
                 this._moveSnake(snake);
             }
+            snake.applyWind(delta);
             snake.elapsed += delta;
         }
     },

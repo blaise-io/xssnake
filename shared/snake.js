@@ -15,6 +15,7 @@ xss.Snake = function(location, direction, size, speed) {
     this.speed = speed;
     this.crashed = false;
     this.limbo = null;
+    this.wind = null;
 };
 
 xss.Snake.prototype = {
@@ -77,6 +78,21 @@ xss.Snake.prototype = {
      */
     directionToShift: function(direction) {
         return [[-1, 0], [0, -1], [1, 0], [0, 1]][direction];
+    },
+
+    /**
+     * @param {number} delta
+     */
+    applyWind: function(delta) {
+        if (this.wind) {
+            var wind = this.wind.update(delta);
+            if (wind[0] || wind[1]) {
+                for (var i = 0, m = this.parts.length; i < m; i++) {
+                    this.parts[i][0] += wind[0];
+                    this.parts[i][1] += wind[1];
+                }
+            }
+        }
     },
 
     /**

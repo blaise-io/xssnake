@@ -3,6 +3,7 @@
 /**
  * @typedef {{
  *   animation: (Function|undefined),
+ *   wind: (Array.<number>)
  *   width: number,
  *   height: number,
  *   spawns: Array,
@@ -15,17 +16,18 @@ xss.LevelData;
 
 /**
  * @param {ImageData} imagedata
- * @param {Function=} animation
+ * @param {Object} data
  * @constructor
  */
-xss.LevelParser = function(imagedata, animation) {
+xss.LevelParser = function(imagedata, data) {
 
     /**
      * @type {xss.LevelData}
      * @private
      */
     this._levelData = {
-        animation   : animation,
+        animation   : data.animation,
+        wind        : data.wind,
         width       : imagedata.width,
         height      : imagedata.height,
         spawns      : [],

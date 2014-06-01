@@ -22,16 +22,15 @@ xss.LevelRegistry = function() {
 xss.LevelRegistry.prototype = {
 
     /**
-     * @param {string} binaryData
-     * @param {Function=} animation
+     * @param {Object} data
      */
-    register: function(binaryData, animation) {
+    register: function(data) {
         var index = this.levelDatas.push(undefined) - 1;
         this._numLevelsRegistered++;
 
         // Which levelImageLoader is used depends on client or server context.
-        xss.levelImageLoader(binaryData, function(imageData) {
-            var parser = new xss.LevelParser(imageData, animation);
+        xss.levelImageLoader(data.image, function(imageData) {
+            var parser = new xss.LevelParser(imageData, data);
             this.levelDatas[index] = parser.getParsedLevel();
 
             // All finished loading
@@ -54,7 +53,7 @@ xss.LevelRegistry.prototype = {
      */
     _registerAll: function(levels) {
         for (var i = 0, m = levels.length; i < m; i++) {
-            this.register(levels[i].image, levels[i].animation);
+            this.register(levels[i]);
         }
     }
 
