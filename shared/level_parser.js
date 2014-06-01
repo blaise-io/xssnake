@@ -3,7 +3,7 @@
 /**
  * @typedef {{
  *   animation: (Function|undefined),
- *   wind: (Array.<number>)
+ *   wind: (Array.<number>),
  *   width: number,
  *   height: number,
  *   spawns: Array,
