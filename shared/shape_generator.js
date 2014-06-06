@@ -53,7 +53,7 @@ xss.ShapeGenerator.prototype = {
      * @param {number} y1
      * @returns {xss.PixelCollection}
      */
-    line: function bline(x0, y0, x1, y1) {
+    line: function(x0, y0, x1, y1) {
         var pixels, dx, sx, dy, sy, err, err2;
 
         pixels = new xss.PixelCollection();
