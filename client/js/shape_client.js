@@ -26,10 +26,8 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
 
     setGameTransform: function() {
         this.transform.scale = xss.GAME_TILE;
-        this.transform.translate = [
-            xss.GAME_TILE / xss.GAME_LEFT,
-            xss.GAME_TILE / xss.GAME_TOP
-        ];
+        this.transform.translate[0] += xss.GAME_TILE / xss.GAME_LEFT;
+        this.transform.translate[1] += xss.GAME_TILE / xss.GAME_TOP;
     },
 
     /**

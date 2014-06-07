@@ -8,13 +8,18 @@ xss.animation.ScrollingCave = function() {
     this.seed = Math.random();
     this.seedIteration = 0;
 
-    /**
-     * @type {Array.<xss.PixelCollection>}
-     * @private
-     */
-    this._shapePixelsArr = [];
-
+    this._shapes = new xss.ShapeCollection();
     this._scroll = this._scrollPref = 0;
+
+    this._max = {
+        // Stalactite ‾\/‾
+        // Mnemonic: They hang...
+        stalactite: this._LEVEL_WIDTH,
+        // Stalagmite _/\_
+        stalagmite: this._LEVEL_WIDTH + Math.round(
+            xss.util.average(this._BUMP_WIDTH)
+        )
+    };
 };
 
 xss.animation.ScrollingCave.prototype = {
@@ -32,7 +37,7 @@ xss.animation.ScrollingCave.prototype = {
     /**
      * @param {number} ms
      * @param {boolean} gameStarted
-     * @returns {Array.<xss.PixelCollection>}
+     * @returns {xss.ShapeCollection|null}
      */
     update: function(ms, gameStarted) {
         this._scroll = Math.round(ms / (1000 - (this._SPEED * 2000)));
@@ -42,42 +47,40 @@ xss.animation.ScrollingCave.prototype = {
         } else {
             this._updateShapePixelsArrs(this._scrollPref - this._scroll);
             this._scrollPref = this._scroll;
-            return this._shapePixelsArr;
+            return this._shapes;
         }
     },
 
     _updateShapePixelsArrs: function(offset) {
-        var maxes = {hanging: this._LEVEL_WIDTH, standing: this._LEVEL_WIDTH - 15};
-        for (var i = 0, m = this._shapePixelsArr.length; i < m; i++) {
-            if (this._shapePixelsArr[i]) {
-                this._updateShapePixelsArr(this._shapePixelsArr, i, offset, maxes);
-            }
+        var max = this._max;
+
+        this._shapes.each(function(shape, index) {
+            this._updateShape(shape, index, offset);
+        }.bind(this));
+
+        max.stalactite += offset;
+        max.stalagmite += offset;
+
+        if (max.stalactite < this._LEVEL_WIDTH) {
+            max.stalactite = this._generateStalactite(max.stalactite + 1);
         }
 
-        if (maxes.hanging <= this._LEVEL_WIDTH) {
-            // Stalactite ‾\/‾
-            this._generateHangingBump(maxes.hanging + 1);
-        }
-
-        if (maxes.standing <= this._LEVEL_WIDTH) {
-            // Stalagmite _/\_
-            this._generateStandingBump(maxes.standing + 1);
+        if (max.stalagmite < this._LEVEL_WIDTH) {
+            max.stalagmite = this._generateStalagmite(max.stalagmite + 1);
         }
     },
 
-    _updateShapePixelsArr: function(shapePixelsArr, i, offset, maxes) {
-        if (shapePixelsArr[i].meta.x1 < 0) {
-            shapePixelsArr[i] = null;
-        } else if (shapePixelsArr[i]) {
-            var meta = shapePixelsArr[i].meta;
-            shapePixelsArr[i] = xss.transform.shift(shapePixelsArr[i], offset);
-            shapePixelsArr[i].meta = meta;
-            shapePixelsArr[i].meta.x1 += offset;
+    _updateShape: function(shape, index, offset) {
+        var translate, cache = shape.cache;
+        translate = shape.transform.translate;
 
-            if (shapePixelsArr[i].meta.isHanging) {
-                maxes.hanging = Math.max(maxes.hanging, shapePixelsArr[i].meta.x1);
+        if (cache) {
+            if (Math.abs(translate[0]) - cache.bbox.width > xss.WIDTH) {
+                // No longer visible, remove shape.
+                this._shapes.set(index, null);
             } else {
-                maxes.standing = Math.max(maxes.standing, shapePixelsArr[i].meta.x1);
+                // Visible, move shape.
+                translate[0] += offset * xss.GAME_TILE;
             }
         }
     },
@@ -101,45 +104,42 @@ xss.animation.ScrollingCave.prototype = {
         return range[0] + Math.floor(this.seed * (range[1] - range[0] + 1));
     },
 
-    _generateHangingBump: function(xRow0) {
-        var xRow1;
-        xRow1 = xRow0 + this._random(this._BUMP_WIDTH);
-        this._generateBump(true, xRow0, xRow1);
+    _generateStalactite: function(x0) {
+        var x1 = x0 + this._random(this._BUMP_WIDTH);
+        this._generateFormation(true, x0, x1);
+        return x1;
     },
 
-    _generateStandingBump: function(xRow0) {
-        var xRow1;
-        xRow1 = xRow0 + this._random(this._BUMP_WIDTH);
-        this._generateBump(false, xRow0, xRow1);
+    _generateStalagmite: function(x0) {
+        var x1 = x0 + this._random(this._BUMP_WIDTH);
+        this._generateFormation(false, x0, x1);
+        return x1;
     },
 
-    _generateBump: function(isHanging, xRow0, xRow1) {
-        var maxHeight, shape;
+    _generateFormation: function(isStalactite, x0, x1) {
+        var y1, shape;
 
-        maxHeight = this._random(this._BUMP_HEIGHT);
+        y1 = this._random(this._BUMP_HEIGHT);
         shape = new xss.Shape();
 
-        shape.pixels.meta.x1 = xRow1;
-        shape.pixels.meta.isHanging = isHanging;
-
-        for (var y = 0; y < maxHeight; y++) {
-            var yTop, xRow1Prev = xRow1;
-            if (y) {
-                xRow0 += this._random(this._BUMP_DECREASE);
-                xRow1 -= this._random(this._BUMP_DECREASE);
+        for (var y0 = 0; y0 < y1; y0++) {
+            var y0Ite, xRow1Prev = x1;
+            if (y0) {
+                x0 += this._random(this._BUMP_DECREASE);
+                x1 -= this._random(this._BUMP_DECREASE);
             }
-            yTop = isHanging ? y : this._LEVEL_HEIGHT - y - 1;
-            if (xRow0 < xRow1 && xRow1 <= xRow1Prev) {
+            y0Ite = isStalactite ? y0 : this._LEVEL_HEIGHT - y0 - 1;
+            if (x0 < x1 && x1 <= xRow1Prev) {
                 shape.add(
-                    xss.shapegen.line(xRow0, yTop, xRow1, yTop)
+                    xss.shapegen.line(x0, y0Ite, x1, y0Ite)
                 );
-                xRow1Prev = xRow1;
+                xRow1Prev = x1;
             } else {
                 break;
             }
         }
 
-        this._shapePixelsArr.push(shape.pixels);
+        this._shapes.add(shape);
     }
 
 };

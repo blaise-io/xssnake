@@ -31,10 +31,6 @@ xss.MENU_WIDTH = 167;
 xss.MENU_WRAP = 176;
 xss.MENU_TITLE_HEIGHT = 20;
 
-xss.GAME_LEFT = 2;
-xss.GAME_TOP = 2;
-xss.GAME_TILE = 4;
-
 xss.HASH_ROOM = 'room';
 
 xss.NS_ANIM = 'ANM';

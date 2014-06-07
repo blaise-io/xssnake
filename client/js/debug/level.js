@@ -8,7 +8,7 @@ xss.debug.debugLevelMatch = location.search.match(/debug=level:([0-9]+)$/);
 if (xss.debug.debugLevelMatch) {
     xss.menuSnake = true; // Prevent spawn.
     document.addEventListener('DOMContentLoaded', function() {
-        window.setTimeout(xss.debug.level, 300);
+        window.setTimeout(xss.debug.level, 2000);
     });
 }
 

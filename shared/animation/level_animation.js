@@ -26,21 +26,21 @@ xss.LevelAnimation.prototype = {
 
     /**
      * Returns an array of animations.
-     * Every animation is an array of shape pixels, or null
+     * Every animation is an array of shapes, or null
      *
      * @param {number} delta
      * @param {boolean} gameStarted
-     * @return {Array.<Array.<xss.PixelCollection>>}
+     * @return {Array.<xss.ShapeCollection>}
      */
     update: function(delta, gameStarted) {
-        var shapePixelsArrArr = [];
+        var shapeCollections = [];
         this._progressMs += delta;
         for (var i = 0, m = this._animations.length; i < m; i++) {
-            shapePixelsArrArr.push(
+            shapeCollections.push(
                 this._animations[i].update(this._progressMs, gameStarted)
             );
         }
-        return shapePixelsArrArr;
+        return shapeCollections;
     }
 
 };

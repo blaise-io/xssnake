@@ -19,7 +19,10 @@ xss.animation.Interface.prototype = {
      * Return null if animation was not updated.
      * @param {number} ms
      * @param {boolean} preGame
-     * @return {Array.<xss.PixelCollection>}
+     * @return {xss.ShapeCollection}
      */
-    update: function(ms, preGame) { return []; }
+    update: function(ms, preGame) {
+        return new xss.ShapeCollection();
+    }
+
 };

@@ -8,9 +8,9 @@
  */
 xss.Level = function(levelData, animProgress) {
     this.levelData = levelData;
-    this.animation = new xss.LevelAnimation(levelData.animation, animProgress);
-    /** @type {Array.<Array.<xss.PixelCollection>>} */
-    this.animated = [];
+    this.levelAnimation = new xss.LevelAnimation(levelData.animation, animProgress);
+    /** @type {Array.<xss.ShapeCollection>} */
+    this.animations = [];
 };
 
 xss.Level.prototype = {
@@ -18,18 +18,18 @@ xss.Level.prototype = {
     /**
      * @param {number} delta
      * @param {boolean} gameStarted
-     * @return {Array.<Array.<xss.PixelCollection>>} shapePixelsArr
+     * @return {Array.<xss.ShapeCollection>}
      */
     updateMovingWalls: function(delta, gameStarted) {
-        var movingWalls = this.animation.update(delta, gameStarted);
+        var shapeCollections = this.levelAnimation.update(delta, gameStarted);
         if (gameStarted) {
-            for (var i = 0, m = movingWalls.length; i < m; i++) {
-                if (movingWalls[i]) {
-                    this.animated[i] = movingWalls[i];
+            for (var i = 0, m = shapeCollections.length; i < m; i++) {
+                if (shapeCollections[i]) {
+                    this.animations[i] = shapeCollections[i];
                 }
             }
         }
-        return movingWalls;
+        return shapeCollections;
     },
 
     /**
@@ -52,8 +52,8 @@ xss.Level.prototype = {
      * @returns {boolean}
      */
     isMovingWall: function(x, y) {
-        for (var i = 0, m = this.animated.length; i < m; i++) {
-            if (this.inShapePixelsArr(this.animated[i], x, y)) {
+        for (var i = 0, m = this.animations.length; i < m; i++) {
+            if (this.inShapes(this.animations[i], x, y)) {
                 return true;
             }
         }
@@ -61,15 +61,19 @@ xss.Level.prototype = {
     },
 
     /**
-     * @param {Array.<xss.PixelCollection>} objects
+     * @param {xss.ShapeCollection} shapeCollection
      * @param {number} x
      * @param {number} y
      * @returns {boolean}
      */
-    inShapePixelsArr: function(objects, x, y) {
-        for (var i = 0, m = objects.length; i < m; i++) {
-            if (objects[i]) {
-                if (objects[i].has(x, y)) {
+    inShapes: function(shapeCollection, x, y) {
+        for (var i = 0, m = shapeCollection.shapes.length; i < m; i++) {
+            var translate, tx, ty, object = shapeCollection.shapes[i];
+            if (object) {
+                translate = object.transform.translate;
+                tx = (translate[0] - xss.GAME_LEFT) / xss.GAME_TILE;
+                ty = (translate[1] - xss.GAME_TOP) / xss.GAME_TILE;
+                if (object.pixels.has(x - tx, y - ty)) {
                     return true;
                 }
             }

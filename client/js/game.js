@@ -292,28 +292,31 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {Array.<Array.<xss.PixelCollection>>} ShapePixelsArrArr
+     * @param {Array.<xss.ShapeCollection>} shapeCollections
      * @private
      */
-    _updateMovingWalls: function(ShapePixelsArrArr) {
-        for (var i = 0, m = ShapePixelsArrArr.length; i < m; i++) {
-            if (ShapePixelsArrArr[i]) {
-                this._updateShapes(i, ShapePixelsArrArr[i]);
+    _updateMovingWalls: function(shapeCollections) {
+        for (var i = 0, m = shapeCollections.length; i < m; i++) {
+            if (shapeCollections[i]) {
+                this._updateShapes(i, shapeCollections[i]);
             }
         }
     },
 
     /**
      * @param {number} index
-     * @param {Array.<xss.PixelCollection>} shapePixelsArr
+     * @param {xss.ShapeCollection} shapeCollection
      * @private
      */
-    _updateShapes: function(index, shapePixelsArr) {
-        for (var i = 0, m = shapePixelsArr.length; i < m; i++) {
+    _updateShapes: function(index, shapeCollection) {
+        var shapes = shapeCollection.shapes;
+        for (var i = 0, m = shapes.length; i < m; i++) {
             var key = xss.NS_ANIM + index + '_' + i;
-            if (shapePixelsArr[i]) {
-                xss.shapes[key] = new xss.Shape(shapePixelsArr[i]);
-                xss.shapes[key].setGameTransform();
+            if (shapes[i]) {
+                if (!shapes[i].cache) {
+                     shapes[i].setGameTransform();
+                }
+                xss.shapes[key] = shapes[i];
             } else {
                 xss.shapes[key] = null;
             }
