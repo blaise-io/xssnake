@@ -81,7 +81,7 @@ xss.util = {
 
     /**
      * @param {Array.<number>} numbers
-     * @returns {number}
+     * @return {number}
      */
     average: function(numbers) {
         var total = 0;
@@ -130,7 +130,7 @@ xss.util = {
      * http://jsperf.com/javascript-sort/
      *
      * @param {Array.<number>} arr
-     * @returns {Array.<number>}
+     * @return {Array.<number>}
      */
     sort: function(arr) {
         for (var i = 1; i < arr.length; i++) {

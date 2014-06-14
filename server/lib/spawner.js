@@ -84,7 +84,7 @@ xss.Spawner.prototype = {
 
     /**
      * @param {number} type
-     * @returns {number}
+     * @return {number}
      */
     numOfType: function(type) {
         var num = 0;

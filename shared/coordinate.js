@@ -9,7 +9,6 @@
  */
 xss.Coordinate;
 
-
 /**
  * Coordinate shift.
  * Array with two values, x and y.

@@ -25,14 +25,14 @@ xss.InputStage.prototype = {
     displayWidth: 0,
 
     /**
-     * @returns {xss.Shape}
+     * @return {xss.Shape}
      */
     getShape: function() {
         return this._shape;
     },
 
     /**
-     * @returns {Object}
+     * @return {Object}
      */
     getData: function() {
         return {};
@@ -131,7 +131,7 @@ xss.InputStage.prototype = {
     },
 
     /**
-     * @returns {xss.Shape}
+     * @return {xss.Shape}
      * @private
      */
     _getShape: function() {

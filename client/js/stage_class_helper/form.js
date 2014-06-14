@@ -127,7 +127,7 @@ xss.Form.prototype = {
 
     /**
      * @param {number} x
-     * @returns {xss.PixelCollection}
+     * @return {xss.PixelCollection}
      * @private
      */
     _getFooterPixels: function(x) {

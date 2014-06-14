@@ -42,7 +42,7 @@ xss.LevelParser = function(imagedata, data) {
 xss.LevelParser.prototype = {
 
     /**
-     * @returns {xss.LevelData}
+     * @return {xss.LevelData}
      */
     getParsedLevel: function() {
         return this._levelData;

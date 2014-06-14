@@ -4,7 +4,7 @@ xss.Chat.prototype._notice = {
 
     /**
      * @param {Array} notice
-     * @returns {string}
+     * @return {string}
      */
     format: function(notice) {
         var format = xss.util.format;
@@ -27,7 +27,7 @@ xss.Chat.prototype._notice = {
      * @param {number} index
      * @param {number} client
      * @param {number} opponent
-     * @returns {string}
+     * @return {string}
      */
     crash: function(index, client, opponent) {
         var notice, names = this.names;

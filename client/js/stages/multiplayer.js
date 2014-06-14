@@ -24,7 +24,7 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
 
     /**
      * @param values
-     * @returns {Function}
+     * @return {Function}
      * @private
      */
     getNextStage: function(values) {
@@ -36,7 +36,7 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
     },
 
     /**
-     * @returns {xss.Form}
+     * @return {xss.Form}
      * @private
      */
     _getForm: function() {

@@ -33,7 +33,7 @@ xss.Score.prototype = {
     },
 
     /**
-     * @returns {xss.Client}
+     * @return {xss.Client}
      */
     getWinner: function() {
         var sorted, last, index;

@@ -25,7 +25,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
     },
 
     /**
-     * @returns {Object}
+     * @return {Object}
      */
     getData: function() {
         return this.data;
@@ -58,7 +58,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
     },
 
     /**
-     * @returns {xss.SelectMenu}
+     * @return {xss.SelectMenu}
      * @private
      */
     _getMenu: function() {
@@ -128,7 +128,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
     /**
      * @param {xss.ClientSnake} snake
      * @param {xss.Coordinate} nextpos
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _isMenuSnakeCrash: function(snake, nextpos) {

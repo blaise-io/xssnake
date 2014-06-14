@@ -50,7 +50,7 @@ xss.Level.prototype = {
     /**
      * @param {number} x
      * @param {number} y
-     * @returns {boolean}
+     * @return {boolean}
      */
     isMovingWall: function(x, y) {
         for (var i = 0, m = this.animations.length; i < m; i++) {
@@ -65,7 +65,7 @@ xss.Level.prototype = {
      * @param {xss.ShapeCollection} shapeCollection
      * @param {number} x
      * @param {number} y
-     * @returns {boolean}
+     * @return {boolean}
      */
     inShapes: function(shapeCollection, x, y) {
         for (var i = 0, m = shapeCollection.shapes.length; i < m; i++) {

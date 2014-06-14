@@ -15,7 +15,7 @@ xss.util.extend(xss.ColorStage.prototype, xss.SelectStage.prototype);
 xss.util.extend(xss.ColorStage.prototype, /** @lends xss.ColorStage.prototype */ {
 
     /**
-     * @returns {xss.SelectMenu}
+     * @return {xss.SelectMenu}
      * @private
      */
     _getMenu: function() {

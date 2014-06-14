@@ -34,14 +34,14 @@ xss.SelectMenu.prototype = {
     },
 
     /**
-     * @returns {number}
+     * @return {number}
      */
     prev: function() {
         return this.select(this._selected - 1);
     },
 
     /**
-     * @returns {number}
+     * @return {number}
      */
     next: function() {
         return this.select(this._selected + 1);
@@ -49,7 +49,7 @@ xss.SelectMenu.prototype = {
 
     /**
      * @param {number} select
-     * @returns {number}
+     * @return {number}
      */
     select: function(select) {
         var max = this._options.length - 1;

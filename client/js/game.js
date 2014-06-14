@@ -396,7 +396,7 @@ xss.Game.prototype = {
 
     /**
      * @param {xss.SnakeParts} parts
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _isCrashIntoWall: function(parts) {
@@ -410,7 +410,7 @@ xss.Game.prototype = {
 
     /**
      * @param {xss.SnakeParts} parts
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _isCrashIntoAnimated: function(parts) {

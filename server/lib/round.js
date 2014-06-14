@@ -35,7 +35,7 @@ xss.Round.prototype = {
     },
 
     /**
-     * @returns {number}
+     * @return {number}
      */
     numCrashed: function() {
         var crashed = 0, snakes = this.game.snakes;
@@ -48,14 +48,14 @@ xss.Round.prototype = {
     },
 
     /**
-     * @returns {boolean}
+     * @return {boolean}
      */
     allCrashed: function() {
         return (this.numCrashed() === this.room.clients.length);
     },
 
     /**
-     * @returns {boolean}
+     * @return {boolean}
      */
     hasEnded: function() {
         return (this.numCrashed() + 1 >= this.room.clients.length);

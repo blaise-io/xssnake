@@ -48,7 +48,7 @@ xss.InputField.prototype = {
     },
 
     /**
-     * @returns {string}
+     * @return {string}
      */
     getValue: function() {
         return this.input.value;

@@ -27,7 +27,7 @@ xss.ShapeGenerator.prototype = {
      * @param {number} yc
      * @param {number} radian
      * @param {number} length
-     * @returns {xss.PixelCollection}
+     * @return {xss.PixelCollection}
      */
     radianLine: function(xc, yc, radian, length) {
         var x0, y0, x1, y1;
@@ -51,7 +51,7 @@ xss.ShapeGenerator.prototype = {
      * @param {number} y0
      * @param {number} x1
      * @param {number} y1
-     * @returns {xss.PixelCollection}
+     * @return {xss.PixelCollection}
      */
     line: function(x0, y0, x1, y1) {
         var pixels, dx, sx, dy, sy, err, err2;

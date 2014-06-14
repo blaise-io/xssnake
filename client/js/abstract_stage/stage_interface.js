@@ -13,7 +13,7 @@ xss.StageInterface.prototype = {
         return new xss.Shape();
     },
 
-    /** @returns {Object} */
+    /** @return {Object} */
     getData: function() {
         return {};
     },

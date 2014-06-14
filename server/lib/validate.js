@@ -26,7 +26,7 @@ xss.Validate.prototype = {
     },
 
     /**
-     * @returns {xss.Validate}
+     * @return {xss.Validate}
      */
     assertArray: function() {
         if (!(this._value instanceof Array)) {
@@ -37,7 +37,7 @@ xss.Validate.prototype = {
     },
 
     /**
-     * @returns {xss.Validate}
+     * @return {xss.Validate}
      */
     assertJSON: function() {
         if (this._valid) { // Don't parse if already invalid

@@ -37,7 +37,7 @@ xss.animation.ScrollingCave.prototype = {
     /**
      * @param {number} ms
      * @param {boolean} gameStarted
-     * @returns {xss.ShapeCollection|null}
+     * @return {xss.ShapeCollection|null}
      */
     update: function(ms, gameStarted) {
         this._scroll = Math.round(ms / (1000 - (this._SPEED * 2000)));
@@ -96,7 +96,7 @@ xss.animation.ScrollingCave.prototype = {
 
     /**
      * @param {Array.<number>} range
-     * @returns {number}
+     * @return {number}
      * @private
      */
     _random: function(range) {

@@ -68,7 +68,7 @@ xss.Game.prototype = {
      * @param {xss.Client} client
      * @param {Array.<Array>} clientParts
      * @param {number} direction
-     * @returns {number}
+     * @return {number}
      */
     updateSnake: function(client, clientParts, direction) {
         var crash, sync, serverParts, common, mismatches, snake = client.snake;
@@ -257,7 +257,7 @@ xss.Game.prototype = {
 
     /**
      * @param {Array.<Array>} parts
-     * @returns {boolean}
+     * @return {boolean}
      * @private
      */
     _containsGaps: function(parts) {
@@ -280,7 +280,7 @@ xss.Game.prototype = {
     /**
      * @param {Array.<Array>} clientParts
      * @param {Array.<Array>} serverParts
-     * @returns {xss.Coordinate} common
+     * @return {xss.Coordinate} common
      * @private
      */
     _findCommon: function(clientParts, serverParts) {

@@ -34,7 +34,7 @@ xss.ShapeCache.prototype = {
      * Belance processing costs with paint saving costs.
      * 
      * @param {xss.PixelCollection} shapePixels
-     * @returns {Array.<Array.<number>>}
+     * @return {Array.<Array.<number>>}
      * @private
      */
     _mergePixels: function(shapePixels) {
@@ -45,7 +45,7 @@ xss.ShapeCache.prototype = {
     /**
      * Group pixels to horizontal lines.
      * @param {xss.PixelCollection} shapePixels
-     * @returns {Array.<Array.<number>>}
+     * @return {Array.<Array.<number>>}
      * @private
      */
     _getLines: function(shapePixels) {
@@ -73,7 +73,7 @@ xss.ShapeCache.prototype = {
     /**
      * Group pixels to rectangles.
      * @param {Array.<Array.<number>>} lines
-     * @returns {Array.<Array.<number>>}
+     * @return {Array.<Array.<number>>}
      * @private
      */
     _getRectangles: function(lines) {

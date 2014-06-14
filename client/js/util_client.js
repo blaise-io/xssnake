@@ -132,7 +132,7 @@ xss.util.extend(xss.util, {
      * @param {number} num
      * @param {string=} single
      * @param {string=} plural
-     * @returns {string}
+     * @return {string}
      */
     pluralize: function(num, single, plural) {
         return (num === 1) ? (single || '') : (plural || 's');
@@ -141,7 +141,7 @@ xss.util.extend(xss.util, {
     /**
      * @param {string} str
      * @param {...(string|number)} varArgs
-     * @returns {string}
+     * @return {string}
      */
     format: function(str, varArgs) {
         var args = arguments;

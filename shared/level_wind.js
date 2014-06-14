@@ -15,7 +15,7 @@ xss.LevelWind.prototype = {
 
     /**
      * @param delta
-     * @returns {xss.Shift}
+     * @return {xss.Shift}
      */
     getShift: function(delta) {
         return [
@@ -27,7 +27,7 @@ xss.LevelWind.prototype = {
     /**
      * @param {number} delta
      * @param {number} direction
-     * @returns {number}
+     * @return {number}
      */
     updateDirection: function(delta, direction) {
         if (this.wind[direction]) {

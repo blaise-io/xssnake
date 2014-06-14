@@ -7,11 +7,8 @@
  * @constructor
  */
 xss.PixelCollection = function(pixels) {
-    /**
-     * @type {Array.<Array.<number>>}
-     */
+    /** @type {Array.<Array.<number>>} */
     this.pixels = pixels || [];
-    this.meta = {};
 };
 
 

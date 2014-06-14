@@ -42,7 +42,7 @@ xss.LevelRegistry.prototype = {
 
     /**
      * @param index
-     * @returns {xss.LevelData}
+     * @return {xss.LevelData}
      */
     getLevelData: function(index) {
         return this.levelDatas[index];
