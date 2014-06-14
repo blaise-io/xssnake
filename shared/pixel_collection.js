@@ -40,7 +40,7 @@ xss.PixelCollection.prototype = {
     },
 
     /**
-     * @param {Array.<Array.<number>>} pairs
+     * @param {Array.<xss.Coordinate>} pairs
      * @return {xss.PixelCollection}
      */
     addPairs: function(pairs) {

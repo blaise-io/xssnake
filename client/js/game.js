@@ -255,10 +255,6 @@ xss.Game.prototype = {
         snake = new xss.ClientSnake(i, i === index, name, location, direction);
         snake.showName();
 
-        if (this.level.levelData.wind) {
-            snake.wind = new xss.Wind(this.level.levelData.wind);
-        }
-
         if (i === index) {
             snake.showDirection();
         }
@@ -282,11 +278,14 @@ xss.Game.prototype = {
      * @private
      */
     _clientGameLoop: function(delta) {
-        var movingWalls = this.level.updateMovingWalls(delta, this.model.started);
+        var shift, movingWalls;
+
+        movingWalls = this.level.updateMovingWalls(delta, this.model.started);
         this._updateMovingWalls(movingWalls);
 
         if (this.model.started) {
-            this._moveSnakes(delta);
+            shift = this.level.levelWind.getShift(delta);
+            this._moveSnakes(delta, shift);
         }
     },
 
@@ -325,16 +324,17 @@ xss.Game.prototype = {
     /**
      * @todo Move to Snake class.
      * @param {number} delta
+     * @param {xss.Shift} shift
      * @private
      */
-    _moveSnakes: function(delta) {
+    _moveSnakes: function(delta, shift) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var snake = this.snakes[i];
             if (snake.elapsed >= snake.speed && !snake.crashed) {
                 snake.elapsed -= snake.speed;
                 this._moveSnake(snake);
             }
-            snake.applyWind(delta);
+            snake.shiftParts(shift);
             snake.elapsed += delta;
         }
     },
@@ -358,7 +358,7 @@ xss.Game.prototype = {
 
     /**
      * @param {xss.ClientSnake} snake
-     * @param {Array.<number>} position
+     * @param {xss.Coordinate} position
      * @return {boolean}
      * @private
      */
@@ -378,7 +378,7 @@ xss.Game.prototype = {
 
         // Own tail.
         if (snake.parts.length >= 5 && snake.hasPartPredict(position)) {
-            if (snake.partIndex(position) !== snake.parts.length - 1) {
+            if (snake.getPartIndex(position) !== snake.parts.length - 1) {
                 return true;
             }
         }

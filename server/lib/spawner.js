@@ -21,7 +21,7 @@ xss.Spawner.prototype = {
 
     /**
      * @param {number} type
-     * @param {Array.<number>=} location
+     * @param {xss.Coordinate=} location
      * @param {boolean=} buffer
      * @return {Object}
      */
@@ -68,7 +68,7 @@ xss.Spawner.prototype = {
 
     /**
      * @param {xss.Client} client
-     * @param {Array.<number>} location
+     * @param {xss.Coordinate} location
      * @return {Array}
      */
     handleHits: function(client, location) {

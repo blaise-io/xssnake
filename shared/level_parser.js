@@ -3,7 +3,7 @@
 /**
  * @typedef {{
  *   animation: (Function|undefined),
- *   wind: (Array.<number>),
+ *   wind: (xss.Coordinate),
  *   width: number,
  *   height: number,
  *   spawns: Array,
@@ -107,7 +107,7 @@ xss.LevelParser.prototype = {
 
     /**
      * @param {number} seq
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      * @private
      */
     _seqToXY: function(seq) {

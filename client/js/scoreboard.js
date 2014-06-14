@@ -91,7 +91,7 @@ xss.ScoreBoard.prototype = {
 
     /**
      * @param {number} index
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      * @private
      */
     _podiumIndexToXY: function(index) {

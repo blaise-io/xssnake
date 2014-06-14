@@ -7,10 +7,11 @@
  * @constructor
  */
 xss.Level = function(levelData, animProgress) {
-    this.levelData = levelData;
-    this.levelAnimation = new xss.LevelAnimation(levelData.animation, animProgress);
     /** @type {Array.<xss.ShapeCollection>} */
     this.animations = [];
+    this.levelData = levelData;
+    this.levelAnimation = new xss.LevelAnimation(levelData.animation, animProgress);
+    this.levelWind = new xss.LevelWind(levelData.wind);
 };
 
 xss.Level.prototype = {
@@ -83,7 +84,7 @@ xss.Level.prototype = {
 
     /**
      * @param {number} playerID
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      */
     getSpawn: function(playerID) {
         return this.levelData.spawns[playerID];
@@ -99,7 +100,7 @@ xss.Level.prototype = {
 
     /**
      * @param {Array.<Array>} nonEmptyLocations
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      */
     getEmptyLocation: function(nonEmptyLocations) {
         while (true) {
@@ -115,7 +116,7 @@ xss.Level.prototype = {
 
     /**
      * @param {Array.<Array>} nonEmptyLocations
-     * @param {Array.<number>} location
+     * @param {xss.Coordinate} location
      * @return {boolean}
      */
     isEmptyLocation: function(nonEmptyLocations, location) {

@@ -109,7 +109,7 @@ xss.Game.prototype = {
             serverParts.slice(0, common[1] + 1),
             clientParts.slice(common[0] + 1)
         );
-        snake.trim();
+        snake.trimParts();
 
         // Handle new location
         crash = this._isCrash(client, snake.parts);
@@ -119,7 +119,7 @@ xss.Game.prototype = {
             this._crashSnake(client, snake.parts);
             this.room.rounds.delegateCrash();
         } else {
-            this.spawner.handleHits(client, snake.head());
+            this.spawner.handleHits(client, snake.getHead());
             this._broadcastSnakeRoom(client);
         }
 
@@ -201,7 +201,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @return {Array.<Array.<number>>}
+     * @return {Array.<xss.Coordinate>}
      */
     getNonEmptyLocations: function() {
         var locations = this.spawner.locations.slice();
@@ -215,7 +215,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      */
     getEmptyLocation: function() {
         var locations = this.getNonEmptyLocations();
@@ -280,7 +280,7 @@ xss.Game.prototype = {
     /**
      * @param {Array.<Array>} clientParts
      * @param {Array.<Array>} serverParts
-     * @returns {Array.<number>} common
+     * @returns {xss.Coordinate} common
      * @private
      */
     _findCommon: function(clientParts, serverParts) {
@@ -443,7 +443,7 @@ xss.Game.prototype = {
             if (snake.elapsed >= snake.speed) {
                 snake.elapsed -= snake.speed;
                 this._applyNewPosition(client);
-                snake.trim();
+                snake.trimParts();
             }
             snake.elapsed += delta;
         }
@@ -451,12 +451,12 @@ xss.Game.prototype = {
 
     /**
      * @param {xss.Snake} snake
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      * @private
      */
     _getPredictPosition: function(snake) {
         var head, shift;
-        head = snake.head();
+        head = snake.getHead();
         shift = [[-1, 0], [0, -1], [1, 0], [0, 1]][snake.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
     },

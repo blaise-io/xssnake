@@ -94,8 +94,8 @@ xss.util = {
     },
 
     /**
-     * @param {Array.<number>} a
-     * @param {Array.<number>} b
+     * @param {xss.Coordinate} a
+     * @param {xss.Coordinate} b
      * @return {number}
      */
     delta: function(a, b) {
@@ -103,8 +103,8 @@ xss.util = {
     },
 
     /**
-     * @param {Array.<number>} a
-     * @param {Array.<number>} b
+     * @param {xss.Coordinate} a
+     * @param {xss.Coordinate} b
      * @return {boolean}
      */
     eq: function(a, b) {

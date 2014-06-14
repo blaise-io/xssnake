@@ -4,7 +4,7 @@
  * @param {number} index
  * @param {boolean} local
  * @param {string} name
- * @param {Array.<number>} location
+ * @param {xss.Coordinate} location
  * @param {number} direction
  * @extends {xss.Snake}
  * @constructor
@@ -82,7 +82,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         };
 
         for (var i = 0; i <= duration * amount; i += duration) {
-            var shape, name, h = this.head();
+            var shape, name, h = this.getHead();
             shape = xss.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
             name = xss.NS_SNAKE + xss.util.randomStr();
             xss.shapes[name] = shape.lifetime(i, duration + i);
@@ -92,7 +92,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
     showDirection: function() {
         var shift, head, shape;
         shift = xss.GAME_SHIFT_MAP[this.direction];
-        head = this.head();
+        head = this.getHead();
 
         shape = new xss.Shape();
         shape.pixels.add(head[0] + shift[0], head[1] + shift[1]);
@@ -138,7 +138,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
     },
 
     explodeParticles: function() {
-        var x, y, head = this.head();
+        var x, y, head = this.getHead();
         x = head[0] * xss.GAME_TILE + xss.GAME_LEFT;
         y = head[1] * xss.GAME_TILE + xss.GAME_TOP;
         if (!this._exploded) {
@@ -170,10 +170,10 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
     },
 
     /**
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      */
     getNextPosition: function() {
-        var shift, head = this.head();
+        var shift, head = this.getHead();
         this._applyCachedDirection();
         shift = xss.GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];

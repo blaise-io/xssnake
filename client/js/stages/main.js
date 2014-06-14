@@ -127,7 +127,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
 
     /**
      * @param {xss.ClientSnake} snake
-     * @param {Array.<number>} nextpos
+     * @param {xss.Coordinate} nextpos
      * @returns {boolean}
      * @private
      */

@@ -1,14 +1,14 @@
 'use strict';
 
 /**
- * @typedef {Array.<Array.<number>>}
+ * @typedef {Array.<xss.Coordinate>}
  * @example [[0,0], [1,0], [2,0]]
  */
 xss.SnakeParts;
 
 /**
  * Snake
- * @param {Array.<number>} location
+ * @param {xss.Coordinate} location
  * @param {number} direction
  * @param {number} size
  * @param {number} speed
@@ -28,48 +28,48 @@ xss.Snake = function(location, direction, size, speed) {
 xss.Snake.prototype = {
 
     /**
-     * @param {Array.<number>} position
+     * @param {xss.Coordinate} position
      */
     move: function(position) {
         this.parts.push(position);
-        this.trim();
+        this.trimParts();
     },
 
     /**
-     * @return {Array.<number>}
+     * @return {xss.Coordinate}
      */
-    head: function() {
+    getHead: function() {
         return this.parts[this.parts.length - 1];
     },
 
     /**
-     * @param {Array.<number>} part
+     * @param {xss.Coordinate} part
      * @return {boolean}
      */
     hasPartPredict: function(part) {
         var treshold = this.crashed ? -1 : 0;
-        return (this.partIndex(part) > treshold);
+        return (this.getPartIndex(part) > treshold);
     },
 
-    trim: function() {
+    trimParts: function() {
         while (this.parts.length > this.size) {
             this.parts.shift();
         }
     },
 
     /**
-     * @param {Array.<number>} part
+     * @param {xss.Coordinate} part
      * @return {boolean}
      */
     hasPart: function(part) {
-        return (-1 !== this.partIndex(part));
+        return (-1 !== this.getPartIndex(part));
     },
 
     /**
-     * @param {Array.<number>} part
+     * @param {xss.Coordinate} part
      * @return {number}
      */
-    partIndex: function(part) {
+    getPartIndex: function(part) {
         var parts = this.parts;
         for (var i = 0, m = parts.length; i < m; i++) {
             if (parts[i][0] === part[0] && parts[i][1] === part[1]) {
@@ -80,17 +80,14 @@ xss.Snake.prototype = {
     },
 
     /**
-     * @todo Move wind to game, only pass shift delta.
-     * @param {number} delta
+     * @param {xss.Shift} shift
      */
-    applyWind: function(delta) {
-        if (this.wind) {
-            var wind = this.wind.update(delta);
-            if (wind[0] || wind[1]) {
-                for (var i = 0, m = this.parts.length; i < m; i++) {
-                    this.parts[i][0] += wind[0];
-                    this.parts[i][1] += wind[1];
-                }
+    shiftParts: function(shift) {
+        var x = shift[0] || 0, y = shift[1] || 0;
+        if (x || y) {
+            for (var i = 0, m = this.parts.length; i < m; i++) {
+                this.parts[i][0] += x;
+                this.parts[i][1] += y;
             }
         }
     },

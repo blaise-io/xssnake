@@ -109,7 +109,7 @@ xss.InputStage.prototype = {
                 ev.preventDefault();
                 break;
             case xss.KEY_ENTER:
-                value = this.value.trim();
+                value = this.value.trimParts();
                 labelHeight = xss.font.height(this.label);
                 top = labelHeight + xss.MENU_TOP + xss.MENU_TITLE_HEIGHT - 3;
                 this.inputSubmit(this._getInputError(value), value, top);

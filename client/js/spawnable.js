@@ -3,7 +3,7 @@
 /**
  * @param {number} type
  * @param {number} index
- * @param {Array.<number>} location
+ * @param {xss.Coordinate} location
  * @constructor
  */
 xss.Spawnable = function(type, index, location) {
