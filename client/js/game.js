@@ -9,10 +9,9 @@
  * @constructor
  */
 xss.Game = function(index, levelIndex, names, created) {
-
     xss.canvas.garbageCollect();
 
-    // Todo: move to stage
+    // Todo: Move to stage, add as netcode listener.
     if (xss.flow.stage) {
         xss.flow.stage.destruct();
     }
@@ -364,14 +363,16 @@ xss.Game.prototype = {
      * @private
      */
     _isCrash: function(snake, position) {
+        var predictSnakeParts = snake.parts.slice();
+        predictSnakeParts[predictSnakeParts.length - 1] = position;
 
         // Walls.
-        if (this.level.isWall(position[0], position[1])) {
+        if (this._isCrashIntoWall(predictSnakeParts)) {
             return true;
         }
 
-        // Animating object.
-        if (this._isCrashIntoAnimated(snake, position)) {
+        // Animating walls.
+        if (this._isCrashIntoAnimated(predictSnakeParts)) {
             return true;
         }
 
@@ -394,18 +395,27 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.ClientSnake} snake
-     * @param {Array.<number>} position
+     * @param {xss.SnakeParts} parts
      * @returns {boolean}
      * @private
      */
-    _isCrashIntoAnimated: function(snake, position) {
-        var parts = snake.parts.slice();
-        // Append predicted position, remove where tail will no longer be.
-        parts[parts.length - 1] = position;
+    _isCrashIntoWall: function(parts) {
         for (var i = 0, m = parts.length; i < m; i++) {
-            var part = parts[i];
-            if (this.level.isMovingWall(part[0], part[1])) {
+            if (this.level.isWall(parts[i][0], parts[i][1])) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * @param {xss.SnakeParts} parts
+     * @returns {boolean}
+     * @private
+     */
+    _isCrashIntoAnimated: function(parts) {
+        for (var i = 0, m = parts.length; i < m; i++) {
+            if (this.level.isMovingWall(parts[i][0], parts[i][1])) {
                 return true;
             }
         }

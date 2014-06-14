@@ -1,6 +1,12 @@
 'use strict';
 
 /**
+ * @typedef {Array.<Array.<number>>}
+ * @example [[0,0], [1,0], [2,0]]
+ */
+xss.SnakeParts;
+
+/**
  * Snake
  * @param {Array.<number>} location
  * @param {number} direction
@@ -9,6 +15,7 @@
  * @constructor
  */
 xss.Snake = function(location, direction, size, speed) {
+    /** @type xss.SnakeParts */
     this.parts = [location];
     this.direction = direction;
     this.size = size;
@@ -96,7 +103,7 @@ xss.Snake.prototype = {
     },
 
     /**
-     * head-tail switch
+     * Head-tail switch.
      */
     reverse: function() {
         var dx, dy;
@@ -104,10 +111,10 @@ xss.Snake.prototype = {
         dx = this.parts[0][0] - this.parts[1][0];
         dy = this.parts[0][1] - this.parts[1][1];
 
-        if (dx !== 0) {
-            this.direction = (dx === -1) ? 0 : 2;
-        } else {
+        if (dx === 0) {
             this.direction = (dy === -1) ? 1 : 3;
+        } else {
+            this.direction = (dx === -1) ? 0 : 2;
         }
 
         this.parts.reverse();
