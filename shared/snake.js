@@ -80,14 +80,7 @@ xss.Snake.prototype = {
     },
 
     /**
-     * @param {number} direction
-     * @return {Array.<number>}
-     */
-    directionToShift: function(direction) {
-        return [[-1, 0], [0, -1], [1, 0], [0, 1]][direction];
-    },
-
-    /**
+     * @todo Move wind to game, only pass shift delta.
      * @param {number} delta
      */
     applyWind: function(delta) {

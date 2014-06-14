@@ -91,7 +91,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
 
     showDirection: function() {
         var shift, head, shape;
-        shift = this.directionToShift(this.direction);
+        shift = xss.GAME_SHIFT_MAP[this.direction];
         head = this.head();
 
         shape = new xss.Shape();
@@ -175,7 +175,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
     getNextPosition: function() {
         var shift, head = this.head();
         this._applyCachedDirection();
-        shift = this.directionToShift(this.direction);
+        shift = xss.GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
     },
 
@@ -187,20 +187,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         if (xss.keysBlocked) {
             return;
         }
-        switch (ev.keyCode) {
-            case xss.KEY_LEFT:
-                this._changeDirection(xss.DIRECTION_LEFT);
-                break;
-            case xss.KEY_UP:
-                this._changeDirection(xss.DIRECTION_UP);
-                break;
-            case xss.KEY_RIGHT:
-                this._changeDirection(xss.DIRECTION_RIGHT);
-                break;
-            case xss.KEY_DOWN:
-                this._changeDirection(xss.DIRECTION_DOWN);
-                break;
-        }
+        this._changeDirection(xss.KEY_TO_DIRECTION[ev.keyCode]);
     },
 
     /**

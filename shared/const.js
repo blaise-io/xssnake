@@ -31,9 +31,10 @@ xss.EVENT_XSS_RES = 'XS!';
 
 xss.SERVER_TICK = 'T';
 
+xss.GAME_SHIFT_MAP = [[-1, 0], [0, -1], [1, 0], [0, 1]];
+
 xss.ROOM_KEY_LENGTH = 5;
 xss.ROOM_CAPACITY = 6;
-
 xss.ROUNDS_MAX = 3;
 xss.ROOM_WIN_BY_MIN = 2;
 

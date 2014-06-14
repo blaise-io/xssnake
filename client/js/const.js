@@ -16,20 +16,26 @@ xss.KEY_DOWN = 40;
 xss.KEY_MUTE = 77; // M
 xss.KEY_START = 83; // S
 
-xss.EVENT_KEYPRESS = 'keypress';
-xss.EVENT_KEYDOWN = 'keydown';
-xss.EVENT_KEYUP = 'keyup';
-
 xss.DIRECTION_LEFT = 0;
 xss.DIRECTION_UP = 1;
 xss.DIRECTION_RIGHT = 2;
 xss.DIRECTION_DOWN = 3;
+
+xss.KEY_TO_DIRECTION = [];
+xss.KEY_TO_DIRECTION[xss.KEY_LEFT] = xss.DIRECTION_LEFT;
+xss.KEY_TO_DIRECTION[xss.KEY_UP] = xss.DIRECTION_UP;
+xss.KEY_TO_DIRECTION[xss.KEY_RIGHT] = xss.DIRECTION_RIGHT;
+xss.KEY_TO_DIRECTION[xss.KEY_DOWN] = xss.DIRECTION_DOWN;
 
 xss.MENU_LEFT = 42;
 xss.MENU_TOP = 48;
 xss.MENU_WIDTH = 167;
 xss.MENU_WRAP = 176;
 xss.MENU_TITLE_HEIGHT = 20;
+
+xss.EVENT_KEYPRESS = 'keypress';
+xss.EVENT_KEYDOWN = 'keydown';
+xss.EVENT_KEYUP = 'keyup';
 
 xss.HASH_ROOM = 'room';
 
