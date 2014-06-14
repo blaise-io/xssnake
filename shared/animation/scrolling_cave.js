@@ -40,6 +40,14 @@ xss.animation.ScrollingCave.prototype = {
      * @return {xss.ShapeCollection|null}
      */
     update: function(ms, gameStarted) {
+
+        if (!gameStarted) {
+            return null;
+        } else if (!this.gameStartedAtMs) {
+            this.gameStartedAtMs = ms;
+        }
+
+        ms -= this.gameStartedAtMs;
         this._scroll = Math.round(ms / (1000 - (this._SPEED * 2000)));
 
         if (this._scrollPref === this._scroll) {

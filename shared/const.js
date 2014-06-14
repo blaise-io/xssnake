@@ -1,8 +1,6 @@
 xss.WIDTH = 256;
 xss.HEIGHT = 161;
 
-xss.GAME_LEFT = 2;
-xss.GAME_TOP = 2;
 xss.GAME_TILE = 4;
 
 xss.EVENT_COMBI = 'C';

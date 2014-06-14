@@ -26,7 +26,7 @@ xss.Shape = function(varArgs) {
 
     /**
      * Transform is applied at paint time, does not affect PixelCollection.
-     * @type {{translate: Array.<number>, scale: number}}
+     * @type {{translate: xss.Shift, scale: number}}
      */
     this.transform = {
         translate: [0, 0], // x,y

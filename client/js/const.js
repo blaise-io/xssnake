@@ -13,8 +13,8 @@ xss.KEY_LEFT = 37;
 xss.KEY_UP = 38;
 xss.KEY_RIGHT = 39;
 xss.KEY_DOWN = 40;
-xss.KEY_MUTE = 77; // M
-xss.KEY_START = 83; // S
+xss.KEY_MUTE = 77; // M key
+xss.KEY_START = 83; // S key
 
 xss.DIRECTION_LEFT = 0;
 xss.DIRECTION_UP = 1;
@@ -26,6 +26,9 @@ xss.KEY_TO_DIRECTION[xss.KEY_LEFT] = xss.DIRECTION_LEFT;
 xss.KEY_TO_DIRECTION[xss.KEY_UP] = xss.DIRECTION_UP;
 xss.KEY_TO_DIRECTION[xss.KEY_RIGHT] = xss.DIRECTION_RIGHT;
 xss.KEY_TO_DIRECTION[xss.KEY_DOWN] = xss.DIRECTION_DOWN;
+
+xss.GAME_LEFT = 2;
+xss.GAME_TOP = 2;
 
 xss.MENU_LEFT = 42;
 xss.MENU_TOP = 48;

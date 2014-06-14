@@ -379,7 +379,7 @@ xss.Game.prototype = {
             }
 
             // Moving wall
-            if (level.isMovingWall(part[0], part[1])) {
+            if (level.isMovingWall(part)) {
                 return new xss.Crash(xss.CRASH_MOVING_WALL, client);
             }
 

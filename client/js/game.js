@@ -415,7 +415,7 @@ xss.Game.prototype = {
      */
     _isCrashIntoAnimated: function(parts) {
         for (var i = 0, m = parts.length; i < m; i++) {
-            if (this.level.isMovingWall(parts[i][0], parts[i][1])) {
+            if (this.level.isMovingWall(parts[i])) {
                 return true;
             }
         }

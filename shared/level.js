@@ -48,13 +48,12 @@ xss.Level.prototype = {
     },
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {xss.Coordinate} coordinate
      * @return {boolean}
      */
-    isMovingWall: function(x, y) {
+    isMovingWall: function(coordinate) {
         for (var i = 0, m = this.animations.length; i < m; i++) {
-            if (this.inShapes(this.animations[i], x, y)) {
+            if (this.inShapes(this.animations[i], coordinate)) {
                 return true;
             }
         }
@@ -63,23 +62,42 @@ xss.Level.prototype = {
 
     /**
      * @param {xss.ShapeCollection} shapeCollection
-     * @param {number} x
-     * @param {number} y
+     * @param {xss.Coordinate} coordinate
      * @return {boolean}
      */
-    inShapes: function(shapeCollection, x, y) {
+    inShapes: function(shapeCollection, coordinate) {
         for (var i = 0, m = shapeCollection.shapes.length; i < m; i++) {
-            var translate, tx, ty, object = shapeCollection.shapes[i];
+            var translate, translated, object = shapeCollection.shapes[i];
             if (object) {
                 translate = object.transform.translate;
-                tx = (translate[0] - xss.GAME_LEFT) / xss.GAME_TILE;
-                ty = (translate[1] - xss.GAME_TOP) / xss.GAME_TILE;
-                if (object.pixels.has(x - tx, y - ty)) {
+                translated = this.convertToGameSystem(coordinate, translate);
+                if (object.pixels.has(translated[0], translated[1])) {
                     return true;
                 }
             }
         }
         return false;
+    },
+
+    /**
+     * Translate coordinate to game coordinate system.
+     *
+     * @param {xss.Coordinate} coordinate
+     * @param {xss.Shift} translate
+     */
+    convertToGameSystem: function(coordinate, translate) {
+        var tx, ty;
+        if (xss.GAME_LEFT) {
+            // In Client, Game transforms left/top. Not ideal, but it is done
+            // so that we can move shapes without losing cache => performance.
+            tx = (translate[0] - xss.GAME_LEFT) / xss.GAME_TILE;
+            ty = (translate[1] - xss.GAME_TOP) / xss.GAME_TILE;
+        } else {
+            // In Server, There is never left/top translation.
+            tx = translate[0] / xss.GAME_TILE;
+            ty = translate[1] / xss.GAME_TILE;
+        }
+        return [coordinate[0] - tx, coordinate[1] - ty];
     },
 
     /**
