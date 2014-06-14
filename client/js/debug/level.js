@@ -13,18 +13,13 @@ if (xss.debug.debugLevelMatch) {
 }
 
 xss.debug.level = function() {
-    var game;
-
-    xss.socket = {emit: xss.util.noop};
-
-    game = new xss.Game(0, Number(xss.debug.debugLevelMatch[1]), ['']);
+    var game = new xss.Game(0, Number(xss.debug.debugLevelMatch[1]), ['']);
     game.start();
     game.snakes[0].size = 5;
 
     xss.event.on(xss.PUB_GAME_TICK, xss.debug.NS, function() {
         if (game.snakes[0].limbo) {
             game.snakes[0].crash();
-            xss.event.off(xss.PUB_GAME_TICK, xss.debug.NS);
         }
     });
 };

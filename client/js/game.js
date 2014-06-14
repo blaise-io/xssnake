@@ -271,7 +271,7 @@ xss.Game.prototype = {
      * @private
      */
     _handleFocus: function(focus) {
-        if (focus) {
+        if (focus && xss.socket) {
             xss.socket.emit(xss.EVENT_GAME_STATE);
         }
     },
