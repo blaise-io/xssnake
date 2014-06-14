@@ -425,19 +425,21 @@ xss.Game.prototype = {
      * @private
      */
     _serverGameLoop: function(delta) {
-        var clients = this.room.clients;
+        var shift, clients = this.room.clients;
+        shift = this.level.levelWind.getShift(delta);
         this.level.updateMovingWalls(delta, true);
         for (var i = 0, m = clients.length; i < m; i++) {
-            this._updateClient(clients[i], delta);
+            this._updateClient(clients[i], delta, shift);
         }
     },
 
     /**
      * @param {xss.Client} client
      * @param {number} delta
+     * @param {xss.Shift} shift
      * @private
      */
-    _updateClient: function(client, delta) {
+    _updateClient: function(client, delta, shift) {
         var snake = client.snake;
         if (!snake.crashed) {
             if (snake.elapsed >= snake.speed) {
@@ -445,6 +447,7 @@ xss.Game.prototype = {
                 this._applyNewPosition(client);
                 snake.trimParts();
             }
+            snake.shiftParts(shift);
             snake.elapsed += delta;
         }
     },
@@ -481,8 +484,7 @@ xss.Game.prototype = {
         // the server, and it seems like the server made a wrong prediction,
         // the snake returns back to life. The snake will be crashed When the
         // limbo time exceeds the latency.
-
-        if (snake.limbo && +new Date() - snake.limbo.time >= client.socket.model.rtt) {
+        if (snake.limbo && !this._canReturnFromLimbo(client)) {
             this._crashSnake(client);
             opponent = snake.limbo.opponent;
             if (opponent && snake.limbo.draw) {
@@ -498,6 +500,15 @@ xss.Game.prototype = {
                 this.spawner.handleHits(client, predict);
             }
         }
+    },
+
+    /**
+     * Snake is considered dead (crashed) when in limbo for too long.
+     * @param {xss.Client} client
+     * @returns {boolean}
+     */
+    _canReturnFromLimbo: function(client) {
+       return +new Date() - client.snake.limbo.time < client.socket.model.rtt;
     },
 
     /**

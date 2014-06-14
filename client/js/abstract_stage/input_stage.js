@@ -7,6 +7,7 @@
  * @constructor
  */
 xss.InputStage = function() {
+    /** @type {string} */
     this.value = xss.util.storage(this.name) || '';
     this._inputTop = xss.MENU_TOP + 17;
     this._shape = this._getShape();
@@ -109,7 +110,7 @@ xss.InputStage.prototype = {
                 ev.preventDefault();
                 break;
             case xss.KEY_ENTER:
-                value = this.value.trimParts();
+                value = this.value.trim();
                 labelHeight = xss.font.height(this.label);
                 top = labelHeight + xss.MENU_TOP + xss.MENU_TITLE_HEIGHT - 3;
                 this.inputSubmit(this._getInputError(value), value, top);

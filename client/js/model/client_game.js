@@ -6,12 +6,12 @@
  *                          for offline play.
  * @constructor
  */
-xss.model.ClientGame = function(created) {
+xss.ClientGameModel = function(created) {
     this.offsetDelta = created ? this.getOffsetDelta(created) : 0;
     this.started = false;
 };
 
-xss.model.ClientGame.prototype = {
+xss.ClientGameModel.prototype = {
 
     getOffsetDelta: function(created) {
         var serverCreatedAsLocal = xss.socket.model.toLocalTime(created);

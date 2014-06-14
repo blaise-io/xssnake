@@ -20,7 +20,7 @@ xss.Game = function(index, levelIndex, names, created) {
     xss.shapes.header = null;
     xss.shapes.border = null;
 
-    this.model = new xss.model.ClientGame(created);
+    this.model = new xss.ClientGameModel(created);
 
     /** @type {xss.Level} */
     this.level = this._setupLevel(levelIndex);
