@@ -71,26 +71,24 @@ xss.animation.ScrollingCave.prototype = {
         max.stalagmite += offset;
 
         if (max.stalactite < this._LEVEL_WIDTH) {
-            max.stalactite = this._generateStalactite(max.stalactite + 1);
+            max.stalactite = this._spawnStalactite(max.stalactite + 1);
         }
 
         if (max.stalagmite < this._LEVEL_WIDTH) {
-            max.stalagmite = this._generateStalagmite(max.stalagmite + 1);
+            max.stalagmite = this._spawnStalagmite(max.stalagmite + 1);
         }
     },
 
     _updateShape: function(shape, index, offset) {
-        var translate, cache = shape.cache;
-        translate = shape.transform.translate;
+        var translate = shape.transform.translate;
 
-        if (cache) {
-            if (Math.abs(translate[0]) - cache.bbox.width > xss.WIDTH) {
-                // No longer visible, remove shape.
-                this._shapes.set(index, null);
-            } else {
-                // Visible, move shape.
-                translate[0] += offset * xss.GAME_TILE;
-            }
+        var gameTileNormalized = Math.abs(translate[0]) / xss.GAME_TILE;
+        if (gameTileNormalized - shape.bbox().width > this._LEVEL_WIDTH) {
+            // No longer visible, despawn shape.
+            this._shapes.set(index, null);
+        } else {
+            // Visible, move shape.
+            translate[0] += offset * xss.GAME_TILE;
         }
     },
 
@@ -113,19 +111,19 @@ xss.animation.ScrollingCave.prototype = {
         return range[0] + Math.floor(this.seed * (range[1] - range[0] + 1));
     },
 
-    _generateStalactite: function(x0) {
+    _spawnStalactite: function(x0) {
         var x1 = x0 + this._random(this._BUMP_WIDTH);
-        this._generateFormation(true, x0, x1);
+        this._spawnFormation(true, x0, x1);
         return x1;
     },
 
-    _generateStalagmite: function(x0) {
+    _spawnStalagmite: function(x0) {
         var x1 = x0 + this._random(this._BUMP_WIDTH);
-        this._generateFormation(false, x0, x1);
+        this._spawnFormation(false, x0, x1);
         return x1;
     },
 
-    _generateFormation: function(isStalactite, x0, x1) {
+    _spawnFormation: function(isStalactite, x0, x1) {
         var y1, shape;
 
         y1 = this._random(this._BUMP_HEIGHT);
