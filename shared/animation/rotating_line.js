@@ -12,7 +12,6 @@ xss.animation.RotatingLine = function(x, y, len, speed) {
     this.x = x;
     this.y = y;
     this.len = len;
-    this.seed = 0;
     this.speed = speed || 0.5;
 };
 

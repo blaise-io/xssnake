@@ -12,7 +12,6 @@
  */
 xss.animation.StaticLine = function(x0, y0, x1, y1) {
     this._lineShape = xss.shapegen.lineShape(x0, y0, x1, y1);
-    this.seed = 0;
 };
 
 xss.animation.StaticLine.prototype = {

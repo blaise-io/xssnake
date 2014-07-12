@@ -15,7 +15,6 @@
 xss.animation.ShiftedLine = function(x0, y0, x1, y1, sx, sy) {
     this._lineShape = xss.shapegen.lineShape(x0, y0, x1, y1);
     this._lineShape.transform.translate = [sx, sy];
-    this.seed = 0;
 };
 
 xss.animation.ShiftedLine.prototype = {
