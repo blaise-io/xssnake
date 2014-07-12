@@ -10,6 +10,7 @@ xss.Room = function(server, key, options) {
     this.server  = server;
     this.key     = key;
     this.options = this.cleanOptions(options);
+    this.seed    = Math.random();
 
     /** type {Array.<xss.Client>} */
     this.clients = [];
@@ -51,6 +52,7 @@ xss.Room.prototype = {
         for (var i = 0, m = clients.length; i < m; i++) {
             clients[i].emit(xss.EVENT_ROOM_SERIALIZE, [
                 i,
+                this.seed,
                 this.key,
                 this.names(),
                 capacity,

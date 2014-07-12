@@ -5,8 +5,9 @@ xss.animation = {};
 
 /**
  * @interface
+ * @param {number=} seed
  */
-xss.animation.Interface = function() {};
+xss.animation.Interface = function(seed) {};
 xss.animation.Interface.prototype = {
 
     /**

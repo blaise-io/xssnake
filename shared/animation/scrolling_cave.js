@@ -1,11 +1,12 @@
 'use strict';
 
 /**
+ * @param {number} seed
  * @implements {xss.animation.Interface}
  * @constructor
  */
-xss.animation.ScrollingCave = function() {
-    this.seed = Math.random();
+xss.animation.ScrollingCave = function(seed) {
+    this.seed = seed;
     this.seedIteration = 0;
 
     this._shapes = new xss.ShapeCollection();
@@ -30,7 +31,7 @@ xss.animation.ScrollingCave.prototype = {
     _BUMP_HEIGHT  : [20, 40],
     _BUMP_DECREASE: [0, 2],
 
-    // To do: get from {xss.LevelData} instance
+    // @todo: get from {xss.LevelData} instance
     _LEVEL_WIDTH  : 63,
     _LEVEL_HEIGHT : 33,
 

@@ -3,12 +3,13 @@
 /***
  * Game
  * @param {number} index
+ * @param {number} seed
  * @param {number} levelIndex
  * @param {Array.<string>} names
  * @param {number=} created
  * @constructor
  */
-xss.Game = function(index, levelIndex, names, created) {
+xss.Game = function(index, seed, levelIndex, names, created) {
     xss.canvas.garbageCollect();
 
     // Todo: Move to stage, add as netcode listener.
@@ -23,7 +24,7 @@ xss.Game = function(index, levelIndex, names, created) {
     this.model = new xss.ClientGameModel(created);
 
     /** @type {xss.Level} */
-    this.level = this._setupLevel(levelIndex);
+    this.level = this._setupLevel(levelIndex, seed);
 
     /** @type {Array.<xss.ClientSnake>} */
     this.snakes = this._spawnSnakes(names, index);
@@ -203,10 +204,11 @@ xss.Game.prototype = {
 
     /**
      * @param {number} index
+     * @param {number} seed
      * @return {xss.Level}
      * @private
      */
-    _setupLevel: function(index) {
+    _setupLevel: function(index, seed) {
         var levelData, border;
 
         levelData = xss.levels.getLevelData(index);
@@ -221,7 +223,7 @@ xss.Game.prototype = {
             }
         }
 
-        return new xss.Level(levelData, this.model.offsetDelta);
+        return new xss.Level(levelData, seed, this.model.offsetDelta);
     },
 
     /**

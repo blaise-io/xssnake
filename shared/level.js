@@ -3,14 +3,15 @@
 /**
  * Collisions and levels
  * @param {xss.LevelData} levelData
+ * @param {number} seed
  * @param {number} animProgress
  * @constructor
  */
-xss.Level = function(levelData, animProgress) {
+xss.Level = function(levelData, seed, animProgress) {
     /** @type {Array.<xss.ShapeCollection>} */
     this.animations = [];
     this.levelData = levelData;
-    this.levelAnimation = new xss.LevelAnimation(levelData.animation, animProgress);
+    this.levelAnimation = new xss.LevelAnimation(seed, levelData.animation, animProgress);
     this.levelWind = new xss.LevelWind(levelData.wind);
 };
 
@@ -87,7 +88,7 @@ xss.Level.prototype = {
      */
     convertToGameSystem: function(coordinate, translate) {
         var tx, ty;
-        if (xss.GAME_LEFT) {
+        if (xss.IS_CLIENT) {
             // In Client, Game transforms left/top. Not ideal, but it is done
             // so that we can move shapes without losing cache => performance.
             tx = (translate[0] - xss.GAME_LEFT) / xss.GAME_TILE;

@@ -1,11 +1,12 @@
 'use strict';
 
 /**
+ * @param {number} seed
  * @param {Function=} animation
  * @param {number=} progress Animation progress (in ms)
  * @constructor
  */
-xss.LevelAnimation = function(animation, progress) {
+xss.LevelAnimation = function(seed, animation, progress) {
     /**
      * List of animations.
      * Each animation has one or more shapes that update every N ms.
@@ -13,7 +14,7 @@ xss.LevelAnimation = function(animation, progress) {
      * @type {Array.<xss.animation.Interface>}
      * @private
      */
-    this._animations = animation ? animation() : [];
+    this._animations = animation ? animation(seed) : [];
 
     /**
      * @type {number}

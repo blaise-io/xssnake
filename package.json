@@ -28,8 +28,7 @@
     "scripts": {
         "prestart": "grunt concat:server",
         "start": "node dist/server.js",
-        "prerestart": "grunt concat:server",
-        "restart": "supervisor --no-restart-on-error --watch server,shared dist/server.js",
+        "restart": "supervisor --no-restart-on-error --watch server,shared --exec npm start",
         "pretest": "grunt testsuite",
         "test" : "mocha -R spec dist/testsuite.js"
     }

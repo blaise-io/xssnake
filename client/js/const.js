@@ -1,4 +1,5 @@
 // Client-only extension of server/shared/const.js
+xss.IS_CLIENT = true;
 
 xss.MIN_FRAME_DELTA = 5;
 xss.MAX_FRAME_DELTA = 250;

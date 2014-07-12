@@ -13,7 +13,7 @@ if (xss.debug.debugLevelMatch) {
 }
 
 xss.debug.level = function() {
-    var game = new xss.Game(0, Number(xss.debug.debugLevelMatch[1]), ['']);
+    var game = new xss.Game(0, Math.random(), Number(xss.debug.debugLevelMatch[1]), ['']);
     game.start();
     game.snakes[0].size = 5;
 

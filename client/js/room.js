@@ -46,6 +46,7 @@ xss.Room.prototype = {
 
     /**
      * @param {number} index
+     * @param {number} seed
      * @param {string} key
      * @param {Array.<string>} names
      * @param {number} capacity
@@ -54,15 +55,16 @@ xss.Room.prototype = {
      * @param {number} started
      * @param {Array.<number>} score
      */
-    update: function(index, key, names, capacity, created, level, started, score) {
+    update: function(index, seed, key, names, capacity, created, level, started, score) {
         xss.util.hash(xss.HASH_ROOM, key);
         names = this._sanitizeNames(names);
 
         this.index = index;
+        this.seed = seed;
         this.capacity = capacity;
         this.players = names.length;
 
-        this.game  = this._updateGame(index, level, names, created);
+        this.game  = this._updateGame(index, seed, level, names, created);
         this.score = this._updateScore(names, score);
         this.chat  = this._updateChat(index, names);
 
@@ -71,11 +73,11 @@ xss.Room.prototype = {
         }
     },
 
-    _updateGame: function(index, level, names, created) {
+    _updateGame: function(index, seed, level, names, created) {
         if (this.game) {
             this.game.destruct();
         }
-        return new xss.Game(index, level, names, created);
+        return new xss.Game(index, seed, level, names, created);
     },
 
     _updateScore: function(names, score) {
@@ -171,7 +173,7 @@ xss.Room.prototype = {
             ok    : function() { xss.socket.emit(xss.EVENT_ROOM_START); },
             cancel: this._restoreDialog.bind(this)
         };
-        
+
         if (this.index === 0 && this.players > 1) {
             this.dialog.destruct();
             this.dialog2 = new xss.Dialog(

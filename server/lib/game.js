@@ -44,7 +44,11 @@ xss.Game.prototype = {
 
     start: function() {
         var levelData = xss.levels.getLevelData(this.levelIndex);
-        this.level = new xss.Level(levelData, new Date() - this.model.created);
+        this.level = new xss.Level(
+            levelData,
+            this.room.seed,
+            new Date() - this.model.created
+        );
 
         this.spawnSnakes();
 
