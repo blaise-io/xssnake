@@ -139,15 +139,22 @@ xss.StageFlow.prototype = {
             ev.preventDefault();
         }
 
-        // Global mute key.
         // Ignore key when user is in input field. Start screen might
         // contain a dialog, so do not use xss.keysBlocked here.
-        if (!xss.shapes.caret && ev.keyCode === xss.KEY_MUTE) {
-            mute = !xss.util.storage(xss.STORAGE_MUTE);
-            instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
-            xss.util.storage(xss.STORAGE_MUTE, mute);
-            xss.util.instruct(instruct, 1e3);
-            xss.play.menu_alt();
+        if (!xss.shapes.caret) {
+            // Mute/Unmute
+            if (ev.keyCode === xss.KEY_MUTE) {
+                mute = !xss.util.storage(xss.STORAGE_MUTE);
+                instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
+                xss.util.storage(xss.STORAGE_MUTE, mute);
+                xss.util.instruct(instruct, 1e3);
+                xss.play.menu_alt();
+            }
+
+            // Enter/Exit Fullscreen
+            if (ev.keyCode === xss.KEY_FULLSCREEN) {
+                xss.util.toggleFullScreen();
+            }
         }
     },
 

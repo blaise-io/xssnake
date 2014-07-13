@@ -14,6 +14,7 @@ xss.KEY_LEFT = 37;
 xss.KEY_UP = 38;
 xss.KEY_RIGHT = 39;
 xss.KEY_DOWN = 40;
+xss.KEY_FULLSCREEN = 70; // F key
 xss.KEY_MUTE = 77; // M key
 xss.KEY_START = 83; // S key
 

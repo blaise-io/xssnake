@@ -72,8 +72,9 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
         };
 
         footer = '' +
-            'Press M to mute/unmute sounds —\n' +
-            'Use arrow keys, Esc and ' + xss.UC_ENTER_KEY + ' to navigate.';
+            'M to mute/unmute sounds,\n' +
+            'F to enter/exit fullscreen,\n' +
+            'Arrow keys, Esc and ' + xss.UC_ENTER_KEY + ' to navigate.';
 
         menu = new xss.SelectMenu(header, footer);
         menu.addOption(null, xss.NameStage, 'MULTIPLAYER');

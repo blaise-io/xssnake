@@ -148,6 +148,43 @@ xss.util.extend(xss.util, {
         return args[0].replace(/\{(\d+)\}/g, function(match, number) {
             return typeof args[number] !== 'undefined' ? args[number] : match;
         });
+    },
+
+    /**
+     * Taken from developer.mozilla.org fullscreen docs.
+     * Safari blocks keyboard usage in fullscreen.
+     */
+    toggleFullScreen: function() {
+        if ((/safari/i).test(navigator.userAgent)) {
+            xss.util.instruct('DANG IT! fullscreen is not supported in Safari', 3000);
+            return false;
+        }
+        if (!document.fullscreenElement &&
+            !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement &&
+            !document.msFullscreenElement) {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                document.documentElement.msRequestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen(
+                    Element.ALLOW_KEYBOARD_INPUT
+                );
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
     }
 
 });
