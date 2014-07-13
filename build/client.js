@@ -33,8 +33,15 @@ exports.gcc_rest = {
     dest: 'dist/client.min.js'
 };
 
+exports.cssUrlEmbed = {
+    encodeDirectly: {
+        src : 'client/xssnake.css',
+        dest: 'dist/client.css'
+    }
+};
+
 exports.cssmin = {
-    src: 'client/xssnake.css',
+    src: 'dist/client.css',
     dest: 'dist/client.min.css'
 };
 

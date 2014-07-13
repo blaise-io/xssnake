@@ -17,6 +17,9 @@ module.exports = function(grunt) {
             audio_mp3: audio.concat.mp3,
             audio_ogg: audio.concat.ogg
         },
+        cssUrlEmbed: {
+            client: client.cssUrlEmbed
+        },
         cssmin: {
             client: client.cssmin
         },
@@ -42,6 +45,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-sails-linker');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-css-url-embed');
 
     grunt.registerTask('testsuite', ['concat:testsuite']);
     grunt.registerTask('scripts', ['sails-linker:client']);

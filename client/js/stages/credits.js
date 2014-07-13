@@ -13,12 +13,21 @@ xss.util.extend(xss.CreditsStage.prototype, xss.ScreenStage.prototype);
 xss.util.extend(xss.CreditsStage.prototype, /** @lends xss.CreditsStage.prototype */ {
 
     getShape: function() {
-        var body, left = xss.MENU_LEFT, top = xss.MENU_TOP;
+        var body, icons, left = xss.MENU_LEFT, top = xss.MENU_TOP;
 
-        body = 'Concept, Code, Bugs, Font & ' + xss.UC_SKULL + ':\n' +
-            'Blaise Kal, 2012-2014.\n\n' +
+        icons = [
+            '{}',
+            xss.UC_BULB,
+            xss.UC_FONT,
+            xss.UC_BUG,
+            xss.UC_MUSIC,
+            xss.UC_SKULL
+        ];
+
+        body = icons.join(' ') + '\n' +
+            'Blaise Kal - 2012-2014.\n\n' +
             'www.blaise.io\n' +
-            'blaisekal@gmail.com\n\n' +
+            'blaise.kal@gmail.com\n\n' +
             'Thank you for playing!\n' +
             'KEEP THE SNAKE ALIVE';
 

@@ -56,7 +56,7 @@ xss.util.extend(xss.NameStage.prototype, /** @lends xss.NameStage.prototype */ {
     _wits: [
         '%s%s%s!!!',
         'You have the same name as my mom',
-        'LOVELY ' + new Array(4).join(xss.UC_HEART),
+        'LOVELY ' + new Array(4).join(xss.UC_WHITE_HEART),
         xss.UC_SKULL,
         'Lamest name EVER',
         'Clever name!',

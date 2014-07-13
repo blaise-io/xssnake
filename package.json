@@ -20,7 +20,8 @@
         "grunt-gcc-rest": "0.1.x",
         "grunt-contrib-concat": "0.3.x",
         "grunt-contrib-cssmin": "0.7.0",
-        "grunt-contrib-uglify": "0.4.0"
+        "grunt-contrib-uglify": "0.4.0",
+        "grunt-css-url-embed": "0.1.4"
     },
     "engines": {
         "node": ">= 0.6"
