@@ -52,7 +52,9 @@ module.exports = function(grunt) {
     grunt.registerTask('audio', ['concat:audio_mp3', 'concat:audio_ogg']);
     grunt.registerTask('levels', ['concat:levels']);
     grunt.registerTask('source', ['scripts', 'levels', 'audio']);
-    grunt.registerTask('client', ['source', 'concat:client', 'gcc_rest:client', 'cssmin:client', 'uglify:client', 'index:client']);
+    grunt.registerTask('client', ['source', 'concat:client', 'gcc_rest:client',
+                                  'cssUrlEmbed:client', 'cssmin:client',
+                                  'uglify:client', 'index:client']);
     grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
     grunt.registerTask('default', ['source', 'client', 'server']);
 };

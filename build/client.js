@@ -34,10 +34,8 @@ exports.gcc_rest = {
 };
 
 exports.cssUrlEmbed = {
-    encodeDirectly: {
-        src : 'client/xssnake.css',
-        dest: 'dist/client.css'
-    }
+    src : 'client/xssnake.css',
+    dest: 'dist/client.css'
 };
 
 exports.cssmin = {
