@@ -153,11 +153,13 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
     header: function() {
         var x, y, shape, welcome = xss.font.pixels('<XSSNAKE>');
 
-        x = xss.MENU_LEFT;
+        x = xss.MENU_LEFT - 2;
         y = xss.MENU_TOP - 34;
 
         shape = new xss.Shape(xss.transform.zoomX4(welcome, x, y, true));
-        shape.add(this.line(x, y + 28, x + xss.MENU_WIDTH, y + 28));
+        x += 2;
+        y += 28;
+        shape.add(this.line(x, y, x + xss.MENU_WIDTH, y));
 
         return shape;
     },
