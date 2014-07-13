@@ -30,7 +30,7 @@ xss.Spawnable.prototype = {
 
         switch (this.type) {
             case xss.SPAWN_APPLE:
-                shape = xss.font.shape(xss.UC_BULLSEYE, x - 1,  y - 2);
+                shape = xss.font.shape(xss.UC_APPLE, x - 1,  y - 2);
                 break;
             case xss.SPAWN_POWERUP:
                 shape = xss.font.shape(xss.UC_ELECTRIC, x - 1,  y - 1);
