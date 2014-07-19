@@ -351,7 +351,11 @@ xss.Game.prototype = {
         // Don't show a snake moving inside a wall, which is caused by latency.
         // Server wil update snake on whether it crashed or made a turn in time.
         if (this._isCrash(snake, position)) {
-            snake.limbo = true;
+            if (snake.local) {
+                snake.crash();
+            } else {
+                snake.limbo = true;
+            }
         } else if (!snake.limbo) {
             snake.move(position);
             snake.updateShape();
