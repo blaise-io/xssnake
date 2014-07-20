@@ -177,12 +177,21 @@ xss.util.extend(xss.util, {
     },
 
     /**
+     * @return {boolean}
+     * developer.mozilla.org/docs/Browser_detection_using_the_user_agent
+     */
+    isSafari: function() {
+        var ua = navigator.userAgent;
+        return (/safari/i).test(ua) && !(/chrom(e|ium)/i).test(ua);
+    },
+
+    /**
      * Taken from developer.mozilla.org fullscreen docs.
      * Safari blocks keyboard usage in fullscreen.
      */
     toggleFullScreen: function() {
-        if ((/safari/i).test(navigator.userAgent)) {
-            xss.util.instruct('DANG IT! fullscreen is not supported in Safari', 3000);
+        if (xss.util.isSafari()) {
+            // Safari does not support key events in fullscreen.
             return false;
         }
         if (!document.fullscreenElement &&
