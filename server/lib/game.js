@@ -399,9 +399,7 @@ xss.Game.prototype = {
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
-                    crash = new xss.Crash(xss.CRASH_OPPONENT, client);
-                    crash.oppponent = clients[ii];
-                    return crash;
+                    return new xss.Crash(xss.CRASH_OPPONENT, client, clients[ii]);
                 }
             }
         }

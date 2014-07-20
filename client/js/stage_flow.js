@@ -8,11 +8,7 @@
 xss.StageFlow = function(Stage) {
     this._FirstStage = Stage || xss.MainStage;
 
-    xss.event.once(
-        xss.PUB_FONT_LOAD,
-        xss.NS_FLOW,
-        this.start.bind(this)
-    );
+    xss.event.once(xss.PUB_FONT_LOAD, xss.NS_FLOW, this.start.bind(this));
 
     if (xss.font.loaded) {
         xss.event.trigger(xss.PUB_FONT_LOAD);

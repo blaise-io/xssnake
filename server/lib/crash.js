@@ -3,24 +3,20 @@
 /**
  * @param {number} type
  * @param {xss.Client} client
+ * @param {xss.Client=} opponent
  * @constructor
  */
-xss.Crash = function(type, client) {
+xss.Crash = function(type, client, opponent) {
     this.type = type;
     this.client = client;
 
-    /** @type {xss.Client} */
-    this.opponent = null;
+    this.opponent = opponent;
     /** @type {xss.Coordinate} */
     this.part = null;
 
     this.parts = client.snake.parts.slice();
     this.time = new Date();
     this.draw = this.detectDraw();
-
-    if (this.draw) {
-        this.type = xss.CRASH_OPPONENT_DRAW;
-    }
 };
 
 xss.Crash.prototype = {
@@ -29,10 +25,12 @@ xss.Crash.prototype = {
         var diff;
         if (this.opponent) {
             diff = this.client.snake.direction + this.opponent.snake.direction;
-            return (Math.abs(diff) === 2);
-        } else {
-            return false;
+            if (Math.abs(diff) === 2) {
+                this.type = xss.CRASH_OPPONENT_DRAW;
+                return true;
+            }
         }
+        return false;
     },
 
     emitNotice: function() {
