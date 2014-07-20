@@ -146,7 +146,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
             xss.shapegen.explosion(
                 x + xss.util.randomRange(0,3),
                 y + xss.util.randomRange(0,3),
-                this.direction, 16
+                this.direction
             );
         }
     },

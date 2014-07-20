@@ -45,6 +45,7 @@ xss.EVENT_KEYUP = 'keyup';
 xss.HASH_ROOM = 'room';
 
 xss.NS_ANIM = 'ANM';
+xss.NS_EXPLOSION = 'EXPL';
 xss.NS_FLOW = 'FLW';
 xss.NS_CHAT = 'CHT';
 xss.NS_DIALOG = 'DLG';

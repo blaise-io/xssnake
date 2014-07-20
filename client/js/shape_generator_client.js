@@ -165,37 +165,37 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
     },
 
     explosion: function(x, y, direction, intensity) {
-        var pixel, shape, to, duration, animation, d = 10, ds = 20,
-            r = xss.util.randomRange;
+        var pixel, shape, to, duration, w, d, rand;
+
+        w = 10;
+        d = 20;
+        rand = xss.util.randomRange;
+
+        intensity = intensity || 16;
         while (intensity--) {
             switch (direction) {
                 case xss.DIRECTION_LEFT:
-                    to = [r(-d,ds), r(-d,d)];
+                    to = [rand(-w,d), rand(-w,w)];
                     break;
                 case xss.DIRECTION_UP:
-                    to = [r(-d,d), r(-ds,d)];
+                    to = [rand(-w,w), rand(-d,w)];
                     break;
                 case xss.DIRECTION_RIGHT:
-                    to = [r(-ds,d), r(-d,d)];
+                    to = [rand(-d,w), rand(-w,w)];
                     break;
                 case xss.DIRECTION_DOWN:
-                    to = [r(-d,d), r(-d,ds)];
+                    to = [rand(-w,w), rand(-w,d)];
                     break;
                 default:
-                    to = [r(-ds,ds), r(-ds,ds)];
+                    to = [rand(-d,d), rand(-d,d)];
             }
 
             pixel = new xss.PixelCollection().add(x, y);
-
-            duration = Math.pow(r(1, 10), 3);
-            animation = {
-                to      : to,
-                duration: duration
-            };
+            duration = Math.pow(rand(1, 10), 3);
 
             shape = new xss.Shape(pixel);
-            shape.animate(animation).lifetime(0, duration);
-            xss.shapes['xpl'+xss.util.randomStr(5)] = shape;
+            shape.animate({to: to, duration: duration}).lifetime(0, duration);
+            xss.shapes[xss.NS_EXPLOSION + xss.util.randomStr(3)] = shape;
         }
     }
 
