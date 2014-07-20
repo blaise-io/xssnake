@@ -4,5 +4,6 @@
     "evil": true,
     "expr": true,
     "sub": true,
+    "node": true,
     "predef": ["xss", "SockJS"]
 }

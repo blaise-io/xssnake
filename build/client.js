@@ -1,21 +1,26 @@
+'use strict';
+
 var helper = require('./helper.js');
 
 var src = [
     'shared/namespace.js',
     'shared/**/*.js',
     'client/data/**/*.js',
-    'client/js/**/*.js'
+    'client/js/**/*.js',
+    '!client/js/debug/*.js'
 ];
 
-var srcCompile = src.slice().concat(['!client/js/debug/*.js']);
-var srcDebug = ['client/vendor/bower-sockjs-client/sockjs.js'].concat(src);
+var srcDebug = [];
+srcDebug = srcDebug.concat(['client/vendor/bower-sockjs-client/sockjs.js']);
+srcDebug = srcDebug.concat(src);
+srcDebug = srcDebug.concat(['client/js/debug/*.js']);
 
 exports.concat = {
     options: {
         banner: '\'use strict\';\n',
         process: helper.replaceStrict
     },
-    src: srcCompile,
+    src: src,
     dest: 'dist/client.js'
 };
 

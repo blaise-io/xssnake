@@ -8,14 +8,14 @@
 xss.StageFlow = function(Stage) {
     this._FirstStage = Stage || xss.MainStage;
 
+    xss.event.once(
+        xss.PUB_FONT_LOAD,
+        xss.NS_FLOW,
+        this.start.bind(this)
+    );
+
     if (xss.font.loaded) {
-        this.start();
-    } else {
-        xss.event.once(
-            xss.PUB_FONT_LOAD,
-            xss.NS_FLOW,
-            this.start.bind(this)
-        );
+        xss.event.trigger(xss.PUB_FONT_LOAD);
     }
 };
 
@@ -26,6 +26,7 @@ xss.StageFlow.prototype = {
         if (xss.socket) {
             xss.socket.destruct();
         }
+        xss.shapes = {};
         xss.event.off(xss.EVENT_KEYDOWN, xss.NS_FLOW);
         xss.canvas.garbageCollect();
     },
@@ -36,7 +37,6 @@ xss.StageFlow.prototype = {
     },
 
     start: function() {
-        xss.shapes = {};
         this._history = [];
         this._bindGlobalEvents();
         this._setupMenuSkeletton();

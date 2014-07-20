@@ -1,4 +1,5 @@
 'use strict';
+
 var fs = require('fs');
 
 exports.replaceStrict = function(src, filepath) {

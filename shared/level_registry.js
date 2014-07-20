@@ -8,6 +8,7 @@ xss.LevelRegistry = function() {
     this._numLevelsRegistered = 0;
     this._numLevelsLoaded = 0;
 
+    this.loaded = false;
     this.onload = xss.util.noop;
 
     /**
@@ -35,6 +36,7 @@ xss.LevelRegistry.prototype = {
 
             // All finished loading
             if (this._numLevelsRegistered === ++this._numLevelsLoaded) {
+                this.loaded = true;
                 this.onload();
             }
         }.bind(this));
