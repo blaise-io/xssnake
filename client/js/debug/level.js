@@ -13,13 +13,8 @@ if (xss.debug.debugLevelMatch) {
 }
 
 xss.debug.level = function() {
-    var game = new xss.Game(0, Math.random(), Number(xss.debug.debugLevelMatch[1]), ['']);
+    var levelIndex = Number(xss.debug.debugLevelMatch[1]);
+    var game = new xss.Game(0, Math.random(), levelIndex, ['Dummy']);
     game.start();
-    game.snakes[0].size = 5;
-
-    xss.event.on(xss.PUB_GAME_TICK, xss.debug.NS, function() {
-        if (game.snakes[0].limbo) {
-            game.snakes[0].crash();
-        }
-    });
+    game.snakes[0].size = 4;
 };

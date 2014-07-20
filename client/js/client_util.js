@@ -151,6 +151,32 @@ xss.util.extend(xss.util, {
     },
 
     /**
+     * @param {xss.Coordinate} coordinate
+     * @return {xss.Coordinate}
+     */
+    translateGame: function(coordinate) {
+        coordinate[0] = xss.util.translateGameX(coordinate[0]);
+        coordinate[1] = xss.util.translateGameY(coordinate[1]);
+        return coordinate;
+    },
+
+    /**
+     * @param {number} x
+     * @return {number}
+     */
+    translateGameX: function(x) {
+        return (x * xss.GAME_TILE) + xss.GAME_LEFT;
+    },
+
+    /**
+     * @param {number} y
+     * @return {number}
+     */
+    translateGameY: function(y) {
+        return (y * xss.GAME_TILE) + xss.GAME_TOP;
+    },
+
+    /**
      * Taken from developer.mozilla.org fullscreen docs.
      * Safari blocks keyboard usage in fullscreen.
      */

@@ -3,13 +3,16 @@
 /**
  * @param {number} type
  * @param {xss.Client} client
- * @param {xss.Client=} opponent
  * @constructor
  */
-xss.Crash = function(type, client, opponent) {
+xss.Crash = function(type, client) {
     this.type = type;
     this.client = client;
-    this.opponent = opponent || null;
+
+    /** @type {xss.Client} */
+    this.opponent = null;
+    /** @type {xss.Coordinate} */
+    this.part = null;
 
     this.parts = client.snake.parts.slice();
     this.time = new Date();

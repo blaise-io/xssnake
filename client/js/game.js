@@ -185,7 +185,7 @@ xss.Game.prototype = {
     _evSnakeCrash: function(data) {
         var snake = this.snakes[data[0]];
         snake.parts = data[1];
-        snake.crash();
+        snake.crash(data[2]);
     },
 
     /**
@@ -346,13 +346,14 @@ xss.Game.prototype = {
      * @private
      */
     _moveSnake: function(snake) {
-        var position = snake.getNextPosition();
+        var crash, position = snake.getNextPosition();
 
         // Don't show a snake moving inside a wall, which is caused by latency.
         // Server wil update snake on whether it crashed or made a turn in time.
-        if (this._isCrash(snake, position)) {
+        crash = this._isCrash(snake, position);
+        if (crash) {
             if (snake.local) {
-                snake.crash();
+                snake.crash(crash.part);
             } else {
                 snake.limbo = true;
             }
@@ -365,27 +366,29 @@ xss.Game.prototype = {
     /**
      * @param {xss.ClientSnake} snake
      * @param {xss.Coordinate} position
-     * @return {boolean}
+     * @return {xss.ClientCrash}
      * @private
      */
     _isCrash: function(snake, position) {
-        var predictSnakeParts = snake.parts.slice();
+        var part, predictSnakeParts = snake.parts.slice();
         predictSnakeParts[predictSnakeParts.length - 1] = position;
 
         // Walls.
-        if (this._isCrashIntoWall(predictSnakeParts)) {
-            return true;
+        part = this._isCrashIntoWall(predictSnakeParts);
+        if (part) {
+            return new xss.ClientCrash(part);
         }
 
         // Animating walls.
-        if (this._isCrashIntoAnimated(predictSnakeParts)) {
-            return true;
+        part = this._isCrashIntoAnimated(predictSnakeParts);
+        if (part) {
+            return new xss.ClientCrash(part);
         }
 
         // Own tail.
         if (snake.parts.length >= 5 && snake.hasPartPredict(position)) {
             if (snake.getPartIndex(position) !== snake.parts.length - 1) {
-                return true;
+                return new xss.ClientCrash(snake.parts[0]);
             }
         }
 
@@ -393,39 +396,39 @@ xss.Game.prototype = {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var opponent = this.snakes[i];
             if (opponent !== snake && opponent.hasPartPredict(position)) {
-                return true;
+                return new xss.ClientCrash();
             }
         }
 
-        return false;
+        return null;
     },
 
     /**
      * @param {xss.SnakeParts} parts
-     * @return {boolean}
+     * @return {xss.Coordinate}
      * @private
      */
     _isCrashIntoWall: function(parts) {
         for (var i = 0, m = parts.length; i < m; i++) {
             if (this.level.isWall(parts[i][0], parts[i][1])) {
-                return true;
+                return parts[i];
             }
         }
-        return false;
+        return null;
     },
 
     /**
      * @param {xss.SnakeParts} parts
-     * @return {boolean}
+     * @return {xss.Coordinate}
      * @private
      */
     _isCrashIntoAnimated: function(parts) {
         for (var i = 0, m = parts.length; i < m; i++) {
             if (this.level.isMovingWall(parts[i])) {
-                return true;
+                return parts[i];
             }
         }
-        return false;
+        return null;
     }
 
 };

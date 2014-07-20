@@ -8,8 +8,8 @@
  */
 xss.Spawnable = function(type, index, location) {
     this.type = type;
-    this.x = location[0] * xss.GAME_TILE + xss.GAME_LEFT;
-    this.y = location[1] * xss.GAME_TILE + xss.GAME_TOP;
+    this.x = xss.util.translateGameX(location[0]);
+    this.y = xss.util.translateGameY(location[1]);
 
     this._shapeName = xss.NS_SPAWN + index;
     xss.shapes[this._shapeName] = this._getShape();

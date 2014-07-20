@@ -164,7 +164,12 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
         return shape;
     },
 
-    explosion: function(x, y, direction, intensity) {
+    /**
+     * @param {xss.Coordinate} location
+     * @param {number=} direction
+     * @param {number=} intensity
+     */
+    explosion: function(location, direction, intensity) {
         var pixel, shape, to, duration, w, d, rand;
 
         w = 10;
@@ -190,7 +195,7 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
                     to = [rand(-d,d), rand(-d,d)];
             }
 
-            pixel = new xss.PixelCollection().add(x, y);
+            pixel = new xss.PixelCollection().add(location[0], location[1]);
             duration = Math.pow(rand(1, 10), 3);
 
             shape = new xss.Shape(pixel);

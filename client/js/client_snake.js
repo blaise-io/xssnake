@@ -130,25 +130,39 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
         xss.shapes[this.shapeKeys.snake] = shape;
     },
 
-    crash: function() {
+    /**
+     * @param {xss.Coordinate=} part
+     */
+    crash: function(part) {
         this.crashed = true;
         this.removeControls();
         this.updateShape();
-        this.explodeParticles();
-    },
-
-    explodeParticles: function() {
-        var x, y, head = this.getHead();
-        x = head[0] * xss.GAME_TILE + xss.GAME_LEFT;
-        y = head[1] * xss.GAME_TILE + xss.GAME_TOP;
         if (!this._exploded) {
             this._exploded = true;
-            xss.shapegen.explosion(
-                x + xss.util.randomRange(0,3),
-                y + xss.util.randomRange(0,3),
-                this.direction
-            );
+            this.explodeParticles(part);
         }
+    },
+
+    /**
+     * @param {xss.Coordinate=} part
+     */
+    explodeParticles: function(part) {
+        var direction, location;
+
+        if (part) {
+            // Crashed part is specified.
+            direction = -1;
+        } else {
+            // Assume head has crashed.
+            direction = this.direction;
+            part = this.getHead();
+        }
+
+        location = xss.util.translateGame(part);
+        location[0] += 1;
+        location[1] += 2;
+
+        xss.shapegen.explosion(location, direction);
     },
 
     /**

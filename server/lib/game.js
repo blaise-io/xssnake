@@ -363,12 +363,12 @@ xss.Game.prototype = {
 
     /**
      * @param {xss.Client} client
-     * @param {Array.<Array>} parts
+     * @param {Array.<xss.Coordinate>} parts
      * @return {xss.Crash}
      * @private
      */
     _isCrash: function(client, parts) {
-        var eq, clients, level;
+        var eq, clients, level, crash;
 
         eq = xss.util.eq;
         clients = this.room.clients;
@@ -384,7 +384,9 @@ xss.Game.prototype = {
 
             // Moving wall
             if (level.isMovingWall(part)) {
-                return new xss.Crash(xss.CRASH_MOVING_WALL, client);
+                crash = new xss.Crash(xss.CRASH_MOVING_WALL, client);
+                crash.part = part;
+                return crash;
             }
 
             // Self
@@ -397,7 +399,9 @@ xss.Game.prototype = {
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
-                    return new xss.Crash(xss.CRASH_OPPONENT, client, clients[ii]);
+                    crash = new xss.Crash(xss.CRASH_OPPONENT, client);
+                    crash.oppponent = clients[ii];
+                    return crash;
                 }
             }
         }
@@ -407,21 +411,23 @@ xss.Game.prototype = {
 
     /**
      * @param {xss.Client} client
-     * @param {Array.<Array>=} parts
-     * @param {boolean=} noEmit
+     * @param {Array.<xss.Coordinate>=} parts
+     * @param {boolean=} emit
      * @private
      */
-    _crashSnake: function(client, parts, noEmit) {
+    _crashSnake: function(client, parts, emit) {
         var snake = client.snake;
         if (snake.limbo) {
-            if (!noEmit) {
+            if (emit !== false) {
                 snake.limbo.emitNotice();
             }
             parts = snake.limbo.parts;
         }
         parts = parts || snake.parts;
         snake.crashed = true;
-        this.room.emit(xss.EVENT_SNAKE_CRASH, [client.model.index, parts]);
+        this.room.emit(xss.EVENT_SNAKE_CRASH, [
+            client.model.index, parts, snake.limbo.part
+        ]);
     },
 
     /**
@@ -492,7 +498,7 @@ xss.Game.prototype = {
             this._crashSnake(client);
             opponent = snake.limbo.opponent;
             if (opponent && snake.limbo.draw) {
-                this._crashSnake(opponent, null, true);
+                this._crashSnake(opponent, null, false);
             }
             this.room.rounds.delegateCrash();
         } else {
