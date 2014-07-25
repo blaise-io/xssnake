@@ -77,6 +77,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
             'Arrow keys, Esc and ' + xss.UC_ENTER_KEY + ' to navigate.';
 
         menu = new xss.SelectMenu(header, footer);
+        menu.addOption(null, xss.NameStage, 'QUICK JOIN');
         menu.addOption(null, xss.NameStage, 'MULTIPLAYER');
         menu.addOption(null, xss.SingleplayerStage, 'SINGLE PLAYER');
         menu.addOption(null, xss.ColorStage, 'COLOR SCHEME');
