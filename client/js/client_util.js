@@ -178,11 +178,14 @@ xss.util.extend(xss.util, {
 
     /**
      * @return {boolean}
-     * developer.mozilla.org/docs/Browser_detection_using_the_user_agent
+     * Disabled because http://ux.stackexchange.com/q/61932/27258
+     * Previously disabled only for Safari.
      */
-    isSafari: function() {
-        var ua = navigator.userAgent;
-        return (/safari/i).test(ua) && !(/chrom(e|ium)/i).test(ua);
+    disableFullscreen: function() {
+        //// developer.mozilla.org/docs/Browser_detection_using_the_user_agent
+        // var ua = navigator.userAgent;
+        // return (/safari/i).test(ua) && !(/chrom(e|ium)/i).test(ua);
+        return true;
     },
 
     /**
@@ -190,7 +193,7 @@ xss.util.extend(xss.util, {
      * Safari blocks keyboard usage in fullscreen.
      */
     toggleFullScreen: function() {
-        if (xss.util.isSafari()) {
+        if (xss.util.disableFullscreen()) {
             // Safari does not support key events in fullscreen.
             return false;
         }

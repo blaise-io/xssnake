@@ -73,11 +73,11 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
 
         footer = '' +
             'M to mute/unmute sounds,\n' +
-            (xss.util.isSafari() ? '' : 'F to enter/exit fullscreen,\n') +
+            (xss.util.disableFullscreen() ? '' : 'F to enter/exit fullscreen,\n') +
             'Arrow keys, Esc and ' + xss.UC_ENTER_KEY + ' to navigate.';
 
         menu = new xss.SelectMenu(header, footer);
-        menu.addOption(null, xss.NameStage, 'QUICK JOIN');
+        menu.addOption(null, xss.GameStage, 'QUICK GAME');
         menu.addOption(null, xss.NameStage, 'MULTIPLAYER');
         menu.addOption(null, xss.SingleplayerStage, 'SINGLE PLAYER');
         menu.addOption(null, xss.ColorStage, 'COLOR SCHEME');
