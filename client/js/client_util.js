@@ -190,11 +190,9 @@ xss.util.extend(xss.util, {
 
     /**
      * Taken from developer.mozilla.org fullscreen docs.
-     * Safari blocks keyboard usage in fullscreen.
      */
     toggleFullScreen: function() {
         if (xss.util.disableFullscreen()) {
-            // Safari does not support key events in fullscreen.
             return false;
         }
         if (!document.fullscreenElement &&
