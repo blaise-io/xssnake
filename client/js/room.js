@@ -207,12 +207,13 @@ xss.Room.prototype = {
      */
     _updateAwaitingMessage: function() {
         var header, body, remaining = this.capacity - this.players;
-        header = 'NEED ' + remaining + ' MORE PLAYER%s...';
-        header = header.replace('%s', remaining !== 1 ? 'S' : '');
-        body = 'Share the current page URL with friends so they ' +
-               'can join this room directly!';
+        header = 'MSG YOUR FRIENDS';
+        body = 'You can fit ' + remaining + ' more player%s in this room! ' +
+               'Share the current page URL with your online friends so they ' +
+               'can join directly.';
+        body = body.replace('%s', remaining === 1 ? '' : 's');
         if (this.players > 1 && this.index === 0) {
-            body += ' Or press S to start now.';
+            body += 'Press S to start now.';
         }
 
         this.dialog = new xss.Dialog(header, body, {

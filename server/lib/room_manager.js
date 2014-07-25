@@ -77,25 +77,24 @@ xss.RoomManager.prototype = {
     },
 
     /**
-     * @param {Object.<string, number|boolean>} reqOptions
+     * @param {Object.<string, ?>} requestOptions
      * @param {xss.Room} room
      * @return {boolean}
      */
-    gameOptionsMatch: function(reqOptions, room) {
+    gameOptionsMatch: function(requestOptions, room) {
         var options = room.options;
-        switch (true) {
-            case room.isFull():
-            case !!room.rounds.started:
-            case options[xss.FIELD_PRIVATE]:
-            case reqOptions[xss.FIELD_PRIVATE]:
-            case options[xss.FIELD_DIFFICULTY] !== reqOptions[xss.FIELD_DIFFICULTY]:
-            case options[xss.FIELD_POWERUPS]   !== reqOptions[xss.FIELD_POWERUPS]:
-            case options[xss.FIELD_XSS]        !== reqOptions[xss.FIELD_XSS]:
-            case options[xss.FIELD_MAX_PLAYERS]  > reqOptions[xss.FIELD_MAX_PLAYERS]:
-                return false;
-            default:
-                return true;
-        }
+        return (
+            !room.isFull() &&
+            !room.rounds.started &&
+            !options[xss.FIELD_PRIVATE] &&
+            !requestOptions[xss.FIELD_PRIVATE] &&
+            options[xss.FIELD_XSS] === requestOptions[xss.FIELD_XSS] &&
+            (requestOptions[xss.FIELD_QUICK_GAME] || (
+                options[xss.FIELD_DIFFICULTY] === requestOptions[xss.FIELD_DIFFICULTY] &&
+                options[xss.FIELD_POWERUPS] === requestOptions[xss.FIELD_POWERUPS] &&
+                options[xss.FIELD_MAX_PLAYERS] <= requestOptions[xss.FIELD_MAX_PLAYERS]
+            ))
+        );
     },
 
     /**

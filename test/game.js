@@ -33,6 +33,7 @@ describe('Game', function() {
         gameOptions[xss.FIELD_POWERUPS] = true;
         gameOptions[xss.FIELD_PRIVATE] = false;
         gameOptions[xss.FIELD_XSS] = false;
+        gameOptions[xss.FIELD_QUICK_GAME] = false;
 
         roomManager = new xss.RoomManager(server);
 

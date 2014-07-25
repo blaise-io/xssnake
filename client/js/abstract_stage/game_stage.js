@@ -75,10 +75,25 @@ xss.GameStage.prototype = {
         );
     },
 
-    _matchRoom: function() {
-        var emit = this.data.multiplayer;
-        emit[xss.FIELD_NAME] = this.data.name;
+    _getQuickGameData: function() {
+        var data = {};
+        data[xss.FIELD_QUICK_GAME] = true;
+        // Used for creating a new game if all public rooms were full.
+        data[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_MEDIUM;
+        data[xss.FIELD_POWERUPS] = true;
+        data[xss.FIELD_PRIVATE] = false;
+        data[xss.FIELD_XSS] = false;
+        data[xss.FIELD_MAX_PLAYERS] = 6;
+        return data;
+    },
 
+    _matchRoom: function() {
+        var emit = this.data.multiplayer || this._getQuickGameData();
+        emit[xss.FIELD_QUICK_GAME] = !!emit[xss.FIELD_QUICK_GAME];
+        emit[xss.FIELD_NAME] = (
+            xss.util.storage(xss.STORAGE_NAME) ||
+            'Player_' + xss.util.randomStr(3)
+        );
         xss.socket = new xss.Socket(function() {
             xss.socket.emit(xss.EVENT_ROOM_MATCH, emit);
         });

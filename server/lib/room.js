@@ -102,6 +102,10 @@ xss.Room.prototype = {
             .assertType('boolean')
             .value(false);
 
+        clean[xss.FIELD_QUICK_GAME] = new xss.Validate(options[xss.FIELD_QUICK_GAME])
+            .assertType('boolean')
+            .value(false);
+
         return clean;
     },
 

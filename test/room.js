@@ -6,7 +6,7 @@ var nodeEvents = require('events');
 
 describe('Rooms', function() {
 
-    var server, roomManager, room, client, gameOptions, pubsubDummy,
+    var server, roomManager, room, client, otherClient, gameOptions, pubsubDummy,
         connectionDummy;
 
     pubsubDummy = new nodeEvents.EventEmitter();
@@ -32,11 +32,13 @@ describe('Rooms', function() {
         gameOptions[xss.FIELD_POWERUPS] = true;
         gameOptions[xss.FIELD_PRIVATE] = false;
         gameOptions[xss.FIELD_XSS] = false;
+        gameOptions[xss.FIELD_QUICK_GAME] = false;
 
         roomManager = server.roomManager;
 
         room = roomManager.createRoom(gameOptions);
         client = new xss.Client(pubsubDummy, connectionDummy);
+        otherClient = new xss.Client(pubsubDummy, connectionDummy);
 
         done();
     });
@@ -109,6 +111,44 @@ describe('Rooms', function() {
             assert(!roomManager.gameOptionsMatch(gameOptions, room));
         });
 
+        it('Matching when quickjoin', function() {
+            var oddGameOptions = xss.util.clone(gameOptions);
+            oddGameOptions[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_EASY;
+            oddGameOptions[xss.FIELD_POWERUPS] = false;
+            room = roomManager.createRoom(oddGameOptions);
+            var quickJoinGameoptions = xss.util.clone(gameOptions);
+            quickJoinGameoptions[xss.FIELD_QUICK_GAME] = true;
+            assert(roomManager.gameOptionsMatch(quickJoinGameoptions, room));
+        });
+
+        it('Not matching quickjoin with private rooms', function() {
+            var privateGameoptions = xss.util.clone(gameOptions);
+            privateGameoptions[xss.FIELD_PRIVATE] = true;
+            room = roomManager.createRoom(privateGameoptions);
+            var quickGameOptions = xss.util.clone(gameOptions);
+            quickGameOptions[xss.FIELD_QUICK_GAME] = true;
+            assert(!roomManager.gameOptionsMatch(quickGameOptions, room));
+        });
+
+        it('Not matching quickjoin with xss', function() {
+            var xssGameoptions = xss.util.clone(gameOptions);
+            xssGameoptions[xss.FIELD_XSS] = true;
+            room = roomManager.createRoom(xssGameoptions);
+            var quickGameOptions = xss.util.clone(gameOptions);
+            quickGameOptions[xss.FIELD_QUICK_GAME] = true;
+            assert(!roomManager.gameOptionsMatch(quickGameOptions, room));
+        });
+
+        it('Not matching quickjoin with full rooms', function() {
+            var FullGameOptions = xss.util.clone(gameOptions);
+            FullGameOptions[xss.FIELD_MAX_PLAYERS] = 2;
+            room = roomManager.createRoom(FullGameOptions);
+            room.addClient(client);
+            room.addClient(otherClient);
+            var quickGameOptions = xss.util.clone(gameOptions);
+            quickGameOptions[xss.FIELD_QUICK_GAME] = true;
+            assert(!roomManager.gameOptionsMatch(quickGameOptions, room));
+        });
     });
 
     describe('Client', function() {
