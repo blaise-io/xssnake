@@ -86,6 +86,13 @@ xss.util.extend(xss.util, {
     },
 
     /**
+     * @returns {boolean}
+     */
+    isMac: function() {
+        return (/Macintosh/).test(navigator.appVersion);
+    },
+
+    /**
      * Simple wrapper for location.hash
      * @param {string?} key
      * @param {*?} value

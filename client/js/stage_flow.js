@@ -142,11 +142,6 @@ xss.StageFlow.prototype = {
                 xss.util.instruct(instruct, 1e3);
                 xss.play.menu_alt();
             }
-
-            // Enter/Exit Fullscreen
-            if (ev.keyCode === xss.KEY_FULLSCREEN) {
-                xss.util.toggleFullScreen();
-            }
         }
     },
 
