@@ -24,8 +24,16 @@ xss.COLOR = [
         ghosting: 0.8
     },
     {
+        title   : 'VFD',
+        desc    : '',
+        bg      : '#000',
+        off     : '#111',
+        on      : '#68F',
+        ghosting: 0.8
+    },
+    {
         title   : '1337',
-        desc    : 'SO HACK omg 0wN3d N00b!!!1\nwtf',
+        desc    : 'SO HACK omg 0wN3d N00b!!!1\n<MARQUEE>TESTLOL</MARQUEE>',
         bg      : '#010',
         off     : '#000',
         on      : '#0f0',
@@ -37,14 +45,6 @@ xss.COLOR = [
         bg      : '#000',
         off     : '#111',
         on      : '#fff',
-        ghosting: 0.6
-    },
-    {
-        title   : 'Gaymer',
-        desc    : 'Batteries, rainbows, shoes\nand unicorns included.',
-        bg      : '#a0a',
-        off     : '#808',
-        on      : '#ff2',
         ghosting: 0.6
     }
 ];
