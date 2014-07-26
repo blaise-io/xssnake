@@ -50,10 +50,9 @@ xss.AudioPlay.prototype = {
     },
 
     _setupDummyFiles: function() {
-        var dummy = function(){};
         for (var k in xss.data.mp3) {
             if (xss.data.mp3.hasOwnProperty(k)) {
-                this[k] = dummy;
+                this[k] = xss.util.noop;
             }
         }
     }
