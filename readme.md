@@ -7,7 +7,7 @@ JavaScript in the browser of other players.
 
 XSSNAKE is currently in development. The beta release is planned around 2014.
 
-![XSSNAKE](http://i.imgur.com/h4BTxp1.png)
+![XSSNAKE](https://i.imgur.com/Gsz4ajb.png)
 
 ## Technical
 

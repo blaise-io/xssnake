@@ -68,7 +68,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
             var name = xss.util.storage(xss.STORAGE_NAME);
             return name ?
                 'YAY ' + name.toUpperCase() + ' IS BACK!' :
-                'PLAY SNAKE ONLINE!!';
+                'MULTIPLAYER SNAKE!';
         };
 
         if (xss.util.isMac()) {
