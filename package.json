@@ -11,7 +11,8 @@
         "url": "https://github.com/blaise-io/xssnake.git"
     },
     "dependencies": {
-        "pngparse": "1.x"
+        "pngparse": "1.x",
+        "ws": "0.4.x"
     },
     "devDependencies": {
         "mocha": "1.x",
