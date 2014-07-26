@@ -34,7 +34,7 @@ xss.Canvas.prototype = {
      */
     setColor: function(color) {
         this.tile.setColor(color);
-        this.flushShapeCache();
+        this._flushShapeCache();
     },
 
     /**
@@ -65,7 +65,7 @@ xss.Canvas.prototype = {
         }
     },
 
-    flushShapeCache: function() {
+    _flushShapeCache: function() {
         var shapes = xss.shapes;
         for (var k in shapes) {
             if (shapes.hasOwnProperty(k) && null !== shapes[k]) {
@@ -197,7 +197,7 @@ xss.Canvas.prototype = {
 
     /** @private */
     _bindEvents: function() {
-        window.onresize = this._positionCanvas.bind(this);
+        window.onresize = xss.util.debounce(this._positionCanvas.bind(this));
         window.onfocus  = this._handleFocusChange.bind(this);
         window.onblur   = this._handleFocusChange.bind(this);
         window.onclick  = this._promoteKeyboard.bind(this);
@@ -241,7 +241,7 @@ xss.Canvas.prototype = {
 
         if (ev) {
             this._setCanvasDimensions();
-            this.flushShapeCache();
+            this._flushShapeCache();
         }
 
         windowCenter = window.innerWidth / 2;

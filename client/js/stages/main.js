@@ -73,7 +73,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
 
         footer = '' +
             'M to mute/unmute sounds,\n' +
-            (xss.util.disableFullscreen() ? '' : 'F to enter/exit fullscreen,\n') +
+            'F11 to enter/exit fullscreen,\n' +
             'Arrow keys, Esc and ' + xss.UC_ENTER_KEY + ' to navigate.';
 
         menu = new xss.SelectMenu(header, footer);

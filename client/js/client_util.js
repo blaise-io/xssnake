@@ -177,50 +177,18 @@ xss.util.extend(xss.util, {
     },
 
     /**
-     * @return {boolean}
-     * Disabled because http://ux.stackexchange.com/q/61932/27258
-     * Previously disabled only for Safari.
+     * @param {Function} fn
+     * @param {number=} delay
+     * @returns {Function}
      */
-    disableFullscreen: function() {
-        //// developer.mozilla.org/docs/Browser_detection_using_the_user_agent
-        // var ua = navigator.userAgent;
-        // return (/safari/i).test(ua) && !(/chrom(e|ium)/i).test(ua);
-        return true;
-    },
-
-    /**
-     * Taken from developer.mozilla.org fullscreen docs.
-     */
-    toggleFullScreen: function() {
-        if (xss.util.disableFullscreen()) {
-            return false;
-        }
-        if (!document.fullscreenElement &&
-            !document.mozFullScreenElement &&
-            !document.webkitFullscreenElement &&
-            !document.msFullscreenElement) {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) {
-                document.documentElement.msRequestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) {
-                document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) {
-                document.documentElement.webkitRequestFullscreen(
-                    Element.ALLOW_KEYBOARD_INPUT
-                );
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-        }
+    debounce: function(fn, delay) {
+        var timeout;
+        return function() {
+            var args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
+                fn.apply(this, args);
+            }.bind(this), delay || 100);
+        };
     }
-
 });
