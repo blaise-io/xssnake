@@ -1,3 +1,4 @@
+/* jshint evil: true */
 'use strict';
 
 /**
@@ -31,7 +32,7 @@ xss.util.extend(xss.ChallengeStage.prototype, /** @lends {xss.ChallengeStage.pro
 
         // Evalevaleval!!!
         // Tolerate answers where user is quoting strings.
-        if (value.replace(/['"]/g, '') === String(eval(this._challenge))) {
+        if (value.replace(/['"]/g, '').trim() === String(eval(this._challenge))) {
             text = '> bleep!';
             xss.event.off(xss.EVENT_KEYDOWN, xss.NS_INPUT);
             setTimeout(function() {

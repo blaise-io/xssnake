@@ -21,7 +21,4 @@
 
 <style><%= app_css %></style>
 
-<script>
-    /* Vendor: */<%= vendor_js %>
-    /* App: */<%= app_js %>
-</script>
+<script><%= app_js %></script>

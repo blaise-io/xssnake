@@ -44,7 +44,11 @@ xss.Client.prototype = {
         if (data) {
             emit.push(data);
         }
-        this.socket.connection.write(JSON.stringify(emit));
+        this.socket.connection.send(JSON.stringify(emit), function(error) {
+            if (error){
+                console.error(error);
+            }
+        }.bind(this));
     },
 
     /**

@@ -87,12 +87,22 @@ xss.GameStage.prototype = {
         return data;
     },
 
+    _getRandomName: function() {
+        var name = xss.util.randomItem([
+            'Ant', 'Bat', 'Bear', 'Bird', 'Cat', 'Cow', 'Crab', 'Deer', 'Dodo',
+            'Dog', 'Duck', 'Emu', 'Fish', 'Fly', 'Fox', 'Frog', 'Goat', 'Hare',
+            'Ibis', 'Kiwi', 'Lion', 'Lynx', 'Mole', 'Moth', 'Mule', 'Olm',
+            'Pig', 'Pika', 'Puma', 'Rat', 'Seal', 'Swan', 'Wasp', 'Wolf', 'Yak'
+        ]);
+        return name + '.' + xss.util.randomRange(10, 99);
+    },
+
     _matchRoom: function() {
         var emit = this.data.multiplayer || this._getQuickGameData();
         emit[xss.FIELD_QUICK_GAME] = !!emit[xss.FIELD_QUICK_GAME];
         emit[xss.FIELD_NAME] = (
             xss.util.storage(xss.STORAGE_NAME) ||
-            'Player_' + xss.util.randomStr(3)
+            this._getRandomName()
         );
         xss.socket = new xss.Socket(function() {
             xss.socket.emit(xss.EVENT_ROOM_MATCH, emit);

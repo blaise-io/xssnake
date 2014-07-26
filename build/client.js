@@ -11,7 +11,6 @@ var src = [
 ];
 
 var srcDebug = [];
-srcDebug = srcDebug.concat(['client/vendor/bower-sockjs-client/sockjs.js']);
 srcDebug = srcDebug.concat(src);
 srcDebug = srcDebug.concat(['client/js/debug/*.js']);
 
@@ -48,22 +47,10 @@ exports.cssmin = {
     dest: 'dist/client.min.css'
 };
 
-exports.uglify = {
-    options: {
-        // Workaround for unsupported --inline-script param.
-        // Without it, SockJS code will contain '</script>', which closes the
-        // inline script prematurely.
-        compress: false
-    },
-    src: 'client/vendor/bower-sockjs-client/sockjs.min.js',
-    dest: 'dist/vendor.ugly.js'
-};
-
 exports.index = {
     options: {
         inline: {
             app_css: 'dist/client.min.css',
-            vendor_js: 'dist/vendor.ugly.js',
             app_js: 'dist/client.min.js'
         }
     },

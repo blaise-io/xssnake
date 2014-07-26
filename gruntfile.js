@@ -30,9 +30,6 @@ module.exports = function(grunt) {
         'sails-linker': {
             client: client.scriptlinker
         },
-        uglify: {
-            client: client.uglify
-        },
         index: {
             client: client.index
         }
@@ -44,7 +41,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-gcc-rest');
     grunt.loadNpmTasks('grunt-sails-linker');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-css-url-embed');
 
     grunt.registerTask('testsuite', ['concat:testsuite']);
@@ -54,7 +50,7 @@ module.exports = function(grunt) {
     grunt.registerTask('source', ['scripts', 'levels', 'audio']);
     grunt.registerTask('client', ['source', 'concat:client', 'gcc_rest:client',
                                   'cssUrlEmbed:client', 'cssmin:client',
-                                  'uglify:client', 'index:client']);
+                                  'index:client']);
     grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
     grunt.registerTask('default', ['source', 'client', 'server']);
 };

@@ -1,3 +1,0 @@
-var sockjs = {
-    "installHandlers": function () {}
-};

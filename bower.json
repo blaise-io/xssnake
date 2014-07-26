@@ -1,7 +1,0 @@
-{
-    "name": "XSSNAKE",
-    "private": true,
-    "dependencies": {
-        "bower-sockjs-client": "0.3.4"
-    }
-}

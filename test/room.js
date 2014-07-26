@@ -10,7 +10,7 @@ describe('Rooms', function() {
         connectionDummy;
 
     pubsubDummy = new nodeEvents.EventEmitter();
-    connectionDummy = {write: xss.util.noop, on: xss.util.noop};
+    connectionDummy = {send: xss.util.noop, on: xss.util.noop};
 
     before(function(done) {
         server = new xss.Server();

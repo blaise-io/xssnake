@@ -8,7 +8,7 @@
 xss.Socket = function(callback) {
     this.model = new xss.model.ClientSocket(callback);
 
-    this.connection = new SockJS(xss.SERVER_ENDPOINT);
+    this.connection = new WebSocket(xss.SERVER_ENDPOINT);
     this.connection.onopen = this.model.connect.bind(this.model);
     this.connection.onclose = this._eventDisconnect.bind(this);
     this.connection.onmessage = this._dispatchMessage.bind(this);

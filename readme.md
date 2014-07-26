@@ -9,11 +9,11 @@ XSSNAKE is currently in development. The beta release is planned around 2014.
 
 ![XSSNAKE](http://i.imgur.com/h4BTxp1.png)
 
+## Technical
+
 XSSNAKE is written in HTML5 and JavaScript. It works in all browsers that
-support Canvas and Websocket. XSSNAKE uses Node.js for the server,
-SockJS for client–server communication, and Google Closure Compiler with
-Advanced Compilation to check for errors and to compile to minified and
-optimized code.
+support Canvas and Websocket. XSSNAKE uses Node.js and ws for the server
+and Google Closure Compiler to compile to minified and optimized code.
 
 [The font used in the game can be downloaded here.](http://fontstruct.com/fontstructions/show/xssnake)
 
@@ -22,8 +22,6 @@ optimized code.
  * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
  * Download and install [node.js](http://nodejs.org/)
  * Install server dependencies: `npm install`
- * Download and install bower: `npm install -g bower`
- * Install client dependencies: `bower install`
  * Configure hostname and port in `shared/config.js`
  * Run `npm start`
 

@@ -13,7 +13,7 @@ xss.Socket = function(client, pubsub, connection) {
 
     this.model = new xss.model.Socket();
 
-    connection.on('data', this._dispatchMessage.bind(this));
+    connection.on('message', this._dispatchMessage.bind(this));
     connection.on('close', this._eventDisconnect.bind(this));
 
     this._startPingInterval();

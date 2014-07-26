@@ -1,9 +1,7 @@
 {
-    "browser": true,
     "globalstrict": true,
-    "evil": true,
+    "browser": true,
     "expr": true,
     "sub": true,
-    "node": true,
-    "predef": ["xss", "SockJS"]
+    "predef": ["xss"]
 }

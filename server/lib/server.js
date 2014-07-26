@@ -1,8 +1,7 @@
 'use strict';
 
-var http = require('http');
-var sockjs = require('sockjs');
-var nodeEvents = require('events');
+var WebSocketServer = require('ws').Server;
+var events = require('events');
 
 
 /**
@@ -11,7 +10,6 @@ var nodeEvents = require('events');
 xss.Server = function() {
     this.pubsub = this.setupPubSub();
     this.roomManager = new xss.RoomManager(this);
-    this._server = null;
 };
 
 xss.Server.prototype = {
@@ -36,7 +34,7 @@ xss.Server.prototype = {
     setupPubSub: function() {
         var pubsub;
 
-        pubsub = new nodeEvents.EventEmitter();
+        pubsub = new events.EventEmitter();
         pubsub.setMaxListeners(0);
 
         // Tick every N ms
@@ -53,17 +51,12 @@ xss.Server.prototype = {
      * @param {number} port
      */
     listen: function(port) {
-        var server, xssnake;
+        var server;
 
-        server = http.createServer();
-        server.listen(port, '0.0.0.0');
-
-        xssnake = sockjs.createServer();
-        xssnake.on('connection', function(connection) {
+        server = new WebSocketServer({port: xss.SERVER_PORT});
+        server.on('connection', function(connection) {
             new xss.Client(this.pubsub, connection);
         }.bind(this));
-
-        xssnake.installHandlers(server, {prefix: '/xssnake', log: xss.util.noop});
 
         this._server = server;
     }

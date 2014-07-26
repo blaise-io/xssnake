@@ -1,4 +1,5 @@
 {
+    "node": true,
     "expr": true,
     "globalstrict": true,
     "sub": true,
