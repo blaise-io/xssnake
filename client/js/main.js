@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     /** @type {!Object.<string, xss.Shape>} */
     xss.shapes = {};
 
+    xss.bootstrap.all();
+
     // Global instances
     xss.event     = new xss.EventHandler();
     xss.font      = new xss.Font();

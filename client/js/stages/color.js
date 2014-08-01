@@ -20,8 +20,8 @@ xss.util.extend(xss.ColorStage.prototype, /** @lends xss.ColorStage.prototype */
      */
     _getMenu: function() {
         var menu = new xss.SelectMenu('COLOR SCHEME');
-        for (var i = 0, m = xss.COLOR.length; i < m; i++) {
-            var title = xss.COLOR[i].title, desc = xss.COLOR[i].desc;
+        for (var i = 0, m = xss.colorSchemes.length; i < m; i++) {
+            var title = xss.colorSchemes[i].title, desc = xss.colorSchemes[i].desc;
             menu.addOption(null, null, title, desc, this._setColor.bind(this));
         }
         return menu;
@@ -32,7 +32,7 @@ xss.util.extend(xss.ColorStage.prototype, /** @lends xss.ColorStage.prototype */
      * @private
      */
     _setColor: function(index) {
-        xss.canvas.setColor(xss.COLOR[index]);
+        xss.canvas.setColorScheme(xss.colorSchemes[index]);
         xss.util.storage(xss.STORAGE_COLOR, index);
     }
 });

@@ -47,7 +47,7 @@ xss.LevelParser.prototype = {
     getParsedLevel: function() {
         return this._levelData;
     },
-    
+
     /**
      * @param {Object} imagedata
      * @private

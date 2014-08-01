@@ -10,7 +10,7 @@ xss.Canvas = function() {
     this.fps = [];
     this.canvas = this._setupCanvas();
     this.context = this.canvas.getContext('2d');
-    this.tile = new xss.CanvasTile(xss.COLOR[color] || xss.COLOR[0]);
+    this.tile = new xss.CanvasTile(xss.colorSchemes[color] || xss.colorSchemes[0]);
 
     this._setCanvasDimensions();
     this._positionCanvas();
@@ -30,10 +30,10 @@ xss.Canvas = function() {
 xss.Canvas.prototype = {
 
     /**
-     * @param {Object} color
+     * @param {xss.ColorScheme} colorScheme
      */
-    setColor: function(color) {
-        this.tile.setColor(color);
+    setColorScheme: function(colorScheme) {
+        this.tile.setColorScheme(colorScheme);
         this._flushShapeCache();
     },
 
@@ -77,7 +77,7 @@ xss.Canvas.prototype = {
     _clear: function() {
         this.context.save();
         this.context.fillStyle = this.tile.off;
-        this.context.globalAlpha = 1 - this.tile.color.ghosting;
+        this.context.globalAlpha = 1 - this.tile.colorScheme.ghosting;
         this.context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.context.restore();
     },
