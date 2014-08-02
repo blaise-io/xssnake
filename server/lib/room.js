@@ -43,11 +43,12 @@ xss.Room.prototype = {
     },
 
     emitState: function() {
-        var rounds, clients, capacity;
+        var rounds, clients, capacity, isprivate;
 
         rounds = this.rounds;
         clients = this.clients;
         capacity = this.options[xss.FIELD_MAX_PLAYERS];
+        isprivate = this.options[xss.FIELD_PRIVATE];
 
         for (var i = 0, m = clients.length; i < m; i++) {
             clients[i].emit(xss.EVENT_ROOM_SERIALIZE, [
@@ -56,6 +57,7 @@ xss.Room.prototype = {
                 this.key,
                 this.names(),
                 capacity,
+                isprivate,
                 rounds.round.game.model.created,
                 rounds.levelIndex,
                 rounds.started,

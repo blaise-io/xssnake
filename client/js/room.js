@@ -50,18 +50,20 @@ xss.Room.prototype = {
      * @param {string} key
      * @param {Array.<string>} names
      * @param {number} capacity
+     * @param {number} isprivate
      * @param {number} created
      * @param {number} level
      * @param {number} started
      * @param {Array.<number>} score
      */
-    update: function(index, seed, key, names, capacity, created, level, started, score) {
+    update: function(index, seed, key, names, capacity, isprivate, created, level, started, score) {
         xss.util.hash(xss.HASH_ROOM, key);
         names = this._sanitizeNames(names);
 
         this.index = index;
         this.seed = seed;
         this.capacity = capacity;
+        this.isprivate = isprivate;
         this.players = names.length;
 
         this.game  = this._updateGame(index, seed, level, names, created);
@@ -177,9 +179,8 @@ xss.Room.prototype = {
         if (this.index === 0 && this.players > 1) {
             this.dialog.destruct();
             this.dialog2 = new xss.Dialog(
-                'ROOM NOT FULL',
-                'You could squeeze in more players. Are you sure you want ' +
-                    'to start the game already?',
+                xss.COPY_CONFIRM_START_HEADER,
+                xss.COPY_CONFIRM_START_BODY,
                 settings
             );
         }
@@ -206,17 +207,16 @@ xss.Room.prototype = {
      * @private
      */
     _updateAwaitingMessage: function() {
-        var header, body, remaining = this.capacity - this.players;
-        header = 'MSG YOUR FRIENDS';
-        body = 'You can fit ' + remaining + ' more player%s in this room! ' +
-               'Share the current page URL with your online friends so they ' +
-               'can join directly.';
-        body = body.replace('%s', remaining === 1 ? '' : 's');
+        var body, remaining = this.capacity - this.players;
+
+        body = xss.COPY_AWAITING_PLAYERS_BODY;
+        body = xss.copy.format(body, remaining, xss.copy.pluralize(remaining));
+
         if (this.players > 1 && this.index === 0) {
-            body += 'Press S to start now.';
+            body += xss.COPY_AWAITING_PLAYERS_START_NOW;
         }
 
-        this.dialog = new xss.Dialog(header, body, {
+        this.dialog = new xss.Dialog(xss.COPY_AWAITING_PLAYERS_HEADER, body, {
             keysBlocked: false
         });
     },
@@ -226,18 +226,7 @@ xss.Room.prototype = {
      * @return {string}
      */
     errorCodeToStr: function(error) {
-        switch (error) {
-            case xss.ROOM_INVALID:
-                return 'INVALID ROOM KEY';
-            case xss.ROOM_NOT_FOUND:
-                return 'ROOM NOT FOUND';
-            case xss.ROOM_FULL:
-                return 'LE ROOM IS FULL!';
-            case xss.ROOM_IN_PROGRESS:
-                return 'GAME IN PROGRESS';
-            default:
-                return 'UNKNOWN ERROROOSHIII';
-        }
+        return xss.COPY_ERROR[error] || xss.COPY_ERROR[xss.ROOM_UNKNOWN_ERROR];
     },
 
     /**

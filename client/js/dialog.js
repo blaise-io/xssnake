@@ -12,18 +12,18 @@ xss.DialogSettings;
 /**
  * @param {string} header
  * @param {string} body
- * @param {xss.DialogSettings|Object=} settings
+ * @param {xss.DialogSettings=} settings
  * @constructor
  */
 xss.Dialog = function(header, body, settings) {
-    this._header = header;
+    this._header = header.toUpperCase();
     this._body = body;
 
     /** @type {xss.DialogSettings} */
     this.settings = {
         keysBlocked: true,
         type       : xss.Dialog.TYPE.INFO,
-        width      : xss.Dialog.MIN_WIDTH,
+        width      : 80,
         ok         : xss.util.noop,
         cancel     : xss.util.noop
     };
@@ -35,9 +35,6 @@ xss.Dialog = function(header, body, settings) {
     // TODO: Play a bubble sound
 };
 
-xss.Dialog.MIN_WIDTH = 80;
-xss.Dialog.STR_OK = 'OK';
-xss.Dialog.STR_CANCEL = 'CANCEL';
 
 /** @enum {number} */
 xss.Dialog.TYPE = {
@@ -74,7 +71,7 @@ xss.Dialog.prototype = {
 //     */
 //    setHeader: function(header) {
 //        xss.play.menu_alt();
-//        this._header = header;
+//        this._header = header.toUpperCase();
 //        this._updateShape();
 //    },
 
@@ -206,7 +203,7 @@ xss.Dialog.prototype = {
      */
     _getCancelButton: function(x, y) {
         var settings = {invert: !this._okSelected};
-        return xss.font.pixels(xss.Dialog.STR_CANCEL, x, y, settings);
+        return xss.font.pixels(xss.COPY_DIALOG_CANCEL, x, y, settings);
     },
 
     /**
@@ -217,7 +214,7 @@ xss.Dialog.prototype = {
      */
     _getOkButton: function(x, y) {
         var settings = {invert: this._okSelected};
-        return xss.font.pixels(xss.Dialog.STR_OK, x, y, settings);
+        return xss.font.pixels(xss.COPY_DIALOG_OK, x, y, settings);
     },
 
     /**
@@ -241,7 +238,7 @@ xss.Dialog.prototype = {
     _getConfirmPixels: function() {
         var x, y, cancel, ok, line;
 
-        x = xss.font.width(xss.Dialog.STR_CANCEL) + 5;
+        x = xss.font.width(xss.COPY_DIALOG_CANCEL) + 5;
         y = this._getButtonPosition();
         cancel = this._getCancelButton(1, y);
         ok = this._getOkButton(x, y);
