@@ -27,7 +27,7 @@ exports.concat.mp3 = {
             );
         }
     },
-    src: ['client/data/audio/*.mp3'],
+    src: ['build/audio/*.mp3'],
     dest: 'client/data/mp3.js'
 };
 
@@ -46,6 +46,6 @@ exports.concat.ogg = {
             );
         }
     },
-    src: ['client/data/audio/*.ogg'],
+    src: ['build/audio/*.ogg'],
     dest: 'client/data/ogg.js'
 };

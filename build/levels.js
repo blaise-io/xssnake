@@ -26,6 +26,6 @@ exports.concat = {
             );
         }
     },
-    src: ['shared/data/level_images/*.png'],
+    src: ['build/levels/*.png'],
     dest: 'shared/data/level_images.js'
 };
