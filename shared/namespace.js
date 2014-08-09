@@ -9,5 +9,9 @@ var xss = {
     model     : {},
     view      : {},
     controller: {},
-    bootstrap : {}
+    bootstrap : {},
+    level     : {
+        animation: {}
+    },
+    levelset  : {}
 };

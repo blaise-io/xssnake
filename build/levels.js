@@ -7,7 +7,7 @@ var path = require('path');
 var banner = '', footer = '';
 
 banner += '// This file was generated using `grunt levels`\n';
-banner += 'xss.data.levelImages = {\n';
+banner += 'xss.data.levels = {\n';
 
 footer += '\n};\n';
 
@@ -27,5 +27,5 @@ exports.concat = {
         }
     },
     src: ['build/levels/*.png'],
-    dest: 'shared/data/level_images.js'
+    dest: 'shared/data/levels.js'
 };
