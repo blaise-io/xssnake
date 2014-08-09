@@ -1,15 +1,12 @@
 'use strict';
 
-window.onerror = function() {
-    xss.error = true;
-};
-
 document.addEventListener('DOMContentLoaded', function() {
 
     /** @type {!Object.<string, xss.Shape>} */
     xss.shapes = {};
 
-    xss.bootstrap.all();
+    xss.bootstrap.registerErrorHandler();
+    xss.bootstrap.registerColorSchemes();
 
     // Global instances
     xss.event     = new xss.EventHandler();
