@@ -3,7 +3,7 @@
 xss.data.levels = [
     {
         image: xss.data.levelImages.blank,
-        wind: [-5, 0],
+        gravity: [-5, 0],
         animation: function(seed) {
             return [
                 new xss.animation.ScrollingCave(seed)

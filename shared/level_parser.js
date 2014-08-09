@@ -3,7 +3,7 @@
 /**
  * @typedef {{
  *   animation: (Function|undefined),
- *   wind: (xss.Coordinate),
+ *   gravity: (xss.Coordinate),
  *   width: number,
  *   height: number,
  *   spawns: Array,
@@ -27,7 +27,7 @@ xss.LevelParser = function(imagedata, data) {
      */
     this._levelData = {
         animation   : data.animation,
-        wind        : data.wind,
+        gravity     : data.gravity,
         width       : imagedata.width,
         height      : imagedata.height,
         spawns      : [],

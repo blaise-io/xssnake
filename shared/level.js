@@ -11,8 +11,10 @@ xss.Level = function(levelData, seed, animProgress) {
     /** @type {Array.<xss.ShapeCollection>} */
     this.animations = [];
     this.levelData = levelData;
-    this.levelAnimation = new xss.LevelAnimation(seed, levelData.animation, animProgress);
-    this.levelWind = new xss.LevelWind(levelData.wind);
+    this.levelAnimation = new xss.LevelAnimation(
+        seed, levelData.animation, animProgress
+    );
+    this.gravity = new xss.LevelGravity(levelData.gravity);
 };
 
 xss.Level.prototype = {

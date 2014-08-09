@@ -1,17 +1,24 @@
 'use strict';
 
 /**
- * Snakes may float away in the wind.
+ * Gravity pulls snakes and power-ups a certain direction.
  *
- * @param {Array.<number>=} wind
+ * @param {Array.<number>=} gravity
+ * gravity is an array with two numbers. The first number is tiles per second to
+ * the left or right, second number is tiles per second up or down.
+ *
+ * Example 1: [-5, -5] pulls objects to top-left.
+ * Example 2: [5, 5] pulls objects to bottom-right.
+ * Example 2: [-5, 0] pulls objects to the left only.
+ *
  * @constructor
  */
-xss.LevelWind = function(wind) {
-    this.wind = wind || []; // [<x_pixels_p_s, y_pixels_p_s]
+xss.LevelGravity = function(gravity) {
+    this.gravity = gravity || [];
     this.progress = [0, 0];
 };
 
-xss.LevelWind.prototype = {
+xss.LevelGravity.prototype = {
 
     /**
      * @param delta
@@ -19,8 +26,8 @@ xss.LevelWind.prototype = {
      */
     getShift: function(delta) {
         return [
-            this.updateDirection(delta, 0),
-            this.updateDirection(delta, 1)
+            this.updateInDirection(delta, 0),
+            this.updateInDirection(delta, 1)
         ];
     },
 
@@ -29,13 +36,13 @@ xss.LevelWind.prototype = {
      * @param {number} direction
      * @return {number}
      */
-    updateDirection: function(delta, direction) {
-        if (this.wind[direction]) {
-            var treshold = 1000 / Math.abs(this.wind[direction]);
+    updateInDirection: function(delta, direction) {
+        if (this.gravity[direction]) {
+            var treshold = 1000 / Math.abs(this.gravity[direction]);
             this.progress[direction] += delta;
             if (this.progress[direction] > treshold) {
                 this.progress[direction] -= treshold;
-                return this.wind[direction] > 0 ? 1 : -1;
+                return this.gravity[direction] > 0 ? 1 : -1;
             }
         }
         return 0;

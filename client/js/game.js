@@ -286,7 +286,7 @@ xss.Game.prototype = {
         this._updateMovingWalls(movingWalls);
 
         if (this.model.started) {
-            shift = this.level.levelWind.getShift(delta);
+            shift = this.level.gravity.getShift(delta);
             this._moveSnakes(delta, shift);
         }
     },

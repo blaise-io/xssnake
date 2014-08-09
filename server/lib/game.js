@@ -434,7 +434,7 @@ xss.Game.prototype = {
      */
     _serverGameLoop: function(delta) {
         var shift, clients = this.room.clients;
-        shift = this.level.levelWind.getShift(delta);
+        shift = this.level.gravity.getShift(delta);
         this.level.updateMovingWalls(delta, true);
         for (var i = 0, m = clients.length; i < m; i++) {
             this._updateClient(clients[i], delta, shift);

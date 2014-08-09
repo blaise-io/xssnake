@@ -22,7 +22,7 @@ xss.Snake = function(location, direction, size, speed) {
     this.speed = speed;
     this.crashed = false;
     this.limbo = null;
-    this.wind = null;
+    this.gravity = null;
 };
 
 xss.Snake.prototype = {
