@@ -4,8 +4,8 @@
  * @constructor
  */
 xss.levelset.Base = function() {
-    /** @type {Array.<xss.level.Base>} */
     this.title = '';
+    /** @type {Array.<xss.level.Base>} */
     this.levels = [];
     this.loaded = false;
     this.options = new xss.levelset.Options();
@@ -14,7 +14,7 @@ xss.levelset.Base = function() {
 xss.levelset.Base.prototype = {
 
     /**
-     * @param {Object} Level
+     * @param {Function} Level
      */
     register: function(Level) {
         this.levels.push(new Level(this));

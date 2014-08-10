@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @type {xss.levelset.Base} levelset
+ * @param {xss.levelset.Base} levelset
  * @extends {xss.level.Base}
  * @constructor
  */
