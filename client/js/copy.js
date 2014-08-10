@@ -5,7 +5,7 @@ xss.copy = {
      * @param {number} num
      * @param {string=} singular
      * @param {string=} plural
-     * @returns {string}
+     * @return {string}
      */
     pluralize: function(num, singular, plural) {
         return (num === 1) ? singular || '' : plural || 's';

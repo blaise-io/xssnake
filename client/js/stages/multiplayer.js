@@ -47,11 +47,9 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
 
         form = new xss.Form('GAME OPTIONS', footer);
 
-        form.addField(xss.FIELD_DIFFICULTY, 'LEVEL DIFFICULTY', [
-            [xss.FIELD_VALUE_MEDIUM, 'SNAKE'],
-            [xss.FIELD_VALUE_HARD, 'PYTHON'],
-            [xss.FIELD_VALUE_EASY, 'WORM']
-        ]);
+        form.addField(xss.FIELD_LEVEL_SET, xss.COPY_FIELD_LEVEL_SET.toUpperCase(),
+            xss.levelSetRegistry.getAsFieldValues()
+        );
 
         form.addField(xss.FIELD_POWERUPS, 'POWER-UPS', [
             [true, 'YES'],

@@ -513,7 +513,7 @@ xss.Game.prototype = {
     /**
      * Snake is considered dead (crashed) when in limbo for too long.
      * @param {xss.Client} client
-     * @returns {boolean}
+     * @return {boolean}
      */
     _canReturnFromLimbo: function(client) {
        return +new Date() - client.snake.limbo.time < client.socket.model.rtt;

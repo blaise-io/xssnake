@@ -79,7 +79,7 @@ xss.GameStage.prototype = {
         var data = {};
         data[xss.FIELD_QUICK_GAME] = true;
         // Used for creating a new game if all public rooms were full.
-        data[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_MEDIUM;
+        data[xss.FIELD_LEVEL_SET] = xss.levelSetRegistry.getRandomIndex();
         data[xss.FIELD_POWERUPS] = true;
         data[xss.FIELD_PRIVATE] = false;
         data[xss.FIELD_XSS] = false;
@@ -89,10 +89,11 @@ xss.GameStage.prototype = {
 
     _getRandomName: function() {
         var name = xss.util.randomItem([
-            'Ant', 'Bat', 'Bear', 'Bird', 'Cat', 'Cow', 'Crab', 'Deer', 'Dodo',
-            'Dog', 'Duck', 'Emu', 'Fish', 'Fly', 'Fox', 'Frog', 'Goat', 'Hare',
-            'Ibis', 'Kiwi', 'Lion', 'Lynx', 'Mole', 'Moth', 'Mule', 'Olm',
-            'Pig', 'Pika', 'Puma', 'Rat', 'Seal', 'Swan', 'Wasp', 'Wolf', 'Yak'
+            'Ant', 'Bat', 'Bear', 'Bird', 'Cat', 'Cow', 'Crab', 'Croc', 'Deer',
+            'Dodo', 'Dog', 'Duck', 'Emu', 'Fish', 'Fly', 'Fox', 'Frog', 'Goat',
+            'Hare', 'Ibis', 'Kiwi', 'Lion', 'Lynx', 'Mole', 'Moth', 'Mule',
+            'Olm', 'Pig', 'Pika', 'Poke', 'Puma', 'Puss', 'Rat', 'Seal', 'Swan',
+            'Wasp', 'Wolf', 'Yak'
         ]);
         return name + '.' + xss.util.randomRange(10, 99);
     },

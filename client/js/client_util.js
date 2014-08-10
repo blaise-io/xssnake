@@ -86,7 +86,7 @@ xss.util.extend(xss.util, {
     },
 
     /**
-     * @returns {boolean}
+     * @return {boolean}
      */
     isMac: function() {
         return (/Macintosh/).test(navigator.appVersion);
@@ -186,7 +186,7 @@ xss.util.extend(xss.util, {
     /**
      * @param {Function} fn
      * @param {number=} delay
-     * @returns {Function}
+     * @return {Function}
      */
     debounce: function(fn, delay) {
         var timeout;

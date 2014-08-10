@@ -15,7 +15,9 @@ xss.COPY_ERROR[xss.ROOM_UNKNOWN_ERROR] = 'Unknown errooshiii#^%^'.toUpperCase();
 xss.COPY_DIALOG_OK = 'Ok'.toUpperCase();
 xss.COPY_DIALOG_CANCEL = 'Cancel'.toUpperCase();
 
-xss.COPY_LEVELSET_BASIC = 'Static obstacles';
-xss.COPY_LEVELSET_MAZE = 'Moving and static mazes';
-xss.COPY_LEVELSET_MOVING = 'Moving obstacles';
-xss.COPY_LEVELSET_GAME = 'Classic game worlds';
+xss.COPY_LEVELSET_BASIC = 'BASIC';
+xss.COPY_LEVELSET_MOVING = 'MOVING';
+xss.COPY_LEVELSET_MAZE = 'MAZES';
+xss.COPY_LEVELSET_GAME = 'GAME WORLDS';
+
+xss.COPY_FIELD_LEVEL_SET = 'Level Set';
