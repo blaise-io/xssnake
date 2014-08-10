@@ -42,8 +42,7 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
     _getForm: function() {
         var footer, form;
 
-        footer = 'Use arrow keys to select and change options.\n' +
-                 'When you’re done, press ' + xss.UC_ENTER_KEY + ' to continue.';
+        footer = xss.COPY_FORM_INSTRUCT;
 
         form = new xss.Form('GAME OPTIONS', footer);
 

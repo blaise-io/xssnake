@@ -62,7 +62,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
      * @private
      */
     _getMenu: function() {
-        var menu, header, footer, fskey = 'F11';
+        var menu, header, footer;
 
         header = function() {
             var name = xss.util.storage(xss.STORAGE_NAME);
@@ -71,14 +71,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
                 'MULTIPLAYER SNAKE!';
         };
 
-        if (xss.util.isMac()) {
-            fskey = 'Cmd+Ctrl+F11';
-        }
-
-        footer = '' +
-            'M to mute/unmute sounds,\n' +
-            fskey + ' to enter/exit fullscreen,\n' +
-            'Arrow keys, Esc and ' + xss.UC_ENTER_KEY + ' to navigate.';
+        footer = xss.COPY_MAIN_INSTRUCT;
 
         menu = new xss.SelectMenu(header, footer);
         menu.addOption(null, xss.GameStage, 'QUICK GAME');
