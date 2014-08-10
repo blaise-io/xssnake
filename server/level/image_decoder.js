@@ -5,6 +5,7 @@ var png = require('pngparse');
 /**
  * Level image decoder for Server
  * @param data
+ * @constructor
  */
 xss.level.ImageDecoder = function(data) {
     this.successFn = xss.util.noop;

@@ -34,29 +34,21 @@ xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.protot
     },
 
     _getLabel: function() {
-        var diffs, bools, label, options, players, br = '\n';
+        var bools, label, options, players;
 
         options = this._options;
         players = this._players;
 
-        diffs = {
-            '1': 'Worm',
-            '2': 'Snake',
-            '3': 'Python'
-        };
-
-        // TODO: Use integers to save bandwidth
         bools = {'false': 'No', 'true' : 'Yes'};
 
-        label = '' +
-            'Players ' +
-            players.length + '/' + options[xss.FIELD_MAX_PLAYERS] + ': ' +
-            players.join(', ') + br +
-            'Difficulty: ' + diffs[options[xss.FIELD_DIFFICULTY]] + br +
-            'Power-Ups: ' + bools[options[xss.FIELD_POWERUPS]] + br +
-            'XSS ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_XSS]] +
-            br + br +
-            'Enter your name to join: ';
+        label = [
+            'Players ' + players.length + '/' + options[xss.FIELD_MAX_PLAYERS] + ': ' + players.join(', '),
+            'Level set: ' + xss.levelSetRegistry.levelsets[options[xss.FIELD_LEVEL_SET]].title,
+            'Power-Ups: ' + bools[options[xss.FIELD_POWERUPS]],
+            'XSS ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_XSS]],
+            '',
+            'Enter your name to join: '
+        ].join('\n');
 
         return label;
     }

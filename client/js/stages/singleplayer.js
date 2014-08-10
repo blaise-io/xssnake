@@ -8,7 +8,7 @@
 xss.SingleplayerStage = function() {
     var multiplayer = {};
 
-    multiplayer[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_HARD;
+    multiplayer[xss.FIELD_LEVEL_SET] = 0;
     multiplayer[xss.FIELD_POWERUPS] = true;
     multiplayer[xss.FIELD_PRIVATE] = true;
     multiplayer[xss.FIELD_XSS] = false;

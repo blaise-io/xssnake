@@ -29,7 +29,7 @@ describe('Game', function() {
     beforeEach(function(done) {
         gameOptions = {};
         gameOptions[xss.FIELD_MAX_PLAYERS] = 6;
-        gameOptions[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_MEDIUM;
+        gameOptions[xss.FIELD_LEVEL_SET] = 0;
         gameOptions[xss.FIELD_POWERUPS] = true;
         gameOptions[xss.FIELD_PRIVATE] = false;
         gameOptions[xss.FIELD_XSS] = false;

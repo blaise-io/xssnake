@@ -90,7 +90,7 @@ xss.RoomManager.prototype = {
             !requestOptions[xss.FIELD_PRIVATE] &&
             options[xss.FIELD_XSS] === requestOptions[xss.FIELD_XSS] &&
             (requestOptions[xss.FIELD_QUICK_GAME] || (
-                options[xss.FIELD_DIFFICULTY] === requestOptions[xss.FIELD_DIFFICULTY] &&
+                options[xss.FIELD_LEVEL_SET] === requestOptions[xss.FIELD_LEVEL_SET] &&
                 options[xss.FIELD_POWERUPS] === requestOptions[xss.FIELD_POWERUPS] &&
                 options[xss.FIELD_MAX_PLAYERS] <= requestOptions[xss.FIELD_MAX_PLAYERS]
             ))

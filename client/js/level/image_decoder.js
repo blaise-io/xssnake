@@ -3,6 +3,7 @@
 /**
  * Level image decoder for Client
  * @param {string} data
+ * @constructor
  */
 xss.level.ImageDecoder = function(data) {
     this.successFn = xss.util.noop;

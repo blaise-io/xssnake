@@ -85,11 +85,8 @@ xss.Room.prototype = {
             .assertRange(1, xss.ROOM_CAPACITY)
             .value(xss.ROOM_CAPACITY);
 
-        clean[xss.FIELD_DIFFICULTY] = new xss.Validate(options[xss.FIELD_DIFFICULTY])
-            .assertInArray([
-                xss.FIELD_VALUE_EASY,
-                xss.FIELD_VALUE_MEDIUM,
-                xss.FIELD_VALUE_HARD])
+        clean[xss.FIELD_LEVEL_SET] = new xss.Validate(options[xss.FIELD_LEVEL_SET])
+            .assertRange(0, xss.levelSetRegistry.levelsets.length - 1)
             .value(xss.FIELD_VALUE_MEDIUM);
 
         clean[xss.FIELD_POWERUPS] = new xss.Validate(options[xss.FIELD_POWERUPS])
