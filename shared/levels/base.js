@@ -14,7 +14,7 @@ xss.level.Base = function(levelset) {
     this.levelData = null;
 };
 
-xss.level.Base.prorotype = {
+xss.level.Base.prototype = {
 
     /**
      * @param {Function} continueFn

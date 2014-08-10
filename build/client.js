@@ -4,6 +4,7 @@ var helper = require('./helper.js');
 
 var src = [
     'shared/namespace.js',
+    'shared/util.js', // We need this for extending objects, pre-bootstrap.
     'shared/**/*.js',
     'client/data/**/*.js',
     'client/js/**/*.js',

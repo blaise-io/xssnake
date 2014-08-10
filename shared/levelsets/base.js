@@ -5,11 +5,11 @@
  */
 xss.levelset.Base = function() {
     /** @type {Array.<xss.level.Base>} */
+    this.title = '';
     this.levels = [];
     this.loaded = false;
     this.options = new xss.levelset.Options();
 };
-
 
 xss.levelset.Base.prototype = {
 
@@ -33,7 +33,7 @@ xss.levelset.Base.prototype = {
         }.bind(this);
 
         for (var i = 0, m = this.levels.length; i < m; i++) {
-            this.levels.preload(checkAllLoaded);
+            this.levels[i].preload(checkAllLoaded);
         }
     }
 };
