@@ -3,21 +3,21 @@
 /**
  * @constructor
  */
-xss.levelset.Base = function() {
+xss.levelset.Levelset = function() {
     this.title = '';
-    /** @type {Array.<xss.level.Base>} */
+    /** @type {Array.<xss.level.Level>} */
     this.levels = [];
     this.loaded = false;
     this.options = new xss.levelset.Options();
 };
 
-xss.levelset.Base.prototype = {
+xss.levelset.Levelset.prototype = {
 
     /**
      * @param {Function} Level
      */
     register: function(Level) {
-        this.levels.push(new Level(this));
+        this.levels.push(new Level(this.options));
     },
 
     /**
@@ -32,8 +32,12 @@ xss.levelset.Base.prototype = {
             }
         }.bind(this);
 
-        for (var i = 0, m = this.levels.length; i < m; i++) {
-            this.levels[i].preload(checkAllLoaded);
+        if (this.levels.length) {
+            for (var i = 0, m = this.levels.length; i < m; i++) {
+                this.levels[i].preload(checkAllLoaded);
+            }
+        } else {
+            continueFn();
         }
     }
 };

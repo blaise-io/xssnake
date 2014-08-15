@@ -2,48 +2,39 @@
 
 /***
  * Game
- * @param {number} index
- * @param {number} seed
- * @param {number} levelIndex
- * @param {Array.<string>} names
- * @param {number=} created
+ * @param {xss.room.PlayerRegistry} players
+ * @param {xss.level.Level} level
  * @constructor
  */
-xss.Game = function(index, seed, levelIndex, names, created) {
+xss.game.Game = function(players, level) {
     xss.canvas.garbageCollect();
 
-    // Todo: Move to stage, add as netcode listener.
-    if (xss.flow.stage) {
-        xss.flow.stage.destruct();
-    }
+//    this.model = new xss.ClientGameModel(created);
 
-    xss.shapes.stage = null;
-    xss.shapes.header = null;
-    xss.shapes.border = null;
+    this.level = level;
+    this.level.paint();
 
-    this.model = new xss.ClientGameModel(created);
+    this.snakes = new xss.game.SnakeRegistry(this.level.data.spawns);
+    this.snakes.setSnakes(players);
+    this.snakes.showMeta();
 
-    /** @type {xss.Level} */
-    this.level = this._setupLevel(levelIndex, seed);
-
-    /** @type {Array.<xss.ClientSnake>} */
-    this.snakes = this._spawnSnakes(names, index);
-
-    /** @type {Array.<xss.Spawnable>} */
-    this.spawnables = [];
+    this.spawnables = new xss.game.SpawnableRegistry();
 
     this._bindEvents();
 };
 
-xss.Game.prototype = {
+xss.game.Game.prototype = {
 
     _bindEvents: function() {
         var ns = xss.NS_GAME;
+
         xss.event.on(xss.PUB_GAME_TICK,        ns, this._clientGameLoop.bind(this));
-        xss.event.on(xss.EVENT_GAME_COUNTDOWN, ns, this.countdown.bind(this));
-        xss.event.on(xss.EVENT_GAME_START,     ns, this.start.bind(this));
+
+        // @todo put in SpawnableRegistry
         xss.event.on(xss.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
         xss.event.on(xss.EVENT_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
+
+        // @todo put in SnakeRegistry
         xss.event.on(xss.EVENT_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
         xss.event.on(xss.EVENT_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
         xss.event.on(xss.EVENT_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
@@ -63,70 +54,28 @@ xss.Game.prototype = {
             this._handleFocus.bind(this)
         );
 
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].removeNameAndDirection();
-        }
-
-        this.addControls();
-        this.model.started = true;
+        this.snakes.removeMeta();
+        this.snakes.addControls();
     },
 
     destruct: function() {
-        var i, m, border, ns, k;
+        xss.event.off(xss.PUB_GAME_TICK, xss.NS_GAME);
+        xss.event.off(xss.EVENT_GAME_SPAWN, xss.NS_GAME);
+        xss.event.off(xss.EVENT_SNAKE_UPDATE, xss.NS_GAME);
+        xss.event.off(xss.EVENT_SNAKE_SIZE, xss.NS_GAME);
+        xss.event.off(xss.EVENT_SNAKE_CRASH, xss.NS_GAME);
+        xss.event.off(xss.EVENT_SNAKE_ACTION, xss.NS_GAME);
+        xss.event.off(xss.EVENT_SNAKE_SPEED, xss.NS_GAME);
 
-        ns = xss.NS_GAME;
-
-        xss.event.off(xss.PUB_GAME_TICK, ns);
-        xss.event.off(xss.EVENT_GAME_COUNTDOWN, ns);
-        xss.event.off(xss.EVENT_GAME_START, ns);
-        xss.event.off(xss.EVENT_GAME_SPAWN, ns);
-        xss.event.off(xss.EVENT_SNAKE_UPDATE, ns);
-        xss.event.off(xss.EVENT_SNAKE_SIZE, ns);
-        xss.event.off(xss.EVENT_SNAKE_CRASH, ns);
-        xss.event.off(xss.EVENT_SNAKE_ACTION, ns);
-        xss.event.off(xss.EVENT_SNAKE_SPEED, ns);
-
-        for (i = 0, m = this.snakes.length; i < m; i++) {
-            if (this.snakes[i]) {
-                this.snakes[i].destruct();
-            }
-        }
-
-        for (i = 0, m = this.spawnables.length; i < m; i++) {
-            if (this.spawnables[i]) {
-                this.spawnables[i].destruct();
-            }
-        }
-
-        for (k in xss.shapes) {
-            if (xss.shapes.hasOwnProperty(k)) {
-                if (0 === k.indexOf(xss.NS_ANIM)) {
-                    xss.shapes[k] = null;
-                }
-            }
-        }
-
-        border = xss.shapegen.outerBorder();
-        for (k in border) {
-            if (border.hasOwnProperty(k)) {
-                xss.shapes[k] = null;
-            }
-        }
-
-        this.spawnables = [];
-        xss.shapes.level = null;
-    },
-
-    addControls: function() {
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].addControls();
-        }
+        this.snakes.destruct();
+        this.spawnables.destruct();
+        this.level.destruct();
     },
 
     countdown: function() {
         var from, body, dialog, updateShape, timer;
 
-        xss.room.unbindKeys();
+        xss.room._unbindKeys();
 
         from = xss.TIME_ROUND_COUNTDOWN;
         body = 'Game starting in: %d';
@@ -202,67 +151,29 @@ xss.Game.prototype = {
         this.snakes[data[0]].speed = data[1];
     },
 
-    /**
-     * @param {number} index
-     * @param {number} seed
-     * @return {xss.Level}
-     * @private
-     */
-    _setupLevel: function(index, seed) {
-        var levelData, border;
-
-        levelData = xss.levels.getLevelData(index);
-
-        xss.shapes.level = xss.shapegen.level(levelData);
-        xss.shapes.innerborder = xss.shapegen.innerBorder();
-
-        border = xss.shapegen.outerBorder();
-        for (var k in border) {
-            if (border.hasOwnProperty(k)) {
-                xss.shapes[k] = border[k];
-            }
-        }
-
-        return new xss.Level(levelData, seed, this.model.offsetDelta);
-    },
-
-    /**
-     * @param {Array.<string>} names
-     * @param {number} index
-     * @return {Array.<xss.ClientSnake>}
-     * @private
-     */
-    _spawnSnakes: function(names, index) {
-        var snakes = [];
-        for (var i = 0, m = names.length; i < m; i++) {
-            var snake = this._spawnSnake(i, names[i], index);
-            snakes.push(snake);
-        }
-        return snakes;
-    },
-
-    /**
-     * @param {number} i
-     * @param {string} name
-     * @param {number} index
-     * @return {xss.ClientSnake}
-     * @private
-     */
-    _spawnSnake: function(i, name, index) {
-        var location, direction, snake;
-
-        location = this.level.getSpawn(i);
-        direction = this.level.getSpawnDirection(i);
-
-        snake = new xss.ClientSnake(i, i === index, name, location, direction);
-        snake.showName();
-
-        if (i === index) {
-            snake.showDirection();
-        }
-
-        return snake;
-    },
+//    /**
+//     * @param {number} index
+//     * @param {number} seed
+//     * @return {xss.Level}
+//     * @private
+//     */
+//    _setupLevel: function(index, seed) {
+//        var levelData, border;
+//
+//        levelData = xss.levels.getLevelData(index);
+//
+//        xss.shapes.level = xss.shapegen.level(levelData);
+//        xss.shapes.innerborder = xss.shapegen.innerBorder();
+//
+//        border = xss.shapegen.outerBorder();
+//        for (var k in border) {
+//            if (border.hasOwnProperty(k)) {
+//                xss.shapes[k] = border[k];
+//            }
+//        }
+//
+//        return new xss.Level(levelData, seed, this.model.offsetDelta);
+//    },
 
     /**
      * @param {boolean} focus
@@ -282,13 +193,13 @@ xss.Game.prototype = {
     _clientGameLoop: function(delta) {
         var shift, movingWalls;
 
-        movingWalls = this.level.updateMovingWalls(delta, this.model.started);
-        this._updateMovingWalls(movingWalls);
-
-        if (this.model.started) {
-            shift = this.level.gravity.getShift(delta);
-            this._moveSnakes(delta, shift);
-        }
+//        movingWalls = this.level.updateMovingWalls(delta, this.model.started);
+//        this._updateMovingWalls(movingWalls);
+//
+//        if (this.model.started) {
+//            shift = this.level.gravity.getShift(delta);
+//            this._moveSnakes(delta, shift);
+//        }
     },
 
     /**
@@ -307,6 +218,7 @@ xss.Game.prototype = {
      * @param {number} index
      * @param {xss.ShapeCollection} shapeCollection
      * @private
+     * @deprecated
      */
     _updateShapes: function(index, shapeCollection) {
         var shapes = shapeCollection.shapes;
@@ -328,6 +240,7 @@ xss.Game.prototype = {
      * @param {number} delta
      * @param {xss.Shift} shift
      * @private
+     * @deprecated
      */
     _moveSnakes: function(delta, shift) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
@@ -342,8 +255,9 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.ClientSnake} snake
+     * @param {xss.game.ClientSnake} snake
      * @private
+     * @deprecated
      */
     _moveSnake: function(snake) {
         var crash, position = snake.getNextPosition();
@@ -364,7 +278,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.ClientSnake} snake
+     * @param {xss.game.ClientSnake} snake
      * @param {xss.Coordinate} position
      * @return {xss.ClientCrash}
      * @private
@@ -404,7 +318,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.SnakeParts} parts
+     * @param {xss.game.SnakeParts} parts
      * @return {xss.Coordinate}
      * @private
      */
@@ -418,13 +332,13 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.SnakeParts} parts
+     * @param {xss.game.SnakeParts} parts
      * @return {xss.Coordinate}
      * @private
      */
     _isCrashIntoAnimated: function(parts) {
         for (var i = 0, m = parts.length; i < m; i++) {
-            if (this.level.isMovingWall(parts[i])) {
+            if (this.level.getMovingWalls(parts[i])) {
                 return parts[i];
             }
         }

@@ -26,11 +26,11 @@ xss.GameStage.prototype = {
     },
 
     destruct: function() {
-        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
     },
 
     _bindKeys: function() {
-        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._exitKeys.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES, this._exitKeys.bind(this));
     },
 
     _exitKeys: function(ev) {
@@ -54,7 +54,7 @@ xss.GameStage.prototype = {
     },
 
     _joinGame: function() {
-        xss.room = new xss.Room();
+        xss.room = new xss.room.Room();
         if (this.data.autoJoin) {
             this._autoJoin(xss.util.hash(xss.HASH_ROOM));
         } else {
@@ -65,7 +65,7 @@ xss.GameStage.prototype = {
     _autoJoin: function(key) {
         xss.event.once(xss.EVENT_ROOM_STATUS, xss.NS_STAGES, function(data) {
             if (!data[0]) {
-                xss.util.error(xss.Room.prototype.errorCodeToStr(data[1]));
+                xss.util.error(xss.room.Room.prototype.errorCodeToStr(data[1]));
             }
         });
 

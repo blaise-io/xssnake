@@ -2,5 +2,7 @@
     "expr": true,
     "globalstrict": true,
     "sub": true,
-    "predef": ["xss"]
+    "globals": {
+        "xss": true
+    }
 }

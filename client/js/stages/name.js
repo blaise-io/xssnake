@@ -39,7 +39,7 @@ xss.util.extend(xss.NameStage.prototype, /** @lends xss.NameStage.prototype */ {
         if (error) {
             text = error;
         } else {
-            xss.event.off(xss.EVENT_KEYDOWN, xss.NS_INPUT);
+            xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT);
             text = xss.util.randomItem(this._wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(function() {

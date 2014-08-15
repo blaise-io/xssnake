@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {xss.Room} room
+ * @param {xss.room.Room} room
  * @constructor
  */
 xss.Score = function(room) {
@@ -47,7 +47,7 @@ xss.Score.prototype = {
     },
 
     /**
-     * @param {xss.Room} room
+     * @param {xss.room.Room} room
      */
     emitKnockoutPoints: function(room) {
         var clients = room.clients;

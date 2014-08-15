@@ -19,7 +19,7 @@ xss.Game = function(round, levelIndex) {
     /** @type {Array.<number>} */
     this.timers = [];
 
-    /** @type {Array.<xss.Snake>} */
+    /** @type {Array.<xss.game.Snake>} */
     this.snakes = [];
 
     this._mainGameLoopBound = this._serverGameLoop.bind(this);
@@ -54,7 +54,6 @@ xss.Game.prototype = {
 
         this.server.pubsub.on(xss.SERVER_TICK, this._mainGameLoopBound);
         this.model.started = true;
-        this.room.emit(xss.EVENT_GAME_START);
         this.spawner.spawn(xss.SPAWN_APPLE);
         if (this.options[xss.FIELD_POWERUPS]) {
             this._spawnSomethingAfterDelay();
@@ -461,7 +460,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Snake} snake
+     * @param {xss.game.Snake} snake
      * @return {xss.Coordinate}
      * @private
      */
@@ -521,7 +520,7 @@ xss.Game.prototype = {
 
     /**
      * @param {number} index
-     * @return {xss.Snake}
+     * @return {xss.game.Snake}
      * @private
      */
     _spawnSnake: function(index) {
@@ -532,7 +531,7 @@ xss.Game.prototype = {
         size = xss.SNAKE_SIZE;
         speed = xss.SNAKE_SPEED;
 
-        snake = new xss.Snake(spawn, direction, size, speed);
+        snake = new xss.game.Snake(spawn, direction, size, speed);
         snake.elapsed = 0;
 
         return snake;

@@ -4,13 +4,12 @@
  * @param {number} index
  * @param {boolean} local
  * @param {string} name
- * @param {xss.Coordinate} location
- * @param {number} direction
- * @extends {xss.Snake}
+ * @param {xss.level.Spawn} spawn
+ * @extends {xss.game.Snake}
  * @constructor
  */
-xss.ClientSnake = function(index, local, name, location, direction) {
-    xss.Snake.call(this, location, direction, xss.SNAKE_SIZE, xss.SNAKE_SPEED);
+xss.game.ClientSnake = function(index, local, name, spawn) {
+    xss.game.Snake.call(this, spawn, xss.SNAKE_SIZE, xss.SNAKE_SPEED);
 
     this.index   = index;
     this.local   = local;
@@ -34,9 +33,9 @@ xss.ClientSnake = function(index, local, name, location, direction) {
     this.updateShape();
 };
 
-/** @lends {xss.ClientSnake.prototype} */
-xss.util.extend(xss.ClientSnake.prototype, xss.Snake.prototype);
-xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype */ {
+/** @lends {xss.game.ClientSnake.prototype} */
+xss.util.extend(xss.game.ClientSnake.prototype, xss.game.Snake.prototype);
+xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.prototype */ {
 
     destruct: function() {
         this.crash();
@@ -110,7 +109,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
     addControls: function() {
         if (this.local) {
             xss.event.on(
-                xss.EVENT_KEYDOWN,
+                xss.DOM_EVENT_KEYDOWN,
                 xss.NS_SNAKE,
                 this._handleKeys.bind(this)
             );
@@ -119,7 +118,7 @@ xss.util.extend(xss.ClientSnake.prototype, /** @lends xss.ClientSnake.prototype 
 
     removeControls: function() {
         if (this.local) {
-            xss.event.off(xss.EVENT_KEYDOWN, xss.NS_SNAKE);
+            xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_SNAKE);
         }
     },
 

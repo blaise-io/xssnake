@@ -29,9 +29,9 @@ xss.InputField.prototype = {
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        xss.event.off(xss.EVENT_KEYPRESS, ns);
-        xss.event.off(xss.EVENT_KEYDOWN, ns);
-        xss.event.off(xss.EVENT_KEYUP, ns);
+        xss.event.off(xss.DOM_EVENT_KEYPRESS, ns);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, ns);
+        xss.event.off(xss.DOM_EVENT_KEYUP, ns);
         xss.shapes.caret = null;
         xss.shapes.inputval = null;
         xss.keysBlocked = false;
@@ -59,9 +59,9 @@ xss.InputField.prototype = {
      */
     _bindEvents: function() {
         var ns = xss.NS_INPUT;
-        xss.event.on(xss.EVENT_KEYPRESS, ns, xss.play.menu_alt);
-        xss.event.on(xss.EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
-        xss.event.on(xss.EVENT_KEYUP, ns, this._updateShapes.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYPRESS, ns, xss.play.menu_alt);
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYUP, ns, this._updateShapes.bind(this));
     },
 
     /**

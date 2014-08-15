@@ -13,12 +13,12 @@
  *
  * @constructor
  */
-xss.LevelGravity = function(gravity) {
+xss.level.Gravity = function(gravity) {
     this.gravity = gravity || [];
     this.progress = [0, 0];
 };
 
-xss.LevelGravity.prototype = {
+xss.level.Gravity.prototype = {
 
     /**
      * @param delta

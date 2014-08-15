@@ -34,7 +34,7 @@ xss.util.extend(xss.ChallengeStage.prototype, /** @lends {xss.ChallengeStage.pro
         // Tolerate answers where user is quoting strings.
         if (value.replace(/['"]/g, '').trim() === String(eval(this._challenge))) {
             text = '> bleep!';
-            xss.event.off(xss.EVENT_KEYDOWN, xss.NS_INPUT);
+            xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT);
             setTimeout(function() {
                 xss.flow.switchStage(this.next);
             }.bind(this), 1000);

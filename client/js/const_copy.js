@@ -37,3 +37,6 @@ xss.COPY_FORM_INSTRUCT = [
     xss.UC_ARR_LEFT + ' & ' + xss.UC_ARR_RIGHT + ' to change a value',
     xss.UC_ENTER_KEY + ' to continue'
 ].join(xss.COPY_JOIN_INSTRUCT);
+
+xss.COPY_COUNTDOWN_TITLE = 'Get ready!';
+xss.COPY_COUNTDOWN_BODY = 'Game starting in: {0}';

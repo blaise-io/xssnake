@@ -23,7 +23,7 @@ xss.StageFlow.prototype = {
             xss.socket.destruct();
         }
         xss.shapes = {};
-        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_FLOW);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_FLOW);
         xss.canvas.garbageCollect();
     },
 
@@ -90,12 +90,9 @@ xss.StageFlow.prototype = {
     },
 
     _setupMenuSkeletton: function() {
-        var border = xss.shapegen.outerBorder();
-        for (var k in border) {
-            if (border.hasOwnProperty(k)) {
-                xss.shapes[k] = border[k];
-            }
-        }
+        xss.shapegen.outerBorder(function(k, border) {
+             xss.shapes[k] = border;
+        });
         xss.shapes.header = xss.shapegen.header();
     },
 
@@ -104,7 +101,7 @@ xss.StageFlow.prototype = {
      */
     _bindGlobalEvents: function() {
         window.onhashchange = this._hashChange.bind(this);
-        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_FLOW, this._handleKeys.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_FLOW, this._handleKeys.bind(this));
     },
 
     /**

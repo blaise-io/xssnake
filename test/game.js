@@ -35,7 +35,7 @@ describe('Game', function() {
         gameOptions[xss.FIELD_XSS] = false;
         gameOptions[xss.FIELD_QUICK_GAME] = false;
 
-        roomManager = new xss.RoomManager(server);
+        roomManager = new xss.room.RoomManager(server);
 
         client = new xss.Client(pubsubDummy, connectionDummy);
         otherClient = new xss.Client(pubsubDummy, connectionDummy);

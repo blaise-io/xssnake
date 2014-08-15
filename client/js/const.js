@@ -38,12 +38,13 @@ xss.MENU_WIDTH = 167;
 xss.MENU_WRAP = 176;
 xss.MENU_TITLE_HEIGHT = 20;
 
-xss.EVENT_KEYPRESS = 'keypress';
-xss.EVENT_KEYDOWN = 'keydown';
-xss.EVENT_KEYUP = 'keyup';
+xss.DOM_EVENT_KEYPRESS = 'keypress';
+xss.DOM_EVENT_KEYDOWN = 'keydown';
+xss.DOM_EVENT_KEYUP = 'keyup';
 
 xss.HASH_ROOM = 'room';
 
+xss.NS_DEBUG = 'DEBUG';
 xss.NS_ANIM = 'ANM';
 xss.NS_EXPLOSION = 'EXPL';
 xss.NS_FLOW = 'FLW';
@@ -52,6 +53,7 @@ xss.NS_DIALOG = 'DLG';
 xss.NS_INPUT = 'INP';
 xss.NS_GAME = 'GAM';
 xss.NS_ROOM = 'ROM';
+xss.NS_ROUND = 'RND';
 xss.NS_SCORE = 'SCR';
 xss.NS_SNAKE = 'SNK';
 xss.NS_SOCKET = 'SOK';

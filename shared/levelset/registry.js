@@ -4,13 +4,14 @@
  * @constructor
  */
 xss.levelset.Registry = function() {
-    /** @type {Array.<xss.levelset.Base>} */
+    /** @type {Array.<xss.levelset.Levelset>} */
     this.levelsets = [];
+    this.loaded = false;
 };
 
 xss.levelset.Registry.prototype = {
     /**
-     * @param {xss.levelset.Base} levelset
+     * @param {xss.levelset.Levelset} levelset
      */
     register: function(levelset) {
         this.levelsets.push(levelset);
@@ -24,6 +25,7 @@ xss.levelset.Registry.prototype = {
 
         checkAllLoaded = function() {
             if (++loaded === this.levelsets.length) {
+                this.loaded = true;
                 continueFn();
             }
         }.bind(this);

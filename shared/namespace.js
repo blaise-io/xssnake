@@ -1,17 +1,21 @@
-/*jshint -W079*/
 'use strict';
 
-// @TODO remove unused namespaces.
-
 var xss = {
-    data      : {},
-    debug     : {},
-    model     : {},
-    view      : {},
-    controller: {},
-    bootstrap : {},
-    level     : {
-        animation: {}
-    },
-    levelset  : {}
+    /** @deprecated */
+    animation: {},
+    /** @deprecated */
+    model    : {},
+    debug    : {},
+    data     : {},
+    bootstrap: {},
+    room     : {},
+    game     : {},
+    level    : {},
+    levels   : {},
+    levelanim: {},
+    levelset : {},
+    levelsets: {},
+    stage    : {},
+    stages   : {},
+    util     : {}
 };

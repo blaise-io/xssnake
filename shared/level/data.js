@@ -1,40 +1,21 @@
 'use strict';
 
 /**
- * Collisions and levels
- * @param {xss.Data} levelData
- * @param {number} seed
- * @param {number} animProgress
+ * @param {ImageData} imagedata
+ * @param {xss.levelanim.Registry} animations
  * @constructor
  */
-xss.Level = function(levelData, seed, animProgress) {
-    /** @type {Array.<xss.ShapeCollection>} */
-    this.animations = [];
-    this.levelData = levelData;
-    this.levelAnimation = new xss.LevelAnimation(
-        seed, levelData.animation, animProgress
-    );
-    this.gravity = new xss.level.Gravity(levelData.gravity);
+xss.level.Data = function(imagedata, animations) {
+    var parser = new xss.level.Parser(imagedata);
+    this.width = imagedata.width;
+    this.height = imagedata.height;
+    this.walls = parser.walls;
+    this.spawns = parser.spawns;
+    this.unreachables = parser.unreachables;
+    this.animations = animations;
 };
 
-xss.Level.prototype = {
-
-    /**
-     * @param {number} delta
-     * @param {boolean} gameStarted
-     * @return {Array.<xss.ShapeCollection>}
-     */
-    updateMovingWalls: function(delta, gameStarted) {
-        var shapeCollections = this.levelAnimation.update(delta, gameStarted);
-        if (gameStarted) {
-            for (var i = 0, m = shapeCollections.length; i < m; i++) {
-                if (shapeCollections[i]) {
-                    this.animations[i] = shapeCollections[i];
-                }
-            }
-        }
-        return shapeCollections;
-    },
+xss.level.Data.prototype = {
 
     /**
      * @param {number} x
@@ -44,7 +25,7 @@ xss.Level.prototype = {
     isWall: function(x, y) {
         if (this.outOfBounds(x, y)) {
             return true;
-        } else if (this.levelData.walls.has(x, y)) {
+        } else if (this.walls.has(x, y)) {
             return true;
         }
         return false;
@@ -55,12 +36,8 @@ xss.Level.prototype = {
      * @return {boolean}
      */
     isMovingWall: function(coordinate) {
-        for (var i = 0, m = this.animations.length; i < m; i++) {
-            if (this.inShapes(this.animations[i], coordinate)) {
-                return true;
-            }
-        }
-        return false;
+        var shapes = this.animations.getMovingWalls();
+        return this.inShapes(shapes, coordinate);
     },
 
     /**
@@ -144,7 +121,7 @@ xss.Level.prototype = {
         if (this.isWall(location[0], location[1])) {
             return false;
         }
-        if (this.levelData.unreachables.has(location[0], location[1])) {
+        if (this.unreachables.has(location[0], location[1])) {
             return false;
         }
         for (var i = 0, m = nonEmptyLocations.length; i < m; i++) {
@@ -165,7 +142,7 @@ xss.Level.prototype = {
         if (x < 0 || y < 0) {
             return true;
         } else {
-            return x >= this.levelData.width || y >= this.levelData.height;
+            return x >= this.width || y >= this.height;
         }
     }
 

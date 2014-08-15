@@ -3,15 +3,15 @@
 /**
  * @constructor
  */
-xss.RoomManager = function(server) {
+xss.room.RoomManager = function(server) {
     this.server = server;
     this.bindEvents();
 
-    /** @type {Object.<string,xss.Room>} */
+    /** @type {Object.<string,xss.room.Room>} */
     this.rooms = {};
 };
 
-xss.RoomManager.prototype = {
+xss.room.RoomManager.prototype = {
 
     bindEvents: function() {
         var pubsub = this.server.pubsub;
@@ -22,14 +22,14 @@ xss.RoomManager.prototype = {
 
     /**
      * @param {string} key
-     * @return {xss.Room}
+     * @return {xss.room.Room}
      */
     room: function(key) {
         return this.rooms[key];
     },
 
     /**
-     * @param {xss.Room} room
+     * @param {xss.room.Room} room
      */
     remove: function(room) {
         delete this.rooms[room.key];
@@ -55,7 +55,7 @@ xss.RoomManager.prototype = {
 
     /**
      * @param {Object.<string, number|boolean>} gameOptions
-     * @return {xss.Room}
+     * @return {xss.room.Room}
      */
     getOrCreateRoom: function(gameOptions) {
         var room = this._findRoom(gameOptions);
@@ -67,18 +67,18 @@ xss.RoomManager.prototype = {
 
     /**
      * @param {Object.<string, number|boolean>} gameOptions
-     * @return {xss.Room}
+     * @return {xss.room.Room}
      */
     createRoom: function(gameOptions) {
         var room, id = xss.util.randomStr(xss.ROOM_KEY_LENGTH);
-        room = new xss.Room(this.server, id, gameOptions);
+        room = new xss.room.Room(this.server, id, gameOptions);
         this.rooms[room.key] = room;
         return room;
     },
 
     /**
      * @param {Object.<string, ?>} requestOptions
-     * @param {xss.Room} room
+     * @param {xss.room.Room} room
      * @return {boolean}
      */
     gameOptionsMatch: function(requestOptions, room) {
@@ -155,7 +155,7 @@ xss.RoomManager.prototype = {
 
     /**
      * @param {Object.<string, number|boolean>} gameOptions
-     * @return {xss.Room}
+     * @return {xss.room.Room}
      * @private
      */
     _findRoom: function(gameOptions) {

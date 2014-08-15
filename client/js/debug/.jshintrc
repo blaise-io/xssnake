@@ -1,0 +1,10 @@
+{
+    "globalstrict": true,
+    "browser": true,
+    "expr": true,
+    "sub": true,
+    "globals": {
+        "xss": true,
+        "console": false
+    }
+}

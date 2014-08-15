@@ -106,45 +106,40 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
     },
 
     /**
-     * @return {Object.<string, xss.Shape>}
+     * @param {function(string, xss.Shape)} callbackFn
      */
-    outerBorder: function() {
-        var shapes = {},
-            w = xss.WIDTH - 1,
-            h = xss.HEIGHT - 1;
+    outerBorder: function(callbackFn) {
+        var shapes = {}, w, h;
+
+        w = xss.WIDTH - 1;
+        h = xss.HEIGHT - 1;
 
         // Splitting this up or it spans too big of an area
-        shapes.top = new xss.Shape(
+        shapes.outerBorderTop = new xss.Shape(
             this.line(1, 0, w - 1, 0),
             this.line(0, 1, w, 1)
         );
 
-        shapes.right = new xss.Shape(
+        shapes.outerBorderRight = new xss.Shape(
             this.line(w, 2, w, h - 2),
             this.line(w - 1, 2, w - 1, h - 2)
         );
 
-        shapes.bottom = new xss.Shape(
+        shapes.outerBorderBottom = new xss.Shape(
             this.line(1, h, w - 1, h),
             this.line(0, h - 1, w, h - 1)
         );
 
-        shapes.left = new xss.Shape(
+        shapes.outerBorderLeft = new xss.Shape(
             this.line(0, 2, 0, h - 2),
             this.line(1, 2, 1, h - 2)
         );
 
-        return shapes;
-    },
-
-    /**
-     * @param {xss.LevelData} data
-     * @return {xss.Shape}
-     */
-    level: function(data) {
-        var shape = new xss.Shape(data.walls);
-        shape.setGameTransform();
-        return shape;
+        for (var k in shapes) {
+            if (shapes.hasOwnProperty(k)) {
+                callbackFn(k, shapes[k]);
+            }
+        }
     },
 
     /**

@@ -6,7 +6,7 @@
  * @param {Object} options
  * @constructor
  */
-xss.Room = function(server, key, options) {
+xss.room.Room = function(server, key, options) {
     this.server  = server;
     this.key     = key;
     this.options = this.cleanOptions(options);
@@ -20,7 +20,7 @@ xss.Room = function(server, key, options) {
     this._emitBuffer = [];
 };
 
-xss.Room.prototype = {
+xss.room.Room.prototype = {
 
     destruct: function() {
         this.clients = [];
@@ -177,7 +177,7 @@ xss.Room.prototype = {
      * Buffer events to be sent later using flush()
      * @param {string} type
      * @param {*} data
-     * @return {xss.Room}
+     * @return {xss.room.Room}
      */
     buffer: function(type, data) {
         this._emitBuffer.push([type, data]);
@@ -186,7 +186,7 @@ xss.Room.prototype = {
 
     /**
      * Send buffer
-     * @return {xss.Room}
+     * @return {xss.room.Room}
      */
     flush: function() {
         if (this._emitBuffer.length > 1) {

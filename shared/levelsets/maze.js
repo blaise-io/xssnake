@@ -1,15 +1,15 @@
 'use strict';
 
 /**
- * @extends {xss.levelset.Base}
+ * @extends {xss.levelset.Levelset}
  * @constructor
  */
 xss.levelset.Maze = function() {
-    xss.levelset.Base.apply(this, arguments);
+    xss.levelset.Levelset.apply(this, arguments);
     this.title = xss.COPY_LEVELSET_MAZE;
 };
 
-xss.util.extend(xss.levelset.Maze.prototype, xss.levelset.Base.prototype);
+xss.util.extend(xss.levelset.Maze.prototype, xss.levelset.Levelset.prototype);
 xss.util.extend(xss.levelset.Maze.prototype, {
 
 });

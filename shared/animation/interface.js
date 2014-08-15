@@ -1,8 +1,5 @@
 'use strict';
 
-xss.animation = {};
-
-
 /**
  * @interface
  * @param {number=} seed

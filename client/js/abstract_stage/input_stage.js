@@ -53,7 +53,7 @@ xss.InputStage.prototype = {
     },
 
     destruct: function() {
-        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
         xss.shapes.message = null;
         this._shape = this._getShape();
         this.input.destruct();
@@ -70,7 +70,7 @@ xss.InputStage.prototype = {
     inputSubmit: function(error, value, top) {
         if (!error && value && top) {
             xss.flow.switchStage(this.next);
-            xss.event.off(xss.EVENT_KEYDOWN, xss.NS_INPUT);
+            xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT);
         } else {
             xss.shapes.message = xss.font.shape(error, xss.MENU_LEFT, top);
             xss.shapes.message.lifetime(0, 500);
@@ -96,7 +96,7 @@ xss.InputStage.prototype = {
      * @private
      */
     _bindEvents: function() {
-        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys.bind(this));
     },
 
     /**

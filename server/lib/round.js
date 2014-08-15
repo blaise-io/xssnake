@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {xss.Room} room
+ * @param {xss.room.Room} room
  * @param {number} levelIndex
  * @constructor
  */
@@ -23,7 +23,7 @@ xss.Round.prototype = {
     },
 
     countdown: function() {
-        this.room.emit(xss.EVENT_GAME_COUNTDOWN);
+        this.room.emit(xss.EVENT_ROUND_COUNTDOWN);
         this._countDownTimer = setTimeout(
             this.start.bind(this),
             xss.TIME_ROUND_COUNTDOWN * 1000
@@ -31,6 +31,7 @@ xss.Round.prototype = {
     },
 
     start: function() {
+        this.room.emit(xss.EVENT_ROUND_START);
         this.game.start();
     },
 

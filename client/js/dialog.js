@@ -48,7 +48,7 @@ xss.Dialog.prototype = {
     destruct: function() {
         xss.shapes.dialog = null;
         xss.keysBlocked = false;
-        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_DIALOG);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_DIALOG);
     },
 
     restore: function() {
@@ -90,7 +90,7 @@ xss.Dialog.prototype = {
     _bindEvents: function() {
         xss.keysBlocked = this.settings.keysBlocked;
         if (this.settings.type !== xss.Dialog.TYPE.INFO) {
-            xss.event.on(xss.EVENT_KEYDOWN, xss.NS_DIALOG, this._handleKeys.bind(this));
+            xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_DIALOG, this._handleKeys.bind(this));
         }
         if (this.settings.type === xss.Dialog.TYPE.ALERT) {
             this._okSelected = true;

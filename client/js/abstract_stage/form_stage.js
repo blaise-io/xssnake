@@ -31,11 +31,11 @@ xss.FormStage.prototype = {
     },
 
     construct: function() {
-        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys.bind(this));
     },
 
     destruct: function() {
-        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
         xss.shapes.stage = null;
     },
 

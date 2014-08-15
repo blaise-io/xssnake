@@ -1,9 +1,7 @@
 'use strict';
 
-xss.debug.NS = 'DEBUG';
-
 // Debug URL: debug.html?debug=level:0
-xss.debug.debugLevelMatch = location.search.match(/debug=level:([0-9]+)$/);
+xss.debug.debugLevelMatch = location.search.match(/debug=(.+Level)$/);
 if (xss.debug.debugLevelMatch) {
     xss.menuSnake = true; // Prevent spawn.
     document.addEventListener('DOMContentLoaded', function() {
@@ -12,13 +10,11 @@ if (xss.debug.debugLevelMatch) {
 }
 
 xss.debug.level = function() {
-    if (!xss.levels || !xss.levels.loaded) {
-        xss.event.off(xss.PUB_FONT_LOAD);
-        return setTimeout(xss.debug.level);
-    }
-
-    var levelIndex = Number(xss.debug.debugLevelMatch[1]);
-    var game = new xss.Game(0, Math.random(), levelIndex, ['Dummy']);
-    game.start();
-    game.snakes[0].size = 4;
+    var players = new xss.room.PlayerRegistry(['']);
+    var levelObject = xss.debug.debugLevelMatch[1];
+    var levelInstance = new xss.level[levelObject](new xss.levelset.Levelset());
+    levelInstance.preload(function() {
+        xss.flow.destruct();
+        new xss.room.Round(players, levelInstance).start();
+    });
 };

@@ -10,10 +10,10 @@ xss.Client = function(pubsub, connection) {
     this.model = new xss.model.Client();
     this.socket = new xss.Socket(this, pubsub, connection);
 
-    /** @type {xss.Snake} */
+    /** @type {xss.game.Snake} */
     this.snake = null;
 
-    /** @type {xss.Room} */
+    /** @type {xss.room.Room} */
     this.room = null;
 };
 

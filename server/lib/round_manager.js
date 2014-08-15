@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {xss.Room} room
+ * @param {xss.room.Room} room
  * @constructor
  */
 xss.RoundManager = function(room) {

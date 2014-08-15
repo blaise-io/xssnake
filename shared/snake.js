@@ -4,20 +4,19 @@
  * @typedef {Array.<xss.Coordinate>}
  * @example [[0,0], [1,0], [2,0]]
  */
-xss.SnakeParts;
+xss.game.SnakeParts;
 
 /**
  * Snake
- * @param {xss.Coordinate} location
- * @param {number} direction
+ * @param {xss.level.Spawn} spawn
  * @param {number} size
  * @param {number} speed
  * @constructor
  */
-xss.Snake = function(location, direction, size, speed) {
-    /** @type xss.SnakeParts */
-    this.parts = [location];
-    this.direction = direction;
+xss.game.Snake = function(spawn, size, speed) {
+    /** @type xss.game.SnakeParts */
+    this.parts = [spawn.location];
+    this.direction = spawn.direction;
     this.size = size;
     this.speed = speed;
     this.crashed = false;
@@ -25,7 +24,7 @@ xss.Snake = function(location, direction, size, speed) {
     this.gravity = null;
 };
 
-xss.Snake.prototype = {
+xss.game.Snake.prototype = {
 
     /**
      * @param {xss.Coordinate} position

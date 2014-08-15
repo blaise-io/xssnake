@@ -23,11 +23,11 @@ xss.ScreenStage.prototype = {
     },
 
     construct: function() {
-        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys);
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES, this._handleKeys);
     },
 
     destruct: function() {
-        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_STAGES);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
         xss.shapes.stage = null;
     },
 

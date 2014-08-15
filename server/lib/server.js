@@ -9,7 +9,7 @@ var events = require('events');
  */
 xss.Server = function() {
     this.pubsub = this.setupPubSub();
-    this.roomManager = new xss.RoomManager(this);
+    this.roomManager = new xss.room.RoomManager(this);
 };
 
 xss.Server.prototype = {

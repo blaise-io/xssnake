@@ -3,7 +3,7 @@
 /**
  * @constructor
  */
-xss.Room = function() {
+xss.room.Room = function() {
     this.game = null;
     this.score = null;
     this.chat = null;
@@ -14,14 +14,14 @@ xss.Room = function() {
     this._bindEvents();
 };
 
-xss.Room.prototype = {
+xss.room.Room.prototype = {
 
     destruct: function() {
         xss.event.off(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.EVENT_XSS_REQ, xss.NS_ROOM);
         xss.event.off(xss.EVENT_XSS_RES, xss.NS_ROOM);
         xss.util.hash();
-        this.unbindKeys();
+        this._unbindKeys();
         this.destructDialog();
         if (this.players) {
             this.game.destruct();
@@ -30,8 +30,8 @@ xss.Room.prototype = {
         }
     },
 
-    unbindKeys: function() {
-        xss.event.off(xss.EVENT_KEYDOWN, xss.NS_ROOM);
+    _unbindKeys: function() {
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM);
     },
 
     destructDialog: function() {
@@ -104,7 +104,8 @@ xss.Room.prototype = {
      * @private
      */
     _bindEvents: function() {
-        xss.event.on(xss.EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
+        xss.event.on(xss.EVENT_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
         xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
         xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._reqxss.bind(this));
         xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalxss.bind(this));
