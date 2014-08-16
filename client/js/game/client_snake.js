@@ -7,6 +7,7 @@
  * @param {xss.level.Level} level
  * @extends {xss.game.Snake}
  * @constructor
+ * @todo offload logic to other classes
  */
 xss.game.ClientSnake = function(index, local, name, level) {
     xss.game.Snake.call(this, index, level);
@@ -18,15 +19,8 @@ xss.game.ClientSnake = function(index, local, name, level) {
     this.elapsed = 0;
     this.limbo   = false;
 
-    /** @type {xss.game.SnakeControls} */
+    /** @type {xss.game.ClientSnakeControls} */
     this.controls = null;
-
-    /**
-     * @type {Array}
-     * @deprecated
-     * @private
-     */
-    this._snakeTurnCache = [];
 
     /** @type {Object.<string,string>} */
     this.shapeKeys = {
@@ -44,6 +38,8 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
 
     destruct: function() {
         this.crash();
+        this.controls.destruct();
+
         for (var k in this.shapeKeys) {
             if (this.shapeKeys.hasOwnProperty(k)) {
                 xss.shapes[this.shapeKeys[k]] = null;
@@ -56,20 +52,9 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     },
 
     showName: function() {
-        var x, y, shape;
-
-        x = this.parts[0][0] * 4;
-        y = this.parts[0][1] * 4;
-
-        switch (this.direction) {
-            case 0: y +=  4; x -=  4; break;
-            case 1: y -=  4; x +=  4; break;
-            case 2: y +=  4; x += 10; break;
-            case 3: y += 10; x +=  4; break;
-        }
-
-        shape = xss.shapegen.tooltip(this.name, x, y, this.direction);
-        xss.shapes[this.shapeKeys.name] = shape;
+        xss.shapes[this.shapeKeys.name] = xss.shapegen.tooltipName(
+            this.name, this.parts[0], this.direction
+        );
     },
 
     /**
@@ -112,19 +97,7 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     },
 
     addControls: function() {
-        if (this.local) {
-            xss.event.on(
-                xss.DOM_EVENT_KEYDOWN,
-                xss.NS_SNAKE,
-                this._handleKeys.bind(this)
-            );
-        }
-    },
-
-    removeControls: function() {
-        if (this.local) {
-            xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_SNAKE);
-        }
+        this.controls = new xss.game.ClientSnakeControls(this);
     },
 
     updateShape: function() {
@@ -132,11 +105,6 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
         shape.pixels.addPairs(this.parts);
         shape.setGameTransform();
         xss.shapes[this.shapeKeys.snake] = shape;
-    },
-
-    isTimeForMove: function(delta) {
-        this.elapsed += delta;
-        return !this.crashed && this.elapsed >= this.speed;
     },
 
     /**
@@ -175,7 +143,7 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
      */
     crash: function(part) {
         this.crashed = true;
-        this.removeControls();
+        this.controls.destruct();
         this.updateShape();
         if (!this._exploded) {
             this._exploded = true;
@@ -207,19 +175,14 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
 
     /**
      * @param {number} direction
-     * @private
      */
-    _emitSnake: function(direction) {
-        var data, sync;
-        sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
-        data = [this.parts.slice(-sync), direction];
-        xss.socket.emit(xss.EVENT_SNAKE_UPDATE, data);
-    },
-
-    /** @private */
-    _applyCachedDirection: function() {
-        if (this._snakeTurnCache.length) {
-            this.direction = this._snakeTurnCache.shift();
+    emit: function(direction) {
+        if (xss.socket) {
+            // @todo: Check if in room?
+            var data, sync;
+            sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
+            data = [this.parts.slice(-sync), direction];
+            xss.socket.emit(xss.EVENT_SNAKE_UPDATE, data);
         }
     },
 
@@ -228,70 +191,9 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
      */
     getNextPosition: function() {
         var shift, head = this.getHead();
-        this._applyCachedDirection();
+        this.direction = this.controls.getNextDirection();
         shift = xss.GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
-    },
-
-    /**
-     * @param {Event} ev
-     * @private
-     */
-    _handleKeys: function(ev) {
-        if (xss.keysBlocked) {
-            return;
-        }
-        this._changeDirection(xss.KEY_TO_DIRECTION[ev.keyCode]);
-    },
-
-    /**
-     * @param {number} direction
-     * @private
-     */
-    _changeDirection: function(direction) {
-        var allowed = this._isTurnAllowed(direction, this._getPrevDirection());
-        if (this._snakeTurnCache.length <= 2 && allowed) {
-            this._snakeTurnCache.push(direction);
-            this._emitProxy(direction);
-        }
-    },
-
-    /**
-     * @param {number} direction
-     * @private
-     */
-    _emitProxy: function(direction) {
-        var emit = function() {
-            this._emitSnake(direction);
-        }.bind(this);
-        if (xss.room && xss.room.game && xss.room.game.model.started) {
-            if (this._snakeTurnCache.length <= 1) {
-                emit();
-            } else {
-                setTimeout(emit, this.speed);
-            }
-        }
-    },
-
-    /**
-     * @return {number}
-     * @private
-     */
-    _getPrevDirection: function() {
-        return (this._snakeTurnCache.length) ?
-            this._snakeTurnCache[0] :
-            this.direction;
-    },
-
-    /**
-     * @param {number} direction
-     * @param {number} prevDirection
-     * @private
-     */
-    _isTurnAllowed: function(direction, prevDirection) {
-        var turns = Math.abs(direction - prevDirection);
-        // Disallow 0: no turn, 2: bumping into torso
-        return turns === 1 || turns === 3;
     }
 
 });

@@ -9,15 +9,15 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
      * @param {string} text
      * @param {number} x
      * @param {number} y
-     * @param {number} side
+     * @param {number} direction
      * @return {xss.Shape}
      */
-    tooltip: function(text, x, y, side) {
+    tooltip: function(text, x, y, direction) {
         var width, shape, hw, line = xss.shapegen.line;
 
         width = xss.font.width(text);
 
-        switch (side) {
+        switch (direction) {
             case 0:
                 shape = xss.font.shape(text, x - width - 6, y - 4);
                 // Left
@@ -91,6 +91,28 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
         shape.isOverlay = true;
         shape.bbox();
         return shape;
+    },
+
+    /**
+     * @param {string} text
+     * @param {xss.Coordinate} part
+     * @param {number} direction
+     * @return {xss.Shape}
+     */
+    tooltipName: function(text, part, direction) {
+        var x, y, t = xss.GAME_TILE, d = xss.GAME_TILE * 2.5;
+
+        x = part[0] * t;
+        y = part[1] * t;
+
+        switch (direction) {
+            case xss.DIRECTION_LEFT:  y += t; x -= t; break;
+            case xss.DIRECTION_UP:    y -= t; x += t; break;
+            case xss.DIRECTION_RIGHT: y += t; x += d; break;
+            case xss.DIRECTION_DOWN:  y += d; x += t; break;
+        }
+
+        return xss.shapegen.tooltip(text, x, y, direction);
     },
 
     /**

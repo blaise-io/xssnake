@@ -107,21 +107,21 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
      * @private
      */
     _updateMenuSnake: function() {
-        var nextpos, snake = xss.menuSnake;
-        nextpos = snake.getNextPosition();
-        snake.removeNameAndDirection();
-        if (xss.room) {
-            snake.destruct();
-        } else if (this._isMenuSnakeCrash(snake, nextpos)) {
-            snake.crash();
-            window.setTimeout(snake.destruct.bind(snake), 1000);
-            // Respawn menu snake
-            // window.setTimeout(this._launchMenuSnake.bind(this), 1000 * 15);
-        } else {
-            snake.isTimeForMove(nextpos);
-            snake.updateShape();
-            window.setTimeout(this._updateMenuSnake.bind(this), 100);
-        }
+//        var nextpos, snake = xss.menuSnake;
+//        nextpos = snake.getNextPosition();
+//        snake.removeNameAndDirection();
+//        if (xss.room) {
+//            snake.destruct();
+//        } else if (this._isMenuSnakeCrash(snake, nextpos)) {
+//            snake.crash();
+//            window.setTimeout(snake.destruct.bind(snake), 1000);
+//            // Respawn menu snake
+//            // window.setTimeout(this._launchMenuSnake.bind(this), 1000 * 15);
+//        } else {
+//            snake.handleNextMove(nextpos, [0, 0], []);
+//            snake.updateShape();
+//            window.setTimeout(this._updateMenuSnake.bind(this), 100);
+//        }
     },
 
     /**
