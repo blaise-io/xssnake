@@ -12,7 +12,7 @@ xss.Crash = function(type, client, opponent) {
 
     this.opponent = opponent;
     /** @type {xss.Coordinate} */
-    this.part = null;
+    this.location = null;
 
     this.parts = client.snake.parts.slice();
     this.time = new Date();

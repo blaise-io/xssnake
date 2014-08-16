@@ -36,8 +36,9 @@ xss.level.Data.prototype = {
      * @return {boolean}
      */
     isMovingWall: function(coordinate) {
-        var shapes = this.animations.getMovingWalls();
-        return this.inShapes(shapes, coordinate);
+//        var shapes = this.animations.getMovingWalls();
+//        return this.inShapes(shapes, coordinate);
+        return false;
     },
 
     /**

@@ -1,17 +1,17 @@
 'use strict';
 
 /**
- * @param {xss.game.Level} level
+ * @param {xss.game.Snake} snake
  * @param {Array.<xss.game.ClientSnake>} snakes
- * @param {xss.game.ClientSnake} snake
- * @param {xss.Coordinate} part
+ * @param {xss.level.Level} level
+ * @param {xss.Coordinate} location
  * @constructor
  */
-xss.game.SnakeMove = function(level, snakes, snake, part) {
+xss.game.SnakeMove = function(snake, snakes, level, location) {
+    this.snake = snake;
     this.level = level;
     this.snakes = snakes;
-    this.snake = snake;
-    this.part = part;
+    this.location = location;
     this.collision = this.getCollission();
 };
 
@@ -25,7 +25,7 @@ xss.game.SnakeMove.prototype = {
     },
 
     getCollission: function() {
-        var parts = this.getParts(this.part);
+        var parts = this.getParts(this.location);
         for (var i = 0, m = parts.length; i < m; i++) {
             var collision = this.getCollisionPart(i, parts[i]);
             if (collision) {

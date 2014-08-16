@@ -5,7 +5,7 @@
  * @constructor
  */
 xss.game.Collision = function(part) {
-    this.part = part;
+    this.location = part;
 };
 
 xss.game.Collision.prototype = {

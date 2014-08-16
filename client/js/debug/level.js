@@ -10,11 +10,13 @@ if (xss.debug.debugLevelMatch) {
 }
 
 xss.debug.level = function() {
-    var players = new xss.room.PlayerRegistry(['']);
+    var players = new xss.room.PlayerRegistry([''], 0);
     var levelObject = xss.debug.debugLevelMatch[1];
-    var levelInstance = new xss.levels[levelObject](new xss.levelset.Levelset());
+    var levelset = new xss.levelset.Levelset();
+    var levelInstance = new xss.levels[levelObject](levelset.options);
     levelInstance.preload(function() {
         xss.flow.destruct();
-        new xss.game.Game(players, levelInstance).start();
+        var game = new xss.game.Game(players, levelInstance);
+        game.start();
     });
 };

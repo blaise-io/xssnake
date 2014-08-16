@@ -7,7 +7,6 @@
 xss.level.Level = function(options) {
     /** @type {xss.levelset.Options} */
     this.options = xss.util.clone(options);
-
     this.animations = new xss.levelanim.Registry();
     this.animations.register(xss.util.noop);
 

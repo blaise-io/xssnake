@@ -6,6 +6,7 @@
  * @param {number} seed
  * @param {number} animProgress
  * @constructor
+ * @deprecated
  */
 xss.Level = function(levelData, seed, animProgress) {
     /** @type {Array.<xss.ShapeCollection>} */

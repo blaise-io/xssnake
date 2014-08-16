@@ -5,5 +5,5 @@
  * @constructor
  */
 xss.ClientCrash = function(part) {
-    this.part = part;
+    this.location = part;
 };

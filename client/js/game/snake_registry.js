@@ -22,23 +22,28 @@ xss.game.SnakeRegistry.prototype = {
     setSnakes: function(players) {
         for (var i = 0, m = players.names.length; i < m; i++) {
             this.snakes.push(
-                this.setSnake(i, players.names[i], i === players.local)
+                this.setSnake(i, i === players.local, players.names[i])
             );
         }
     },
 
-    setSnake: function(i, name, local) {
-        var snake = new xss.game.ClientSnake(i, local, name, this.level);
+    /**
+     * @param {number} index
+     * @param {boolean} local
+     * @param {string} name
+     * @return {xss.game.ClientSnake}
+     */
+    setSnake: function(index, local, name) {
+        var snake = new xss.game.ClientSnake(index, local, name, this.level);
         if (local) {
             this.localSnake = snake;
         }
-        return this.snake;
+        return snake;
     },
 
     showMeta: function() {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].showName();
-
         }
         if (this.localSnake) {
             this.localSnake.showDirection();
@@ -59,9 +64,7 @@ xss.game.SnakeRegistry.prototype = {
 
     move: function(delta, shift) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            if (this.snakes[i].isTimeForMove(delta, shift)) {
-                this.snakes[i].handleNextMove(this.snakes);
-            }
+            this.snakes[i].handleNextMove(delta, shift, this.snakes);
         }
     }
 };

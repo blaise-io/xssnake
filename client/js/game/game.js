@@ -52,6 +52,7 @@ xss.game.Game.prototype = {
             this._handleFocus.bind(this)
         );
 
+        this.started = true;
         this.snakes.removeMeta();
         this.snakes.addControls();
     },
@@ -246,7 +247,7 @@ xss.game.Game.prototype = {
         crash = this._isCrash(snake, position);
         if (crash) {
             if (snake.local) {
-                snake.crash(crash.part);
+                snake.crash(crash.location);
             } else {
                 snake.limbo = true;
             }

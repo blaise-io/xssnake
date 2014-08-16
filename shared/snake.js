@@ -20,6 +20,7 @@ xss.game.Snake = function(index, level) {
     this.direction = spawn.direction;
     this.size = level.options.snakeSize;
     this.speed = level.options.snakeSpeed;
+
     this.crashed = false;
     this.limbo = null;
     this.gravity = null;

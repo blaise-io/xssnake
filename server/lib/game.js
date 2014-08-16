@@ -384,7 +384,7 @@ xss.Game.prototype = {
             // Moving wall
             if (level.isMovingWall(part)) {
                 crash = new xss.Crash(xss.CRASH_MOVING_WALL, client);
-                crash.part = part;
+                crash.location = part;
                 return crash;
             }
 
@@ -423,7 +423,7 @@ xss.Game.prototype = {
         parts = parts || snake.parts;
         snake.crashed = true;
         this.room.emit(xss.EVENT_SNAKE_CRASH, [
-            client.model.index, parts, snake.limbo.part
+            client.model.index, parts, snake.limbo.location
         ]);
     },
 

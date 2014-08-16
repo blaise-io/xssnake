@@ -2,18 +2,19 @@
 
 /**
  * @param {number} index
- * @param {string} name
  * @param {boolean} local
+ * @param {string} name
  * @param {xss.level.Level} level
  * @extends {xss.game.Snake}
  * @constructor
  */
-xss.game.ClientSnake = function(index, name, local, level) {
+xss.game.ClientSnake = function(index, local, name, level) {
     xss.game.Snake.call(this, index, level);
 
     this.index   = index;
-    this.name    = name;
     this.local   = local;
+    this.name    = name;
+    this.level   = level;
     this.elapsed = 0;
     this.limbo   = false;
 
@@ -139,23 +140,33 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     },
 
     /**
+     * @param {number} delta
+     * @param shift
      * @param {Array.<xss.game.ClientSnake>} snakes
      */
-    handleNextMove: function(snakes) {
-        var move = new xss.game.SnakeMove(this.level, snakes, this, this.getNextPosition());
+    handleNextMove: function(delta, shift, snakes) {
+        this.elapsed += delta;
 
-        // Don't show a snake moving inside a wall, which is caused by latency.
-        // Server wil issue a final verdict whether the snake truly crashed, or
-        // made a turn in time.
-        if (move.collision) {
-            if (this.local) {
-                this.crash(move.collision.part);
-            } else {
-                this.limbo = move.collision;
+        if (!this.crashed && this.elapsed >= this.speed) {
+            var move = new xss.game.SnakeMove(
+                this, snakes, this.level, this.getNextPosition()
+            );
+
+            this.elapsed -= this.speed;
+
+            // Don't show a snake moving inside a wall, which is caused by latency.
+            // Server wil issue a final verdict whether the snake truly crashed, or
+            // made a turn in time.
+            if (move.collision) {
+                if (this.local) {
+                    this.crash(move.collision.location);
+                } else {
+                    this.limbo = move.collision;
+                }
+            } else if (!this.limbo) {
+                this.move(move.location);
+                this.updateShape();
             }
-        } else if (!this.limbo) {
-            this.move(move.location);
-            this.updateShape();
         }
     },
 
