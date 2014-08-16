@@ -15,6 +15,6 @@ xss.debug.level = function() {
     var levelInstance = new xss.levels[levelObject](new xss.levelset.Levelset());
     levelInstance.preload(function() {
         xss.flow.destruct();
-        new xss.room.Round(players, levelInstance).start();
+        new xss.game.Game(players, levelInstance).start();
     });
 };

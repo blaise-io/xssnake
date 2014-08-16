@@ -8,17 +8,18 @@ xss.game.SnakeParts;
 
 /**
  * Snake
- * @param {xss.level.Spawn} spawn
- * @param {number} size
- * @param {number} speed
+ * @param {number} index
+ * @param {xss.level.Level} level
  * @constructor
  */
-xss.game.Snake = function(spawn, size, speed) {
+xss.game.Snake = function(index, level) {
+    var spawn = level.data.spawns[index];
+
     /** @type xss.game.SnakeParts */
     this.parts = [spawn.location];
     this.direction = spawn.direction;
-    this.size = size;
-    this.speed = speed;
+    this.size = level.options.snakeSize;
+    this.speed = level.options.snakeSpeed;
     this.crashed = false;
     this.limbo = null;
     this.gravity = null;

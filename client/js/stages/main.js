@@ -118,7 +118,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
             // Respawn menu snake
             // window.setTimeout(this._launchMenuSnake.bind(this), 1000 * 15);
         } else {
-            snake.move(nextpos);
+            snake.isTimeForMove(nextpos);
             snake.updateShape();
             window.setTimeout(this._updateMenuSnake.bind(this), 100);
         }

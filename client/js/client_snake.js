@@ -2,23 +2,27 @@
 
 /**
  * @param {number} index
- * @param {boolean} local
  * @param {string} name
- * @param {xss.level.Spawn} spawn
+ * @param {boolean} local
+ * @param {xss.level.Level} level
  * @extends {xss.game.Snake}
  * @constructor
  */
-xss.game.ClientSnake = function(index, local, name, spawn) {
-    xss.game.Snake.call(this, spawn, xss.SNAKE_SIZE, xss.SNAKE_SPEED);
+xss.game.ClientSnake = function(index, name, local, level) {
+    xss.game.Snake.call(this, index, level);
 
     this.index   = index;
-    this.local   = local;
     this.name    = name;
+    this.local   = local;
     this.elapsed = 0;
     this.limbo   = false;
 
+    /** @type {xss.game.SnakeControls} */
+    this.controls = null;
+
     /**
      * @type {Array}
+     * @deprecated
      * @private
      */
     this._snakeTurnCache = [];
@@ -127,6 +131,32 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
         shape.pixels.addPairs(this.parts);
         shape.setGameTransform();
         xss.shapes[this.shapeKeys.snake] = shape;
+    },
+
+    isTimeForMove: function(delta) {
+        this.elapsed += delta;
+        return !this.crashed && this.elapsed >= this.speed;
+    },
+
+    /**
+     * @param {Array.<xss.game.ClientSnake>} snakes
+     */
+    handleNextMove: function(snakes) {
+        var move = new xss.game.SnakeMove(this.level, snakes, this, this.getNextPosition());
+
+        // Don't show a snake moving inside a wall, which is caused by latency.
+        // Server wil issue a final verdict whether the snake truly crashed, or
+        // made a turn in time.
+        if (move.collision) {
+            if (this.local) {
+                this.crash(move.collision.part);
+            } else {
+                this.limbo = move.collision;
+            }
+        } else if (!this.limbo) {
+            this.move(move.location);
+            this.updateShape();
+        }
     },
 
     /**

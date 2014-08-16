@@ -1,11 +1,13 @@
 'use strict';
 
 /**
- * @param {Array.<xss.level.Spawn>} spawns
+ * @param {xss.level.Level} level
  * @constructor
  */
-xss.game.SnakeRegistry = function(spawns) {
-    this.spawns = spawns;
+xss.game.SnakeRegistry = function(level) {
+    this.level = level;
+    this.spawns = level.data.spawns;
+
     /** @type {Array.<xss.game.ClientSnake>} */
     this.snakes = [];
     /** @type {xss.game.ClientSnake} */
@@ -26,7 +28,7 @@ xss.game.SnakeRegistry.prototype = {
     },
 
     setSnake: function(i, name, local) {
-        var snake = new xss.game.ClientSnake(i, local, name, this.spawns[i]);
+        var snake = new xss.game.ClientSnake(i, local, name, this.level);
         if (local) {
             this.localSnake = snake;
         }
@@ -52,6 +54,14 @@ xss.game.SnakeRegistry.prototype = {
     addControls: function() {
         if (this.localSnake) {
             this.localSnake.addControls();
+        }
+    },
+
+    move: function(delta, shift) {
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            if (this.snakes[i].isTimeForMove(delta, shift)) {
+                this.snakes[i].handleNextMove(this.snakes);
+            }
         }
     }
 };
