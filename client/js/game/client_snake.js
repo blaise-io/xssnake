@@ -57,25 +57,8 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
         );
     },
 
-    /**
-     * @param {string} label
-     * @param {number=} duration
-     * @param {number=} amount
-     */
-    showAction: function(label, duration, amount) {
-        duration = duration || this.speed;
-        amount = amount || 3;
-
-        var rand = function() {
-            return xss.util.randomRange(-12, 12);
-        };
-
-        for (var i = 0; i <= duration * amount; i += duration) {
-            var shape, name, h = this.getHead();
-            shape = xss.font.shape(label, h[0] * 4 + rand(), h[1] * 4 + rand());
-            name = xss.NS_SNAKE + xss.util.randomStr();
-            xss.shapes[name] = shape.lifetime(i, duration + i);
-        }
+    showAction: function(label) {
+        xss.shapegen.showAction(label, this.getHead(), this.speed);
     },
 
     showDirection: function() {

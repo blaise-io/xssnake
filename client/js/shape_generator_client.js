@@ -116,6 +116,31 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
     },
 
     /**
+     * @param {string} label
+     * @param {xss.Coordinate} coordinate
+     * @param {number} duration
+     * @param {number=} amount
+     */
+    showAction: function(label, coordinate, duration, amount) {
+        amount = amount || 3;
+
+        var rand = function() {
+            return xss.util.randomRange(-12, 12);
+        };
+
+        for (var s = 0; s <= duration * amount; s += duration) {
+            var shape, name;
+            shape = xss.font.shape(
+                label,
+                coordinate[0] * xss.GAME_TILE + rand(),
+                coordinate[1] * xss.GAME_TILE + rand()
+            );
+            name = xss.NS_ACTION + xss.util.randomStr();
+            xss.shapes[name] = shape.lifetime(s, s + duration);
+        }
+    },
+
+    /**
      * @return {xss.Shape}
      */
     innerBorder: function() {
@@ -197,19 +222,19 @@ xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prot
         while (intensity--) {
             switch (direction) {
                 case xss.DIRECTION_LEFT:
-                    to = [rand(-w,d), rand(-w,w)];
+                    to = [rand(-w, d), rand(-w, w)];
                     break;
                 case xss.DIRECTION_UP:
-                    to = [rand(-w,w), rand(-d,w)];
+                    to = [rand(-w, w), rand(-d, w)];
                     break;
                 case xss.DIRECTION_RIGHT:
-                    to = [rand(-d,w), rand(-w,w)];
+                    to = [rand(-d, w), rand(-w, w)];
                     break;
                 case xss.DIRECTION_DOWN:
-                    to = [rand(-w,w), rand(-w,d)];
+                    to = [rand(-w, w), rand(-w, d)];
                     break;
                 default:
-                    to = [rand(-d,d), rand(-d,d)];
+                    to = [rand(-d, d), rand(-d, d)];
             }
 
             pixel = new xss.PixelCollection().add(location[0], location[1]);
