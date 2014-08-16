@@ -11,7 +11,7 @@ xss.ShapeCache = function(shape, tile) {
     this.tile = tile;
     this.bbox = this._getBBox();
     this.canvas = this._getCanvas();
-    this.context = this._getContext();
+    this.context = this.canvas.getContext('2d');
     this._paintShapePixels();
 };
 
@@ -22,10 +22,6 @@ xss.ShapeCache.prototype = {
         canvas.width = this.bbox.width + this._getSize();
         canvas.height = this.bbox.height + this._getSize();
         return canvas;
-    },
-
-    _getContext: function() {
-        return this.canvas.getContext('2d');
     },
 
     /**

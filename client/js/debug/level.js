@@ -12,7 +12,7 @@ if (xss.debug.debugLevelMatch) {
 xss.debug.level = function() {
     var players = new xss.room.PlayerRegistry(['']);
     var levelObject = xss.debug.debugLevelMatch[1];
-    var levelInstance = new xss.level[levelObject](new xss.levelset.Levelset());
+    var levelInstance = new xss.levels[levelObject](new xss.levelset.Levelset());
     levelInstance.preload(function() {
         xss.flow.destruct();
         new xss.room.Round(players, levelInstance).start();
