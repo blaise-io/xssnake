@@ -128,30 +128,6 @@ xss.game.Game.prototype = {
         this.snakes[data[0]].speed = data[1];
     },
 
-//    /**
-//     * @param {number} index
-//     * @param {number} seed
-//     * @return {xss.Level}
-//     * @private
-//     */
-//    _setupLevel: function(index, seed) {
-//        var levelData, border;
-//
-//        levelData = xss.levels.getLevelData(index);
-//
-//        xss.shapes.level = xss.shapegen.level(levelData);
-//        xss.shapes.innerborder = xss.shapegen.innerBorder();
-//
-//        border = xss.shapegen.outerBorder();
-//        for (var k in border) {
-//            if (border.hasOwnProperty(k)) {
-//                xss.shapes[k] = border[k];
-//            }
-//        }
-//
-//        return new xss.Level(levelData, seed, this.model.offsetDelta);
-//    },
-
     /**
      * @param {boolean} focus
      * @private
@@ -168,19 +144,15 @@ xss.game.Game.prototype = {
      * @private
      */
     _clientGameLoop: function(delta) {
+        var shift = this.level.gravity.getShift(delta);
 
 //        movingWalls = this.level.updateMovingWalls(delta, this.model.started);
 //        this._updateMovingWalls(movingWalls);
-//
-//        if (this.model.started) {
-//            shift = this.level.gravity.getShift(delta);
-//            this._moveSnakes(delta, shift);
-//        }
 
         if (this.started) {
-            this.snakes.move(delta, [0, 0]);
+            this.snakes.move(delta, shift);
         }
-    },
+    }//,
 
 //    /**
 //     * @param {Array.<xss.ShapeCollection>} shapeCollections
@@ -194,135 +166,93 @@ xss.game.Game.prototype = {
 //        }
 //    },
 
-    /**
-     * @param {number} index
-     * @param {xss.ShapeCollection} shapeCollection
-     * @private
-     * @deprecated
-     */
-    _updateShapes: function(index, shapeCollection) {
-        var shapes = shapeCollection.shapes;
-        for (var i = 0, m = shapes.length; i < m; i++) {
-            var key = xss.NS_ANIM + index + '_' + i;
-            if (shapes[i]) {
-                if (!shapes[i].cache) {
-                     shapes[i].setGameTransform();
-                }
-                xss.shapes[key] = shapes[i];
-            } else {
-                xss.shapes[key] = null;
-            }
-        }
-    },
-
 //    /**
-//     * @todo Move to Snake class.
-//     * @param {number} delta
-//     * @param {xss.Shift} shift
+//     * @param {number} index
+//     * @param {xss.ShapeCollection} shapeCollection
 //     * @private
 //     * @deprecated
 //     */
-//    _moveSnakes: function(delta, shift) {
-//        for (var i = 0, m = this.snakes.length; i < m; i++) {
-//            var snake = this.snakes[i];
-//            if (snake.elapsed >= snake.speed && !snake.crashed) {
-//                snake.elapsed -= snake.speed;
-//                this._moveSnake(snake);
+//    _updateShapes: function(index, shapeCollection) {
+//        var shapes = shapeCollection.shapes;
+//        for (var i = 0, m = shapes.length; i < m; i++) {
+//            var key = xss.NS_ANIM + index + '_' + i;
+//            if (shapes[i]) {
+//                if (!shapes[i].cache) {
+//                     shapes[i].setGameTransform();
+//                }
+//                xss.shapes[key] = shapes[i];
+//            } else {
+//                xss.shapes[key] = null;
 //            }
-//            snake.shiftParts(shift);
-//            snake.elapsed += delta;
 //        }
 //    },
-
-    /**
-     * @param {xss.game.ClientSnake} snake
-     * @private
-     * @deprecated
-     */
-    _moveSnake: function(snake) {
-        var crash, position = snake.getNextPosition();
-
-        // Don't show a snake moving inside a wall, which is caused by latency.
-        // Server wil update snake on whether it crashed or made a turn in time.
-        crash = this._isCrash(snake, position);
-        if (crash) {
-            if (snake.local) {
-                snake.crash(crash.location);
-            } else {
-                snake.limbo = true;
-            }
-        } else if (!snake.limbo) {
-            snake.move(position);
-            snake.updateShape();
-        }
-    },
-
-    /**
-     * @param {xss.game.ClientSnake} snake
-     * @param {xss.Coordinate} position
-     * @return {xss.ClientCrash}
-     * @private
-     */
-    _isCrash: function(snake, position) {
-        var part, predictSnakeParts = snake.parts.slice();
-        predictSnakeParts[predictSnakeParts.length - 1] = position;
-
-        // Walls.
-        part = this._isCrashIntoWall(predictSnakeParts);
-        if (part) {
-            return new xss.ClientCrash(part);
-        }
-
-        // Animating walls.
-        part = this._isCrashIntoAnimated(predictSnakeParts);
-        if (part) {
-            return new xss.ClientCrash(part);
-        }
-
-        // Own tail.
-        if (snake.parts.length >= 5 && snake.hasPartPredict(position)) {
-            if (snake.getPartIndex(position) !== snake.parts.length - 1) {
-                return new xss.ClientCrash(snake.parts[0]);
-            }
-        }
-
-        // Other snake.
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            var opponent = this.snakes[i];
-            if (opponent !== snake && opponent.hasPartPredict(position)) {
-                return new xss.ClientCrash();
-            }
-        }
-
-        return null;
-    },
-
-    /**
-     * @param {xss.game.SnakeParts} parts
-     * @return {xss.Coordinate}
-     * @private
-     */
-    _isCrashIntoWall: function(parts) {
-        for (var i = 0, m = parts.length; i < m; i++) {
-            if (this.level.isWall(parts[i][0], parts[i][1])) {
-                return parts[i];
-            }
-        }
-        return null;
-    },
-
-    /**
-     * @param {xss.game.SnakeParts} parts
-     * @return {xss.Coordinate}
-     * @private
-     */
-    _isCrashIntoAnimated: function(parts) {
-        for (var i = 0, m = parts.length; i < m; i++) {
-            if (this.level.getMovingWalls(parts[i])) {
-                return parts[i];
-            }
-        }
-        return null;
-    }
+//
+//    /**
+//     * @param {xss.game.ClientSnake} snake
+//     * @param {xss.Coordinate} position
+//     * @return {xss.ClientCrash}
+//     * @private
+//     */
+//    _isCrash: function(snake, position) {
+//        var part, predictSnakeParts = snake.parts.slice();
+//        predictSnakeParts[predictSnakeParts.length - 1] = position;
+//
+//        // Walls.
+//        part = this._isCrashIntoWall(predictSnakeParts);
+//        if (part) {
+//            return new xss.ClientCrash(part);
+//        }
+//
+//        // Animating walls.
+//        part = this._isCrashIntoAnimated(predictSnakeParts);
+//        if (part) {
+//            return new xss.ClientCrash(part);
+//        }
+//
+//        // Own tail.
+//        if (snake.parts.length >= 5 && snake.hasPartPredict(position)) {
+//            if (snake.getPartIndex(position) !== snake.parts.length - 1) {
+//                return new xss.ClientCrash(snake.parts[0]);
+//            }
+//        }
+//
+//        // Other snake.
+//        for (var i = 0, m = this.snakes.length; i < m; i++) {
+//            var opponent = this.snakes[i];
+//            if (opponent !== snake && opponent.hasPartPredict(position)) {
+//                return new xss.ClientCrash();
+//            }
+//        }
+//
+//        return null;
+//    },
+//
+//    /**
+//     * @param {xss.game.SnakeParts} parts
+//     * @return {xss.Coordinate}
+//     * @private
+//     */
+//    _isCrashIntoWall: function(parts) {
+//        for (var i = 0, m = parts.length; i < m; i++) {
+//            if (this.level.isWall(parts[i][0], parts[i][1])) {
+//                return parts[i];
+//            }
+//        }
+//        return null;
+//    },
+//
+//    /**
+//     * @param {xss.game.SnakeParts} parts
+//     * @return {xss.Coordinate}
+//     * @private
+//     */
+//    _isCrashIntoAnimated: function(parts) {
+//        for (var i = 0, m = parts.length; i < m; i++) {
+//            if (this.level.getMovingWalls(parts[i])) {
+//                return parts[i];
+//            }
+//        }
+//        return null;
+//    }
 
 };

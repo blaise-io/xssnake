@@ -3,7 +3,8 @@
 /**
  * @constructor
  */
-xss.levelset.Options = function() {
+xss.levelset.Config = function() {
+    this.level = xss.data.levels.blank;
     this.gravity = [0, 0];
     this.enableApples = true;
     this.enablePowerups = [];

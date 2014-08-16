@@ -86,7 +86,7 @@ describe('Rooms', function() {
 
     });
 
-    describe('Game Options', function() {
+    describe('Game Config', function() {
 
         it('Matching when equal', function() {
             assert(typeof roomManager.gameOptionsMatch(gameOptions, room));

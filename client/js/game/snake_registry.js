@@ -65,6 +65,7 @@ xss.game.SnakeRegistry.prototype = {
     move: function(delta, shift) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].handleNextMove(delta, shift, this.snakes);
+            this.snakes[i].shiftParts(shift);
         }
     }
 };

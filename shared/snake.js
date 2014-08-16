@@ -18,8 +18,8 @@ xss.game.Snake = function(index, level) {
     /** @type xss.game.SnakeParts */
     this.parts = [spawn.location];
     this.direction = spawn.direction;
-    this.size = level.options.snakeSize;
-    this.speed = level.options.snakeSpeed;
+    this.size = level.config.snakeSize;
+    this.speed = level.config.snakeSpeed;
 
     this.crashed = false;
     this.limbo = null;

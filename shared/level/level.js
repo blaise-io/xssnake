@@ -1,16 +1,13 @@
 'use strict';
 
 /**
- * @param {xss.levelset.Options} options
+ * @param {xss.levelset.Config} config
  * @constructor
  */
-xss.level.Level = function(options) {
-    /** @type {xss.levelset.Options} */
-    this.options = xss.util.clone(options);
+xss.level.Level = function(config) {
+    this.config = config;
     this.animations = new xss.levelanim.Registry();
-    this.animations.register(xss.util.noop);
-
-    this.image = '';
+    this.gravity = new xss.level.Gravity(this.config.gravity);
 
     /** @type {xss.level.Data} */
     this.data = null;
@@ -30,8 +27,8 @@ xss.level.Level.prototype = {
      * @param {Function} continueFn
      */
     preload: function(continueFn) {
-        new xss.level.ImageDecoder(this.image).then(function(data) {
-            this.image = null;
+        new xss.level.ImageDecoder(this.config.level).then(function(data) {
+            delete this.config.level;
             this.data = new xss.level.Data(data, this.animations);
             continueFn();
         }.bind(this));

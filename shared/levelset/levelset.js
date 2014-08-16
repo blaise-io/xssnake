@@ -8,16 +8,19 @@ xss.levelset.Levelset = function() {
     /** @type {Array.<xss.level.Level>} */
     this.levels = [];
     this.loaded = false;
-    this.options = new xss.levelset.Options();
 };
 
 xss.levelset.Levelset.prototype = {
+
+    getConfig: function() {
+        return new xss.levelset.Config();
+    },
 
     /**
      * @param {Function} Level
      */
     register: function(Level) {
-        this.levels.push(new Level(this.options));
+        this.levels.push(new Level(this.getConfig()));
     },
 
     /**
