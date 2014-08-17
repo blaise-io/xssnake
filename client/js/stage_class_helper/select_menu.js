@@ -27,7 +27,7 @@ xss.SelectMenu.prototype = {
         this._options.push({
             value      : value,
             next       : next,
-            title      : title,
+            title      : title.toUpperCase(),
             description: description || '',
             callback   : callback || xss.util.noop
         });
