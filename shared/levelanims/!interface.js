@@ -4,8 +4,8 @@
  * @interface
  * @param {number=} seed
  */
-xss.animation.Interface = function(seed) {};
-xss.animation.Interface.prototype = {
+xss.levelanim.Interface = function(seed) {};
+xss.levelanim.Interface.prototype = {
 
     /**
      * Return one or more {xss.PixelCollection}'s.
@@ -15,7 +15,7 @@ xss.animation.Interface.prototype = {
      * @return {xss.ShapeCollection}
      */
     update: function(ms, preGame) {
-        return new xss.ShapeCollection();
+        return null;
     }
 
 };

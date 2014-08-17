@@ -24,6 +24,9 @@ xss.Shape = function(varArgs) {
     /** @type {number} */
     this.expand = 0;
 
+    /** @type {Object.<string,*>} */
+    this.headers = {};
+
     /**
      * Transform is applied at paint time, does not affect PixelCollection.
      * @type {{translate: xss.Shift, scale: number}}

@@ -2,10 +2,10 @@
 
 /**
  * @param {number} seed
- * @implements {xss.animation.Interface}
+ * @implements {xss.levelanim.Interface}
  * @constructor
  */
-xss.animation.ScrollingCave = function(seed) {
+xss.levelanim.ScrollingCave = function(seed) {
     this.seed = seed;
     this.seedIteration = 0;
 
@@ -23,7 +23,7 @@ xss.animation.ScrollingCave = function(seed) {
     };
 };
 
-xss.animation.ScrollingCave.prototype = {
+xss.levelanim.ScrollingCave.prototype = {
 
     _SPEED        : 0.47,
 

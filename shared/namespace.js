@@ -2,9 +2,8 @@
 
 var xss = {
     /** @deprecated */
-    animation: {},
-    /** @deprecated */
     model    : {},
+
     debug    : {},
     data     : {},
     bootstrap: {},

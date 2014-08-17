@@ -9,9 +9,9 @@
 xss.LevelAnimation = function(seed, animation, progress) {
     /**
      * List of animations.
-     * Each animation has one or more shapes that update every N ms.
+     * Each levelanim has one or more shapes that update every N ms.
      *
-     * @type {Array.<xss.animation.Interface>}
+     * @type {Array.<xss.levelanim.Interface>}
      * @private
      */
     this._animations = animation ? animation(seed) : [];
@@ -27,7 +27,7 @@ xss.LevelAnimation.prototype = {
 
     /**
      * Returns an array of animations.
-     * Every animation is an array of shapes, or null
+     * Every levelanim is an array of shapes, or null
      *
      * @param {number} delta
      * @param {boolean} gameStarted

@@ -7,7 +7,7 @@
  * @typedef {Array.<number>}
  * @example [5, 3]
  */
-xss.Coordinate = new Array(2);
+xss.Coordinate;
 
 /**
  * Coordinate shift.

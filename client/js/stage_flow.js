@@ -68,7 +68,7 @@ xss.StageFlow.prototype = {
         // Remove everything
         xss.shapes.stage = null;
 
-        // Replace by animation
+        // Replace by levelanim
         this._switchStageAnimate(
             this.stage.getShape(),
             switchToStage.getShape(),

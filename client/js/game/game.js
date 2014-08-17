@@ -146,113 +146,11 @@ xss.game.Game.prototype = {
     _clientGameLoop: function(delta) {
         var shift = this.level.gravity.getShift(delta);
 
-//        movingWalls = this.level.updateMovingWalls(delta, this.model.started);
-//        this._updateMovingWalls(movingWalls);
+        this.level.animations.update(delta, this.started);
 
         if (this.started) {
             this.snakes.move(delta, shift);
         }
-    }//,
-
-//    /**
-//     * @param {Array.<xss.ShapeCollection>} shapeCollections
-//     * @private
-//     */
-//    _updateMovingWalls: function(shapeCollections) {
-//        for (var i = 0, m = shapeCollections.length; i < m; i++) {
-//            if (shapeCollections[i]) {
-//                this._updateShapes(i, shapeCollections[i]);
-//            }
-//        }
-//    },
-
-//    /**
-//     * @param {number} index
-//     * @param {xss.ShapeCollection} shapeCollection
-//     * @private
-//     * @deprecated
-//     */
-//    _updateShapes: function(index, shapeCollection) {
-//        var shapes = shapeCollection.shapes;
-//        for (var i = 0, m = shapes.length; i < m; i++) {
-//            var key = xss.NS_ANIM + index + '_' + i;
-//            if (shapes[i]) {
-//                if (!shapes[i].cache) {
-//                     shapes[i].setGameTransform();
-//                }
-//                xss.shapes[key] = shapes[i];
-//            } else {
-//                xss.shapes[key] = null;
-//            }
-//        }
-//    },
-//
-//    /**
-//     * @param {xss.game.ClientSnake} snake
-//     * @param {xss.Coordinate} position
-//     * @return {xss.ClientCrash}
-//     * @private
-//     */
-//    _isCrash: function(snake, position) {
-//        var part, predictSnakeParts = snake.parts.slice();
-//        predictSnakeParts[predictSnakeParts.length - 1] = position;
-//
-//        // Walls.
-//        part = this._isCrashIntoWall(predictSnakeParts);
-//        if (part) {
-//            return new xss.ClientCrash(part);
-//        }
-//
-//        // Animating walls.
-//        part = this._isCrashIntoAnimated(predictSnakeParts);
-//        if (part) {
-//            return new xss.ClientCrash(part);
-//        }
-//
-//        // Own tail.
-//        if (snake.parts.length >= 5 && snake.hasPartPredict(position)) {
-//            if (snake.getPartIndex(position) !== snake.parts.length - 1) {
-//                return new xss.ClientCrash(snake.parts[0]);
-//            }
-//        }
-//
-//        // Other snake.
-//        for (var i = 0, m = this.snakes.length; i < m; i++) {
-//            var opponent = this.snakes[i];
-//            if (opponent !== snake && opponent.hasPartPredict(position)) {
-//                return new xss.ClientCrash();
-//            }
-//        }
-//
-//        return null;
-//    },
-//
-//    /**
-//     * @param {xss.game.SnakeParts} parts
-//     * @return {xss.Coordinate}
-//     * @private
-//     */
-//    _isCrashIntoWall: function(parts) {
-//        for (var i = 0, m = parts.length; i < m; i++) {
-//            if (this.level.isWall(parts[i][0], parts[i][1])) {
-//                return parts[i];
-//            }
-//        }
-//        return null;
-//    },
-//
-//    /**
-//     * @param {xss.game.SnakeParts} parts
-//     * @return {xss.Coordinate}
-//     * @private
-//     */
-//    _isCrashIntoAnimated: function(parts) {
-//        for (var i = 0, m = parts.length; i < m; i++) {
-//            if (this.level.getMovingWalls(parts[i])) {
-//                return parts[i];
-//            }
-//        }
-//        return null;
-//    }
+    }
 
 };

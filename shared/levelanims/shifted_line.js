@@ -1,20 +1,23 @@
 'use strict';
 
 /**
- * Static Line -- for debugging
+ * Shifted Line -- for debugging
  *
  * @param {number} x0
  * @param {number} y0
  * @param {number} x1
  * @param {number} y1
- * @implements {xss.animation.Interface}
+ * @param {number} sx
+ * @param {number} sy
+ * @implements {xss.levelanim.Interface}
  * @constructor
  */
-xss.animation.StaticLine = function(x0, y0, x1, y1) {
+xss.levelanim.ShiftedLine = function(x0, y0, x1, y1, sx, sy) {
     this._lineShape = xss.shapegen.lineShape(x0, y0, x1, y1);
+    this._lineShape.transform.translate = [sx, sy];
 };
 
-xss.animation.StaticLine.prototype = {
+xss.levelanim.ShiftedLine.prototype = {
 
     /**
      * @param {number} ms
