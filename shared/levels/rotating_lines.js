@@ -16,7 +16,7 @@ xss.util.extend(xss.levels.RotatingLinesLevel.prototype, {
 
     registerAnimations: function() {
         this.animations.register(
-            new xss.levelanim.RotatingLine(31, 16, 12)
+            new xss.levelanims.RotatingLine(31, 16, 12)
         );
     }
 

@@ -7,14 +7,14 @@
  * @param {number} y0
  * @param {number} x1
  * @param {number} y1
- * @implements {xss.levelanim.Interface}
+ * @implements {xss.levelanims.Interface}
  * @constructor
  */
-xss.levelanim.StaticLine = function(x0, y0, x1, y1) {
+xss.levelanims.StaticLine = function(x0, y0, x1, y1) {
     this._lineShape = xss.shapegen.lineShape(x0, y0, x1, y1);
 };
 
-xss.levelanim.StaticLine.prototype = {
+xss.levelanims.StaticLine.prototype = {
 
     /**
      * @param {number} ms

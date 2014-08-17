@@ -4,8 +4,8 @@
  * @interface
  * @param {number=} seed
  */
-xss.levelanim.Interface = function(seed) {};
-xss.levelanim.Interface.prototype = {
+xss.levelanims.Interface = function(seed) {};
+xss.levelanims.Interface.prototype = {
 
     /**
      * Return one or more {xss.PixelCollection}'s.

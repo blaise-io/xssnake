@@ -5,17 +5,17 @@
  * @param {number} y
  * @param {number} len
  * @param {number=} speed
- * @implements {xss.levelanim.Interface}
+ * @implements {xss.levelanims.Interface}
  * @constructor
  */
-xss.levelanim.RotatingLine = function(x, y, len, speed) {
+xss.levelanims.RotatingLine = function(x, y, len, speed) {
     this.x = x;
     this.y = y;
     this.len = len;
     this.speed = speed || 0.5;
 };
 
-xss.levelanim.RotatingLine.prototype = {
+xss.levelanims.RotatingLine.prototype = {
 
     /**
      * @param {number} ms
