@@ -7,7 +7,7 @@
  */
 xss.levels.BlankLevel = function(config) {
     config.gravity = [-5, 0];
-    config.level = xss.data.levels.lines;
+    config.level = xss.data.levels.blank;
     xss.level.Level.call(this, config);
 };
 
