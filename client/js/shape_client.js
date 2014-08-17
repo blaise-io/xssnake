@@ -25,9 +25,10 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
     },
 
     setGameTransform: function() {
-        this.transform.scale = xss.GAME_TILE;
-        this.transform.translate[0] += xss.GAME_TILE / xss.GAME_LEFT;
-        this.transform.translate[1] += xss.GAME_TILE / xss.GAME_TOP;
+        var transform = this.transform, t = xss.GAME_TILE;
+        transform.scale = t;
+        transform.translate[0] = transform.translate[0] * t + t / xss.GAME_LEFT;
+        transform.translate[1] = transform.translate[1] * t + t / xss.GAME_TOP;
     },
 
     /**

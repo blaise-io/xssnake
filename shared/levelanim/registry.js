@@ -60,22 +60,30 @@ xss.levelanim.Registry.prototype = {
     },
 
     /**
-     * @param {number} index
+     * @param {number} animIndex
      * @param {xss.ShapeCollection} shapeCollection
      */
-    _updateShapes: function(index, shapeCollection) {
+    _updateShapes: function(animIndex, shapeCollection) {
         var shapes = shapeCollection.shapes;
         for (var i = 0, m = shapes.length; i < m; i++) {
-            var key = xss.NS_ANIM + index + '_' + i;
-            if (shapes[i]) {
-                if (!shapes[i].headers.transformed) {
-                    shapes[i].setGameTransform();
-                    shapes[i].headers.transformed = true;
-                }
-                xss.shapes[key] = shapes[i];
-            } else {
-                xss.shapes[key] = null;
+            this._updateShape([xss.NS_ANIM, animIndex, i].join('_'), shapes[i]);
+        }
+    },
+
+    /**
+     * @param {string} key
+     * @param {xss.Shape} shape
+     * @private
+     */
+    _updateShape: function(key, shape) {
+        if (shape) {
+            if (!shape.headers.transformed) {
+                shape.setGameTransform();
+                shape.headers.transformed = true;
             }
+            xss.shapes[key] = shape;
+        } else {
+            xss.shapes[key] = null;
         }
     }
 
