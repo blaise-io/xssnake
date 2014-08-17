@@ -9,7 +9,6 @@ xss.levels.ScrollingCaveLevel = function(config) {
     config.gravity = [-5, 0];
     config.level = xss.data.levels.blank;
     xss.level.Level.call(this, config);
-    this.registerAnimations();
 };
 
 xss.util.extend(xss.levels.ScrollingCaveLevel.prototype, xss.level.Level.prototype);

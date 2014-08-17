@@ -15,6 +15,10 @@ xss.level.Level = function(config) {
 
 xss.level.Level.prototype = {
 
+    registerAnimations: function() {
+        xss.util.noop();
+    },
+
     destruct: function() {
         xss.shapes.level = null;
         xss.shapes.innerborder = null;
@@ -30,6 +34,7 @@ xss.level.Level.prototype = {
         new xss.level.ImageDecoder(this.config.level).then(function(data) {
             delete this.config.level;
             this.data = new xss.level.Data(data, this.animations);
+            this.registerAnimations();
             continueFn();
         }.bind(this));
     },

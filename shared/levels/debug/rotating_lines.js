@@ -8,7 +8,6 @@
 xss.levels.RotatingLinesLevel = function(config) {
     config.level = xss.data.levels.lines;
     xss.level.Level.call(this, config);
-    this.registerAnimations();
 };
 
 xss.util.extend(xss.levels.RotatingLinesLevel.prototype, xss.level.Level.prototype);

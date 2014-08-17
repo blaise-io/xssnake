@@ -51,11 +51,11 @@ xss.level.Data.prototype = {
      */
     inShapes: function(shapeCollection, coordinate) {
         for (var i = 0, m = shapeCollection.shapes.length; i < m; i++) {
-            var translate, translated, object = shapeCollection.shapes[i];
-            if (object) {
-                translate = object.transform.translate;
+            var translate, translated, shape = shapeCollection.shapes[i];
+            if (shape) {
+                translate = shape.transform.translate;
                 translated = this.convertToGameSystem(coordinate, translate);
-                if (object.pixels.has(translated[0], translated[1])) {
+                if (shape.pixels.has(translated[0], translated[1])) {
                     return true;
                 }
             }
