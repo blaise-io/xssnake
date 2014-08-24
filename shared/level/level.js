@@ -15,9 +15,7 @@ xss.level.Level = function(config) {
 
 xss.level.Level.prototype = {
 
-    registerAnimations: function() {
-        xss.util.noop();
-    },
+    registerAnimations: xss.util.noop,
 
     destruct: function() {
         xss.shapes.level = null;
@@ -47,7 +45,6 @@ xss.level.Level.prototype = {
 
     /**
      * Client-Only!
-     * @returns {xss.Shape}
      */
     paint: function() {
         xss.shapes.level = new xss.Shape(this.data.walls);

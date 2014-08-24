@@ -3,11 +3,11 @@
 xss.util = {
 
     /**
-     * Dummy callback function to reduce if statements.
+     * Dummy callback function.
      * @example this.callback = optionalCallbackParam || xss.util.noop;
-     * @param varArgs {...?}
+     * @return {void}
      */
-    noop: function(varArgs) {},
+    noop: function() {},
 
     /**
      * @param {Object} obj Object to clone.

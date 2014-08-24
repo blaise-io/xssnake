@@ -7,7 +7,7 @@
  * @param {number} y0
  * @param {number} x1
  * @param {number} y1
- * @implements {xss.levelanims.Interface}
+ * @implements {xss.levelanim.Interface}
  * @constructor
  */
 xss.levelanims.StaticLine = function(x0, y0, x1, y1) {

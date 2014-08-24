@@ -42,7 +42,7 @@ xss.game.SnakeMove.prototype = {
         levelData = this.level.data;
 
         if (index > 4) {
-            partIndex = this.getPartIndex(part);
+            partIndex = snake.getPartIndex(part);
             if (-1 !== partIndex && partIndex !== index) {
                 return new xss.game.SelfCollision(part);
             }

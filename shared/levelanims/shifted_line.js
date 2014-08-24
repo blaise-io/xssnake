@@ -9,7 +9,7 @@
  * @param {number} y1
  * @param {number} sx
  * @param {number} sy
- * @implements {xss.levelanims.Interface}
+ * @implements {xss.levelanim.Interface}
  * @constructor
  */
 xss.levelanims.ShiftedLine = function(x0, y0, x1, y1, sx, sy) {

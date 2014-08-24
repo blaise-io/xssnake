@@ -3,7 +3,7 @@
 /**
  * Client xss.util extension
  */
-xss.util.extend(xss.util, {
+xss.util.extend(xss.util, /** @lends xss.util */ {
 
     /**
      * @param {string} str

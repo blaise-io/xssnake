@@ -2,7 +2,7 @@
 
 /**
  * @param {number} seed
- * @implements {xss.levelanims.Interface}
+ * @implements {xss.levelanim.Interface}
  * @constructor
  */
 xss.levelanims.ScrollingCave = function(seed) {

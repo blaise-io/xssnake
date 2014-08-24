@@ -89,7 +89,7 @@ xss.level.Data.prototype = {
      * @return {xss.Coordinate}
      */
     getSpawn: function(playerID) {
-        return this.levelData.spawns[playerID];
+        return this.spawns[playerID].location;
     },
 
     /**
@@ -97,7 +97,7 @@ xss.level.Data.prototype = {
      * @return {number}
      */
     getSpawnDirection: function(playerID) {
-        return this.levelData.directions[playerID];
+        return this.spawns[playerID].direction;
     },
 
     /**
@@ -107,8 +107,8 @@ xss.level.Data.prototype = {
     getEmptyLocation: function(nonEmptyLocations) {
         while (true) {
             var location = [
-                Math.floor(Math.random() * this.levelData.width),
-                Math.floor(Math.random() * this.levelData.height)
+                Math.floor(Math.random() * this.width),
+                Math.floor(Math.random() * this.height)
             ];
             if (this.isEmptyLocation(nonEmptyLocations, location)) {
                 return location;
