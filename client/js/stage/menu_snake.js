@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @constructor
+ */
 xss.stage.MenuSnake = function() {
     this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
     this.level.preload(this.konstruct.bind(this));
