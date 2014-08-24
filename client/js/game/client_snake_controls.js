@@ -56,7 +56,7 @@ xss.game.ClientSnakeControls.prototype = {
         var emit = function() {
             this.snake.emit(direction);
         }.bind(this);
-        if (xss.room && xss.room.game && xss.room.game.model.started) {
+        if (xss.remoteRoom && xss.remoteRoom.rounds.round && xss.remoteRoom.rounds.round.started) {
             if (this.directionBuffer.length <= 1) {
                 emit();
             } else {

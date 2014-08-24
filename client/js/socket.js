@@ -22,9 +22,9 @@ xss.Socket.prototype = {
         xss.event.off(xss.EVENT_PING, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_COMBI, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_PONG, xss.NS_SOCKET);
-        if (xss.room) {
-            xss.room.destruct();
-            xss.room = null;
+        if (xss.remoteRoom) {
+            xss.remoteRoom.destruct();
+            xss.remoteRoom = null;
         }
         if (this.connection.readyState <= 1) {
             this.connection.onclose = xss.util.noop;
@@ -35,9 +35,9 @@ xss.Socket.prototype = {
 
     _eventDisconnect: function() {
         var callback = function() {
-            if (xss.room) {
-                xss.room.destruct();
-                xss.room = null;
+            if (xss.remoteRoom) {
+                xss.remoteRoom.destruct();
+                xss.remoteRoom = null;
             }
         };
         if (this.model.isConnected()) {

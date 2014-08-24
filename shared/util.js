@@ -5,9 +5,10 @@ xss.util = {
     /**
      * Dummy callback function.
      * @example this.callback = optionalCallbackParam || xss.util.noop;
+     * @param {...*} varArgs
      * @return {void}
      */
-    noop: function() {},
+    noop: function(varArgs) {},
 
     /**
      * @param {Object} obj Object to clone.

@@ -8,7 +8,7 @@ xss.Chat.prototype._notice = {
      */
     format: function(notice) {
         var format = xss.util.format;
-        this.names = xss.room.chat.names;
+        this.names = xss.remoteRoom.chat.names;
         switch (notice[0]) {
             case xss.NOTICE_CRASH:
                 return this.crash(notice[1], notice[2], notice[3]);

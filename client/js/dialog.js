@@ -138,8 +138,8 @@ xss.Dialog.prototype = {
      * @private
      */
     _getAreaHeight: function() {
-        if (xss.room && xss.room.game && xss.room.game.level) {
-            return xss.room.game.level.levelData.height * xss.GAME_TILE;
+        if (xss.remoteRoom && xss.remoteRoom.rounds.round.game && xss.remoteRoom.rounds.round.game.level) {
+            return xss.remoteRoom.rounds.round.game.level.data.height * xss.GAME_TILE;
         } else {
             return xss.HEIGHT;
         }

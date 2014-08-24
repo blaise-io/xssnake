@@ -34,7 +34,7 @@ xss.GameStage.prototype = {
     },
 
     _exitKeys: function(ev) {
-        if (!xss.keysBlocked && ev.keyCode === xss.KEY_ESCAPE && xss.room) {
+        if (!xss.keysBlocked && ev.keyCode === xss.KEY_ESCAPE && xss.remoteRoom) {
             this.dialog = new xss.Dialog(
                 'LEAVING GAME',
                 'Are you sure you want to leave this game?', {
@@ -54,7 +54,7 @@ xss.GameStage.prototype = {
     },
 
     _joinGame: function() {
-        xss.room = new xss.room.Room();
+        xss.remoteRoom = new xss.room.Room();
         if (this.data.autoJoin) {
             this._autoJoin(xss.util.hash(xss.HASH_ROOM));
         } else {

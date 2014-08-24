@@ -79,7 +79,7 @@ xss.room.Room.prototype = {
         if (this.game) {
             this.game.destruct();
         }
-        return new xss.Game(index, seed, level, names, created);
+//        return new xss.game.Game(index, seed, level, names, created);
     },
 
     _updateScore: function(names, score) {

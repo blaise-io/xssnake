@@ -16,6 +16,15 @@ xss.game.SnakeRegistry = function(level) {
 
 xss.game.SnakeRegistry.prototype = {
 
+    destruct: function() {
+        this.level = null;
+        this.spawns = null;
+        this.localSnake = null;
+        for (var i = 0, m = this.snakes.length; i < m; i++) {
+            this.snakes[i].destruct();
+        }
+    },
+
     /**
      * @param {xss.room.PlayerRegistry} players
      */
