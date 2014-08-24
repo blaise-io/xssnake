@@ -18,7 +18,7 @@ exports.concat = {
         footer: footer,
         process: function(data, file) {
             return util.format(
-                '    %s: \'%s\'',
+                '    %s: {imagedata: \'%s\'}',
                 path.basename(file, '.png'),
                 // grunt-contrib-concat file-to-string breaks binary files,
                 // read binary file ourselves.

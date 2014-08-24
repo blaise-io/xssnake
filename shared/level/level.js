@@ -10,7 +10,7 @@ xss.level.Level = function(config) {
     this.gravity = new xss.level.Gravity(this.config.gravity);
 
     /** @type {xss.level.Data} */
-    this.data = null;
+    this.data = config.level.cache || null;
 };
 
 xss.level.Level.prototype = {
@@ -31,12 +31,18 @@ xss.level.Level.prototype = {
      * @param {Function} continueFn
      */
     preload: function(continueFn) {
-        new xss.level.ImageDecoder(this.config.level).then(function(data) {
-            delete this.config.level;
-            this.data = new xss.level.Data(data, this.animations);
-            this.registerAnimations();
+        var level = this.config.level;
+        if (level.cache) {
             continueFn();
-        }.bind(this));
+        } else {
+            new xss.level.ImageDecoder(level.imagedata).then(function(data) {
+                level.cache = new xss.level.Data(data, this.animations);
+                level.imagedata = null;
+                this.data = level.cache;
+                this.registerAnimations();
+                continueFn();
+            }.bind(this));
+        }
     },
 
     /**
