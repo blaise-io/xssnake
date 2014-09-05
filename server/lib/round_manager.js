@@ -126,7 +126,7 @@ xss.RoundManager.prototype = {
      * @param {xss.Client} winner
      */
     _xssFetch: function(winner) {
-        var pubsub = this.room.server.pubsub;
+        var pubsub = this.room.server.emitter;
 
         this._xssListener = function(xss, client) {
             if (client === winner) {
@@ -141,7 +141,7 @@ xss.RoundManager.prototype = {
 
     _xssRemoveListener: function() {
         if (this._xssListener) {
-            this.room.server.pubsub.removeListener(
+            this.room.server.emitter.removeListener(
                 xss.EVENT_XSS_REQ, this._xssListener
             );
         }

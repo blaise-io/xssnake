@@ -138,11 +138,12 @@ xss.Dialog.prototype = {
      * @private
      */
     _getAreaHeight: function() {
-        if (xss.remoteRoom && xss.remoteRoom.rounds.round.game && xss.remoteRoom.rounds.round.game.level) {
-            return xss.remoteRoom.rounds.round.game.level.data.height * xss.GAME_TILE;
-        } else {
-            return xss.HEIGHT;
-        }
+//        if (xss.remoteRoom && xss.remoteRoom.rounds.round.game && xss.remoteRoom.rounds.round.game.level) {
+//            return xss.remoteRoom.rounds.round.game.level.data.height * xss.GAME_TILE;
+//        } else {
+//            return xss.HEIGHT;
+//        }
+        return Math.round(xss.HEIGHT * 3 * 2);
     },
 
     /**

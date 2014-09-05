@@ -1,8 +1,8 @@
 'use strict';
 
 // Debug URL: client.html?debug=dialog
-xss.debug.levelIndex = location.search.match(/debug=dialog/);
-if (xss.debug.levelIndex) {
+xss.debug.dialog = location.search.match(/debug=dialog/);
+if (xss.debug.dialog) {
     window.setTimeout(function() {
         new xss.Dialog(
             'HEADER TITLE',

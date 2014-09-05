@@ -40,11 +40,9 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
 
         exit = function() {
             dialog.destruct();
-
             if (callback) {
                 callback();
             }
-
             xss.flow.restart();
         };
 

@@ -2,16 +2,18 @@
 
 /**
  * Client-Server communication
- * @param callback {function({Socket})}
+ * @param onopen {Function}
  * @constructor
  */
-xss.Socket = function(callback) {
-    this.model = new xss.model.ClientSocket(callback);
+xss.Socket = function(onopen) {
+    this.onopen = onopen;
+    this.connected = false;
+//    this.model = new xss.model.ClientSocket(callback);
 
-    this.connection = new WebSocket(xss.SERVER_ENDPOINT);
-    this.connection.onopen = this.model.connect.bind(this.model);
-    this.connection.onclose = this._eventDisconnect.bind(this);
-    this.connection.onmessage = this._dispatchMessage.bind(this);
+    this.connection = new WebSocket('ws://' + xss.SERVER_ENDPOINT);
+    this.connection.onopen = this.onopen.bind(this);
+    this.connection.onclose = this.onclose.bind(this);
+    this.connection.onmessage = this.onmessage.bind(this);
 
     this._bindEvents();
 };
@@ -19,13 +21,10 @@ xss.Socket = function(callback) {
 xss.Socket.prototype = {
 
     destruct: function() {
+        this.connected = false;
         xss.event.off(xss.EVENT_PING, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_COMBI, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_PONG, xss.NS_SOCKET);
-        if (xss.remoteRoom) {
-            xss.remoteRoom.destruct();
-            xss.remoteRoom = null;
-        }
         if (this.connection.readyState <= 1) {
             this.connection.onclose = xss.util.noop;
             this.connection.onmessage = xss.util.noop;
@@ -33,15 +32,16 @@ xss.Socket.prototype = {
         }
     },
 
-    _eventDisconnect: function() {
-        var callback = function() {
-            if (xss.remoteRoom) {
-                xss.remoteRoom.destruct();
-                xss.remoteRoom = null;
-            }
-        };
-        if (this.model.isConnected()) {
-            xss.util.error('CONNECTION LOST', callback);
+    onopen: function() {
+//        this.state = new xss.SocketState();
+        this.connected = true;
+        this.onopen();
+    },
+
+    onclose: function() {
+        if (this.connected) {
+            this.connected = false;
+            xss.util.error('CONNECTION LOST');
         } else {
             xss.util.error('CANNOT CONNECT');
         }
@@ -62,7 +62,7 @@ xss.Socket.prototype = {
     /**
      * @param {Object} ev
      */
-    _dispatchMessage: function(ev) {
+    onmessage: function(ev) {
         var data = JSON.parse(ev.data);
         xss.event.trigger(data[0], data[1]);
     },

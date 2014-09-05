@@ -2,13 +2,13 @@
 
 
 /**
- * @param {EventEmitter} pubsub
+ * @param {xss.EventEmitter} emitter
  * @param {Object} connection
  * @constructor
  */
-xss.Client = function(pubsub, connection) {
+xss.Client = function(emitter, connection) {
     this.model = new xss.model.Client();
-    this.socket = new xss.Socket(this, pubsub, connection);
+    this.socket = new xss.Socket(this, emitter, connection);
 
     /** @type {xss.game.Snake} */
     this.snake = null;

@@ -14,7 +14,7 @@ xss.room.RoomManager = function(server) {
 xss.room.RoomManager.prototype = {
 
     bindEvents: function() {
-        var pubsub = this.server.pubsub;
+        var pubsub = this.server.emitter.emitter;
         pubsub.on(xss.EVENT_ROOM_STATUS, this._evRoomStatus.bind(this));
         pubsub.on(xss.EVENT_ROOM_JOIN, this._evJoinRoom.bind(this));
         pubsub.on(xss.EVENT_ROOM_MATCH, this._evMatchRoom.bind(this));

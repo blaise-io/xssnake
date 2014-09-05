@@ -2,19 +2,19 @@
 
 /**
  * @param {xss.Client} client
- * @param {EventEmitter} pubsub
+ * @param {xss.EventEmitter} emitter
  * @param {Object} connection
  * @constructor
  */
-xss.Socket = function(client, pubsub, connection) {
+xss.Socket = function(client, emitter, connection) {
     this.client = client;
-    this.pubsub = pubsub;
+    this.emitter = emitter.emitter;
     this.connection = connection;
 
     this.model = new xss.model.Socket();
 
-    connection.on('message', this._dispatchMessage.bind(this));
-    connection.on('close', this._eventDisconnect.bind(this));
+    connection.on('message', this.onmessage.bind(this));
+    connection.on('close', this.onclose.bind(this));
 
     this._startPingInterval();
 };
@@ -24,7 +24,6 @@ xss.Socket.prototype = {
     destruct: function() {
         clearInterval(this._pingInterval);
         this.client = null;
-        this.pubsub = null;
         this.connection = null;
         this.model = null;
     },
@@ -32,10 +31,10 @@ xss.Socket.prototype = {
     /**
      * @private
      */
-    _dispatchMessage: function(message) {
+    onmessage: function(message) {
         var cleanMessage = this._cleanMessage(message);
         if (cleanMessage) {
-            this.pubsub.emit(cleanMessage.event, cleanMessage.data, this.client);
+            this.emitter.emit(cleanMessage.event, cleanMessage.data, this.client);
             this._dispatchEvent(cleanMessage.event, cleanMessage.data);
         }
     },
@@ -113,7 +112,7 @@ xss.Socket.prototype = {
     /**
      * @private
      */
-    _eventDisconnect: function() {
+    onclose: function() {
         var client = this.client, room = client.room;
         if (room) {
             room.removeClient(client);
