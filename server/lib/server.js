@@ -8,6 +8,7 @@ var events = require('events');
  * @constructor
  */
 xss.Server = function() {
+    this.port = xss.SERVER_PORT;
     this.pubsub = this.setupPubSub();
     this.roomManager = new xss.room.RoomManager(this);
 };
@@ -20,16 +21,15 @@ xss.Server.prototype = {
         }
     },
 
-    /**
-     * @param {number=} port
-     */
-    start: function(port) {
-        this.port = port || xss.SERVER_PORT;
-        this.listen(this.port);
+    start: function() {
+        this._server = new WebSocketServer({port: this.port});
+        this._server.on('connection', function(connection) {
+            new xss.Client(this.pubsub, connection);
+        }.bind(this));
     },
 
     /**
-     * @return {EventEmitter}
+     * @return {nodeEvents.EventEmitter}
      */
     setupPubSub: function() {
         var pubsub;
@@ -45,20 +45,6 @@ xss.Server.prototype = {
         }.bind(this), 50);
 
         return pubsub;
-    },
-
-    /**
-     * @param {number} port
-     */
-    listen: function(port) {
-        var server;
-
-        server = new WebSocketServer({port: xss.SERVER_PORT});
-        server.on('connection', function(connection) {
-            new xss.Client(this.pubsub, connection);
-        }.bind(this));
-
-        this._server = server;
     }
 
 };

@@ -1,6 +1,7 @@
 'use strict';
 
+xss.bootstrap.server();
 xss.bootstrap.registerLevels(function() {
-    xss.bootstrap.server();
+    xss.server = new xss.Server();
     console.log('XSSnake running on port ' + xss.server.port);
 });

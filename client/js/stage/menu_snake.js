@@ -4,17 +4,23 @@
  * @constructor
  */
 xss.stage.MenuSnake = function() {
+    this.snake = null;
     this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
-    this.level.preload(this.konstruct.bind(this));
+    this.level.preload(this.construct.bind(this));
 };
 
 xss.stage.MenuSnake.prototype = {
 
-    konstruct: function() {
+    construct: function() {
         this.snake = new xss.game.ClientSnake(0, false, '', this.level);
         this.snake.addControls();
         this.snake.showDirection();
         window.setTimeout(this.move.bind(this), 1500);
+    },
+
+    destruct: function() {
+        this.snake.destruct();
+        this.level.destruct();
     },
 
     move: function() {
