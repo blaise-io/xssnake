@@ -7,6 +7,7 @@ exports.concat = {
     },
     src: [
         'shared/namespace.js',
+        'shared/util.js',
         'shared/**/*.js',
         'server/**/*.js',
         'server/start.js'

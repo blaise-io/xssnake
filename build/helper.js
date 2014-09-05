@@ -3,7 +3,7 @@
 var fs = require('fs');
 
 exports.replaceStrict = function(src, filepath) {
-    return '// @sourceURL ' + filepath + '\n' + src.replace(/'use strict';\n/g, '');
+    return '// #sourceURL ' + filepath + '\n' + src.replace(/'use strict';\n/g, '');
 };
 
 exports.readFileSync = function(abspath) {
