@@ -4,7 +4,7 @@
  * @param {xss.room.Room} room
  * @constructor
  */
-xss.Score = function(room) {
+xss.game.Score = function(room) {
     this.room = room;
     this.points = [];
     for (var i = 0, m = room.clients.length; i < m; i++) {
@@ -12,28 +12,28 @@ xss.Score = function(room) {
     }
 };
 
-xss.Score.prototype = {
+xss.game.Score.prototype = {
 
     destruct: function() {
         this.room = null;
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      */
     addClient: function(client) {
         this.points[client.model.index] = 0;
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      */
     removeClient: function(client) {
         this.points.splice(client.model.index, 1);
     },
 
     /**
-     * @return {xss.Client}
+     * @return {xss.netcode.Client}
      */
     getWinner: function() {
         var sorted, last, index;
@@ -61,7 +61,7 @@ xss.Score.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      */
     bufferApplePoints: function(client) {
         var points = ++this.points[client.model.index];
@@ -71,7 +71,7 @@ xss.Score.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @return {number}
      */
     rank: function(client) {

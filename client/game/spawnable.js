@@ -6,7 +6,7 @@
  * @param {xss.Coordinate} location
  * @constructor
  */
-xss.Spawnable = function(type, index, location) {
+xss.game.Spawnable = function(type, index, location) {
     this.type = type;
     this.x = xss.util.translateGameX(location[0]);
     this.y = xss.util.translateGameY(location[1]);
@@ -15,7 +15,7 @@ xss.Spawnable = function(type, index, location) {
     xss.shapes[this._shapeName] = this._getShape();
 };
 
-xss.Spawnable.prototype = {
+xss.game.Spawnable.prototype = {
 
     destruct: function() {
         xss.shapes[this._shapeName] = null;

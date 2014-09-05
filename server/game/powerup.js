@@ -2,18 +2,18 @@
 
 /**
  * Powerup
- * @param {xss.Game} game
- * @param {xss.Client} client
+ * @param {xss.game.Game} game
+ * @param {xss.netcode.Client} client
  * @constructor
  */
-xss.Powerup = function(game, client) {
+xss.game.Powerup = function(game, client) {
     this.game = game;
     this.room = game.room;
     this.client = client;
     this._triggerPowerup();
 };
 
-xss.Powerup.prototype = {
+xss.game.Powerup.prototype = {
 
     /**
      * @private
@@ -94,7 +94,7 @@ xss.Powerup.prototype = {
     },
 
     /**
-     * @return {Array.<xss.Client>}
+     * @return {Array.<xss.netcode.Client>}
      * @private
      */
     _others: function() {
@@ -139,7 +139,7 @@ xss.Powerup.prototype = {
     },
 
     /**
-     * @param {Array.<xss.Client>} clients
+     * @param {Array.<xss.netcode.Client>} clients
      * @param {number} delta
      * @param {string} label
      * @param {number} duration
@@ -207,7 +207,7 @@ xss.Powerup.prototype = {
     },
 
     /**
-     * @param {Array.<xss.Client>} clients
+     * @param {Array.<xss.netcode.Client>} clients
      * @private
      */
     _reverse: function(clients) {
@@ -238,7 +238,7 @@ xss.Powerup.prototype = {
     },
 
     /**
-     * @param {Array.<xss.Client>} clients
+     * @param {Array.<xss.netcode.Client>} clients
      * @param {number} delta
      * @param {string} message
      * @private

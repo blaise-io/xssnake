@@ -15,6 +15,7 @@ var xss = {
     levelanims: {},
     levelset  : {},
     levelsets : {},
+    netcode   : {},
     stage     : {},
     stages    : {},
     util      : {}

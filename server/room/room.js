@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {xss.Server} server
+ * @param {xss.netcode.Server} server
  * @param {string} key
  * @param {Object} options
  * @constructor
@@ -12,9 +12,9 @@ xss.room.Room = function(server, key, options) {
     this.options = this.cleanOptions(options);
     this.seed    = Math.random();
 
-    /** type {Array.<xss.Client>} */
+    /** type {Array.<xss.netcode.Client>} */
     this.clients = [];
-    this.rounds  = new xss.RoundManager(this);
+    this.rounds  = new xss.room.RoundManager(this);
 
     /** type {Array.<Array>} */
     this._emitBuffer = [];
@@ -31,7 +31,7 @@ xss.room.Room.prototype = {
 
     restartRounds: function() {
         this.rounds.destruct();
-        this.rounds = new xss.RoundManager(this);
+        this.rounds = new xss.room.RoundManager(this);
         this.rounds.detectAutoStart();
         this.emitState();
     },
@@ -67,7 +67,7 @@ xss.room.Room.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @return {boolean}
      */
     isHost: function(client) {
@@ -81,27 +81,27 @@ xss.room.Room.prototype = {
     cleanOptions: function(options) {
         var clean = {};
 
-        clean[xss.FIELD_MAX_PLAYERS] = new xss.Validate(options[xss.FIELD_MAX_PLAYERS])
+        clean[xss.FIELD_MAX_PLAYERS] = new xss.netcode.Validator(options[xss.FIELD_MAX_PLAYERS])
             .assertRange(1, xss.ROOM_CAPACITY)
             .value(xss.ROOM_CAPACITY);
 
-        clean[xss.FIELD_LEVEL_SET] = new xss.Validate(options[xss.FIELD_LEVEL_SET])
+        clean[xss.FIELD_LEVEL_SET] = new xss.netcode.Validator(options[xss.FIELD_LEVEL_SET])
             .assertRange(0, xss.levelSetRegistry.levelsets.length - 1)
             .value(xss.FIELD_VALUE_MEDIUM);
 
-        clean[xss.FIELD_POWERUPS] = new xss.Validate(options[xss.FIELD_POWERUPS])
+        clean[xss.FIELD_POWERUPS] = new xss.netcode.Validator(options[xss.FIELD_POWERUPS])
             .assertType('boolean')
             .value(true);
 
-        clean[xss.FIELD_PRIVATE] = new xss.Validate(options[xss.FIELD_PRIVATE])
+        clean[xss.FIELD_PRIVATE] = new xss.netcode.Validator(options[xss.FIELD_PRIVATE])
             .assertType('boolean')
             .value(false);
 
-        clean[xss.FIELD_XSS] = new xss.Validate(options[xss.FIELD_XSS])
+        clean[xss.FIELD_XSS] = new xss.netcode.Validator(options[xss.FIELD_XSS])
             .assertType('boolean')
             .value(false);
 
-        clean[xss.FIELD_QUICK_GAME] = new xss.Validate(options[xss.FIELD_QUICK_GAME])
+        clean[xss.FIELD_QUICK_GAME] = new xss.netcode.Validator(options[xss.FIELD_QUICK_GAME])
             .assertType('boolean')
             .value(false);
 
@@ -109,7 +109,7 @@ xss.room.Room.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      */
     addClient: function(client) {
         client.room = this;
@@ -126,7 +126,7 @@ xss.room.Room.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      */
     removeClient: function(client) {
         this.emit(xss.EVENT_CHAT_NOTICE, [

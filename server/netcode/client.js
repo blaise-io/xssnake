@@ -6,9 +6,10 @@
  * @param {Object} connection
  * @constructor
  */
-xss.Client = function(emitter, connection) {
+xss.netcode.Client = function(emitter, connection) {
     this.model = new xss.model.Client();
-    this.socket = new xss.EventDispatcher(this, emitter, connection);
+    this.connection = connection;
+    this.socket = new xss.netcode.Dispatcher(this, emitter, connection);
 
     /** @type {xss.game.Snake} */
     this.snake = null;
@@ -17,7 +18,7 @@ xss.Client = function(emitter, connection) {
     this.room = null;
 };
 
-xss.Client.prototype = {
+xss.netcode.Client.prototype = {
 
     destruct: function() {
         this.socket.destruct();
@@ -27,7 +28,7 @@ xss.Client.prototype = {
     },
 
     /**
-     * @return {xss.Game}
+     * @return {xss.game.Game}
      */
     getGame: function() {
         var room = this.room, rounds = room.rounds;
@@ -44,7 +45,7 @@ xss.Client.prototype = {
         if (data) {
             emit.push(data);
         }
-        this.socket.connection.send(JSON.stringify(emit), function(error) {
+        this.connection.send(JSON.stringify(emit), function(error) {
             if (error){
                 console.error(error);
             }
@@ -70,7 +71,7 @@ xss.Client.prototype = {
      * Buffer events to be sent later using flush()
      * @param {string} type
      * @param {*} data
-     * @return {xss.Client}
+     * @return {xss.netcode.Client}
      */
     buffer: function(type, data) {
         this.socket.model.emitBuffer.push([type, data]);
@@ -79,7 +80,7 @@ xss.Client.prototype = {
 
     /**
      * Send buffer
-     * @return {xss.Client}
+     * @return {xss.netcode.Client}
      */
     flush: function() {
         var emitBuffer = this.socket.model.emitBuffer;

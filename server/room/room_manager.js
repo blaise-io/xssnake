@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {xss.Server} server
+ * @param {xss.netcode.Server} server
  * @constructor
  */
 xss.room.RoomManager = function(server) {
@@ -54,7 +54,7 @@ xss.room.RoomManager.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {string} key
      */
     joinRoomByKey: function(client, key) {
@@ -120,7 +120,7 @@ xss.room.RoomManager.prototype = {
      */
     _validRoomKey: function(key) {
         var len = xss.ROOM_KEY_LENGTH;
-        return new xss.Validate(key).assertStringOfLength(len, len).valid();
+        return new xss.netcode.Validator(key).assertStringOfLength(len, len).valid();
     },
 
     /**
@@ -128,7 +128,7 @@ xss.room.RoomManager.prototype = {
      * @return {string}
      */
     _cleanUsername: function(name) {
-        if (new xss.Validate(name).assertStringOfLength(2, 20).valid()) {
+        if (new xss.netcode.Validator(name).assertStringOfLength(2, 20).valid()) {
             return String(name);
         } else {
             return 'Idiot' + xss.util.randomStr(3);
@@ -137,11 +137,11 @@ xss.room.RoomManager.prototype = {
 
     /**
      * @param {Array} data [roomKey, name]
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @private
      */
     _evJoinRoom: function(data, client) {
-        if (new xss.Validate(data).assertArrayOfLength(2, 2).valid()) {
+        if (new xss.netcode.Validator(data).assertArrayOfLength(2, 2).valid()) {
             client.model.name = this._cleanUsername(data[1]);
             this.joinRoomByKey(client, data[0]);
         }
@@ -149,7 +149,7 @@ xss.room.RoomManager.prototype = {
 
     /**
      * @param {Object} preferences
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @private
      */
     _evMatchRoom: function(preferences, client) {
@@ -163,7 +163,7 @@ xss.room.RoomManager.prototype = {
 
     /**
      * @param {string} key
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      */
     _evRoomStatus: function(key, client) {
         var data = this.getRoomData(key);

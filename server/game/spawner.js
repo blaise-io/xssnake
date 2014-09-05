@@ -2,16 +2,16 @@
 
 /**
  * Spawner
- * @param {xss.Game} game
+ * @param {xss.game.Game} game
  * @constructor
  */
-xss.Spawner = function(game) {
+xss.game.Spawner = function(game) {
     this.game = game;
     this.spawns = [];
     this.locations = []; // Keep separate list for getEmptyLocation speed
 };
 
-xss.Spawner.prototype = {
+xss.game.Spawner.prototype = {
 
     destruct: function() {
         for (var i = 0, m = this.spawns.length; i < m; i++) {
@@ -49,7 +49,7 @@ xss.Spawner.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {number} index
      */
     hit: function(client, index) {
@@ -67,7 +67,7 @@ xss.Spawner.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {xss.Coordinate} location
      * @return {Array}
      */

@@ -3,13 +3,14 @@
 /**
  * @param {EventEmitter} emitter
  * @constructor
+ * @todo Implement in room
  */
-xss.ServerTicker = function(emitter) {
+xss.game.MainLoop = function(emitter) {
     this.emitter = emitter;
     this.tick();
 };
 
-xss.ServerTicker.prototype = {
+xss.game.MainLoop.prototype = {
 
     destruct: function() {
         clearInterval(this.interval);

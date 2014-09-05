@@ -10,6 +10,7 @@ xss.ChatMessage;
  * @param {number} index
  * @param {Array.<string>} names
  * @constructor
+ * @todo Split model and ui
  */
 xss.Chat = function(index, names) {
 

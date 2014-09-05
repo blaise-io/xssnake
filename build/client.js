@@ -5,16 +5,16 @@ var helper = require('./helper.js');
 var src = [
     'shared/namespace.js',
     'shared/util.js', // We need this for extending objects, pre-bootstrap.
-    'client/js/util.js', // idem.
+    'client/util/util.js', // idem.
     'shared/**/*.js',
     'client/data/**/*.js',
-    'client/js/**/*.js',
-    '!client/js/debug/*.js'
+    'client/**/*.js',
+    '!client/debug/*.js'
 ];
 
 var srcDebug = [];
 srcDebug = srcDebug.concat(src);
-srcDebug = srcDebug.concat(['client/js/debug/*.js']);
+srcDebug = srcDebug.concat(['client/debug/*.js']);
 
 exports.concat = {
     options: {
@@ -40,7 +40,7 @@ exports.gcc_rest = {
 };
 
 exports.cssUrlEmbed = {
-    src : 'client/xssnake.css',
+    src : 'client/static/xssnake.css',
     dest: 'dist/client.css'
 };
 

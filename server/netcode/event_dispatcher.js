@@ -1,12 +1,12 @@
 'use strict';
 
 /**
- * @param {xss.Client} client
+ * @param {xss.netcode.Client} client
  * @param {EventEmitter} emitter
  * @param {Object} connection
  * @constructor
  */
-xss.EventDispatcher = function(client, emitter, connection) {
+xss.netcode.Dispatcher = function(client, emitter, connection) {
     this.client = client;
     this.emitter = emitter;
     this.connection = connection;
@@ -19,7 +19,7 @@ xss.EventDispatcher = function(client, emitter, connection) {
     this._startPingInterval();
 };
 
-xss.EventDispatcher.prototype = {
+xss.netcode.Dispatcher.prototype = {
 
     destruct: function() {
         clearInterval(this._pingInterval);
@@ -65,28 +65,28 @@ xss.EventDispatcher.prototype = {
      * @private
      */
     _cleanMessage: function(dirtyMessage) {
-        var messageValidate, json, jsonValidate, eventValidate;
+        var validator, json;
 
-        messageValidate = new xss.Validate(dirtyMessage)
+        validator = new xss.netcode.Validator(dirtyMessage)
             .assertStringOfLength(5, 512)
             .assertJSON();
-        if (!messageValidate.valid()) {
+        if (!validator.valid()) {
             return null;
         }
 
-        json = messageValidate.json();
-        jsonValidate = new xss.Validate(json).assertArrayOfLength(1, 2);
-        if (!jsonValidate.valid()) {
+        json = validator.json();
+        validator = new xss.netcode.Validator(json).assertArrayOfLength(1, 2);
+        if (!validator.valid()) {
             return null;
         }
 
-        eventValidate = new xss.Validate(json[0]).assertStringOfLength(1, 20);
-        if (!eventValidate.valid()) {
+        validator = new xss.netcode.Validator(json[0]).assertStringOfLength(1, 20);
+        if (!validator.valid()) {
             return null;
         }
 
         return {
-            event: eventValidate.value(),
+            event: validator.value(),
             data: json[1] // Can be any type, validate in event listener
         };
     },
@@ -134,7 +134,7 @@ xss.EventDispatcher.prototype = {
     _eventChat: function(message) {
         var index, validMessage, room = this.client.room;
 
-        validMessage = new xss.Validate(message).assertStringOfLength(1, 30);
+        validMessage = new xss.netcode.Validator(message).assertStringOfLength(1, 30);
 
         if (room && validMessage.valid()) {
             index = this.client.model.index;
@@ -152,8 +152,8 @@ xss.EventDispatcher.prototype = {
         client = this.client;
         game = client.getGame();
 
-        parts = new xss.Validate(data[0]).assertArray();
-        direction = new xss.Validate(data[1]).assertRange(0, 3);
+        parts = new xss.netcode.Validator(data[0]).assertArray();
+        direction = new xss.netcode.Validator(data[1]).assertRange(0, 3);
 
         if (game && parts.valid()) {
             game.updateSnake(this.client, parts.value(), direction.value(0));

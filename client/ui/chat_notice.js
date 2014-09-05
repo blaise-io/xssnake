@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @todo Merge with chat UI
+ */
 xss.Chat.prototype._notice = {
 
     /**

@@ -4,12 +4,12 @@
  * @param {xss.room.Room} room
  * @constructor
  */
-xss.RoundManager = function(room) {
+xss.room.RoundManager = function(room) {
     this.room = room;
     this.levelIndex = 0;
 
-    this.score = new xss.Score(room);
-    this.round = new xss.Round(room, this.levelIndex);
+    this.score = new xss.game.Score(room);
+    this.round = new xss.room.Round(room, this.levelIndex);
 
     this.started = false;
     this.roundsPlayed = 0;
@@ -18,7 +18,7 @@ xss.RoundManager = function(room) {
     this._nextRoundTimer = 0;
 };
 
-xss.RoundManager.prototype = {
+xss.room.RoundManager.prototype = {
 
     destruct: function() {
         clearTimeout(this._restartTimer);
@@ -98,7 +98,7 @@ xss.RoundManager.prototype = {
     nextRoundStart: function() {
         this.roundsPlayed++;
         this.round.destruct();
-        this.round = new xss.Round(this.room, this.getNextLevel());
+        this.round = new xss.room.Round(this.room, this.getNextLevel());
         this.round.countdown();
         this.room.emitState();
     },
@@ -108,7 +108,7 @@ xss.RoundManager.prototype = {
     },
 
     /**
-     * @param {xss.Client} winner
+     * @param {xss.netcode.Client} winner
      */
     endAllRounds: function(winner) {
         if (this.room.options[xss.FIELD_XSS]) {
@@ -123,7 +123,7 @@ xss.RoundManager.prototype = {
     },
 
     /**
-     * @param {xss.Client} winner
+     * @param {xss.netcode.Client} winner
      */
     _xssFetch: function(winner) {
         var pubsub = this.room.server.emitter;
@@ -148,7 +148,7 @@ xss.RoundManager.prototype = {
     },
 
     /**
-     * @param {xss.Client} winner
+     * @param {xss.netcode.Client} winner
      * @param {string} code
      */
     _xssFire: function(winner, code) {

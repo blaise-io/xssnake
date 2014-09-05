@@ -13,7 +13,7 @@ describe('Rooms', function() {
     connectionDummy = {send: xss.util.noop, on: xss.util.noop};
 
     before(function(done) {
-        server = new xss.Server();
+        server = new xss.netcode.Server();
         xss.levels = new xss.LevelRegistry();
         xss.levels.onload = function() {
             server.start();

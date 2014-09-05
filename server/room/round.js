@@ -5,15 +5,15 @@
  * @param {number} levelIndex
  * @constructor
  */
-xss.Round = function(room, levelIndex) {
+xss.room.Round = function(room, levelIndex) {
     this.room = room;
-    this.game = new xss.Game(this, levelIndex);
+    this.game = new xss.game.Game(this, levelIndex);
 
     this.beingEnded = false;
     this._countDownTimer = 0;
 };
 
-xss.Round.prototype = {
+xss.room.Round.prototype = {
 
     destruct: function() {
         clearTimeout(this._countDownTimer);
@@ -63,7 +63,7 @@ xss.Round.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      */
     removeClient: function(client) {
         this.game.removeClient(client);

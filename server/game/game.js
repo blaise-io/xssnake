@@ -1,11 +1,11 @@
 'use strict';
 
 /**
- * @param {xss.Round} round
+ * @param {xss.room.Round} round
  * @param {number} levelIndex
  * @constructor
  */
-xss.Game = function(round, levelIndex) {
+xss.game.Game = function(round, levelIndex) {
     this.round = round;
     this.room = round.room;
     this.server = this.room.server;
@@ -13,7 +13,7 @@ xss.Game = function(round, levelIndex) {
 
     this.options = this.room.options;
 
-    this.spawner = new xss.Spawner(this);
+    this.spawner = new xss.game.Spawner(this);
     this.model = new xss.model.Game();
 
     /** @type {Array.<number>} */
@@ -25,7 +25,7 @@ xss.Game = function(round, levelIndex) {
     this._mainGameLoopBound = this._serverGameLoop.bind(this);
 };
 
-xss.Game.prototype = {
+xss.game.Game.prototype = {
 
     destruct: function() {
         this.stop();
@@ -68,7 +68,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {Array.<Array>} clientParts
      * @param {number} direction
      * @return {number}
@@ -176,7 +176,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {number} index
      */
     hitApple: function(client, index) {
@@ -195,12 +195,12 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {number} index
      */
     hitPowerup: function(client, index) {
         this.room.emit(xss.EVENT_GAME_DESPAWN, index);
-        return new xss.Powerup(this, client);
+        return new xss.game.Powerup(this, client);
     },
 
     /**
@@ -298,7 +298,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @return {number}
      * @private
      */
@@ -339,7 +339,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @private
      */
     _emitSnakeRoom: function(client) {
@@ -348,7 +348,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @private
      */
     _broadcastSnakeRoom: function(client) {
@@ -361,9 +361,9 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {Array.<xss.Coordinate>} parts
-     * @return {xss.Crash}
+     * @return {xss.game.Crash}
      * @private
      */
     _isCrash: function(client, parts) {
@@ -378,12 +378,12 @@ xss.Game.prototype = {
 
             // Wall
             if (level.isWall(part[0], part[1])) {
-                return new xss.Crash(xss.CRASH_WALL, client);
+                return new xss.game.Crash(xss.CRASH_WALL, client);
             }
 
             // Moving wall
             if (level.isMovingWall(part)) {
-                crash = new xss.Crash(xss.CRASH_MOVING_WALL, client);
+                crash = new xss.game.Crash(xss.CRASH_MOVING_WALL, client);
                 crash.location = part;
                 return crash;
             }
@@ -391,14 +391,14 @@ xss.Game.prototype = {
             // Self
             if (m > 4) {
                 if (m - 1 !== i && eq(part, parts[m - 1])) {
-                    return new xss.Crash(xss.CRASH_SELF, client);
+                    return new xss.game.Crash(xss.CRASH_SELF, client);
                 }
             }
 
             // Opponent
             for (var ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
-                    return new xss.Crash(xss.CRASH_OPPONENT, client, clients[ii]);
+                    return new xss.game.Crash(xss.CRASH_OPPONENT, client, clients[ii]);
                 }
             }
         }
@@ -407,7 +407,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {Array.<xss.Coordinate>=} parts
      * @param {boolean=} emit
      * @private
@@ -441,7 +441,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @param {number} delta
      * @param {xss.Shift} shift
      * @private
@@ -472,7 +472,7 @@ xss.Game.prototype = {
     },
 
     /**
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @private
      */
     _applyNewPosition: function(client) {
@@ -511,7 +511,7 @@ xss.Game.prototype = {
 
     /**
      * Snake is considered dead (crashed) when in limbo for too long.
-     * @param {xss.Client} client
+     * @param {xss.netcode.Client} client
      * @return {boolean}
      */
     _canReturnFromLimbo: function(client) {

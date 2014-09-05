@@ -6,13 +6,13 @@ var WebSocketServer = require('ws').Server;
 /**
  * @constructor
  */
-xss.Server = function() {
+xss.netcode.Server = function() {
     this.emitter = new events.EventEmitter();
     this.roomManager = new xss.room.RoomManager(this);
     this.ws = this.start();
 };
 
-xss.Server.prototype = {
+xss.netcode.Server.prototype = {
 
     destruct: function() {
         this.roomManager.destruct();
@@ -27,7 +27,7 @@ xss.Server.prototype = {
         });
 
         ws.on('connection', function(connection) {
-            new xss.Client(this.emitter, connection);
+            new xss.netcode.Client(this.emitter, connection);
         }.bind(this));
 
         return ws;

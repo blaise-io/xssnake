@@ -2,11 +2,11 @@
 
 /**
  * @param {number} type
- * @param {xss.Client} client
- * @param {xss.Client=} opponent
+ * @param {xss.netcode.Client} client
+ * @param {xss.netcode.Client=} opponent
  * @constructor
  */
-xss.Crash = function(type, client, opponent) {
+xss.game.Crash = function(type, client, opponent) {
     this.type = type;
     this.client = client;
 
@@ -19,7 +19,7 @@ xss.Crash = function(type, client, opponent) {
     this.draw = this.detectDraw();
 };
 
-xss.Crash.prototype = {
+xss.game.Crash.prototype = {
 
     detectDraw: function() {
         var diff;
