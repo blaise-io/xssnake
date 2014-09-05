@@ -2,13 +2,13 @@
 
 /**
  * @param {xss.Client} client
- * @param {xss.EventEmitter} emitter
+ * @param {EventEmitter} emitter
  * @param {Object} connection
  * @constructor
  */
-xss.Socket = function(client, emitter, connection) {
+xss.EventDispatcher = function(client, emitter, connection) {
     this.client = client;
-    this.emitter = emitter.emitter;
+    this.emitter = emitter;
     this.connection = connection;
 
     this.model = new xss.model.Socket();
@@ -19,7 +19,7 @@ xss.Socket = function(client, emitter, connection) {
     this._startPingInterval();
 };
 
-xss.Socket.prototype = {
+xss.EventDispatcher.prototype = {
 
     destruct: function() {
         clearInterval(this._pingInterval);

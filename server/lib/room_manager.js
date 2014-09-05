@@ -1,23 +1,32 @@
 'use strict';
 
 /**
+ * @param {xss.Server} server
  * @constructor
  */
 xss.room.RoomManager = function(server) {
     this.server = server;
     this.bindEvents();
-
     /** @type {Object.<string,xss.room.Room>} */
     this.rooms = {};
 };
 
 xss.room.RoomManager.prototype = {
 
+    destruct: function() {
+        this.removeAllRooms();
+        this.server.emitter.removeAllListeners([
+            xss.EVENT_ROOM_STATUS,
+            xss.EVENT_ROOM_JOIN,
+            xss.EVENT_ROOM_MATCH
+        ]);
+    },
+
     bindEvents: function() {
-        var pubsub = this.server.emitter.emitter;
-        pubsub.on(xss.EVENT_ROOM_STATUS, this._evRoomStatus.bind(this));
-        pubsub.on(xss.EVENT_ROOM_JOIN, this._evJoinRoom.bind(this));
-        pubsub.on(xss.EVENT_ROOM_MATCH, this._evMatchRoom.bind(this));
+        var emitter = this.server.emitter;
+        emitter.on(xss.EVENT_ROOM_STATUS, this._evRoomStatus.bind(this));
+        emitter.on(xss.EVENT_ROOM_JOIN, this._evJoinRoom.bind(this));
+        emitter.on(xss.EVENT_ROOM_MATCH, this._evMatchRoom.bind(this));
     },
 
     /**
@@ -34,6 +43,14 @@ xss.room.RoomManager.prototype = {
     remove: function(room) {
         delete this.rooms[room.key];
         room.destruct();
+    },
+
+    removeAllRooms: function() {
+        for (var k in this.rooms) {
+            if (this.rooms.hasOwnProperty(k)) {
+                this.remove(this.rooms[k]);
+            }
+        }
     },
 
     /**
