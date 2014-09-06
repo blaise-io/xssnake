@@ -52,14 +52,14 @@ xss.room.Round.prototype = {
      * @return {boolean}
      */
     allCrashed: function() {
-        return (this.numCrashed() === this.room.clients.length);
+        return (this.numCrashed() === this.room.players.length);
     },
 
     /**
      * @return {boolean}
      */
     hasEnded: function() {
-        return (this.numCrashed() + 1 >= this.room.clients.length);
+        return (this.numCrashed() + 1 >= this.room.players.length);
     },
 
     /**

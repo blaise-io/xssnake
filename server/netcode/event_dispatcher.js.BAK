@@ -67,7 +67,7 @@ xss.netcode.Dispatcher.prototype = {
     _cleanMessage: function(dirtyMessage) {
         var validator, json;
 
-        validator = new xss.netcode.Validator(dirtyMessage)
+        validator = new xss.util.Validator(dirtyMessage)
             .assertStringOfLength(5, 512)
             .assertJSON();
         if (!validator.valid()) {
@@ -75,12 +75,12 @@ xss.netcode.Dispatcher.prototype = {
         }
 
         json = validator.json();
-        validator = new xss.netcode.Validator(json).assertArrayOfLength(1, 2);
+        validator = new xss.util.Validator(json).assertArrayOfLength(1, 2);
         if (!validator.valid()) {
             return null;
         }
 
-        validator = new xss.netcode.Validator(json[0]).assertStringOfLength(1, 20);
+        validator = new xss.util.Validator(json[0]).assertStringOfLength(1, 20);
         if (!validator.valid()) {
             return null;
         }
@@ -134,7 +134,7 @@ xss.netcode.Dispatcher.prototype = {
     _eventChat: function(message) {
         var index, validMessage, room = this.client.room;
 
-        validMessage = new xss.netcode.Validator(message).assertStringOfLength(1, 30);
+        validMessage = new xss.util.Validator(message).assertStringOfLength(1, 30);
 
         if (room && validMessage.valid()) {
             index = this.client.model.index;
@@ -152,8 +152,8 @@ xss.netcode.Dispatcher.prototype = {
         client = this.client;
         game = client.getGame();
 
-        parts = new xss.netcode.Validator(data[0]).assertArray();
-        direction = new xss.netcode.Validator(data[1]).assertRange(0, 3);
+        parts = new xss.util.Validator(data[0]).assertArray();
+        direction = new xss.util.Validator(data[1]).assertRange(0, 3);
 
         if (game && parts.valid()) {
             game.updateSnake(this.client, parts.value(), direction.value(0));

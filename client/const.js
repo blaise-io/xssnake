@@ -58,6 +58,7 @@ xss.NS_ROUND = 'RND';
 xss.NS_SCORE = 'SCR';
 xss.NS_SNAKE = 'SNK';
 xss.NS_SNAKE_CONTROLS = 'SNKC';
+xss.NS_HEARTBEAT = 'HBT';
 xss.NS_SOCKET = 'SOK';
 xss.NS_SPAWN = 'SPN';
 xss.NS_STAGES = 'STG';

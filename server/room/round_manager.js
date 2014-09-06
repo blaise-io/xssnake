@@ -6,16 +6,16 @@
  */
 xss.room.RoundManager = function(room) {
     this.room = room;
-    this.levelIndex = 0;
-
-    this.score = new xss.game.Score(room);
-    this.round = new xss.room.Round(room, this.levelIndex);
-
-    this.started = false;
-    this.roundsPlayed = 0;
-
-    this._restartTimer = 0;
-    this._nextRoundTimer = 0;
+//    this.levelIndex = 0;
+//
+//    this.score = new xss.game.Score(room);
+//    this.round = new xss.room.Round(room, this.levelIndex);
+//
+//    this.started = false;
+//    this.roundsPlayed = 0;
+//
+//    this._restartTimer = 0;
+//    this._nextRoundTimer = 0;
 };
 
 xss.room.RoundManager.prototype = {
@@ -37,7 +37,7 @@ xss.room.RoundManager.prototype = {
     },
 
     addClient: function(client) {
-        this.score.addClient(client);
+        this.score.addPlayer(client);
     },
 
     removeClient: function(client) {
@@ -47,7 +47,7 @@ xss.room.RoundManager.prototype = {
 
     clientStart: function(client) {
         var room = this.room;
-        if (room.isHost(client) && !this.started && room.clients.length > 1) {
+        if (room.isHost(client) && !this.started && room.players.length > 1) {
             this.start();
         }
     },

@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  * @param {EventEmitter} emitter
  * @param {Object} connection
@@ -59,9 +58,9 @@ xss.netcode.Client.prototype = {
     broadcast: function(name, data) {
         var room = this.room;
         if (room) {
-            for (var i = 0, m = room.clients.length; i < m; i++) {
-                if (room.clients[i] !== this) {
-                    room.clients[i].emit(name, data);
+            for (var i = 0, m = room.players.length; i < m; i++) {
+                if (room.players[i] !== this) {
+                    room.players[i].emit(name, data);
                 }
             }
         }

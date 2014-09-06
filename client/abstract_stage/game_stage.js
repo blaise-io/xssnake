@@ -70,7 +70,7 @@ xss.GameStage.prototype = {
         });
 
         xss.socket.emit(
-            xss.EVENT_ROOM_JOIN,
+            xss.EVENT_ROOM_JOIN_KEY,
             [key, this.data.name]
         );
     },
@@ -106,7 +106,7 @@ xss.GameStage.prototype = {
             this._getRandomName()
         );
         xss.socket = new xss.Socket(function() {
-            xss.socket.emit(xss.EVENT_ROOM_MATCH, emit);
+            xss.socket.emit(xss.EVENT_ROOM_JOIN_MATCHING, emit);
         });
     }
 

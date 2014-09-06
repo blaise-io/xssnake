@@ -7,7 +7,7 @@
 xss.game.Score = function(room) {
     this.room = room;
     this.points = [];
-    for (var i = 0, m = room.clients.length; i < m; i++) {
+    for (var i = 0, m = room.players.getTotal(); i < m; i++) {
         this.points.push(0);
     }
 };
@@ -43,14 +43,14 @@ xss.game.Score.prototype = {
         index = this.points.indexOf(sorted[last]);
 
         return (sorted[last] - xss.ROOM_WIN_BY_MIN >= sorted[last - 1]) ?
-            this.room.clients[index] : null;
+            this.room.players[index] : null;
     },
 
     /**
      * @param {xss.room.Room} room
      */
     emitKnockoutPoints: function(room) {
-        var clients = room.clients;
+        var clients = room.players;
         for (var i = 0, m = clients.length; i < m; i++) {
             if (!clients[i].snake.crashed) {
                 this.points[i] += 2;

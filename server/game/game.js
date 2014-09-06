@@ -226,7 +226,7 @@ xss.game.Game.prototype = {
     },
 
     spawnSnakes: function() {
-        var clients = this.room.clients;
+        var clients = this.room.players;
         for (var i = 0, m = clients.length; i < m; i++) {
             var snake = this._spawnSnake(i);
             this.snakes[i] = snake;
@@ -303,7 +303,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _maxMismatches: function(client) {
-        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.socket.model.rtt);
+        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.socket.model.latency);
         return Math.ceil((rtt + 20) / client.snake.speed);
     },
 
@@ -370,7 +370,7 @@ xss.game.Game.prototype = {
         var eq, clients, level, crash;
 
         eq = xss.util.eq;
-        clients = this.room.clients;
+        clients = this.room.players;
         level = this.level;
 
         for (var i = 0, m = parts.length; i < m; i++) {
@@ -432,7 +432,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _serverGameLoop: function(delta) {
-        var shift, clients = this.room.clients;
+        var shift, clients = this.room.players;
         shift = this.level.gravity.getShift(delta);
         this.level.updateMovingWalls(delta, true);
         for (var i = 0, m = clients.length; i < m; i++) {
@@ -515,7 +515,7 @@ xss.game.Game.prototype = {
      * @return {boolean}
      */
     _canReturnFromLimbo: function(client) {
-       return +new Date() - client.snake.limbo.time < client.socket.model.rtt;
+       return +new Date() - client.snake.limbo.time < client.socket.model.latency;
     },
 
     /**

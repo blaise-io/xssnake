@@ -27,7 +27,7 @@ xss.netcode.Server.prototype = {
         });
 
         ws.on('connection', function(connection) {
-            new xss.netcode.Client(this.emitter, connection);
+            new xss.room.Player(this, connection);
         }.bind(this));
 
         return ws;

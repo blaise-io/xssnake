@@ -7,7 +7,7 @@ var nodeEvents = require('events');
 describe('Game', function() {
 
     var server, roomManager, room, round, game, client, otherClient,
-        gameOptions, pubsubDummy, connectionDummy;
+        roomPreferences, pubsubDummy, connectionDummy;
 
     pubsubDummy = new nodeEvents.EventEmitter();
     connectionDummy = {send: xss.util.noop, on: xss.util.noop};
@@ -27,22 +27,22 @@ describe('Game', function() {
     });
 
     beforeEach(function(done) {
-        gameOptions = {};
-        gameOptions[xss.FIELD_MAX_PLAYERS] = 6;
-        gameOptions[xss.FIELD_LEVEL_SET] = 0;
-        gameOptions[xss.FIELD_POWERUPS] = true;
-        gameOptions[xss.FIELD_PRIVATE] = false;
-        gameOptions[xss.FIELD_XSS] = false;
-        gameOptions[xss.FIELD_QUICK_GAME] = false;
+        roomPreferences = {};
+        roomPreferences[xss.FIELD_MAX_PLAYERS] = 6;
+        roomPreferences[xss.FIELD_LEVEL_SET] = 0;
+        roomPreferences[xss.FIELD_POWERUPS] = true;
+        roomPreferences[xss.FIELD_PRIVATE] = false;
+        roomPreferences[xss.FIELD_XSS] = false;
+        roomPreferences[xss.FIELD_QUICK_GAME] = false;
 
         roomManager = new xss.room.RoomManager(server);
 
         client = new xss.Client(pubsubDummy, connectionDummy);
         otherClient = new xss.Client(pubsubDummy, connectionDummy);
 
-        room = roomManager.createRoom(gameOptions);
-        room.addClient(client);
-        room.addClient(otherClient);
+        room = roomManager.createRoom(roomPreferences);
+        room.addPlayer(client);
+        room.addPlayer(otherClient);
 
         round = room.rounds.round;
         game = round.game;
@@ -124,21 +124,21 @@ describe('Game', function() {
         });
 
         it('Disallow too many mismatches', function() {
-            client.socket.model.rtt = 100;
+            client.socket.model.latency = 100;
             client.snake.speed = 150;
             var update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
             assert(update === xss.UPDATE_ERR_MISMATCHES);
         });
 
         it('Allow more mismatches on high latency', function() {
-            client.socket.model.rtt = 150;
+            client.socket.model.latency = 150;
             client.snake.speed = 150;
             var update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
             assert(update === xss.UPDATE_SUCCES);
         });
 
         it('Allow more mismatches on high speed', function() {
-            client.socket.model.rtt = 100;
+            client.socket.model.latency = 100;
             client.snake.speed = 100;
             var update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
             assert(update === xss.UPDATE_SUCCES);

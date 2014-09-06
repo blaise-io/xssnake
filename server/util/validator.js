@@ -2,20 +2,20 @@
 
 /**
  * Validator / Sanitize user input.
- * Example usage: new xss.netcode.Validator(str).assertType('string').valid(); // true|false
+ * Example usage: new xss.util.Validator(str).assertType('string').valid(); // true|false
  * @param {?} value
  * @constructor
  */
-xss.netcode.Validator = function(value) {
+xss.util.Validator = function(value) {
     this._value = value;
     this._valid = true;
 };
 
-xss.netcode.Validator.prototype = {
+xss.util.Validator.prototype = {
 
     /**
      * @param {string} type
-     * @return {xss.netcode.Validator}
+     * @return {xss.util.Validator}
      */
     assertType: function(type) {
         if (typeof this._value !== type) {
@@ -26,7 +26,7 @@ xss.netcode.Validator.prototype = {
     },
 
     /**
-     * @return {xss.netcode.Validator}
+     * @return {xss.util.Validator}
      */
     assertArray: function() {
         if (!(this._value instanceof Array)) {
@@ -37,7 +37,7 @@ xss.netcode.Validator.prototype = {
     },
 
     /**
-     * @return {xss.netcode.Validator}
+     * @return {xss.util.Validator}
      */
     assertJSON: function() {
         if (this._valid) { // Don't parse if already invalid
@@ -53,7 +53,7 @@ xss.netcode.Validator.prototype = {
 
     /**
      * @param {Array} arr
-     * @return {xss.netcode.Validator}
+     * @return {xss.util.Validator}
      */
     assertInArray: function(arr) {
         if (-1 === arr.indexOf(this._value)) {
@@ -66,7 +66,7 @@ xss.netcode.Validator.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {xss.netcode.Validator}
+     * @return {xss.util.Validator}
      */
     assertRange: function(min, max) {
         if (typeof this._value !== 'number') {
@@ -82,7 +82,7 @@ xss.netcode.Validator.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {xss.netcode.Validator}
+     * @return {xss.util.Validator}
      */
     assertStringOfLength: function(min, max) {
         if (typeof this._value !== 'string') {
@@ -98,7 +98,7 @@ xss.netcode.Validator.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {xss.netcode.Validator}
+     * @return {xss.util.Validator}
      */
     assertArrayOfLength: function(min, max) {
         if (!(this._value instanceof Array)) {

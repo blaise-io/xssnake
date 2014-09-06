@@ -1,9 +1,6 @@
 'use strict';
 
 var xss = {
-    /** @deprecated */
-    model: {},
-
     debug     : {},
     data      : {},
     bootstrap : {},

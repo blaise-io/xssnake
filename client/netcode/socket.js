@@ -2,29 +2,36 @@
 
 /**
  * Client-Server communication
- * @param onopen {Function}
+ * @param onopenCallback {Function}
  * @constructor
  */
-xss.Socket = function(onopen) {
-    this.onopen = onopen;
+xss.Socket = function(onopenCallback) {
+    this.onopenCallback = onopenCallback;
     this.connected = false;
-//    this.model = new xss.model.ClientSocket(callback);
 
     this.connection = new WebSocket('ws://' + xss.SERVER_ENDPOINT);
     this.connection.onopen = this.onopen.bind(this);
+    this.connection.onerror = this.onclose.bind(this);
     this.connection.onclose = this.onclose.bind(this);
     this.connection.onmessage = this.onmessage.bind(this);
 
-    this._bindEvents();
+    this.bindEvents();
 };
 
 xss.Socket.prototype = {
 
     destruct: function() {
         this.connected = false;
+
+        if (this.heartbeat) {
+            this.heartbeat.destruct();
+            this.heartbeat = null;
+        }
+
         xss.event.off(xss.EVENT_PING, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_COMBI, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_PONG, xss.NS_SOCKET);
+
         if (this.connection.readyState <= 1) {
             this.connection.onclose = xss.util.noop;
             this.connection.onmessage = xss.util.noop;
@@ -33,18 +40,18 @@ xss.Socket.prototype = {
     },
 
     onopen: function() {
-//        this.state = new xss.SocketState();
         this.connected = true;
-        this.onopen();
+        this.onopenCallback();
+        this.heartbeat = new xss.netcode.ClientHeartbeat(this);
     },
 
     onclose: function() {
         if (this.connected) {
-            this.connected = false;
             xss.util.error('CONNECTION LOST');
         } else {
             xss.util.error('CANNOT CONNECT');
         }
+        this.destruct();
     },
 
     /**
@@ -56,6 +63,7 @@ xss.Socket.prototype = {
         if (data) {
             emit.push(data);
         }
+        console.log(emit);
         this.connection.send(JSON.stringify(emit));
     },
 
@@ -67,27 +75,8 @@ xss.Socket.prototype = {
         xss.event.trigger(data[0], data[1]);
     },
 
-    /**
-     * @private
-     */
-    _bindEvents: function() {
-        xss.event.on(xss.EVENT_PING,  xss.NS_SOCKET, this._clientPing.bind(this));
-        xss.event.on(xss.EVENT_PONG,  xss.NS_SOCKET, this._clientPong.bind(this));
+    bindEvents: function() {
         xss.event.on(xss.EVENT_COMBI, xss.NS_SOCKET, this._combinedEvents.bind(this));
-    },
-
-    /**
-     * @private
-     */
-    _clientPing: function() {
-        xss.socket.emit(xss.EVENT_PING);
-    },
-
-    /**
-     * @param {Array.<number>} data
-     */
-    _clientPong: function(data) {
-        this.model.setPongData(data[0], data[1]);
     },
 
     /**

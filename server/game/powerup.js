@@ -98,7 +98,7 @@ xss.game.Powerup.prototype = {
      * @private
      */
     _others: function() {
-        var clients = this.room.clients.slice();
+        var clients = this.room.players.slice();
         clients.splice(this.client.model.index, 1);
         return clients;
     },
