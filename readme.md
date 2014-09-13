@@ -1,25 +1,25 @@
-# XSSNAKE
+# XSSnake
 
 Online multiplayer Snake where the winner of a game is allowed to execute
 JavaScript in the browser of other players.
 
-[![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
+[![Build Status](https://travis-ci.org/blaise-io/XSSnake.png?branch=master)](https://travis-ci.org/blaise-io/XSSnake)
 
-XSSNAKE is currently in development. The beta release is planned around 2014.
+XSSnake is currently in development. The beta release is planned around 2014.
 
-![XSSNAKE](https://i.imgur.com/Gsz4ajb.png)
+![XSSnake](https://i.imgur.com/Gsz4ajb.png)
 
 ## Technical
 
-XSSNAKE is written in HTML5 and JavaScript. It works in all browsers that
-support Canvas and Websocket. XSSNAKE uses Node.js and ws for the server
+XSSnake is written using HTML5 and JavaScript. It works in all browsers that
+support Canvas and Websocket. XSSnake uses Node.js and ws for the server
 and Google Closure Compiler to compile to minified and optimized code.
 
-[The font used in the game can be downloaded here.](http://fontstruct.com/fontstructions/show/xssnake)
+[The font used in the game can be downloaded here.](http://fontstruct.com/fontstructions/show/XSSnake)
 
 ## Initial Setup
 
- * Clone or download XSSNAKE from https://github.com/blaise-io/xssnake.git
+ * Clone or download XSSnake from https://github.com/blaise-io/XSSnake.git
  * Download and install [node.js](http://nodejs.org/)
  * Install server dependencies: `npm install`
  * Configure hostname and port in `shared/config.js`
@@ -27,7 +27,7 @@ and Google Closure Compiler to compile to minified and optimized code.
 
 ## Production
 
-XSSNAKE is not production-ready yet.
+XSSnake is not production-ready yet.
 
 ## Developing and Testing
 
