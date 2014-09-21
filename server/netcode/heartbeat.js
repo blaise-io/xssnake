@@ -21,6 +21,10 @@ xss.netcode.ServerHeartbeat.prototype = {
         this.player = null;
     },
 
+    isAlive: function() {
+        return (+new Date() - this.pingSent < xss.HEARTBEAT_INTERVAL_MS * 2);
+    },
+
     bindEvents: function() {
        this.player.emitter.on(xss.EVENT_PING, this.ping.bind(this));
        this.player.emitter.on(xss.EVENT_PONG, this.pong.bind(this));

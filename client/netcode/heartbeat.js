@@ -9,9 +9,15 @@
 xss.netcode.ClientHeartbeat = function(socket) {
     this.latency = 0;
     this.socket = socket;
-    this.interval = setInterval(this.ping.bind(this), 7000);
+    this.pingSent = null;
+
     this.bindEvents();
     this.ping();
+
+    this.interval = setInterval(
+        this.ping.bind(this),
+        xss.HEARTBEAT_INTERVAL_MS
+    );
 };
 
 xss.netcode.ClientHeartbeat.prototype = {
@@ -26,17 +32,19 @@ xss.netcode.ClientHeartbeat.prototype = {
         xss.event.on(xss.EVENT_PONG, xss.NS_HEARTBEAT, this.pong.bind(this));
     },
 
-    /**
-     * @todo Disconnect when server does not respond within N ms.
-     */
     ping: function() {
+        if (this.pingSent) {
+            // Last ping did not pong.
+            return this.socket.timeout();
+        }
         this.pingSent = +new Date();
         this.socket.emit(xss.EVENT_PING);
     },
 
     pong: function() {
-        this.latency = (+new Date() - this.pingSent) / 2;
+        this.latency = (+this.lastResponse - this.pingSent) / 2;
         this.socket.emit(xss.EVENT_PONG);
+        this.pingSent = null;
     }
 
 };

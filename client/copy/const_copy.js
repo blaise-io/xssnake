@@ -40,3 +40,7 @@ xss.COPY_FORM_INSTRUCT = [
 
 xss.COPY_COUNTDOWN_TITLE = 'Get ready!';
 xss.COPY_COUNTDOWN_BODY = 'Game starting in: {0}';
+
+xss.COPY_SOCKET_CONNECTION_LOST = 'Connection lost';
+xss.COPY_SOCKET_CANNOT_CONNECT = 'Cannot connect';
+xss.COPY_SOCKET_SERVER_AWAY = 'Server went away';

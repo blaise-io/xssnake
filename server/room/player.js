@@ -4,7 +4,7 @@ var events = require('events');
 
 /**
  * @param {xss.netcode.Server} server
- * @param {EventEmitter} connection
+ * @param {ws.WebSocket} connection
  * @constructor
  */
 xss.room.Player = function(server, connection) {
@@ -14,6 +14,9 @@ xss.room.Player = function(server, connection) {
     this.connection = connection;
     this.connection.on('message', this.onmessage.bind(this));
     this.connection.on('close', this.onclose.bind(this));
+
+    this.index = -1;
+    this.ondisconnect = null;
 
     this.name = null;
     this.snake = null;
@@ -25,11 +28,18 @@ xss.room.Player = function(server, connection) {
 xss.room.Player.prototype = {
 
     destruct: function() {
-        this.emitter.removeAllListeners();
-        this.emitBuffer.length = 0;
+        this.disconnect();
         this.server = null;
-        this.connection = null;
         this.snake = null;
+    },
+
+    disconnect: function() {
+        if (this.ondisconnect) {
+            this.ondisconnect(this);
+        }
+        this.connection.close();
+        this.connection = null;
+        this.emitter.removeAllListeners();
     },
 
     /**
@@ -62,7 +72,6 @@ xss.room.Player.prototype = {
         return this.name;
     },
 
-
     /**
      * Send data to client
      * @param {string} name
@@ -70,14 +79,19 @@ xss.room.Player.prototype = {
      */
     emit: function(name, data) {
         var emit = [name];
-        if (data) {
-            emit.push(data);
-        }
-        this.connection.send(JSON.stringify(emit), function(error) {
-            if (error){
-                console.error(error);
+
+        if (!this.heartbeat.isAlive()) {
+            this.disconnect();
+        } else if (this.connection) {
+            if (data) {
+                emit.push(data);
             }
-        }.bind(this));
+            this.connection.send(JSON.stringify(emit), function(error) {
+                if (error){
+                    console.error(error);
+                }
+            }.bind(this));
+        }
     },
 
     /**
@@ -87,7 +101,7 @@ xss.room.Player.prototype = {
     broadcast: function(name, data) {
         var room = this.room;
         if (room) {
-            for (var i = 0, m = room.players.length; i < m; i++) { /*a*/
+            for (var i = 0, m = room.players.length; i < m; i++) {
                 if (room.players[i] !== this) {
                     room.players[i].emit(name, data);
                 }

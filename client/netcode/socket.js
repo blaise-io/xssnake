@@ -11,8 +11,8 @@ xss.Socket = function(onopenCallback) {
 
     this.connection = new WebSocket('ws://' + xss.SERVER_ENDPOINT);
     this.connection.onopen = this.onopen.bind(this);
-    this.connection.onerror = this.onclose.bind(this);
     this.connection.onclose = this.onclose.bind(this);
+    this.connection.onerror = this.onclose.bind(this);
     this.connection.onmessage = this.onmessage.bind(this);
 
     this.bindEvents();
@@ -28,13 +28,17 @@ xss.Socket.prototype = {
             this.heartbeat = null;
         }
 
+        this.connection.onopen = null;
+        this.connection.onclose = null;
+        this.connection.onerror = null;
+        this.connection.onmessage = null;
+
         xss.event.off(xss.EVENT_PING, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_COMBI, xss.NS_SOCKET);
         xss.event.off(xss.EVENT_PONG, xss.NS_SOCKET);
 
+        // Close explicitely when CONNECTING and OPEN.
         if (this.connection.readyState <= 1) {
-            this.connection.onclose = xss.util.noop;
-            this.connection.onmessage = xss.util.noop;
             this.connection.close();
         }
     },
@@ -47,10 +51,15 @@ xss.Socket.prototype = {
 
     onclose: function() {
         if (this.connected) {
-            xss.util.error('CONNECTION LOST');
+            xss.util.error(xss.COPY_SOCKET_CONNECTION_LOST);
         } else {
-            xss.util.error('CANNOT CONNECT');
+            xss.util.error(xss.COPY_SOCKET_CANNOT_CONNECT);
         }
+        this.destruct();
+    },
+
+    timeout: function() {
+        xss.util.error(xss.COPY_SOCKET_SERVER_AWAY);
         this.destruct();
     },
 

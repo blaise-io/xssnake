@@ -52,7 +52,7 @@ xss.game.Game.prototype = {
 
         this.spawnSnakes();
 
-        this.server.emitter.on(xss.SERVER_TICK, this._mainGameLoopBound);
+        this.server.emitter.on(xss.SEVENT_SERVER_TICK, this._mainGameLoopBound);
         this.model.started = true;
         this.spawner.spawn(xss.SPAWN_APPLE);
         if (this.options[xss.FIELD_POWERUPS]) {
@@ -62,8 +62,8 @@ xss.game.Game.prototype = {
 
     stop: function() {
         var pubsub = this.server.emitter;
-        if (pubsub.listeners(xss.SERVER_TICK)) {
-            pubsub.removeListener(xss.SERVER_TICK, this._mainGameLoopBound);
+        if (pubsub.listeners(xss.SEVENT_SERVER_TICK)) {
+            pubsub.removeListener(xss.SEVENT_SERVER_TICK, this._mainGameLoopBound);
         }
     },
 

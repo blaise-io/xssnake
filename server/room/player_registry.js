@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @constructor
+ */
 xss.room.PlayerRegistry = function() {
     /** @type {Array.<xss.room.Player>} */
     this.players = [];
@@ -19,10 +22,31 @@ xss.room.PlayerRegistry.prototype = {
     },
 
     /**
-     * @param player
+     * @param {xss.room.Player} player
      */
     add: function(player) {
-        this.players.push(player);
+        var length = this.players.push(player);
+        player.index = length - 1;
+        player.ondisconnect = this.disconnect.bind(this);
+    },
+
+    /**
+     * @param {xss.room.Player} player
+     */
+    remove: function(player) {
+        this.players.splice(player.index, 1);
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            this.players[i].index = i;
+        }
+    },
+
+    /**
+     * @param {xss.room.Player} player
+     */
+    disconnect: function(player) {
+        this.emit(xss.EVENT_CHAT_NOTICE, [xss.NOTICE_DISCONNECT, player.index]);
+        // Keep player data until rounds have ended.
+        // this.remove(player);
     },
 
     getTotal: function() {

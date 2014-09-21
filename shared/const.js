@@ -27,7 +27,10 @@ xss.EVENT_SNAKE_UPDATE = 'S';
 xss.EVENT_XSS_REQ = 'XS?';
 xss.EVENT_XSS_RES = 'XS!';
 
-xss.SERVER_TICK = 'T';
+xss.SEVENT_SERVER_TICK = 'T';
+xss.SEVENT_PLAYER_DISCONNECT = 'PD';
+
+xss.HEARTBEAT_INTERVAL_MS = 7000;
 
 xss.GAME_SHIFT_MAP = [[-1, 0], [0, -1], [1, 0], [0, 1]];
 
