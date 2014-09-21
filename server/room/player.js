@@ -15,7 +15,6 @@ xss.room.Player = function(server, connection) {
     this.connection.on('message', this.onmessage.bind(this));
     this.connection.on('close', this.onclose.bind(this));
 
-    this.index = -1;
     this.ondisconnect = null;
 
     this.name = null;

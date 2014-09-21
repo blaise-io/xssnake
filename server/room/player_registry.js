@@ -25,8 +25,7 @@ xss.room.PlayerRegistry.prototype = {
      * @param {xss.room.Player} player
      */
     add: function(player) {
-        var length = this.players.push(player);
-        player.index = length - 1;
+        this.players.push(player);
         player.ondisconnect = this.disconnect.bind(this);
     },
 
@@ -34,9 +33,9 @@ xss.room.PlayerRegistry.prototype = {
      * @param {xss.room.Player} player
      */
     remove: function(player) {
-        this.players.splice(player.index, 1);
-        for (var i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].index = i;
+        var index = this.players.indexOf(player);
+        if (-1 !== index) {
+            this.players.splice(this.players.indexOf(player), 1);
         }
     },
 
@@ -44,7 +43,10 @@ xss.room.PlayerRegistry.prototype = {
      * @param {xss.room.Player} player
      */
     disconnect: function(player) {
-        this.emit(xss.EVENT_CHAT_NOTICE, [xss.NOTICE_DISCONNECT, player.index]);
+        this.emit(xss.EVENT_CHAT_NOTICE, [
+            xss.NOTICE_DISCONNECT,
+            this.players.indexOf(player)
+        ]);
         // Keep player data until rounds have ended.
         // this.remove(player);
     },
