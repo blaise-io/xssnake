@@ -60,26 +60,20 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
      * @return {*}
      */
     storage: function(key, value) {
-        if (!localStorage || key === null) {
+        if (arguments.length === 1) {
+            try {
+                return JSON.parse(localStorage.getItem(key));
+            } catch (err) {
+                localStorage.removeItem(key);
+            }
             return '';
-        }
-        switch (arguments.length) {
-            case 0:
+        } else if (arguments.length === 2) {
+            if (value === null) {
+                localStorage.removeItem(key);
                 return '';
-            case 1:
-                try {
-                    return JSON.parse(localStorage.getItem(key));
-                } catch(err) {
-                    localStorage.removeItem(key);
-                }
-                return '';
-            case 2:
-                if (value === null) {
-                    localStorage.removeItem(key);
-                    return '';
-                } else {
-                    return localStorage.setItem(key, JSON.stringify(value));
-                }
+            } else {
+                return localStorage.setItem(key, JSON.stringify(value));
+            }
         }
     },
 
@@ -110,11 +104,7 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
         switch (arguments.length) {
             case 0: // Empty
                 if (location.hash) {
-                    try {
-                        history.replaceState(null, '', location.pathname + location.search);
-                    } catch(err) {
-                        document.hash = '';
-                    }
+                    history.replaceState(null, '', location.pathname + location.search);
                 }
                 return;
             case 1: // Return value
@@ -151,7 +141,7 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
     format: function(str, varArgs) {
         var args = arguments;
         return args[0].replace(/\{(\d+)\}/g, function(match, number) {
-            return typeof args[number] !== 'undefined' ? args[number] : match;
+            return args[number];
         });
     },
 
@@ -189,11 +179,14 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
     debounce: function(fn, delay) {
         var timeout;
         return function() {
-            var args = arguments;
+            var context = this, args = arguments;
+            function later() {
+                timeout = null;
+                fn.apply(context, args);
+            }
             clearTimeout(timeout);
-            timeout = setTimeout(function() {
-                fn.apply(this, args);
-            }.bind(this), delay || 100);
+            timeout = setTimeout(later, delay);
         };
     }
+
 });

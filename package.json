@@ -1,36 +1,44 @@
 {
-    "name": "xssnake",
-    "description": "Online multiplayer Snake where the winner of a game is allowed to execute JavaScript in the browser of other players.",
-    "keywords": ["xssnake", "snake", "multiplayer", "game"],
-    "homepage": "https://github.com/blaise-io/xssnake",
-    "author": "Blaise Kal <blaise.kal@gmail.com>",
-    "license": "MIT",
-    "version": "0.0.1-alpha",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/blaise-io/xssnake.git"
-    },
-    "dependencies": {
-        "pngparse": "1.x",
-        "ws": "0.4.x"
-    },
-    "devDependencies": {
-        "mocha": "1.x",
-        "grunt-sails-linker": "0.9.5",
-        "grunt-gcc-rest": "0.1.x",
-        "grunt-contrib-concat": "0.3.x",
-        "grunt-contrib-cssmin": "0.7.0",
-        "grunt-contrib-uglify": "0.4.0",
-        "grunt-css-url-embed": "0.1.4"
-    },
-    "engines": {
-        "node": ">= 0.6"
-    },
-    "scripts": {
-        "prestart": "grunt concat:server",
-        "start": "node dist/server.js",
-        "restart": "supervisor --no-restart-on-error --watch server,shared --exec npm start",
-        "pretest": "grunt testsuite",
-        "test" : "mocha -R spec dist/testsuite.js"
-    }
+  "name": "xssnake",
+  "description": "Online multiplayer Snake where the winner of a game is allowed to execute JavaScript in the browser of other players.",
+  "keywords": [
+    "xssnake",
+    "snake",
+    "multiplayer",
+    "game"
+  ],
+  "homepage": "https://github.com/blaise-io/xssnake",
+  "author": "Blaise Kal <blaise.kal@gmail.com>",
+  "license": "MIT",
+  "version": "0.0.1-alpha",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blaise-io/xssnake.git"
+  },
+  "dependencies": {
+    "pngparse": "1.x",
+    "ws": "0.4.x"
+  },
+  "devDependencies": {
+    "grunt-contrib-concat": "0.3.x",
+    "grunt-contrib-cssmin": "0.7.0",
+    "grunt-contrib-uglify": "0.4.0",
+    "grunt-css-url-embed": "0.1.4",
+    "grunt-gcc-rest": "0.1.x",
+    "grunt-sails-linker": "0.9.5",
+    "karma": "0.12.x",
+    "karma-coverage": "^0.2.6",
+    "karma-jasmine": "0.2.x",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-spec-reporter": "0.0.13"
+  },
+  "engines": {
+    "node": ">= 0.6"
+  },
+  "scripts": {
+    "prestart": "grunt concat:server",
+    "start": "node dist/server.js",
+    "restart": "supervisor --no-restart-on-error --watch server,shared --exec npm start",
+    "test": "grunt test"
+  }
 }

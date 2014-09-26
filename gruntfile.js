@@ -4,13 +4,16 @@ var client = require('./build/client.js');
 var server = require('./build/server.js');
 var levels = require('./build/levels.js');
 var audio = require('./build/audio.js');
-var testsuite = require('./build/testsuite.js');
 
 module.exports = function(grunt) {
 
     grunt.initConfig({
+        karma: {
+            client: {
+                configFile: 'test/client/karma.conf.js'
+            }
+        },
         concat: {
-            testsuite: testsuite.concat,
             client: client.concat,
             server: server.concat,
             levels: levels.concat,
@@ -37,13 +40,14 @@ module.exports = function(grunt) {
 
     grunt.loadTasks('build');
 
+    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-gcc-rest');
     grunt.loadNpmTasks('grunt-sails-linker');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-css-url-embed');
 
-    grunt.registerTask('testsuite', ['concat:testsuite']);
+    grunt.registerTask('test', ['karma:client']);
     grunt.registerTask('scripts', ['sails-linker:client']);
     grunt.registerTask('audio', ['concat:audio_mp3', 'concat:audio_ogg']);
     grunt.registerTask('levels', ['concat:levels']);

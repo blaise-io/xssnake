@@ -16,6 +16,11 @@ var srcDebug = [];
 srcDebug = srcDebug.concat(src);
 srcDebug = srcDebug.concat(['client/debug/*.js']);
 
+// Karma (test suite runner) does not understand the bang prefix.
+var srcTestsuite = src.slice();
+srcTestsuite.pop();
+exports.testsuite = srcTestsuite;
+
 exports.concat = {
     options: {
         banner: '\'use strict\';\n',
