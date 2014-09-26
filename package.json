@@ -27,6 +27,7 @@
     "grunt-gcc-rest": "0.1.x",
     "grunt-sails-linker": "0.9.5",
     "karma": "0.12.x",
+    "grunt-karma": "1.4.x",
     "karma-coverage": "^0.2.6",
     "karma-jasmine": "0.2.x",
     "karma-phantomjs-launcher": "^0.1.4",
