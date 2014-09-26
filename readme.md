@@ -3,7 +3,7 @@
 Online multiplayer Snake where the winner of a game is allowed to execute
 JavaScript in the browser of other players.
 
-[![Build Status](https://travis-ci.org/blaise-io/XSSnake.png?branch=master)](https://travis-ci.org/blaise-io/XSSnake)
+[![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
 
 XSSnake is currently in development. The beta release is planned around 2014.
 
