@@ -33,14 +33,9 @@ exports.gcc_rest = {
 
 exports.jasmine_node = {
     options: {
-        verbose        : true,
-        forceExit      : true,
-        match          : '.',
-        matchall       : false,
-        extensions     : 'js',
-        specNameMatcher: 'spec',
-        noStack        : false,
-        specFolders    : [__dirname + '/../test/server/'],
-        jUnit          : {report: false}
+        verbose          : true,
+        forceExit        : true,
+        includeStackTrace: true,
+        specFolders      : [__dirname + '/../test/server/']
     }
 };
