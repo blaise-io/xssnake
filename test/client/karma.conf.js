@@ -1,7 +1,16 @@
 'use strict';
 
+var grunt = require('grunt');
 var client = require('../../build/client.js');
-var files = client.testsuite.concat(['test/client/*.spec.js']);
+var files = client.concat.src.slice();
+
+// Append tests.
+files.push('test/client/*.spec.js');
+
+// Karma does not support advanced globbing.
+// Expand files manually.
+files = grunt.file.expand({cwd: __dirname + '/../..'}, files);
+
 
 module.exports = function(config) {
     config.set({
@@ -10,7 +19,7 @@ module.exports = function(config) {
         },
         coverageReporter: {
             type: 'html',
-            dir: '../xssnake-coverage/'
+            dir: 'test/coverage/'
         },
         basePath  : '../../',
         frameworks: ['jasmine'],

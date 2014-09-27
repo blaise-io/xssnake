@@ -13,6 +13,9 @@ module.exports = function(grunt) {
                 configFile: 'test/client/karma.conf.js'
             }
         },
+        jasmine_node: {
+            server: server.jasmine_node
+        },
         concat: {
             client: client.concat,
             server: server.concat,
@@ -41,13 +44,14 @@ module.exports = function(grunt) {
     grunt.loadTasks('build');
 
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-jasmine-node');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-gcc-rest');
     grunt.loadNpmTasks('grunt-sails-linker');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-css-url-embed');
 
-    grunt.registerTask('test', ['karma:client']);
+    grunt.registerTask('test', ['karma:client', 'concat:server', 'jasmine_node:server']);
     grunt.registerTask('scripts', ['sails-linker:client']);
     grunt.registerTask('audio', ['concat:audio_mp3', 'concat:audio_ogg']);
     grunt.registerTask('levels', ['concat:levels']);

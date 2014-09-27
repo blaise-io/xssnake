@@ -16,6 +16,7 @@ xss.netcode.Server.prototype = {
 
     destruct: function() {
         this.roomManager.destruct();
+        this.roomManager = null;
         this.ws.close();
     },
 

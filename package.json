@@ -21,17 +21,20 @@
   },
   "devDependencies": {
     "grunt-contrib-concat": "0.3.x",
-    "grunt-contrib-cssmin": "0.7.0",
-    "grunt-contrib-uglify": "0.4.0",
-    "grunt-css-url-embed": "0.1.4",
+    "grunt-contrib-cssmin": "0.7.x",
+    "grunt-contrib-jasmine": "^0.8.0",
+    "grunt-contrib-uglify": "0.4.x",
+    "grunt-css-url-embed": "0.1.x",
+    "grunt-env": "^0.4.1",
     "grunt-gcc-rest": "0.1.x",
+    "grunt-jasmine-node": "0.2.x",
+    "grunt-karma": "0.9.0",
     "grunt-sails-linker": "0.9.5",
     "karma": "0.12.x",
-    "grunt-karma": "0.9.0",
-    "karma-coverage": "^0.2.6",
+    "karma-coverage": "0.2.x",
     "karma-jasmine": "0.2.x",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "karma-spec-reporter": "0.0.13"
+    "karma-phantomjs-launcher": "0.1.x",
+    "karma-spec-reporter": "0.0.x"
   },
   "engines": {
     "node": ">= 0.6"
@@ -40,6 +43,7 @@
     "prestart": "grunt concat:server",
     "start": "node dist/server.js",
     "restart": "supervisor --no-restart-on-error --watch server,shared --exec npm start",
-    "test": "grunt test"
+    "test": "grunt test",
+    "__test_alternative": "jasmine-node test/server --forceexit --verbose"
   }
 }
