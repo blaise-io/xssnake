@@ -1,4 +1,3 @@
-var fs = require('fs');
 var helper = require('./helper.js');
 
 exports.concat = {
@@ -33,9 +32,7 @@ exports.gcc_rest = {
 
 exports.jasmine_node = {
     options: {
-        verbose          : true,
-        forceExit        : true,
-        includeStackTrace: true,
-        specFolders      : [__dirname + '/../test/server/']
+        forceExit  : true,
+        specFolders: [__dirname + '/../test/server/']
     }
 };
