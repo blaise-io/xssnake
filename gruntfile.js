@@ -8,41 +8,37 @@ var audio = require('./build/audio.js');
 module.exports = function(grunt) {
 
     grunt.initConfig({
-        karma: {
-            client: {
-                configFile: 'test/client/karma.conf.js'
-            }
-        },
-        jasmine_node: {
-            server: server.jasmine_node
-        },
         concat: {
-            client: client.concat,
-            server: server.concat,
-            levels: levels.concat,
+            client   : client.concat,
+            server   : server.concat,
+            levels   : levels.concat,
             audio_mp3: audio.concat.mp3,
             audio_ogg: audio.concat.ogg
         },
-        cssUrlEmbed: {
-            client: client.cssUrlEmbed
-        },
-        cssmin: {
-            client: client.cssmin
-        },
+
         gcc_rest: {
             client: client.gcc_rest,
             server: server.gcc_rest
         },
-        'sails-linker': {
-            client: client.scriptlinker
+
+        jasmine_node  : {
+             // Must be namespaced.
+            server: server.jasmine_node
         },
-        index: {
-            client: client.index
-        }
+
+        karma         : client.karma,
+        cssUrlEmbed   : client.cssUrlEmbed,
+        cssmin        : client.cssmin,
+        'sails-linker': client.scriptlinker,
+        index         : client.index,
+        instrument    : server.instrument,
+        storeCoverage : server.storeCoverage,
+        makeReport    : server.makeReport
     });
 
     grunt.loadTasks('build');
 
+    // Dependencies
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-jasmine-node');
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -50,15 +46,46 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-sails-linker');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-css-url-embed');
+    grunt.loadNpmTasks('grunt-istanbul');
 
-    grunt.registerTask('test', ['karma:client', 'concat:server', 'jasmine_node:server']);
-    grunt.registerTask('scripts', ['sails-linker:client']);
-    grunt.registerTask('audio', ['concat:audio_mp3', 'concat:audio_ogg']);
-    grunt.registerTask('levels', ['concat:levels']);
-    grunt.registerTask('source', ['scripts', 'levels', 'audio']);
-    grunt.registerTask('client', ['source', 'concat:client', 'gcc_rest:client',
-                                  'cssUrlEmbed:client', 'cssmin:client',
-                                  'index:client']);
-    grunt.registerTask('server', ['concat:server', 'gcc_rest:server']);
-    grunt.registerTask('default', ['source', 'client', 'server']);
+    // Tasks
+    grunt.registerTask('test', [
+        'karma',
+        'server_test'
+    ]);
+
+    grunt.registerTask('server_test', [
+        'concat:server',
+        'instrument',
+        'jasmine_node',
+        'storeCoverage',
+        'makeReport'
+    ]);
+
+    grunt.registerTask('source', [
+        'sails-linker',
+        'concat:levels',
+        'concat:audio_mp3',
+        'concat:audio_ogg'
+    ]);
+
+    grunt.registerTask('client', [
+        'source',
+        'concat:client',
+        'gcc_rest:client',
+        'cssUrlEmbed',
+        'cssmin',
+        'index'
+    ]);
+
+    grunt.registerTask('server', [
+        'concat:server',
+        'gcc_rest:server'
+    ]);
+
+    grunt.registerTask('default', [
+        'source',
+        'client',
+        'server'
+    ]);
 };

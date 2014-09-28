@@ -43,7 +43,6 @@
     "prestart": "grunt concat:server",
     "start": "node dist/server.js",
     "restart": "supervisor --no-restart-on-error --watch server,shared --exec npm start",
-    "test": "grunt test",
-    "__test_alternative": "jasmine-node test/server --forceexit --verbose"
+    "test": "grunt test"
   }
 }

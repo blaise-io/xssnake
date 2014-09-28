@@ -30,9 +30,31 @@ exports.gcc_rest = {
     dest: 'dist/server.min.js'
 };
 
+exports.instrument = {
+    files: 'dist/server.js',
+    options: {
+        basePath: 'dist/instrument',
+        flatten : true
+    }
+};
+
 exports.jasmine_node = {
     options: {
         forceExit  : true,
-        specFolders: [__dirname + '/../test/server/']
+        specFolders: ['test/server']
+    }
+};
+
+exports.storeCoverage = {
+    options: {
+        dir: 'dist/instrument'
+    }
+};
+
+exports.makeReport = {
+    src: 'dist/instrument/coverage.json',
+    options: {
+        type   : 'html',
+        dir    : 'test/coverage/server'
     }
 };

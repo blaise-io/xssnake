@@ -25,6 +25,10 @@ exports.concat = {
     dest: 'dist/client.js'
 };
 
+exports.karma = {
+    configFile: 'test/client/karma.conf.js'
+};
+
 exports.gcc_rest = {
     options: {
         params: {
