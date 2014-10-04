@@ -2,7 +2,7 @@
 
 describe('Server', function() {
 
-    var xss = require('../../dist/instrument/server.js');
+    require('../../dist/instrument/server/start.js');
 
     it('Starts', function(done) {
         xss.bootstrap.server();

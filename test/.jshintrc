@@ -3,6 +3,7 @@
     "expr": true,
     "globalstrict": true,
     "sub": true,
+    "node": true,
     "globals": {
         "xss": true,
         "jasmine": true,

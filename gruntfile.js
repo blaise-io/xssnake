@@ -1,3 +1,4 @@
+/* jshint node:true */
 'use strict';
 
 var client = require('./build/client.js');
@@ -7,35 +8,7 @@ var audio = require('./build/audio.js');
 
 module.exports = function(grunt) {
 
-    grunt.initConfig({
-        concat: {
-            client   : client.concat,
-            server   : server.concat,
-            levels   : levels.concat,
-            audio_mp3: audio.concat.mp3,
-            audio_ogg: audio.concat.ogg
-        },
-
-        gcc_rest: {
-            client: client.gcc_rest,
-            server: server.gcc_rest
-        },
-
-        jasmine_node  : {
-             // Must be namespaced.
-            server: server.jasmine_node
-        },
-
-        karma         : client.karma,
-        cssUrlEmbed   : client.cssUrlEmbed,
-        cssmin        : client.cssmin,
-        'sails-linker': client.scriptlinker,
-        index         : client.index,
-        instrument    : server.instrument,
-        storeCoverage : server.storeCoverage,
-        makeReport    : server.makeReport
-    });
-
+    // Loads our tasks from the build dir
     grunt.loadTasks('build');
 
     // Dependencies
@@ -48,6 +21,28 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-css-url-embed');
     grunt.loadNpmTasks('grunt-istanbul');
 
+    // Config
+    grunt.initConfig({
+        concat:         {client: client.concat,
+                         server: server.concat,
+                         levels: levels.concat,
+                         audio1: audio.concat.mp3,
+                         audio2: audio.concat.ogg},
+        gcc_rest     :  {client: client.gcc_rest,
+                         server: server.gcc_rest},
+        jasmine_node  : {server: server.jasmine_node},
+        karma         : {client: client.karma},
+        cssUrlEmbed   : {client: client.cssUrlEmbed},
+        cssmin        : {client: client.cssmin},
+        'sails-linker': {client: client.scriptlinker},
+        index         : {client: client.index},
+
+        // These don't allow namespacing:
+        instrument    : server.instrument,
+        storeCoverage : server.storeCoverage,
+        makeReport    : server.makeReport
+    });
+
     // Tasks
     grunt.registerTask('test', [
         'karma',
@@ -55,7 +50,6 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('server_test', [
-        'concat:server',
         'instrument',
         'jasmine_node',
         'storeCoverage',
@@ -65,8 +59,8 @@ module.exports = function(grunt) {
     grunt.registerTask('source', [
         'sails-linker',
         'concat:levels',
-        'concat:audio_mp3',
-        'concat:audio_ogg'
+        'concat:audio1',
+        'concat:audio2'
     ]);
 
     grunt.registerTask('client', [

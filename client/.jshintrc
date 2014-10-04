@@ -3,5 +3,7 @@
     "browser": true,
     "expr": true,
     "sub": true,
-    "predef": ["xss"]
+    "globals": {
+        "xss": false
+    }
 }

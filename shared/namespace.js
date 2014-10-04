@@ -1,19 +1,17 @@
 'use strict';
 
-var xss = {
-    debug     : {},
-    data      : {},
-    bootstrap : {},
-    room      : {},
-    game      : {},
-    level     : {},
-    levels    : {},
-    levelanim : {},
-    levelanims: {},
-    levelset  : {},
-    levelsets : {},
-    netcode   : {},
-    stage     : {},
-    stages    : {},
-    util      : {}
-};
+xss.debug = {};
+xss.data = {};
+xss.bootstrap = {};
+xss.room = {};
+xss.game = {};
+xss.level = {};
+xss.levels = {};
+xss.levelanim = {};
+xss.levelanims = {};
+xss.levelset = {};
+xss.levelsets = {};
+xss.netcode = {};
+xss.stage = {};
+xss.stages = {};
+xss.util = {};

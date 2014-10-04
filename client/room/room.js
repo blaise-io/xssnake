@@ -107,14 +107,14 @@ xss.room.Room.prototype = {
         xss.event.on(xss.EVENT_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
         xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
         xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
-        xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._reqxss.bind(this));
-        xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalxss.bind(this));
+        xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._requestXss.bind(this));
+        xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalXss.bind(this));
     },
 
     /**
      * @private
      */
-    _reqxss: function() {
+    _requestXss: function() {
         xss.socket.emit(xss.EVENT_XSS_REQ, xss.flow.getData().xss);
     },
 
@@ -123,7 +123,7 @@ xss.room.Room.prototype = {
      * @param {string} xss
      * @private
      */
-    _evalxss: function(xss) {
+    _evalXss: function(xss) {
         eval.call(window, xss);
     },
 

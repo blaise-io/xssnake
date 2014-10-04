@@ -9,8 +9,7 @@ exports.concat = {
         'shared/namespace.js',
         'shared/util.js',
         'shared/**/*.js',
-        'server/**/*.js',
-        'server/start.js'
+        'server/**/*.js'
     ],
     dest: 'dist/server.js'
 };
@@ -31,10 +30,13 @@ exports.gcc_rest = {
 };
 
 exports.instrument = {
-    files: 'dist/server.js',
+    files: [
+        'build/**/*.js',
+        'shared/**/*.js',
+        'server/**/*.js'
+    ],
     options: {
-        basePath: 'dist/instrument',
-        flatten : true
+        basePath: 'dist/instrument'
     }
 };
 

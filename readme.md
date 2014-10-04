@@ -34,6 +34,12 @@ XSSnake is not production-ready yet.
  * Run the game server: `npm start`
  * Access the game by opening `client/debug.html` in your browser
 
+Running unit tests:
+
+ * Client: `grunt karma`
+ * Server: `grunt server_test`
+ * Both: `npm test` or `grunt test`
+
 If you add client JavaScript files, or add/modify levels or audio, you need
 to rebuild files by running `grunt source`.
 

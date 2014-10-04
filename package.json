@@ -28,7 +28,7 @@
     "grunt-env": "^0.4.1",
     "grunt-gcc-rest": "0.1.x",
     "grunt-jasmine-node": "0.2.x",
-    "grunt-karma": "0.9.0",
+    "grunt-karma": "~0.9.0",
     "grunt-sails-linker": "0.9.5",
     "karma": "0.12.x",
     "karma-coverage": "0.2.x",
@@ -40,8 +40,7 @@
     "node": ">= 0.6"
   },
   "scripts": {
-    "prestart": "grunt concat:server",
-    "start": "node dist/server.js",
+    "start": "node server/start.js",
     "restart": "supervisor --no-restart-on-error --watch server,shared --exec npm start",
     "test": "grunt test"
   }
