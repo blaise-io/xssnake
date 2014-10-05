@@ -1,11 +1,11 @@
 'use strict';
 
 /**
- * @param {?} rawOptions
+ * @param {?} dirtyOptions
  * @constructor
  */
-xss.room.Options = function(rawOptions) {
-    this.setCleanOptions(rawOptions);
+xss.room.Options = function(dirtyOptions) {
+    this.setCleanOptions(dirtyOptions);
 };
 
 xss.room.Options.prototype = {
