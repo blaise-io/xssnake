@@ -18,8 +18,9 @@ module.exports = function(config) {
             'client/**/*.js': ['coverage']
         },
         coverageReporter: {
-            type: 'html',
-            dir: 'test/coverage/'
+            type  : 'html',
+            dir   : 'test/coverage/client/',
+            subdir: '.'
         },
         basePath  : '../../',
         frameworks: ['jasmine'],

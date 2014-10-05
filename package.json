@@ -34,7 +34,8 @@
     "karma-coverage": "0.2.x",
     "karma-jasmine": "0.2.x",
     "karma-phantomjs-launcher": "0.1.x",
-    "karma-spec-reporter": "0.0.x"
+    "karma-spec-reporter": "0.0.x",
+    "grunt-istanbul": "~0.3.0"
   },
   "engines": {
     "node": ">= 0.6"
