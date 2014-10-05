@@ -165,6 +165,10 @@ xss.room.RoomManager.prototype = {
         room = this.matcher.getRoomMatching(options);
         room = room || this.createRoom(options);
         room.addPlayer(player);
+
+        player.emit(xss.EVENT_ROOM_SERIALIZE, room.serialize());
+        player.emit(xss.EVENT_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
+        player.emit(xss.EVENT_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
     }
 
 //    /**

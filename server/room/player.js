@@ -33,6 +33,7 @@ xss.room.Player.prototype = {
     },
 
     disconnect: function() {
+        console.log('xss.room.Player disconnect');
         if (this.ondisconnect) {
             this.ondisconnect(this);
         }
@@ -42,11 +43,18 @@ xss.room.Player.prototype = {
     },
 
     /**
+     * @returns {String}
+     */
+    serialize: function() {
+        return this.name;
+    },
+
+    /**
      * @param {string} jsonStr
      */
     onmessage: function(jsonStr) {
         var message = new xss.netcode.Message(jsonStr);
-        console.log(message.event, message.data);
+        console.log('<--', this.name, jsonStr);
         if (message.isClean) {
             // Emit the message on global emitter first,
             // Any class can pick this up.
@@ -85,8 +93,9 @@ xss.room.Player.prototype = {
             if (data) {
                 emit.push(data);
             }
+            console.log('-->', this.name, JSON.stringify(emit));
             this.connection.send(JSON.stringify(emit), function(error) {
-                if (error){
+                if (error) {
                     console.error(error);
                 }
             }.bind(this));

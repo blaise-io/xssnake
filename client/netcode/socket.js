@@ -72,7 +72,7 @@ xss.Socket.prototype = {
         if (data) {
             emit.push(data);
         }
-        console.log(emit);
+        console.log('-->', emit);
         this.connection.send(JSON.stringify(emit));
     },
 
@@ -81,6 +81,7 @@ xss.Socket.prototype = {
      */
     onmessage: function(ev) {
         var data = JSON.parse(ev.data);
+        console.log('<--', data);
         xss.event.trigger(data[0], data[1]);
     },
 

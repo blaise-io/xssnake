@@ -41,7 +41,9 @@ xss.room.Room.prototype = {
         return !this.isFull();
     },
 
-    emitState: function() {
+    serialize: function() {
+        return [this.key];
+
 //        var rounds, clients, capacity, isprivate;
 //
 //        rounds = this.rounds;

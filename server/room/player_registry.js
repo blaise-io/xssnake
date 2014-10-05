@@ -7,9 +7,6 @@ xss.room.PlayerRegistry = function() {
     /** @type {Array.<xss.room.Player>} */
     this.players = [];
 
-    /** @deprecated */
-    this.clients = null;
-
     /** type {Array.<Array>} */
     this.emitBuffer = [];
 };
@@ -53,6 +50,17 @@ xss.room.PlayerRegistry.prototype = {
 
     getTotal: function() {
         return this.players.length;
+    },
+
+    /**
+     * @returns {Array}
+     */
+    serialize: function() {
+        var serialized = [];
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            serialized.push(this.players[i].serialize());
+        }
+        return serialized;
     },
 
     /**

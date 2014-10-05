@@ -41,6 +41,17 @@ xss.room.Options.prototype = {
             .value(false);
     },
 
+    serialize: function() {
+        return [
+            this.maxPlayers,
+            this.levelSet,
+            Number(this.hasPowerups),
+            Number(this.isPrivate),
+            Number(this.isXSS),
+            Number(this.isQuickGame)
+        ];
+    },
+
     /**
      * @param {xss.room.Options} request
      * @returns {boolean}
