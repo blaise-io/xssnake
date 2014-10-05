@@ -47,6 +47,7 @@ xss.room.Options.prototype = {
      */
     matches: function(request) {
         return (
+            !this.isPrivate &&
             !request.isPrivate &&
             request.isXSS === this.isXSS &&
             (request.isQuickGame || (

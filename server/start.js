@@ -13,6 +13,7 @@ for (var i = 0, m = files.length; i < m; i++) {
 }
 
 // Don't start server when testing.
+// istanbul ignore if
 if (typeof jasmine === 'undefined') {
     xss.bootstrap.server();
     xss.bootstrap.registerLevels(function() {

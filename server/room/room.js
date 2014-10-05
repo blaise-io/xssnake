@@ -17,10 +17,8 @@ xss.room.Room = function(server, options, key) {
 xss.room.Room.prototype = {
 
     destruct: function() {
-        this.clients = [];
         this.rounds.destruct();
         this.players.destruct();
-        this.heartbeat.destruct();
         this.server = null;
         this.rounds = null;
     },
