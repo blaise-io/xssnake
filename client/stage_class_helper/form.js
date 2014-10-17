@@ -7,7 +7,7 @@
  * @constructor
  */
 xss.Form = function(header, footer) {
-    this.header = header;
+    this.header = header.toUpperCase();
     this.footer = footer || '';
     this.selectedField = 0;
     this.selectedOption = [];
@@ -149,7 +149,7 @@ xss.Form.prototype = {
         shape = xss.font.shape(label, x, y);
 
         option = this.fields[i].options[this.selectedOption[i] || 0];
-        value = option[1] || String(option[0]);
+        value = option[1].toUpperCase();
 
         props.option = col2X + (this.maxwidth - xss.font.width(value)) / 2;
         props.option = Math.floor(props.option);

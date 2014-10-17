@@ -57,15 +57,15 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
 
         // Trololol
         form.addField(xss.FIELD_BUGS, xss.COPY_FIELD_BUGS, [
-            [xss.COPY_FIELD_TRUE_OPT1],
-            [xss.COPY_FIELD_TRUE_OPT2],
-            [xss.COPY_FIELD_TRUE_OPT3],
-            [xss.COPY_FIELD_TRUE_OPT4],
-            [xss.COPY_FIELD_TRUE_OPT5],
-            [xss.COPY_FIELD_TRUE_OPT6],
-            [xss.COPY_FIELD_TRUE_OPT7],
-            [xss.COPY_FIELD_TRUE_OPT8],
-            [xss.COPY_FIELD_TRUE_OPT9]
+            [true, xss.COPY_FIELD_TRUE_OPT1],
+            [true, xss.COPY_FIELD_TRUE_OPT2],
+            [true, xss.COPY_FIELD_TRUE_OPT3],
+            [true, xss.COPY_FIELD_TRUE_OPT4],
+            [true, xss.COPY_FIELD_TRUE_OPT5],
+            [true, xss.COPY_FIELD_TRUE_OPT6],
+            [true, xss.COPY_FIELD_TRUE_OPT7],
+            [true, xss.COPY_FIELD_TRUE_OPT8],
+            [true, xss.COPY_FIELD_TRUE_OPT9]
         ]);
 
         form.addField(xss.FIELD_PRIVATE, xss.COPY_FIELD_PRIVATE, [
@@ -79,7 +79,12 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
         ]);
 
         form.addField(xss.FIELD_MAX_PLAYERS, xss.COPY_FIELD_MAX_PLAYERS, [
-            [6],[1],[2],[3],[4],[5]
+            [6, '6'],
+            [1, '1'],
+            [2, '2'],
+            [3, '3'],
+            [4, '4'],
+            [5, '5']
         ]);
 
         return form;

@@ -20,15 +20,13 @@ xss.COPY_DIALOG_OK = 'Ok'.toUpperCase();
 xss.COPY_DIALOG_CANCEL = 'Cancel'.toUpperCase();
 
 // Level sets.
-xss.COPY_LEVELSET_BASIC = 'BASIC';
-xss.COPY_LEVELSET_MOVING = 'MOVING';
-xss.COPY_LEVELSET_MAZE = 'MAZES';
-xss.COPY_LEVELSET_GAME = 'GAME WORLDS';
+xss.COPY_LEVELSET_BASIC = 'Basic';
+xss.COPY_LEVELSET_MOVING = 'Moving';
+xss.COPY_LEVELSET_MAZE = 'Mazes';
+xss.COPY_LEVELSET_GAME = 'Pactris';
 
-
-
-//
-xss.COPY_JOIN_INSTRUCT = ' –\n';
+// Stages misc.
+xss.COPY_JOIN_INSTRUCT = ' …\n';
 
 // Main stage.
 xss.COPY_MAIN_INSTRUCT = [
@@ -40,7 +38,7 @@ xss.COPY_MAIN_INSTRUCT = [
 // Form stage.
 xss.COPY_FORM_INSTRUCT = [
     xss.UC_ARR_UP + ' & ' + xss.UC_ARR_DOWN + ' to select an option',
-    xss.UC_ARR_LEFT + ' & ' + xss.UC_ARR_RIGHT + ' to change a value',
+    xss.UC_ARR_LEFT + ' & ' + xss.UC_ARR_RIGHT + ' to change the value',
     xss.UC_ENTER_KEY + ' to continue'
 ].join(xss.COPY_JOIN_INSTRUCT);
 
@@ -54,8 +52,8 @@ xss.COPY_SOCKET_CANNOT_CONNECT = 'Cannot connect';
 xss.COPY_SOCKET_SERVER_AWAY = 'Server went away';
 
 // Game options stage.
-xss.COPY_FIELD_TRUE = 'Yes Pls';
-xss.COPY_FIELD_FALSE = 'No Tnx';
+xss.COPY_FIELD_TRUE = 'Yes';
+xss.COPY_FIELD_FALSE = 'No';
 xss.COPY_FIELD_LEVEL_SET = 'Level Set';
 xss.COPY_OPTIONS_STAGE_HEADER = 'Game Options';
 xss.COPY_FIELD_POWERUPS = 'Power-Ups';
@@ -66,7 +64,7 @@ xss.COPY_FIELD_MAX_PLAYERS = 'Max Players';
 xss.COPY_FIELD_BUGS = 'WEIRD BUGS';
 xss.COPY_FIELD_TRUE_OPT1 = xss.COPY_FIELD_TRUE;
 xss.COPY_FIELD_TRUE_OPT2 = 'Enable';
-xss.COPY_FIELD_TRUE_OPT3 = 'Ok';
+xss.COPY_FIELD_TRUE_OPT3 = 'OK';
 xss.COPY_FIELD_TRUE_OPT4 = 'True';
 xss.COPY_FIELD_TRUE_OPT5 = 'Accept';
 xss.COPY_FIELD_TRUE_OPT6 = 'Hao';
