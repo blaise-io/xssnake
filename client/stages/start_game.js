@@ -1,12 +1,12 @@
 'use strict';
 
 /**
- * @extends {xss.GameStage}
+ * @extends {xss.stage.Game}
  * @implements {xss.StageInterface}
  * @constructor
  */
 xss.StartGameStage = function() {
-    xss.GameStage.call(this);
+    xss.stage.Game.call(this);
 };
 
-xss.util.extend(xss.StartGameStage.prototype, xss.GameStage.prototype);
+xss.util.extend(xss.StartGameStage.prototype, xss.stage.Game.prototype);

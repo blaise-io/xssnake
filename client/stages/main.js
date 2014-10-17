@@ -74,7 +74,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
         footer = xss.COPY_MAIN_INSTRUCT;
 
         menu = new xss.SelectMenu(header, footer);
-        menu.addOption(null, xss.GameStage, 'QUICK GAME');
+        menu.addOption(null, xss.stage.QuickGame, 'QUICK GAME');
         menu.addOption(null, xss.NameStage, 'MULTIPLAYER');
         menu.addOption(null, xss.SingleplayerStage, 'SINGLE PLAYER');
         menu.addOption(null, xss.ColorStage, 'COLOR SCHEME');

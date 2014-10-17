@@ -155,6 +155,20 @@ xss.util = {
         while (i--) { fn(); }
         duration = +new Date() - start;
         console.log(label || 'Benchmark', duration, duration / iterations);
+    },
+
+    /**
+     * @returns {String}
+     */
+    getRandomName: function() {
+        var name = xss.util.randomItem([
+            'Ant', 'Bat', 'Bear', 'Bird', 'Cat', 'Cow', 'Crab', 'Croc', 'Deer',
+            'Dodo', 'Dog', 'Duck', 'Emu', 'Fish', 'Fly', 'Fox', 'Frog', 'Goat',
+            'Hare', 'Ibis', 'Kiwi', 'Lion', 'Lynx', 'Miao', 'Mole', 'Moth',
+            'Mule', 'Oger', 'Pig', 'Pika', 'Poke', 'Puma', 'Puss', 'Rat',
+            'Seal', 'Swan', 'Wasp', 'Wolf', 'Yak', 'Zeb'
+        ]);
+        return name + '.' + xss.util.randomRange(10, 99);
     }
 
 };

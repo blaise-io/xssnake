@@ -8,8 +8,8 @@
  * @constructor
  */
 xss.SelectMenu = function(header, footer) {
-    this._header = header || '';
-    this._footer = footer || '';
+    this.header = header || '';
+    this.footer = footer || '';
     this._selected = 0;
     this._options = [];
 };
@@ -91,7 +91,7 @@ xss.SelectMenu.prototype = {
         y = xss.MENU_TOP;
 
         // Header
-        header = (typeof this._header === 'string') ? this._header : this._header();
+        header = (typeof this.header === 'string') ? this.header : this.header();
         headerPixels = xss.font.pixels(header);
         headerPixels = xss.transform.zoomX2(headerPixels, x, y, true);
         shape = new xss.Shape(headerPixels);
@@ -99,7 +99,7 @@ xss.SelectMenu.prototype = {
 
         // Footer
         shape.add(xss.font.pixels(
-            this._footer, x, xss.HEIGHT - 3 - xss.font.height(this._footer)
+            this.footer, x, xss.HEIGHT - 3 - xss.font.height(this.footer)
         ));
 
         // Draw options

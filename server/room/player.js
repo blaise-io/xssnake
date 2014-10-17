@@ -37,8 +37,10 @@ xss.room.Player.prototype = {
         if (this.ondisconnect) {
             this.ondisconnect(this);
         }
-        this.connection.close();
-        this.connection = null;
+        if (this.connection) {
+            this.connection.close();
+            this.connection = null;
+        }
         this.emitter.removeAllListeners();
     },
 
@@ -75,7 +77,9 @@ xss.room.Player.prototype = {
      * @returns {string}
      */
     setName: function(dirtyName) {
-        this.name = xss.util.clean.username(dirtyName);
+        this.name = new xss.util.Validator(dirtyName)
+            .assertStringOfLength(2, 20)
+            .value(xss.util.getRandomName());
         return this.name;
     },
 

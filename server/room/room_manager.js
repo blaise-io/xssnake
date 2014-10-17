@@ -159,7 +159,9 @@ xss.room.RoomManager.prototype = {
     joinMatchingRoom: function(emitData, player) {
         var options, room;
 
-        player.setName(emitData[xss.FIELD_NAME]);
+        emitData = new xss.util.Validator(emitData).assertArray().value([]);
+
+        player.setName(emitData[0]);
         options = new xss.room.Options(emitData);
 
         room = this.matcher.getRoomMatching(options);

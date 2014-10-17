@@ -7,34 +7,34 @@
  * @constructor
  */
 xss.Form = function(header, footer) {
-    this._header = header;
-    this._footer = footer || '';
-    this._selectedV = 0;
-    this._selectedH = [];
-    this._fields = [];
-    this._optionMaxWidth = 0;
+    this.header = header;
+    this.footer = footer || '';
+    this.selectedField = 0;
+    this.selectedOption = [];
+    this.fields = [];
+    this.maxwidth = 0;
 };
 
 xss.Form.prototype = {
 
     /**
-     * @param {string} name
+     * @param {Number} id
      * @param {string} label
      * @param {Array.<Array>} options
      */
-    addField: function(name, label, options) {
-        this._fields.push({
-            name   : name,
-            label  : label,
+    addField: function(id, label, options) {
+        this.fields.push({
+            id     : id,
+            label  : label.toUpperCase(),
             options: options
         });
 
-        this._selectedH.push(0);
+        this.selectedOption.push(0);
 
         for (var i = 0, m = options.length; i < m; i++) {
-            this._optionMaxWidth = Math.max(
-                this._optionMaxWidth,
-                xss.font.width(options[i][1] || String(options[i][0]))
+            this.maxwidth = Math.max(
+                this.maxwidth,
+                xss.font.width(options[i][1].toUpperCase())
             );
         }
     },
@@ -43,9 +43,9 @@ xss.Form.prototype = {
      * @param {number} delta
      */
     selectField: function(delta) {
-        this._selectedV = xss.util.ensureIndexWithinBounds(
-            this._selectedV + delta,
-            this._fields
+        this.selectedField = xss.util.ensureIndexWithinBounds(
+            this.selectedField + delta,
+            this.fields
         );
     },
 
@@ -53,10 +53,10 @@ xss.Form.prototype = {
      * @param {number} delta
      */
     selectOption: function(delta) {
-        var focusField = this._fields[this._selectedV];
+        var focusField = this.fields[this.selectedField];
         if (focusField) {
-            this._selectedH[this._selectedV] = xss.util.ensureIndexWithinBounds(
-                this._selectedH[this._selectedV] + delta,
+            this.selectedOption[this.selectedField] = xss.util.ensureIndexWithinBounds(
+                this.selectedOption[this.selectedField] + delta,
                 focusField.options
             );
         }
@@ -72,7 +72,7 @@ xss.Form.prototype = {
         y = xss.MENU_TOP;
 
         optionX = xss.MENU_LEFT + 2 + xss.MENU_WIDTH -
-                  this._optionMaxWidth - xss.font.width(' ' + xss.UC_TR_LEFT);
+                  this.maxwidth - xss.font.width(' ' + xss.UC_TR_LEFT);
 
         shape = new xss.Shape();
         shape.add(this._getHeaderPixels(x, y));
@@ -81,8 +81,8 @@ xss.Form.prototype = {
         y += xss.MENU_TITLE_HEIGHT;
 
         // Draw options
-        for (var i = 0, m = this._fields.length; i < m; i++) {
-            var option, bbox, active = (this._selectedV === i);
+        for (var i = 0, m = this.fields.length; i < m; i++) {
+            var option, bbox, active = (this.selectedField === i);
 
             option = this._getOptionsShape(i, x, optionX, y, active);
 
@@ -103,13 +103,11 @@ xss.Form.prototype = {
     },
 
     getData: function() {
-        var values = {};
-        for (var i = 0, m = this._fields.length; i < m; i++) {
-            var field = this._fields[i],
-                optionIndex = this._selectedH[i];
-            if (field.name) {
-                values[field.name] = field.options[optionIndex][0];
-            }
+        var values = [];
+        for (var i = 0, m = this.fields.length; i < m; i++) {
+            var field = this.fields[i],
+            optionIndex = this.selectedOption[i];
+            values[field.id] = field.options[optionIndex][0];
         }
         return values;
     },
@@ -121,7 +119,7 @@ xss.Form.prototype = {
      * @private
      */
     _getHeaderPixels: function(x, y) {
-        var header = xss.font.pixels(this._header);
+        var header = xss.font.pixels(this.header);
         return xss.transform.zoomX2(header, x, y, true);
     },
 
@@ -131,8 +129,8 @@ xss.Form.prototype = {
      * @private
      */
     _getFooterPixels: function(x) {
-        var height = xss.font.height(this._footer);
-        return xss.font.pixels(this._footer, x, xss.HEIGHT - 3 - height);
+        var height = xss.font.height(this.footer);
+        return xss.font.pixels(this.footer, x, xss.HEIGHT - 3 - height);
     },
 
     /**
@@ -145,26 +143,26 @@ xss.Form.prototype = {
      * @private
      */
     _getOptionsShape: function(i, x, col2X, y, active) {
-        var label, shape, value, option, pixels, xx = {};
+        var label, shape, value, option, pixels, props = {};
 
-        label = this._fields[i].label;
+        label = this.fields[i].label;
         shape = xss.font.shape(label, x, y);
 
-        option = this._fields[i].options[this._selectedH[i] || 0];
+        option = this.fields[i].options[this.selectedOption[i] || 0];
         value = option[1] || String(option[0]);
 
-        xx.option = col2X + (this._optionMaxWidth - xss.font.width(value)) / 2;
-        xx.option = Math.floor(xx.option);
+        props.option = col2X + (this.maxwidth - xss.font.width(value)) / 2;
+        props.option = Math.floor(props.option);
 
-        pixels = xss.font.pixels(value, xx.option, y);
+        pixels = xss.font.pixels(value, props.option, y);
         shape.add(pixels);
 
-        xx.left = col2X - xss.font.width(xss.UC_TR_LEFT + ' ');
-        xx.right = col2X + this._optionMaxWidth + xss.font.width(' ');
+        props.left = col2X - xss.font.width(xss.UC_TR_LEFT + ' ');
+        props.right = col2X + this.maxwidth + xss.font.width(' ');
 
         shape.add(
-            xss.font.pixels(active ? xss.UC_TR_LEFT : '<', xx.left, y),
-            xss.font.pixels(active ? xss.UC_TR_RIGHT : '>', xx.right, y)
+            xss.font.pixels(active ? xss.UC_TR_LEFT : '<', props.left, y),
+            xss.font.pixels(active ? xss.UC_TR_RIGHT : '>', props.right, y)
         );
 
         return shape;

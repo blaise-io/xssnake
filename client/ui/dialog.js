@@ -16,7 +16,7 @@ xss.DialogSettings;
  * @constructor
  */
 xss.Dialog = function(header, body, settings) {
-    this._header = header.toUpperCase();
+    this.header = header.toUpperCase();
     this._body = body;
 
     /** @type {xss.DialogSettings} */
@@ -153,7 +153,7 @@ xss.Dialog.prototype = {
     _getContentWidth: function() {
         return Math.max(
             this.settings.width,
-            -2 + xss.font.width(this._header) * 2
+            -2 + xss.font.width(this.header) * 2
         );
     },
 
@@ -172,7 +172,7 @@ xss.Dialog.prototype = {
      */
     _getHeaderPixels: function() {
         var header;
-        header = xss.font.pixels(this._header, 0, 0);
+        header = xss.font.pixels(this.header, 0, 0);
         header = xss.transform.zoomX2(header, 0, 0, true);
         return header;
     },

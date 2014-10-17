@@ -80,6 +80,14 @@ xss.util.Validator.prototype = {
     },
 
     /**
+     *
+     * @returns {xss.util.Validator}
+     */
+    assertIntAsBoolean: function() {
+        return this.assertRange(0, 1);
+    },
+
+    /**
      * @param {number} min
      * @param {number} max
      * @return {xss.util.Validator}

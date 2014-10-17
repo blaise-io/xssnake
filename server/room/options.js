@@ -16,39 +16,28 @@ xss.room.Options.prototype = {
     setCleanOptions: function(dirty) {
         var Validator = xss.util.Validator;
 
-        this.maxPlayers = new Validator(dirty[xss.FIELD_MAX_PLAYERS])
+        this.maxPlayers = new Validator(dirty[1])
             .assertRange(1, xss.ROOM_CAPACITY)
             .value(xss.ROOM_CAPACITY);
 
-        this.levelSet = new Validator(dirty[xss.FIELD_LEVEL_SET])
+        this.levelSet = new Validator(dirty[2])
             .assertRange(0, xss.levelSetRegistry.levelsets.length - 1)
             .value(xss.FIELD_VALUE_MEDIUM);
 
-        this.hasPowerups = new Validator(dirty[xss.FIELD_POWERUPS])
-            .assertType('boolean')
-            .value(true);
-
-        this.isPrivate = new Validator(dirty[xss.FIELD_PRIVATE])
-            .assertType('boolean')
-            .value(false);
-
-        this.isXSS = new Validator(dirty[xss.FIELD_XSS])
-            .assertType('boolean')
-            .value(false);
-
-        this.isQuickGame = new Validator(dirty[xss.FIELD_QUICK_GAME])
-            .assertType('boolean')
-            .value(false);
+        this.isQuickGame = Boolean(dirty[3]);
+        this.hasPowerups = Boolean(dirty[4]);
+        this.isPrivate   = Boolean(dirty[5]);
+        this.isXSS       = Boolean(dirty[6]);
     },
 
     serialize: function() {
         return [
             this.maxPlayers,
             this.levelSet,
+            Number(this.isQuickGame),
             Number(this.hasPowerups),
             Number(this.isPrivate),
-            Number(this.isXSS),
-            Number(this.isQuickGame)
+            Number(this.isXSS)
         ];
     },
 

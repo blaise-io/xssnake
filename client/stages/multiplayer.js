@@ -44,40 +44,41 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
 
         footer = xss.COPY_FORM_INSTRUCT;
 
-        form = new xss.Form('GAME OPTIONS', footer);
+        form = new xss.Form(xss.COPY_OPTIONS_STAGE_HEADER, footer);
 
-        form.addField(xss.FIELD_LEVEL_SET, xss.COPY_FIELD_LEVEL_SET.toUpperCase(),
+        form.addField(xss.FIELD_LEVEL_SET, xss.COPY_FIELD_LEVEL_SET,
             xss.levelSetRegistry.getAsFieldValues()
         );
 
-        form.addField(xss.FIELD_POWERUPS, 'POWER-UPS', [
-            [true, 'YES'],
-            [false, 'NO']
+        form.addField(xss.FIELD_POWERUPS, xss.COPY_FIELD_POWERUPS, [
+            [true, xss.COPY_FIELD_TRUE],
+            [false, xss.COPY_FIELD_FALSE]
         ]);
 
         // Trololol
-        form.addField('', 'WEIRD BUGS', [
-            ['YES'],
-            ['ENABLE'],
-            ['OK'],
-            ['TRUE'],
-            ['ACCEPT'],
-            ['HAO'],
-            ['OUI!'],
-            ['SI SENOR']
+        form.addField(xss.FIELD_BUGS, xss.COPY_FIELD_BUGS, [
+            [xss.COPY_FIELD_TRUE_OPT1],
+            [xss.COPY_FIELD_TRUE_OPT2],
+            [xss.COPY_FIELD_TRUE_OPT3],
+            [xss.COPY_FIELD_TRUE_OPT4],
+            [xss.COPY_FIELD_TRUE_OPT5],
+            [xss.COPY_FIELD_TRUE_OPT6],
+            [xss.COPY_FIELD_TRUE_OPT7],
+            [xss.COPY_FIELD_TRUE_OPT8],
+            [xss.COPY_FIELD_TRUE_OPT9]
         ]);
 
-        form.addField(xss.FIELD_PRIVATE, 'PRIVATE GAME', [
-            [false, 'NO'],
-            [true, 'YES']
+        form.addField(xss.FIELD_PRIVATE, xss.COPY_FIELD_PRIVATE, [
+            [false, xss.COPY_FIELD_FALSE],
+            [true, xss.COPY_FIELD_TRUE]
         ]);
 
-        form.addField(xss.FIELD_XSS, 'XSS ' + xss.UC_SKULL, [
-            [false, 'NO'],
-            [true, 'YES']
+        form.addField(xss.FIELD_XSS, xss.COPY_FIELD_XSS, [
+            [false, xss.COPY_FIELD_FALSE],
+            [true, xss.COPY_FIELD_TRUE]
         ]);
 
-        form.addField(xss.FIELD_MAX_PLAYERS, 'MAX PLAYERS', [
+        form.addField(xss.FIELD_MAX_PLAYERS, xss.COPY_FIELD_MAX_PLAYERS, [
             [6],[1],[2],[3],[4],[5]
         ]);
 
