@@ -1,11 +1,20 @@
 'use strict';
 
 /**
- * @param {?} dirtyOptions
+ * @param {?=} dirtyOptions
  * @constructor
  */
 xss.room.Options = function(dirtyOptions) {
-    this.setCleanOptions(dirtyOptions);
+    this.maxPlayers  = 6;
+    this.levelSet    = 0;
+    this.isQuickGame = false;
+    this.hasPowerups = true;
+    this.isPrivate   = false;
+    this.isXSS       = false;
+
+    if (dirtyOptions) {
+        this.setCleanOptions(dirtyOptions);
+    }
 };
 
 xss.room.Options.prototype = {

@@ -6,61 +6,56 @@ describe('Options', function() {
 
     require('../../../dist/instrument/server/start.js');
 
-    var defaultOptions;
+    var existingOptions;
 
     beforeEach(function() {
-        defaultOptions = {};
-        defaultOptions[xss.FIELD_QUICK_GAME] = false;
-        defaultOptions[xss.FIELD_MAX_PLAYERS] = 6;
-        defaultOptions[xss.FIELD_LEVEL_SET] = 0;
-        defaultOptions[xss.FIELD_POWERUPS] = true;
-        defaultOptions[xss.FIELD_PRIVATE] = false;
-        defaultOptions[xss.FIELD_XSS] = false;
-
+        existingOptions = new xss.room.Options();
         xss.levelSetRegistry = new xss.levelset.Registry();
         xss.levelSetRegistry.levelsets = new Array(2);
     });
 
     it('Matches when options are equal', function() {
-        var existingOptions = new xss.room.Options(xss.util.clone(defaultOptions));
-        var requestOptions = new xss.room.Options(xss.util.clone(defaultOptions));
-        expect(existingOptions.matches(requestOptions)).toBeTruthy();
+        expect(existingOptions.matches(new xss.room.Options())).toBeTruthy();
     });
 
     it('Matches when requester wants a quick game', function() {
-        var existingOptions = xss.util.clone(defaultOptions);
-        var requestOptions = xss.util.clone(defaultOptions);
+        var requestOptions = new xss.room.Options();
+        requestOptions.isQuickGame = true;
+        expect(existingOptions.matches(requestOptions)).toBeTruthy();
+    });
 
-        requestOptions[xss.FIELD_QUICK_GAME] = true;
-
-        expect(new xss.room.Options(existingOptions).matches(
-            new xss.room.Options(requestOptions))).toBeTruthy();
-
-        existingOptions[xss.FIELD_MAX_PLAYERS] = 2;
-        existingOptions[xss.FIELD_LEVEL_SET] = 1;
-        existingOptions[xss.FIELD_POWERUPS] = false;
-
-        expect(new xss.room.Options(existingOptions).matches(
-            new xss.room.Options(requestOptions))
-        ).toBeTruthy('Ignores mismatches in max players, level sets, powerups');
+    it('Ignores mismatches in maxPlayers, levelSet, hasPowerups when requester wants a quick game', function() {
+        var requestOptions = new xss.room.Options();
+        requestOptions.isQuickGame = true;
+        existingOptions.maxPlayers = 2;
+        existingOptions.levelSet = 1;
+        existingOptions.hasPowerups = false;
+        expect(existingOptions.matches(requestOptions)).toBeTruthy();
     });
 
     it('Does not apply for quick game when room is private', function() {
-        var existingOptions = xss.util.clone(defaultOptions);
-        var requestOptions = xss.util.clone(defaultOptions);
-        existingOptions[xss.FIELD_PRIVATE] = true;
-        expect(new xss.room.Options(existingOptions).matches(
-            new xss.room.Options(requestOptions))
+        existingOptions.isPrivate = true;
+        expect(existingOptions.matches(
+            new xss.room.Options(new xss.room.Options()))
         ).toBeFalsy();
     });
 
     it('Does not apply for quick game when room has XSS enabled', function() {
-        var existingOptions = xss.util.clone(defaultOptions);
-        var requestOptions = xss.util.clone(defaultOptions);
-        existingOptions[xss.FIELD_XSS] = true;
-        expect(new xss.room.Options(existingOptions).matches(
-            new xss.room.Options(requestOptions))
+        existingOptions.isXSS = true;
+        expect(existingOptions.matches(
+            new xss.room.Options(new xss.room.Options()))
         ).toBeFalsy();
+    });
+
+    it('Serializes', function() {
+        var s = existingOptions.serialize();
+        expect(s.length).toBe(6);
+        expect(s[0]).toBe(6, 'maxPlayers');
+        expect(s[1]).toBe(0, 'levelSet');
+        expect(s[2]).toBe(0, 'isQuickGame');
+        expect(s[3]).toBe(1, 'hasPowerups');
+        expect(s[4]).toBe(0, 'isPrivate');
+        expect(s[5]).toBe(0, 'isXSS');
     });
 
 });
