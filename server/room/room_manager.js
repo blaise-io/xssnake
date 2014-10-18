@@ -97,7 +97,7 @@ xss.room.RoomManager.prototype = {
 //    },
 
     /**
-     * @param {xss.room.Options} preferences
+     * @param {xss.room.ServerOptions} preferences
      * @return {xss.room.Room}
      */
     createRoom: function(preferences) {
@@ -157,12 +157,10 @@ xss.room.RoomManager.prototype = {
      * @private
      */
     joinMatchingRoom: function(emitData, player) {
-        var options, room;
+        var options, room, emitDataArr;
 
-        emitData = new xss.util.Validator(emitData).assertArray().value([]);
-
-        player.setName(emitData[0]);
-        options = new xss.room.Options(emitData);
+        emitDataArr = new xss.util.Validator(emitData).assertArray().value([]);
+        options = new xss.room.ServerOptions(emitDataArr);
 
         room = this.matcher.getRoomMatching(options);
         room = room || this.createRoom(options);

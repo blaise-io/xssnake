@@ -15,6 +15,8 @@ xss.room.Player = function(server, connection) {
     this.connection.on('message', this.onmessage.bind(this));
     this.connection.on('close', this.onclose.bind(this));
 
+    this.bindEvents();
+
     this.ondisconnect = null;
 
     this.name = null;
@@ -27,6 +29,7 @@ xss.room.Player = function(server, connection) {
 xss.room.Player.prototype = {
 
     destruct: function() {
+        this.unbindEvents();
         this.disconnect();
         this.server = null;
         this.snake = null;
@@ -72,14 +75,23 @@ xss.room.Player.prototype = {
         this.destruct();
     },
 
+    bindEvents: function() {
+        this.emitter.on(xss.EVENT_PLAYER_NAME, this.setName.bind(this));
+    },
+
+    unbindEvents: function() {
+        this.emitter.removeListener(xss.EVENT_PLAYER_NAME);
+    },
+
     /**
-     * @param {*} dirtyName
+     * @param {?} dirtyName
      * @returns {string}
      */
     setName: function(dirtyName) {
         this.name = new xss.util.Validator(dirtyName)
             .assertStringOfLength(2, 20)
             .value(xss.util.getRandomName());
+        console.log('Set name', this.name);
         return this.name;
     },
 

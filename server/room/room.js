@@ -2,7 +2,7 @@
 
 /**
  * @param {xss.netcode.Server} server
- * @param {xss.room.Options} options
+ * @param {xss.room.ServerOptions} options
  * @param {string} key
  * @constructor
  */

@@ -4,6 +4,7 @@
  * Game Stage
  * @implements {xss.StageInterface}
  * @constructor
+ * @todo Split connecting and inside game
  */
 xss.stage.Game = function() {
     //this.data = xss.flow.getData();
@@ -75,10 +76,10 @@ xss.stage.Game.prototype = {
 
     connectToRoom: function() {
         xss.socket = new xss.Socket(function() {
+            xss.socket.emit(xss.EVENT_PLAYER_NAME, this.getPlayerName());
             xss.socket.emit(xss.EVENT_ROOM_JOIN_MATCHING, this.getEmitData());
         }.bind(this));
     }
-
 
 
     //joinGame: function() {

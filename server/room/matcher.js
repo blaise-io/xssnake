@@ -15,7 +15,7 @@ xss.room.Matcher.prototype = {
     },
 
     /**
-     * @param {xss.room.Options} preferences
+     * @param {xss.room.ServerOptions} preferences
      * @returns {xss.room.Room}
      */
     getRoomMatching: function(preferences) {
