@@ -88,10 +88,9 @@ xss.room.Player.prototype = {
      * @returns {string}
      */
     setName: function(dirtyName) {
-        this.name = new xss.util.Validator(dirtyName)
+        this.name = new xss.util.Sanitizer(dirtyName)
             .assertStringOfLength(2, 20)
-            .value(xss.util.getRandomName());
-        console.log('Set name', this.name);
+            .getValueOr(xss.util.getRandomName());
         return this.name;
     },
 

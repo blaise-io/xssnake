@@ -49,7 +49,7 @@ xss.levelset.Registry.prototype = {
     /**
      * @return {number}
      */
-    getRandomIndex: function() {
+    getRandomLevelset: function() {
         return xss.util.randomRange(0, this.levelsets.length - 1);
     }
 

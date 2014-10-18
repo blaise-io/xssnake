@@ -7,6 +7,8 @@
  * @todo Split connecting and inside game
  */
 xss.stage.Game = function() {
+    /** @type {xss.room.ClientRoom} */
+    this.room = null;
     //this.data = xss.flow.getData();
 };
 
@@ -27,6 +29,10 @@ xss.stage.Game.prototype = {
     },
 
     destruct: function() {
+        if (this.room) {
+            this.room.destruct();
+            this.room = null;
+        }
         xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
     },
 
@@ -76,14 +82,14 @@ xss.stage.Game.prototype = {
 
     connectToRoom: function() {
         xss.socket = new xss.Socket(function() {
+            this.room = new xss.room.ClientRoom();
             xss.socket.emit(xss.EVENT_PLAYER_NAME, this.getPlayerName());
             xss.socket.emit(xss.EVENT_ROOM_JOIN_MATCHING, this.getEmitData());
         }.bind(this));
     }
 
-
     //joinGame: function() {
-    //    xss.remoteRoom = new xss.room.Room();
+    //    xss.remoteRoom = new xss.room.ClientRoom();
     //    if (this.data.autoJoin) {
     //        this._autoJoin(xss.util.hash(xss.HASH_ROOM));
     //    } else {
@@ -95,7 +101,7 @@ xss.stage.Game.prototype = {
     //_autoJoin: function(key) {
     //    xss.event.once(xss.EVENT_ROOM_STATUS, xss.NS_STAGES, function(data) {
     //        if (!data[0]) {
-    //            xss.util.error(xss.room.Room.prototype.errorCodeToStr(data[1]));
+    //            xss.util.error(xss.room.ClientRoom.prototype.errorCodeToStr(data[1]));
     //        }
     //    });
     //

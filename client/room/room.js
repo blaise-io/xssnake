@@ -3,25 +3,28 @@
 /**
  * @constructor
  */
-xss.room.Room = function() {
+xss.room.ClientRoom = function() {
+    /** @type {string} */
+    this.key = null;
+
     this.game = null;
     this.score = null;
     this.chat = null;
 
-    this.capacity = 0;
-    this.players = 0;
+    /** @type {xss.room.ClientOptions} */
+    this.options = null;
 
-    this._bindEvents();
+    //this.capacity = 0;
+    //this.players = 0;
+
+    this.bindEvents();
 };
 
-xss.room.Room.prototype = {
+xss.room.ClientRoom.prototype = {
 
     destruct: function() {
-        xss.event.off(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM);
-        xss.event.off(xss.EVENT_XSS_REQ, xss.NS_ROOM);
-        xss.event.off(xss.EVENT_XSS_RES, xss.NS_ROOM);
         xss.util.hash();
-        this._unbindKeys();
+        this.unbindEvents();
         this.destructDialog();
         if (this.players) {
             this.game.destruct();
@@ -30,8 +33,37 @@ xss.room.Room.prototype = {
         }
     },
 
-    _unbindKeys: function() {
-        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM);
+    /**
+     * @private
+     */
+    bindEvents: function() {
+        xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this.setKey.bind(this));
+        xss.event.on(xss.EVENT_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM, this.setOptions.bind(this));
+        xss.event.on(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, xss.util.noop);
+
+        //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
+        //xss.event.on(xss.EVENT_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
+        //xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
+        //xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._requestXss.bind(this));
+        //xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalXss.bind(this));
+    },
+
+    unbindEvents: function() {
+        xss.event.off(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM);
+        xss.event.off(xss.EVENT_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM);
+        xss.event.off(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
+        //xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM);
+    },
+
+    setKey: function(key) {
+        this.key = key;
+        xss.util.hash(xss.HASH_ROOM, key);
+    },
+
+    setOptions: function(options) {
+        this.options = new xss.room.ClientOptions();
+        this.options.deserialize(options);
+        console.log(this.options);
     },
 
     destructDialog: function() {
@@ -98,17 +130,6 @@ xss.room.Room.prototype = {
         } else {
             return new xss.Chat(index, names);
         }
-    },
-
-    /**
-     * @private
-     */
-    _bindEvents: function() {
-        xss.event.on(xss.EVENT_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
-        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
-        xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
-        xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._requestXss.bind(this));
-        xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalXss.bind(this));
     },
 
     /**

@@ -42,7 +42,7 @@ xss.room.Room.prototype = {
     },
 
     serialize: function() {
-        return [this.key];
+        return this.key;
 
 //        var rounds, clients, capacity, isprivate;
 //

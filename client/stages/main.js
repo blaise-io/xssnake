@@ -49,7 +49,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
         xss.event.once(xss.EVENT_ROOM_STATUS, xss.NS_STAGES, function(data) {
             dialog.destruct();
             if (!data[0]) {
-                xss.util.error(xss.room.Room.prototype.errorCodeToStr(data[1]));
+                xss.util.error(xss.room.ClientRoom.prototype.errorCodeToStr(data[1]));
             } else {
                 this.data = {autoJoin: data};
                 xss.flow.switchStage(xss.AutoJoinStage);

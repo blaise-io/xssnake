@@ -134,7 +134,7 @@ xss.room.RoomManager.prototype = {
 //     */
 //    _validRoomKey: function(key) {
 //        var len = xss.ROOM_KEY_LENGTH;
-//        return new xss.util.Validator(key).assertStringOfLength(len, len).valid();
+//        return new xss.util.Sanitizer(key).assertStringOfLength(len, len).valid();
 //    },
 
 
@@ -145,7 +145,7 @@ xss.room.RoomManager.prototype = {
 //     * @private
 //     */
 //    joinRoomKey: function(data, client) {
-//        if (new xss.util.Validator(data).assertArrayOfLength(2, 2).valid()) {
+//        if (new xss.util.Sanitizer(data).assertArrayOfLength(2, 2).valid()) {
 //            client.model.name = xss.util.clean.username(data[1]);
 //            this.joinRoomByKey(client, data[0]);
 //        }
@@ -159,7 +159,7 @@ xss.room.RoomManager.prototype = {
     joinMatchingRoom: function(emitData, player) {
         var options, room, emitDataArr;
 
-        emitDataArr = new xss.util.Validator(emitData).assertArray().value([]);
+        emitDataArr = new xss.util.Sanitizer(emitData).assertArray().getValueOr([]);
         options = new xss.room.ServerOptions(emitDataArr);
 
         room = this.matcher.getRoomMatching(options);

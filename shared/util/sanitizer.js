@@ -1,21 +1,20 @@
 'use strict';
 
 /**
- * Validator / Sanitize user input.
- * Example usage: new xss.util.Validator(str).assertType('string').valid(); // true|false
- * @param {?} value
+ * Sanitizer / Sanitize user input.
+ * @param {*=} value
  * @constructor
  */
-xss.util.Validator = function(value) {
+xss.util.Sanitizer = function(value) {
     this._value = value;
     this._valid = true;
 };
 
-xss.util.Validator.prototype = {
+xss.util.Sanitizer.prototype = {
 
     /**
      * @param {string} type
-     * @return {xss.util.Validator}
+     * @return {xss.util.Sanitizer}
      */
     assertType: function(type) {
         if (typeof this._value !== type) {
@@ -26,7 +25,7 @@ xss.util.Validator.prototype = {
     },
 
     /**
-     * @return {xss.util.Validator}
+     * @return {xss.util.Sanitizer}
      */
     assertArray: function() {
         if (!(this._value instanceof Array)) {
@@ -37,7 +36,7 @@ xss.util.Validator.prototype = {
     },
 
     /**
-     * @return {xss.util.Validator}
+     * @return {xss.util.Sanitizer}
      */
     assertJSON: function() {
         if (this._valid) { // Don't parse if already invalid
@@ -53,7 +52,7 @@ xss.util.Validator.prototype = {
 
     /**
      * @param {Array} arr
-     * @return {xss.util.Validator}
+     * @return {xss.util.Sanitizer}
      */
     assertInArray: function(arr) {
         if (-1 === arr.indexOf(this._value)) {
@@ -66,7 +65,7 @@ xss.util.Validator.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {xss.util.Validator}
+     * @return {xss.util.Sanitizer}
      */
     assertRange: function(min, max) {
         if (typeof this._value !== 'number') {
@@ -81,7 +80,7 @@ xss.util.Validator.prototype = {
 
     /**
      *
-     * @returns {xss.util.Validator}
+     * @returns {xss.util.Sanitizer}
      */
     assertIntAsBoolean: function() {
         return this.assertRange(0, 1);
@@ -90,7 +89,7 @@ xss.util.Validator.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {xss.util.Validator}
+     * @return {xss.util.Sanitizer}
      */
     assertStringOfLength: function(min, max) {
         if (typeof this._value !== 'string') {
@@ -106,7 +105,7 @@ xss.util.Validator.prototype = {
     /**
      * @param {number} min
      * @param {number} max
-     * @return {xss.util.Validator}
+     * @return {xss.util.Sanitizer}
      */
     assertArrayOfLength: function(min, max) {
         if (!(this._value instanceof Array)) {
@@ -139,7 +138,7 @@ xss.util.Validator.prototype = {
      * @param {*=} def
      * @return {?}
      */
-    value: function(def) {
+    getValueOr: function(def) {
         return (this._valid) ? this._value : def;
     },
 
