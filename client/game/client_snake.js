@@ -7,7 +7,6 @@
  * @param {xss.level.Level} level
  * @extends {xss.game.Snake}
  * @constructor
- * @todo offload logic to other classes
  */
 xss.game.ClientSnake = function(index, local, name, level) {
     xss.game.Snake.call(this, index, level);
@@ -94,14 +93,14 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     /**
      * @param {number} delta
      * @param shift
-     * @param {Array.<xss.game.ClientSnake>} snakes
+     * @param {Array.<xss.game.ClientPlayer>} players
      */
-    handleNextMove: function(delta, shift, snakes) {
+    handleNextMove: function(delta, shift, players) {
         this.elapsed += delta;
 
         if (!this.crashed && this.elapsed >= this.speed) {
             var move = new xss.game.SnakeMove(
-                this, snakes, this.level, this.getNextPosition()
+                this, players, this.level, this.getNextPosition()
             );
 
             this.elapsed -= this.speed;
@@ -161,12 +160,12 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
      * @param {number} direction
      */
     emit: function(direction) {
-        if (xss.socket) {
+        if (xss.player) {
             // @todo: Check if in room?
             var data, sync;
             sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
             data = [this.parts.slice(-sync), direction];
-            xss.socket.emit(xss.EVENT_SNAKE_UPDATE, data);
+            xss.player.emit(xss.EVENT_SNAKE_UPDATE, data);
         }
     },
 

@@ -4,10 +4,12 @@
  * Client-Server communication
  * @param onopenCallback {Function}
  * @constructor
+ * @extends {xss.room.ClientPlayer}
  */
-xss.Socket = function(onopenCallback) {
+xss.room.ClientSocketPlayer = function(onopenCallback) {
+    xss.room.ClientPlayer.call(this);
+
     this.onopenCallback = onopenCallback;
-    this.connected = false;
 
     this.connection = new WebSocket('ws://' + xss.SERVER_ENDPOINT);
     this.connection.onopen = this.onopen.bind(this);
@@ -18,7 +20,8 @@ xss.Socket = function(onopenCallback) {
     this.bindEvents();
 };
 
-xss.Socket.prototype = {
+xss.util.extend(xss.room.ClientSocketPlayer.prototype, xss.room.ClientPlayer.prototype);
+xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
 
     destruct: function() {
         this.connected = false;
@@ -99,4 +102,4 @@ xss.Socket.prototype = {
         }
     }
 
-};
+});

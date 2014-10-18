@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {xss.room.Player} player
+ * @param {xss.room.ServerPlayer} player
  * @todo Disconnect client when client no longer sends ping messages.
  * @constructor
  */

@@ -104,7 +104,7 @@ xss.Chat.prototype = {
     },
 
     send: function(str) {
-        xss.socket.emit(xss.EVENT_CHAT_MESSAGE, str);
+        xss.player.emit(xss.EVENT_CHAT_MESSAGE, str);
     },
 
     _bindEvents: function() {

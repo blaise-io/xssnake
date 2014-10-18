@@ -4,6 +4,7 @@
  * @param {xss.room.Round} round
  * @param {number} levelIndex
  * @constructor
+ * @todo Offload logic.
  */
 xss.game.Game = function(round, levelIndex) {
     this.round = round;
@@ -303,7 +304,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _maxMismatches: function(client) {
-        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.socket.model.latency);
+        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.player.model.latency);
         return Math.ceil((rtt + 20) / client.snake.speed);
     },
 
@@ -515,7 +516,7 @@ xss.game.Game.prototype = {
      * @return {boolean}
      */
     _canReturnFromLimbo: function(client) {
-       return +new Date() - client.snake.limbo.time < client.socket.model.latency;
+       return +new Date() - client.snake.limbo.time < client.player.model.latency;
     },
 
     /**

@@ -34,11 +34,11 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
     autoJoinRoom: function() {
         var dialog = new xss.Dialog('AUTO-JOIN ROOM', 'Connecting to server...');
 
-        xss.socket = new xss.Socket(function() {
+        xss.player = new xss.room.ClientSocketPlayer(function() {
             window.setTimeout(function() {
                 dialog.setBody('Getting room properties...');
                 window.setTimeout(function() {
-                    xss.socket.emit(
+                    xss.player.emit(
                         xss.EVENT_ROOM_STATUS,
                         xss.util.hash(xss.HASH_ROOM)
                     );

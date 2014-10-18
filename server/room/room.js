@@ -11,7 +11,7 @@ xss.room.Room = function(server, options, key) {
     this.options = options;
     this.key = key;
 //    this.rounds  = new xss.room.RoundManager(this);
-    this.players = new xss.room.PlayerRegistry();
+    this.players = new xss.room.ServerPlayerRegistry();
 };
 
 xss.room.Room.prototype = {
@@ -76,10 +76,11 @@ xss.room.Room.prototype = {
     },
 
     /**
-     * @param {xss.room.Player} player
+     * @param {xss.room.ServerPlayer} player
      */
     addPlayer: function(player) {
         this.players.add(player);
+        player.ondisconnect = this.players.disconnect.bind(this.players);
 //        player.room = this;
 //        player.model.index = this.clients.push(player) - 1;
 //

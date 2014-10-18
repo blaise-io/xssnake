@@ -19,8 +19,8 @@ xss.StageFlow.prototype = {
 
     destruct: function() {
         this.stage.destruct();
-        if (xss.socket) {
-            xss.socket.destruct();
+        if (xss.player) {
+            xss.player.destruct();
         }
         xss.shapes = {};
         xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_FLOW);

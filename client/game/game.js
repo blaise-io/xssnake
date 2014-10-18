@@ -2,17 +2,17 @@
 
 /***
  * Game
- * @param {xss.room.PlayerRegistry} players
+ * @param {xss.room.ClientPlayerRegistry} players
  * @param {xss.level.Level} level
  * @constructor
  */
-xss.game.Game = function(players, level) {
+xss.game.ClientGame = function(players, level) {
+    this.players = players;
+    this.players.setSnakes(level);
+    this.players.showMeta();
+
     this.level = level;
     this.level.paint();
-
-    this.snakes = new xss.game.SnakeRegistry(this.level);
-    this.snakes.setSnakes(players);
-    this.snakes.showMeta();
 
     this.spawnables = new xss.game.SpawnableRegistry();
 
@@ -21,23 +21,23 @@ xss.game.Game = function(players, level) {
     this._bindEvents();
 };
 
-xss.game.Game.prototype = {
+xss.game.ClientGame.prototype = {
 
     _bindEvents: function() {
         var ns = xss.NS_GAME;
 
-        xss.event.on(xss.PUB_GAME_TICK,        ns, this._clientGameLoop.bind(this));
+        xss.event.on(xss.PUB_GAME_TICK, ns, this._clientGameLoop.bind(this));
 
-        // @todo put in SpawnableRegistry
-        xss.event.on(xss.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
-        xss.event.on(xss.EVENT_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
-
-        // @todo put in SnakeRegistry
-        xss.event.on(xss.EVENT_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
-        xss.event.on(xss.EVENT_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
+        //// @todo put in SpawnableRegistry
+        //xss.event.on(xss.EVENT_GAME_SPAWN,     ns, this._evSpawn.bind(this));
+        //xss.event.on(xss.EVENT_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
+        //
+        //// @todo put in SnakeRegistry
+        //xss.event.on(xss.EVENT_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
+        //xss.event.on(xss.EVENT_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
+        //xss.event.on(xss.EVENT_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
+        //xss.event.on(xss.EVENT_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
+        //xss.event.on(xss.EVENT_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
     },
 
     /**
@@ -53,8 +53,8 @@ xss.game.Game.prototype = {
         );
 
         this.started = true;
-        this.snakes.removeMeta();
-        this.snakes.addControls();
+        this.players.hideMeta();
+        this.players.addControls();
     },
 
     destruct: function() {
@@ -66,7 +66,7 @@ xss.game.Game.prototype = {
         xss.event.off(xss.EVENT_SNAKE_ACTION, xss.NS_GAME);
         xss.event.off(xss.EVENT_SNAKE_SPEED, xss.NS_GAME);
 
-        this.snakes.destruct();
+        this.players.destruct();
         this.spawnables.destruct();
         this.level.destruct();
     },
@@ -133,8 +133,8 @@ xss.game.Game.prototype = {
      * @private
      */
     _handleFocus: function(focus) {
-        if (focus && xss.socket) {
-            xss.socket.emit(xss.EVENT_GAME_STATE);
+        if (focus && xss.player) {
+            xss.player.emit(xss.EVENT_GAME_STATE);
         }
     },
 
@@ -145,11 +145,10 @@ xss.game.Game.prototype = {
      */
     _clientGameLoop: function(delta) {
         var shift = this.level.gravity.getShift(delta);
-
         this.level.animations.update(delta, this.started);
 
         if (this.started) {
-            this.snakes.move(delta, shift);
+            this.players.moveSnakes(delta, shift);
         }
     }
 

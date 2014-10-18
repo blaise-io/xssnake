@@ -2,15 +2,15 @@
 
 /**
  * @param {xss.game.Snake} snake
- * @param {Array.<xss.game.ClientSnake>} snakes
+ * @param {Array.<xss.game.ClientPlayer>} players
  * @param {xss.level.Level} level
  * @param {xss.Coordinate} location
  * @constructor
  */
-xss.game.SnakeMove = function(snake, snakes, level, location) {
+xss.game.SnakeMove = function(snake, players, level, location) {
     this.snake = snake;
     this.level = level;
-    this.snakes = snakes;
+    this.players = players;
     this.location = location;
     this.collision = this.getCollission();
 };
@@ -36,9 +36,9 @@ xss.game.SnakeMove.prototype = {
     },
 
     getCollisionPart: function(index, part) {
-        var snakes, snake, levelData, partIndex;
+        var players, snake, levelData, partIndex;
         snake = this.snake;
-        snakes = this.snakes;
+        players = this.players;
         levelData = this.level.data;
 
         if (index > 4) {
@@ -56,9 +56,9 @@ xss.game.SnakeMove.prototype = {
             return new xss.game.MovingWallCollision(part);
         }
 
-        for (var ii = 0, mm = snakes.length; ii < mm; ii++) {
-            if (snake !== snakes[ii] && snakes[ii].hasPart(part)) {
-                return new xss.game.OpponentCollision(part, snakes[ii]);
+        for (var ii = 0, mm = players.length; ii < mm; ii++) {
+            if (snake !== players[ii].snake && players[ii].snake.hasPart(part)) {
+                return new xss.game.OpponentCollision(part, players[ii].snake);
             }
         }
     }

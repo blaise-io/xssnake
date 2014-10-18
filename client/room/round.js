@@ -1,12 +1,12 @@
 'use strict';
 
 /**
- * @param {xss.room.PlayerRegistry} players
+ * @param {xss.room.ClientPlayerRegistry} players
  * @param {xss.level.Level} level
  * @constructor
  */
 xss.room.Round = function(players, level) {
-    this.game = new xss.game.Game(players, level);
+    this.game = new xss.game.ClientGame(players, level);
     
     xss.event.on(
         xss.EVENT_ROUND_COUNTDOWN,

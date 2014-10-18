@@ -6,14 +6,19 @@ var events = require('events');
  * @param {xss.netcode.Server} server
  * @param {ws.WebSocket} connection
  * @constructor
+ * @extends {xss.room.Player}
  */
-xss.room.Player = function(server, connection) {
+xss.room.ServerPlayer = function(server, connection) {
+    xss.room.Player.call(this);
+
     this.emitter = new events.EventEmitter();
     this.server = server;
 
     this.connection = connection;
     this.connection.on('message', this.onmessage.bind(this));
     this.connection.on('close', this.onclose.bind(this));
+
+    this.connected = true;
 
     this.bindEvents();
 
@@ -26,17 +31,21 @@ xss.room.Player = function(server, connection) {
     this.emitBuffer = [];
 };
 
-xss.room.Player.prototype = {
+xss.util.extend(xss.room.ServerPlayer.prototype, xss.room.Player.prototype);
+xss.util.extend(xss.room.ServerPlayer.prototype, {
 
     destruct: function() {
+        this.connected = false;
         this.unbindEvents();
-        this.disconnect();
         this.server = null;
         this.snake = null;
+        if (this.connected) {
+            this.disconnect();
+        }
     },
 
     disconnect: function() {
-        console.log('xss.room.Player disconnect');
+        console.log('xss.room.ServerPlayer disconnect');
         if (this.ondisconnect) {
             this.ondisconnect(this);
         }
@@ -153,4 +162,4 @@ xss.room.Player.prototype = {
         this.emitBuffer.length = 0;
     }
 
-};
+});

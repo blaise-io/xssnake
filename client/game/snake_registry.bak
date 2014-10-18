@@ -3,6 +3,7 @@
 /**
  * @param {xss.level.Level} level
  * @constructor
+ * @deprecated
  */
 xss.game.SnakeRegistry = function(level) {
     this.level = level;
@@ -26,7 +27,7 @@ xss.game.SnakeRegistry.prototype = {
     },
 
     /**
-     * @param {xss.room.PlayerRegistry} players
+     * @param {xss.room.ClientPlayerRegistry} players
      */
     setSnakes: function(players) {
         for (var i = 0, m = players.names.length; i < m; i++) {
@@ -73,7 +74,7 @@ xss.game.SnakeRegistry.prototype = {
 
     move: function(delta, shift) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].handleNextMove(delta, shift, this.snakes);
+            this.snakes[i].handleNextMove(delta, shift, this.players);
             this.snakes[i].shiftParts(shift);
         }
     }

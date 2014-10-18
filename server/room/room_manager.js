@@ -153,7 +153,7 @@ xss.room.RoomManager.prototype = {
 
     /**
      * @param {?} emitData
-     * @param {xss.room.Player} player
+     * @param {xss.room.ServerPlayer} player
      * @private
      */
     joinMatchingRoom: function(emitData, player) {

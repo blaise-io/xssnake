@@ -1,8 +1,8 @@
 'use strict';
 
-// Debug URL: debug.html?debug=level:0
-xss.debug.debugLevelMatch = location.search.match(/debug=(.+Level)$/);
-if (xss.debug.debugLevelMatch) {
+// Debug URL: debug.html?debug=LinesLevel
+xss.debug.locationLevel = location.search.match(/debug=(.+Level)$/);
+if (xss.debug.locationLevel) {
     xss.menuSnake = true; // Prevent spawn.
     document.addEventListener('DOMContentLoaded', function() {
         xss.debug.level();
@@ -10,13 +10,20 @@ if (xss.debug.debugLevelMatch) {
 }
 
 xss.debug.level = function() {
-    var players = new xss.room.PlayerRegistry([''], 0);
-    var levelObject = xss.debug.debugLevelMatch[1];
+    var player = new xss.room.ClientPlayer();
+    player.local = true;
+
+    var players = new xss.room.ClientPlayerRegistry();
+    players.add(player);
+    players.localPlayer = player;
+
+    var levelObject = xss.debug.locationLevel[1];
     var levelset = new xss.levelset.Levelset();
-    var levelInstance = new xss.levels[levelObject](levelset.getConfig());
-    levelInstance.preload(function() {
+    var level = new xss.levels[levelObject](levelset.getConfig());
+
+    level.preload(function() {
         xss.flow.destruct();
-        var game = new xss.game.Game(players, levelInstance);
+        var game = new xss.game.ClientGame(players, level);
         game.start();
     });
 };

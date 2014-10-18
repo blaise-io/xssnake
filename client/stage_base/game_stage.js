@@ -81,10 +81,10 @@ xss.stage.Game.prototype = {
     },
 
     connectToRoom: function() {
-        xss.socket = new xss.Socket(function() {
+        xss.player = new xss.room.ClientSocketPlayer(function() {
             this.room = new xss.room.ClientRoom();
-            xss.socket.emit(xss.EVENT_PLAYER_NAME, this.getPlayerName());
-            xss.socket.emit(xss.EVENT_ROOM_JOIN_MATCHING, this.getEmitData());
+            xss.player.emit(xss.EVENT_PLAYER_NAME, this.getPlayerName());
+            xss.player.emit(xss.EVENT_ROOM_JOIN_MATCHING, this.getEmitData());
         }.bind(this));
     }
 
@@ -131,7 +131,7 @@ xss.stage.Game.prototype = {
     //        xss.util.storage(xss.STORAGE_NAME) ||
     //        this._getRandomName()
     //    );
-    //    xss.socket = new xss.Socket(function() {
+    //    xss.socket = new xss.room.ClientSocketPlayer(function() {
     //        xss.socket.emit(xss.EVENT_ROOM_JOIN_MATCHING, emit);
     //    });
     //}

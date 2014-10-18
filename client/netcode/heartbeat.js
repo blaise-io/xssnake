@@ -3,12 +3,12 @@
 /**
  * Pings server every N seconds.
  *
- * @param {xss.Socket} socket
+ * @param {xss.room.ClientSocketPlayer} player
  * @constructor
  */
-xss.netcode.ClientHeartbeat = function(socket) {
+xss.netcode.ClientHeartbeat = function(player) {
     this.latency = 0;
-    this.socket = socket;
+    this.player = player;
     this.pingSent = null;
 
     this.bindEvents();
@@ -23,7 +23,7 @@ xss.netcode.ClientHeartbeat = function(socket) {
 xss.netcode.ClientHeartbeat.prototype = {
 
     destruct: function() {
-        this.socket = null;
+        this.player = null;
         clearInterval(this.interval);
         xss.event.off(xss.EVENT_PONG, xss.NS_HEARTBEAT);
     },
@@ -35,15 +35,15 @@ xss.netcode.ClientHeartbeat.prototype = {
     ping: function() {
         if (this.pingSent) {
             // Last ping did not pong.
-            return this.socket.timeout();
+            return this.player.timeout();
         }
         this.pingSent = +new Date();
-        this.socket.emit(xss.EVENT_PING);
+        this.player.emit(xss.EVENT_PING);
     },
 
     pong: function() {
         this.latency = (+this.lastResponse - this.pingSent) / 2;
-        this.socket.emit(xss.EVENT_PONG);
+        this.player.emit(xss.EVENT_PONG);
         this.pingSent = null;
     }
 

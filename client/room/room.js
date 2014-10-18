@@ -8,14 +8,10 @@ xss.room.ClientRoom = function() {
     this.key = null;
 
     this.game = null;
-    this.score = null;
     this.chat = null;
 
-    /** @type {xss.room.ClientOptions} */
-    this.options = null;
-
-    //this.capacity = 0;
-    //this.players = 0;
+    this.players = new xss.room.ClientPlayerRegistry();
+    this.options = new xss.room.ClientOptions();
 
     this.bindEvents();
 };
@@ -39,7 +35,7 @@ xss.room.ClientRoom.prototype = {
     bindEvents: function() {
         xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this.setKey.bind(this));
         xss.event.on(xss.EVENT_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM, this.setOptions.bind(this));
-        xss.event.on(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, xss.util.noop);
+        xss.event.on(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.setPlayers.bind(this));
 
         //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
         //xss.event.on(xss.EVENT_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
@@ -60,10 +56,14 @@ xss.room.ClientRoom.prototype = {
         xss.util.hash(xss.HASH_ROOM, key);
     },
 
-    setOptions: function(options) {
+    setOptions: function(insaneOptions) {
         this.options = new xss.room.ClientOptions();
-        this.options.deserialize(options);
-        console.log(this.options);
+        this.options.deserialize(insaneOptions);
+    },
+
+    setPlayers: function() {
+
+        this.players.deserialize(players);
     },
 
     destructDialog: function() {
@@ -111,7 +111,7 @@ xss.room.ClientRoom.prototype = {
         if (this.game) {
             this.game.destruct();
         }
-//        return new xss.game.Game(index, seed, level, names, created);
+//        return new xss.game.ClientGame(index, seed, level, names, created);
     },
 
     _updateScore: function(names, score) {
@@ -136,7 +136,7 @@ xss.room.ClientRoom.prototype = {
      * @private
      */
     _requestXss: function() {
-        xss.socket.emit(xss.EVENT_XSS_REQ, xss.flow.getData().xss);
+        xss.player.emit(xss.EVENT_XSS_REQ, xss.flow.getData().xss);
     },
 
     /**
@@ -194,7 +194,7 @@ xss.room.ClientRoom.prototype = {
     _handleStartKey: function() {
         var settings = {
             type  : xss.Dialog.TYPE.CONFIRM,
-            ok    : function() { xss.socket.emit(xss.EVENT_ROOM_START); },
+            ok    : function() { xss.player.emit(xss.EVENT_ROOM_START); },
             cancel: this._restoreDialog.bind(this)
         };
 
