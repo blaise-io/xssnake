@@ -109,6 +109,7 @@ xss.Dialog.prototype = {
             case xss.KEY_UP:
             case xss.KEY_DOWN:
             case xss.KEY_RIGHT:
+            case xss.KEY_TAB:
                 if (this.settings.type === xss.Dialog.TYPE.CONFIRM) {
                     xss.play.menu_alt();
                     this._okSelected = !this._okSelected;
@@ -124,6 +125,7 @@ xss.Dialog.prototype = {
                 }
                 break;
             case xss.KEY_ENTER:
+            case xss.KEY_SPACE:
                 if (this._okSelected) {
                     this.ok();
                 } else {
@@ -143,7 +145,7 @@ xss.Dialog.prototype = {
 //        } else {
 //            return xss.HEIGHT;
 //        }
-        return Math.round(xss.HEIGHT * 3 * 2);
+        return Math.round(xss.HEIGHT / 3 * 2);
     },
 
     /**

@@ -10,6 +10,7 @@ xss.KEY_BACKSPACE = 8;
 xss.KEY_TAB = 9;
 xss.KEY_ENTER = 13;
 xss.KEY_ESCAPE = 27;
+xss.KEY_SPACE = 32;
 xss.KEY_LEFT = 37;
 xss.KEY_UP = 38;
 xss.KEY_RIGHT = 39;

@@ -124,7 +124,8 @@ xss.StageFlow.prototype = {
         var mute, instruct;
 
         // Firefox disconnects websocket on Esc. Disable that.
-        if (ev.keyCode === xss.KEY_ESCAPE) {
+        // Also prevent the tab key focusing things outside canvas.
+        if (ev.keyCode === xss.KEY_ESCAPE || ev.keyCode === xss.KEY_TAB) {
             ev.preventDefault();
         }
 
