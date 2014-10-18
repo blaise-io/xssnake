@@ -61,8 +61,7 @@ xss.room.ClientRoom.prototype = {
         this.options.deserialize(insaneOptions);
     },
 
-    setPlayers: function() {
-
+    setPlayers: function(players) {
         this.players.deserialize(players);
     },
 

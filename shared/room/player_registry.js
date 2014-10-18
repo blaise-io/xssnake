@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * @constructor
+ */
 xss.room.PlayerRegistry = function() {
     /** @type {xss.room.Player} */
     this.players = [];
@@ -9,6 +12,17 @@ xss.room.PlayerRegistry.prototype = {
 
     destruct: function() {
         this.players.length = 0;
+    },
+
+    /**
+     * @returns {Array}
+     */
+    serialize: function() {
+        var serialized = [];
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            serialized.push(this.players[i].serialize());
+        }
+        return serialized;
     },
 
     /**

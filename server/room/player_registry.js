@@ -2,17 +2,16 @@
 
 /**
  * @constructor
- * @extends {xss.room.ServerPlayerRegistry}
+ * @extends {xss.room.PlayerRegistry}
  */
 xss.room.ServerPlayerRegistry = function() {
     /** type {Array.<Array>} */
     this.emitBuffer = [];
 
-    xss.room.ServerPlayerRegistry.call(this);
+    xss.room.PlayerRegistry.call(this);
 };
 
-xss.util.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.ServerPlayerRegistry.prototype);
-
+xss.util.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
 xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
 
     /**
@@ -25,17 +24,6 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
         ]);
         // Keep player data until rounds have ended.
         // this.remove(player);
-    },
-
-    /**
-     * @returns {Array}
-     */
-    serialize: function() {
-        var serialized = [];
-        for (var i = 0, m = this.players.length; i < m; i++) {
-            serialized.push(this.players[i].serialize());
-        }
-        return serialized;
     },
 
     /**

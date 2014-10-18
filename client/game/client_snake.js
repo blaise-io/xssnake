@@ -93,7 +93,7 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     /**
      * @param {number} delta
      * @param shift
-     * @param {Array.<xss.game.ClientPlayer>} players
+     * @param {Array.<xss.game.Player>} players
      */
     handleNextMove: function(delta, shift, players) {
         this.elapsed += delta;

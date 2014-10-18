@@ -12,6 +12,7 @@ if (xss.debug.locationLevel) {
 xss.debug.level = function() {
     var player = new xss.room.ClientPlayer();
     player.local = true;
+    player.name = '';
 
     var players = new xss.room.ClientPlayerRegistry();
     players.add(player);

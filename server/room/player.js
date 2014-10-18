@@ -24,9 +24,6 @@ xss.room.ServerPlayer = function(server, connection) {
 
     this.ondisconnect = null;
 
-    this.name = null;
-    this.snake = null;
-
     this.heartbeat = new xss.netcode.ServerHeartbeat(this);
     this.emitBuffer = [];
 };
@@ -54,13 +51,6 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
             this.connection = null;
         }
         this.emitter.removeAllListeners();
-    },
-
-    /**
-     * @returns {String}
-     */
-    serialize: function() {
-        return this.name;
     },
 
     /**

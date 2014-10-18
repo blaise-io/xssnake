@@ -6,18 +6,30 @@
  */
 xss.room.ClientPlayerRegistry = function() {
     xss.room.PlayerRegistry.call(this);
-    /** @type {xss.room.ClientPlayer} */
+    /** @type {xss.room.Player} */
     this.localPlayer = null;
 };
 
 xss.util.extend(xss.room.ClientPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
-
 xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
 
     destruct: function() {
         this.hideMeta();
         this.localPlayer = null;
         xss.room.ClientPlayerRegistry.destruct.call(this);
+    },
+
+    /**
+     * @param {Array} serialized
+     */
+    deserialize: function(serialized) {
+        var player;
+        this.players.length = 0;
+        for (var i = 0, m = serialized.length; i < m; i++) {
+            player = new xss.room.ClientPlayer();
+            player.deserialize(serialized[i]);
+            this.add(player);
+        }
     },
 
     /**
