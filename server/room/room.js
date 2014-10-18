@@ -10,8 +10,9 @@ xss.room.Room = function(server, options, key) {
     this.server = server;
     this.options = options;
     this.key = key;
-//    this.rounds  = new xss.room.RoundManager(this);
+
     this.players = new xss.room.ServerPlayerRegistry();
+    this.rounds  = new xss.room.ServerRoundManager(this.players, this.options);
 };
 
 xss.room.Room.prototype = {

@@ -7,14 +7,14 @@ xss.bootstrap.registerLevels = function(continueFn) {
     basic.register(xss.levels.ShiftedLineLevel);
     basic.register(xss.levels.LinesLevel);
 
-    game = new xss.levelset.Game();
-    moving = new xss.levelset.Moving();
-    maze = new xss.levelset.Maze();
+    //game = new xss.levelset.Game();
+    //moving = new xss.levelset.Moving();
+    //maze = new xss.levelset.Maze();
 
     xss.levelSetRegistry = new xss.levelset.Registry();
     xss.levelSetRegistry.register(basic);
-    xss.levelSetRegistry.register(game);
-    xss.levelSetRegistry.register(moving);
-    xss.levelSetRegistry.register(maze);
+    //xss.levelSetRegistry.register(game);
+    //xss.levelSetRegistry.register(moving);
+    //xss.levelSetRegistry.register(maze);
     xss.levelSetRegistry.preloadLevels(continueFn);
 };

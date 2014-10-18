@@ -169,6 +169,7 @@ xss.room.RoomManager.prototype = {
         player.emit(xss.EVENT_ROOM_SERIALIZE, room.serialize());
         player.emit(xss.EVENT_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
         player.emit(xss.EVENT_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
+        player.emit(xss.EVENT_ROOM_ROUND_SERIALIZE, room.rounds.round.serialize());
     }
 
 //    /**

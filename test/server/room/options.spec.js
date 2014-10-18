@@ -24,11 +24,11 @@ describe('Options', function() {
         expect(existingOptions.matches(requestOptions)).toBeTruthy();
     });
 
-    it('Ignores mismatches in maxPlayers, levelSet, hasPowerups when requester wants a quick game', function() {
+    it('Ignores mismatches in maxPlayers, levelset, hasPowerups when requester wants a quick game', function() {
         var requestOptions = new xss.room.Options();
         requestOptions.isQuickGame = true;
         existingOptions.maxPlayers = 2;
-        existingOptions.levelSet = 1;
+        existingOptions.levelset = 1;
         existingOptions.hasPowerups = false;
         expect(existingOptions.matches(requestOptions)).toBeTruthy();
     });
@@ -51,7 +51,7 @@ describe('Options', function() {
         var s = existingOptions.serialize();
         expect(s.length).toBe(6);
         expect(s[0]).toBe(6, 'maxPlayers');
-        expect(s[1]).toBe(0, 'levelSet');
+        expect(s[1]).toBe(0, 'levelset');
         expect(s[2]).toBe(0, 'isQuickGame');
         expect(s[3]).toBe(1, 'hasPowerups');
         expect(s[4]).toBe(0, 'isPrivate');

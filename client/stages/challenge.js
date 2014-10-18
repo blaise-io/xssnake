@@ -74,7 +74,7 @@ xss.util.extend(xss.ChallengeStage.prototype, /** @lends {xss.ChallengeStage.pro
         randomStr = xss.util.randomStr().substr(0, 3).toUpperCase();
         randomDigit = String(xss.util.randomRange(0, 5));
 
-        challenge = String(xss.util.randomItem(this._challenges));
+        challenge = String(xss.util.randomArrItem(this._challenges));
         challenge = challenge.replace(/%s/g, randomStr);
         challenge = challenge.replace(/%d/g, randomDigit);
 

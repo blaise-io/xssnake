@@ -1,0 +1,157 @@
+'use strict';
+
+/**
+ * @constructor
+ */
+xss.room.RoundManager = function(room) {
+    this.room = room;
+    this.levelIndex = 0;
+
+    this.score = new xss.game.Score(room);
+    this.round = new xss.room.Round(room, this.levelIndex);
+
+    this.started = false;
+    this.roundsPlayed = 0;
+
+    this._restartTimer = 0;
+    this._nextRoundTimer = 0;
+};
+
+xss.room.RoundManager.prototype = {
+
+    destruct: function() {
+        clearTimeout(this._restartTimer);
+        clearTimeout(this._nextRoundTimer);
+        this._xssRemoveListener();
+        this.score.destruct();
+        this.round.destruct();
+        this.score = null;
+        this.round = null;
+        this.room = null;
+    },
+
+    start: function() {
+        this.round.countdown();
+        this.started = true;
+    },
+
+    addClient: function(client) {
+        this.score.addPlayer(client);
+    },
+
+    removeClient: function(client) {
+        this.round.removeClient(client);
+        this.score.removeClient(client);
+    },
+
+    clientStart: function(client) {
+        var room = this.room;
+        if (room.isHost(client) && !this.started && room.players.length > 1) {
+            this.start();
+        }
+    },
+
+    detectAutoStart: function() {
+        if (this.room.isFull()) {
+            this.start();
+        }
+    },
+
+    delegateCrash: function() {
+        this.score.emitKnockoutPoints(this.room);
+        if (this.round.hasEnded() && !this.round.beingEnded) {
+            this.round.beingEnded = true;
+            this.endCurrentRound();
+        }
+    },
+
+    /**
+     * @return {boolean}
+     */
+    allRoundsPlayed: function() {
+        return (this.roundsPlayed + 1 >= xss.ROUNDS_MAX);
+    },
+
+    endCurrentRound: function() {
+        var winner = this.score.getWinner();
+        if (this.allRoundsPlayed() && winner) {
+            this.endAllRounds(winner);
+        } else {
+            this.nextRoundStartDelay();
+        }
+    },
+
+    nextRoundStartDelay: function() {
+        var delay = this.round.allCrashed() ?
+            xss.TIME_ROUND_PAUSE : xss.TIME_ROUND_GLOAT;
+
+        this.room.emit(
+            xss.EVENT_CHAT_NOTICE, [xss.NOTICE_NEW_ROUND, delay]
+        );
+
+        this._nextRoundTimer = setTimeout(
+            this.nextRoundStart.bind(this), delay * 1000
+        );
+    },
+
+    nextRoundStart: function() {
+        this.roundsPlayed++;
+        this.round.destruct();
+        this.round = new xss.room.Round(this.room, this.getNextLevel());
+        this.round.countdown();
+        this.room.emitState();
+    },
+
+    getNextLevel: function() {
+        return ++this.levelIndex;
+    },
+
+    /**
+     * @param {xss.netcode.Client} winner
+     */
+    endAllRounds: function(winner) {
+        if (this.room.options[xss.FIELD_XSS]) {
+            this._xssFetch(winner);
+        } else {
+            this.round.game.showLotsOfApples();
+        }
+        this._restartTimer = setTimeout(
+            this.room.restartRounds.bind(this.room),
+            xss.TIME_ALL_ROUNDS_GLOAT * 1000
+        );
+    },
+
+    /**
+     * @param {xss.netcode.Client} winner
+     */
+    _xssFetch: function(winner) {
+        var pubsub = this.room.server.emitter;
+
+        this._xssListener = function(xss, client) {
+            if (client === winner) {
+                this._xssFire(winner, xss);
+                this._xssRemoveListener();
+            }
+        }.bind(this);
+
+        pubsub.on(xss.EVENT_XSS_REQ, this._xssListener);
+        winner.emit(xss.EVENT_XSS_REQ);
+    },
+
+    _xssRemoveListener: function() {
+        if (this._xssListener) {
+            this.room.server.emitter.removeListener(
+                xss.EVENT_XSS_REQ, this._xssListener
+            );
+        }
+    },
+
+    /**
+     * @param {xss.netcode.Client} winner
+     * @param {string} code
+     */
+    _xssFire: function(winner, code) {
+        winner.broadcast(xss.EVENT_XSS_RES, code);
+    }
+
+};

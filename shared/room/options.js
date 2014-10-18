@@ -6,7 +6,7 @@
 xss.room.Options = function() {
     this.isQuickGame = false;
     this.maxPlayers  = 6;
-    this.levelSet    = 0;
+    this.levelset    = 0;
     this.hasPowerups = true;
     this.isPrivate   = false;
     this.isXSS       = false;
@@ -20,7 +20,7 @@ xss.room.Options.prototype = {
     serialize: function() {
         return [
             this.maxPlayers,
-            this.levelSet,
+            this.levelset,
             Number(this.isQuickGame),
             Number(this.hasPowerups),
             Number(this.isPrivate),
@@ -36,7 +36,7 @@ xss.room.Options.prototype = {
             .assertRange(1, xss.ROOM_CAPACITY)
             .getValueOr(xss.ROOM_CAPACITY);
 
-        this.levelSet = new xss.util.Sanitizer(dirtyOptions[1])
+        this.levelset = new xss.util.Sanitizer(dirtyOptions[1])
             .assertRange(0, xss.levelSetRegistry.levelsets.length - 1)
             .getValueOr(0);
 

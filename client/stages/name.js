@@ -40,7 +40,7 @@ xss.util.extend(xss.NameStage.prototype, /** @lends xss.NameStage.prototype */ {
             text = error;
         } else {
             xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT);
-            text = xss.util.randomItem(this._wits).replace(/%s/g, value);
+            text = xss.util.randomArrItem(this._wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(function() {
                 xss.flow.switchStage(this.next);

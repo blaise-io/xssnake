@@ -50,10 +50,18 @@ xss.util = {
 
     /**
      * @param {Array} arr
-     * @return {*}
+     * @return {?}
      */
-    randomItem: function(arr) {
+    randomArrItem: function(arr) {
         return arr[Math.floor(Math.random() * arr.length)];
+    },
+
+    /**
+     * @param {Array} arr
+     * @return {number}
+     */
+    randomArrIndex: function(arr) {
+        return Math.floor(Math.random() * arr.length);
     },
 
     /**
@@ -161,7 +169,7 @@ xss.util = {
      * @returns {String}
      */
     getRandomName: function() {
-        var name = xss.util.randomItem([
+        var name = xss.util.randomArrItem([
             'Ant', 'Bat', 'Bear', 'Bird', 'Cat', 'Cow', 'Crab', 'Croc', 'Deer',
             'Dodo', 'Dog', 'Duck', 'Emu', 'Fish', 'Fly', 'Fox', 'Frog', 'Goat',
             'Hare', 'Ibis', 'Kiwi', 'Lion', 'Lynx', 'Miao', 'Mole', 'Moth',

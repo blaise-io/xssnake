@@ -17,7 +17,7 @@ xss.levelset.Levelset.prototype = {
     },
 
     /**
-     * @param {Function} Level
+     * @param {?} Level
      */
     register: function(Level) {
         this.levels.push(new Level(this.getConfig()));
@@ -42,5 +42,30 @@ xss.levelset.Levelset.prototype = {
         } else {
             continueFn();
         }
+    },
+
+    /**
+     * @param {Array.<number>} levelsPlayed
+     * @return {number}
+     */
+    getRandomLevelIndex: function(levelsPlayed) {
+        var notPlayed = this.levels.slice();
+
+        if (notPlayed.length <= 1) {
+            return 0;
+        }
+
+        // All levels were played.
+        // Play any level except other than the one just played.
+        if (this.levels.length === levelsPlayed.length) {
+            levelsPlayed.splice(0, levelsPlayed.length - 1);
+        }
+
+        for (var i = 0, m = levelsPlayed.length; i < m; i++) {
+            notPlayed.splice(levelsPlayed[i], 1);
+        }
+
+        return xss.util.randomArrIndex(notPlayed);
     }
+
 };

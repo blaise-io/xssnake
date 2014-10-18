@@ -26,7 +26,7 @@ xss.util.extend(xss.room.ServerOptions.prototype, {
             !request.isPrivate &&
             request.isXSS === this.isXSS &&
             (request.isQuickGame || (
-                request.levelSet === this.levelSet &&
+                request.levelset === this.levelset &&
                 request.hasPowerups === this.hasPowerups &&
                 request.maxPlayers <= this.maxPlayers
             ))
