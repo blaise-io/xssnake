@@ -9,23 +9,23 @@ describe('Options', function() {
     var existingOptions;
 
     beforeEach(function() {
-        existingOptions = new xss.room.Options();
+        existingOptions = new xss.room.ServerOptions();
         xss.levelSetRegistry = new xss.levelset.Registry();
         xss.levelSetRegistry.levelsets = new Array(2);
     });
 
     it('Matches when options are equal', function() {
-        expect(existingOptions.matches(new xss.room.Options())).toBeTruthy();
+        expect(existingOptions.matches(new xss.room.ServerOptions())).toBeTruthy();
     });
 
     it('Matches when requester wants a quick game', function() {
-        var requestOptions = new xss.room.Options();
+        var requestOptions = new xss.room.ServerOptions();
         requestOptions.isQuickGame = true;
         expect(existingOptions.matches(requestOptions)).toBeTruthy();
     });
 
     it('Ignores mismatches in maxPlayers, levelset, hasPowerups when requester wants a quick game', function() {
-        var requestOptions = new xss.room.Options();
+        var requestOptions = new xss.room.ServerOptions();
         requestOptions.isQuickGame = true;
         existingOptions.maxPlayers = 2;
         existingOptions.levelset = 1;
@@ -36,15 +36,15 @@ describe('Options', function() {
     it('Does not apply for quick game when room is private', function() {
         existingOptions.isPrivate = true;
         expect(existingOptions.matches(
-            new xss.room.Options(new xss.room.Options()))
+            new xss.room.Options(new xss.room.ServerOptions()))
         ).toBeFalsy();
     });
 
     it('Does not apply for quick game when room has XSS enabled', function() {
+        var requestOptions = new xss.room.ServerOptions();
+        requestOptions.isQuickGame = true;
         existingOptions.isXSS = true;
-        expect(existingOptions.matches(
-            new xss.room.Options(new xss.room.Options()))
-        ).toBeFalsy();
+        expect(existingOptions.matches(requestOptions)).toBeFalsy();
     });
 
     it('Serializes', function() {

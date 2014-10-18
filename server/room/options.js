@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param dirtyOptions
+ * @param {Array=} dirtyOptions
  * @constructor
  * @extends {xss.room.Options}
  */
