@@ -20,11 +20,11 @@ xss.levelset.Levelset.prototype = {
     },
 
     /**
-     * @param {number} levelIndex
+     * @param {number} index
      * @return {xss.level.Level}
      */
-    getLevel: function(levelIndex) {
-        return this.levels[levelIndex];
+    getLevel: function(index) {
+        return this.levels[index];
     },
 
     /**

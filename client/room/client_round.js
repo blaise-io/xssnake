@@ -38,7 +38,7 @@ xss.util.extend(xss.room.ClientRound.prototype, {
     },
 
     updateGame: function() {
-        this.levelset = xss.levelSetRegistry.getLevel(this.levelsetIndex);
+        this.levelset = xss.levelSetRegistry.getLevelset(this.levelsetIndex);
         this.level = this.levelset.getLevel(this.levelIndex);
         this.game = new xss.game.ClientGame(this.players, this.level);
     }
