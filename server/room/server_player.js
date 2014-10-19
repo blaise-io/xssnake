@@ -36,15 +36,14 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
         this.unbindEvents();
         this.server = null;
         this.snake = null;
-        if (this.connected) {
-            this.disconnect();
-        }
+        this.disconnect();
     },
 
     disconnect: function() {
         console.log('xss.room.ServerPlayer disconnect');
         if (this.ondisconnect) {
             this.ondisconnect(this);
+            this.ondisconnect = null;
         }
         if (this.connection) {
             this.connection.close();
