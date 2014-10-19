@@ -81,23 +81,29 @@ xss.room.ServerRoom.prototype = {
      */
     addPlayer: function(player) {
         this.players.add(player);
-        player.ondisconnect = this.players.disconnect.bind(this.players);
-//        player.room = this;
-//        player.model.index = this.clients.push(player) - 1;
-//
-//        this.emitState();
-//
-//        player.broadcast(xss.EVENT_CHAT_NOTICE, [
-//            xss.NOTICE_JOIN, player.model.index
-//        ]);
-//
-//        this.rounds.addPlayer(player);
-//        this.rounds.detectAutoStart();
+
+        player.room = this;
+
+        this.players.emitPlayers();
 
         player.emit(xss.EVENT_ROOM_SERIALIZE, this.serialize());
         player.emit(xss.EVENT_ROOM_OPTIONS_SERIALIZE, this.options.serialize());
-        player.emit(xss.EVENT_ROOM_PLAYERS_SERIALIZE, this.players.serialize(player));
         player.emit(xss.EVENT_ROOM_ROUND_SERIALIZE, this.rounds.round.serialize());
+
+//        this.rounds.detectAutoStart();
+
+    },
+
+    removePlayer: function(player) {
+        // Remove immediately if rounds have not started.
+        if (!this.rounds.started) {
+            this.players.remove(player);
+        }
+
+        // Notify users that someone disconnected.
+        this.players.emitPlayers();
+
+        // @todo Clean up during next round.
     },
 
 //    /**

@@ -157,7 +157,7 @@ xss.room.ServerRoomManager.prototype = {
      * @private
      */
     joinMatchingRoom: function(emitData, player) {
-        var options, room, emitDataArr, index;
+        var options, room, emitDataArr;
 
         emitDataArr = new xss.util.Sanitizer(emitData).assertArray().getValueOr([]);
         options = new xss.room.ServerOptions(emitDataArr);

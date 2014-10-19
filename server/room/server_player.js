@@ -14,6 +14,9 @@ xss.room.ServerPlayer = function(server, connection) {
     this.emitter = new events.EventEmitter();
     this.server = server;
 
+    /** @type {xss.room.ServerRoom} */
+    this.room = null;
+
     this.connection = connection;
     this.connection.on('message', this.onmessage.bind(this));
     this.connection.on('close', this.onclose.bind(this));
@@ -21,8 +24,6 @@ xss.room.ServerPlayer = function(server, connection) {
     this.connected = true;
 
     this.bindEvents();
-
-    this.ondisconnect = null;
 
     this.heartbeat = new xss.netcode.ServerHeartbeat(this);
     this.emitBuffer = [];
@@ -32,18 +33,17 @@ xss.util.extend(xss.room.ServerPlayer.prototype, xss.room.Player.prototype);
 xss.util.extend(xss.room.ServerPlayer.prototype, {
 
     destruct: function() {
-        this.connected = false;
+        this.disconnect();
         this.unbindEvents();
+        this.connected = false;
         this.server = null;
         this.snake = null;
-        this.disconnect();
+        this.room = null;
     },
 
     disconnect: function() {
-        console.log('xss.room.ServerPlayer disconnect');
-        if (this.ondisconnect) {
-            this.ondisconnect(this);
-            this.ondisconnect = null;
+        if (this.room) {
+            this.room.removePlayer(this);
         }
         if (this.connection) {
             this.connection.close();
@@ -109,24 +109,19 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
             console.log('-->', this.name, JSON.stringify(emit));
             this.connection.send(JSON.stringify(emit), function(error) {
                 if (error) {
-                    console.error(error);
+                    console.error('Error sending message', error);
                 }
             }.bind(this));
         }
     },
 
     /**
-     * @param {string} name
+     * @param {string} type
      * @param {*=} data
      */
-    broadcast: function(name, data) {
-        var room = this.room;
-        if (room) {
-            for (var i = 0, m = room.players.length; i < m; i++) {
-                if (room.players[i] !== this) {
-                    room.players[i].emit(name, data);
-                }
-            }
+    broadcast: function(type, data) {
+        if (this.room) {
+            this.room.players.emit(type, data, this);
         }
     },
 
@@ -134,6 +129,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
      * Buffer events to be sent later using flush()
      * @param {string} type
      * @param {*} data
+     * @deprecated Not that much overhead in separate messages
      */
     buffer: function(type, data) {
         this.emitBuffer.push([type, data]);
@@ -141,6 +137,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
 
     /**
      * Send buffer
+     * @deprecated Not that much overhead in separate messages
      */
     flush: function() {
         if (this.emitBuffer.length > 1) {

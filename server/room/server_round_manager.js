@@ -8,6 +8,7 @@
 xss.room.ServerRoundManager = function(players, options) {
     this.players = players;
     this.options = options;
+    this.started = false;
 
     /** @type {Array.<number>} */
     this.levelHistory = [];

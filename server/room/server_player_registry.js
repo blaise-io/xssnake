@@ -15,25 +15,29 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.PlayerRegistry
 xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
 
     /**
-     * @param {xss.room.ServerPlayer} player
+     * Send data to everyone in the room.
+     * @param {string} type
+     * @param {*=} data
+     * @param {xss.room.ServerPlayer=} exclude
      */
-    disconnect: function(player) {
-        this.emit(xss.EVENT_CHAT_NOTICE, [
-            xss.NOTICE_DISCONNECT,
-            this.players.indexOf(player)
-        ]);
-        // Keep player data until rounds have ended.
-        // this.remove(player);
+    emit: function(type, data, exclude) {
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            if (exclude !== this.players[i]) {
+                this.players[i].emit(type, data);
+            }
+        }
     },
 
     /**
-     * Send data to everyone in the room.
-     * @param {string} name
-     * @param {*=} data
+     * Emit players.
+     * Players get their own version because seriaize contains local flag.
      */
-    emit: function(name, data) {
+    emitPlayers: function() {
         for (var i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].emit(name, data);
+            this.players[i].emit(
+                xss.EVENT_ROOM_PLAYERS_SERIALIZE,
+                this.serialize(this.players[i])
+            );
         }
     },
 
