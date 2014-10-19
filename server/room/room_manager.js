@@ -4,15 +4,15 @@
  * @param {xss.netcode.Server} server
  * @constructor
  */
-xss.room.RoomManager = function(server) {
+xss.room.ServerRoomManager = function(server) {
     this.server = server;
-    /** @type {Array.<xss.room.Room>} */
+    /** @type {Array.<xss.room.ServerRoom>} */
     this.rooms = [];
     this.matcher = new xss.room.Matcher(this.rooms);
     this.bindEvents();
 };
 
-xss.room.RoomManager.prototype = {
+xss.room.ServerRoomManager.prototype = {
 
     destruct: function() {
         this.removeAllRooms();
@@ -45,14 +45,14 @@ xss.room.RoomManager.prototype = {
 
     /**
      * @param {string} key
-     * @return {xss.room.Room}
+     * @return {xss.room.ServerRoom}
      */
     room: function(key) {
         return this.rooms[key];
     },
 
     /**
-     * @param {xss.room.Room} room
+     * @param {xss.room.ServerRoom} room
      */
     remove: function(room) {
         delete this.rooms[room.key];
@@ -86,7 +86,7 @@ xss.room.RoomManager.prototype = {
 
 //    /**
 //     * @param {Object.<string, number|boolean>} roomPreferences
-//     * @return {xss.room.Room}
+//     * @return {xss.room.ServerRoom}
 //     */
 //    getOrCreateRoom: function(roomPreferences) {
 //        var room = this._findRoom(roomPreferences);
@@ -98,18 +98,18 @@ xss.room.RoomManager.prototype = {
 
     /**
      * @param {xss.room.ServerOptions} preferences
-     * @return {xss.room.Room}
+     * @return {xss.room.ServerRoom}
      */
     createRoom: function(preferences) {
         var room, id = xss.util.randomStr(xss.ROOM_KEY_LENGTH);
-        room = new xss.room.Room(this.server, preferences, id);
+        room = new xss.room.ServerRoom(this.server, preferences, id);
         this.rooms.push(room);
         return room;
     },
 
 //    /**
 //     * @param {Object.<string, ?>} requestOptions
-//     * @param {xss.room.Room} room
+//     * @param {xss.room.ServerRoom} room
 //     * @return {boolean}
 //     */
 //    roomPreferencesMatch: function(requestOptions, room) {
@@ -165,11 +165,6 @@ xss.room.RoomManager.prototype = {
         room = this.matcher.getRoomMatching(options);
         room = room || this.createRoom(options);
         room.addPlayer(player);
-
-        player.emit(xss.EVENT_ROOM_SERIALIZE, room.serialize());
-        player.emit(xss.EVENT_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
-        player.emit(xss.EVENT_ROOM_PLAYERS_SERIALIZE, room.players.serialize(player));
-        player.emit(xss.EVENT_ROOM_ROUND_SERIALIZE, room.rounds.round.serialize());
     }
 
 //    /**
@@ -183,7 +178,7 @@ xss.room.RoomManager.prototype = {
 
 //    /**
 //     * @param {Object.<string, number|boolean>} roomPreferences
-//     * @return {xss.room.Room}
+//     * @return {xss.room.ServerRoom}
 //     * @private
 //     */
 //    _findRoom: function(roomPreferences) {

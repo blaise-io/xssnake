@@ -16,7 +16,7 @@ xss.room.PlayerRegistry.prototype = {
 
     /**
      * @param {xss.room.Player} localPlayer
-     * @returns {Array}
+     * @return {Array}
      */
     serialize: function(localPlayer) {
         var serialized = [];

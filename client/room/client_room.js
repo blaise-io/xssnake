@@ -12,6 +12,7 @@ xss.room.ClientRoom = function() {
 
     this.players = new xss.room.ClientPlayerRegistry();
     this.options = new xss.room.ClientOptions();
+    this.round = new xss.room.ClientRound(this.players, this.options);
 
     this.bindEvents();
 };
@@ -21,12 +22,8 @@ xss.room.ClientRoom.prototype = {
     destruct: function() {
         xss.util.hash();
         this.unbindEvents();
-        if (this.players) {
-            this.players.destruct();
-        }
-        if (this.options) {
-            this.options.destruct();
-        }
+        this.players.destruct();
+        this.options.destruct();
     },
 
     /**

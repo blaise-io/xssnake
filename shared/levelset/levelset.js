@@ -12,8 +12,19 @@ xss.levelset.Levelset = function() {
 
 xss.levelset.Levelset.prototype = {
 
+    /**
+     * @return {xss.levelset.Config}
+     */
     getConfig: function() {
         return new xss.levelset.Config();
+    },
+
+    /**
+     * @param {number} levelIndex
+     * @return {xss.level.Level}
+     */
+    getLevel: function(levelIndex) {
+        return this.levels[levelIndex];
     },
 
     /**

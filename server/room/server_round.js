@@ -5,18 +5,13 @@
  * @param {xss.room.Options} options
  * @param {Array.<number>} levelsPlayed
  * @constructor
+ * @extends {xss.room.Round}
  */
 xss.room.ServerRound = function(players, options, levelsPlayed) {
-    this.players = players;
-    this.options = options;
-    this.levelset = xss.levelSetRegistry.levelsets[this.options.levelset];
+    xss.room.Round.call(this, players, options);
+    this.levelsetIndex = options.levelset;
+    this.levelset = xss.levelSetRegistry.levelsets[this.levelsetIndex];
     this.levelIndex = this.levelset.getRandomLevelIndex(levelsPlayed);
 };
 
-xss.room.ServerRound.prototype = {
-
-    serialize: function() {
-        return [this.levelIndex];
-    }
-
-};
+xss.util.extend(xss.room.ServerRound.prototype, xss.room.Round.prototype);

@@ -18,7 +18,7 @@ xss.util.extend(xss.room.ServerOptions.prototype, {
 
     /**
      * @param {xss.room.ServerOptions} request
-     * @returns {boolean}
+     * @return {boolean}
      */
     matches: function(request) {
         return (

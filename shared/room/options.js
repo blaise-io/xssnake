@@ -15,7 +15,7 @@ xss.room.Options = function() {
 xss.room.Options.prototype = {
 
     /**
-     * @returns {Array.<number>}
+     * @return {Array.<number>}
      */
     serialize: function() {
         return [

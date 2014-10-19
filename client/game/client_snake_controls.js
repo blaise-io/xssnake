@@ -87,7 +87,7 @@ xss.game.ClientSnakeControls.prototype = {
     },
 
     /**
-     * @returns {number}
+     * @return {number}
      */
     getNextDirection: function() {
         if (this.directionBuffer.length) {

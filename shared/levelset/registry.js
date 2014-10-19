@@ -36,6 +36,14 @@ xss.levelset.Registry.prototype = {
     },
 
     /**
+     * @param {number} levelsetIndex
+     * @return {xss.levelset.Levelset}
+     */
+    getLevel: function(levelsetIndex) {
+        return this.levelsets[levelsetIndex];
+    },
+
+    /**
      * @return {Array.<Array.<number|string>>}
      */
     getAsFieldValues: function() {

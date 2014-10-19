@@ -14,7 +14,7 @@ xss.room.Player.prototype = {
 
     /**
      * @param {xss.room.Player} localPlayer
-     * @returns {Array.<string|number>}
+     * @return {Array.<string|number>}
      */
     serialize: function(localPlayer) {
         return [this.name, this.score, Number(localPlayer === this)];

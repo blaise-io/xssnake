@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {Array.<xss.room.Room>} rooms
+ * @param {Array.<xss.room.ServerRoom>} rooms
  * @constructor
  */
 xss.room.Matcher = function(rooms) {
@@ -16,7 +16,7 @@ xss.room.Matcher.prototype = {
 
     /**
      * @param {xss.room.ServerOptions} preferences
-     * @returns {xss.room.Room}
+     * @return {xss.room.ServerRoom}
      */
     getRoomMatching: function(preferences) {
         var rooms = this.rooms;

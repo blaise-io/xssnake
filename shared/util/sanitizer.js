@@ -80,7 +80,7 @@ xss.util.Sanitizer.prototype = {
 
     /**
      *
-     * @returns {xss.util.Sanitizer}
+     * @return {xss.util.Sanitizer}
      */
     assertIntAsBoolean: function() {
         return this.assertRange(0, 1);

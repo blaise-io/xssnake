@@ -8,7 +8,7 @@ var WebSocketServer = require('ws').Server;
  */
 xss.netcode.Server = function() {
     this.emitter = new events.EventEmitter();
-    this.roomManager = new xss.room.RoomManager(this);
+    this.roomManager = new xss.room.ServerRoomManager(this);
     this.ws = this.start();
 };
 

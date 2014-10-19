@@ -83,7 +83,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
 
     /**
      * @param {?} dirtyName
-     * @returns {string}
+     * @return {string}
      */
     setName: function(dirtyName) {
         this.name = new xss.util.Sanitizer(dirtyName)

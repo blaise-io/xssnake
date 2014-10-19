@@ -6,7 +6,7 @@
  * @param {string} key
  * @constructor
  */
-xss.room.Room = function(server, options, key) {
+xss.room.ServerRoom = function(server, options, key) {
     this.server = server;
     this.options = options;
     this.key = key;
@@ -15,7 +15,7 @@ xss.room.Room = function(server, options, key) {
     this.rounds  = new xss.room.ServerRoundManager(this.players, this.options);
 };
 
-xss.room.Room.prototype = {
+xss.room.ServerRoom.prototype = {
 
     destruct: function() {
         this.rounds.destruct();
@@ -93,6 +93,11 @@ xss.room.Room.prototype = {
 //
 //        this.rounds.addPlayer(player);
 //        this.rounds.detectAutoStart();
+
+        player.emit(xss.EVENT_ROOM_SERIALIZE, this.serialize());
+        player.emit(xss.EVENT_ROOM_OPTIONS_SERIALIZE, this.options.serialize());
+        player.emit(xss.EVENT_ROOM_PLAYERS_SERIALIZE, this.players.serialize(player));
+        player.emit(xss.EVENT_ROOM_ROUND_SERIALIZE, this.rounds.round.serialize());
     },
 
 //    /**

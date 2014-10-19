@@ -13,7 +13,7 @@ xss.netcode.Client = function(emitter, connection) {
     /** @type {xss.game.Snake} */
     this.snake = null;
 
-    /** @type {xss.room.Room} */
+    /** @type {xss.room.ServerRoom} */
     this.room = null;
 };
 

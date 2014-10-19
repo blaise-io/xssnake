@@ -34,7 +34,7 @@ xss.EVENT_XSS_RES = 'XS!';
 xss.SEVENT_SERVER_TICK = 'T';
 xss.SEVENT_PLAYER_DISCONNECT = 'PD';
 
-xss.HEARTBEAT_INTERVAL_MS = 7000;
+xss.HEARTBEAT_INTERVAL_MS = 7000 *30; // @todo remove "*30"
 
 xss.GAME_SHIFT_MAP = [[-1, 0], [0, -1], [1, 0], [0, 1]];
 

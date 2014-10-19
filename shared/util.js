@@ -166,7 +166,7 @@ xss.util = {
     },
 
     /**
-     * @returns {String}
+     * @return {String}
      */
     getRandomName: function() {
         var name = xss.util.randomArrItem([
