@@ -223,7 +223,9 @@ xss.Font.prototype = {
 
         data = this._ctx.getImageData(0, 0, w, h).data;
         for (var i = 0, m = data.length; i < m; i += 4) {
-            if (data[i] + data[i + 1] + data[i + 2] > 720) {
+            // When this does not work on some OS, try a few presets until
+            // it matches a known pattern.
+            if (data[i] + data[i + 1] + data[i + 2] > 650) {
                 var seq = i / 4,
                     x = seq % w,
                     y = Math.floor(seq / w);
