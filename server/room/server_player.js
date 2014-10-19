@@ -79,7 +79,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
     },
 
     unbindEvents: function() {
-        this.emitter.removeListener(xss.EVENT_PLAYER_NAME);
+        this.emitter.removeAllListeners(xss.EVENT_PLAYER_NAME);
     },
 
     /**

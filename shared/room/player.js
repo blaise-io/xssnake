@@ -13,10 +13,11 @@ xss.room.Player = function() {
 xss.room.Player.prototype = {
 
     /**
+     * @param {xss.room.Player} localPlayer
      * @returns {Array.<string|number>}
      */
-    serialize: function() {
-        return [this.name, this.score];
+    serialize: function(localPlayer) {
+        return [this.name, this.score, Number(localPlayer === this)];
     },
 
     /**
@@ -25,6 +26,7 @@ xss.room.Player.prototype = {
     deserialize: function(serialized) {
         this.name = serialized[0];
         this.score = serialized[1];
+        this.local = Boolean(serialized[2]);
     }
 
 };

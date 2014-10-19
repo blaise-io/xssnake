@@ -157,7 +157,7 @@ xss.room.RoomManager.prototype = {
      * @private
      */
     joinMatchingRoom: function(emitData, player) {
-        var options, room, emitDataArr;
+        var options, room, emitDataArr, index;
 
         emitDataArr = new xss.util.Sanitizer(emitData).assertArray().getValueOr([]);
         options = new xss.room.ServerOptions(emitDataArr);
@@ -168,7 +168,7 @@ xss.room.RoomManager.prototype = {
 
         player.emit(xss.EVENT_ROOM_SERIALIZE, room.serialize());
         player.emit(xss.EVENT_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
-        player.emit(xss.EVENT_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
+        player.emit(xss.EVENT_ROOM_PLAYERS_SERIALIZE, room.players.serialize(player));
         player.emit(xss.EVENT_ROOM_ROUND_SERIALIZE, room.rounds.round.serialize());
     }
 

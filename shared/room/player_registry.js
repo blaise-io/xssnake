@@ -15,12 +15,13 @@ xss.room.PlayerRegistry.prototype = {
     },
 
     /**
+     * @param {xss.room.Player} localPlayer
      * @returns {Array}
      */
-    serialize: function() {
+    serialize: function(localPlayer) {
         var serialized = [];
         for (var i = 0, m = this.players.length; i < m; i++) {
-            serialized.push(this.players[i].serialize());
+            serialized.push(this.players[i].serialize(localPlayer));
         }
         return serialized;
     },
