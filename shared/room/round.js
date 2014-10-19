@@ -8,9 +8,14 @@
 xss.room.Round = function(players, options) {
     this.players = players;
     this.options = options;
-    this.levelset = null;
+    /** @type {number} */
     this.levelsetIndex = null;
+    /** @type {number} */
     this.levelIndex = null;
+    /** @type {xss.levelset.Levelset} */
+    this.levelset = null;
+    /** @type {xss.level.Level} */
+    this.level = null;
 };
 
 xss.room.Round.prototype = {

@@ -8,6 +8,7 @@
  */
 xss.room.ClientRound = function(players, options) {
     xss.room.Round.apply(this, arguments);
+    /** @type {xss.game.ClientGame} */
     this.game = null;
     this.bindEvents();
 };
