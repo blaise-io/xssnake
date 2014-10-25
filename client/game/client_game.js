@@ -7,7 +7,7 @@
  * @constructor
  */
 xss.game.ClientGame = function(players, level) {
-    this.setPlayers(players);
+    this.setPlayersAndSnakes(players);
 
     this.level = level;
     this.level.paint();
@@ -37,10 +37,10 @@ xss.game.ClientGame.prototype = {
 
     updatePlayers: function(players) {
         this.players.unsetSnakes();
-        this.setPlayers(players);
+        this.setPlayersAndSnakes(players);
     },
 
-    setPlayers: function(players) {
+    setPlayersAndSnakes: function(players) {
         this.players = players;
         this.players.setSnakes(this.level);
         this.players.showMeta();

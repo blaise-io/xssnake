@@ -15,7 +15,7 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
 
     destruct: function() {
         this.localPlayer = null;
-        xss.room.PlayerRegistry.prototype.destruct().call(this);
+        xss.room.PlayerRegistry.prototype.destruct.call(this);
     },
 
     /**
