@@ -3,7 +3,6 @@
 describe('Client', function() {
 describe('util', function() {
 describe('xss.game.ClientGame', function() {
-
     var players, level, game;
 
     beforeEach(function(done) {
@@ -20,42 +19,39 @@ describe('xss.game.ClientGame', function() {
     });
 
     describe('Updates players', function() {
-        var playerA, playerB;
+        var playerA, playerB, playerC;
 
         beforeEach(function() {
             playerA = new xss.room.ClientPlayer('A');
-            players.add(playerA);
-            game.updatePlayers(players);
-
             playerB = new xss.room.ClientPlayer('B');
+            playerC = new xss.room.ClientPlayer('C');
+            players.add(playerA);
             players.add(playerB);
-            game.updatePlayers(players);
-        });
-
-        it('Should add snake A and B', function() {
-            expect(xss.shapes.SNK0).toBeTruthy();
-            expect(xss.shapes.SNK1).toBeTruthy();
-        });
-
-        it('Should add snake C', function() {
-            var playerC = new xss.room.ClientPlayer('C');
             players.add(playerC);
             game.updatePlayers(players);
-            expect(xss.shapes.SNK2).toBeTruthy();
         });
 
-        it('Should remove snake A after removing', function() {
-            players.players.length = 1;
+        it('Add three snakes', function() {
+            expect(xss.shapes.SNK0).toEqual(jasmine.any(xss.Shape));
+            expect(xss.shapes.SNK1).toEqual(jasmine.any(xss.Shape));
+            expect(xss.shapes.SNK2).toEqual(jasmine.any(xss.Shape));
+        });
+
+        it('Removes snake shapes', function() {
+            players.remove(playerB);
             game.updatePlayers(players);
-            // Players B should now be the first snake.
+            // Players A remains first snake.
+            // Players C is now the second snake.
             expect(xss.shapes.SNK0).toBeTruthy();
-            expect(xss.shapes.SNK1).toBeNull();
+            expect(xss.shapes.SNK1).toBeTruthy();
+            expect(xss.shapes.SNK2).toBeNull();
         });
 
-        it('Should not show crash particles', function() {
+        // @TODO: Move to Snake tests
+        it('Does not show crash particles', function() {
             var crashed = false;
             Object.keys(xss.shapes).forEach(function(key) {
-                if (key.substr(0,4) === 'EXPL' && xss.shapes[key] !== null) {
+                if (key.substr(0, 4) === 'EXPL' && xss.shapes[key]) {
                     crashed = true;
                 }
             });
