@@ -1,6 +1,7 @@
 'use strict';
 
 describe('Client', function() {
+describe('util', function() {
 describe('xss.util', function() {
 
     it('Stores data', function() {
@@ -44,15 +45,19 @@ describe('xss.util', function() {
 
     it('Debounces', function(done) {
         var spy = jasmine.createSpy('debounce');
-        var debounceSpy = xss.util.debounce(spy, 10);
+        var debounceSpy = xss.util.debounce(spy, 50);
         debounceSpy();
-        setTimeout(debounceSpy, 5);
-        setTimeout(debounceSpy, 10);
+        expect(spy.calls.count()).toBe(0, 'Immediate');
+        setTimeout(debounceSpy, 40);
+        expect(spy.calls.count()).toBe(0, 'First extend');
+        setTimeout(debounceSpy, 80);
+        expect(spy.calls.count()).toBe(0, 'Second extend');
         setTimeout(function() {
-            expect(spy.calls.count()).toBe(1);
+            expect(spy.calls.count()).toBe(1, 'Final');
             done();
-        }, 25);
+        }, 500); // Imprecise timer, cut some slack.
     });
 
+});
 });
 });

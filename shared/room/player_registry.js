@@ -39,7 +39,7 @@ xss.room.PlayerRegistry.prototype = {
     remove: function(player) {
         var index = this.players.indexOf(player);
         if (-1 !== index) {
-            this.players.splice(this.players.indexOf(player), 1);
+            this.players.splice(index, 1);
         }
     },
 

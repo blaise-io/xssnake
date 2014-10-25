@@ -180,12 +180,11 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
         var timeout;
         return function() {
             var context = this, args = arguments;
-            function later() {
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
                 timeout = null;
                 fn.apply(context, args);
-            }
-            clearTimeout(timeout);
-            timeout = setTimeout(later, delay);
+            }, delay || 100);
         };
     }
 

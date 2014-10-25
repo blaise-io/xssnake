@@ -36,17 +36,15 @@ xss.util.extend(xss.game.ClientSnake.prototype, xss.game.Snake.prototype);
 xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.prototype */ {
 
     destruct: function() {
-        this.crash();
-        this.removeNameAndDirection();
+        // Remove any related shape.
+        var keys = Object.keys(this.shapeKeys);
+        for (var i = 0, m = keys.length; i < m; i++) {
+            var shapeKey = this.shapeKeys[keys[i]];
+            xss.shapes[shapeKey] = null;
+        }
+
         if (this.controls) {
             this.controls.destruct();
-        }
-        xss.shapes[this.getShape()] = null;
-
-        for (var k in this.shapeKeys) {
-            if (this.shapeKeys.hasOwnProperty(k)) {
-                xss.shapes[this.shapeKeys[k]] = null;
-            }
         }
     },
 

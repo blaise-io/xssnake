@@ -50,8 +50,19 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     },
 
     unsetSnakes: function() {
+        // There may still be a few shapes lingering around.
+        this.clearSnakeShapes();
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].unsetSnake();
+        }
+    },
+
+    clearSnakeShapes: function() {
+        var keys = Object.keys(xss.shapes);
+        for (var i = 0, m = keys.length; i < m; i++) {
+            if (keys[i].substr(0, xss.NS_SNAKE.length) === xss.NS_SNAKE) {
+                xss.shapes[keys[i]] = null;
+            }
         }
     },
 

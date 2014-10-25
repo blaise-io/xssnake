@@ -7,7 +7,7 @@
  * @constructor
  */
 xss.game.ClientGame = function(players, level) {
-    this.setPlayersAndSnakes(players);
+    this.updatePlayers(players);
 
     this.level = level;
     this.level.paint();
@@ -35,13 +35,14 @@ xss.game.ClientGame.prototype = {
         this.spawnables.destruct();
     },
 
+    /**
+     * Update game before round has started.
+     * Don't call this mid-game.
+     * @param players
+     */
     updatePlayers: function(players) {
-        this.players.unsetSnakes();
-        this.setPlayersAndSnakes(players);
-    },
-
-    setPlayersAndSnakes: function(players) {
         this.players = players;
+        this.players.unsetSnakes();
         this.players.setSnakes(this.level);
         this.players.showMeta();
     },

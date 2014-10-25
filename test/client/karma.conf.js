@@ -5,7 +5,7 @@ var client = require('../../build/client.js');
 var files = client.concat.src.slice();
 
 // Append tests.
-files.push('test/client/*.spec.js');
+files.push('test/client/**/*.spec.js');
 
 // Karma does not support advanced globbing.
 // Expand files manually.
