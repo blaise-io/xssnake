@@ -54,7 +54,7 @@ xss.game.Score.prototype = {
         for (var i = 0, m = clients.length; i < m; i++) {
             if (!clients[i].snake.crashed) {
                 this.points[i] += 2;
-                room.buffer(xss.EVENT_SCORE_UPDATE, [i, this.points[i]]);
+                room.buffer(xss.NC_SCORE_UPDATE, [i, this.points[i]]);
             }
         }
         room.flush();
@@ -66,7 +66,7 @@ xss.game.Score.prototype = {
     bufferApplePoints: function(client) {
         var points = ++this.points[client.model.index];
         this.room.buffer(
-            xss.EVENT_SCORE_UPDATE, [client.model.index, points]
+            xss.NC_SCORE_UPDATE, [client.model.index, points]
         );
     },
 

@@ -118,8 +118,8 @@ xss.game.Powerup.prototype = {
             index = this.client.model.index,
             snake = this.client.snake;
         snake.speed -= 15;
-        room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
-        room.buffer(xss.EVENT_SNAKE_ACTION, [index, '+Speed']).flush();
+        room.buffer(xss.NC_SNAKE_SPEED, [index, snake.speed]);
+        room.buffer(xss.NC_SNAKE_ACTION, [index, '+Speed']).flush();
     },
 
     _speedBoostSelf: function() {
@@ -151,8 +151,8 @@ xss.game.Powerup.prototype = {
             var index = clients[i].model.index,
                 snake = clients[i].snake;
             snake.speed += delta;
-            room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
-            room.buffer(xss.EVENT_SNAKE_ACTION, [index, label]);
+            room.buffer(xss.NC_SNAKE_SPEED, [index, snake.speed]);
+            room.buffer(xss.NC_SNAKE_ACTION, [index, label]);
         }
         room.flush();
 
@@ -161,7 +161,7 @@ xss.game.Powerup.prototype = {
                 var index = clients[i].model.index,
                     snake = clients[i].snake;
                 snake.speed -= delta;
-                room.buffer(xss.EVENT_SNAKE_SPEED, [index, snake.speed]);
+                room.buffer(xss.NC_SNAKE_SPEED, [index, snake.speed]);
             }
             room.flush();
         });
@@ -191,7 +191,7 @@ xss.game.Powerup.prototype = {
             game.spawner.spawn(type);
         };
 
-        game.room.emit(xss.EVENT_SNAKE_ACTION, [index, message]);
+        game.room.emit(xss.NC_SNAKE_ACTION, [index, message]);
 
         for (var i = 0; i < amount; i++) {
             setTimeout(spawn, i * 100);
@@ -215,8 +215,8 @@ xss.game.Powerup.prototype = {
         for (var i = 0, m = clients.length; i < m; i++) {
             snake = clients[i].snake;
             snake.reverse();
-            room.buffer(xss.EVENT_SNAKE_ACTION, [i, 'Reverse']);
-            room.buffer(xss.EVENT_SNAKE_UPDATE, [i, snake.parts, snake.direction]);
+            room.buffer(xss.NC_SNAKE_ACTION, [i, 'Reverse']);
+            room.buffer(xss.NC_SNAKE_UPDATE, [i, snake.parts, snake.direction]);
         }
         room.flush();
     },
@@ -249,8 +249,8 @@ xss.game.Powerup.prototype = {
             var index = clients[i].model.index,
                 snake = clients[i].snake;
             snake.size = Math.max(1, snake.size + delta);
-            room.buffer(xss.EVENT_SNAKE_ACTION, [index, message]);
-            room.buffer(xss.EVENT_SNAKE_SIZE, [index, snake.size]);
+            room.buffer(xss.NC_SNAKE_ACTION, [index, message]);
+            room.buffer(xss.NC_SNAKE_SIZE, [index, snake.size]);
         }
         room.flush();
     }

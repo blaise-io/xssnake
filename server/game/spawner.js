@@ -40,9 +40,9 @@ xss.game.Spawner.prototype = {
         data = [type, index, spawn.location];
 
         if (buffer) {
-            game.room.buffer(xss.EVENT_GAME_SPAWN, data);
+            game.room.buffer(xss.NC_GAME_SPAWN, data);
         } else {
-            game.room.emit(xss.EVENT_GAME_SPAWN, data);
+            game.room.emit(xss.NC_GAME_SPAWN, data);
         }
 
         return spawn;

@@ -35,7 +35,7 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
     emitPlayers: function() {
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].emit(
-                xss.EVENT_ROOM_PLAYERS_SERIALIZE,
+                xss.NC_ROOM_PLAYERS_SERIALIZE,
                 this.serialize(this.players[i])
             );
         }
@@ -55,7 +55,7 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
      */
     flush: function() {
         if (this.emitBuffer.length > 1) {
-            this.emit(xss.EVENT_COMBI, this.emitBuffer);
+            this.emit(xss.NC_COMBI, this.emitBuffer);
         } else if (this.emitBuffer.length) {
             this.emit(this.emitBuffer[0][0], this.emitBuffer[0][1]);
         }

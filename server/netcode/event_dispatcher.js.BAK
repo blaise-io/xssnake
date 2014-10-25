@@ -46,11 +46,11 @@ xss.netcode.Dispatcher.prototype = {
         var map = this._eventMap;
         if (!map) {
             map = {};
-            map[xss.EVENT_PING]         = this._eventPong.bind(this);
-            map[xss.EVENT_ROOM_START]   = this._eventRoomStart.bind(this);
-            map[xss.EVENT_CHAT_MESSAGE] = this._eventChat.bind(this);
-            map[xss.EVENT_SNAKE_UPDATE] = this._eventSnakeUpdate.bind(this);
-            map[xss.EVENT_GAME_STATE]   = this._eventRequestGameState.bind(this);
+            map[xss.NC_PING]         = this._eventPong.bind(this);
+            map[xss.NC_ROOM_START]   = this._eventRoomStart.bind(this);
+            map[xss.NC_CHAT_MESSAGE] = this._eventChat.bind(this);
+            map[xss.NC_SNAKE_UPDATE] = this._eventSnakeUpdate.bind(this);
+            map[xss.NC_GAME_STATE]   = this._eventRequestGameState.bind(this);
             this._eventMap = map;
         }
 
@@ -97,7 +97,7 @@ xss.netcode.Dispatcher.prototype = {
     _startPingInterval: function() {
         this._pingInterval = setInterval(function() {
             this.model.ping();
-            this.client.emit(xss.EVENT_PING);
+            this.client.emit(xss.NC_PING);
         }.bind(this), xss.NETCODE_PING_INTERVAL);
     },
 
@@ -106,7 +106,7 @@ xss.netcode.Dispatcher.prototype = {
      */
     _eventPong: function() {
         var rtt = this.model.pong();
-        this.client.emit(xss.EVENT_PONG, [Number(new Date()), rtt]);
+        this.client.emit(xss.NC_PONG, [Number(new Date()), rtt]);
     },
 
     /**
@@ -138,8 +138,8 @@ xss.netcode.Dispatcher.prototype = {
 
         if (room && validMessage.valid()) {
             index = this.client.model.index;
-            this.client.broadcast(xss.EVENT_CHAT_MESSAGE, [index, message]);
-            room.emit(xss.EVENT_SNAKE_ACTION, [index, 'Blah']);
+            this.client.broadcast(xss.NC_CHAT_MESSAGE, [index, message]);
+            room.emit(xss.NC_SNAKE_ACTION, [index, 'Blah']);
         }
     },
 

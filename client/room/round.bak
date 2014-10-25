@@ -9,13 +9,13 @@ xss.room.Round = function(players, level) {
     this.game = new xss.game.ClientGame(players, level);
     
     xss.event.on(
-        xss.EVENT_ROUND_COUNTDOWN,
+        xss.NC_ROUND_COUNTDOWN,
         xss.NS_ROUND,
         this.countdown.bind(this)
     );
 
     xss.event.on(
-        xss.EVENT_ROUND_START,
+        xss.NC_ROUND_START,
         xss.NS_ROUND,
         this.start.bind(this)
     );
@@ -25,11 +25,11 @@ xss.room.Round.prototype = {
 
     destruct: function() {
         xss.event.off(
-            xss.EVENT_ROUND_COUNTDOWN,
+            xss.NC_ROUND_COUNTDOWN,
             xss.NS_ROUND
         );
         xss.event.off(
-            xss.EVENT_ROUND_START,
+            xss.NC_ROUND_START,
             xss.NS_ROUND
         );
     },

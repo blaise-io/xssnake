@@ -29,21 +29,21 @@ xss.room.Options.prototype = {
     },
 
     /**
-     * @param {?} dirtyOptions
+     * @param {?} serialized
      */
-    deserialize: function(dirtyOptions) {
-        this.maxPlayers = new xss.util.Sanitizer(dirtyOptions[0])
+    deserialize: function(serialized) {
+        this.maxPlayers = new xss.util.Sanitizer(serialized[0])
             .assertRange(1, xss.ROOM_CAPACITY)
             .getValueOr(xss.ROOM_CAPACITY);
 
-        this.levelset = new xss.util.Sanitizer(dirtyOptions[1])
+        this.levelset = new xss.util.Sanitizer(serialized[1])
             .assertRange(0, xss.levelSetRegistry.levelsets.length - 1)
             .getValueOr(0);
 
-        this.isQuickGame = Boolean(dirtyOptions[2]);
-        this.hasPowerups = Boolean(dirtyOptions[3]);
-        this.isPrivate   = Boolean(dirtyOptions[4]);
-        this.isXSS       = Boolean(dirtyOptions[5]);
+        this.isQuickGame = Boolean(serialized[2]);
+        this.hasPowerups = Boolean(serialized[3]);
+        this.isPrivate   = Boolean(serialized[4]);
+        this.isXSS       = Boolean(serialized[5]);
     }
 
 };

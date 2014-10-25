@@ -53,7 +53,7 @@ xss.game.Game.prototype = {
 
         this.spawnSnakes();
 
-        this.server.emitter.on(xss.SEVENT_SERVER_TICK, this._mainGameLoopBound);
+        this.server.emitter.on(xss.SE_SERVER_TICK, this._mainGameLoopBound);
         this.model.started = true;
         this.spawner.spawn(xss.SPAWN_APPLE);
         if (this.options[xss.FIELD_POWERUPS]) {
@@ -63,8 +63,8 @@ xss.game.Game.prototype = {
 
     stop: function() {
         var pubsub = this.server.emitter;
-        if (pubsub.listeners(xss.SEVENT_SERVER_TICK)) {
-            pubsub.removeListener(xss.SEVENT_SERVER_TICK, this._mainGameLoopBound);
+        if (pubsub.listeners(xss.SE_SERVER_TICK)) {
+            pubsub.removeListener(xss.SE_SERVER_TICK, this._mainGameLoopBound);
         }
     },
 
@@ -155,7 +155,7 @@ xss.game.Game.prototype = {
     bufferSnakesState: function(client) {
         for (var i = 0, m = this.snakes.length; i < m; i++) {
             var data = [i, this.snakes[i].parts, this.snakes[i].direction];
-            client.buffer(xss.EVENT_SNAKE_UPDATE, data);
+            client.buffer(xss.NC_SNAKE_UPDATE, data);
         }
     },
 
@@ -169,7 +169,7 @@ xss.game.Game.prototype = {
         for (var i = 0, m = spawns.length; i < m; i++) {
             var spawn = spawns[i];
             if (null !== spawn) {
-                client.buffer(xss.EVENT_GAME_SPAWN, [
+                client.buffer(xss.NC_GAME_SPAWN, [
                     spawn.type, i, spawn.location
                 ]);
             }
@@ -183,9 +183,9 @@ xss.game.Game.prototype = {
     hitApple: function(client, index) {
         var size = client.snake.size += 3;
 
-        this.room.buffer(xss.EVENT_GAME_DESPAWN, index);
-        this.room.buffer(xss.EVENT_SNAKE_SIZE, [client.model.index, size]);
-        this.room.buffer(xss.EVENT_SNAKE_ACTION, [client.model.index, 'Nom']);
+        this.room.buffer(xss.NC_GAME_DESPAWN, index);
+        this.room.buffer(xss.NC_SNAKE_SIZE, [client.model.index, size]);
+        this.room.buffer(xss.NC_SNAKE_ACTION, [client.model.index, 'Nom']);
         this.room.rounds.score.bufferApplePoints(client);
         this.room.flush();
 
@@ -200,7 +200,7 @@ xss.game.Game.prototype = {
      * @param {number} index
      */
     hitPowerup: function(client, index) {
-        this.room.emit(xss.EVENT_GAME_DESPAWN, index);
+        this.room.emit(xss.NC_GAME_DESPAWN, index);
         return new xss.game.Powerup(this, client);
     },
 
@@ -345,7 +345,7 @@ xss.game.Game.prototype = {
      */
     _emitSnakeRoom: function(client) {
         var data = [client.model.index, client.snake.parts, client.snake.direction];
-        this.room.emit(xss.EVENT_SNAKE_UPDATE, data);
+        this.room.emit(xss.NC_SNAKE_UPDATE, data);
     },
 
     /**
@@ -358,7 +358,7 @@ xss.game.Game.prototype = {
             client.snake.parts,
             client.snake.direction
         ];
-        client.broadcast(xss.EVENT_SNAKE_UPDATE, data);
+        client.broadcast(xss.NC_SNAKE_UPDATE, data);
     },
 
     /**
@@ -423,7 +423,7 @@ xss.game.Game.prototype = {
         }
         parts = parts || snake.parts;
         snake.crashed = true;
-        this.room.emit(xss.EVENT_SNAKE_CRASH, [
+        this.room.emit(xss.NC_SNAKE_CRASH, [
             client.model.index, parts, snake.limbo.location
         ]);
     },

@@ -44,8 +44,8 @@ xss.Chat.prototype = {
     animDuration: 200,
 
     destruct: function() {
-        xss.event.off(xss.EVENT_CHAT_MESSAGE, xss.NS_CHAT);
-        xss.event.off(xss.EVENT_CHAT_NOTICE, xss.NS_CHAT);
+        xss.event.off(xss.NC_CHAT_MESSAGE, xss.NS_CHAT);
+        xss.event.off(xss.NC_CHAT_NOTICE, xss.NS_CHAT);
         xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_CHAT);
 
         this._deleteShapes();
@@ -104,13 +104,13 @@ xss.Chat.prototype = {
     },
 
     send: function(str) {
-        xss.player.emit(xss.EVENT_CHAT_MESSAGE, str);
+        xss.player.emit(xss.NC_CHAT_MESSAGE, str);
     },
 
     _bindEvents: function() {
         var ns = xss.NS_CHAT;
-        xss.event.on(xss.EVENT_CHAT_MESSAGE, ns, this._chatMessage.bind(this));
-        xss.event.on(xss.EVENT_CHAT_NOTICE, ns, this._chatNotice.bind(this));
+        xss.event.on(xss.NC_CHAT_MESSAGE, ns, this._chatMessage.bind(this));
+        xss.event.on(xss.NC_CHAT_NOTICE, ns, this._chatNotice.bind(this));
         xss.event.on(xss.DOM_EVENT_KEYDOWN, ns, this._chatFocus.bind(this));
     },
 

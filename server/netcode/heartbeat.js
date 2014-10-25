@@ -16,7 +16,7 @@ xss.netcode.ServerHeartbeat.prototype = {
 
     destruct: function() {
         this.player.emitter.removeAllListeners([
-            xss.EVENT_PING, xss.EVENT_PONG
+            xss.NC_PING, xss.NC_PONG
         ]);
         this.player = null;
     },
@@ -27,13 +27,13 @@ xss.netcode.ServerHeartbeat.prototype = {
     },
 
     bindEvents: function() {
-       this.player.emitter.on(xss.EVENT_PING, this.ping.bind(this));
-       this.player.emitter.on(xss.EVENT_PONG, this.pong.bind(this));
+       this.player.emitter.on(xss.NC_PING, this.ping.bind(this));
+       this.player.emitter.on(xss.NC_PONG, this.pong.bind(this));
     },
 
     ping: function() {
         this.pingSent = +new Date();
-        this.player.emit(xss.EVENT_PONG);
+        this.player.emit(xss.NC_PONG);
     },
 
     pong: function() {

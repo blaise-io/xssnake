@@ -165,7 +165,7 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
             var data, sync;
             sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
             data = [this.parts.slice(-sync), direction];
-            xss.player.emit(xss.EVENT_SNAKE_UPDATE, data);
+            xss.player.emit(xss.NC_SNAKE_UPDATE, data);
         }
     },
 

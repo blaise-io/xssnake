@@ -36,9 +36,9 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
         this.connection.onerror = null;
         this.connection.onmessage = null;
 
-        xss.event.off(xss.EVENT_PING, xss.NS_SOCKET);
-        xss.event.off(xss.EVENT_COMBI, xss.NS_SOCKET);
-        xss.event.off(xss.EVENT_PONG, xss.NS_SOCKET);
+        xss.event.off(xss.NC_PING, xss.NS_SOCKET);
+        xss.event.off(xss.NC_COMBI, xss.NS_SOCKET);
+        xss.event.off(xss.NC_PONG, xss.NS_SOCKET);
 
         // Close explicitely when CONNECTING and OPEN.
         if (this.connection.readyState <= 1) {
@@ -67,13 +67,17 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
     },
 
     /**
-     * @param {string} name
-     * @param {*=} data
+     * Send messages as [event, eventdata1, eventdata2]
+     * @param {number} event
+     * @param {Array.<string|number>=} data
      */
-    emit: function(name, data) {
-        var emit = [name];
+    emit: function(event, data) {
+        var emit;
         if (data) {
-            emit.push(data);
+            emit = data;
+            emit.unshift(event);
+        } else {
+            emit = [event];
         }
         console.log('-->', emit);
         this.connection.send(JSON.stringify(emit));
@@ -85,11 +89,11 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
     onmessage: function(ev) {
         var data = JSON.parse(ev.data);
         console.log('<--', data);
-        xss.event.trigger(data[0], data[1]);
+        xss.event.trigger(data[0], data.slice(1));
     },
 
     bindEvents: function() {
-        xss.event.on(xss.EVENT_COMBI, xss.NS_SOCKET, this._combinedEvents.bind(this));
+        xss.event.on(xss.NC_COMBI, xss.NS_SOCKET, this._combinedEvents.bind(this));
     },
 
     /**

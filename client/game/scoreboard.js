@@ -22,7 +22,7 @@ xss.ScoreBoard.prototype = {
     animDuration: 200,
 
     destruct: function() {
-        xss.event.off(xss.EVENT_SCORE_UPDATE, xss.NS_SCORE);
+        xss.event.off(xss.NC_SCORE_UPDATE, xss.NS_SCORE);
         for (var k in this.shapes) {
             if (this.shapes.hasOwnProperty(k)) {
                 xss.shapes[k] = null;
@@ -60,7 +60,7 @@ xss.ScoreBoard.prototype = {
      * @private
      */
     _bindEvents: function() {
-        xss.event.on(xss.EVENT_SCORE_UPDATE, xss.NS_SCORE, this.updateScore.bind(this));
+        xss.event.on(xss.NC_SCORE_UPDATE, xss.NS_SCORE, this.updateScore.bind(this));
     },
 
     /**

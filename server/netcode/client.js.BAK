@@ -84,7 +84,7 @@ xss.netcode.Client.prototype = {
     flush: function() {
         var emitBuffer = this.socket.model.emitBuffer;
         if (emitBuffer.length > 1) {
-            this.emit(xss.EVENT_COMBI, emitBuffer);
+            this.emit(xss.NC_COMBI, emitBuffer);
         } else if (emitBuffer.length) {
             this.emit(emitBuffer[0][0], emitBuffer[0][1]);
         }

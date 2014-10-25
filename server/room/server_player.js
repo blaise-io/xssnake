@@ -74,19 +74,19 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
     },
 
     bindEvents: function() {
-        this.emitter.on(xss.EVENT_PLAYER_NAME, this.setName.bind(this));
+        this.emitter.on(xss.NC_PLAYER_NAME, this.setName.bind(this));
     },
 
     unbindEvents: function() {
-        this.emitter.removeAllListeners(xss.EVENT_PLAYER_NAME);
+        this.emitter.removeAllListeners(xss.NC_PLAYER_NAME);
     },
 
     /**
-     * @param {?} dirtyName
+     * @param {?} serialized
      * @return {string}
      */
-    setName: function(dirtyName) {
-        this.name = new xss.util.Sanitizer(dirtyName)
+    setName: function(serialized) {
+        this.name = new xss.util.Sanitizer(serialized[0])
             .assertStringOfLength(2, 20)
             .getValueOr(xss.util.getRandomName());
         return this.name;
@@ -94,17 +94,20 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
 
     /**
      * Send data to client
-     * @param {string} name
-     * @param {*=} data
+     * @param {number} event
+     * @param {Array.<string|number|Array>=} data
      */
-    emit: function(name, data) {
-        var emit = [name];
+    emit: function(event, data) {
+        var emit;
 
         if (!this.heartbeat.isAlive()) {
             this.disconnect();
         } else if (this.connection) {
             if (data) {
-                emit.push(data);
+                emit = data;
+                emit.unshift(event);
+            } else {
+                emit = [event];
             }
             console.log('-->', this.name, JSON.stringify(emit));
             this.connection.send(JSON.stringify(emit), function(error) {
@@ -141,7 +144,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
      */
     flush: function() {
         if (this.emitBuffer.length > 1) {
-            this.emit(xss.EVENT_COMBI, this.emitBuffer);
+            this.emit(xss.NC_COMBI, this.emitBuffer);
         } else if (this.emitBuffer.length) {
             this.emit(this.emitBuffer[0][0], this.emitBuffer[0][1]);
         }

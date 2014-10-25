@@ -18,9 +18,9 @@ xss.room.ServerRoomManager.prototype = {
         this.removeAllRooms();
         this.matcher.destruct();
         this.server.emitter.removeAllListeners([
-            xss.EVENT_ROOM_STATUS,
-            xss.EVENT_ROOM_JOIN_KEY,
-            xss.EVENT_ROOM_JOIN_MATCHING
+            xss.NC_ROOM_STATUS,
+            xss.NC_ROOM_JOIN_KEY,
+            xss.NC_ROOM_JOIN_MATCHING
         ]);
     },
 
@@ -28,17 +28,17 @@ xss.room.ServerRoomManager.prototype = {
         var emitter = this.server.emitter;
 
 //        emitter.on(
-//            xss.EVENT_ROOM_STATUS,
+//            xss.NC_ROOM_STATUS,
 //            this.returnRoomStatus.bind(this)
 //        );
 //
 //        emitter.on(
-//            xss.EVENT_ROOM_JOIN_KEY,
+//            xss.NC_ROOM_JOIN_KEY,
 //            this.joinRoomKey.bind(this)
 //        );
 
         emitter.on(
-            xss.EVENT_ROOM_JOIN_MATCHING,
+            xss.NC_ROOM_JOIN_MATCHING,
             this.joinMatchingRoom.bind(this)
         );
     },
@@ -79,7 +79,7 @@ xss.room.ServerRoomManager.prototype = {
 //                room = this.rooms[key];
 //                room.addPlayer(client);
 //            } else {
-//                client.emit(xss.EVENT_ROOM_STATUS, data); // Nope
+//                client.emit(xss.NC_ROOM_STATUS, data); // Nope
 //            }
 //        }
 //    },
@@ -173,7 +173,7 @@ xss.room.ServerRoomManager.prototype = {
 //     */
 //    returnRoomStatus: function(key, client) {
 //        var data = this.getRoomData(key);
-//        client.emit(xss.EVENT_ROOM_STATUS, data);
+//        client.emit(xss.NC_ROOM_STATUS, data);
 //    },
 
 //    /**

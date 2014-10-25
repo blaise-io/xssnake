@@ -25,11 +25,11 @@ xss.netcode.ClientHeartbeat.prototype = {
     destruct: function() {
         this.player = null;
         clearInterval(this.interval);
-        xss.event.off(xss.EVENT_PONG, xss.NS_HEARTBEAT);
+        xss.event.off(xss.NC_PONG, xss.NS_HEARTBEAT);
     },
 
     bindEvents: function() {
-        xss.event.on(xss.EVENT_PONG, xss.NS_HEARTBEAT, this.pong.bind(this));
+        xss.event.on(xss.NC_PONG, xss.NS_HEARTBEAT, this.pong.bind(this));
     },
 
     ping: function() {
@@ -38,12 +38,12 @@ xss.netcode.ClientHeartbeat.prototype = {
             return this.player.timeout();
         }
         this.pingSent = +new Date();
-        this.player.emit(xss.EVENT_PING);
+        this.player.emit(xss.NC_PING);
     },
 
     pong: function() {
         this.latency = (+this.lastResponse - this.pingSent) / 2;
-        this.player.emit(xss.EVENT_PONG);
+        this.player.emit(xss.NC_PONG);
         this.pingSent = null;
     }
 

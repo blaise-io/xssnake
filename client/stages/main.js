@@ -39,14 +39,14 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
                 dialog.setBody('Getting room properties...');
                 window.setTimeout(function() {
                     xss.player.emit(
-                        xss.EVENT_ROOM_STATUS,
+                        xss.NC_ROOM_STATUS,
                         xss.util.hash(xss.HASH_ROOM)
                     );
                 }, 500);
             }, 500);
         });
 
-        xss.event.once(xss.EVENT_ROOM_STATUS, xss.NS_STAGES, function(data) {
+        xss.event.once(xss.NC_ROOM_STATUS, xss.NS_STAGES, function(data) {
             dialog.destruct();
             if (!data[0]) {
                 xss.util.error(xss.room.ClientRoom.prototype.errorCodeToStr(data[1]));

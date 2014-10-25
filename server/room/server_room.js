@@ -42,8 +42,11 @@ xss.room.ServerRoom.prototype = {
         return !this.isFull();
     },
 
+    /**
+     * @returns {Array.<string>}
+     */
     serialize: function() {
-        return this.key;
+        return [this.key];
 
 //        var rounds, clients, capacity, isprivate;
 //
@@ -53,7 +56,7 @@ xss.room.ServerRoom.prototype = {
 //        isprivate = this.options.isPrivate;
 //
 //        for (var i = 0, m = clients.length; i < m; i++) {
-//            clients[i].emit(xss.EVENT_ROOM_SERIALIZE, [
+//            clients[i].emit(xss.NC_ROOM_SERIALIZE, [
 //                i,
 //                this.seed,
 //                this.key,
@@ -86,9 +89,9 @@ xss.room.ServerRoom.prototype = {
 
         this.players.emitPlayers();
 
-        player.emit(xss.EVENT_ROOM_SERIALIZE, this.serialize());
-        player.emit(xss.EVENT_ROOM_OPTIONS_SERIALIZE, this.options.serialize());
-        player.emit(xss.EVENT_ROOM_ROUND_SERIALIZE, this.rounds.round.serialize());
+        player.emit(xss.NC_ROOM_SERIALIZE, this.serialize());
+        player.emit(xss.NC_ROOM_OPTIONS_SERIALIZE, this.options.serialize());
+        player.emit(xss.NC_ROOM_ROUND_SERIALIZE, this.rounds.round.serialize());
 
 //        this.rounds.detectAutoStart();
 
@@ -110,7 +113,7 @@ xss.room.ServerRoom.prototype = {
 //     * @param {xss.netcode.Client} client
 //     */
 //    removeClient: function(client) {
-//        this.emit(xss.EVENT_CHAT_NOTICE, [
+//        this.emit(xss.NC_CHAT_NOTICE, [
 //            xss.NOTICE_DISCONNECT, client.model.index
 //        ]);
 //

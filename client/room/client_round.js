@@ -17,13 +17,13 @@ xss.util.extend(xss.room.ClientRound.prototype, xss.room.Round.prototype);
 xss.util.extend(xss.room.ClientRound.prototype, {
 
     bindEvents: function() {
-        xss.event.on(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROUND, this.updatePlayers.bind(this));
-        xss.event.on(xss.EVENT_ROOM_ROUND_SERIALIZE, xss.NS_ROUND, this.updateRound.bind(this));
+        xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROUND, this.updatePlayers.bind(this));
+        xss.event.on(xss.NC_ROOM_ROUND_SERIALIZE, xss.NS_ROUND, this.updateRound.bind(this));
     },
 
     unbindEvents: function() {
-        xss.event.off(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROUND);
-        xss.event.off(xss.EVENT_ROOM_ROUND_SERIALIZE, xss.NS_ROUND);
+        xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROUND);
+        xss.event.off(xss.NC_ROOM_ROUND_SERIALIZE, xss.NS_ROUND);
     },
 
     updatePlayers: function() {

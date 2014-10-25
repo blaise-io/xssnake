@@ -42,7 +42,7 @@ xss.game.Crash.prototype = {
         if (this.opponent) {
             data.push(this.opponent.model.index);
         }
-        this.client.room.emit(xss.EVENT_CHAT_NOTICE, data);
+        this.client.room.emit(xss.NC_CHAT_NOTICE, data);
     }
 
 };

@@ -30,27 +30,27 @@ xss.room.ClientRoom.prototype = {
      * @private
      */
     bindEvents: function() {
-        xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this.setRoom.bind(this));
-        xss.event.on(xss.EVENT_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM, this.setOptions.bind(this));
-        xss.event.on(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.setPlayers.bind(this));
+        xss.event.on(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM, this.setRoom.bind(this));
+        xss.event.on(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM, this.setOptions.bind(this));
+        xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.setPlayers.bind(this));
 
         //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
-        //xss.event.on(xss.EVENT_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
-        //xss.event.on(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
-        //xss.event.on(xss.EVENT_XSS_REQ, xss.NS_ROOM, this._requestXss.bind(this));
-        //xss.event.on(xss.EVENT_XSS_RES, xss.NS_ROOM, this._evalXss.bind(this));
+        //xss.event.on(xss.NC_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
+        //xss.event.on(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
+        //xss.event.on(xss.NC_XSS, xss.NS_ROOM, this._requestXss.bind(this));
+        //xss.event.on(xss.NC_XSS, xss.NS_ROOM, this._evalXss.bind(this));
     },
 
     unbindEvents: function() {
-        xss.event.off(xss.EVENT_ROOM_SERIALIZE, xss.NS_ROOM);
-        xss.event.off(xss.EVENT_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM);
-        xss.event.off(xss.EVENT_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
+        xss.event.off(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM);
+        xss.event.off(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM);
+        xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
         //xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM);
     },
 
-    setRoom: function(key) {
-        this.key = key;
-        xss.util.hash(xss.HASH_ROOM, key);
+    setRoom: function(serialized) {
+        this.key = serialized[0];
+        xss.util.hash(xss.HASH_ROOM, this.key);
     },
 
     setOptions: function(insaneOptions) {
@@ -132,7 +132,7 @@ xss.room.ClientRoom.prototype = {
 //     * @private
 //     */
 //    _requestXss: function() {
-//        xss.player.emit(xss.EVENT_XSS_REQ, xss.flow.getData().xss);
+//        xss.player.emit(xss.NC_XSS, xss.flow.getData().xss);
 //    },
 //
 //    /**
@@ -190,7 +190,7 @@ xss.room.ClientRoom.prototype = {
 //    _handleStartKey: function() {
 //        var settings = {
 //            type  : xss.Dialog.TYPE.CONFIRM,
-//            ok    : function() { xss.player.emit(xss.EVENT_ROOM_START); },
+//            ok    : function() { xss.player.emit(xss.NC_ROOM_START); },
 //            cancel: this._restoreDialog.bind(this)
 //        };
 //
