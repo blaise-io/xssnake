@@ -110,7 +110,7 @@ xss.game.Powerup.prototype = {
      */
     _resetState: function(delay, callback) {
         var timer = setTimeout(callback, delay);
-        this.game.timers.push(timer);
+        this.game.timeouts.push(timer);
     },
 
     _speedIncPerm: function() {

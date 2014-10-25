@@ -23,6 +23,12 @@ xss.util.extend(xss.room.ClientPlayer.prototype, {
         this.snake = new xss.game.ClientSnake(
             index, this.local, this.name, level
         );
+    },
+
+    unsetSnake: function() {
+        if (this.snake) {
+            this.snake.destruct();
+        }
     }
 
 });

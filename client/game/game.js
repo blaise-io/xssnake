@@ -7,9 +7,7 @@
  * @constructor
  */
 xss.game.ClientGame = function(players, level) {
-    this.players = players;
-    this.players.setSnakes(level);
-    this.players.showMeta();
+    this.setPlayers(players);
 
     this.level = level;
     this.level.paint();
@@ -18,12 +16,43 @@ xss.game.ClientGame = function(players, level) {
 
     this.started = false;
 
-    this._bindEvents();
+    this.bindEvents();
 };
 
 xss.game.ClientGame.prototype = {
 
-    _bindEvents: function() {
+    destruct: function() {
+        xss.event.off(xss.PUB_GAME_TICK, xss.NS_GAME);
+        //xss.event.off(xss.NC_GAME_SPAWN, xss.NS_GAME);
+        //xss.event.off(xss.NC_SNAKE_UPDATE, xss.NS_GAME);
+        //xss.event.off(xss.NC_SNAKE_SIZE, xss.NS_GAME);
+        //xss.event.off(xss.NC_SNAKE_CRASH, xss.NS_GAME);
+        //xss.event.off(xss.NC_SNAKE_ACTION, xss.NS_GAME);
+        //xss.event.off(xss.NC_SNAKE_SPEED, xss.NS_GAME);
+
+        this.players = null;
+        this.level = null;
+        this.spawnables.destruct();
+    },
+
+    updatePlayers: function(players) {
+        this.players.unsetSnakes();
+        this.setPlayers(players);
+    },
+
+    setPlayers: function(players) {
+        this.players = players;
+        this.players.setSnakes(this.level);
+        this.players.showMeta();
+    },
+
+    updateLevel: function(level) {
+        this.level.destruct();
+        this.level = level;
+        this.level.paint();
+    },
+
+    bindEvents: function() {
         var ns = xss.NS_GAME;
 
         xss.event.on(xss.PUB_GAME_TICK, ns, this._clientGameLoop.bind(this));
@@ -55,20 +84,6 @@ xss.game.ClientGame.prototype = {
         this.started = true;
         this.players.hideMeta();
         this.players.addControls();
-    },
-
-    destruct: function() {
-        xss.event.off(xss.PUB_GAME_TICK, xss.NS_GAME);
-        xss.event.off(xss.NC_GAME_SPAWN, xss.NS_GAME);
-        xss.event.off(xss.NC_SNAKE_UPDATE, xss.NS_GAME);
-        xss.event.off(xss.NC_SNAKE_SIZE, xss.NS_GAME);
-        xss.event.off(xss.NC_SNAKE_CRASH, xss.NS_GAME);
-        xss.event.off(xss.NC_SNAKE_ACTION, xss.NS_GAME);
-        xss.event.off(xss.NC_SNAKE_SPEED, xss.NS_GAME);
-
-        this.players.destruct();
-        this.spawnables.destruct();
-        this.level.destruct();
     },
 
     _evSpawn: function(data) {

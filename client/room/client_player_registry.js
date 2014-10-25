@@ -14,21 +14,29 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, xss.room.PlayerRegistry
 xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
 
     destruct: function() {
-        this.hideMeta();
         this.localPlayer = null;
-        xss.room.ClientPlayerRegistry.destruct.call(this);
+        xss.room.PlayerRegistry.prototype.destruct().call(this);
+    },
+
+    /**
+     * @param {Array.<Array>} serializedPlayers
+     */
+    deserialize: function(serializedPlayers) {
+        this.destruct();
+        for (var i = 0, m = serializedPlayers.length; i < m; i++) {
+            this.deserializePlayer(serializedPlayers[i]);
+        }
     },
 
     /**
      * @param {Array} serialized
      */
-    deserialize: function(serialized) {
-        var player;
-        this.players.length = 0;
-        for (var i = 0, m = serialized.length; i < m; i++) {
-            player = new xss.room.ClientPlayer();
-            player.deserialize(serialized[i]);
-            this.add(player);
+    deserializePlayer: function(serialized) {
+        var player = new xss.room.ClientPlayer();
+        player.deserialize(serialized);
+        this.add(player);
+        if (player.local) {
+            this.localPlayer = player;
         }
     },
 
@@ -38,6 +46,12 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     setSnakes: function(level) {
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].setSnake(i, level);
+        }
+    },
+
+    unsetSnakes: function() {
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            this.players[i].unsetSnake();
         }
     },
 

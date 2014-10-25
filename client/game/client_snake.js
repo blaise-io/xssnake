@@ -37,7 +37,10 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
 
     destruct: function() {
         this.crash();
-        this.controls.destruct();
+        this.removeNameAndDirection();
+        if (this.controls) {
+            this.controls.destruct();
+        }
         xss.shapes[this.getShape()] = null;
 
         for (var k in this.shapeKeys) {
@@ -93,7 +96,7 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     /**
      * @param {number} delta
      * @param shift
-     * @param {Array.<xss.game.Player>} players
+     * @param {Array.<xss.room.Player>} players
      */
     handleNextMove: function(delta, shift, players) {
         this.elapsed += delta;
@@ -126,7 +129,9 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
      */
     crash: function(part) {
         this.crashed = true;
-        this.controls.destruct();
+        if (this.controls) {
+            this.controls.destruct();
+        }
         this.updateShape();
         if (!this._exploded) {
             this._exploded = true;

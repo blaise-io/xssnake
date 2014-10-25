@@ -7,9 +7,9 @@
  * @extends {xss.room.Round}
  */
 xss.room.ClientRound = function(players, options) {
-    xss.room.Round.apply(this, arguments);
-    /** @type {xss.game.ClientGame} */
-    this.game = null;
+    xss.room.Round.call(this, players, options);
+    this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
+    this.game = new xss.game.ClientGame(this.players, this.level);
     this.bindEvents();
 };
 
@@ -26,21 +26,20 @@ xss.util.extend(xss.room.ClientRound.prototype, {
         xss.event.off(xss.NC_ROOM_ROUND_SERIALIZE, xss.NS_ROUND);
     },
 
-    updatePlayers: function() {
-        if (this.levelset && this.level) {
-            this.updateGame();
-        }
+    getLevel: function() {
+        var levelset = xss.levelSetRegistry.getLevelset(this.levelsetIndex);
+        return levelset.getLevel(this.levelIndex);
     },
 
-    updateRound: function(serialized) {
-        this.deserialize(serialized);
-        this.updateGame();
+    updatePlayers: function(serializedPlayers) {
+        this.players.deserialize(serializedPlayers);
+        this.game.updatePlayers(this.players);
     },
 
-    updateGame: function() {
-        this.levelset = xss.levelSetRegistry.getLevelset(this.levelsetIndex);
-        this.level = this.levelset.getLevel(this.levelIndex);
-        this.game = new xss.game.ClientGame(this.players, this.level);
+    updateRound: function(serializedRound) {
+        this.deserialize(serializedRound);
+        this.level = this.getLevel();
+        this.game.updateLevel(this.level);
     }
 
 });

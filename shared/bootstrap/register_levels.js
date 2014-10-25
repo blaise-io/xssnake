@@ -4,7 +4,8 @@ xss.bootstrap.registerLevels = function(continueFn) {
     var basic, game, moving, maze;
 
     basic = new xss.levelset.Basic();
-    basic.register(xss.levels.ShiftedLineLevel);
+    //basic.register(xss.levels.ShiftedLineLevel);
+    basic.register(xss.levels.LinesLevel);
     basic.register(xss.levels.LinesLevel);
 
     //game = new xss.levelset.Game();

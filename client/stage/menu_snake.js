@@ -5,6 +5,7 @@
  */
 xss.stage.MenuSnake = function() {
     this.snake = null;
+    this.timeouts = [];
     this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
     this.level.preload(this.construct.bind(this));
 };
@@ -12,13 +13,23 @@ xss.stage.MenuSnake = function() {
 xss.stage.MenuSnake.prototype = {
 
     construct: function() {
-        this.snake = new xss.game.ClientSnake(0, false, '', this.level);
-        this.snake.addControls();
-        this.snake.showDirection();
-        window.setTimeout(this.move.bind(this), 1500);
+        var snake;
+
+        snake = new xss.game.ClientSnake(0, false, '', this.level);
+        snake.addControls();
+        snake.showDirection();
+        snake.removeNameAndDirection();
+
+        this.snake = snake;
+        this.timeouts.push(
+            setTimeout(this.move.bind(this), 1500)
+        );
     },
 
     destruct: function() {
+        for (var i = 0, m = this.timeouts.length; i < m; i++) {
+            clearTimeout(this.timeouts[i]);
+        }
         this.snake.destruct();
         this.level.destruct();
     },
@@ -26,18 +37,21 @@ xss.stage.MenuSnake.prototype = {
     move: function() {
         var nextpos, snake = this.snake;
 
-        snake.removeNameAndDirection();
         snake.limbo = null;
 
         nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {
             snake.crash();
-            window.setTimeout(snake.destruct.bind(snake), 1000);
+            this.timeouts.push(
+                setTimeout(snake.destruct.bind(snake), 1000)
+            );
         } else {
             snake.elapsed = 1000; // Trigger move.
             snake.move(snake.getNextPosition());
             snake.updateShape();
-            window.setTimeout(this.move.bind(this), 100);
+            this.timeouts.push(
+                setTimeout(this.move.bind(this), 100)
+            );
         }
     },
 

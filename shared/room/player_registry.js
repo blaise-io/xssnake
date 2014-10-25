@@ -4,7 +4,7 @@
  * @constructor
  */
 xss.room.PlayerRegistry = function() {
-    /** @type {xss.room.Player} */
+    /** @type {Array.<xss.room.Player>} */
     this.players = [];
 };
 

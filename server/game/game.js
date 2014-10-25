@@ -18,7 +18,7 @@ xss.game.Game = function(round, levelIndex) {
     this.model = new xss.model.Game();
 
     /** @type {Array.<number>} */
-    this.timers = [];
+    this.timeouts = [];
 
     /** @type {Array.<xss.game.Snake>} */
     this.snakes = [];
@@ -31,8 +31,8 @@ xss.game.Game.prototype = {
     destruct: function() {
         this.stop();
         this.spawner.destruct();
-        for (var i = 0, m = this.timers.length; i < m; i++) {
-            clearTimeout(this.timers[i]);
+        for (var i = 0, m = this.timeouts.length; i < m; i++) {
+            clearTimeout(this.timeouts[i]);
         }
 
         this.room = null;
@@ -314,7 +314,7 @@ xss.game.Game.prototype = {
     _spawnSomethingAfterDelay: function() {
         var delay, range = xss.SPAWN_SOMETHING_EVERY;
         delay = xss.util.randomRange(range[0] * 1000, range[1] * 1000);
-        this.timers.push(
+        this.timeouts.push(
             setTimeout(this._spawnSomething.bind(this), delay)
         );
     },

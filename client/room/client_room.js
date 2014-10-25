@@ -12,6 +12,8 @@ xss.room.ClientRoom = function() {
 
     this.players = new xss.room.ClientPlayerRegistry();
     this.options = new xss.room.ClientOptions();
+
+    /** @typedef {xss.room.ClientRound} */
     this.round = new xss.room.ClientRound(this.players, this.options);
 
     this.bindEvents();
@@ -26,13 +28,11 @@ xss.room.ClientRoom.prototype = {
         this.options.destruct();
     },
 
-    /**
-     * @private
-     */
     bindEvents: function() {
         xss.event.on(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM, this.setRoom.bind(this));
-        xss.event.on(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM, this.setOptions.bind(this));
-        xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.setPlayers.bind(this));
+        xss.event.on(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM, this.updateOptions.bind(this));
+        xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.updatePlayers.bind(this));
+        //xss.event.on(xss.NC_ROOM_ROUND_SERIALIZE, xss.NS_ROOM, this.setRound.bind(this));
 
         //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
         //xss.event.on(xss.NC_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
@@ -45,21 +45,21 @@ xss.room.ClientRoom.prototype = {
         xss.event.off(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
+        //xss.event.off(xss.NC_ROOM_ROUND_SERIALIZE, xss.NS_ROOM);
         //xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM);
     },
 
-    setRoom: function(serialized) {
-        this.key = serialized[0];
+    setRoom: function(serializedRoom) {
+        this.key = serializedRoom[0];
         xss.util.hash(xss.HASH_ROOM, this.key);
     },
 
-    setOptions: function(insaneOptions) {
-        this.options = new xss.room.ClientOptions();
-        this.options.deserialize(insaneOptions);
+    updateOptions: function(serializedOptions) {
+        this.options.deserialize(serializedOptions);
     },
 
-    setPlayers: function(players) {
-        this.players.deserialize(players);
+    updatePlayers: function(serializedPlayers) {
+        this.players.deserialize(serializedPlayers);
     }
 
 //    destructDialog: function() {
