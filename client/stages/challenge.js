@@ -9,7 +9,7 @@
 xss.ChallengeStage = function() {
     this._challenge = this._getRandomChallenge();
 
-    this.maxValWidth = 50;
+    this.maxwidth = 50;
     this.header = 'DANGER DANGER';
     this.label = '' +
         'XSS mode allows the winner of a game to execute\n' +

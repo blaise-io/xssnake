@@ -20,9 +20,9 @@ xss.InputStage.prototype = {
     label: '',
     next: xss.InputStage,
 
-    minChars: 0,
+    minlength: 0,
     maxChars: 0,
-    maxValWidth: 0,
+    maxwidth: 0,
     displayWidth: 0,
 
     /**
@@ -80,7 +80,7 @@ xss.InputStage.prototype = {
     _setupInputField: function() {
         var input = new xss.InputField(xss.MENU_LEFT, this._inputTop, this.label);
 
-        input.maxValWidth = this.maxValWidth || input.maxValWidth;
+        input.maxValWidth = this.maxwidth || input.maxValWidth;
         input.displayWidth = this.displayWidth || input.displayWidth;
 
         input.callback = function(value) {
@@ -123,7 +123,7 @@ xss.InputStage.prototype = {
      * @private
      */
     _getInputError: function(val) {
-        if (val.length < this.minChars) {
+        if (val.length < this.minlength) {
             return 'Too short!!';
         } else if (this.maxChars && val.length > this.maxChars) {
             return 'Too long!!';

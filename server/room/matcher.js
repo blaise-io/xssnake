@@ -15,16 +15,19 @@ xss.room.Matcher.prototype = {
     },
 
     /**
-     * @param {xss.room.ServerOptions} preferences
+     * @param {xss.room.ServerOptions} requestOptions
      * @return {xss.room.ServerRoom}
      */
-    getRoomMatching: function(preferences) {
+    getRoomMatching: function(requestOptions) {
         var rooms = this.rooms;
-        if (!preferences.isPrivate) {
+        if (!requestOptions.isPrivate) { // Shortcut.
             for (var i = 0, m = rooms.length; i < m; i++) {
                 var room = rooms[i];
-                if (room.isAwaitingPlayers() && room.options.matches(preferences)) {
-                    return rooms[i];
+                console.log(room.isAwaitingPlayers(), 'iswaiting');
+                if (room.isAwaitingPlayers()) {
+                    if (room.options.matches(requestOptions)) {
+                        return room;
+                    }
                 }
             }
         }

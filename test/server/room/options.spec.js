@@ -10,8 +10,8 @@ describe('Options', function() {
 
     beforeEach(function() {
         existingOptions = new xss.room.ServerOptions();
-        xss.levelSetRegistry = new xss.levelset.Registry();
-        xss.levelSetRegistry.levelsets = new Array(2);
+        xss.levelsetRegistry = new xss.levelset.Registry();
+        xss.levelsetRegistry.levelsets = new Array(2);
     });
 
     it('Matches when options are equal', function() {

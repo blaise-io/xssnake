@@ -87,7 +87,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
      */
     setName: function(serialized) {
         this.name = new xss.util.Sanitizer(serialized[0])
-            .assertStringOfLength(2, 20)
+            .assertStringOfLength(xss.PLAYER_NAME_MINLENGTH, 20)
             .getValueOr(xss.util.getRandomName());
         return this.name;
     },

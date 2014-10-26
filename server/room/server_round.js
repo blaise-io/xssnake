@@ -10,7 +10,7 @@
 xss.room.ServerRound = function(players, options, levelsPlayed) {
     xss.room.Round.call(this, players, options);
     this.levelsetIndex = options.levelset;
-    this.levelset = xss.levelSetRegistry.getLevelset(this.levelsetIndex);
+    this.levelset = xss.levelsetRegistry.getLevelset(this.levelsetIndex);
     this.levelIndex = this.levelset.getRandomLevelIndex(levelsPlayed);
 };
 

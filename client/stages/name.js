@@ -10,8 +10,8 @@ xss.NameStage = function() {
     this.name = xss.STORAGE_NAME;
     this.header = 'HELLO';
     this.label = 'My name is ';
-    this.minChars = 2;
-    this.maxValWidth = xss.UI_WIDTH_NAME;
+    this.minlength = xss.PLAYER_NAME_MINLENGTH;
+    this.maxwidth = xss.PLAYER_NAME_MAXWIDTH;
 
     xss.InputStage.call(this);
 };
@@ -64,6 +64,7 @@ xss.util.extend(xss.NameStage.prototype, /** @lends xss.NameStage.prototype */ {
         'asdasdasdasd',
         'Please dont touch anything',
         'Hello %s',
+        'Are you excited?',
         'ARE YOU READY TO PARTY???',
         'Is that your real name?',
         'You dont look like a %s...',

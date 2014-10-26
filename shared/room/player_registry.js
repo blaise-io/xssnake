@@ -43,7 +43,7 @@ xss.room.PlayerRegistry.prototype = {
         }
     },
 
-    getTotal: function() {
+    getTotalNum: function() {
         return this.players.length;
     }
 

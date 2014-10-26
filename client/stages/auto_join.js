@@ -18,8 +18,8 @@ xss.AutoJoinStage = function() {
     isXSS = this._options[xss.FIELD_XSS];
     this.next = (isXSS) ? xss.ChallengeStage : xss.StartGameStage;
 
-    this.minChars = 2;
-    this.maxValWidth = xss.UI_WIDTH_NAME;
+    this.minlength = xss.PLAYER_NAME_MINLENGTH;
+    this.maxwidth = xss.PLAYER_NAME_MAXWIDTH;
 
     xss.InputStage.call(this);
 };
@@ -43,7 +43,7 @@ xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.protot
 
         label = [
             'Players ' + players.length + '/' + options[xss.FIELD_MAX_PLAYERS] + ': ' + players.join(', '),
-            'Level set: ' + xss.levelSetRegistry.levelsets[options[xss.FIELD_LEVEL_SET]].title,
+            'Level set: ' + xss.levelsetRegistry.levelsets[options[xss.FIELD_LEVEL_SET]].title,
             'Power-Ups: ' + bools[options[xss.FIELD_POWERUPS]],
             'XSS ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_XSS]],
             '',

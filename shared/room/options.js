@@ -37,7 +37,7 @@ xss.room.Options.prototype = {
             .getValueOr(xss.ROOM_CAPACITY);
 
         this.levelset = new xss.util.Sanitizer(serialized[1])
-            .assertRange(0, xss.levelSetRegistry.levelsets.length - 1)
+            .assertRange(0, xss.levelsetRegistry.levelsets.length - 1)
             .getValueOr(0);
 
         this.isQuickGame = Boolean(serialized[2]);

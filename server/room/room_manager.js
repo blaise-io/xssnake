@@ -39,7 +39,7 @@ xss.room.ServerRoomManager.prototype = {
 
         emitter.on(
             xss.NC_ROOM_JOIN_MATCHING,
-            this.joinMatchingRoom.bind(this)
+            this.findAndJoinMatchingRoom.bind(this)
         );
     },
 
@@ -152,14 +152,15 @@ xss.room.ServerRoomManager.prototype = {
 //    },
 
     /**
-     * @param {?} emitData
+     * @param {?} dirtySerializeOptions
      * @param {xss.room.ServerPlayer} player
      * @private
      */
-    joinMatchingRoom: function(emitData, player) {
+    findAndJoinMatchingRoom: function(dirtySerializeOptions, player) {
         var options, room, emitDataArr;
 
-        emitDataArr = new xss.util.Sanitizer(emitData).assertArray().getValueOr([]);
+        emitDataArr = new xss.util.Sanitizer(dirtySerializeOptions)
+                                  .assertArray().getValueOr([]);
         options = new xss.room.ServerOptions(emitDataArr);
 
         room = this.matcher.getRoomMatching(options);

@@ -6,7 +6,7 @@
  */
 xss.room.ClientOptions = function() {
     xss.room.Options.call(this);
-    this.levelset = xss.levelSetRegistry.getRandomLevelsetIndex();
+    this.levelset = xss.levelsetRegistry.getRandomLevelsetIndex();
 };
 
 xss.util.extend(xss.room.ClientOptions.prototype, xss.room.Options.prototype);

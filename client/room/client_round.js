@@ -27,7 +27,7 @@ xss.util.extend(xss.room.ClientRound.prototype, {
     },
 
     getLevel: function() {
-        var levelset = xss.levelSetRegistry.getLevelset(this.levelsetIndex);
+        var levelset = xss.levelsetRegistry.getLevelset(this.levelsetIndex);
         return levelset.getLevel(this.levelIndex);
     },
 

@@ -4,8 +4,6 @@ xss.IS_CLIENT = true;
 xss.MIN_FRAME_DELTA = 5;
 xss.MAX_FRAME_DELTA = 250;
 
-xss.UI_WIDTH_NAME = 40;
-
 xss.KEY_BACKSPACE = 8;
 xss.KEY_TAB = 9;
 xss.KEY_ENTER = 13;

@@ -14,7 +14,7 @@ xss.InputXssStage = function() {
         'Line breaks will be removed.\n\n' +
         '> ';
 
-    this.minChars = 2;
+    this.minlength = 2;
     this.maxChars = 256;
     this.displayWidth = xss.MENU_WIDTH - xss.font.width('> ');
     this.next = xss.StartGameStage;

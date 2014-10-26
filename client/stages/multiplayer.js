@@ -47,7 +47,7 @@ xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.
         form = new xss.Form(xss.COPY_OPTIONS_STAGE_HEADER, footer);
 
         form.addField(xss.FIELD_LEVEL_SET, xss.COPY_FIELD_LEVEL_SET,
-            xss.levelSetRegistry.getAsFieldValues()
+            xss.levelsetRegistry.getAsFieldValues()
         );
 
         form.addField(xss.FIELD_POWERUPS, xss.COPY_FIELD_POWERUPS, [

@@ -38,8 +38,8 @@ xss.room.ServerRoom.prototype = {
 //    },
 
     isAwaitingPlayers: function() {
-//      return !this.isFull() && !this.rounds.started;
-        return !this.isFull();
+        console.log(this.isFull(), this.rounds.started, '------------');
+        return !this.isFull() && !this.rounds.started;
     },
 
     /**
@@ -132,7 +132,7 @@ xss.room.ServerRoom.prototype = {
      * @return {boolean}
      */
     isFull: function() {
-        return this.players.length === this.options.maxPlayers;
+        return this.players.getTotalNum() === this.options.maxPlayers;
     }
 
 //    /**
