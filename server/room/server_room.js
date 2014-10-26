@@ -38,7 +38,6 @@ xss.room.ServerRoom.prototype = {
 //    },
 
     isAwaitingPlayers: function() {
-        console.log(this.isFull(), this.rounds.started, '------------');
         return !this.isFull() && !this.rounds.started;
     },
 

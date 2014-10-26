@@ -4,8 +4,8 @@
  * @constructor
  */
 xss.room.Player = function() {
-    this.connected = false;
     this.name = null;
+    this.connected = false;
     this.score = 0;
     this.snake = null;
 };
@@ -26,10 +26,10 @@ xss.room.Player.prototype = {
      * @param {Array.<string|number>} serialized
      */
     deserialize: function(serialized) {
-        this.name = serialized[0];
-        this.score = serialized[1] >> 2;
-        this.connected = Boolean(serialized[1] & 1);
-        this.local = Boolean((serialized[1] & 2) >> 1);
+        this.name      = serialized[0];
+        this.connected = Boolean((serialized[1] & 1) >> 0);
+        this.local     = Boolean((serialized[1] & 2) >> 1);
+        this.score     = serialized[1] >> 2;
     }
 
 };

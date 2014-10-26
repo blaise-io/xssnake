@@ -23,7 +23,6 @@ xss.room.Matcher.prototype = {
         if (!requestOptions.isPrivate) { // Shortcut.
             for (var i = 0, m = rooms.length; i < m; i++) {
                 var room = rooms[i];
-                console.log(room.isAwaitingPlayers(), 'iswaiting');
                 if (room.isAwaitingPlayers()) {
                     if (room.options.matches(requestOptions)) {
                         return room;
