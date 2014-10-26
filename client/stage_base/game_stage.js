@@ -6,11 +6,7 @@
  * @constructor
  * @todo Split connecting and inside game
  */
-xss.stage.Game = function() {
-    /** @type {xss.room.ClientRoom} */
-    this.room = null;
-    //this.data = xss.flow.getData();
-};
+xss.stage.Game = function() {};
 
 xss.stage.Game.prototype = {
 
@@ -29,9 +25,12 @@ xss.stage.Game.prototype = {
     },
 
     destruct: function() {
-        if (this.room) {
-            this.room.destruct();
-            this.room = null;
+        if (xss.player) {
+            xss.player.destruct();
+            if (xss.player.room) {
+                xss.player.room.destruct();
+                xss.player.room = null;
+            }
         }
         xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
     },
@@ -82,7 +81,7 @@ xss.stage.Game.prototype = {
 
     connectToRoom: function() {
         xss.player = new xss.room.ClientSocketPlayer(function() {
-            this.room = new xss.room.ClientRoom();
+            xss.player.room = new xss.room.ClientRoom();
             xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
             xss.player.emit(xss.NC_ROOM_JOIN_MATCHING, this.getEmitData());
         }.bind(this));

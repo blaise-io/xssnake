@@ -41,6 +41,17 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     },
 
     /**
+     * @returns {Array.<string>}
+     */
+    getNames: function() {
+        var names = [];
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            names.push(this.players[i].name);
+        }
+        return names;
+    },
+
+    /**
      * @param {xss.level.Level} level
      */
     setSnakes: function(level) {

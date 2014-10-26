@@ -25,7 +25,7 @@ body {
 }
 
 body:after {
-    content: 'This triggers Chrome font-face loading...';
+    content: 'This triggers Chrome font-face loading…';
     position: absolute;
     left: -999em;
 }

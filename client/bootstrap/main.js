@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     xss.bootstrap.registerErrorHandler();
     xss.bootstrap.registerColorSchemes();
+    xss.bootstrap.preloadAsyncData();
     xss.bootstrap.registerLevels(xss.util.noop);
 
     xss.event     = new xss.EventHandler();

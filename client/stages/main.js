@@ -5,10 +5,11 @@
  * @extends {xss.SelectStage}
  */
 xss.MainStage = function() {
+    var roomKey = xss.util.hash(xss.HASH_ROOM);
     this.menu = this._getMenu();
 
-    if (xss.util.hash(xss.HASH_ROOM)) {
-        this.autoJoinRoom();
+    if (roomKey) {
+        new xss.stage.AutoJoinWizard(roomKey);
     } else if (!xss.menuSnake) {
         xss.menuSnake = new xss.stage.MenuSnake();
     }
@@ -17,6 +18,7 @@ xss.MainStage = function() {
 };
 
 xss.util.extend(xss.MainStage.prototype, xss.SelectStage.prototype);
+xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ xss.stage.autoJoinConnectMixin);
 xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
 
     construct: function() {
@@ -29,32 +31,6 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
      */
     getData: function() {
         return this.data;
-    },
-
-    autoJoinRoom: function() {
-        var dialog = new xss.Dialog('AUTO-JOIN ROOM', 'Connecting to server...');
-
-        xss.player = new xss.room.ClientSocketPlayer(function() {
-            window.setTimeout(function() {
-                dialog.setBody('Getting room properties...');
-                window.setTimeout(function() {
-                    xss.player.emit(
-                        xss.NC_ROOM_STATUS,
-                        xss.util.hash(xss.HASH_ROOM)
-                    );
-                }, 500);
-            }, 500);
-        });
-
-        xss.event.once(xss.NC_ROOM_STATUS, xss.NS_STAGES, function(data) {
-            dialog.destruct();
-            if (!data[0]) {
-                xss.util.error(xss.room.ClientRoom.prototype.errorCodeToStr(data[1]));
-            } else {
-                this.data = {autoJoin: data};
-                xss.flow.switchStage(xss.AutoJoinStage);
-            }
-        }.bind(this));
     },
 
     /**

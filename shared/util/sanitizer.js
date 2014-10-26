@@ -88,10 +88,11 @@ xss.util.Sanitizer.prototype = {
 
     /**
      * @param {number} min
-     * @param {number} max
+     * @param {number=} max
      * @return {xss.util.Sanitizer}
      */
     assertStringOfLength: function(min, max) {
+        max = typeof max === 'undefined' ? min : max;
         if (typeof this._value !== 'string') {
             this._log('assertStringOfLength type', this._value);
             this._valid = false;

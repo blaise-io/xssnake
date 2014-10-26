@@ -33,9 +33,9 @@ describe('xss.util', function() {
     });
 
     it('Formats', function() {
-        expect(xss.util.format('{1}!', 'A')).toBe('A!');
-        expect(xss.util.format('{1} == {1}', 'B')).toBe('B == B');
-        expect(xss.util.format('{1} != {2}', 'A', 'B')).toBe('A != B');
+        expect(xss.util.format('{0}!', 'A')).toBe('A!');
+        expect(xss.util.format('{0} == {0}', 'B')).toBe('B == B');
+        expect(xss.util.format('{0} != {1}', 'A', 'B')).toBe('A != B');
     });
 
     it('Translates to game', function() {

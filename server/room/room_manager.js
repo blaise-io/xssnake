@@ -27,10 +27,10 @@ xss.room.ServerRoomManager.prototype = {
     bindEvents: function() {
         var emitter = this.server.emitter;
 
-//        emitter.on(
-//            xss.NC_ROOM_STATUS,
-//            this.returnRoomStatus.bind(this)
-//        );
+        emitter.on(
+            xss.NC_ROOM_STATUS,
+            this.emitRoomStatus.bind(this)
+        );
 //
 //        emitter.on(
 //            xss.NC_ROOM_JOIN_KEY,
@@ -84,18 +84,6 @@ xss.room.ServerRoomManager.prototype = {
 //        }
 //    },
 
-//    /**
-//     * @param {Object.<string, number|boolean>} roomPreferences
-//     * @return {xss.room.ServerRoom}
-//     */
-//    getOrCreateRoom: function(roomPreferences) {
-//        var room = this._findRoom(roomPreferences);
-//        if (!room) {
-//            room = this.createRoom(roomPreferences);
-//        }
-//        return room;
-//    },
-
     /**
      * @param {xss.room.ServerOptions} preferences
      * @return {xss.room.ServerRoom}
@@ -106,50 +94,6 @@ xss.room.ServerRoomManager.prototype = {
         this.rooms.push(room);
         return room;
     },
-
-//    /**
-//     * @param {Object.<string, ?>} requestOptions
-//     * @param {xss.room.ServerRoom} room
-//     * @return {boolean}
-//     */
-//    roomPreferencesMatch: function(requestOptions, room) {
-//        var options = room.options;
-//        return (
-//            !room.isFull() &&
-//            !room.rounds.started &&
-//            !options[xss.FIELD_PRIVATE] &&
-//            !requestOptions[xss.FIELD_PRIVATE] &&
-//            options[xss.FIELD_XSS] === requestOptions[xss.FIELD_XSS] &&
-//            (requestOptions[xss.FIELD_QUICK_GAME] || (
-//                options[xss.FIELD_LEVEL_SET] === requestOptions[xss.FIELD_LEVEL_SET] &&
-//                options[xss.FIELD_POWERUPS] === requestOptions[xss.FIELD_POWERUPS] &&
-//                options[xss.FIELD_MAX_PLAYERS] <= requestOptions[xss.FIELD_MAX_PLAYERS]
-//            ))
-//        );
-//    },
-
-//    /**
-//     * @param {*} key
-//     * @return {boolean}
-//     */
-//    _validRoomKey: function(key) {
-//        var len = xss.ROOM_KEY_LENGTH;
-//        return new xss.util.Sanitizer(key).assertStringOfLength(len, len).valid();
-//    },
-
-
-
-//    /**
-//     * @param {Array} data [roomKey, name]
-//     * @param {xss.netcode.Client} client
-//     * @private
-//     */
-//    joinRoomKey: function(data, client) {
-//        if (new xss.util.Sanitizer(data).assertArrayOfLength(2, 2).valid()) {
-//            client.model.name = xss.util.clean.username(data[1]);
-//            this.joinRoomByKey(client, data[0]);
-//        }
-//    },
 
     /**
      * @param {?} dirtySerializeOptions
@@ -166,58 +110,44 @@ xss.room.ServerRoomManager.prototype = {
         room = this.matcher.getRoomMatching(options);
         room = room || this.createRoom(options);
         room.addPlayer(player);
+    },
+
+    getRoomByKey: function(key) {
+        for (var i = 0, m = this.rooms.length; i < m; i++) {
+            if (key === this.rooms[i].key) {
+                return this.rooms[i];
+            }
+        }
+        return null;
+    },
+
+    /**
+     * @param {string} dirtyKeyArr
+     * @param {xss.room.ServerPlayer} player
+     */
+    emitRoomStatus: function(dirtyKeyArr, player) {
+        var key, keySanitizer, room;
+
+        keySanitizer = new xss.util.Sanitizer(dirtyKeyArr[0]);
+        keySanitizer.assertStringOfLength(xss.ROOM_KEY_LENGTH);
+        key = keySanitizer.getValueOr();
+
+        if (!key) {
+            player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_INVALID]);
+        } else {
+            room = this.getRoomByKey(key);
+            if (!room) {
+                player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_NOT_FOUND]);
+            } else if (room.isFull()) {
+                player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_FULL]);
+            } else if (room.rounds.started) {
+                player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_IN_PROGRESS]);
+            } else {
+                player.emit(xss.NC_ROOM_SERIALIZE, room.serialize());
+                player.emit(xss.NC_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
+                player.emit(xss.NC_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
+            }
+        }
     }
-
-//    /**
-//     * @param {string} key
-//     * @param {xss.netcode.Client} client
-//     */
-//    returnRoomStatus: function(key, client) {
-//        var data = this.getRoomData(key);
-//        client.emit(xss.NC_ROOM_STATUS, data);
-//    },
-
-//    /**
-//     * @param {Object.<string, number|boolean>} roomPreferences
-//     * @return {xss.room.ServerRoom}
-//     * @private
-//     */
-//    _findRoom: function(roomPreferences) {
-//        var rooms = this.rooms;
-//        for (var k in rooms) {
-//            if (rooms.hasOwnProperty(k)) {
-//                var room = rooms[k];
-//                if (this.roomPreferencesMatch(roomPreferences, room)) {
-//                    return room;
-//                }
-//            }
-//        }
-//        return null;
-//    },
-//
-//    /**
-//     * @param {string} key
-//     * @return {Array}
-//     * @private
-//     */
-//    getRoomData: function(key) {
-//        var room, data = [0];
-//        if (!this._validRoomKey(key)) {
-//            data.push(xss.ROOM_INVALID);
-//        } else {
-//            room = this.rooms[key];
-//            if (!room) {
-//                data.push(xss.ROOM_NOT_FOUND);
-//            } else if (room.isFull()) {
-//                data.push(xss.ROOM_FULL);
-//            } else if (room.rounds.started) {
-//                data.push(xss.ROOM_IN_PROGRESS);
-//            } else {
-//                data = [1, room.options, room.names()];
-//            }
-//        }
-//
-//        return data;
-//    }
 
 };

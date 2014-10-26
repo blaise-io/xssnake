@@ -67,7 +67,7 @@ xss.util.extend(xss.NameStage.prototype, /** @lends xss.NameStage.prototype */ {
         'Are you excited?',
         'ARE YOU READY TO PARTY???',
         'Is that your real name?',
-        'You dont look like a %s...',
+        'You dont look like a %s…',
         'Are you new here?',
         'I remember you',
         'I dont believe that\'s your name, but continue anyway',

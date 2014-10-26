@@ -6,17 +6,13 @@
  * @constructor
  */
 xss.AutoJoinStage = function() {
-    var isXSS, autoJoinData = xss.flow.getData().autoJoin;
-
-    this._options = autoJoinData[1];
-    this._players = autoJoinData[2];
+    /** @type {this.room.ClientRoom} */
+    this.room = xss.player.room;
 
     this.header = 'JOiN GAME';
-    this.label = this._getLabel();
+    this.label = this.getRoomSummary();
     this.name = xss.STORAGE_NAME;
-
-    isXSS = this._options[xss.FIELD_XSS];
-    this.next = (isXSS) ? xss.ChallengeStage : xss.StartGameStage;
+    this.next = this.room.options.isXSS ? xss.ChallengeStage : xss.StartGameStage;
 
     this.minlength = xss.PLAYER_NAME_MINLENGTH;
     this.maxwidth = xss.PLAYER_NAME_MAXWIDTH;
@@ -27,30 +23,40 @@ xss.AutoJoinStage = function() {
 xss.util.extend(xss.AutoJoinStage.prototype, xss.InputStage.prototype);
 xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.prototype */ {
 
-    getData: function() {
-        return {
-            name: this.getValue()
-        };
-    },
+    getRoomSummary: function() {
+        var summary = [];
 
-    _getLabel: function() {
-        var bools, label, options, players;
+        summary.push(
+            xss.util.format(
+                xss.COPY_AUTOJOIN_PLAYERS, this.room.players.getTotalNum()
+            ) + xss.COPY_DEF +
+            this.room.players.getNames().join(', ')
+        );
 
-        options = this._options;
-        players = this._players;
+        summary.push(
+            xss.COPY_FIELD_MAX_PLAYERS + xss.COPY_DEF +
+            this.room.options.maxPlayers
+        );
 
-        bools = {'false': 'No', 'true' : 'Yes'};
+        summary.push(
+            xss.COPY_FIELD_LEVEL_SET + xss.COPY_DEF +
+            xss.levelsetRegistry.getLevelset(this.room.options.levelset).title
+        );
 
-        label = [
-            'Players ' + players.length + '/' + options[xss.FIELD_MAX_PLAYERS] + ': ' + players.join(', '),
-            'Level set: ' + xss.levelsetRegistry.levelsets[options[xss.FIELD_LEVEL_SET]].title,
-            'Power-Ups: ' + bools[options[xss.FIELD_POWERUPS]],
-            'XSS ' + xss.UC_SKULL + ': ' + bools[options[xss.FIELD_XSS]],
-            '',
-            'Enter your name to join: '
-        ].join('\n');
+        summary.push(
+            xss.COPY_FIELD_POWERUPS + xss.COPY_DEF +
+            xss.COPY_BOOL[Number(this.room.options.hasPowerups)]
+        );
 
-        return label;
+        summary.push(
+            xss.COPY_FIELD_XSS + xss.COPY_DEF +
+            xss.COPY_BOOL[Number(this.room.options.isXSS)]
+        );
+
+        return summary.join(xss.COPY_LB) +
+            xss.COPY_LB +
+            xss.COPY_LB +
+            xss.COPY_AUTOJOIN_ENTER_NAME;
     }
 
 });
