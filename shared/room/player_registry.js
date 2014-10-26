@@ -21,7 +21,7 @@ xss.room.PlayerRegistry.prototype = {
     serialize: function(localPlayer) {
         var serialized = [];
         for (var i = 0, m = this.players.length; i < m; i++) {
-            serialized.push(this.players[i].serialize(localPlayer));
+            serialized.push(this.players[i].serialize(localPlayer === this.players[i]));
         }
         return serialized;
     },
