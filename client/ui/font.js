@@ -29,7 +29,7 @@ xss.Font.prototype = {
      * @return {xss.Shape}
      */
     shape: function(str, x, y, options) {
-        var chrs, pointer, shape = new xss.Shape();
+        var chrs, pointer, shape = new xss.Shape(), tabx1;
 
         x = x || 0;
         y = y || 0;
@@ -47,7 +47,13 @@ xss.Font.prototype = {
                 nextWordFit = this._nextWordFit(str, i, pointer, options.wrap);
             }
 
-            if (chr === '\n' || !nextWordFit) {
+            if (chr === '\t') {
+                if (tabx1) {
+                    pointer.x = tabx1;
+                } else {
+                    pointer.x = tabx1 = this._getTabx1(str);
+                }
+            } else if (chr === '\n' || !nextWordFit) {
                 pointer.x = 0;
                 pointer.y += xss.Font.LINE_HEIGHT;
             } else {
@@ -162,6 +168,25 @@ xss.Font.prototype = {
     _nextWordFit: function(str, i, pointer, wrap) {
         var nextWord = str.substr(i + 1).split(/[\s\-]/)[0];
         return (pointer.x + this.width(nextWord) <= wrap);
+    },
+
+    /**
+     * Determine X position for tab end to align a two-column table.
+     * Note to future self: Does not work for more than one tab per line.
+     * @param {string} str
+     * @return {number}
+     * @private
+     */
+    _getTabx1: function(str) {
+        var maxtab = 0;
+        var lines = str.split(/\n/g);
+        for (var i = 0, m = lines.length; i < m; i++) {
+            var segments = lines[i].split('\t');
+            if (segments.length >= 2) {
+                maxtab = Math.max(maxtab, this.width('  ' + segments[0]));
+            }
+        }
+        return maxtab;
     },
 
     /**

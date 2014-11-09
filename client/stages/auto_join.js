@@ -29,34 +29,31 @@ xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.protot
         summary.push(
             xss.util.format(
                 xss.COPY_AUTOJOIN_PLAYERS, this.room.players.getTotalNum()
-            ) + xss.COPY_DEF +
-            this.room.players.getNames().join(', ')
+            ) + '\t' +
+            this.room.players.getNames().join(xss.COPY_COMMA_SPACE)
         );
 
         summary.push(
-            xss.COPY_FIELD_MAX_PLAYERS + xss.COPY_DEF +
+            xss.COPY_FIELD_MAX_PLAYERS + '\t' +
             this.room.options.maxPlayers
         );
 
         summary.push(
-            xss.COPY_FIELD_LEVEL_SET + xss.COPY_DEF +
+            xss.COPY_FIELD_LEVEL_SET + '\t' +
             xss.levelsetRegistry.getLevelset(this.room.options.levelset).title
         );
 
         summary.push(
-            xss.COPY_FIELD_POWERUPS + xss.COPY_DEF +
+            xss.COPY_FIELD_POWERUPS + '\t' +
             xss.COPY_BOOL[Number(this.room.options.hasPowerups)]
         );
 
         summary.push(
-            xss.COPY_FIELD_XSS + xss.COPY_DEF +
+            xss.COPY_FIELD_XSS + '\t' +
             xss.COPY_BOOL[Number(this.room.options.isXSS)]
         );
 
-        return summary.join(xss.COPY_LB) +
-            xss.COPY_LB +
-            xss.COPY_LB +
-            xss.COPY_AUTOJOIN_ENTER_NAME;
+        return summary.join('\n') + '\n\n' + xss.COPY_AUTOJOIN_ENTER_NAME;
     }
 
 });

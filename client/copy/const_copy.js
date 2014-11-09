@@ -26,7 +26,7 @@ xss.COPY_LEVELSET_MAZE = 'Mazes';
 xss.COPY_LEVELSET_GAME = 'Pactris';
 
 // Stages misc.
-xss.COPY_LB = '\n';
+xss.COPY_COMMA_SPACE = ', ';
 xss.COPY_JOINER = ' …\n';
 xss.COPY_DEF = ':  ';
 
