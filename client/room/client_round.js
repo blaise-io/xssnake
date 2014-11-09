@@ -8,6 +8,7 @@
  */
 xss.room.ClientRound = function(players, options) {
     xss.room.Round.call(this, players, options);
+    this.players = players;
     this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
     this.game = new xss.game.ClientGame(this.players, this.level);
     this.bindEvents();

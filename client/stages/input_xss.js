@@ -17,7 +17,7 @@ xss.InputXssStage = function() {
     this.minlength = 2;
     this.maxChars = 256;
     this.displayWidth = xss.MENU_WIDTH - xss.font.width('> ');
-    this.next = xss.StartGameStage;
+    this.next = xss.flow.GameStage;
 
     xss.InputStage.call(this);
 

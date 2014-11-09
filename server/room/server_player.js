@@ -82,11 +82,11 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
     },
 
     /**
-     * @param {?} serialized
+     * @param {?} dirtyNameArr
      * @return {string}
      */
-    setName: function(serialized) {
-        this.name = new xss.util.Sanitizer(serialized[0])
+    setName: function(dirtyNameArr) {
+        this.name = new xss.util.Sanitizer(dirtyNameArr[0])
             .assertStringOfLength(xss.PLAYER_NAME_MINLENGTH, 20)
             .getValueOr(xss.util.getRandomName());
         return this.name;

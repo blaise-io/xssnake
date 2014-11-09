@@ -9,7 +9,7 @@ xss.COPY_CONFIRM_START_BODY = 'Do you really want to start the game before the r
 
 // Invalid room.
 xss.COPY_ERROR = [];
-xss.COPY_ERROR[xss.ROOM_INVALID] = 'Invalid room key'.toUpperCase();
+xss.COPY_ERROR[xss.ROOM_INVALID_KEY] = 'Invalid room key'.toUpperCase();
 xss.COPY_ERROR[xss.ROOM_NOT_FOUND] = 'Room not found'.toUpperCase();
 xss.COPY_ERROR[xss.ROOM_FULL] = 'The room is full!'.toUpperCase();
 xss.COPY_ERROR[xss.ROOM_IN_PROGRESS] = 'Game in progress'.toUpperCase();

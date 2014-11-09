@@ -12,7 +12,9 @@ xss.AutoJoinStage = function() {
     this.header = 'JOiN GAME';
     this.label = this.getRoomSummary();
     this.name = xss.STORAGE_NAME;
-    this.next = this.room.options.isXSS ? xss.ChallengeStage : xss.StartGameStage;
+
+    xss.flow.GameStage = xss.stage.QuickJoinGame;
+    this.next = this.room.options.isXSS ? xss.ChallengeStage : xss.flow.GameStage;
 
     this.minlength = xss.PLAYER_NAME_MINLENGTH;
     this.maxwidth = xss.PLAYER_NAME_MAXWIDTH;

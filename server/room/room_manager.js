@@ -31,11 +31,11 @@ xss.room.ServerRoomManager.prototype = {
             xss.NC_ROOM_STATUS,
             this.emitRoomStatus.bind(this)
         );
-//
-//        emitter.on(
-//            xss.NC_ROOM_JOIN_KEY,
-//            this.joinRoomKey.bind(this)
-//        );
+
+        emitter.on(
+            xss.NC_ROOM_JOIN_KEY,
+            this.autojoinRoom.bind(this)
+        );
 
         emitter.on(
             xss.NC_ROOM_JOIN_MATCHING,
@@ -67,23 +67,6 @@ xss.room.ServerRoomManager.prototype = {
         }
     },
 
-//    /**
-//     * @param {xss.netcode.Client} client
-//     * @param {string} key
-//     */
-//    joinRoomByKey: function(client, key) {
-//        var room, data;
-//        if (this._validRoomKey(key)) {
-//            data = this.getRoomData(key);
-//            if (data[0]) { // Room can be joined
-//                room = this.rooms[key];
-//                room.addPlayer(client);
-//            } else {
-//                client.emit(xss.NC_ROOM_STATUS, data); // Nope
-//            }
-//        }
-//    },
-
     /**
      * @param {xss.room.ServerOptions} preferences
      * @return {xss.room.ServerRoom}
@@ -96,7 +79,25 @@ xss.room.ServerRoomManager.prototype = {
     },
 
     /**
-     * @param {?} dirtySerializeOptions
+     * @param {Array.<?>} dirtyKeyArr
+     * @param {xss.room.ServerPlayer} player
+     */
+    autojoinRoom: function(dirtyKeyArr, player) {
+        var room, key, status;
+        key = this.getSanitizedRoomKey(dirtyKeyArr);
+        status = this.getRoomStatus(key);
+
+        if (status === xss.ROOM_JOINABLE) {
+            room = this.getRoomByKey(key);
+            room.addPlayer(player);
+            player.emit(xss.NC_ROOM_ROUND_SERIALIZE, room.rounds.round.serialize());
+        } else {
+            player.emit(xss.NC_ROOM_JOIN_ERROR, [status]);
+        }
+    },
+
+    /**
+     * @param {Array.<?>} dirtySerializeOptions
      * @param {xss.room.ServerPlayer} player
      * @private
      */
@@ -110,6 +111,7 @@ xss.room.ServerRoomManager.prototype = {
         room = this.matcher.getRoomMatching(options);
         room = room || this.createRoom(options);
         room.addPlayer(player);
+        room.emitAll(player);
     },
 
     getRoomByKey: function(key) {
@@ -121,32 +123,48 @@ xss.room.ServerRoomManager.prototype = {
         return null;
     },
 
+    getSanitizedRoomKey: function(dirtyKeyArr) {
+        var keySanitizer = new xss.util.Sanitizer(dirtyKeyArr[0]);
+        keySanitizer.assertStringOfLength(xss.ROOM_KEY_LENGTH);
+        return keySanitizer.getValueOr();
+    },
+
     /**
-     * @param {string} dirtyKeyArr
+     * @param {string} key
+     * @returns {number}
+     */
+    getRoomStatus: function(key) {
+        var room;
+        if (!key) {
+            return xss.ROOM_INVALID_KEY;
+        }
+        room = this.getRoomByKey(key);
+        if (!room) {
+            return xss.ROOM_NOT_FOUND;
+        } else if (room.isFull()) {
+            return xss.ROOM_FULL;
+        } else if (room.rounds.started) {
+            return xss.ROOM_IN_PROGRESS;
+        }
+        return xss.ROOM_JOINABLE;
+    },
+
+    /**
+     * @param {Array.<?>} dirtyKeyArr
      * @param {xss.room.ServerPlayer} player
      */
     emitRoomStatus: function(dirtyKeyArr, player) {
-        var key, keySanitizer, room;
+        var room, key, status;
+        key = this.getSanitizedRoomKey(dirtyKeyArr);
+        status = this.getRoomStatus(key);
 
-        keySanitizer = new xss.util.Sanitizer(dirtyKeyArr[0]);
-        keySanitizer.assertStringOfLength(xss.ROOM_KEY_LENGTH);
-        key = keySanitizer.getValueOr();
-
-        if (!key) {
-            player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_INVALID]);
-        } else {
+        if (status === xss.ROOM_JOINABLE) {
             room = this.getRoomByKey(key);
-            if (!room) {
-                player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_NOT_FOUND]);
-            } else if (room.isFull()) {
-                player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_FULL]);
-            } else if (room.rounds.started) {
-                player.emit(xss.NC_ROOM_JOIN_ERROR, [xss.ROOM_IN_PROGRESS]);
-            } else {
-                player.emit(xss.NC_ROOM_SERIALIZE, room.serialize());
-                player.emit(xss.NC_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
-                player.emit(xss.NC_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
-            }
+            player.emit(xss.NC_ROOM_SERIALIZE, room.serialize());
+            player.emit(xss.NC_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
+            player.emit(xss.NC_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
+        } else {
+            player.emit(xss.NC_ROOM_JOIN_ERROR, [status]);
         }
     }
 

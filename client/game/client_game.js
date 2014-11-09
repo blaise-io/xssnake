@@ -7,10 +7,10 @@
  * @constructor
  */
 xss.game.ClientGame = function(players, level) {
-    this.updatePlayers(players);
-
     this.level = level;
     this.level.paint();
+
+    this.updatePlayers(players);
 
     this.spawnables = new xss.game.SpawnableRegistry();
 

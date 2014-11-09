@@ -83,17 +83,15 @@ xss.room.ServerRoom.prototype = {
      */
     addPlayer: function(player) {
         this.players.add(player);
-
         player.room = this;
-
         this.players.emitPlayers();
+//        this.rounds.detectAutoStart();
+    },
 
+    emitAll: function(player) {
         player.emit(xss.NC_ROOM_SERIALIZE, this.serialize());
         player.emit(xss.NC_ROOM_OPTIONS_SERIALIZE, this.options.serialize());
         player.emit(xss.NC_ROOM_ROUND_SERIALIZE, this.rounds.round.serialize());
-
-//        this.rounds.detectAutoStart();
-
     },
 
     removePlayer: function(player) {

@@ -10,6 +10,8 @@ xss.StageFlow = function(Stage) {
 
     xss.event.once(xss.PUB_FONT_LOAD, xss.NS_FLOW, this.start.bind(this));
 
+    this.GameStage = xss.StartGameStage;
+
     if (xss.font.loaded) {
         xss.event.trigger(xss.PUB_FONT_LOAD);
     }
