@@ -14,7 +14,7 @@ xss.room.ClientRoom = function() {
     this.options = new xss.room.ClientOptions();
 
     /** @typedef {xss.room.ClientRound} */
-    this.round = new xss.room.ClientRound(this.players, this.options);
+    this.round = null;
 
     this.bindEvents();
 };
@@ -47,6 +47,10 @@ xss.room.ClientRoom.prototype = {
         xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
         //xss.event.off(xss.NC_ROOM_ROUND_SERIALIZE, xss.NS_ROOM);
         //xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM);
+    },
+
+    setRound: function() {
+        this.round = new xss.room.ClientRound(this.players, this.options);
     },
 
     setRoom: function(serializedRoom) {
