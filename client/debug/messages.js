@@ -22,7 +22,7 @@ if (xss.debug.messages) {
         function addMessage() {
             messages.push(new xss.room.Message(xss.util.getRandomName(), randomBody()));
             ui.updateMessages();
-            window.setTimeout(addMessage, xss.util.randomRange(0, 3000));
+            window.setTimeout(addMessage, xss.util.randomRange(0, 5000));
         }
 
         addMessage();

@@ -10,7 +10,7 @@ xss.ui.MessageBox = function(messages) {
     this.queued = 0;
 
     this.lineHeight = 7;
-    this.animationDuration = 200;
+    this.animationDuration = 250;
 
     this.paddingTop = 2;
 
@@ -37,7 +37,8 @@ xss.ui.MessageBox.prototype = {
             return;
         }
 
-        shape = new xss.Shape();
+        xss.shapes.messageBox = shape = new xss.Shape();
+
         displaymessages = this.messages.slice(
             -this.fitsMessages - 1 - this.queued,
             this.messages.length - this.queued
@@ -46,8 +47,6 @@ xss.ui.MessageBox.prototype = {
         for (var i = 0, m = displaymessages.length; i < m; i++) {
             shape.add(this.getMessagePixels(i, displaymessages[i]));
         }
-
-        xss.shapes.CHAT = shape;
 
         if (displaymessages.length === this.fitsMessages + 1) {
             this.animate(shape);
@@ -79,18 +78,19 @@ xss.ui.MessageBox.prototype = {
     },
 
     cutOverflowTop: function(shape, x, y) {
-        // @todo: Remove
         shape.pixels.removeLine(this.y0 - y - this.paddingTop);
         shape.pixels.removeLine(this.y0 - y - this.paddingTop - 1);
         shape.uncache();
     },
 
     animateCallback: function(shape) {
-        this.animating = false;
-
         shape.pixels.removeLine(this.y0 + this.lineHeight - 1);
         shape.uncache();
+        setTimeout(this.processQueue.bind(this), 200);
+    },
 
+    processQueue: function() {
+        this.animating = false;
         if (this.queued >= 1) {
             this.updateMessages();
             this.queued--;
