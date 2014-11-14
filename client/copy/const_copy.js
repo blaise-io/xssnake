@@ -59,11 +59,11 @@ xss.COPY_FIELD_FALSE = 'No';
 xss.COPY_FIELD_LEVEL_SET = 'Level Set';
 xss.COPY_OPTIONS_STAGE_HEADER = 'Game Options';
 xss.COPY_FIELD_POWERUPS = 'Power-Ups';
-xss.COPY_FIELD_PRIVATE = 'Private Game';
-xss.COPY_FIELD_XSS = 'XSS ' + xss.UC_SKULL;
+xss.COPY_FIELD_PRIVATE = 'Private Room';
+xss.COPY_FIELD_XSS = 'Winner fires XSS';
 xss.COPY_FIELD_MAX_PLAYERS = 'Max Players';
 
-xss.COPY_FIELD_BUGS = 'WEIRD BUGS';
+xss.COPY_FIELD_BUGS = 'WEIRD BUGS ' + xss.UC_BUG;
 xss.COPY_FIELD_TRUE_OPT1 = xss.COPY_FIELD_TRUE;
 xss.COPY_FIELD_TRUE_OPT2 = 'Enable';
 xss.COPY_FIELD_TRUE_OPT3 = 'OK';
@@ -72,7 +72,7 @@ xss.COPY_FIELD_TRUE_OPT5 = 'Accept';
 xss.COPY_FIELD_TRUE_OPT6 = 'Hao';
 xss.COPY_FIELD_TRUE_OPT7 = 'Oui!';
 xss.COPY_FIELD_TRUE_OPT8 = 'Si Senor';
-xss.COPY_FIELD_TRUE_OPT9 = 'Check';
+xss.COPY_FIELD_TRUE_OPT9 = xss.UC_YES;
 
 xss.COPY_BOOL = [xss.COPY_FIELD_FALSE, xss.COPY_FIELD_TRUE];
 
