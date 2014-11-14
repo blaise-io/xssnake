@@ -46,8 +46,9 @@ xss.room.ClientRoom.prototype = {
         xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
     },
 
-    setRound: function() {
+    propagateToPlayer: function() {
         this.round = new xss.room.ClientRound(this.players, this.options);
+        this.chat = new xss.room.MessageBox(this.players);
     },
 
     setRoom: function(serializedRoom) {

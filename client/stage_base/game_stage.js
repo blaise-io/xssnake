@@ -82,7 +82,7 @@ xss.stage.Game.prototype = {
     connectToRoom: function() {
         xss.player = new xss.room.ClientSocketPlayer(function() {
             xss.player.room = new xss.room.ClientRoom();
-            xss.player.room.setRound();
+            xss.player.room.propagateToPlayer();
             xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
             xss.player.emit(xss.NC_ROOM_JOIN_MATCHING, this.getEmitData());
         }.bind(this));

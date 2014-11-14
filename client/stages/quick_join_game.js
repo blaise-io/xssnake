@@ -13,7 +13,7 @@ xss.util.extend(xss.stage.QuickJoinGame.prototype, xss.stage.Game.prototype);
 xss.util.extend(xss.stage.QuickJoinGame.prototype, {
 
     connectToRoom: function() {
-        xss.player.room.setRound();
+        xss.player.room.propagateToPlayer();
         xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
         xss.player.emit(xss.NC_ROOM_JOIN_KEY, [xss.player.room.key]);
         this.bindEvents();

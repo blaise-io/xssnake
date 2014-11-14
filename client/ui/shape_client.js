@@ -127,13 +127,14 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
      * @private
      */
     _animateEffect: function(options) {
-        var from, to, duration, callback, progress = 0;
+        var from, to, duration, doneCallback, progressCallback, progress = 0;
 
         options  = options || {};
         from     = options.from || [0, 0];
         to       = options.to || [0, 0];
         duration = options.duration || 200;
-        callback = options.callback || xss.util.noop;
+        doneCallback = options.callback || xss.util.noop;
+        progressCallback = options.progress || xss.util.noop;
 
         /** @this {xss.Shape} */
         return function(delta) {
@@ -141,12 +142,13 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
             progress += delta;
             percent = Math.sqrt(progress / duration);
             if (progress < duration) {
-                x = from[0] - ((from[0] - to[0]) * percent);
-                y = from[1] - ((from[1] - to[1]) * percent);
-                this.transform.translate = [Math.round(x), Math.round(y)];
+                x = Math.round(from[0] - ((from[0] - to[0]) * percent));
+                y = Math.round(from[1] - ((from[1] - to[1]) * percent));
+                this.transform.translate = [x, y];
+                progressCallback(this, x, y);
             } else {
                 delete this.effects.animate;
-                callback();
+                doneCallback(this);
             }
         }.bind(this);
     }

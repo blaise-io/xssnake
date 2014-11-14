@@ -112,6 +112,17 @@ xss.PixelCollection.prototype = {
             this.pixels[y].splice(index, 1);
         }
         return this;
+    },
+
+    /**
+     * @param {number} y
+     * @return {xss.PixelCollection}
+     */
+    removeLine: function(y) {
+        if (this.pixels[y]) {
+            this.pixels[y].length = 0;
+        }
+        return this;
     }
 
 };
