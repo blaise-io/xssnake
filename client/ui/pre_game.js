@@ -21,7 +21,7 @@ xss.ui.PreGame = function(players, options) {
 xss.ui.PreGame.prototype = {
 
     destruct: function() {
-        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_ROUND);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME);
         this.players = null;
         this.options = null;
         if (this.dialog) {
@@ -30,7 +30,9 @@ xss.ui.PreGame.prototype = {
     },
 
     bindKeys: function() {
-        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROUND, this.handleKeys.bind(this));
+        xss.event.on(
+            xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME, this.handleKeys.bind(this)
+        );
     },
 
     handleKeys: function(ev) {
