@@ -34,9 +34,13 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     deserializePlayer: function(serialized) {
         var player = new xss.room.ClientPlayer();
         player.deserialize(serialized);
-        this.add(player);
+
         if (player.local) {
-            this.localPlayer = player;
+            xss.player.deserialize(serialized);
+            this.localPlayer = xss.player;
+            this.add(xss.player);
+        } else {
+            this.add(player);
         }
     },
 
@@ -103,6 +107,14 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
         if (this.localPlayer) {
             this.localPlayer.snake.addControls();
         }
+    },
+
+    localPlayerIsHost: function() {
+        return Boolean(
+            this.localPlayer && xss.player &&
+            this.localPlayer === xss.player &&
+            0 === this.players.indexOf(xss.player)
+        );
     }
 
 });

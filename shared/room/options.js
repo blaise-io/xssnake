@@ -14,6 +14,8 @@ xss.room.Options = function() {
 
 xss.room.Options.prototype = {
 
+    destruct: xss.util.noop,
+
     /**
      * @return {Array.<number>}
      */

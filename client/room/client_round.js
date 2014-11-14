@@ -11,11 +11,18 @@ xss.room.ClientRound = function(players, options) {
     this.players = players;
     this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
     this.game = new xss.game.ClientGame(this.players, this.level);
+    this.preGameUI = new xss.ui.PreGame(players, options);
     this.bindEvents();
 };
 
 xss.util.extend(xss.room.ClientRound.prototype, xss.room.Round.prototype);
 xss.util.extend(xss.room.ClientRound.prototype, {
+
+    destruct: function() {
+        this.unbindEvents();
+        this.preGameUI.destruct();
+        this.preGameUI = null;
+    },
 
     bindEvents: function() {
         xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROUND, this.updatePlayers.bind(this));
@@ -35,6 +42,7 @@ xss.util.extend(xss.room.ClientRound.prototype, {
     updatePlayers: function(serializedPlayers) {
         this.players.deserialize(serializedPlayers);
         this.game.updatePlayers(this.players);
+        this.preGameUI.updateUI();
     },
 
     updateRound: function(serializedRound) {

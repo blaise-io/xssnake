@@ -15,3 +15,4 @@ xss.netcode = {};
 xss.stage = {};
 xss.stages = {};
 xss.util = {};
+xss.ui = {};

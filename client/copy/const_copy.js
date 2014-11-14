@@ -2,10 +2,14 @@
 
 xss.COPY_AWAITING_PLAYERS_HEADER = 'Msg your friends';
 xss.COPY_AWAITING_PLAYERS_BODY = 'You can fit {0} more player{1} in this room! Share the current page URL with your online friends to allow direct access.';
-xss.COPY_AWAITING_PLAYERS_START_NOW = ' Press S to start now.';
+xss.COPY_AWAITING_PLAYERS_START_NOW = 'Press S to start now.';
 
 xss.COPY_CONFIRM_START_HEADER = 'Confirm start';
 xss.COPY_CONFIRM_START_BODY = 'Do you really want to start the game before the room is full?';
+
+xss.COPY_CONFIRM_EXIT_HEADER = 'Confirm exit';
+xss.COPY_CONFIRM_EXIT_BODY = 'Do you really want to leave this room?';
+xss.COPY_CONFIRM_EXIT_BODY_DRAMATIC = 'Do you REALLY want to leave that other player ALL ALONE in this room?';
 
 // Invalid room.
 xss.COPY_ERROR = [];

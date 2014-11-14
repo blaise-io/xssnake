@@ -16,6 +16,9 @@ xss.room.Round = function(players, options) {
     this.levelset = null;
     /** @type {xss.level.Level} */
     this.level = null;
+
+    this.index = 0;
+    this.started = false;
 };
 
 xss.room.Round.prototype = {

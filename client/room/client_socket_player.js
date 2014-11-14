@@ -10,6 +10,7 @@ xss.room.ClientSocketPlayer = function(onopenCallback) {
     xss.room.ClientPlayer.call(this);
 
     this.onopenCallback = onopenCallback;
+    this.local = true;
 
     this.connection = new WebSocket('ws://' + xss.SERVER_ENDPOINT);
     this.connection.onopen = this.onopen.bind(this);
