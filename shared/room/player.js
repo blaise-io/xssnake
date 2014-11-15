@@ -1,10 +1,11 @@
 'use strict';
 
 /**
+ * @param {string=} name;
  * @constructor
  */
-xss.room.Player = function() {
-    this.name = null;
+xss.room.Player = function(name) {
+    this.name = name || null;
     this.connected = false;
     this.score = 0;
     this.snake = null;

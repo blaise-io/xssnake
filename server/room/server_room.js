@@ -13,6 +13,7 @@ xss.room.ServerRoom = function(server, options, key) {
 
     this.players = new xss.room.ServerPlayerRegistry();
     this.rounds  = new xss.room.ServerRoundManager(this.players, this.options);
+    this.bindEvents();
 };
 
 xss.room.ServerRoom.prototype = {
@@ -22,6 +23,22 @@ xss.room.ServerRoom.prototype = {
         this.players.destruct();
         this.server = null;
         this.rounds = null;
+    },
+
+    bindEvents: function() {
+        this.server.emitter.on(xss.NC_CHAT_MESSAGE, this.handleChatEvent.bind(this));
+    },
+
+    handleChatEvent: function(serializedMessage, player) {
+        var sanitizer = new xss.util.Sanitizer(serializedMessage[0]);
+        sanitizer.assertStringOfLength(1, 64);
+        if (sanitizer.valid()) {
+            // @todo Antispam.
+            player.broadcast(xss.NC_CHAT_MESSAGE, [
+                this.players.players.indexOf(player),
+                sanitizer.getValueOr()
+            ]);
+        }
     },
 
     restartRounds: function() {

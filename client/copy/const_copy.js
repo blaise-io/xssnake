@@ -86,3 +86,5 @@ xss.COPY_AUTOJOIN_CONNECTING = 'Connecting to server…';
 xss.COPY_AUTOJOIN_FETCHING = 'Getting room properties…';
 xss.COPY_AUTOJOIN_PLAYERS = 'Players ({0})';
 xss.COPY_AUTOJOIN_ENTER_NAME = 'Enter your name to join: ';
+
+xss.COPY_CHAT_INSTRUCT = 'Press ' + xss.UC_ENTER_KEY + ' to chat.';

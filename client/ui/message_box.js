@@ -2,14 +2,17 @@
 
 /**
  * @param {Array.<xss.room.Message>} messages
+ * @param {xss.room.Player} localAuthor
  * @constructor
  */
-xss.ui.MessageBox = function(messages) {
+xss.ui.MessageBox = function(messages, localAuthor) {
     this.messages = messages;
+    this.localAuthor = localAuthor;
+
     this.animating = false;
+    this.skipQueue = false;
     this.queued = 0;
 
-    this.localAuthor = xss.player ? xss.player.name : xss.util.getRandomName();
     this.inputField = null;
     this.sendMessageFn = xss.util.noop;
 
@@ -60,28 +63,54 @@ xss.ui.MessageBox.prototype = {
     },
 
     showInput: function() {
-        var prefix = this.localAuthor + ': ';
-        this.inputField = new xss.InputField(
-            this.x0 + this.padding.x1,
-            this.y1 - this.padding.y1 - this.lineHeight,
-            prefix
-        );
-        this.inputField.maxValWidth = this.x1 - xss.font.width(prefix) - this.x0;
-        this.inputField.maxValWidth -= 8; // LB icon
+        var x, y, prefix;
+
+        x = this.x0 + this.padding.x1 + new xss.room.Message('', '').getOffset();
+        y = this.y1 - this.padding.y1 - this.lineHeight;
+        prefix = this.localAuthor.name + ': ';
+
+        this.inputField = new xss.InputField(x, y, prefix);
+        this.inputField.maxValWidth = this.x1 - x - xss.font.width(prefix);
+        this.inputField.maxValWidth -= xss.font.width(xss.UC_ENTER_KEY);
         this.inputField.maxValWidth -= this.padding.x0 + this.padding.x1;
         this.inputField.setValue('');
+
         this.updateMessages();
     },
 
     hideInput: function() {
-        this.inputField.destruct();
-        this.inputField = null;
+        if (this.inputField) {
+            this.inputField.destruct();
+            this.inputField = null;
+        }
         this.updateMessages();
     },
 
-    sendMessage: function(message) {
-        this.messages.push(new xss.room.Message(this.localAuthor, message));
-        this.sendMessageFn(message);
+    sendMessage: function(body) {
+        if (body.trim()) {
+            this.messages.push(new xss.room.Message(this.localAuthor.name, body));
+            this.sendMessageFn(body);
+
+            this.skipQueue = true;
+            this.flashEnterKey();
+        }
+    },
+
+    flashEnterKey: function() {
+        var x, y, shape;
+
+        x = this.x1 - this.padding.x1 - xss.font.width(xss.UC_ENTER_KEY) - 2;
+        y = this.y1 - this.lineHeight - this.padding.y1 + 1;
+
+        shape = xss.shapes.MSG_SENT = xss.font.shape(xss.UC_ENTER_KEY, x, y);
+        shape.flash(100, 100).lifetime(0, 100 * 4);
+    },
+
+    getDisplayMessages: function(num) {
+        return this.messages.slice(
+            -num - 1 - this.queued,
+            this.messages.length - this.queued
+        );
     },
 
     getNumMessagesFit: function() {
@@ -92,7 +121,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     debounceUpdate: function() {
-        if (this.animating) {
+        if (this.animating && !this.skipQueue) {
             this.queued++;
         } else {
             this.updateMessages();
@@ -100,37 +129,28 @@ xss.ui.MessageBox.prototype = {
     },
 
     updateMessages: function() {
-        var fits, shape, displaymessages;
+        var num, shape, messages;
 
-        fits = this.getNumMessagesFit();
-
-        shape = new xss.Shape();
+        shape = xss.shapes.MSG_BOX = new xss.Shape();
         shape.mask = [
             this.x0, this.y0, this.x1,
-            this.inputField === null ? this.y1 : this.y1 - this.lineHeight - this.padding.y1
+            this.y1 - (this.inputField ? this.lineHeight - this.padding.y1 : 0)
         ];
 
-        xss.shapes.messageBox = shape;
-
-        displaymessages = this.messages.slice(
-            -fits - 1 - this.queued,
-            this.messages.length - this.queued
-        );
-
-        for (var i = 0, m = displaymessages.length; i < m; i++) {
-            shape.add(this.getMessagePixels(i, displaymessages[i]));
+        num = this.getNumMessagesFit();
+        messages = this.getDisplayMessages(num);
+        for (var i = 0, m = messages.length; i < m; i++) {
+            shape.add(this.getMessagePixels(i, messages[i]));
         }
 
-        if (displaymessages.length === fits + 1) {
+        if (this.skipQueue) {
+            this.skipQueue = false;
+            this.queued = 0;
+            if (messages.length === num + 1) {
+                this.animateCallback(shape);
+            }
+        } else if (messages.length === num + 1) {
             this.animate(shape);
-        }
-    },
-
-    formatMessage: function(message) {
-        if (message) {
-            return message.author + ': ' + message.body;
-        } else {
-            return '';
         }
     },
 
@@ -138,7 +158,9 @@ xss.ui.MessageBox.prototype = {
         var x, y;
         x = this.x0 + this.padding.x0;
         y = this.y0 + this.padding.y0 + (lineIndex * this.lineHeight);
-        return xss.font.pixels(this.formatMessage(message), x, y);
+        return xss.font.pixels(
+            message.getFormatted(), x + message.getOffset(), y
+        );
     },
 
     animate: function(shape) {
@@ -152,6 +174,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     animateCallback: function(shape) {
+        shape.transform.translate = [0, -this.lineHeight];
         shape.pixels.removeLine(this.y0 + this.lineHeight);
         shape.uncache();
         setTimeout(this.processQueue.bind(this), 200);

@@ -6,7 +6,8 @@ if (xss.debug.messages) {
     xss.menuSnake = true; // Prevent spawn.
     setTimeout(function() {
         var messages = [];
-        var ui = new xss.ui.MessageBox(messages);
+        var author = new xss.room.Player('Dummy');
+        var ui = new xss.ui.MessageBox(messages, author);
 
         xss.flow.destruct();
 
@@ -29,6 +30,8 @@ if (xss.debug.messages) {
             window.setTimeout(addMessage, xss.util.randomRange(0, 5000));
         }
 
+        messages.push(new xss.room.Message(null, xss.COPY_CHAT_INSTRUCT));
+        ui.debounceUpdate();
         addMessage();
 
     }, 200);

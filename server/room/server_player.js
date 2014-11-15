@@ -104,7 +104,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
             this.disconnect();
         } else if (this.connection) {
             if (data) {
-                emit = data;
+                emit = data.slice();
                 emit.unshift(event);
             } else {
                 emit = [event];
