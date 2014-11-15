@@ -8,8 +8,12 @@ if (xss.debug.messages) {
         var messages = [];
         var ui = new xss.ui.MessageBox(messages);
 
-        xss.shapes.stage = null;
+        xss.flow.destruct();
+
         xss.shapes.innerBorder = xss.shapegen.innerBorder();
+        xss.shapegen.outerBorder(function(a, b) {
+            xss.shapes[a] = b;
+        });
 
         function randomBody() {
             var body = [];
@@ -21,7 +25,7 @@ if (xss.debug.messages) {
 
         function addMessage() {
             messages.push(new xss.room.Message(xss.util.getRandomName(), randomBody()));
-            ui.updateMessages();
+            ui.debounceUpdate();
             window.setTimeout(addMessage, xss.util.randomRange(0, 5000));
         }
 

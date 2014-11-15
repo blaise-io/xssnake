@@ -9,6 +9,10 @@ xss.ui.MessageBox = function(messages) {
     this.animating = false;
     this.queued = 0;
 
+    this.localAuthor = xss.player ? xss.player.name : xss.util.getRandomName();
+    this.inputField = null;
+    this.sendMessageFn = xss.util.noop;
+
     this.lineHeight = 7;
     this.animationDuration = 250;
 
@@ -19,28 +23,82 @@ xss.ui.MessageBox = function(messages) {
     this.y0 = xss.HEIGHT - 24;
     this.y1 = xss.HEIGHT - 3;
 
-    this.calculateNumMessagesFit();
-    this.updateMessages();
+    this.bindEvents();
+    this.debounceUpdate();
 };
 
 xss.ui.MessageBox.prototype = {
 
-    calculateNumMessagesFit: function() {
-        this.fitsMessages = Math.floor((this.y1 - this.y0) / this.lineHeight);
+    destruct: function() {
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_CHAT);
+        if (this.inputField) {
+            this.inputField.destruct();
+            this.inputField = null;
+        }
+    },
+
+    bindEvents: function() {
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_CHAT, this.handleKeys.bind(this));
+    },
+
+    handleKeys: function(ev) {
+        switch (ev.keyCode) {
+            case xss.KEY_ESCAPE:
+                this.hideInput();
+                ev.preventDefault();
+                break;
+            case xss.KEY_ENTER:
+                if (this.inputField) {
+                    this.sendMessage(this.inputField.getValue());
+                    this.hideInput();
+                } else if (!xss.keysBlocked) {
+                    this.showInput();
+                }
+                ev.preventDefault();
+                break;
+        }
+    },
+
+    showInput: function() {
+        var prefix = this.localAuthor + ': ';
+        this.inputField = new xss.InputField(this.x0, this.y1 - this.lineHeight, prefix);
+        this.inputField.maxValWidth = this.x1 - xss.font.width(prefix) - this.x0 - 8;
+        this.inputField.setValue('');
+        this.updateMessages();
+    },
+
+    hideInput: function() {
+        this.inputField.destruct();
+        this.inputField = null;
+        this.updateMessages();
+    },
+
+    sendMessage: function(message) {
+        this.messages.push(new xss.room.Message(this.localAuthor, message));
+        this.sendMessageFn(message);
+    },
+
+    getNumMessagesFit: function() {
+        var fits = Math.floor((this.y1 - this.y0) / this.lineHeight);
+        fits -= this.inputField === null ? 0 : 1;
+        return fits;
+    },
+
+    debounceUpdate: function() {
+        if (this.animating) {
+            this.queued++;
+        } else {
+            this.updateMessages();
+        }
     },
 
     updateMessages: function() {
-        var shape, displaymessages;
-
-        if (this.animating) {
-            this.queued++;
-            return;
-        }
-
+        var fits, shape, displaymessages;
         xss.shapes.messageBox = shape = new xss.Shape();
 
+        fits = this.getNumMessagesFit();
         displaymessages = this.messages.slice(
-            -this.fitsMessages - 1 - this.queued,
+            -fits - 1 - this.queued,
             this.messages.length - this.queued
         );
 
@@ -48,7 +106,7 @@ xss.ui.MessageBox.prototype = {
             shape.add(this.getMessagePixels(i, displaymessages[i]));
         }
 
-        if (displaymessages.length === this.fitsMessages + 1) {
+        if (displaymessages.length === fits + 1) {
             this.animate(shape);
         }
     },
@@ -92,7 +150,7 @@ xss.ui.MessageBox.prototype = {
     processQueue: function() {
         this.animating = false;
         if (this.queued >= 1) {
-            this.updateMessages();
+            this.debounceUpdate();
             this.queued--;
         }
     }
