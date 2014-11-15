@@ -18,7 +18,4 @@ document.addEventListener('DOMContentLoaded', function() {
     xss.play      = new xss.AudioPlay();
     xss.flow      = new xss.StageFlow();
 
-//    // Global instances
-//    xss.levels    = new xss.LevelRegistry();
-
 }, false);

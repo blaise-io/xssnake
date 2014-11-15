@@ -14,14 +14,14 @@ xss.ui.MessageBox = function(messages) {
     this.sendMessageFn = xss.util.noop;
 
     this.lineHeight = 7;
-    this.animationDuration = 250;
-
-    this.paddingTop = 2;
+    this.animationDuration = 200;
 
     this.x0 = 100;
     this.x1 = xss.WIDTH;
-    this.y0 = xss.HEIGHT - 24;
-    this.y1 = xss.HEIGHT - 3;
+    this.y0 = xss.HEIGHT - 25;
+    this.y1 = xss.HEIGHT - 2;
+
+    this.padding = {x0: 0, x1: 0, y0: 1, y1: 1};
 
     this.bindEvents();
     this.debounceUpdate();
@@ -61,8 +61,14 @@ xss.ui.MessageBox.prototype = {
 
     showInput: function() {
         var prefix = this.localAuthor + ': ';
-        this.inputField = new xss.InputField(this.x0, this.y1 - this.lineHeight, prefix);
-        this.inputField.maxValWidth = this.x1 - xss.font.width(prefix) - this.x0 - 8;
+        this.inputField = new xss.InputField(
+            this.x0 + this.padding.x1,
+            this.y1 - this.padding.y1 - this.lineHeight,
+            prefix
+        );
+        this.inputField.maxValWidth = this.x1 - xss.font.width(prefix) - this.x0;
+        this.inputField.maxValWidth -= 8; // LB icon
+        this.inputField.maxValWidth -= this.padding.x0 + this.padding.x1;
         this.inputField.setValue('');
         this.updateMessages();
     },
@@ -79,7 +85,8 @@ xss.ui.MessageBox.prototype = {
     },
 
     getNumMessagesFit: function() {
-        var fits = Math.floor((this.y1 - this.y0) / this.lineHeight);
+        var fits = (this.y1 - this.padding.y1) - (this.y0 + this.padding.y0);
+        fits = Math.floor(fits / this.lineHeight);
         fits -= this.inputField === null ? 0 : 1;
         return fits;
     },
@@ -94,9 +101,17 @@ xss.ui.MessageBox.prototype = {
 
     updateMessages: function() {
         var fits, shape, displaymessages;
-        xss.shapes.messageBox = shape = new xss.Shape();
 
         fits = this.getNumMessagesFit();
+
+        shape = new xss.Shape();
+        shape.mask = [
+            this.x0, this.y0, this.x1,
+            this.inputField === null ? this.y1 : this.y1 - this.lineHeight - this.padding.y1
+        ];
+
+        xss.shapes.messageBox = shape;
+
         displaymessages = this.messages.slice(
             -fits - 1 - this.queued,
             this.messages.length - this.queued
@@ -120,8 +135,10 @@ xss.ui.MessageBox.prototype = {
     },
 
     getMessagePixels: function(lineIndex, message) {
-        var y = this.y0 + (lineIndex * this.lineHeight);
-        return xss.font.pixels(this.formatMessage(message), this.x0, y);
+        var x, y;
+        x = this.x0 + this.padding.x0;
+        y = this.y0 + this.padding.y0 + (lineIndex * this.lineHeight);
+        return xss.font.pixels(this.formatMessage(message), x, y);
     },
 
     animate: function(shape) {
@@ -129,20 +146,13 @@ xss.ui.MessageBox.prototype = {
         var anim = {
             to: [0, -this.lineHeight],
             duration: this.animationDuration,
-            progress: this.cutOverflowTop.bind(this),
             callback: this.animateCallback.bind(this)
         };
         shape.animate(anim);
     },
 
-    cutOverflowTop: function(shape, x, y) {
-        shape.pixels.removeLine(this.y0 - y - this.paddingTop);
-        shape.pixels.removeLine(this.y0 - y - this.paddingTop - 1);
-        shape.uncache();
-    },
-
     animateCallback: function(shape) {
-        shape.pixels.removeLine(this.y0 + this.lineHeight - 1);
+        shape.pixels.removeLine(this.y0 + this.lineHeight);
         shape.uncache();
         setTimeout(this.processQueue.bind(this), 200);
     },

@@ -175,11 +175,68 @@ xss.Canvas.prototype = {
             shape.cache = new xss.ShapeCache(shape, this.tile);
         }
 
-        // Paint cached image on canvas
+        if (shape.mask) {
+            // A mask specifies a bounding box (x0, y0, x1, y1)
+            // where anything outside will not get drawn.
+            this._drawMaskedShape(shape);
+        } else {
+            // Paint cached image on canvas
+            this.context.drawImage(
+                shape.cache.canvas,
+                shape.cache.bbox.x0 + (translate[0] * this.tile.size),
+                shape.cache.bbox.y0 + (translate[1] * this.tile.size)
+            );
+        }
+    },
+
+    /**
+     * @param {xss.Shape} shape
+     * @private
+     */
+    _drawMaskedShape: function(shape) {
+        var translate = shape.transform.translate;
+
+        var mx0 = shape.mask[0] * this.tile.size;
+        var my0 = shape.mask[1] * this.tile.size;
+        var mx1 = shape.mask[2] * this.tile.size;
+        var my1 = shape.mask[3] * this.tile.size;
+
+        var sx = 0;
+        var sy = 0;
+        var width = shape.cache.bbox.width + this.tile.size;
+        var height = shape.cache.bbox.height + this.tile.size;
+
+        var dx = shape.cache.bbox.x0 + (translate[0] * this.tile.size);
+        var dy = shape.cache.bbox.y0 + (translate[1] * this.tile.size);
+
+        // Cut top off
+        if (dy < my0) {
+            sy = my0 - dy;
+            dy += sy;
+            height -= sy;
+        }
+
+        // Cut left off
+        if (dx < mx0) {
+            sx = mx0 - dx;
+            dx += sx;
+            width -= sx;
+        }
+
+        // Cut bottom off
+        if (dy + height > my1) {
+            height -= (dy + height) - my1;
+        }
+
+        // Cut right off
+        if (dx + width > mx1) {
+            width -= (dx + width) - mx1;
+        }
+
         this.context.drawImage(
             shape.cache.canvas,
-            shape.cache.bbox.x0 + (translate[0] * this.tile.size),
-            shape.cache.bbox.y0 + (translate[1] * this.tile.size)
+            sx, sy, width, height,
+            dx, dy, width, height
         );
     },
 

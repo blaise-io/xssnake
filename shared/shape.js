@@ -28,6 +28,12 @@ xss.Shape = function(varArgs) {
     this.headers = {};
 
     /**
+     * x0, y0, x1, y2
+     * @type {Array.<number>}
+     */
+    this.mask = null;
+
+    /**
      * Transform is applied at paint time, does not affect PixelCollection.
      * @type {{translate: xss.Shift, scale: number}}
      */
