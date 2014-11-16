@@ -19,6 +19,14 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     },
 
     /**
+     * @param {xss.room.ClientPlayerRegistry} playerRegistry
+     */
+    clone: function(playerRegistry) {
+        this.players = playerRegistry.players.slice();
+        this.localPlayer = playerRegistry.localPlayer;
+    },
+
+    /**
      * @param {Array.<Array>} serializedPlayers
      */
     deserialize: function(serializedPlayers) {
@@ -109,6 +117,35 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
         }
     },
 
+    /**
+     * @param {xss.room.ClientPlayerRegistry} missingPlayerRegistry
+     * @return {xss.room.Player}
+     */
+    getQuit: function(missingPlayerRegistry) {
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            if (-1 === missingPlayerRegistry.players.indexOf(this.players[i])) {
+                return this.players[i];
+            }
+        }
+        return null;
+    },
+
+    /**
+     * @param {xss.room.ClientPlayerRegistry} includingPlayerRegistery
+     * @return {xss.room.Player}
+     */
+    getJoin: function(includingPlayerRegistery) {
+        for (var i = 0, m = includingPlayerRegistery.players.length; i < m; i++) {
+            if (-1 === this.players.indexOf(includingPlayerRegistery.players[i])) {
+                return includingPlayerRegistery.players[i];
+            }
+        }
+        return null;
+    },
+
+    /**
+     * @return {xss.room.Player}
+     */
     localPlayerIsHost: function() {
         return Boolean(
             this.localPlayer && xss.player &&

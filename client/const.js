@@ -61,6 +61,7 @@ xss.NS_CHAT = 'CHT';
 xss.NS_DIALOG = 'DLG';
 xss.NS_INPUT = 'INP';
 xss.NS_GAME = 'GAM';
+xss.NS_MSGBOX = 'MSG';
 xss.NS_ROOM = 'ROM';
 xss.NS_ROUND = 'RND';
 xss.NS_PRE_GAME = 'PGM';

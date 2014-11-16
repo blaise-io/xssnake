@@ -74,7 +74,7 @@ xss.ui.PreGame.prototype = {
     showInvitePlayersDialog: function() {
         var numplayers, remaining, body;
 
-        numplayers = this.players.getTotalNum();
+        numplayers = this.players.getTotal();
         remaining = this.options.maxPlayers - numplayers;
 
         body = xss.COPY_AWAITING_PLAYERS_BODY;
@@ -101,7 +101,7 @@ xss.ui.PreGame.prototype = {
 
         this.dialog = new xss.Dialog(
              xss.COPY_CONFIRM_EXIT_HEADER,
-             this.players.getTotalNum() === 2 ?
+             this.players.getTotal() === 2 ?
                  xss.COPY_CONFIRM_EXIT_BODY_DRAMATIC :
                  xss.COPY_CONFIRM_EXIT_BODY,
              settings
@@ -117,7 +117,7 @@ xss.ui.PreGame.prototype = {
             }
         };
 
-        if (this.players.localPlayerIsHost() && this.players.getTotalNum() > 1) {
+        if (this.players.localPlayerIsHost() && this.players.getTotal() > 1) {
             this.dialog = new xss.Dialog(
                 xss.COPY_CONFIRM_START_HEADER,
                 xss.COPY_CONFIRM_START_BODY,

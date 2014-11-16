@@ -88,3 +88,8 @@ xss.COPY_AUTOJOIN_PLAYERS = 'Players ({0})';
 xss.COPY_AUTOJOIN_ENTER_NAME = 'Enter your name to join: ';
 
 xss.COPY_CHAT_INSTRUCT = 'Press ' + xss.UC_ENTER_KEY + ' to chat.';
+
+
+// Chat.
+xss.COPY_PLAYER_JOINED = '{0} joined.';
+xss.COPY_PLAYER_QUIT = '{0} quit.';

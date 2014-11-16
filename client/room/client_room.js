@@ -51,7 +51,7 @@ xss.room.ClientRoom.prototype = {
 
     propagateToPlayer: function() {
         this.round = new xss.room.ClientRound(this.players, this.options);
-        this.messagebox = new xss.room.MessageBox(this.players);
+        this.messagebox = new xss.room.MessageBox();
     },
 
     setRoom: function(serializedRoom) {

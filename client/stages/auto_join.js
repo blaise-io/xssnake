@@ -30,7 +30,7 @@ xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.protot
 
         summary.push(
             xss.util.format(
-                xss.COPY_AUTOJOIN_PLAYERS, this.room.players.getTotalNum()
+                xss.COPY_AUTOJOIN_PLAYERS, this.room.players.getTotal()
             ) + '\t' +
             this.room.players.getNames().join(xss.COPY_COMMA_SPACE)
         );

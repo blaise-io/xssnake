@@ -146,7 +146,7 @@ xss.room.ServerRoom.prototype = {
      * @return {boolean}
      */
     isFull: function() {
-        return this.players.getTotalNum() === this.options.maxPlayers;
+        return this.players.getTotal() === this.options.maxPlayers;
     }
 
 //    /**

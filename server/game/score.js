@@ -7,7 +7,7 @@
 xss.game.Score = function(room) {
     this.room = room;
     this.points = [];
-    for (var i = 0, m = room.players.getTotalNum(); i < m; i++) {
+    for (var i = 0, m = room.players.getTotal(); i < m; i++) {
         this.points.push(0);
     }
 };
