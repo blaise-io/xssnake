@@ -28,8 +28,7 @@ xss.BoundingBox.prototype = {
         this.y0 -= expand;
         this.x1 += expand;
         this.y1 += expand;
-        this.width += expand * 2;
-        this.height += expand * 2;
+        this.setDimensions();
         return this;
     },
 
@@ -56,10 +55,14 @@ xss.BoundingBox.prototype = {
         this.y0 = y0;
         this.y1 = y1;
 
-        this.width = x1 - x0;
-        this.height = y1 - y0;
+        this.setDimensions();
 
         return this;
+    },
+
+    setDimensions: function() {
+        this.width = this.x1 - this.x0;
+        this.height = this.y1 - this.y0;
     }
 
 };

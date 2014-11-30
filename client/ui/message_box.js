@@ -19,7 +19,7 @@ xss.ui.MessageBox = function(messages, localAuthor) {
     this.lineHeight = 7;
     this.animationDuration = 200;
 
-    this.x0 = 100;
+    this.x0 = 120;
     this.x1 = xss.WIDTH;
     this.y0 = xss.HEIGHT - 25;
     this.y1 = xss.HEIGHT - 2;
@@ -27,7 +27,7 @@ xss.ui.MessageBox = function(messages, localAuthor) {
     this.padding = {x0: 0, x1: 0, y0: 1, y1: 1};
 
     this.bindEvents();
-    this.debounceUpdate();
+    this.updateMessages();
 };
 
 xss.ui.MessageBox.prototype = {
@@ -131,7 +131,7 @@ xss.ui.MessageBox.prototype = {
     updateMessages: function() {
         var num, shape, messages;
 
-        shape = xss.shapes.MSG_BOX = new xss.Shape();
+        shape = new xss.Shape();
         shape.mask = [
             this.x0, this.y0, this.x1,
             this.y1 - (this.inputField ? this.lineHeight - this.padding.y1 : 0)
@@ -139,6 +139,13 @@ xss.ui.MessageBox.prototype = {
 
         num = this.getNumMessagesFit();
         messages = this.getDisplayMessages(num);
+
+        if (messages.length) {
+            xss.shapes.MSG_BOX = shape;
+        } else {
+            return false;
+        }
+
         for (var i = 0, m = messages.length; i < m; i++) {
             shape.add(this.getMessagePixels(i, messages[i]));
         }

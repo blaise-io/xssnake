@@ -53,7 +53,7 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     },
 
     /**
-     * @returns {Array.<string>}
+     * @return {Array.<string>}
      */
     getNames: function() {
         var names = [];
@@ -61,6 +61,17 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
             names.push(this.players[i].name);
         }
         return names;
+    },
+
+    /**
+     * @return {Array.<number>}
+     */
+    getScore: function() {
+        var scores = [];
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            scores.push(this.players[i].score);
+        }
+        return scores;
     },
 
     /**

@@ -59,7 +59,7 @@ xss.room.ServerRoom.prototype = {
     },
 
     /**
-     * @returns {Array.<string>}
+     * @return {Array.<string>}
      */
     serialize: function() {
         return [this.key];

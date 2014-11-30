@@ -16,6 +16,7 @@ xss.room.ClientRoom = function() {
     /** @typedef {xss.room.ClientRound} */
     this.round = null;
     this.messagebox = null;
+    this.scoreboard = null;
 
     this.bindEvents();
 };
@@ -29,6 +30,7 @@ xss.room.ClientRoom.prototype = {
         this.options.destruct();
         this.round.destruct();
         this.messagebox.destruct();
+        this.scoreboard.destruct();
     },
 
     bindEvents: function() {
@@ -51,6 +53,7 @@ xss.room.ClientRoom.prototype = {
 
     propagateToPlayer: function() {
         this.round = new xss.room.ClientRound(this.players, this.options);
+        this.scoreboard = new xss.room.Scoreboard(this.players);
         this.messagebox = new xss.room.MessageBox();
     },
 

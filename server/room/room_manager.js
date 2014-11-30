@@ -131,7 +131,7 @@ xss.room.ServerRoomManager.prototype = {
 
     /**
      * @param {string} key
-     * @returns {number}
+     * @return {number}
      */
     getRoomStatus: function(key) {
         var room;

@@ -147,6 +147,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
                 this.transform.translate = [x, y];
                 progressCallback(this, x, y);
             } else {
+                this.transform.translate = to;
                 delete this.effects.animate;
                 doneCallback(this);
             }

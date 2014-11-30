@@ -16,6 +16,9 @@ if (xss.debug.messages) {
             xss.shapes[a] = b;
         });
 
+        var players = new xss.room.ClientPlayerRegistry();
+        new xss.room.Scoreboard(players);
+
         function randomBody() {
             var body = [];
             for (var i = 0, m = xss.util.randomRange(1, 6); i < m; i++) {
