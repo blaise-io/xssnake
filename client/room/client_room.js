@@ -8,7 +8,6 @@ xss.room.ClientRoom = function() {
     this.key = null;
 
     this.game = null;
-    this.chat = null;
 
     this.players = new xss.room.ClientPlayerRegistry();
     this.options = new xss.room.ClientOptions();
