@@ -125,6 +125,7 @@ xss.util.Sanitizer.prototype = {
      * @return {boolean}
      */
     _assertLength: function(min, max) {
+        this._value = this._value.trim();
         return this._value.length >= min && this._value.length <= max;
     },
 

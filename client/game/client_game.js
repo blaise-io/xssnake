@@ -22,7 +22,7 @@ xss.game.ClientGame = function(players, level) {
 xss.game.ClientGame.prototype = {
 
     destruct: function() {
-        xss.event.off(xss.PUB_GAME_TICK, xss.NS_GAME);
+        xss.event.off(xss.EV_GAME_TICK, xss.NS_GAME);
         //xss.event.off(xss.NC_GAME_SPAWN, xss.NS_GAME);
         //xss.event.off(xss.NC_SNAKE_UPDATE, xss.NS_GAME);
         //xss.event.off(xss.NC_SNAKE_SIZE, xss.NS_GAME);
@@ -56,7 +56,7 @@ xss.game.ClientGame.prototype = {
     bindEvents: function() {
         var ns = xss.NS_GAME;
 
-        xss.event.on(xss.PUB_GAME_TICK, ns, this._clientGameLoop.bind(this));
+        xss.event.on(xss.EV_GAME_TICK, ns, this._clientGameLoop.bind(this));
 
         //// @todo put in SpawnableRegistry
         //xss.event.on(xss.NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
@@ -77,7 +77,7 @@ xss.game.ClientGame.prototype = {
      */
     start: function() {
         xss.event.on(
-            xss.PUB_WIN_FOCUS_CHANGE,
+            xss.EV_WIN_FOCUS_CHANGE,
             xss.NS_GAME,
             this._handleFocus.bind(this)
         );

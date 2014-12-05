@@ -9,13 +9,14 @@ describe('Matcher', function() {
     var room, matcher, matchingOptions;
     var dummyEmitter = jasmine.createSpyObj('dummyEdmitter', ['on', 'send']);
     var dummyLevelset = jasmine.createSpyObj('dummyLevelset', ['getRandomLevelIndex']);
+    var dummyServer = {emitter: dummyEmitter};
 
     xss.levelsetRegistry = new xss.levelset.Registry();
     xss.levelsetRegistry.levelsets = [dummyLevelset];
 
     beforeEach(function() {
         matchingOptions = new xss.room.ServerOptions();
-        room = new xss.room.ServerRoom(null, new xss.room.ServerOptions(), 'A');
+        room = new xss.room.ServerRoom(dummyServer, new xss.room.ServerOptions(), 'A');
         matcher = new xss.room.Matcher([room]);
     });
 

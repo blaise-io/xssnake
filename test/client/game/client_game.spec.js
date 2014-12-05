@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Client', function() {
-describe('util', function() {
 describe('xss.game.ClientGame', function() {
     var players, level, game;
 
@@ -59,6 +58,5 @@ describe('xss.game.ClientGame', function() {
         });
     });
 
-});
 });
 });

@@ -19,8 +19,8 @@ xss.ui.MessageBox = function(messages, localAuthor) {
     this.lineHeight = 7;
     this.animationDuration = 200;
 
-    this.x0 = 120;
-    this.x1 = xss.WIDTH;
+    this.x0 = 108;
+    this.x1 = xss.WIDTH - 2;
     this.y0 = xss.HEIGHT - 25;
     this.y1 = xss.HEIGHT - 2;
 
@@ -48,6 +48,7 @@ xss.ui.MessageBox.prototype = {
         switch (ev.keyCode) {
             case xss.KEY_ESCAPE:
                 this.hideInput();
+                this.hideEnterKey();
                 ev.preventDefault();
                 break;
             case xss.KEY_ENTER:
@@ -71,11 +72,13 @@ xss.ui.MessageBox.prototype = {
 
         this.inputField = new xss.InputField(x, y, prefix);
         this.inputField.maxValWidth = this.x1 - x - xss.font.width(prefix);
-        this.inputField.maxValWidth -= xss.font.width(xss.UC_ENTER_KEY);
         this.inputField.maxValWidth -= this.padding.x0 + this.padding.x1;
+        this.inputField.displayWidth = this.inputField.maxValWidth;
+        this.inputField.displayWidth -= xss.font.width(xss.UC_ENTER_KEY) + 1;
         this.inputField.setValue('');
 
         this.updateMessages();
+        this.showEnterKey();
     },
 
     hideInput: function() {
@@ -90,20 +93,28 @@ xss.ui.MessageBox.prototype = {
         if (body.trim()) {
             this.messages.push(new xss.room.Message(this.localAuthor.name, body));
             this.sendMessageFn(body);
-
             this.skipQueue = true;
-            this.flashEnterKey();
         }
+        this.hideEnterKey(!!body.trim());
     },
 
-    flashEnterKey: function() {
+    showEnterKey: function() {
         var x, y, shape;
 
-        x = this.x1 - this.padding.x1 - xss.font.width(xss.UC_ENTER_KEY) - 2;
+        x = this.x1 - this.padding.x1 - xss.font.width(xss.UC_ENTER_KEY);
         y = this.y1 - this.lineHeight - this.padding.y1 + 1;
 
-        shape = xss.shapes.MSG_SENT = xss.font.shape(xss.UC_ENTER_KEY, x, y);
-        shape.flash(100, 100).lifetime(0, 100 * 4);
+        shape = xss.shapes.MSG_ENTER = xss.font.shape(xss.UC_ENTER_KEY, x, y);
+        shape.invert(shape.bbox(2));
+        shape.isOverlay = true;
+    },
+
+    hideEnterKey: function(flash) {
+        if (flash) {
+            xss.shapes.MSG_ENTER.flash(60, 60).lifetime(0, 60 * 4);
+        } else {
+            xss.shapes.MSG_ENTER = null;
+        }
     },
 
     getDisplayMessages: function(num) {

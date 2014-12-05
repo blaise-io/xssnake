@@ -113,7 +113,7 @@ xss.Font.prototype = {
         var props = this._getChrProperties(xss.UC_HOURGLASS);
         if (props && 8 === props.width) {
             this.loaded = true;
-            xss.event.trigger(xss.PUB_FONT_LOAD);
+            xss.event.trigger(xss.EV_FONT_LOAD);
         } else {
             window.setTimeout(this._detectFontLoad.bind(this), 0);
         }

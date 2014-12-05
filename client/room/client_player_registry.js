@@ -129,27 +129,30 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     },
 
     /**
-     * @param {xss.room.ClientPlayerRegistry} missingPlayerRegistry
-     * @return {xss.room.Player}
+     * @param {xss.room.ClientPlayerRegistry} prevPlayers
+     * @return {string}
      */
-    getQuit: function(missingPlayerRegistry) {
-        for (var i = 0, m = this.players.length; i < m; i++) {
-            if (-1 === missingPlayerRegistry.players.indexOf(this.players[i])) {
-                return this.players[i];
+    getQuitName: function(prevPlayers) {
+        var prevNames, newNames;
+        prevNames = prevPlayers.getNames();
+        newNames = this.getNames();
+
+        for (var i = 0, m = prevNames.length; i < m; i++) {
+            if (-1 === newNames.indexOf(prevNames[i])) {
+                return prevNames[i];
             }
         }
+
         return null;
     },
 
     /**
-     * @param {xss.room.ClientPlayerRegistry} includingPlayerRegistery
-     * @return {xss.room.Player}
+     * Assume last player tthat joined to be last item in players array.
+     * @return {string}
      */
-    getJoin: function(includingPlayerRegistery) {
-        for (var i = 0, m = includingPlayerRegistery.players.length; i < m; i++) {
-            if (-1 === this.players.indexOf(includingPlayerRegistery.players[i])) {
-                return includingPlayerRegistery.players[i];
-            }
+    getJoinName: function() {
+        if (this.getTotal()) {
+            return this.players[this.players.length - 1].name;
         }
         return null;
     },

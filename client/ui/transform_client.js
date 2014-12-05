@@ -17,8 +17,8 @@ xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */
 
         r = (typeof round === 'undefined') ? 1 : 0;
 
-        hPadding = (hPadding || 6);
-        vPadding = (vPadding || 4);
+        hPadding = typeof hPadding === 'number' ? hPadding : 6;
+        vPadding = typeof vPadding === 'number' ? vPadding : 6;
 
         // Keep in viewport
         if (bbox.y0 - vPadding < 0) {

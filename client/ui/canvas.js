@@ -42,7 +42,7 @@ xss.Canvas.prototype = {
      */
     paint: function(delta) {
         // Abuse this loop to trigger game tick
-        xss.event.trigger(xss.PUB_GAME_TICK, delta, this.focus);
+        xss.event.trigger(xss.EV_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this._clear();
@@ -266,7 +266,7 @@ xss.Canvas.prototype = {
      */
     _handleFocusChange: function(ev) {
         this.focus = (ev.type !== 'blur');
-        xss.event.trigger(xss.PUB_WIN_FOCUS_CHANGE, this.focus);
+        xss.event.trigger(xss.EV_WIN_FOCUS_CHANGE, this.focus);
     },
 
     /**

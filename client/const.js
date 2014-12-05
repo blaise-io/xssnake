@@ -73,9 +73,10 @@ xss.NS_SOCKET = 'SOK';
 xss.NS_SPAWN = 'SPN';
 xss.NS_STAGES = 'STG';
 
-xss.PUB_GAME_TICK = 'TIK';
-xss.PUB_WIN_FOCUS_CHANGE = 'WFC';
-xss.PUB_FONT_LOAD = 'FLD';
+xss.EV_GAME_TICK = 'TIK';
+xss.EV_WIN_FOCUS_CHANGE = 'WFC';
+xss.EV_FONT_LOAD = 'FLD';
+xss.EV_PLAYERS_UPDATED = 'PU';
 
 xss.STORAGE_MUTE = 'MUT';
 xss.STORAGE_NAME = 'NME';

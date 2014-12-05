@@ -1,22 +1,19 @@
 'use strict';
 
 /**
+ * @param {xss.room.ClientPlayerRegistry} players
  * @constructor
  */
-xss.room.MessageBox = function() {
-    /** @type {Array.<xss.room.Message>} */
-    this.messages = [];
-
+xss.room.MessageBox = function(players) {
     /**
      * MessageBox has its own set of players to compare.
      * @type {xss.room.ClientPlayerRegistry}
      */
     this.previousPlayers = null;
-    this.players = new xss.room.ClientPlayerRegistry();
+    this.players = players;
 
-    this.messages.push(
-        new xss.room.Message(null, xss.COPY_CHAT_INSTRUCT)
-    );
+    /** @type {Array.<xss.room.Message>} */
+    this.messages = [new xss.room.Message(null, xss.COPY_CHAT_INSTRUCT)];
 
     this.ui = new xss.ui.MessageBox(this.messages, xss.player);
     this.ui.sendMessageFn = this.sendMessage.bind(this);
@@ -29,19 +26,18 @@ xss.room.MessageBox.prototype = {
     destruct: function() {
         this.messages.length = 0;
         this.previousPlayers = null;
-        this.players = null;
         this.ui.destruct();
         this.unbindEvents();
     },
 
     bindEvents: function() {
         xss.event.on(xss.NC_CHAT_MESSAGE, xss.NS_MSGBOX, this.addMessage.bind(this));
-        xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_MSGBOX, this.updatePlayers.bind(this));
+        xss.event.on(xss.EV_PLAYERS_UPDATED, xss.NS_MSGBOX, this.updatePlayers.bind(this));
     },
 
     unbindEvents: function() {
         xss.event.off(xss.NC_CHAT_MESSAGE, xss.NS_MSGBOX, this.addMessage.bind(this));
-        xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_MSGBOX);
+        xss.event.off(xss.EV_PLAYERS_UPDATED, xss.NS_MSGBOX);
     },
 
     addMessage: function(serializedMessage) {
@@ -50,8 +46,7 @@ xss.room.MessageBox.prototype = {
         this.ui.debounceUpdate();
     },
 
-    updatePlayers: function(serializedPlayers) {
-        this.players.deserialize(serializedPlayers);
+    updatePlayers: function() {
         if (this.previousPlayers) {
             this.notifyPlayersChange();
         }
@@ -63,10 +58,10 @@ xss.room.MessageBox.prototype = {
         var body, name;
         if (this.players.getTotal() > this.previousPlayers.getTotal()) {
             body = xss.COPY_PLAYER_JOINED;
-            name = this.previousPlayers.getJoin(this.players).name;
+            name = this.players.getJoinName();
         } else if (this.players.getTotal() < this.previousPlayers.getTotal()) {
             body = xss.COPY_PLAYER_QUIT;
-            name = this.previousPlayers.getQuit(this.players).name;
+            name = this.players.getQuitName(this.previousPlayers);
         }
         this.messages.push(
             new xss.room.Message(null, xss.util.format(body, name))

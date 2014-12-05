@@ -12,7 +12,7 @@ xss.ui.Scoreboard = function(players) {
     this.queueTimer = 0;
 
     this.x0 = 3;
-    this.x1 = 60;
+    this.x1 = 56;
     this.y0 = xss.HEIGHT - 24;
     this.y1 = xss.HEIGHT - 2;
     this.podiumSize = 6;

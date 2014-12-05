@@ -8,8 +8,7 @@
 xss.room.Message = function(author, body) {
     this.author = author;
     this.body = body;
-
-    this.notificationPrefix = '!!';
+    this.notificationPrefix = '#';
 };
 
 xss.room.Message.prototype = {

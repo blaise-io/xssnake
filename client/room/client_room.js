@@ -53,7 +53,7 @@ xss.room.ClientRoom.prototype = {
     propagateToPlayer: function() {
         this.round = new xss.room.ClientRound(this.players, this.options);
         this.scoreboard = new xss.room.Scoreboard(this.players);
-        this.messagebox = new xss.room.MessageBox();
+        this.messagebox = new xss.room.MessageBox(this.players);
     },
 
     setRoom: function(serializedRoom) {
@@ -67,6 +67,7 @@ xss.room.ClientRoom.prototype = {
 
     updatePlayers: function(serializedPlayers) {
         this.players.deserialize(serializedPlayers);
+        xss.event.trigger(xss.EV_PLAYERS_UPDATED, this.players);
     }
 
 //    /**
