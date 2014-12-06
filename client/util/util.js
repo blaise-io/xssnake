@@ -11,22 +11,20 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
      * @param {boolean=} flash
      */
     instruct: function(str, duration, flash) {
-        var shape, left = xss.WIDTH - xss.font.width(str) - 3;
+        var shape, x, y;
 
-        shape = xss.font.shape(
-            str, left, xss.HEIGHT - 3 - xss.font.height(str), {invert: true}
-        );
+        x = xss.WIDTH - xss.font.width(str) - 2;
+        y = xss.HEIGHT - 2 - xss.font.height(str);
+
+        shape = xss.font.shape(str, x, y, {invert: true});
         shape.isOverlay = true;
-
-        if (duration) {
-            shape.lifetime(0, duration);
-        }
+        shape.lifetime(0, duration);
 
         if (flash) {
             shape.flash();
         }
 
-        xss.shapes.instruction = shape;
+        xss.shapes.INSTRUCTION = shape;
     },
 
     /**

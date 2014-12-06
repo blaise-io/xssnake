@@ -7,7 +7,8 @@
 xss.game.ClientSnakeControls = function(snake) {
     this.snake = snake;
     this.bindEvents();
-    this.directionBuffer = [];
+    // Allow buffering the next move.
+    this.upcomingDirections = [];
 };
 
 xss.game.ClientSnakeControls.prototype = {
@@ -32,7 +33,7 @@ xss.game.ClientSnakeControls.prototype = {
      */
     handleKeys: function(event) {
         if (!xss.keysBlocked) {
-            this.changeDirection(xss.KEY_TO_DIRECTION[event.keyCode]);
+            this.setDirection(xss.KEY_TO_DIRECTION[event.keyCode]);
         }
     },
 
@@ -40,28 +41,11 @@ xss.game.ClientSnakeControls.prototype = {
      * @param {number} direction
      * @private
      */
-    changeDirection: function(direction) {
-        var allowed = this.isTurnAllowed(direction, this.getPreviousDirection());
-        if (this.directionBuffer.length <= 2 && allowed) {
-            this.directionBuffer.push(direction);
-            this.emitProxy(direction);
-        }
-    },
-
-    /**
-     * @param {number} direction
-     * @private
-     */
-    emitProxy: function(direction) {
-        var emit = function() {
-            this.snake.emit(direction);
-        }.bind(this);
-        if (xss.remoteRoom && xss.remoteRoom.rounds.round && xss.remoteRoom.rounds.round.started) {
-            if (this.directionBuffer.length <= 1) {
-                emit();
-            } else {
-                setTimeout(emit, this.speed);
-            }
+    setDirection: function(direction) {
+        var allowed = this.isDirectionAllowed(direction, this.getPreviousDirection());
+        if (allowed && this.upcomingDirections.length <= 2) {
+            this.upcomingDirections.push(direction);
+            this.emitNewDirection(direction);
         }
     },
 
@@ -70,9 +54,10 @@ xss.game.ClientSnakeControls.prototype = {
      * @private
      */
     getPreviousDirection: function() {
-        return (this.directionBuffer.length) ?
-            this.directionBuffer[0] :
-            this.snake.direction;
+        if (this.upcomingDirections.length) {
+            return this.upcomingDirections[0];
+        }
+        return this.snake.direction;
     },
 
     /**
@@ -80,7 +65,7 @@ xss.game.ClientSnakeControls.prototype = {
      * @param {number} prevDirection
      * @private
      */
-    isTurnAllowed: function(direction, prevDirection) {
+    isDirectionAllowed: function(direction, prevDirection) {
         var turns = Math.abs(direction - prevDirection);
         // Disallow 0: no turn, 2: bumping into torso
         return turns === 1 || turns === 3;
@@ -90,9 +75,28 @@ xss.game.ClientSnakeControls.prototype = {
      * @return {number}
      */
     getNextDirection: function() {
-        if (this.directionBuffer.length) {
-            this.snake.direction = this.directionBuffer.shift();
+        if (this.upcomingDirections.length) {
+            this.snake.direction = this.upcomingDirections[0];
         }
         return this.snake.direction;
+    },
+
+    /**
+     * @param {number} direction
+     */
+    emitNewDirection: function(direction) {
+        if (xss.player && xss.player.room && xss.player.room.gameHasStarted()) {
+            this.snake.emit(direction);
+        }
+    },
+
+    /**
+     * Snake moved. Administrate!
+     */
+    move: function() {
+        if (this.upcomingDirections.length) {
+            this.emitNewDirection(this.upcomingDirections.shift());
+        }
     }
+
 };

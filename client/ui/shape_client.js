@@ -79,6 +79,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
      */
     _flashEffect: function(on, off) {
         var duration = [on || 400, off || 100], progress = 0;
+        /** @this xss.Shape */
         return function(delta) {
             progress += delta;
             if (progress > duration[+!this.enabled]) {
@@ -89,35 +90,31 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
     },
 
     /**
-     * @param {number} start
-     * @param {number} end
+     * @param {!number} start
+     * @param {!number} end
      * @return {function({number})}
      * @private
      */
     _lifetimeEffect: function(start, end) {
         var key, progress = 0;
+
+        /** @this xss.Shape */
         return function(delta) {
-            // Enable/disable shape only once, allows combination
-            // with other enabling/disabling effects
-
-            // Init
-            progress += delta;
-            if (progress === delta) {
-                this.enabled = false;
-            }
-
-            // Start time reached
+            // Start time reached.
             if (start && progress >= start) {
+                start = 0; // Prevent re-setting enabled, conflicts with flash()
                 this.enabled = true;
             }
 
-            // Stop time reached
+            // Stop time reached.
             if (end && progress >= end) {
                 key = xss.util.getKey(xss.shapes, this);
                 if (key) {
                     xss.shapes[key] = null;
                 }
             }
+
+            progress += delta;
         };
     },
 

@@ -68,7 +68,16 @@ xss.room.ClientRoom.prototype = {
     updatePlayers: function(serializedPlayers) {
         this.players.deserialize(serializedPlayers);
         xss.event.trigger(xss.EV_PLAYERS_UPDATED, this.players);
+    },
+
+    gameHasStarted: function() {
+        return (
+            this.round &&
+            this.round.game &&
+            this.round.game.started
+        );
     }
+
 
 //    /**
 //     * @param {Array.<string>} names

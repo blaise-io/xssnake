@@ -254,10 +254,10 @@ xss.Canvas.prototype = {
 
     /** @private */
     _bindEvents: function() {
+        this.canvas.onclick = this._promoteKeyboard.bind(this);
         window.onresize = xss.util.debounce(this._positionCanvas.bind(this));
-        window.onfocus  = this._handleFocusChange.bind(this);
-        window.onblur   = this._handleFocusChange.bind(this);
-        window.onclick  = this._promoteKeyboard.bind(this);
+        window.onfocus = this._handleFocusChange.bind(this);
+        window.onblur = this._handleFocusChange.bind(this);
     },
 
     /**

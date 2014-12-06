@@ -11,12 +11,13 @@
 xss.game.ClientSnake = function(index, local, name, level) {
     xss.game.Snake.call(this, index, level);
 
-    this.index   = index;
-    this.local   = local;
-    this.name    = name;
-    this.level   = level;
+    this.index = index;
+    this.local = local;
+    this.name = name;
+    this.level = level;
     this.elapsed = 0;
-    this.limbo   = false;
+    this.limbo = false;
+    this.exploded = false;
 
     /** @type {xss.game.ClientSnakeControls} */
     this.controls = null;
@@ -46,6 +47,13 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
         if (this.controls) {
             this.controls.destruct();
         }
+    },
+
+    move: function(coordinate) {
+        if (this.controls) {
+            this.controls.move();
+        }
+        xss.game.Snake.prototype.move.call(this, coordinate);
     },
 
     getShape: function() {
@@ -131,8 +139,8 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
             this.controls.destruct();
         }
         this.updateShape();
-        if (!this._exploded) {
-            this._exploded = true;
+        if (!this.exploded) {
+            this.exploded = true;
             this.explodeParticles(part);
         }
     },
