@@ -19,7 +19,7 @@ xss.ui.MessageBox = function(messages, localAuthor) {
     this.lineHeight = 7;
     this.animationDuration = 200;
 
-    this.x0 = 108;
+    this.x0 = 109;
     this.x1 = xss.WIDTH - 2;
     this.y0 = xss.HEIGHT - 25;
     this.y1 = xss.HEIGHT - 2;

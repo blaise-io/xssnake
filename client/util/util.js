@@ -138,7 +138,7 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
      */
     format: function(str, varArgs) {
         var args = Array.prototype.slice.call(arguments, 1);
-        return arguments[0].replace(/\{(\d+)\}/g, function(match, number) {
+        return str.replace(/\{(\d+)\}/g, function(match, number) {
             return args[number];
         });
     },

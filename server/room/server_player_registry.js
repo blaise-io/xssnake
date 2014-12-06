@@ -16,7 +16,7 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
 
     /**
      * Send data to everyone in the room.
-     * @param {string} type
+     * @param {number} type
      * @param {*=} data
      * @param {xss.room.ServerPlayer=} exclude
      */
@@ -43,7 +43,7 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
 
     /**
      * Buffer events to be sent later using flush()
-     * @param {string} type
+     * @param {number} type
      * @param {*} data
      */
     buffer: function(type, data) {

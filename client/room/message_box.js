@@ -55,18 +55,22 @@ xss.room.MessageBox.prototype = {
     },
 
     notifyPlayersChange: function() {
-        var body, name;
+        var message;
         if (this.players.getTotal() > this.previousPlayers.getTotal()) {
-            body = xss.COPY_PLAYER_JOINED;
-            name = this.players.getJoinName();
+            message = xss.util.format(
+                xss.COPY_PLAYER_JOINED,
+                this.players.getJoinName()
+            );
         } else if (this.players.getTotal() < this.previousPlayers.getTotal()) {
-            body = xss.COPY_PLAYER_QUIT;
-            name = this.players.getQuitName(this.previousPlayers);
+            message = xss.util.format(
+                xss.COPY_PLAYER_QUIT,
+                this.players.getQuitName(this.previousPlayers)
+            );
         }
-        this.messages.push(
-            new xss.room.Message(null, xss.util.format(body, name))
-        );
-        this.ui.debounceUpdate();
+        if (message) {
+            this.messages.push(new xss.room.Message(null, message));
+            this.ui.debounceUpdate();
+        }
     },
 
     sendMessage: function(body) {

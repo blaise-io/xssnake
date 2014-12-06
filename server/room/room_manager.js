@@ -90,7 +90,8 @@ xss.room.ServerRoomManager.prototype = {
         if (status === xss.ROOM_JOINABLE) {
             room = this.getRoomByKey(key);
             room.addPlayer(player);
-            player.emit(xss.NC_ROOM_ROUND_SERIALIZE, room.rounds.round.serialize());
+            player.emit(xss.NC_ROUND_SERIALIZE, room.rounds.round.serialize());
+            room.detectAutostart();
         } else {
             player.emit(xss.NC_ROOM_JOIN_ERROR, [status]);
         }
@@ -112,6 +113,7 @@ xss.room.ServerRoomManager.prototype = {
         room = room || this.createRoom(options);
         room.addPlayer(player);
         room.emitAll(player);
+        room.detectAutostart();
     },
 
     getRoomByKey: function(key) {
@@ -161,7 +163,7 @@ xss.room.ServerRoomManager.prototype = {
         if (status === xss.ROOM_JOINABLE) {
             room = this.getRoomByKey(key);
             player.emit(xss.NC_ROOM_SERIALIZE, room.serialize());
-            player.emit(xss.NC_ROOM_OPTIONS_SERIALIZE, room.options.serialize());
+            player.emit(xss.NC_OPTIONS_SERIALIZE, room.options.serialize());
             player.emit(xss.NC_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
         } else {
             player.emit(xss.NC_ROOM_JOIN_ERROR, [status]);

@@ -7,7 +7,7 @@
 xss.room.Player = function(name) {
     this.name = name || null;
     this.connected = false;
-    this.score = 999
+    this.score = 0
     ;
     this.snake = null;
 };

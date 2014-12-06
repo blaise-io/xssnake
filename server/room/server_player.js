@@ -33,7 +33,9 @@ xss.util.extend(xss.room.ServerPlayer.prototype, xss.room.Player.prototype);
 xss.util.extend(xss.room.ServerPlayer.prototype, {
 
     destruct: function() {
-        this.disconnect();
+        if (this.connected) {
+            this.disconnect();
+        }
         this.unbindEvents();
         this.connected = false;
         this.server = null;
@@ -42,9 +44,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
     },
 
     disconnect: function() {
-        if (this.room) {
-            this.room.removePlayer(this);
-        }
+        this.emitMessage(xss.SE_PLAYER_DISCONNECT, this);
         if (this.connection) {
             this.connection.close();
             this.connection = null;
@@ -57,15 +57,21 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
      */
     onmessage: function(jsonStr) {
         var message = new xss.netcode.Message(jsonStr);
-        console.log('<--', this.name, jsonStr);
+        console.log('IN ', this.name, jsonStr);
         if (message.isClean) {
-            // Emit the message on global emitter first,
-            // Any class can pick this up.
-            if (!this.emitter.emit(message.event, message.data)) {
-                // If the event was not picked up, emit the message
-                // using the local emitter.
-                this.server.emitter.emit(message.event, message.data, this);
-            }
+            this.emitMessage(message.event, message.data);
+        }
+    },
+
+    emitMessage: function(event, data) {
+        var playerEmits, roomEmits;
+
+        playerEmits = this.emitter.emit(event, data);
+        roomEmits = this.room && this.room.emitter.emit(event, data, this);
+
+        // Global events (connecting, finding room).
+        if (!playerEmits && !roomEmits) {
+            this.server.emitter.emit(event, data, this);
         }
     },
 
@@ -109,7 +115,7 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
             } else {
                 emit = [event];
             }
-            console.log('-->', this.name, JSON.stringify(emit));
+            console.log('OUT', this.name, JSON.stringify(emit));
             this.connection.send(JSON.stringify(emit), function(error) {
                 if (error) {
                     console.error('Error sending message', error);

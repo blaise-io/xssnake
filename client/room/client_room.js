@@ -34,7 +34,7 @@ xss.room.ClientRoom.prototype = {
 
     bindEvents: function() {
         xss.event.on(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM, this.setRoom.bind(this));
-        xss.event.on(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM, this.updateOptions.bind(this));
+        xss.event.on(xss.NC_OPTIONS_SERIALIZE, xss.NS_ROOM, this.updateOptions.bind(this));
         xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.updatePlayers.bind(this));
 
         //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
@@ -46,7 +46,7 @@ xss.room.ClientRoom.prototype = {
 
     unbindEvents: function() {
         xss.event.off(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM);
-        xss.event.off(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_ROOM);
+        xss.event.off(xss.NC_OPTIONS_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
     },
 

@@ -1,5 +1,7 @@
 'use strict';
 
+var events = require('events');
+
 /**
  * @param {xss.netcode.Server} server
  * @param {xss.room.ServerOptions} options
@@ -11,29 +13,33 @@ xss.room.ServerRoom = function(server, options, key) {
     this.options = options;
     this.key = key;
 
+    this.emitter = new events.EventEmitter();
     this.players = new xss.room.ServerPlayerRegistry();
-    this.rounds  = new xss.room.ServerRoundManager(this.players, this.options);
+    this.rounds  = new xss.room.ServerRoundManager(this.emitter, this.players, this.options);
     this.bindEvents();
 };
 
 xss.room.ServerRoom.prototype = {
 
     destruct: function() {
-        this.rounds.destruct();
+        this.emitter.removeAllListeners();
         this.players.destruct();
+        this.rounds.destruct();
         this.server = null;
+        this.players = null;
         this.rounds = null;
     },
 
     bindEvents: function() {
-        this.server.emitter.on(xss.NC_CHAT_MESSAGE, this.handleChatEvent.bind(this));
+        this.emitter.on(xss.NC_CHAT_MESSAGE, this.handleChatEvent.bind(this));
+        this.emitter.on(xss.SE_PLAYER_DISCONNECT, this.handlePlayerDisconnect.bind(this));
     },
 
     handleChatEvent: function(serializedMessage, player) {
         var sanitizer = new xss.util.Sanitizer(serializedMessage[0]);
         sanitizer.assertStringOfLength(1, 64);
         if (sanitizer.valid()) {
-            // @todo Antispam.
+            // TODO Prevent spam.
             player.broadcast(xss.NC_CHAT_MESSAGE, [
                 this.players.players.indexOf(player),
                 sanitizer.getValueOr()
@@ -48,12 +54,6 @@ xss.room.ServerRoom.prototype = {
 //        this.emitState();
     },
 
-//    updateIndices: function() {
-//        for (var i = 0, m = this.clients.length; i < m; i++) {
-//            this.clients[i].model.index = i;
-//        }
-//    },
-
     isAwaitingPlayers: function() {
         return !this.isFull() && !this.rounds.started;
     },
@@ -63,36 +63,14 @@ xss.room.ServerRoom.prototype = {
      */
     serialize: function() {
         return [this.key];
-
-//        var rounds, clients, capacity, isprivate;
-//
-//        rounds = this.rounds;
-//        clients = this.clients;
-//        capacity = this.options.maxPlayers;
-//        isprivate = this.options.isPrivate;
-//
-//        for (var i = 0, m = clients.length; i < m; i++) {
-//            clients[i].emit(xss.NC_ROOM_SERIALIZE, [
-//                i,
-//                this.seed,
-//                this.key,
-//                this.names(),
-//                capacity,
-//                isprivate,
-//                rounds.round.game.model.created,
-//                rounds.levelIndex,
-//                rounds.started,
-//                rounds.score.points
-//            ]);
-//        }
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {xss.room.ServerPlayer} player
      * @return {boolean}
      */
-    isHost: function(client) {
-        return (0 === client.model.index);
+    isHost: function(player) {
+        return (0 === this.players.indexOf(player));
     },
 
     /**
@@ -102,45 +80,30 @@ xss.room.ServerRoom.prototype = {
         this.players.add(player);
         player.room = this;
         this.players.emitPlayers();
-//        this.rounds.detectAutoStart();
+    },
+
+    detectAutostart: function() {
+        this.rounds.detectAutostart(this.isFull());
+    },
+
+    emit: function(player) {
+        player.emit(xss.NC_ROOM_SERIALIZE, this.serialize());
     },
 
     emitAll: function(player) {
-        player.emit(xss.NC_ROOM_SERIALIZE, this.serialize());
-        player.emit(xss.NC_ROOM_OPTIONS_SERIALIZE, this.options.serialize());
-        player.emit(xss.NC_ROOM_ROUND_SERIALIZE, this.rounds.round.serialize());
+        this.emit(player);
+        this.options.emit(player);
+        this.rounds.round.emit(player);
     },
 
-    removePlayer: function(player) {
+    handlePlayerDisconnect: function(player) {
         // Remove immediately if rounds have not started.
         if (!this.rounds.started) {
             this.players.remove(player);
         }
-
         // Notify users that someone disconnected.
         this.players.emitPlayers();
-
-        // @todo Clean up during next round.
     },
-
-//    /**
-//     * @param {xss.netcode.Client} client
-//     */
-//    removeClient: function(client) {
-//        this.emit(xss.NC_CHAT_NOTICE, [
-//            xss.NOTICE_DISCONNECT, client.model.index
-//        ]);
-//
-//        this.rounds.removeClient(client);
-//        this.clients.splice(client.model.index, 1);
-//
-//        this.updateIndices();
-//        this.emitState();
-//
-//        if (!this.clients.length) {
-//            this.server.roomManager.remove(this);
-//        }
-//    },
 
     /**
      * @return {boolean}
@@ -148,17 +111,5 @@ xss.room.ServerRoom.prototype = {
     isFull: function() {
         return this.players.getTotal() === this.options.maxPlayers;
     }
-
-//    /**
-//     * @return {Array.<string>}
-//     * @todo Move to PlayerRegistry
-//     */
-//    names: function() {
-//        var names = [];
-//        for (var i = 0, m = this.clients.length; i < m; i++) {
-//            names.push(this.clients[i].model.name);
-//        }
-//        return names;
-//    }
 
 };

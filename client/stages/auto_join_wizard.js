@@ -49,7 +49,7 @@ xss.stage.AutoJoinWizard.prototype = {
         );
 
         xss.event.on(
-            xss.NC_ROOM_OPTIONS_SERIALIZE,
+            xss.NC_OPTIONS_SERIALIZE,
             xss.NS_STAGES,
             this.checkAllRoomDataReceived.bind(this)
         );
@@ -69,7 +69,7 @@ xss.stage.AutoJoinWizard.prototype = {
 
     unbindEvents: function() {
         xss.event.off(xss.NC_ROOM_SERIALIZE, xss.NS_STAGES);
-        xss.event.off(xss.NC_ROOM_OPTIONS_SERIALIZE, xss.NS_STAGES);
+        xss.event.off(xss.NC_OPTIONS_SERIALIZE, xss.NS_STAGES);
         xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_STAGES);
         xss.event.off(xss.NC_ROOM_JOIN_ERROR, xss.NS_STAGES);
     },

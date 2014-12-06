@@ -80,7 +80,7 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
         } else {
             emit = [event];
         }
-        console.log('-->', emit);
+        console.log('OUT', emit);
         this.connection.send(JSON.stringify(emit));
     },
 
@@ -89,7 +89,7 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
      */
     onmessage: function(ev) {
         var data = JSON.parse(ev.data);
-        console.log('<--', data);
+        console.log('IN ', data);
         xss.event.trigger(data[0], data.slice(1));
     },
 

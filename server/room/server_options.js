@@ -17,6 +17,13 @@ xss.util.extend(xss.room.ServerOptions.prototype, xss.room.Options.prototype);
 xss.util.extend(xss.room.ServerOptions.prototype, {
 
     /**
+     * @param {xss.room.ServerPlayer} player
+     */
+    emit: function(player) {
+        player.emit(xss.NC_OPTIONS_SERIALIZE, this.serialize());
+    },
+
+    /**
      * @param {xss.room.ServerOptions} request
      * @return {boolean}
      */
