@@ -14,7 +14,7 @@ xss.util.extend(xss.util, /** @lends xss.util */ {
         var shape, x, y;
 
         x = xss.WIDTH - xss.font.width(str) - 2;
-        y = xss.HEIGHT - 2 - xss.font.height(str);
+        y = xss.HEIGHT - xss.font.height(str) - 2;
 
         shape = xss.font.shape(str, x, y, {invert: true});
         shape.isOverlay = true;
