@@ -127,7 +127,8 @@ xss.ui.PreGame.prototype = {
             cancel: this.hideConfirmDialog.bind(this),
             ok    : function() {
                 xss.player.emit(xss.NC_ROOM_START);
-            }
+                this.hideConfirmDialog();
+            }.bind(this)
         };
 
         this.dialog = new xss.Dialog(

@@ -185,7 +185,9 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
      */
     getNextPosition: function() {
         var shift, head = this.getHead();
-        this.direction = this.controls.getNextDirection();
+        if (this.controls) {
+            this.direction = this.controls.getNextDirection();
+        }
         shift = xss.GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
     }

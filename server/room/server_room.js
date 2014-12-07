@@ -67,14 +67,6 @@ xss.room.ServerRoom.prototype = {
 
     /**
      * @param {xss.room.ServerPlayer} player
-     * @return {boolean}
-     */
-    isHost: function(player) {
-        return (0 === this.players.indexOf(player));
-    },
-
-    /**
-     * @param {xss.room.ServerPlayer} player
      */
     addPlayer: function(player) {
         this.players.add(player);

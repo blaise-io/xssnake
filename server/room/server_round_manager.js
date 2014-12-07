@@ -14,7 +14,7 @@ xss.room.ServerRoundManager = function(roomEmitter, players, options) {
     /** @type {Array.<number>} */
     this.levelHistory = [];
 
-    this.round = new xss.room.ServerRound(players, options, this.levelHistory);
+    this.round = new xss.room.ServerRound(roomEmitter, players, options, this.levelHistory);
     this.roundIndex = 0;
 };
 
@@ -28,7 +28,7 @@ xss.room.ServerRoundManager.prototype = {
     },
 
     hasStarted: function() {
-        return (0 === this.roundIndex || this.round.started);
+        return (this.roundIndex >= 1 || this.round.started);
     },
 
     detectAutostart: function(full) {

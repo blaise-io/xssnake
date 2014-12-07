@@ -48,6 +48,14 @@ xss.room.PlayerRegistry.prototype = {
      */
     getTotal: function() {
         return this.players.length;
+    },
+
+    /**
+     * @param {xss.room.Player} player
+     * @return {boolean}
+     */
+    isHost: function(player) {
+        return 0 === this.players.indexOf(player);
     }
 
 };
