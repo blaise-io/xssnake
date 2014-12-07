@@ -42,10 +42,8 @@ xss.game.ClientSnakeControls.prototype = {
      * @private
      */
     setDirection: function(direction) {
-        if (this.upcomingDirections.length <= 2) {
-            if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
-                this.upcomingDirections.push(direction);
-            }
+        if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
+            this.upcomingDirections.push(direction);
         }
     },
 
@@ -67,8 +65,11 @@ xss.game.ClientSnakeControls.prototype = {
      */
     isDirectionAllowed: function(direction, prevDirection) {
         var turn = Math.abs(direction - prevDirection);
-        // Disallow 0: no turn, 2: bumping into torso
-        return turn === 1 || turn === 3;
+        return (
+            this.upcomingDirections.length <= 2 &&
+            this.snake.parts.length >= 2 && // Must go to blinkie at start.
+            turn !== 0 && turn !== 2 // No turn and 180 turn not allowed.
+        );
     },
 
     /**
