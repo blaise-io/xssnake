@@ -10,6 +10,9 @@ xss.ui.PreGame = function(players, options) {
     this.options = options;
 
     this.dialog = null;
+
+    this.countdownStarted = null;
+    this.countdownInterval = null;
     this.confirmExit = false;
     this.confirmStart = false;
 
@@ -22,6 +25,7 @@ xss.ui.PreGame.prototype = {
 
     destruct: function() {
         xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME);
+        clearInterval(this.countdownInterval);
         this.players = null;
         this.options = null;
         if (this.dialog) {
@@ -30,25 +34,25 @@ xss.ui.PreGame.prototype = {
     },
 
     bindKeys: function() {
-        xss.event.on(
-            xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME, this.handleKeys.bind(this)
-        );
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME, this.handleKeys.bind(this));
     },
 
     handleKeys: function(ev) {
-        if (!xss.keysBlocked) {
-            switch (ev.keyCode) {
-                case xss.KEY_BACKSPACE:
-                case xss.KEY_ESCAPE:
-                    this.confirmExit = true;
-                    this.updateUI();
-                    break;
-                case xss.KEY_START:
+        if (xss.keysBlocked) {
+            return;
+        }
+        switch (ev.keyCode) {
+            case xss.KEY_BACKSPACE:
+            case xss.KEY_ESCAPE:
+                this.confirmExit = true;
+                this.updateUI();
+                break;
+            case xss.KEY_START:
+                if (this.playerCanStartRound()) {
                     this.confirmStart = true;
                     this.updateUI();
-                    break;
-            }
-            this.updateUI();
+                }
+                break;
         }
     },
 
@@ -60,6 +64,8 @@ xss.ui.PreGame.prototype = {
             this.showConfirmExitDialog();
         } else if (this.confirmStart) {
             this.showConfirmStartDialog();
+        } else if (this.countdownStarted) {
+            this.showCountdown();
         } else {
             this.showInvitePlayersDialog();
         }
@@ -71,6 +77,10 @@ xss.ui.PreGame.prototype = {
         this.updateUI();
     },
 
+    playerCanStartRound: function() {
+        return this.players.getTotal() > 1 && this.players.localPlayerIsHost();
+    },
+
     showInvitePlayersDialog: function() {
         var numplayers, remaining, body;
 
@@ -80,7 +90,7 @@ xss.ui.PreGame.prototype = {
         body = xss.COPY_AWAITING_PLAYERS_BODY;
         body = xss.util.format(body, remaining, xss.util.pluralize(remaining));
 
-        if (numplayers > 1 && this.players.localPlayerIsHost()) {
+        if (this.playerCanStartRound()) {
             body += '\n\n' + xss.COPY_AWAITING_PLAYERS_START_NOW;
         }
 
@@ -117,13 +127,53 @@ xss.ui.PreGame.prototype = {
             }
         };
 
-        if (this.players.localPlayerIsHost() && this.players.getTotal() > 1) {
-            this.dialog = new xss.Dialog(
-                xss.COPY_CONFIRM_START_HEADER,
-                xss.COPY_CONFIRM_START_BODY,
-                settings
-            );
+        this.dialog = new xss.Dialog(
+            xss.COPY_CONFIRM_START_HEADER,
+            xss.COPY_CONFIRM_START_BODY,
+            settings
+        );
+    },
+
+    /**
+     * @param {boolean} started
+     */
+    toggleCountdown: function(started) {
+        if (started) {
+            this.countdownStarted = new Date();
+        } else {
+            this.countdownStarted = null;
+            clearInterval(this.countdownInterval);
         }
+    },
+
+    getCountdownRemaining: function() {
+        var remaining = xss.TIME_ROUND_COUNTDOWN;
+        remaining -= (+new Date() - this.countdownStarted) / 1000;
+        return Math.max(0, Math.round(remaining));
+    },
+
+    startCountdownTimer: function() {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+        }
+        this.countdownInterval = setInterval(function() {
+            xss.play.menu_alt();
+            // Prevent re-creating dialog which destroys button selection.
+            if (!this.confirmExit) {
+                this.updateUI();
+            }
+        }.bind(this), 1000);
+    },
+
+    showCountdown: function() {
+        var body = xss.util.format(
+            xss.COPY_COUNTDOWN_BODY,
+            this.getCountdownRemaining()
+        );
+        this.startCountdownTimer();
+        this.dialog = new xss.Dialog(xss.COPY_COUNTDOWN_TITLE, body, {
+            keysBlocked: false
+        });
     }
 
 };

@@ -27,11 +27,13 @@ xss.util.extend(xss.room.ClientRound.prototype, {
     bindEvents: function() {
         xss.event.on(xss.EV_PLAYERS_UPDATED, xss.NS_ROUND, this.updatePlayers.bind(this));
         xss.event.on(xss.NC_ROUND_SERIALIZE, xss.NS_ROUND, this.updateRound.bind(this));
+        xss.event.on(xss.NC_ROUND_COUNTDOWN, xss.NS_ROUND, this.updateCountdown.bind(this));
     },
 
     unbindEvents: function() {
         xss.event.off(xss.EV_PLAYERS_UPDATED, xss.NS_ROUND);
         xss.event.off(xss.NC_ROUND_SERIALIZE, xss.NS_ROUND);
+        xss.event.off(xss.NC_ROUND_COUNTDOWN, xss.NS_ROUND);
     },
 
     getLevel: function() {
@@ -48,6 +50,11 @@ xss.util.extend(xss.room.ClientRound.prototype, {
         this.deserialize(serializedRound);
         this.level = this.getLevel();
         this.game.updateLevel(this.level);
+    },
+
+    updateCountdown: function(serializedStarted) {
+        this.preGameUI.toggleCountdown(Boolean(serializedStarted[0]));
+        this.preGameUI.updateUI();
     }
 
 });
