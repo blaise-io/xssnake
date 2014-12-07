@@ -132,29 +132,6 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
         if (this.room) {
             this.room.players.emit(type, data, this);
         }
-    },
-
-    /**
-     * Buffer events to be sent later using flush()
-     * @param {string} type
-     * @param {*} data
-     * @deprecated Not that much overhead in separate messages
-     */
-    buffer: function(type, data) {
-        this.emitBuffer.push([type, data]);
-    },
-
-    /**
-     * Send buffer
-     * @deprecated Not that much overhead in separate messages
-     */
-    flush: function() {
-        if (this.emitBuffer.length > 1) {
-            this.emit(xss.NC_COMBI, this.emitBuffer);
-        } else if (this.emitBuffer.length) {
-            this.emit(this.emitBuffer[0][0], this.emitBuffer[0][1]);
-        }
-        this.emitBuffer.length = 0;
     }
 
 });

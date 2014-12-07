@@ -5,9 +5,6 @@
  * @extends {xss.room.PlayerRegistry}
  */
 xss.room.ServerPlayerRegistry = function() {
-    /** type {Array.<Array>} */
-    this.emitBuffer = [];
-
     xss.room.PlayerRegistry.call(this);
 };
 
@@ -39,27 +36,6 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
                 this.serialize(this.players[i])
             );
         }
-    },
-
-    /**
-     * Buffer events to be sent later using flush()
-     * @param {number} type
-     * @param {*} data
-     */
-    buffer: function(type, data) {
-        this.emitBuffer.push([type, data]);
-    },
-
-    /**
-     * Send buffer
-     */
-    flush: function() {
-        if (this.emitBuffer.length > 1) {
-            this.emit(xss.NC_COMBI, this.emitBuffer);
-        } else if (this.emitBuffer.length) {
-            this.emit(this.emitBuffer[0][0], this.emitBuffer[0][1]);
-        }
-        this.emitBuffer.length = 0;
     }
 
 });

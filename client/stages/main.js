@@ -52,7 +52,7 @@ xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
         menu = new xss.SelectMenu(header, footer);
         menu.addOption(null, xss.stage.QuickGame, 'QUICK GAME');
         menu.addOption(null, xss.NameStage, 'MULTIPLAYER');
-        menu.addOption(null, xss.SingleplayerStage, 'SINGLE PLAYER');
+        menu.addOption(null, xss.stage.SinglePlayer, 'SINGLE PLAYER');
         menu.addOption(null, xss.ColorStage, 'COLOR SCHEME');
         menu.addOption(null, xss.CreditsStage, 'CREDITS');
 

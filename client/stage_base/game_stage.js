@@ -20,36 +20,17 @@ xss.stage.Game.prototype = {
 
     construct: function() {
         this.destructMenu();
-        this.bindKeys();
         this.connectToRoom();
     },
 
     destruct: function() {
         if (xss.player) {
-            xss.player.destruct();
             if (xss.player.room) {
                 xss.player.room.destruct();
-                xss.player.room = null;
             }
+            xss.player.destruct();
         }
         xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
-    },
-
-    bindKeys: function() {
-        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES, this.exitKeys.bind(this));
-    },
-
-    exitKeys: function(ev) {
-        //if (!xss.keysBlocked && ev.keyCode === xss.KEY_ESCAPE && xss.remoteRoom) {
-        //    this.dialog = new xss.Dialog(
-        //        'LEAVING GAME',
-        //        'Are you sure you want to leave this game?', {
-        //            ok: function() {
-        //                xss.flow.restart();
-        //            }
-        //        }
-        //    );
-        //}
     },
 
     destructMenu: function() {
@@ -87,53 +68,5 @@ xss.stage.Game.prototype = {
             xss.player.emit(xss.NC_ROOM_JOIN_MATCHING, this.getEmitData());
         }.bind(this));
     }
-
-    //joinGame: function() {
-    //    xss.remoteRoom = new xss.room.ClientRoom();
-    //    if (this.data.autoJoin) {
-    //        this._autoJoin(xss.util.hash(xss.HASH_ROOM));
-    //    } else {
-    //        this._matchRoom();
-    //    }
-    //}
-
-    //
-    //_autoJoin: function(key) {
-    //    xss.event.once(xss.NC_ROOM_STATUS, xss.NS_STAGES, function(data) {
-    //        if (!data[0]) {
-    //            xss.util.error(xss.room.ClientRoom.prototype.errorCodeToStr(data[1]));
-    //        }
-    //    });
-    //
-    //    xss.socket.emit(
-    //        xss.NC_ROOM_JOIN_KEY,
-    //        [key, this.data.name]
-    //    );
-    //},
-    //
-    //_getQuickGameData: function() {
-    //    var data = {};
-    //    data[xss.FIELD_QUICK_GAME] = true;
-    //    // Used for creating a new game if all public rooms were full.
-    //    data[xss.FIELD_LEVEL_SET] = xss.levelSetRegistry.getRandomIndex();
-    //    data[xss.FIELD_POWERUPS] = true;
-    //    data[xss.FIELD_PRIVATE] = false;
-    //    data[xss.FIELD_XSS] = false;
-    //    data[xss.FIELD_MAX_PLAYERS] = 6;
-    //    return data;
-    //},
-    //
-    //
-    //_matchRoom: function() {
-    //    var emit = this.data.multiplayer || this._getQuickGameData();
-    //    emit[xss.FIELD_QUICK_GAME] = !!emit[xss.FIELD_QUICK_GAME];
-    //    emit[xss.FIELD_NAME] = (
-    //        xss.util.storage(xss.STORAGE_NAME) ||
-    //        this._getRandomName()
-    //    );
-    //    xss.socket = new xss.room.ClientSocketPlayer(function() {
-    //        xss.socket.emit(xss.NC_ROOM_JOIN_MATCHING, emit);
-    //    });
-    //}
 
 };

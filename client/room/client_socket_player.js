@@ -11,14 +11,14 @@ xss.room.ClientSocketPlayer = function(onopenCallback) {
 
     this.onopenCallback = onopenCallback;
     this.local = true;
+    this.room = null;
 
+    // Vanilla websockets.
     this.connection = new WebSocket('ws://' + xss.SERVER_ENDPOINT);
     this.connection.onopen = this.onopen.bind(this);
     this.connection.onclose = this.onclose.bind(this);
     this.connection.onerror = this.onclose.bind(this);
     this.connection.onmessage = this.onmessage.bind(this);
-
-    this.bindEvents();
 };
 
 xss.util.extend(xss.room.ClientSocketPlayer.prototype, xss.room.ClientPlayer.prototype);
@@ -26,6 +26,7 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
 
     destruct: function() {
         this.connected = false;
+        this.room = null;
 
         if (this.heartbeat) {
             this.heartbeat.destruct();
@@ -38,10 +39,9 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
         this.connection.onmessage = null;
 
         xss.event.off(xss.NC_PING, xss.NS_SOCKET);
-        xss.event.off(xss.NC_COMBI, xss.NS_SOCKET);
         xss.event.off(xss.NC_PONG, xss.NS_SOCKET);
 
-        // Close explicitely when CONNECTING and OPEN.
+        // Close explicitely when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {
             this.connection.close();
         }
@@ -91,20 +91,6 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
         var data = JSON.parse(ev.data);
         console.log('IN ', data);
         xss.event.trigger(data[0], data.slice(1));
-    },
-
-    bindEvents: function() {
-        xss.event.on(xss.NC_COMBI, xss.NS_SOCKET, this._combinedEvents.bind(this));
-    },
-
-    /**
-     * Combined package, delegate.
-     * @param {Array.<Array>} data
-     */
-    _combinedEvents: function(data) {
-        for (var i = 0, m = data.length; i < m; i++) {
-            xss.event.trigger(data[i][0], data[i][1]);
-        }
     }
 
 });
