@@ -7,15 +7,13 @@
  * @constructor
  */
 xss.game.ClientGame = function(players, level) {
+    this.players = this.updatePlayers(players);
     this.level = level;
+
     this.level.paint();
-
-    this.updatePlayers(players);
-
-    this.spawnables = new xss.game.SpawnableRegistry();
-
     this.started = false;
 
+    this.spawnables = new xss.game.SpawnableRegistry();
     this.bindEvents();
 };
 
@@ -30,9 +28,10 @@ xss.game.ClientGame.prototype = {
         //xss.event.off(xss.NC_SNAKE_ACTION, xss.NS_GAME);
         //xss.event.off(xss.NC_SNAKE_SPEED, xss.NS_GAME);
 
-        this.players = null;
         this.level = null;
+        this.players = null;
         this.spawnables.destruct();
+        this.spawnables = null;
     },
 
     /**
@@ -41,10 +40,10 @@ xss.game.ClientGame.prototype = {
      * @param players
      */
     updatePlayers: function(players) {
-        this.players = players;
-        this.players.unsetSnakes();
-        this.players.setSnakes(this.level);
-        this.players.showMeta();
+        players.unsetSnakes();
+        players.setSnakes(this.level);
+        players.showMeta();
+        return players;
     },
 
     updateLevel: function(level) {

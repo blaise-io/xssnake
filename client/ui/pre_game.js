@@ -20,7 +20,6 @@ xss.ui.PreGame = function(players, options) {
     this.updateUI();
 };
 
-
 xss.ui.PreGame.prototype = {
 
     destruct: function() {

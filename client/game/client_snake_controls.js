@@ -42,10 +42,10 @@ xss.game.ClientSnakeControls.prototype = {
      * @private
      */
     setDirection: function(direction) {
-        var allowed = this.isDirectionAllowed(direction, this.getPreviousDirection());
-        if (allowed && this.upcomingDirections.length <= 2) {
-            this.upcomingDirections.push(direction);
-            this.emitNewDirection(direction);
+        if (this.upcomingDirections.length <= 2) {
+            if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
+                this.upcomingDirections.push(direction);
+            }
         }
     },
 
@@ -66,9 +66,9 @@ xss.game.ClientSnakeControls.prototype = {
      * @private
      */
     isDirectionAllowed: function(direction, prevDirection) {
-        var turns = Math.abs(direction - prevDirection);
+        var turn = Math.abs(direction - prevDirection);
         // Disallow 0: no turn, 2: bumping into torso
-        return turns === 1 || turns === 3;
+        return turn === 1 || turn === 3;
     },
 
     /**
