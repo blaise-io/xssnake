@@ -12,11 +12,11 @@ xss.InputField = function(x, y, prefix) {
     this.prefix = prefix || '';
 
     this.callback = xss.util.noop;
-    this.maxValWidth = 0;
+    this.maxValWidth = null;
     this.displayWidth = xss.WIDTH - x - 8;
     this.maxlength = 156;
 
-    this.input = this._createInput();
+    this.input = this.addInputToDom();
     this.input.focus();
 
     xss.keysBlocked = true;
@@ -25,26 +25,36 @@ xss.InputField = function(x, y, prefix) {
 xss.InputField.prototype = {
 
     destruct: function() {
-        var ns = xss.NS_INPUT;
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        xss.event.off(xss.DOM_EVENT_KEYPRESS, ns);
-        xss.event.off(xss.DOM_EVENT_KEYDOWN, ns);
-        xss.event.off(xss.DOM_EVENT_KEYUP, ns);
-        xss.shapes.caret = null;
-        xss.shapes.inputval = null;
+        this.unbindEvents();
+        xss.shapes.INPUT_CARET = null;
+        xss.shapes.INPUT_VALUE = null;
         xss.keysBlocked = false;
+    },
+
+    unbindEvents: function() {
+        xss.event.off(xss.DOM_EVENT_KEYPRESS, xss.NS_INPUT);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT);
+        xss.event.off(xss.DOM_EVENT_KEYUP, xss.NS_INPUT);
+    },
+
+    bindEvents: function() {
+        xss.event.on(xss.DOM_EVENT_KEYPRESS, xss.NS_INPUT, xss.play.menu_alt);
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT, this.updateShapes.bind(this));
+        xss.event.on(xss.DOM_EVENT_KEYUP, xss.NS_INPUT, this.updateShapes.bind(this));
     },
 
     /**
      * @param {string} value
      */
     setValue: function(value) {
-        this.input.value = ''; // Empty first puts caret at end
+        this.input.focus();
         this.input.value = value;
-        this._bindEvents();
-        this._updateShapes();
+        this.input.setSelectionRange(value.length, value.length);
+        this.bindEvents();
+        this.updateShapes();
     },
 
     /**
@@ -54,37 +64,18 @@ xss.InputField.prototype = {
         return this.input.value;
     },
 
-    /**
-     * @private
-     */
-    _bindEvents: function() {
-        var ns = xss.NS_INPUT;
-        xss.event.on(xss.DOM_EVENT_KEYPRESS, ns, xss.play.menu_alt);
-        xss.event.on(xss.DOM_EVENT_KEYDOWN, ns, this._updateShapes.bind(this));
-        xss.event.on(xss.DOM_EVENT_KEYUP, ns, this._updateShapes.bind(this));
-    },
-
-    /**
-     * @private
-     */
-    _updateShapes: function() {
-        // IE9 workaround for issue where _updateShapes executes
-        // after event listeners are removed.
-        if (!xss.keysBlocked) { return; }
-
-        this._applyMaxWidth();
+    updateShapes: function() {
+        this.maxwidthCutOff();
         this.callback(this.input.value);
-        xss.shapes.caret = this._caretShape();
-        xss.shapes.inputval = this._valueShape();
+        xss.shapes.INPUT_CARET = this.getCaretShape();
+        xss.shapes.INPUT_VALUE = this.getInputValueShape();
     },
 
     /**
      * @return {Element}
-     * @private
      */
-    _createInput: function() {
-        var input;
-        input = document.createElement('input');
+    addInputToDom: function() {
+        var input = document.createElement('input');
         input.setAttribute('maxlength', String(this.maxlength));
         input.focus();
         document.body.appendChild(input);
@@ -93,11 +84,10 @@ xss.InputField.prototype = {
 
     /**
      * @return {xss.Shape}
-     * @private
      */
-    _caretShape: function() {
+    getCaretShape: function() {
         var untilCaretStr, endPos, caret, caretShape,
-            segments = this._getValueSegments();
+            segments = this.getSelectionSegments();
 
         if (!segments[1]) {
             untilCaretStr = segments[0] + segments[1];
@@ -119,11 +109,11 @@ xss.InputField.prototype = {
 
     /**
      * @return {xss.Shape}
-     * @private
      */
-    _valueShape: function() {
-        var pos, shape, values = this._getValueSegments(), endpos;
+    getInputValueShape: function() {
+        var pos, shape, values, endpos;
 
+        values = this.getSelectionSegments();
         shape = new xss.Shape();
         shape.add(xss.font.pixels(this.prefix + values[0], this.x, this.y));
 
@@ -144,14 +134,18 @@ xss.InputField.prototype = {
     },
 
     /**
-     * @return {Array.<number>}
+     * @return {Array.<string>}
      * @private
      */
-    _getValueSegments: function() {
-        var input = this.input, value = input.value, start = input.selectionStart,
-            end = input.selectionEnd;
+    getSelectionSegments: function() {
+        var input, value, start, end;
 
-        // Handle situation where input value is wider than display width
+        input = this.input;
+        value = input.value;
+        start = input.selectionStart;
+        end = input.selectionEnd;
+
+        // Handle situation where input value is wider than display width.
         while (xss.font.width(value) > this.displayWidth) {
             if (start === 0) {
                 value = value.substring(0, value.length - 2);
@@ -169,8 +163,8 @@ xss.InputField.prototype = {
         ];
     },
 
-    _applyMaxWidth: function() {
-        if (this.maxValWidth) {
+    maxwidthCutOff: function() {
+        if (null !== this.maxValWidth) {
             while (xss.font.width(this.input.value) > this.maxValWidth) {
                 this.input.value = this.input.value.slice(0, -1);
             }

@@ -133,7 +133,7 @@ xss.StageFlow.prototype = {
 
         // Ignore key when user is in input field. Start screen might
         // contain a dialog, so do not use xss.keysBlocked here.
-        if (!xss.shapes.caret) {
+        if (!xss.shapes.INPUT_CARET) {
             // Mute/Unmute
             if (ev.keyCode === xss.KEY_MUTE) {
                 mute = !xss.util.storage(xss.STORAGE_MUTE);
