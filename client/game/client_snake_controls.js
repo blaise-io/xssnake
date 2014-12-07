@@ -39,7 +39,6 @@ xss.game.ClientSnakeControls.prototype = {
 
     /**
      * @param {number} direction
-     * @private
      */
     setDirection: function(direction) {
         if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
@@ -49,7 +48,6 @@ xss.game.ClientSnakeControls.prototype = {
 
     /**
      * @return {number}
-     * @private
      */
     getPreviousDirection: function() {
         if (this.upcomingDirections.length) {
@@ -61,7 +59,7 @@ xss.game.ClientSnakeControls.prototype = {
     /**
      * @param {number} direction
      * @param {number} prevDirection
-     * @private
+     * @return {boolean}
      */
     isDirectionAllowed: function(direction, prevDirection) {
         var turn = Math.abs(direction - prevDirection);
