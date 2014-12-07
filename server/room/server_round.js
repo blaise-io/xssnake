@@ -22,6 +22,7 @@ xss.util.extend(xss.room.ServerRound.prototype, xss.room.Round.prototype);
 xss.util.extend(xss.room.ServerRound.prototype, {
 
     destruct: function() {
+        clearTimeout(this.countdownTimer);
         this.unbindEvents();
     },
 
@@ -46,6 +47,14 @@ xss.util.extend(xss.room.ServerRound.prototype, {
     toggleCountdown: function(enabled) {
         this.countdownStarted = enabled;
         this.players.emit(xss.NC_ROUND_COUNTDOWN, [+enabled]);
+        this.countdownTimer = setTimeout(
+            this.startRound.bind(this),
+            xss.TIME_ROUND_COUNTDOWN * 1000
+        );
+    },
+
+    startRound: function() {
+        this.players.emit(xss.NC_ROUND_START);
     },
 
     handleDisconnect: function() {

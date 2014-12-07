@@ -55,7 +55,7 @@ xss.room.ServerRoom.prototype = {
     },
 
     isAwaitingPlayers: function() {
-        return !this.isFull() && !this.rounds.started;
+        return !this.isFull() && !this.rounds.hasStarted();
     },
 
     /**
@@ -98,7 +98,7 @@ xss.room.ServerRoom.prototype = {
 
     handlePlayerDisconnect: function(player) {
         // Remove immediately if rounds have not started.
-        if (!this.rounds.started) {
+        if (!this.rounds.hasStarted()) {
             this.players.remove(player);
         }
         // Notify users that someone disconnected.

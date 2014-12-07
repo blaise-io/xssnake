@@ -10,7 +10,6 @@ xss.room.ServerRoundManager = function(roomEmitter, players, options) {
     this.roomEmitter = roomEmitter;
     this.players = players;
     this.options = options;
-    this.started = false;
 
     /** @type {Array.<number>} */
     this.levelHistory = [];
@@ -26,6 +25,10 @@ xss.room.ServerRoundManager.prototype = {
         this.players = null;
         this.options = null;
         this.round = null;
+    },
+
+    hasStarted: function() {
+        return (0 === this.roundIndex || this.round.started);
     },
 
     detectAutostart: function(full) {

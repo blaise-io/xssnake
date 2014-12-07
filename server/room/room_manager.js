@@ -145,7 +145,7 @@ xss.room.ServerRoomManager.prototype = {
             return xss.ROOM_NOT_FOUND;
         } else if (room.isFull()) {
             return xss.ROOM_FULL;
-        } else if (room.rounds.started) {
+        } else if (room.rounds.hasStarted()) {
             return xss.ROOM_IN_PROGRESS;
         }
         return xss.ROOM_JOINABLE;
