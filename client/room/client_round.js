@@ -28,7 +28,7 @@ xss.util.extend(xss.room.ClientRound.prototype, {
         xss.event.on(xss.EV_PLAYERS_UPDATED, xss.NS_ROUND, this.updatePlayers.bind(this));
         xss.event.on(xss.NC_ROUND_SERIALIZE, xss.NS_ROUND, this.updateRound.bind(this));
         xss.event.on(xss.NC_ROUND_COUNTDOWN, xss.NS_ROUND, this.updateCountdown.bind(this));
-        xss.event.on(xss.NC_ROUND_START, xss.NS_ROUND, this.game.start.bind(this.game));
+        xss.event.on(xss.NC_ROUND_START, xss.NS_ROUND, this.startGame.bind(this));
     },
 
     unbindEvents: function() {
@@ -57,6 +57,11 @@ xss.util.extend(xss.room.ClientRound.prototype, {
     updateCountdown: function(serializedStarted) {
         this.preGameUI.toggleCountdown(Boolean(serializedStarted[0]));
         this.preGameUI.updateUI();
+    },
+
+    startGame: function() {
+        this.preGameUI.destruct();
+        this.game.start();
     }
 
 });

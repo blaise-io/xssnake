@@ -24,8 +24,8 @@ xss.ui.PreGame = function(players, options) {
 xss.ui.PreGame.prototype = {
 
     destruct: function() {
-        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME);
         clearInterval(this.countdownInterval);
+        this.unbindKeys();
         this.players = null;
         this.options = null;
         if (this.dialog) {
@@ -35,6 +35,10 @@ xss.ui.PreGame.prototype = {
 
     bindKeys: function() {
         xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME, this.handleKeys.bind(this));
+    },
+
+    unbindKeys: function() {
+        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME);
     },
 
     handleKeys: function(ev) {
