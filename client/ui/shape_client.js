@@ -43,7 +43,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
 
     /**
      * @param {number} start
-     * @param {number} end
+     * @param {number=} end
      * @return {xss.Shape}
      */
     lifetime: function(start, end) {
@@ -90,8 +90,8 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
     },
 
     /**
-     * @param {!number} start
-     * @param {!number} end
+     * @param {number} start
+     * @param {number=} end
      * @return {function({number})}
      * @private
      */

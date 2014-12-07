@@ -40,7 +40,7 @@ xss.KEY_TO_DIRECTION[xss.KEY_DOWN] = xss.DIRECTION_DOWN;
 xss.GAME_LEFT = 2;
 xss.GAME_TOP = 2;
 
-xss.MENU_LEFT = 42;
+xss.MENU_LEFT = 44;
 xss.MENU_TOP = 48;
 xss.MENU_WIDTH = 167;
 xss.MENU_WRAP = 176;

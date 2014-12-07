@@ -19,7 +19,6 @@ xss.stage.Game.prototype = {
     },
 
     construct: function() {
-        this.destructMenu();
         this.connectToRoom();
     },
 
@@ -31,13 +30,7 @@ xss.stage.Game.prototype = {
             xss.player.destruct();
         }
         xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_STAGES);
-    },
-
-    destructMenu: function() {
-        if (xss.menuSnake) {
-            xss.menuSnake.destruct();
-        }
-        xss.shapes.header = null;
+        xss.shapes.CONNECTING = null;
     },
 
     getSerializedGameOptions: function() {
@@ -61,12 +54,29 @@ xss.stage.Game.prototype = {
     },
 
     connectToRoom: function() {
+        xss.shapes.CONNECTING = this.getConnectingShape();
         xss.player = new xss.room.ClientSocketPlayer(function() {
+            this.destructStageLeftovers();
             xss.player.room = new xss.room.ClientRoom();
             xss.player.room.propagateToPlayer();
             xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
             xss.player.emit(xss.NC_ROOM_JOIN_MATCHING, this.getEmitData());
         }.bind(this));
+    },
+
+    getConnectingShape: function() {
+        var shape = xss.font.shape(xss.COPY_CONNECTING);
+        shape.center(xss.WIDTH, xss.HEIGHT - 20);
+        shape.lifetime(2000);
+        shape.flash();
+        return shape;
+    },
+
+    destructStageLeftovers: function() {
+        if (xss.menuSnake) {
+            xss.menuSnake.destruct();
+        }
+        xss.shapes.header = null;
     }
 
 };

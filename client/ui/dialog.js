@@ -272,7 +272,8 @@ xss.Dialog.prototype = {
         shape.isOverlay = true;
 
         shape.outline();
-        shape.center(0, this._getAreaHeight());
+        shape.center(0, 0);
+        shape.transform.translate[1] = xss.MENU_TOP - 2;
 
         xss.shapes.dialog = shape;
     }
