@@ -2,13 +2,13 @@
 
 /***
  * Game
- * @param {xss.room.ClientPlayerRegistry} players
  * @param {xss.level.Level} level
+ * @param {xss.room.ClientPlayerRegistry} players
  * @constructor
  */
-xss.game.ClientGame = function(players, level) {
-    this.players = this.updatePlayers(players);
+xss.game.ClientGame = function(level, players) {
     this.level = level;
+    this.players = this.updatePlayers(players);
 
     this.level.paint();
     this.started = false;

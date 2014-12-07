@@ -10,7 +10,7 @@ xss.room.ClientRound = function(players, options) {
     xss.room.Round.call(this, players, options);
     this.players = players;
     this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
-    this.game = new xss.game.ClientGame(this.players, this.level);
+    this.game = new xss.game.ClientGame(this.level, this.players);
     this.preGameUI = new xss.ui.PreGame(players, options);
     this.bindEvents();
 };
@@ -20,6 +20,8 @@ xss.util.extend(xss.room.ClientRound.prototype, {
 
     destruct: function() {
         this.unbindEvents();
+        this.game.destruct();
+        this.game = null;
         this.preGameUI.destruct();
         this.preGameUI = null;
     },
@@ -60,6 +62,7 @@ xss.util.extend(xss.room.ClientRound.prototype, {
     },
 
     startGame: function() {
+        this.unbindEvents();
         this.preGameUI.destruct();
         this.game.start();
     }

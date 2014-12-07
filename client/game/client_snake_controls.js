@@ -32,8 +32,9 @@ xss.game.ClientSnakeControls.prototype = {
      * @param {Event} event
      */
     handleKeys: function(event) {
-        if (!xss.keysBlocked) {
-            this.setDirection(xss.KEY_TO_DIRECTION[event.keyCode]);
+        var direction = xss.KEY_TO_DIRECTION[event.keyCode];
+        if (!xss.keysBlocked && typeof direction !== 'undefined') {
+            this.setDirection(direction);
         }
     },
 

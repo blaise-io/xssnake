@@ -23,7 +23,7 @@ xss.debug.level = function() {
 
     level.preload(function() {
         xss.flow.destruct();
-        var game = new xss.game.ClientGame(players, level);
+        var game = new xss.game.ClientGame(level, players);
         game.start();
     });
 };

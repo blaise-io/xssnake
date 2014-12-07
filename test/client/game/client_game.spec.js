@@ -8,7 +8,7 @@ describe('xss.game.ClientGame', function() {
         players = new xss.room.ClientPlayerRegistry();
         level = new xss.levels.BlankLevel(new xss.levelset.Config());
         level.preload(function() {
-            game = new xss.game.ClientGame(players, level);
+            game = new xss.game.ClientGame(level, players);
             done();
         });
     });

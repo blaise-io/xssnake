@@ -11,6 +11,8 @@ xss.room.ClientSocketPlayer = function(onopenCallback) {
 
     this.onopenCallback = onopenCallback;
     this.local = true;
+
+    /** @type {xss.room.ClientRoom} */
     this.room = null;
 
     // Vanilla websockets.
@@ -26,9 +28,6 @@ xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
 
     destruct: function() {
         this.connected = false;
-
-        this.room.destruct();
-        this.room = null;
 
         if (this.heartbeat) {
             this.heartbeat.destruct();
