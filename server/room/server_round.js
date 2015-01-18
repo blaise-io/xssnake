@@ -79,7 +79,7 @@ xss.util.extend(xss.room.ServerRound.prototype, {
 
     startRound: function() {
         this.level = this.getLevel(this.levelsetIndex, this.levelIndex);
-        this.game = new xss.game.ServerGame(this.level, this.players);
+        this.game = new xss.game.ServerGame(this.roomEmitter, this.level, this.players);
         this.started = true;
         this.players.emit(xss.NC_ROUND_START);
     },

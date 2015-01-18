@@ -108,7 +108,7 @@ xss.util.Sanitizer.prototype = {
      * @param {number} max
      * @return {xss.util.Sanitizer}
      */
-    assertArrayOfLength: function(min, max) {
+    assertArrayLengthBetween: function(min, max) {
         if (!(this._value instanceof Array)) {
             this._log('assertArrayOfLength type', this._value);
             this._valid = false;

@@ -146,6 +146,14 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
         if (this.snake) {
             this.snake.destruct();
         }
+    },
+
+    /**
+     * @return {number}
+     */
+    getMaxMismatchesAllowed: function() {
+        var latency = Math.min(xss.NETCODE_SYNC_MS, this.heartbeat.latency);
+        return Math.ceil(latency / this.snake.speed);
     }
 
 });

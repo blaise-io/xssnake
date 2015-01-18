@@ -23,18 +23,18 @@ xss.netcode.Message.prototype = {
     },
 
     sanitize: function(messageJsonStr) {
-        var validator, arrayValidator, eventNumberValidator, messageJson;
+        var sanitizer, arrayValidator, eventNumberValidator, messageJson;
 
-        validator = new xss.util.Sanitizer(messageJsonStr)
+        sanitizer = new xss.util.Sanitizer(messageJsonStr)
             .assertStringOfLength(3, 512)
             .assertJSON();
-        if (!validator.valid()) {
+        if (!sanitizer.valid()) {
             return null;
         }
 
-        messageJson = validator.json();
+        messageJson = sanitizer.json();
         arrayValidator = new xss.util.Sanitizer(messageJson)
-            .assertArrayOfLength(1, 20);
+            .assertArrayLengthBetween(1, 20);
         if (!arrayValidator.valid()) {
             return null;
         }
