@@ -17,11 +17,6 @@ xss.KEY_FULLSCREEN = 70; // F key
 xss.KEY_MUTE = 77; // M key
 xss.KEY_START = 83; // S key
 
-xss.DIRECTION_LEFT = 0;
-xss.DIRECTION_UP = 1;
-xss.DIRECTION_RIGHT = 2;
-xss.DIRECTION_DOWN = 3;
-
 xss.FIELD_BUGS = -1;
 xss.FIELD_NAME = 0;
 xss.FIELD_QUICK_GAME = 1;

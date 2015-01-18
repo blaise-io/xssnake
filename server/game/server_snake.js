@@ -11,7 +11,6 @@ xss.game.ServerSnake = function(index, level) {
     this.index = index;
     this.level = level;
     this.elapsed = 0;
-    this.limbo = false;
 };
 
 /** @lends {xss.game.ClientSnake.prototype} */
@@ -22,13 +21,6 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
         this.level = null;
     },
 
-    move: function(coordinate) {
-        if (this.controls) {
-            this.controls.move();
-        }
-        xss.game.Snake.prototype.move.call(this, coordinate);
-    },
-
     /**
      * @param {number} elapsed
      * @param shift
@@ -37,33 +29,27 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
     handleNextMove: function(elapsed, shift, players) {
         this.elapsed += elapsed;
 
-        //if (!this.crashed && this.elapsed >= this.speed) {
-        //    var move = new xss.game.SnakeMove(
-        //        this, players, this.level, this.getNextPosition()
-        //    );
-        //
-        //    this.elapsed -= this.speed;
-        //
-        //    // Don't show a snake moving inside a wall, which is caused by latency.
-        //    // Server wil issue a final verdict whether the snake truly crashed, or
-        //    // made a turn in time.
-        //    if (move.collision) {
-        //        if (this.local) {
-        //            this.crash(move.collision.location);
-        //        } else {
-        //            this.limbo = move.collision;
-        //        }
-        //    } else if (!this.limbo) {
-        //        this.move(move.location);
-        //        this.updateShape();
-        //    }
-        //}
+        if (!this.crashed && this.elapsed >= this.speed) {
+            var move = new xss.game.SnakeMove(
+                this, players, this.level, this.getNextPosition()
+            );
+
+            this.elapsed -= this.speed;
+
+            if (!move.collision) {
+                this.limbo = null;
+                this.move(move.location);
+            } else if (this.limbo) { // @ TODO: && elapsed > ping
+                this.crash();
+            } else {
+                this.limbo = move.collision;
+            }
+
+        }
     },
 
-    /**
-     * @param {xss.Coordinate=} part
-     */
-    crash: function(part) {
+    crash: function() {
+        // TODO: emit to players
         this.crashed = true;
     },
 

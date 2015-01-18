@@ -16,7 +16,6 @@ xss.game.ClientSnake = function(index, local, name, level) {
     this.name = name;
     this.level = level;
     this.elapsed = 0;
-    this.limbo = false;
     this.exploded = false;
 
     /** @type {xss.game.ClientSnakeControls} */

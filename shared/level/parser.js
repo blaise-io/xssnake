@@ -10,110 +10,80 @@ xss.level.Parser = function(imagedata) {
     this.walls = new xss.PixelCollection();
     this.unreachables = new xss.PixelCollection();
 
-    /**
-     * @type {Array.<xss.level.Spawn>}
-     */
+    /** @type {Array.<xss.level.Spawn>} */
     this.spawns = new Array(xss.ROOM_CAPACITY);
 
-    /**
-     * @type {Array.<xss.Coordinate>}
-     * @private
-     */
-    this._spawns = new Array(xss.ROOM_CAPACITY);
+    /** @type {Array.<xss.Coordinate>} */
+    this.spawnCoordinates = new Array(xss.ROOM_CAPACITY);
 
-    /**
-     * @type {Array.<xss.Coordinate>}
-     * @private
-     */
-    this._directions = new Array(xss.ROOM_CAPACITY);
+    /** @type {Array.<xss.Coordinate>} */
+    this.spawnDirections = [];
 
-    this._parsePixels(imagedata.data);
+    this.parsePixels(imagedata.data);
+    this.generateSpawns();
 };
 
 xss.level.Parser.prototype = {
 
     /**
      * @param {Object} imagedata
-     * @private
      */
-    _parsePixels: function(imagedata) {
+    parsePixels: function(imagedata) {
         for (var i = 0, m = imagedata.length / 4; i < m; i++) {
-            var rgb = [], location = this._seqToXY(i);
-            for (var ii = 0; ii < 3; ii++) {
-                rgb.push(imagedata[i * 4 + ii]);
-            }
-            this._handleColor(rgb, location[0], location[1]);
+            this.parsePixel(
+                [
+                    imagedata[i * 4],
+                    imagedata[i * 4 + 1],
+                    imagedata[i * 4 + 2]
+                ], [
+                    i % this.width,
+                    Math.floor(i / this.width)
+                ]
+            );
         }
-
-        this._generateSpawns();
     },
 
     /**
      * @param {Array.<number>} rgb
-     * @param {number} x
-     * @param {number} y
-     * @private
+     * @param {xss.Coordinate} coordinate
      */
-    _handleColor: function(rgb, x, y) {
-        switch (rgb.join(',')) {
-            case '255,255,255':
-                break;
-            case '0,0,0':
-                this.walls.add(x, y);
-                break;
-            case '222,222,222':
-                this.unreachables.add(x, y);
-                break;
-            case '99,99,99':
-                this._directions.push([x, y]);
-                break;
-            case '255,0,0':
-                this._spawns[0] = [x, y];
-                break;
-            case '0,255,0':
-                this._spawns[1] = [x, y];
-                break;
-            case '0,0,255':
-                this._spawns[2] = [x, y];
-                break;
-            case '255,255,0':
-                this._spawns[3] = [x, y];
-                break;
-            case '255,0,255':
-                this._spawns[4] = [x, y];
-                break;
-            case '0,255,255':
-                this._spawns[5] = [x, y];
-                break;
-            default:
-                throw new Error(
-                    'Unknown color: ' + rgb + ' ' +
-                    'at ' + x + ',' + y
-                );
+    parsePixel: function(rgb, coordinate) {
+        function rgbEquals(r, g, b) {
+            return rgb[0] === r && rgb[1] === g && rgb[2] === b;
+        }
+
+        if (rgbEquals(0, 0, 0)) {
+            this.walls.add(coordinate[0], coordinate[1]);
+        } else if (rgbEquals(222, 222, 222)) {
+            this.unreachables.add(coordinate[0], coordinate[1]);
+        } else if (rgbEquals(99, 99, 99)) {
+            this.spawnDirections.push(coordinate);
+        } else if (rgbEquals(255, 0, 0)) {
+            this.spawnCoordinates[0] = coordinate;
+        } else if (rgbEquals(0, 255, 0)) {
+            this.spawnCoordinates[1] = coordinate;
+        } else if (rgbEquals(0, 0, 255)) {
+            this.spawnCoordinates[2] = coordinate;
+        } else if (rgbEquals(255, 255, 0)) {
+            this.spawnCoordinates[3] = coordinate;
+        } else if (rgbEquals(255, 0, 255)) {
+            this.spawnCoordinates[4] = coordinate;
+        } else if (rgbEquals(0, 255, 255)) {
+            this.spawnCoordinates[5] = coordinate;
+        } else if (!rgbEquals(255, 255, 255)) {
+            throw new Error('Unknown color: ' + rgb + ' ' + 'at ' + coordinate);
         }
     },
 
-    /**
-     * @param {number} seq
-     * @return {xss.Coordinate}
-     * @private
-     */
-    _seqToXY: function(seq) {
-        return [
-            seq % this.width,
-            Math.floor(seq / this.width)
-        ];
-    },
-
-    /**
-     * @private
-     */
-    _generateSpawns: function() {
-        for (var i = 0, m = this._spawns.length; i < m; i++) {
-            var direction, spawn = this._spawns[i];
-            if (spawn) {
-                direction = this._getSpawnDirection(spawn);
-                this.spawns[i] = new xss.level.Spawn(spawn, direction);
+    generateSpawns: function() {
+        for (var i = 0, m = this.spawnCoordinates.length; i < m; i++) {
+            var spawnCoordinate = this.spawnCoordinates[i];
+            
+            if (spawnCoordinate) {
+                this.spawns[i] = new xss.level.Spawn(
+                    spawnCoordinate,
+                    this.getDirectionForSpawn(spawnCoordinate)
+                );
             } else {
                 throw new Error('Missing spawn with index: ' + i);
             }
@@ -123,18 +93,17 @@ xss.level.Parser.prototype = {
     /**
      * @param {xss.Coordinate} spawn
      * @return {number}
-     * @private
      */
-    _getSpawnDirection: function(spawn) {
-        for (var i = 0, m = this._directions.length; i < m; i++) {
+    getDirectionForSpawn: function(spawn) {
+        for (var i = 0, m = this.spawnDirections.length; i < m; i++) {
             var dx, dy;
 
-            if (!this._directions[i]) {
+            if (!this.spawnDirections[i]) {
                 continue;
             }
 
-            dx = spawn[0] - this._directions[i][0];
-            dy = spawn[1] - this._directions[i][1];
+            dx = spawn[0] - this.spawnDirections[i][0];
+            dy = spawn[1] - this.spawnDirections[i][1];
 
             if (1 === Math.abs(dx) + Math.abs(dy)) {
                 if (dx === 0) {

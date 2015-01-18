@@ -47,6 +47,11 @@ xss.HEARTBEAT_INTERVAL_MS = 7000 * 30; // @TODO ping more often.
 
 xss.GAME_SHIFT_MAP = [[-1, 0], [0, -1], [1, 0], [0, 1]];
 
+xss.DIRECTION_LEFT = 0;
+xss.DIRECTION_UP = 1;
+xss.DIRECTION_RIGHT = 2;
+xss.DIRECTION_DOWN = 3;
+
 xss.ROOM_KEY_LENGTH = 5;
 xss.ROOM_CAPACITY = 6;
 xss.ROUNDS_MAX = 3;
