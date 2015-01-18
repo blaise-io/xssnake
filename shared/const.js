@@ -39,8 +39,8 @@ xss.NC_SNAKE_UPDATE = 65;
 xss.NC_XSS = 666;
 
 // Server EventEmitters
-xss.SE_SERVER_TICK = 0;
-xss.SE_PLAYER_DISCONNECT = 1;
+xss.SE_SERVER_TICK = 100;
+xss.SE_PLAYER_DISCONNECT = 101;
 
 
 xss.HEARTBEAT_INTERVAL_MS = 7000 * 30; // @TODO ping more often.

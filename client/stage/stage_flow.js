@@ -95,7 +95,7 @@ xss.StageFlow.prototype = {
         xss.shapegen.outerBorder(function(k, border) {
              xss.shapes[k] = border;
         });
-        xss.shapes.header = xss.shapegen.header();
+        xss.shapes.HEADER = xss.shapegen.header();
     },
 
     /**

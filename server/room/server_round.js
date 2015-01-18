@@ -68,12 +68,14 @@ xss.util.extend(xss.room.ServerRound.prototype, {
 
     handleManualRoomStart: function(nodata, player) {
         if (this.players.isHost(player) && !this.countdownTimer) {
+            console.log('handleManualRoomStart');
             this.toggleCountdown(true);
         }
     },
 
     handleDisconnect: function() {
         if (this.countdownStarted) {
+            console.log('handleDisconnect');
             this.toggleCountdown(false);
         }
     }

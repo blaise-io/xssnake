@@ -35,11 +35,11 @@ xss.room.Options.prototype = {
      */
     deserialize: function(serialized) {
         this.maxPlayers = new xss.util.Sanitizer(serialized[0])
-            .assertRange(1, xss.ROOM_CAPACITY)
+            .assertBetween(1, xss.ROOM_CAPACITY)
             .getValueOr(xss.ROOM_CAPACITY);
 
         this.levelset = new xss.util.Sanitizer(serialized[1])
-            .assertRange(0, xss.levelsetRegistry.levelsets.length - 1)
+            .assertBetween(0, xss.levelsetRegistry.levelsets.length - 1)
             .getValueOr(0);
 
         this.isQuickGame = Boolean(serialized[2]);

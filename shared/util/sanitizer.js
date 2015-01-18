@@ -67,7 +67,7 @@ xss.util.Sanitizer.prototype = {
      * @param {number} max
      * @return {xss.util.Sanitizer}
      */
-    assertRange: function(min, max) {
+    assertBetween: function(min, max) {
         if (typeof this._value !== 'number') {
             this._log('assertRange type', this._value);
             this._valid = false;
@@ -83,7 +83,7 @@ xss.util.Sanitizer.prototype = {
      * @return {xss.util.Sanitizer}
      */
     assertIntAsBoolean: function() {
-        return this.assertRange(0, 1);
+        return this.assertBetween(0, 1);
     },
 
     /**

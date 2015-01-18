@@ -56,11 +56,11 @@ xss.stage.Game.prototype = {
     connectToRoom: function() {
         xss.shapes.CONNECTING = this.getConnectingShape();
         xss.player = new xss.room.ClientSocketPlayer(function() {
-            this.destructStageLeftovers();
             xss.player.room = new xss.room.ClientRoom();
             xss.player.room.propagateToPlayer();
             xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
             xss.player.emit(xss.NC_ROOM_JOIN_MATCHING, this.getEmitData());
+            this.destructStageLeftovers();
         }.bind(this));
     },
 
@@ -76,7 +76,8 @@ xss.stage.Game.prototype = {
         if (xss.menuSnake) {
             xss.menuSnake.destruct();
         }
-        xss.shapes.header = null;
+        xss.shapes.CONNECTING = null;
+        xss.shapes.HEADER = null;
     }
 
 };
