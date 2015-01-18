@@ -39,7 +39,7 @@ xss.NC_SNAKE_UPDATE = 65;
 xss.NC_XSS = 666;
 
 // Server EventEmitters
-xss.SE_SERVER_TICK = 100;
+/** @deprecated */xss.SE_SERVER_TICK = 100;
 xss.SE_PLAYER_DISCONNECT = 101;
 
 

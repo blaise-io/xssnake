@@ -48,7 +48,7 @@ xss.SelectStage.prototype = {
                 }
                 break;
             case xss.KEY_UP:
-                this.menu.prev();
+                this.menu.prevtick();
                 xss.play.menu();
                 xss.flow.refreshShapes();
                 break;

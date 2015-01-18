@@ -36,6 +36,26 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
                 this.serialize(this.players[i])
             );
         }
+    },
+
+    /**
+     * @param {xss.level.Level} level
+     */
+    setSnakes: function(level) {
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            this.players[i].setSnake(i, level);
+        }
+    },
+
+    /**
+     * @param {number} elapsed
+     * @param {xss.Shift} shift
+     */
+    moveSnakes: function(elapsed, shift) {
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            this.players[i].snake.handleNextMove(elapsed, shift, this.players);
+            this.players[i].snake.shiftParts(shift);
+        }
     }
 
 });

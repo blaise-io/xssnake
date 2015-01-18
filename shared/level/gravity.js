@@ -21,13 +21,13 @@ xss.level.Gravity = function(gravity) {
 xss.level.Gravity.prototype = {
 
     /**
-     * @param delta
+     * @param elapsed
      * @return {xss.Shift}
      */
-    getShift: function(delta) {
+    getShift: function(elapsed) {
         return [
-            this.updateInDirection(delta, 0),
-            this.updateInDirection(delta, 1)
+            this.updateInDirection(elapsed, 0),
+            this.updateInDirection(elapsed, 1)
         ];
     },
 

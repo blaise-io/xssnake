@@ -30,6 +30,11 @@ xss.room.Round.prototype = {
     deserialize: function(serialized) {
         this.levelsetIndex = serialized[0];
         this.levelIndex = serialized[1];
+    },
+
+    getLevel: function(levelsetIndex, levelIndex) {
+        var levelset = xss.levelsetRegistry.getLevelset(levelsetIndex);
+        return levelset.getLevel(levelIndex);
     }
 
 };

@@ -55,7 +55,7 @@ xss.game.ClientGame.prototype = {
     bindEvents: function() {
         var ns = xss.NS_GAME;
 
-        xss.event.on(xss.EV_GAME_TICK, ns, this._clientGameLoop.bind(this));
+        xss.event.on(xss.EV_GAME_TICK, ns, this.gameloop.bind(this));
 
         //// @todo put in SpawnableRegistry
         //xss.event.on(xss.NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
@@ -155,15 +155,15 @@ xss.game.ClientGame.prototype = {
 
     /**
      * Runs ~ every 16 ms (60 fps)
-     * @param {number} delta
+     * @param {number} elapsed
      * @private
      */
-    _clientGameLoop: function(delta) {
-        var shift = this.level.gravity.getShift(delta);
-        this.level.animations.update(delta, this.started);
+    gameloop: function(elapsed) {
+        var shift = this.level.gravity.getShift(elapsed);
+        this.level.animations.update(elapsed, this.started);
 
         if (this.started) {
-            this.players.moveSnakes(delta, shift);
+            this.players.moveSnakes(elapsed, shift);
         }
     }
 

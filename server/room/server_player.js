@@ -132,6 +132,20 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
         if (this.room) {
             this.room.players.emit(type, data, this);
         }
+    },
+
+    /**
+     * @param {number} index
+     * @param {xss.level.Level} level
+     */
+    setSnake: function(index, level) {
+        this.snake = new xss.game.ServerSnake(index, level);
+    },
+
+    unsetSnake: function() {
+        if (this.snake) {
+            this.snake.destruct();
+        }
     }
 
 });

@@ -100,9 +100,9 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
         }
     },
 
-    moveSnakes: function(delta, shift) {
+    moveSnakes: function(elapsed, shift) {
         for (var i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].snake.handleNextMove(delta, shift, this.players);
+            this.players[i].snake.handleNextMove(elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);
         }
     },

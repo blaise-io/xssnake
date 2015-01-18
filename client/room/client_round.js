@@ -40,11 +40,6 @@ xss.util.extend(xss.room.ClientRound.prototype, {
         xss.event.off(xss.NC_ROUND_START, xss.NS_ROUND);
     },
 
-    getLevel: function() {
-        var levelset = xss.levelsetRegistry.getLevelset(this.levelsetIndex);
-        return levelset.getLevel(this.levelIndex);
-    },
-
     updatePlayers: function() {
         this.game.updatePlayers(this.players);
         this.preGameUI.updateUI();
@@ -52,7 +47,7 @@ xss.util.extend(xss.room.ClientRound.prototype, {
 
     updateRound: function(serializedRound) {
         this.deserialize(serializedRound);
-        this.level = this.getLevel();
+        this.level = this.getLevel(this.levelsetIndex, this.levelIndex);
         this.game.updateLevel(this.level);
     },
 

@@ -20,7 +20,6 @@ xss.util.extend(xss.room.ClientPlayer.prototype, {
     /**
      * @param {number} index
      * @param {xss.level.Level} level
-     * @return {xss.game.ClientSnake}
      */
     setSnake: function(index, level) {
         this.snake = new xss.game.ClientSnake(

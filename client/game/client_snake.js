@@ -46,7 +46,10 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
 
         if (this.controls) {
             this.controls.destruct();
+            this.controls = null;
         }
+
+        this.level = null;
     },
 
     move: function(coordinate) {
@@ -100,12 +103,12 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     },
 
     /**
-     * @param {number} delta
+     * @param {number} elapsed
      * @param shift
      * @param {Array.<xss.room.Player>} players
      */
-    handleNextMove: function(delta, shift, players) {
-        this.elapsed += delta;
+    handleNextMove: function(elapsed, shift, players) {
+        this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
             var move = new xss.game.SnakeMove(

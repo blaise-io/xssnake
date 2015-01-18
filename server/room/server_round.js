@@ -15,6 +15,10 @@ xss.room.ServerRound = function(roomEmitter, players, options, levelsPlayed) {
     this.levelset = xss.levelsetRegistry.getLevelset(this.levelsetIndex);
     this.levelIndex = this.levelset.getRandomLevelIndex(levelsPlayed);
 
+    /** @type {xss.game.ServerGame} */
+    this.game = null;
+    /** @type {xss.level.Level} */
+    this.level = null;
     this.countdownStarted = false;
     this.bindEvents();
 };
@@ -24,7 +28,18 @@ xss.util.extend(xss.room.ServerRound.prototype, xss.room.Round.prototype);
 xss.util.extend(xss.room.ServerRound.prototype, {
 
     destruct: function() {
+        if (this.game) {
+            this.game.destruct();
+            this.game = null;
+        }
+        if (this.level) {
+            this.level.destruct();
+            this.level = null;
+        }
+
         this.roomEmitter = null;
+        this.levelset = null;
+
         clearTimeout(this.countdownTimer);
         this.unbindEvents();
     },
@@ -63,19 +78,20 @@ xss.util.extend(xss.room.ServerRound.prototype, {
     },
 
     startRound: function() {
+        this.level = this.getLevel(this.levelsetIndex, this.levelIndex);
+        this.game = new xss.game.ServerGame(this.level, this.players);
+        this.started = true;
         this.players.emit(xss.NC_ROUND_START);
     },
 
     handleManualRoomStart: function(nodata, player) {
         if (this.players.isHost(player) && !this.countdownTimer) {
-            console.log('handleManualRoomStart');
             this.toggleCountdown(true);
         }
     },
 
     handleDisconnect: function() {
         if (this.countdownStarted) {
-            console.log('handleDisconnect');
             this.toggleCountdown(false);
         }
     }
