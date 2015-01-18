@@ -4,7 +4,6 @@
  * Game Stage
  * @implements {xss.StageInterface}
  * @constructor
- * @todo Split connecting and inside game
  */
 xss.stage.Game = function() {};
 
