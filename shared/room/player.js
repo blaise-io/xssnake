@@ -8,6 +8,7 @@ xss.room.Player = function(name) {
     this.name = name || null;
     this.connected = false;
     this.score = 0;
+    /** @type {xss.game.Snake} */
     this.snake = null;
 };
 

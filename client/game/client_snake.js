@@ -170,15 +170,23 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     },
 
     /**
+     * @param {Array} serializedSnake
+     */
+    deserialize: function(serializedSnake) {
+        this.direction = serializedSnake[0];
+        this.parts = serializedSnake[1];
+        // If server updated snake, client prediction
+        // of snake crashing was incorrect.
+        this.limbo = null;
+    },
+
+    /**
      * @param {number} direction
      */
     emit: function(direction) {
         if (xss.player) {
-            // @todo: Check if in room?
-            var data, sync;
-            sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
-            data = [this.parts.slice(-sync), direction];
-            xss.player.emit(xss.NC_SNAKE_UPDATE, data);
+            var sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
+            xss.player.emit(xss.NC_SNAKE_UPDATE, [direction, this.parts.slice(-sync)]);
         }
     },
 

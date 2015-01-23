@@ -32,7 +32,7 @@ xss.game.ServerGame.prototype = {
     },
 
     bindEvents: function() {
-        this.roomEmitter.on(xss.NC_SNAKE_UPDATE, this.handleSnakeUpdate);
+        this.roomEmitter.on(xss.NC_SNAKE_UPDATE, this.handleSnakeUpdate.bind(this));
     },
 
     unbindEvents: function() {
@@ -58,13 +58,22 @@ xss.game.ServerGame.prototype = {
     handleSnakeUpdate: function(dirtySnake, player) {
         var move = new xss.game.ServerSnakeMove(dirtySnake, player);
         if (move.isValid()) {
-            player.snake.direction = move.direction;
-            player.snake.parts = move.parts;
-            player.snake.trimParts();
+            this.applyMove(player.snake, move);
+            this.players.emit(xss.NC_SNAKE_UPDATE, player.snake.serialize(), player);
         } else {
             console.log('invalid', move.status);
             // TODO: Emit our snake to player
         }
+    },
+
+    /**
+     * @param {xss.game.Snake} snake
+     * @param {xss.game.ServerSnakeMove} move
+     */
+    applyMove: function(snake, move) {
+        snake.direction = move.direction;
+        snake.parts = move.parts;
+        snake.trimParts();
     }
 
 };

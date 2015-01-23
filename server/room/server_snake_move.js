@@ -20,6 +20,8 @@ xss.game.ServerSnakeMove.prototype = {
     isValidJson: function() {
         var snake, parts, direction;
 
+        console.log('move', this.dirtyMove);
+
         snake = new xss.util.Sanitizer(this.dirtyMove);
         snake.assertArrayLengthBetween(2, 2);
 
@@ -27,17 +29,17 @@ xss.game.ServerSnakeMove.prototype = {
             return false;
         }
 
-        parts = new xss.util.Sanitizer(snake.getValueOr()[0]);
-        parts.assertArray();
-
-        if (!parts.valid()) {
-            return false;
-        }
-
-        direction = new xss.util.Sanitizer(snake.getValueOr()[1]);
+        direction = new xss.util.Sanitizer(snake.getValueOr()[0]);
         direction.assertBetween(xss.DIRECTION_LEFT, xss.DIRECTION_DOWN);
 
         if (!direction.valid()) {
+            return false;
+        }
+
+        parts = new xss.util.Sanitizer(snake.getValueOr()[1]);
+        parts.assertArray();
+
+        if (!parts.valid()) {
             return false;
         }
 

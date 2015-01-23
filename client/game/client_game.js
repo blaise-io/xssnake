@@ -21,6 +21,7 @@ xss.game.ClientGame.prototype = {
 
     destruct: function() {
         xss.event.off(xss.EV_GAME_TICK, xss.NS_GAME);
+        xss.event.off(xss.NC_SNAKE_UPDATE, xss.NS_GAME);
         //xss.event.off(xss.NC_GAME_SPAWN, xss.NS_GAME);
         //xss.event.off(xss.NC_SNAKE_UPDATE, xss.NS_GAME);
         //xss.event.off(xss.NC_SNAKE_SIZE, xss.NS_GAME);
@@ -34,6 +35,21 @@ xss.game.ClientGame.prototype = {
         this.spawnables = null;
     },
 
+    bindEvents: function() {
+        xss.event.on(xss.EV_GAME_TICK, xss.NS_GAME, this.gameloop.bind(this));
+        xss.event.on(xss.NC_SNAKE_UPDATE, xss.NS_GAME, this.updateSnake.bind(this));
+
+        //// @todo put in SpawnableRegistry
+        //xss.event.on(xss.NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
+        //xss.event.on(xss.NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
+        //
+        //// @todo put in SnakeRegistry
+        //xss.event.on(xss.NC_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
+        //xss.event.on(xss.NC_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
+        //xss.event.on(xss.NC_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
+        //xss.event.on(xss.NC_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
+        //xss.event.on(xss.NC_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
+    },
     /**
      * Update game before round has started.
      * Don't call this mid-game.
@@ -52,21 +68,9 @@ xss.game.ClientGame.prototype = {
         this.level.paint();
     },
 
-    bindEvents: function() {
-        var ns = xss.NS_GAME;
-
-        xss.event.on(xss.EV_GAME_TICK, ns, this.gameloop.bind(this));
-
-        //// @todo put in SpawnableRegistry
-        //xss.event.on(xss.NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
-        //xss.event.on(xss.NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
-        //
-        //// @todo put in SnakeRegistry
-        //xss.event.on(xss.NC_SNAKE_UPDATE,   ns, this._evSnakeUpdate.bind(this));
-        //xss.event.on(xss.NC_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
-        //xss.event.on(xss.NC_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
-        //xss.event.on(xss.NC_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
-        //xss.event.on(xss.NC_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
+    updateSnake: function(serializedSnake) {
+        var clientIndex = serializedSnake.shift();
+        this.players.players[clientIndex].snake.deserialize(serializedSnake);
     },
 
     /**

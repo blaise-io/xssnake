@@ -22,6 +22,13 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
     },
 
     /**
+     * @return {Array}
+     */
+    serialize: function() {
+        return [this.index, this.direction, this.parts];
+    },
+
+    /**
      * @param {number} elapsed
      * @param shift
      * @param {Array.<xss.room.Player>} players

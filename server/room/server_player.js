@@ -26,7 +26,6 @@ xss.room.ServerPlayer = function(server, connection) {
     this.bindEvents();
 
     this.heartbeat = new xss.netcode.ServerHeartbeat(this);
-    this.emitBuffer = [];
 };
 
 xss.util.extend(xss.room.ServerPlayer.prototype, xss.room.Player.prototype);
