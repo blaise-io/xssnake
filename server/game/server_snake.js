@@ -10,6 +10,8 @@ xss.game.ServerSnake = function(index, level) {
     xss.game.Snake.call(this, index, level);
     this.index = index;
     this.level = level;
+    /** @type {xss.game.SnakeMove} */
+    this.limbo = null;
     this.elapsed = 0;
 };
 
@@ -29,11 +31,12 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
     },
 
     /**
+     * @param {number} tick
      * @param {number} elapsed
      * @param shift
      * @param {Array.<xss.room.Player>} players
      */
-    handleNextMove: function(elapsed, shift, players) {
+    handleNextMove: function(tick, elapsed, shift, players) {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
@@ -46,24 +49,11 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
             if (!move.collision) {
                 this.limbo = null;
                 this.move(move.location);
-            } else if (this.limbo) { // @ TODO: && elapsed > ping
-                this.crash();
-            } else {
-                this.limbo = move.collision;
+            } else if (!this.limbo) {
+                this.limbo = move;
+                this.limbo.tick = tick;
             }
-
         }
-    },
-
-    crash: function() {
-        // TODO: emit to players
-        this.crashed = true;
-    },
-
-    /**
-     * @param {number} direction
-     */
-    emit: function(direction) {
     },
 
     /**
@@ -73,6 +63,14 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
         var shift, head = this.getHead();
         shift = xss.GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
+    },
+
+    /**
+     * @param {number} tick
+     * @return {boolean}
+     */
+    hasCollisionOnTick: function(tick) {
+        return !this.crashed && this.limbo && this.limbo.tick === tick;
     }
 
 });

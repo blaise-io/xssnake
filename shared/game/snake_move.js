@@ -12,6 +12,7 @@ xss.game.SnakeMove = function(snake, players, level, location) {
     this.level = level;
     this.players = players;
     this.location = location;
+    this.tick = 0;
     this.collision = this.getCollission();
 };
 

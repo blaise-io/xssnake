@@ -10,7 +10,6 @@ xss.room.ServerPlayerRegistry = function() {
 
 xss.util.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
 xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
-
     /**
      * Send data to everyone in the room.
      * @param {number} type
@@ -48,12 +47,27 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
     },
 
     /**
+     * @param {number} tick
+     * @returns {Array.<xss.room.ServerPlayer>}
+     */
+    getCollisionsOnTick: function(tick) {
+        var crashingPlayers = [];
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            if (this.players[i].snake.hasCollisionOnTick(tick)) {
+                crashingPlayers.push(this.players[i]);
+            }
+        }
+        return crashingPlayers;
+    },
+
+    /**
+     * @param {number} tick
      * @param {number} elapsed
      * @param {xss.Shift} shift
      */
-    moveSnakes: function(elapsed, shift) {
+    moveSnakes: function(tick, elapsed, shift) {
         for (var i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].snake.handleNextMove(elapsed, shift, this.players);
+            this.players[i].snake.handleNextMove(tick, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);
         }
     }

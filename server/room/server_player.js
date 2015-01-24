@@ -75,7 +75,14 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
     },
 
     onclose: function() {
-        this.destruct();
+        if (this.room && this.room.rounds && this.room.rounds.hasStarted()) {
+            // Cannot destruct immediately, game expects player.
+            // Room should destruct player at end of round, or
+            // when all players in room have disconnected.
+            this.disconnect();
+        } else {
+            this.destruct();
+        }
     },
 
     bindEvents: function() {

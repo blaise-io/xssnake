@@ -46,8 +46,6 @@ xss.game.ServerSnakeMove.prototype = {
         this.parts = parts.getValueOr();
         this.direction = direction.getValueOr();
 
-        console.log(this.direction);
-
         return true;
     },
 
