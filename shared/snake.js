@@ -23,7 +23,7 @@ xss.game.Snake = function(index, level) {
     this.speed = level.config.snakeSpeed;
 
     this.crashed = false;
-    this.limbo = null;
+    this.collision = null;
     this.gravity = null;
 };
 

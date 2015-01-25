@@ -37,7 +37,9 @@ xss.game.ClientGame.prototype = {
 
     bindEvents: function() {
         xss.event.on(xss.EV_GAME_TICK, xss.NS_GAME, this.gameloop.bind(this));
-        xss.event.on(xss.NC_SNAKE_UPDATE, xss.NS_GAME, this.updateSnake.bind(this));
+        xss.event.on(xss.NC_SNAKE_UPDATE, xss.NS_GAME, this.ncUpdateSnake.bind(this));
+        xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_GAME, this.ncCrashSnakes.bind(this));
+
 
         //// @todo put in SpawnableRegistry
         //xss.event.on(xss.NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
@@ -50,10 +52,11 @@ xss.game.ClientGame.prototype = {
         //xss.event.on(xss.NC_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
         //xss.event.on(xss.NC_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
     },
+
     /**
      * Update game before round has started.
      * Don't call this mid-game.
-     * @param players
+     * @param {xss.room.ClientPlayerRegistry} players
      */
     updatePlayers: function(players) {
         players.unsetSnakes();
@@ -62,15 +65,31 @@ xss.game.ClientGame.prototype = {
         return players;
     },
 
+    /**
+     * @param {xss.level.Level} level
+     */
     updateLevel: function(level) {
         this.level.destruct();
         this.level = level;
         this.level.paint();
     },
 
-    updateSnake: function(serializedSnake) {
+    /**
+     * @param {Array} serializedSnake
+     */
+    ncUpdateSnake: function(serializedSnake) {
         var clientIndex = serializedSnake.shift();
         this.players.players[clientIndex].snake.deserialize(serializedSnake);
+    },
+
+    /**
+     * @param {Array} serializedCollisions
+     */
+    ncCrashSnakes: function(serializedCollisions) {
+        for (var i = 0, m = serializedCollisions.length; i < m; i++) {
+            var player = this.players.players[serializedCollisions[i].shift()];
+            player.snake.crash(serializedCollisions[i]);
+        }
     },
 
     /**
@@ -112,7 +131,7 @@ xss.game.ClientGame.prototype = {
      */
     _evSnakeUpdate: function(data) {
         var snake = this.snakes[data[0]];
-        snake.limbo = false;
+        snake.collision = false;
         snake.parts = data[1];
         snake.direction = data[2];
     },

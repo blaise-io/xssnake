@@ -37,7 +37,7 @@ xss.stage.MenuSnake.prototype = {
     move: function() {
         var nextpos, snake = this.snake;
 
-        snake.limbo = null;
+        snake.collision = null;
 
         nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {

@@ -11,7 +11,7 @@ xss.game.ServerSnake = function(index, level) {
     this.index = index;
     this.level = level;
     /** @type {xss.game.SnakeMove} */
-    this.limbo = null;
+    this.collision = null;
     this.elapsed = 0;
 };
 
@@ -47,11 +47,11 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
             this.elapsed -= this.speed;
 
             if (!move.collision) {
-                this.limbo = null;
+                this.collision = null;
                 this.move(move.location);
-            } else if (!this.limbo) {
-                this.limbo = move;
-                this.limbo.tick = tick;
+            } else if (!this.collision) {
+                this.collision = move.collision;
+                this.collision.tick = tick;
             }
         }
     },
@@ -70,7 +70,7 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
      * @return {boolean}
      */
     hasCollisionOnTick: function(tick) {
-        return !this.crashed && this.limbo && this.limbo.tick === tick;
+        return !this.crashed && this.collision && this.collision.tick === tick;
     }
 
 });

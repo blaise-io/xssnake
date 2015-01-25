@@ -19,7 +19,11 @@ xss.game.ServerGame = function(roomEmitter, level, players) {
     this.players.setSnakes(this.level);
 
     this.bindEvents();
-    this.tickInterval = setInterval(this.handleTick.bind(this), xss.SERVER_TICK_INTERVAL);
+
+    this.tickInterval = setInterval(
+        this.handleTick.bind(this),
+        xss.SERVER_TICK_INTERVAL
+    );
 };
 
 xss.game.ServerGame.prototype = {
@@ -36,7 +40,7 @@ xss.game.ServerGame.prototype = {
     bindEvents: function() {
         this.roomEmitter.on(
             xss.NC_SNAKE_UPDATE,
-            this.handlePlayerSnakeUpdate.bind(this)
+            this.ncSnakeUpdate.bind(this)
         );
     },
 
@@ -58,7 +62,7 @@ xss.game.ServerGame.prototype = {
     },
 
     handleCrashingPlayers: function(tick) {
-        var indexes, crashingPlayers;
+        var serialized = [], crashingPlayers;
 
         crashingPlayers = this.players.getCollisionsOnTick(
             tick - xss.SERVER_TICK_NUM_REWRITABLE
@@ -66,11 +70,16 @@ xss.game.ServerGame.prototype = {
 
         if (crashingPlayers.length) {
             for (var i = 0, m = crashingPlayers.length; i < m; i++) {
-                crashingPlayers[i].snake.crashed = true;
-                indexes = crashingPlayers[i].snake.index;
+                var snake = crashingPlayers[i].snake;
+                snake.crashed = true;
+                console.log(snake.collision);
+                serialized.push(
+                    [snake.index].concat(snake.collision.serialize())
+                );
             }
+
             // Emit crashed snakes.
-            this.players.emit(xss.NC_SNAKE_CRASH, indexes);
+            this.players.emit(xss.NC_SNAKE_CRASH, serialized);
 
             // TODO:
 
@@ -88,7 +97,7 @@ xss.game.ServerGame.prototype = {
      * @param {?} dirtySnake
      * @param {xss.room.ServerPlayer} player
      */
-    handlePlayerSnakeUpdate: function(dirtySnake, player) {
+    ncSnakeUpdate: function(dirtySnake, player) {
         var move = new xss.game.ServerSnakeMove(dirtySnake, player);
         if (move.isValid()) {
             this.applyMove(player.snake, move);

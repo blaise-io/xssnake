@@ -123,9 +123,9 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
                 if (this.local) {
                     this.crash(move.collision.location);
                 } else {
-                    this.limbo = move.collision;
+                    this.collision = move.collision;
                 }
-            } else if (!this.limbo) {
+            } else if (!this.collision) {
                 this.move(move.location);
                 this.updateShape();
             }
@@ -177,7 +177,7 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
         this.parts = serializedSnake[1];
         // If server updated snake, client prediction
         // of snake crashing was incorrect.
-        this.limbo = null;
+        this.collision = null;
     },
 
     /**

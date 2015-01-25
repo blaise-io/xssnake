@@ -12,7 +12,7 @@ xss.game.SnakeMove = function(snake, players, level, location) {
     this.level = level;
     this.players = players;
     this.location = location;
-    this.tick = 0;
+    /** @type {xss.game.Collision} */
     this.collision = this.getCollission();
 };
 
@@ -25,6 +25,9 @@ xss.game.SnakeMove.prototype = {
         return parts;
     },
 
+    /**
+     * @returns {xss.game.Collision}
+     */
     getCollission: function() {
         var parts = this.getParts(this.location);
         for (var i = 0, m = parts.length; i < m; i++) {
@@ -36,6 +39,11 @@ xss.game.SnakeMove.prototype = {
         return null;
     },
 
+    /**
+     * @param {number} index
+     * @param {xss.Coordinate} part
+     * @returns {xss.game.Collision}
+     */
     getCollisionPart: function(index, part) {
         var players, snake, levelData, partIndex;
         snake = this.snake;
@@ -45,21 +53,21 @@ xss.game.SnakeMove.prototype = {
         if (index > 4) {
             partIndex = snake.getPartIndex(part);
             if (-1 !== partIndex && partIndex !== index) {
-                return new xss.game.SelfCollision(part);
+                return new xss.game.Collision(part, xss.CRASH_SELF);
             }
         }
 
         if (levelData.isWall(part[0], part[1])) {
-            return new xss.game.WallCollision(part);
+            return new xss.game.Collision(part, xss.CRASH_WALL);
         }
 
         if (levelData.isMovingWall(part)) {
-            return new xss.game.MovingWallCollision(part);
+            return new xss.game.Collision(part, xss.CRASH_MOVING_WALL);
         }
 
-        for (var ii = 0, mm = players.length; ii < mm; ii++) {
-            if (snake !== players[ii].snake && players[ii].snake.hasPart(part)) {
-                return new xss.game.OpponentCollision(part, players[ii].snake);
+        for (var i = 0, m = players.length; i < m; i++) {
+            if (snake !== players[i].snake && players[i].snake.hasPart(part)) {
+                return new xss.game.Collision(part, xss.CRASH_OPPONENT);
             }
         }
     }
