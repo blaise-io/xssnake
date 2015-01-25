@@ -38,7 +38,7 @@ xss.game.ClientGame.prototype = {
     bindEvents: function() {
         xss.event.on(xss.EV_GAME_TICK, xss.NS_GAME, this.gameloop.bind(this));
         xss.event.on(xss.NC_SNAKE_UPDATE, xss.NS_GAME, this.ncUpdateSnake.bind(this));
-        xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_GAME, this.ncCrashSnakes.bind(this));
+        xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_GAME, this.notifySnakesCrashed.bind(this));
 
 
         //// @todo put in SpawnableRegistry
@@ -85,10 +85,11 @@ xss.game.ClientGame.prototype = {
     /**
      * @param {Array} serializedCollisions
      */
-    ncCrashSnakes: function(serializedCollisions) {
-        for (var i = 0, m = serializedCollisions.length; i < m; i++) {
-            var player = this.players.players[serializedCollisions[i].shift()];
-            player.snake.crash(serializedCollisions[i]);
+    notifySnakesCrashed: function(serializedCollisions) {
+        var collisions = serializedCollisions.slice();
+        for (var i = 0, m = collisions.length; i < m; i++) {
+            var player = this.players.players[collisions[i].shift()];
+            player.snake.crash(collisions[i]);
         }
     },
 

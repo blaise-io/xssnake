@@ -46,6 +46,10 @@ xss.room.MessageBox.prototype = {
         this.ui.debounceUpdate();
     },
 
+    addNotification: function(notification) {
+        this.messages.push(new xss.room.Message(null, notification));
+    },
+
     updatePlayers: function() {
         if (this.previousPlayers) {
             this.notifyPlayersChange();

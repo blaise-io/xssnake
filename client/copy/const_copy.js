@@ -31,6 +31,8 @@ xss.COPY_LEVELSET_GAME = 'Pactris';
 
 // Stages misc.
 xss.COPY_COMMA_SPACE = ', ';
+xss.COPY_SPACE_AND_SPACE = ' & ';
+xss.COPY_ELLIPSIS = ' …';
 xss.COPY_JOINER = ' …\n';
 xss.COPY_DEF = ':  ';
 
@@ -95,3 +97,7 @@ xss.COPY_CONNECTING = 'Connecting...';
 // Chat.
 xss.COPY_PLAYER_JOINED = '{0} joined.';
 xss.COPY_PLAYER_QUIT = '{0} quit.';
+
+// Notify snake crashes.
+xss.COPY_SNAKE_CRASHED = ' crashed.';
+

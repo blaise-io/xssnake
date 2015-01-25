@@ -72,7 +72,6 @@ xss.game.ServerGame.prototype = {
             for (var i = 0, m = crashingPlayers.length; i < m; i++) {
                 var snake = crashingPlayers[i].snake;
                 snake.crashed = true;
-                console.log(snake.collision);
                 serialized.push(
                     [snake.index].concat(snake.collision.serialize())
                 );
