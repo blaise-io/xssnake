@@ -45,13 +45,13 @@ xss.game.SnakeMove.prototype = {
      * @returns {xss.game.Collision}
      */
     getCollisionPart: function(index, part) {
-        var players, snake, levelData, partIndex;
+        var players, levelData, partIndex;
         players = this.players;
         levelData = this.level.data;
 
         if (index > 4) {
             partIndex = this.snake.getPartIndex(part);
-            if (-1 !== partIndex && partIndex !== index) {
+            if (-1 !== partIndex && index !== partIndex) {
                 return new xss.game.Collision(part, xss.CRASH_SELF);
             }
         }
@@ -65,9 +65,10 @@ xss.game.SnakeMove.prototype = {
         }
 
         for (var i = 0, m = players.length; i < m; i++) {
-            if (this.snake !== players[i].snake &&
-                !players[i].snake.crashed &&
-                players[i].snake.hasPart(part)
+            var opponentSnake = players[i].snake;
+            if (opponentSnake.crashed === false &&
+                opponentSnake !== this.snake &&
+                opponentSnake.hasPart(part)
             ) {
                 return new xss.game.Collision(part, xss.CRASH_OPPONENT);
             }
