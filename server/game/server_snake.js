@@ -69,8 +69,8 @@ xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.
      * @param {number} tick
      * @return {boolean}
      */
-    hasCollisionOnTick: function(tick) {
-        return !this.crashed && this.collision && this.collision.tick === tick;
+    hasCollisionLteTick: function(tick) {
+        return !this.crashed && this.collision && this.collision.tick <= tick;
     }
 
 });

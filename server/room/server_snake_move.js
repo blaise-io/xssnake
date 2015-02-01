@@ -20,8 +20,6 @@ xss.game.ServerSnakeMove.prototype = {
     isValidJson: function() {
         var snake, parts, direction;
 
-        console.log('move', this.dirtyMove);
-
         snake = new xss.util.Sanitizer(this.dirtyMove);
         snake.assertArrayLengthBetween(2, 2);
 

@@ -31,11 +31,11 @@ xss.room.ServerRoom.prototype = {
     },
 
     bindEvents: function() {
-        this.emitter.on(xss.NC_CHAT_MESSAGE, this.handleChatEvent.bind(this));
+        this.emitter.on(xss.NC_CHAT_MESSAGE, this.ncChatMessage.bind(this));
         this.emitter.on(xss.SE_PLAYER_DISCONNECT, this.handlePlayerDisconnect.bind(this));
     },
 
-    handleChatEvent: function(serializedMessage, player) {
+    ncChatMessage: function(serializedMessage, player) {
         var sanitizer = new xss.util.Sanitizer(serializedMessage[0]);
         sanitizer.assertStringOfLength(1, 64);
         if (sanitizer.valid()) {

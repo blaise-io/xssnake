@@ -6,6 +6,7 @@
  */
 xss.room.ServerPlayerRegistry = function() {
     xss.room.PlayerRegistry.call(this);
+    this.averageLatencyInTicks = 0;
 };
 
 xss.util.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
@@ -54,7 +55,7 @@ xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
     getCollisionsOnTick: function(tick) {
         var crashingPlayers = [];
         for (var i = 0, m = this.players.length; i < m; i++) {
-            if (this.players[i].snake.hasCollisionOnTick(tick)) {
+            if (this.players[i].snake.hasCollisionLteTick(tick)) {
                 crashingPlayers.push(this.players[i]);
             }
         }

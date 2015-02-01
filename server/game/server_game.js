@@ -15,6 +15,7 @@ xss.game.ServerGame = function(roomEmitter, level, players) {
 
     this.tick = 0;
     this.lastTick = +new Date();
+    this.averageLatencyInTicks = 1;
 
     this.players.setSnakes(this.level);
 
@@ -38,14 +39,43 @@ xss.game.ServerGame.prototype = {
     },
 
     bindEvents: function() {
-        this.roomEmitter.on(
-            xss.NC_SNAKE_UPDATE,
-            this.ncSnakeUpdate.bind(this)
-        );
+        this.roomEmitter.on(xss.NC_SNAKE_UPDATE, this.ncSnakeUpdate.bind(this));
+        this.roomEmitter.on(xss.NC_PONG, this.ncPong.bind(this));
     },
+
 
     unbindEvents: function() {
         this.roomEmitter.off(xss.NC_SNAKE_UPDATE);
+        this.roomEmitter.off(xss.NC_PONG);
+    },
+
+    /**
+     * @param {?} dirtySnake
+     * @param {xss.room.ServerPlayer} player
+     */
+    ncSnakeUpdate: function(dirtySnake, player) {
+        var move = new xss.game.ServerSnakeMove(dirtySnake, player);
+        if (move.isValid()) {
+            this.applyMove(player.snake, move);
+            this.players.emit(xss.NC_SNAKE_UPDATE, player.snake.serialize(), player);
+        } else {
+            this.players.emit(xss.NC_SNAKE_UPDATE, player.snake.serialize());
+        }
+    },
+
+    ncPong: function() {
+        this.averageLatencyInTicks = this.getAverageLatencyInTicks();
+    },
+
+    /**
+     * @return {number}
+     */
+    getAverageLatencyInTicks: function() {
+        var latencies = [];
+        for (var i = 0, m = this.players.length; i < m; i++) {
+            latencies.push(this.players[i].player.heartbeat.latency);
+        }
+        return Math.round(xss.util.average(latencies) / xss.SERVER_TICK_INTERVAL);
     },
 
     handleTick: function() {
@@ -57,16 +87,14 @@ xss.game.ServerGame.prototype = {
     gameloop: function(tick, elapsed) {
         var shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
-        this.handleCrashingPlayers(tick);
+        this.handleCrashingPlayers(tick - this.averageLatencyInTicks);
         this.players.moveSnakes(tick, elapsed, shift);
     },
 
     handleCrashingPlayers: function(tick) {
         var serialized = [], crashingPlayers;
 
-        crashingPlayers = this.players.getCollisionsOnTick(
-            tick - xss.SERVER_TICK_NUM_REWRITABLE
-        );
+        crashingPlayers = this.players.getCollisionsOnTick(tick);
 
         if (crashingPlayers.length) {
             for (var i = 0, m = crashingPlayers.length; i < m; i++) {
@@ -89,20 +117,6 @@ xss.game.ServerGame.prototype = {
             // Handout knockout points for remaining snakes.
 
             // Detect round end.
-        }
-    },
-
-    /**
-     * @param {?} dirtySnake
-     * @param {xss.room.ServerPlayer} player
-     */
-    ncSnakeUpdate: function(dirtySnake, player) {
-        var move = new xss.game.ServerSnakeMove(dirtySnake, player);
-        if (move.isValid()) {
-            this.applyMove(player.snake, move);
-            this.players.emit(xss.NC_SNAKE_UPDATE, player.snake.serialize(), player);
-        } else {
-            this.players.emit(xss.NC_SNAKE_UPDATE, player.snake.serialize());
         }
     },
 

@@ -95,9 +95,7 @@ xss.util = {
     average: function(numbers) {
         var total = 0;
         for (var i = 0, m = numbers.length; i < m; i++) {
-            if (typeof numbers[i] === 'number') {
-                total += numbers[i];
-            }
+            total += numbers[i];
         }
         return m ? total / m : 0;
     },

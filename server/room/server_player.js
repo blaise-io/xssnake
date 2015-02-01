@@ -36,10 +36,13 @@ xss.util.extend(xss.room.ServerPlayer.prototype, {
             this.disconnect();
         }
         this.unbindEvents();
+        this.heartbeat.destruct(); // Awww.
+
         this.connected = false;
         this.server = null;
         this.snake = null;
         this.room = null;
+        this.heartbeat = null;
     },
 
     disconnect: function() {

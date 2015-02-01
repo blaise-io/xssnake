@@ -37,7 +37,10 @@ xss.netcode.ServerHeartbeat.prototype = {
     },
 
     pong: function() {
-        this.latency = (+new Date() - this.pingSent) / 2;
+        this.latency = Math.min(
+            xss.SERVER_MAX_TOLERATED_LATENCY,
+            (+new Date() - this.pingSent) / 2
+        );
     }
 
 };

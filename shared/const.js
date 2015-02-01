@@ -45,7 +45,7 @@ xss.NC_XSS = 666;
 xss.SE_PLAYER_DISCONNECT = 101;
 
 
-xss.HEARTBEAT_INTERVAL_MS = 7000 * 30; // @TODO ping more often.
+xss.HEARTBEAT_INTERVAL_MS = 5000;
 
 xss.GAME_SHIFT_MAP = [[-1, 0], [0, -1], [1, 0], [0, 1]];
 
