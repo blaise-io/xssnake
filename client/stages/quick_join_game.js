@@ -39,6 +39,7 @@ xss.util.extend(xss.stage.QuickJoinGame.prototype, {
     },
 
     setupRoom: function() {
+        this.destructStageLeftovers();
         this.unbindEvents();
     },
 
