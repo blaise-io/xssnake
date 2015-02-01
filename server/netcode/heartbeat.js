@@ -2,7 +2,6 @@
 
 /**
  * @param {xss.room.ServerPlayer} player
- * @todo Disconnect client when client no longer sends ping messages.
  * @constructor
  */
 xss.netcode.ServerHeartbeat = function(player) {

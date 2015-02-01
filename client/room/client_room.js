@@ -37,7 +37,7 @@ xss.room.ClientRoom.prototype = {
         xss.event.on(xss.NC_OPTIONS_SERIALIZE, xss.NS_ROOM, this.updateOptions.bind(this));
         xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.updatePlayers.bind(this));
 
-        // TODO: Create a notifier class?
+        // TODO: Move to a new notifier class
         xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_ROOM, this.ncNotifySnakesCrashed.bind(this));
 
         //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));

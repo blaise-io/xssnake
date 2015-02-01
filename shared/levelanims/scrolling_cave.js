@@ -31,7 +31,6 @@ xss.levelanims.ScrollingCave.prototype = {
     _BUMP_HEIGHT  : [20, 40],
     _BUMP_DECREASE: [0, 2],
 
-    // @todo: get from {xss.Data} instance
     _LEVEL_WIDTH  : 63,
     _LEVEL_HEIGHT : 33,
 

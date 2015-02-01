@@ -40,11 +40,9 @@ xss.game.ClientGame.prototype = {
         xss.event.on(xss.NC_SNAKE_UPDATE, xss.NS_GAME, this.ncUpdateSnake.bind(this));
         xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_GAME, this.ncSetSnakesCrashed.bind(this));
 
-        //// @todo put in SpawnableRegistry
         //xss.event.on(xss.NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
         //xss.event.on(xss.NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
         //
-        //// @todo put in SnakeRegistry
         //xss.event.on(xss.NC_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));
         //xss.event.on(xss.NC_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
         //xss.event.on(xss.NC_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));

@@ -110,7 +110,7 @@ xss.game.ServerGame.prototype = {
             // Emit crashed snakes.
             this.players.emit(xss.NC_SNAKE_CRASH, collisions);
 
-            // TODO:
+            // TODO for snake crashing:
             // Client should flash dead snake
             // Handout knockout points for remaining snakes.
             // Detect round end.

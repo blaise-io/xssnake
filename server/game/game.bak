@@ -4,7 +4,6 @@
  * @param {xss.room.Round} round
  * @param {number} levelIndex
  * @constructor
- * @todo Offload logic.
  */
 xss.game.Game = function(round, levelIndex) {
     this.round = round;
