@@ -92,7 +92,7 @@ xss.game.ServerGame.prototype = {
     },
 
     handleCrashingPlayers: function(tick) {
-        var serialized = [], crashingPlayers;
+        var collisions = [], crashingPlayers;
 
         crashingPlayers = this.players.getCollisionsOnTick(tick);
 
@@ -100,22 +100,19 @@ xss.game.ServerGame.prototype = {
             for (var i = 0, m = crashingPlayers.length; i < m; i++) {
                 var snake = crashingPlayers[i].snake;
                 snake.crashed = true;
-                serialized.push(
-                    [snake.index].concat(snake.collision.serialize())
-                );
+                collisions.push([
+                    snake.index,
+                    snake.parts,
+                    snake.collision.serialize()
+                ]);
             }
 
             // Emit crashed snakes.
-            this.players.emit(xss.NC_SNAKE_CRASH, serialized);
+            this.players.emit(xss.NC_SNAKE_CRASH, collisions);
 
             // TODO:
-
-            // Emit snake parts, crashing part of snake.
-            // Client should flash snake [?] and show particles.
-            // Cannot crash into dead snake [?]
-
+            // Client should flash dead snake
             // Handout knockout points for remaining snakes.
-
             // Detect round end.
         }
     },

@@ -38,7 +38,7 @@ xss.room.ClientRoom.prototype = {
         xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.updatePlayers.bind(this));
 
         // TODO: Create a notifier class?
-        xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_ROOM, this.notifySnakesCrashed.bind(this));
+        xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_ROOM, this.ncNotifySnakesCrashed.bind(this));
 
         //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
         //xss.event.on(xss.NC_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
@@ -81,9 +81,8 @@ xss.room.ClientRoom.prototype = {
         );
     },
 
-    notifySnakesCrashed: function(serializedCollisions) {
-        var names, notification = '';
-        names = this.players.getNames();
+    ncNotifySnakesCrashed: function(serializedCollisions) {
+        var notification = '', names = this.players.getNames();
         for (var i = 0, m = serializedCollisions.length; i < m; i++) {
             notification += names[serializedCollisions[i][0]];
 
