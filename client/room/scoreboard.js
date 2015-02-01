@@ -25,20 +25,21 @@ xss.room.Scoreboard.prototype = {
             xss.NS_SCORE,
             this.ui.debounceUpdate.bind(this.ui)
         );
-        //xss.event.on(
-        //    xss.NC_ROOM_SCORE_UPDATE,
-        //    xss.NS_SCORE,
-        //    this.ui.updatePlayerScore.bind(this.ui)
-        //);
+        xss.event.on(
+            xss.NC_SCORE_UPDATE,
+            xss.NS_SCORE,
+            this.updatePlayerScores.bind(this)
+        );
     },
 
     unbindEvents: function() {
         xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_SCORE);
-    }
+        xss.event.off(xss.NC_SCORE_UPDATE, xss.NS_SCORE);
+    },
 
-    //updatePlayerScore: function(dirtyScoreArr) {
-    //    this.deserialize(dirtyScoreArr);
-    //    this.ui.debounceUpdate();
-    //},
+    updatePlayerScores: function(scoreArray) {
+        this.players.setScores(scoreArray);
+        this.ui.debounceUpdate();
+    }
 
 };

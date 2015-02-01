@@ -64,14 +64,12 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
     },
 
     /**
-     * @return {Array.<number>}
+     * @param {Array.<number>} scores
      */
-    getScore: function() {
-        var scores = [];
-        for (var i = 0, m = this.players.length; i < m; i++) {
-            scores.push(this.players[i].score);
+    setScores: function(scores) {
+        for (var i = 0, m = scores.length; i < m; i++) {
+            this.players[i].score = scores[i];
         }
-        return scores;
     },
 
     /**

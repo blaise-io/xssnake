@@ -11,7 +11,9 @@ xss.game.ServerGame = function(roomEmitter, level, players) {
     this.roomEmitter = roomEmitter;
     this.level = level;
     this.players = players;
+
     this.items = new xss.game.ServerItems(level, players);
+    this.score = new xss.game.ServerScore(level, players);
 
     this.tick = 0;
     this.lastTick = +new Date();
@@ -32,17 +34,20 @@ xss.game.ServerGame.prototype = {
     destruct: function() {
         clearInterval(this.tickInterval);
         this.unbindEvents();
+
         this.items.destruct();
+        this.score.destruct();
+
         this.level = null;
         this.players = null;
         this.items = null;
+        this.score = null;
     },
 
     bindEvents: function() {
         this.roomEmitter.on(xss.NC_SNAKE_UPDATE, this.ncSnakeUpdate.bind(this));
         this.roomEmitter.on(xss.NC_PONG, this.ncPong.bind(this));
     },
-
 
     unbindEvents: function() {
         this.roomEmitter.off(xss.NC_SNAKE_UPDATE);
@@ -63,6 +68,10 @@ xss.game.ServerGame.prototype = {
         }
     },
 
+    /**
+     * Update averge latency of all players in this room.
+     * Affects tolerance of clients overriding server prediction.
+     */
     ncPong: function() {
         this.averageLatencyInTicks = this.getAverageLatencyInTicks();
     },
@@ -109,6 +118,12 @@ xss.game.ServerGame.prototype = {
 
             // Emit crashed snakes.
             this.players.emit(xss.NC_SNAKE_CRASH, collisions);
+
+            // Handout knockout points.
+            // TODO Should be handled by round instead.
+            if (this.score.dealKnockoutPoints(crashingPlayers)) {
+                this.score.emitScore();
+            }
 
             // TODO for snake crashing:
             // Client should flash dead snake

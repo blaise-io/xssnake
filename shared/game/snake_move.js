@@ -26,7 +26,7 @@ xss.game.SnakeMove.prototype = {
     },
 
     /**
-     * @returns {xss.game.Collision}
+     * @return {xss.game.Collision}
      */
     getCollission: function() {
         var parts = this.getParts(this.location);
@@ -42,7 +42,7 @@ xss.game.SnakeMove.prototype = {
     /**
      * @param {number} index
      * @param {xss.Coordinate} part
-     * @returns {xss.game.Collision}
+     * @return {xss.game.Collision}
      */
     getCollisionPart: function(index, part) {
         var players, levelData, partIndex;
