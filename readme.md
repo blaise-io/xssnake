@@ -5,7 +5,7 @@ JavaScript in the browser of other players.
 
 [![Build Status](https://travis-ci.org/blaise-io/xssnake.png?branch=master)](https://travis-ci.org/blaise-io/xssnake)
 
-XSSnake is currently in development. The beta release is planned around 2014.
+XSSnake is currently in development. The beta release is planned around 2020.
 
 ![XSSnake](https://i.imgur.com/Gsz4ajb.png)
 

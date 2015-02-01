@@ -42,7 +42,7 @@
   },
   "scripts": {
     "start": "node server/start.js",
-    "restart": "supervisor --no-restart-on-error --watch server,shared server/start.js",
+    "restart": "supervisor --no-restart-on error --watch server,shared server/start.js",
     "test": "grunt test"
   }
 }
