@@ -100,9 +100,14 @@ xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
         }
     },
 
-    moveSnakes: function(elapsed, shift) {
+    /**
+     * @param {xss.level.Level} level
+     * @param {number} elapsed
+     * @param {xss.Shift} shift
+     */
+    moveSnakes: function(level, elapsed, shift) {
         for (var i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].snake.handleNextMove(elapsed, shift, this.players);
+            this.players[i].snake.handleNextMove(level, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);
         }
     },

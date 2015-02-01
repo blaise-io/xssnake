@@ -14,7 +14,6 @@ xss.game.ClientSnake = function(index, local, name, level) {
     this.index = index;
     this.local = local;
     this.name = name;
-    this.level = level;
     this.elapsed = 0;
     this.exploded = false;
 
@@ -102,16 +101,17 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     },
 
     /**
+     * @param {xss.level.Level} level
      * @param {number} elapsed
      * @param shift
      * @param {Array.<xss.room.Player>} players
      */
-    handleNextMove: function(elapsed, shift, players) {
+    handleNextMove: function(level, elapsed, shift, players) {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
             var move = new xss.game.SnakeMove(
-                this, players, this.level, this.getNextPosition()
+                this, players, level, this.getNextPosition()
             );
 
             this.elapsed -= this.speed;
