@@ -85,8 +85,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
             off || xss.FRAME * 6
         ];
 
-        /** @this xss.Shape */
-        return function(delta) {
+        return /** @this xss.Shape */ function(delta) {
             progress += delta;
             if (progress > duration[+!this.enabled]) {
                 progress -= duration[+!this.enabled];
@@ -104,8 +103,7 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
     _lifetimeEffect: function(start, end) {
         var key, progress = 0;
 
-        /** @this xss.Shape */
-        return function(delta) {
+        return /** @this xss.Shape */ function(delta) {
             // Start time reached.
             if (start && progress >= start) {
                 start = 0; // Prevent re-setting enabled, conflicts with flash()
@@ -139,7 +137,6 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
         doneCallback = options.callback || xss.util.noop;
         progressCallback = options.progress || xss.util.noop;
 
-        /** @this {xss.Shape} */
         return function(delta) {
             var x, y, percent;
             progress += delta;

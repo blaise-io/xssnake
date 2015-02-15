@@ -14,7 +14,7 @@ xss.room.ServerOptions = function(dirtyOptions) {
 };
 
 xss.util.extend(xss.room.ServerOptions.prototype, xss.room.Options.prototype);
-xss.util.extend(xss.room.ServerOptions.prototype, {
+xss.util.extend(xss.room.ServerOptions.prototype, /** @lends {xss.room.ServerOptions.prototype} */ {
 
     /**
      * @param {xss.room.ServerPlayer} player

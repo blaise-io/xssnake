@@ -10,6 +10,6 @@ xss.levelset.Game = function() {
 };
 
 xss.util.extend(xss.levelset.Game.prototype, xss.levelset.Levelset.prototype);
-xss.util.extend(xss.levelset.Game.prototype, {
+xss.util.extend(xss.levelset.Game.prototype, /** @lends {xss.levelset.Game.prototype} */ {
 
 });

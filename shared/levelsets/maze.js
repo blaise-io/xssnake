@@ -10,6 +10,6 @@ xss.levelset.Maze = function() {
 };
 
 xss.util.extend(xss.levelset.Maze.prototype, xss.levelset.Levelset.prototype);
-xss.util.extend(xss.levelset.Maze.prototype, {
+xss.util.extend(xss.levelset.Maze.prototype, /** @lends {xss.levelset.Maze.prototype} */ {
 
 });

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     xss.event     = new xss.EventHandler();
     xss.font      = new xss.Font();
     xss.canvas    = new xss.Canvas();
-    xss.shapegen  = new xss.ShapeGenerator();
+    xss.shapegen  = new xss.ClientShapeGenerator();
     xss.transform = new xss.Transform();
     xss.play      = new xss.AudioPlay();
     xss.flow      = new xss.StageFlow();

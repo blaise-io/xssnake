@@ -34,7 +34,7 @@ xss.ui.Scoreboard.prototype = {
     },
 
     destructShapes: function() {
-        for (var i = 0, m = this.podiumSize.length; i < m; i++) {
+        for (var i = 0; i < this.podiumSize; i++) {
             xss.shapes[xss.NS_SCORE + i] = null;
         }
     },

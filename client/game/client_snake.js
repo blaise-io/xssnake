@@ -32,7 +32,7 @@ xss.game.ClientSnake = function(index, local, name, level) {
 
 /** @lends {xss.game.ClientSnake.prototype} */
 xss.util.extend(xss.game.ClientSnake.prototype, xss.game.Snake.prototype);
-xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.prototype */ {
+xss.util.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prototype} */ {
 
     destruct: function() {
         // Remove any related shape.

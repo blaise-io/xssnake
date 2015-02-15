@@ -3,8 +3,8 @@
 /**
  * Client-Server communication
  * @param onopenCallback {Function}
- * @constructor
  * @extends {xss.room.ClientPlayer}
+ * @constructor
  */
 xss.room.ClientSocketPlayer = function(onopenCallback) {
     xss.room.ClientPlayer.call(this);
@@ -24,7 +24,7 @@ xss.room.ClientSocketPlayer = function(onopenCallback) {
 };
 
 xss.util.extend(xss.room.ClientSocketPlayer.prototype, xss.room.ClientPlayer.prototype);
-xss.util.extend(xss.room.ClientSocketPlayer.prototype, {
+xss.util.extend(xss.room.ClientSocketPlayer.prototype, /** @lends {xss.room.ClientSocketPlayer.prototype} */ {
 
     destruct: function() {
         this.connected = false;

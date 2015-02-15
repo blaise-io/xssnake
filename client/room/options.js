@@ -10,7 +10,7 @@ xss.room.ClientOptions = function() {
 };
 
 xss.util.extend(xss.room.ClientOptions.prototype, xss.room.Options.prototype);
-xss.util.extend(xss.room.ClientOptions.prototype, {
+xss.util.extend(xss.room.ClientOptions.prototype, /** @lends {xss.room.ClientOptions.prototype} */ {
 
     setOptionsFromForm: function(indexedOptions) {
         this.isQuickGame = false;

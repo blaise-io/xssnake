@@ -10,6 +10,6 @@ xss.levelset.Basic = function() {
 };
 
 xss.util.extend(xss.levelset.Basic.prototype, xss.levelset.Levelset.prototype);
-xss.util.extend(xss.levelset.Basic.prototype, {
+xss.util.extend(xss.levelset.Basic.prototype, /** @lends {xss.levelset.Basic.prototype} */ {
 
 });

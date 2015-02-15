@@ -29,7 +29,7 @@ xss.room.ServerPlayer = function(server, connection) {
 };
 
 xss.util.extend(xss.room.ServerPlayer.prototype, xss.room.Player.prototype);
-xss.util.extend(xss.room.ServerPlayer.prototype, {
+xss.util.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.prototype} */ {
 
     destruct: function() {
         if (this.connected) {

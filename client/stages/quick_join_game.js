@@ -10,7 +10,7 @@ xss.stage.QuickJoinGame = function() {
 };
 
 xss.util.extend(xss.stage.QuickJoinGame.prototype, xss.stage.Game.prototype);
-xss.util.extend(xss.stage.QuickJoinGame.prototype, {
+xss.util.extend(xss.stage.QuickJoinGame.prototype, /** @lends {xss.stage.QuickJoinGame.prototype} */ {
 
     connectToRoom: function() {
         xss.player.room.propagateToPlayer();

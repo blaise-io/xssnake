@@ -1,9 +1,18 @@
 'use strict';
 
 /**
+ * @extends {xss.ShapeGenerator}
+ * @constructor
+ */
+xss.util.ClientShapeGenerator = function() {
+    xss.ShapeGenerator.call(this);
+};
+
+/**
  * Extend ShapeGenerator with client-end only methods.
  */
-xss.util.extend(xss.ShapeGenerator.prototype, /** @lends xss.ShapeGenerator.prototype */ {
+xss.util.ClientShapeGenerator.prototype = xss.util.extend(xss.ShapeGenerator.prototype);
+xss.util.ClientShapeGenerator.prototype = xss.util.extend({
 
     /**
      * @param {string} text

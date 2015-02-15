@@ -10,6 +10,6 @@ xss.levelset.Moving = function() {
 };
 
 xss.util.extend(xss.levelset.Moving.prototype, xss.levelset.Levelset.prototype);
-xss.util.extend(xss.levelset.Moving.prototype, {
+xss.util.extend(xss.levelset.Moving.prototype, /** @lends {xss.levelset.Moving.prototype} */ {
 
 });

@@ -15,7 +15,7 @@ xss.room.ClientPlayer = function(name) {
 };
 
 xss.util.extend(xss.room.ClientPlayer.prototype, xss.room.Player.prototype);
-xss.util.extend(xss.room.ClientPlayer.prototype, {
+xss.util.extend(xss.room.ClientPlayer.prototype, /** @lends {xss.room.ClientPlayer.prototype} */ {
 
     /**
      * @param {number} index

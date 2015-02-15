@@ -11,7 +11,7 @@ xss.room.ClientPlayerRegistry = function() {
 };
 
 xss.util.extend(xss.room.ClientPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
-xss.util.extend(xss.room.ClientPlayerRegistry.prototype, {
+xss.util.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientPlayerRegistry.prototype} */ {
 
     destruct: function() {
         this.localPlayer = null;

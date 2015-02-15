@@ -10,7 +10,7 @@ xss.stage.SinglePlayer = function() {
 };
 
 xss.util.extend(xss.stage.SinglePlayer.prototype, xss.stage.Game.prototype);
-xss.util.extend(xss.stage.SinglePlayer.prototype, {
+xss.util.extend(xss.stage.SinglePlayer.prototype, /** @lends {xss.stage.SinglePlayer.prototype} */ {
 
     getSerializedGameOptions: function(name) {
         var options = new xss.room.ClientOptions(name);

@@ -10,7 +10,7 @@ xss.room.ServerPlayerRegistry = function() {
 };
 
 xss.util.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
-xss.util.extend(xss.room.ServerPlayerRegistry.prototype, {
+xss.util.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerPlayerRegistry.prototype} */ {
 
     /**
      * Send data to everyone in the room.
