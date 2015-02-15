@@ -6,7 +6,7 @@ var src = [
     'client/namespace.js',
     'shared/namespace.js',
     'shared/util.js', // We need this for extending objects, pre-bootstrap.
-    'client/util/util.js', // idem.
+    'client/util/client_util.js', // idem.
     'shared/**/*.js',
     'client/data/**/*.js',
     'client/**/*.js',
