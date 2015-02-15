@@ -49,12 +49,12 @@ xss.SelectStage.prototype = {
                 break;
             case xss.KEY_UP:
                 this.menu.prev();
-                xss.play.menu();
+                xss.audio.play('menu');
                 xss.flow.refreshShapes();
                 break;
             case xss.KEY_DOWN:
                 this.menu.next();
-                xss.play.menu();
+                xss.audio.play('menu');
                 xss.flow.refreshShapes();
         }
     }

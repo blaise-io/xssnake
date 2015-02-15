@@ -70,7 +70,7 @@ xss.Dialog.prototype = {
 //     * @param {string} header
 //     */
 //    setHeader: function(header) {
-//        xss.play.menu_alt();
+//        xss.audio.play('menu_alt');
 //        this._header = header.toUpperCase();
 //        this._updateShape();
 //    },
@@ -79,7 +79,7 @@ xss.Dialog.prototype = {
      * @param {string} body
      */
     setBody: function(body) {
-        xss.play.menu_alt();
+        xss.audio.play('menu_alt');
         this._body = body;
         this._updateShape();
     },
@@ -111,7 +111,7 @@ xss.Dialog.prototype = {
             case xss.KEY_RIGHT:
             case xss.KEY_TAB:
                 if (this.settings.type === xss.Dialog.TYPE.CONFIRM) {
-                    xss.play.menu_alt();
+                    xss.audio.play('menu_alt');
                     this._okSelected = !this._okSelected;
                     this._updateShape();
                 }

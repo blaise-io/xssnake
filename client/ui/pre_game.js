@@ -161,7 +161,7 @@ xss.ui.PreGame.prototype = {
             clearInterval(this.countdownInterval);
         }
         this.countdownInterval = setInterval(function() {
-            xss.play.menu_alt();
+            xss.audio.play('menu_alt');
             // Prevent re-creating dialog which destroys button selection.
             if (!this.confirmExit) {
                 this.updateUI();

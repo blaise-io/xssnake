@@ -54,22 +54,22 @@ xss.FormStage.prototype = {
                 break;
             case xss.KEY_UP:
                 this.form.selectField(-1);
-                xss.play.menu();
+                xss.audio.play('menu');
                 xss.flow.refreshShapes();
                 break;
             case xss.KEY_DOWN:
                 this.form.selectField(1);
-                xss.play.menu();
+                xss.audio.play('menu');
                 xss.flow.refreshShapes();
                 break;
             case xss.KEY_LEFT:
                 this.form.selectOption(-1);
-                xss.play.menu_alt();
+                xss.audio.play('menu_alt');
                 xss.flow.refreshShapes();
                 break;
             case xss.KEY_RIGHT:
                 this.form.selectOption(1);
-                xss.play.menu_alt();
+                xss.audio.play('menu_alt');
                 xss.flow.refreshShapes();
                 break;
         }

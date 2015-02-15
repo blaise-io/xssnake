@@ -140,7 +140,7 @@ xss.StageFlow.prototype = {
                 instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
                 xss.util.storage(xss.STORAGE_MUTE, mute);
                 xss.util.instruct(instruct, 1e3);
-                xss.play.menu_alt();
+                xss.audio.play('menu_alt');
             }
         }
     },
@@ -166,9 +166,9 @@ xss.StageFlow.prototype = {
         newStageAnim.callback = callback;
 
         if (back) {
-            xss.play.swoosh_rev();
+            xss.audio.play('swoosh_rev');
         } else {
-            xss.play.swoosh();
+            xss.audio.play('swoosh');
         }
 
         xss.shapes.oldstage = oldShape.animate(oldStageAnim);
