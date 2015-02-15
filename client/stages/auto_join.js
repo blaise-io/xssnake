@@ -6,7 +6,7 @@
  * @constructor
  */
 xss.AutoJoinStage = function() {
-    /** @type {this.room.ClientRoom} */
+    /** @type {xss.room.ClientRoom} */
     this.room = xss.player.room;
 
     this.header = 'JOiN GAME';

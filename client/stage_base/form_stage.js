@@ -23,7 +23,7 @@ xss.FormStage.prototype = {
 
     /**
      * @param {Object} data
-     * @return {Object|null}
+     * @return {Function}
      * @private
      */
     getNextStage: function(data) {
