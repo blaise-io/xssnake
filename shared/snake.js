@@ -15,9 +15,8 @@ xss.game.SnakeParts;
 xss.game.Snake = function(index, level) {
     var spawn = level.data.spawns[index];
 
-    /** @type xss.game.SnakeParts, head is last item */
     this.index = index;
-    /** @type {xss.game.SnakeParts} */
+    /** @type xss.game.SnakeParts, head is last item */
     this.parts = [spawn.location];
     this.direction = spawn.direction;
     this.size = level.config.snakeSize;

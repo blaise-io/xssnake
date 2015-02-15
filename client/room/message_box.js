@@ -36,12 +36,12 @@ xss.room.MessageBox.prototype = {
     },
 
     unbindEvents: function() {
-        xss.event.off(xss.NC_CHAT_MESSAGE, xss.NS_MSGBOX, this.addMessage.bind(this));
+        xss.event.off(xss.NC_CHAT_MESSAGE, xss.NS_MSGBOX);
         xss.event.off(xss.EV_PLAYERS_UPDATED, xss.NS_MSGBOX);
     },
 
     addMessage: function(serializedMessage) {
-        var name = this.players.players[serializedMessage[0]].name;
+        var name = String(this.players.players[serializedMessage[0]].name);
         this.messages.push(new xss.room.Message(name, serializedMessage[1]));
         this.ui.debounceUpdate();
     },
@@ -63,12 +63,12 @@ xss.room.MessageBox.prototype = {
         if (this.players.getTotal() > this.previousPlayers.getTotal()) {
             message = xss.util.format(
                 xss.COPY_PLAYER_JOINED,
-                this.players.getJoinName()
+                String(this.players.getJoinName())
             );
         } else if (this.players.getTotal() < this.previousPlayers.getTotal()) {
             message = xss.util.format(
                 xss.COPY_PLAYER_QUIT,
-                this.players.getQuitName(this.previousPlayers)
+                String(this.players.getQuitName(this.previousPlayers))
             );
         }
         if (message) {

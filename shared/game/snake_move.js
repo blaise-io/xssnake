@@ -2,7 +2,7 @@
 
 /**
  * @param {xss.game.Snake} snake
- * @param {Array.<xss.game.ClientPlayer>} players
+ * @param {Array.<xss.room.Player>} players
  * @param {xss.level.Level} level
  * @param {xss.Coordinate} location
  * @constructor
@@ -73,6 +73,8 @@ xss.game.SnakeMove.prototype = {
                 return new xss.game.Collision(part, xss.CRASH_OPPONENT);
             }
         }
+
+        return null;
     }
 
 };

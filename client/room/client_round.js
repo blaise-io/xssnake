@@ -2,7 +2,7 @@
 
 /**
  * @constructor
- * @param {xss.room.PlayerRegistry} players
+ * @param {xss.room.ClientPlayerRegistry} players
  * @param {xss.room.Options} options
  * @extends {xss.room.Round}
  */

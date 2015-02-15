@@ -90,8 +90,9 @@ xss.ui.MessageBox.prototype = {
     },
 
     sendMessage: function(body) {
+        var author = String(this.localAuthor.name);
         if (body.trim()) {
-            this.messages.push(new xss.room.Message(this.localAuthor.name, body));
+            this.messages.push(new xss.room.Message(author, body));
             this.sendMessageFn(body);
             this.skipQueue = true;
         }

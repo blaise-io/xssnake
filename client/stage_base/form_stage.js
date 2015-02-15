@@ -22,7 +22,7 @@ xss.FormStage.prototype = {
     },
 
     /**
-     * @param {Object} data
+     * @param {Function} data
      * @return {Function}
      * @private
      */

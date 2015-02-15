@@ -133,7 +133,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
 
     /**
      * @param {xss.room.ClientPlayerRegistry} prevPlayers
-     * @return {string}
+     * @return {string|null}
      */
     getQuitName: function(prevPlayers) {
         var prevNames, newNames;
@@ -150,8 +150,8 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     },
 
     /**
-     * Assume last player tthat joined to be last item in players array.
-     * @return {string}
+     * Assume last player that joined to be last item in players array.
+     * @return {string|null}
      */
     getJoinName: function() {
         if (this.getTotal()) {
@@ -161,7 +161,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     },
 
     /**
-     * @return {xss.room.Player}
+     * @return {boolean}
      */
     localPlayerIsHost: function() {
         return Boolean(

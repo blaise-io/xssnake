@@ -1,10 +1,11 @@
 'use strict';
 
 /**
- * @param {string=} name;
+ * @param {String=} name
  * @constructor
  */
 xss.room.Player = function(name) {
+    /** @type {String} */
     this.name = name || null;
     this.connected = false;
     this.score = 0;
@@ -25,7 +26,7 @@ xss.room.Player.prototype = {
     },
 
     /**
-     * @param {Array.<string|number>} serialized
+     * @param {Array} serialized
      */
     deserialize: function(serialized) {
         this.name      = serialized[0];

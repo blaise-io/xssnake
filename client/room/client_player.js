@@ -2,7 +2,7 @@
 
 /**
  * Client-Server communication
- * @param {string=} name;
+ * @param {string=} name
  * @constructor
  * @extends {xss.room.Player}
  */
@@ -11,7 +11,6 @@ xss.room.ClientPlayer = function(name) {
     /** @type {xss.game.ClientSnake} */
     this.snake = null;
     this.local = false;
-    this.name = name || '';
 };
 
 xss.extend(xss.room.ClientPlayer.prototype, xss.room.Player.prototype);

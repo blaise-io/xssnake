@@ -2,7 +2,7 @@
 
 /**
  * Sanitizer / Sanitize user input.
- * @param {*=} value
+ * @param {?=} value
  * @constructor
  */
 xss.util.Sanitizer = function(value) {

@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @param {string=} author
+ * @param {string|null|undefined=} author
  * @param {string=} body
  * @constructor
  */

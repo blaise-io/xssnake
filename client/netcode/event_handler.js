@@ -30,7 +30,7 @@ xss.EventHandler.prototype = {
     /**
      * @param {number|string} topic
      * @param {string} key
-     * @param {function((Event|null))} callback
+     * @param {Function} callback
      */
     on: function(topic, key, callback) {
         if (!this._topics[topic]) {
