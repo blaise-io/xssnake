@@ -86,23 +86,19 @@ xss.InputField.prototype = {
      * @return {xss.Shape}
      */
     getCaretShape: function() {
-        var untilCaretStr, endPos, caret, caretShape,
-            segments = this.getSelectionSegments();
+        var segments, untilCaretStr, endPos, caret, caretShape;
 
-        if (!segments[1]) {
-            untilCaretStr = segments[0] + segments[1];
-            endPos = xss.font.endPos(this.prefix + untilCaretStr);
-            caret = [this.x + endPos[0] - 1, this.y + endPos[1]];
+        segments = this.getSelectionSegments();
+        untilCaretStr = segments[0] + segments[1];
+        endPos = xss.font.endPos(this.prefix + untilCaretStr);
+        caret = [this.x + endPos[0] - 1, this.y + endPos[1]];
 
-            caretShape = xss.shapegen.lineShape(
-                caret[0], caret[1] - 1,
-                caret[0], caret[1] + 7
-            );
+        caretShape = xss.shapegen.lineShape(
+            caret[0], caret[1] - 1,
+            caret[0], caret[1] + 7
+        );
 
-            caretShape.flash(300, 300);
-        } else {
-            caretShape = new xss.Shape();
-        }
+        caretShape.flash(xss.FRAME * 20, xss.FRAME * 20);
 
         return caretShape;
     },

@@ -110,8 +110,9 @@ xss.ui.MessageBox.prototype = {
     },
 
     hideEnterKey: function(flash) {
+        var speed = xss.FRAME * 4;
         if (flash) {
-            xss.shapes.MSG_ENTER.flash(60, 60).lifetime(0, 60 * 4);
+            xss.shapes.MSG_ENTER.flash(speed, speed).lifetime(0, speed);
         } else {
             xss.shapes.MSG_ENTER = null;
         }

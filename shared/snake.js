@@ -17,6 +17,7 @@ xss.game.Snake = function(index, level) {
 
     /** @type xss.game.SnakeParts, head is last item */
     this.index = index;
+    /** @type {xss.game.SnakeParts} */
     this.parts = [spawn.location];
     this.direction = spawn.direction;
     this.size = level.config.snakeSize;

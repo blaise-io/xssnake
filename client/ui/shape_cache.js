@@ -108,8 +108,8 @@ xss.ShapeCache.prototype = {
         this.context.fillRect(
             expand,
             expand,
-            this.bbox.width - expand,
-            this.bbox.height - expand
+            this.bbox.width + this.tile.size - expand,
+            this.bbox.height + this.tile.size - expand
         );
     },
 

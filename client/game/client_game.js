@@ -90,11 +90,8 @@ xss.game.ClientGame.prototype = {
      */
     ncSetSnakesCrashed: function(serializedCollisions) {
         for (var i = 0, m = serializedCollisions.length; i < m; i++) {
-            var collision, snake;
-            collision = serializedCollisions[i];
-            snake = this.players.players[collision[0]].snake;
-            snake.parts = collision[1];
-            snake.crash(collision[2]);
+            var collision = serializedCollisions[i];
+            this.players.players[collision[0]].snake.setCrashed(collision[1], collision[2]);
         }
     },
 

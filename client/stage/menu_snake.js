@@ -43,7 +43,7 @@ xss.stage.MenuSnake.prototype = {
         if (this.isCrash(snake, nextpos)) {
             snake.crash();
             this.timeouts.push(
-                setTimeout(snake.destruct.bind(snake), 1000)
+                setTimeout(snake.destruct.bind(snake), 2200)
             );
         } else {
             snake.elapsed = 1000; // Trigger move.

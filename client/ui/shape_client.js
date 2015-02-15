@@ -78,7 +78,13 @@ xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
      * @private
      */
     _flashEffect: function(on, off) {
-        var duration = [on || 400, off || 100], progress = 0;
+        var duration, progress = 0;
+
+        duration = [
+            on || xss.FRAME * 24,
+            off || xss.FRAME * 6
+        ];
+
         /** @this xss.Shape */
         return function(delta) {
             progress += delta;

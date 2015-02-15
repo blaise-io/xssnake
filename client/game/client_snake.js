@@ -133,6 +133,15 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     },
 
     /**
+     * @param {xss.game.SnakeParts} parts
+     * @param {xss.Coordinate=} crashingPart
+     */
+    setCrashed: function(parts, crashingPart) {
+        this.parts = parts;
+        this.crash(crashingPart);
+    },
+
+    /**
      * @param {xss.Coordinate=} part
      */
     crash: function(part) {
@@ -144,6 +153,7 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
         if (!this.exploded) {
             this.exploded = true;
             this.explodeParticles(part);
+            this.getShape().lifetime(0, 1000).flash(xss.FRAME * 5, xss.FRAME * 10);
         }
     },
 
@@ -186,7 +196,9 @@ xss.util.extend(xss.game.ClientSnake.prototype, /** @lends xss.game.ClientSnake.
     emit: function(direction) {
         if (xss.player) {
             var sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
-            xss.player.emit(xss.NC_SNAKE_UPDATE, [direction, this.parts.slice(-sync)]);
+            xss.player.emit(xss.NC_SNAKE_UPDATE, [
+                direction, this.parts.slice(-sync)
+            ]);
         }
     },
 
