@@ -16,8 +16,8 @@ xss.game.ServerSnake = function(index, level) {
 };
 
 /** @lends {xss.game.ClientSnake.prototype} */
-xss.util.extend(xss.game.ServerSnake.prototype, xss.game.Snake.prototype);
-xss.util.extend(xss.game.ServerSnake.prototype, /** @lends xss.game.ServerSnake.prototype */ {
+xss.extend(xss.game.ServerSnake.prototype, xss.game.Snake.prototype);
+xss.extend(xss.game.ServerSnake.prototype, /** @lends {xss.game.ServerSnake.prototype} */ {
 
     destruct: function() {
         this.level = null;

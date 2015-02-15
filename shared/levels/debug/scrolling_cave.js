@@ -11,9 +11,9 @@ xss.levels.ScrollingCaveLevel = function(config) {
     xss.level.Level.call(this, config);
 };
 
-xss.util.extend(xss.levels.ScrollingCaveLevel.prototype, xss.level.Level.prototype);
-xss.util.extend(xss.levels.ScrollingCaveLevel.prototype,
-/** @lends xss.levels.RotatingLinesLevel.prototype */ {
+xss.extend(xss.levels.ScrollingCaveLevel.prototype, xss.level.Level.prototype);
+xss.extend(xss.levels.ScrollingCaveLevel.prototype,
+/** @lends {xss.levels.RotatingLinesLevel.prototype} */ {
 
     registerAnimations: function() {
         this.animations.register(

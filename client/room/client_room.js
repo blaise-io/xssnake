@@ -4,7 +4,7 @@
  * @constructor
  */
 xss.room.ClientRoom = function() {
-    /** @type {string} */
+    /** @type {String} */
     this.key = null;
 
     this.game = null;

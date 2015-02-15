@@ -9,4 +9,4 @@ xss.StartGameStage = function() {
     xss.stage.Game.call(this);
 };
 
-xss.util.extend(xss.StartGameStage.prototype, xss.stage.Game.prototype);
+xss.extend(xss.StartGameStage.prototype, xss.stage.Game.prototype);

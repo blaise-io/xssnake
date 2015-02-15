@@ -9,8 +9,8 @@ xss.room.ServerPlayerRegistry = function() {
     this.averageLatencyInTicks = 0;
 };
 
-xss.util.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
-xss.util.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerPlayerRegistry.prototype} */ {
+xss.extend(xss.room.ServerPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
+xss.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerPlayerRegistry.prototype} */ {
 
     /**
      * Send data to everyone in the room.

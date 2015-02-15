@@ -41,7 +41,7 @@ xss.InputField.prototype = {
     },
 
     bindEvents: function() {
-        xss.event.on(xss.DOM_EVENT_KEYPRESS, xss.NS_INPUT, xss.play.menu_alt);
+        xss.event.on(xss.DOM_EVENT_KEYPRESS, xss.NS_INPUT, function() { xss.audio.play('menu_alt'); });
         xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT, this.updateShapes.bind(this));
         xss.event.on(xss.DOM_EVENT_KEYUP, xss.NS_INPUT, this.updateShapes.bind(this));
     },

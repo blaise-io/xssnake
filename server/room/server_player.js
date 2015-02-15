@@ -28,8 +28,8 @@ xss.room.ServerPlayer = function(server, connection) {
     this.heartbeat = new xss.netcode.ServerHeartbeat(this);
 };
 
-xss.util.extend(xss.room.ServerPlayer.prototype, xss.room.Player.prototype);
-xss.util.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.prototype} */ {
+xss.extend(xss.room.ServerPlayer.prototype, xss.room.Player.prototype);
+xss.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.prototype} */ {
 
     destruct: function() {
         if (this.connected) {

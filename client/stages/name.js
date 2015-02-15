@@ -16,8 +16,8 @@ xss.NameStage = function() {
     xss.InputStage.call(this);
 };
 
-xss.util.extend(xss.NameStage.prototype, xss.InputStage.prototype);
-xss.util.extend(xss.NameStage.prototype, /** @lends xss.NameStage.prototype */ {
+xss.extend(xss.NameStage.prototype, xss.InputStage.prototype);
+xss.extend(xss.NameStage.prototype, /** @lends {xss.NameStage.prototype} */ {
 
     /**
      * @return {Object}

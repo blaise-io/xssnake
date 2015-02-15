@@ -9,8 +9,8 @@ xss.CreditsStage = function() {
     xss.ScreenStage.call(this);
 };
 
-xss.util.extend(xss.CreditsStage.prototype, xss.ScreenStage.prototype);
-xss.util.extend(xss.CreditsStage.prototype, /** @lends xss.CreditsStage.prototype */ {
+xss.extend(xss.CreditsStage.prototype, xss.ScreenStage.prototype);
+xss.extend(xss.CreditsStage.prototype, /** @lends {xss.CreditsStage.prototype} */ {
 
     getShape: function() {
         var body, icons, left = xss.MENU_LEFT, top = xss.MENU_TOP;

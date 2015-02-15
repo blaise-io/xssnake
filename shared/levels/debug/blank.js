@@ -10,4 +10,4 @@ xss.levels.BlankLevel = function(config) {
     xss.level.Level.call(this, config);
 };
 
-xss.util.extend(xss.levels.BlankLevel.prototype, xss.level.Level.prototype);
+xss.extend(xss.levels.BlankLevel.prototype, xss.level.Level.prototype);

@@ -23,9 +23,9 @@ xss.room.ServerRound = function(roomEmitter, players, options, levelsPlayed) {
     this.bindEvents();
 };
 
-xss.util.extend(xss.room.ServerRound.prototype, xss.room.Round.prototype);
+xss.extend(xss.room.ServerRound.prototype, xss.room.Round.prototype);
 
-xss.util.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prototype} */ {
+xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prototype} */ {
 
     destruct: function() {
         if (this.game) {

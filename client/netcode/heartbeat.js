@@ -42,7 +42,7 @@ xss.netcode.ClientHeartbeat.prototype = {
     },
 
     pong: function() {
-        this.latency = (+this.lastResponse - this.pingSent) / 2;
+        this.latency = (this.pingSent - new Date()) / 2;
         this.player.emit(xss.NC_PONG);
         this.pingSent = null;
     }

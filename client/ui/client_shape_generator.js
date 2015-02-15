@@ -4,15 +4,12 @@
  * @extends {xss.ShapeGenerator}
  * @constructor
  */
-xss.util.ClientShapeGenerator = function() {
+xss.ClientShapeGenerator = function() {
     xss.ShapeGenerator.call(this);
 };
 
-/**
- * Extend ShapeGenerator with client-end only methods.
- */
-xss.util.ClientShapeGenerator.prototype = xss.util.extend(xss.ShapeGenerator.prototype);
-xss.util.ClientShapeGenerator.prototype = xss.util.extend({
+xss.extend(xss.ClientShapeGenerator.prototype, xss.ShapeGenerator.prototype);
+xss.extend(xss.ClientShapeGenerator.prototype, /** @lends {xss.ShapeGenerator.prototype} */ {
 
     /**
      * @param {string} text
@@ -22,7 +19,7 @@ xss.util.ClientShapeGenerator.prototype = xss.util.extend({
      * @return {xss.Shape}
      */
     tooltip: function(text, x, y, direction) {
-        var width, shape, hw, line = xss.shapegen.line;
+        var width, shape, hw, line = xss.shapegen.line.bind(xss.shapegen);
 
         width = xss.font.width(text);
 

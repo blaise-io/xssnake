@@ -22,8 +22,8 @@ xss.AutoJoinStage = function() {
     xss.InputStage.call(this);
 };
 
-xss.util.extend(xss.AutoJoinStage.prototype, xss.InputStage.prototype);
-xss.util.extend(xss.AutoJoinStage.prototype, /** @lends xss.AutoJoinStage.prototype */ {
+xss.extend(xss.AutoJoinStage.prototype, xss.InputStage.prototype);
+xss.extend(xss.AutoJoinStage.prototype, /** @lends {xss.AutoJoinStage.prototype} */ {
 
     getRoomSummary: function() {
         var summary = [];

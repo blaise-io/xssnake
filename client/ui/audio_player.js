@@ -5,9 +5,9 @@
  */
 xss.AudioPlayer = function() {
     /** @type {Object.<string,string>} */
-    this.files = null;
+    this.files;
     /** @type {string} */
-    this.mimetype = null;
+    this.mimetype;
     this.setupFiles();
 };
 

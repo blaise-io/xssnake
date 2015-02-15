@@ -10,4 +10,4 @@ xss.levels.LinesLevel = function(config) {
     xss.level.Level.call(this, config);
 };
 
-xss.util.extend(xss.levels.LinesLevel.prototype, xss.level.Level.prototype);
+xss.extend(xss.levels.LinesLevel.prototype, xss.level.Level.prototype);

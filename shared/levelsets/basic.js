@@ -9,7 +9,7 @@ xss.levelset.Basic = function() {
     this.title = xss.COPY_LEVELSET_BASIC;
 };
 
-xss.util.extend(xss.levelset.Basic.prototype, xss.levelset.Levelset.prototype);
-xss.util.extend(xss.levelset.Basic.prototype, /** @lends {xss.levelset.Basic.prototype} */ {
+xss.extend(xss.levelset.Basic.prototype, xss.levelset.Levelset.prototype);
+xss.extend(xss.levelset.Basic.prototype, /** @lends {xss.levelset.Basic.prototype} */ {
 
 });

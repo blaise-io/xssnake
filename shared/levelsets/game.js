@@ -9,7 +9,7 @@ xss.levelset.Game = function() {
     this.title = xss.COPY_LEVELSET_GAME;
 };
 
-xss.util.extend(xss.levelset.Game.prototype, xss.levelset.Levelset.prototype);
-xss.util.extend(xss.levelset.Game.prototype, /** @lends {xss.levelset.Game.prototype} */ {
+xss.extend(xss.levelset.Game.prototype, xss.levelset.Levelset.prototype);
+xss.extend(xss.levelset.Game.prototype, /** @lends {xss.levelset.Game.prototype} */ {
 
 });

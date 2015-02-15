@@ -3,7 +3,7 @@
 /**
  * Extend Transform with client-only methods.
  */
-xss.util.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
+xss.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
 
     /**
      * @param {xss.Shape} shape

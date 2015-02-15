@@ -9,7 +9,7 @@ xss.levelset.Maze = function() {
     this.title = xss.COPY_LEVELSET_MAZE;
 };
 
-xss.util.extend(xss.levelset.Maze.prototype, xss.levelset.Levelset.prototype);
-xss.util.extend(xss.levelset.Maze.prototype, /** @lends {xss.levelset.Maze.prototype} */ {
+xss.extend(xss.levelset.Maze.prototype, xss.levelset.Levelset.prototype);
+xss.extend(xss.levelset.Maze.prototype, /** @lends {xss.levelset.Maze.prototype} */ {
 
 });

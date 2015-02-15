@@ -24,8 +24,8 @@ xss.InputXssStage = function() {
     this.value = this.value || 'document.title = "LOSER!!"';
 };
 
-xss.util.extend(xss.InputXssStage.prototype, xss.InputStage.prototype);
-xss.util.extend(xss.InputXssStage.prototype, /** @lends xss.InputXssStage.prototype */ {
+xss.extend(xss.InputXssStage.prototype, xss.InputStage.prototype);
+xss.extend(xss.InputXssStage.prototype, /** @lends {xss.InputXssStage.prototype} */ {
 
     getData: function() {
         return {

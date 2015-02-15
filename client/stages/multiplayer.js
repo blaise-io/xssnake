@@ -10,8 +10,8 @@ xss.MultiplayerStage = function() {
     this.form = this._getForm();
 };
 
-xss.util.extend(xss.MultiplayerStage.prototype, xss.FormStage.prototype);
-xss.util.extend(xss.MultiplayerStage.prototype, /** @lends xss.MultiplayerStage.prototype */ {
+xss.extend(xss.MultiplayerStage.prototype, xss.FormStage.prototype);
+xss.extend(xss.MultiplayerStage.prototype, /** @lends {xss.MultiplayerStage.prototype} */ {
 
     /**
      * @return {Object}

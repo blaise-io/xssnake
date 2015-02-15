@@ -11,9 +11,10 @@ xss.EventHandler = function() {
 xss.EventHandler.prototype = {
 
     /**
-     * @param {string} topic
+     * @param {number|string} topic
+     * @param {...*} eventData
      */
-    trigger: function(topic) {
+    trigger: function(topic, eventData) {
         var topicKeys, topics = this._topics[topic];
         if (topics) {
             topicKeys = Object.keys(topics);
@@ -27,7 +28,7 @@ xss.EventHandler.prototype = {
     },
 
     /**
-     * @param {string} topic
+     * @param {number|string} topic
      * @param {string} key
      * @param {function((Event|null))} callback
      */
@@ -37,12 +38,12 @@ xss.EventHandler.prototype = {
         }
         this._topics[topic][key] = callback;
         if ('on' + topic in document) {
-            document.addEventListener(topic, callback, false);
+            document.addEventListener(String(topic), callback, false);
         }
     },
 
     /**
-     * @param {string} topic
+     * @param {number|string} topic
      * @param {string} key
      * @param {function((Event|null))} callback
      */
@@ -55,7 +56,7 @@ xss.EventHandler.prototype = {
     },
 
     /**
-     * @param {string} topic
+     * @param {number|string} topic
      * @param {string=} key
      */
     off: function(topic, key) {
@@ -64,7 +65,7 @@ xss.EventHandler.prototype = {
             if (typeof key !== 'undefined') {
                 if ('on' + topic in document) {
                     callback = this._topics[topic][key];
-                    document.removeEventListener(topic, callback, false);
+                    document.removeEventListener(String(topic), callback, false);
                 }
                 delete this._topics[topic][key];
             } else {

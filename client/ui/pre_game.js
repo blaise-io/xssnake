@@ -37,7 +37,7 @@ xss.ui.PreGame.prototype = {
     },
 
     unbindKeys: function() {
-        xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME);
+        xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_PRE_GAME);
     },
 
     handleKeys: function(ev) {

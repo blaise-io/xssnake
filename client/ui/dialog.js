@@ -28,7 +28,7 @@ xss.Dialog = function(header, body, settings) {
         cancel     : xss.util.noop
     };
 
-    xss.util.extend(this.settings, settings);
+    xss.extend(this.settings, settings);
 
     this._bindEvents();
     this._updateShape();

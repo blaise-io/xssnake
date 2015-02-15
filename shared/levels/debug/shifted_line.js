@@ -10,9 +10,9 @@ xss.levels.ShiftedLineLevel = function(config) {
     xss.level.Level.call(this, config);
 };
 
-xss.util.extend(xss.levels.ShiftedLineLevel.prototype, xss.level.Level.prototype);
-xss.util.extend(xss.levels.ShiftedLineLevel.prototype,
-/** @lends xss.levels.RotatingLinesLevel.prototype */ {
+xss.extend(xss.levels.ShiftedLineLevel.prototype, xss.level.Level.prototype);
+xss.extend(xss.levels.ShiftedLineLevel.prototype,
+/** @lends {xss.levels.RotatingLinesLevel.prototype} */ {
 
     registerAnimations: function() {
         this.animations.register(

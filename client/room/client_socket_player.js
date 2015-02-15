@@ -23,8 +23,8 @@ xss.room.ClientSocketPlayer = function(onopenCallback) {
     this.connection.onmessage = this.onmessage.bind(this);
 };
 
-xss.util.extend(xss.room.ClientSocketPlayer.prototype, xss.room.ClientPlayer.prototype);
-xss.util.extend(xss.room.ClientSocketPlayer.prototype, /** @lends {xss.room.ClientSocketPlayer.prototype} */ {
+xss.extend(xss.room.ClientSocketPlayer.prototype, xss.room.ClientPlayer.prototype);
+xss.extend(xss.room.ClientSocketPlayer.prototype, /** @lends {xss.room.ClientSocketPlayer.prototype} */ {
 
     destruct: function() {
         this.connected = false;

@@ -11,8 +11,8 @@ xss.ColorStage = function() {
     xss.SelectStage.call(this);
 };
 
-xss.util.extend(xss.ColorStage.prototype, xss.SelectStage.prototype);
-xss.util.extend(xss.ColorStage.prototype, /** @lends xss.ColorStage.prototype */ {
+xss.extend(xss.ColorStage.prototype, xss.SelectStage.prototype);
+xss.extend(xss.ColorStage.prototype, /** @lends {xss.ColorStage.prototype} */ {
 
     /**
      * @return {xss.SelectMenu}

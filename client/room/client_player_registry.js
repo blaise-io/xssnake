@@ -10,8 +10,8 @@ xss.room.ClientPlayerRegistry = function() {
     this.localPlayer = null;
 };
 
-xss.util.extend(xss.room.ClientPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
-xss.util.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientPlayerRegistry.prototype} */ {
+xss.extend(xss.room.ClientPlayerRegistry.prototype, xss.room.PlayerRegistry.prototype);
+xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientPlayerRegistry.prototype} */ {
 
     destruct: function() {
         this.localPlayer = null;

@@ -9,8 +9,8 @@ xss.room.ClientOptions = function() {
     this.levelset = xss.levelsetRegistry.getRandomLevelsetIndex();
 };
 
-xss.util.extend(xss.room.ClientOptions.prototype, xss.room.Options.prototype);
-xss.util.extend(xss.room.ClientOptions.prototype, /** @lends {xss.room.ClientOptions.prototype} */ {
+xss.extend(xss.room.ClientOptions.prototype, xss.room.Options.prototype);
+xss.extend(xss.room.ClientOptions.prototype, /** @lends {xss.room.ClientOptions.prototype} */ {
 
     setOptionsFromForm: function(indexedOptions) {
         this.isQuickGame = false;

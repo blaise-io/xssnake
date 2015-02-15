@@ -17,9 +17,8 @@ xss.MainStage = function() {
     xss.SelectStage.call(this);
 };
 
-xss.util.extend(xss.MainStage.prototype, xss.SelectStage.prototype);
-xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ xss.stage.autoJoinConnectMixin);
-xss.util.extend(xss.MainStage.prototype, /** @lends xss.MainStage.prototype */ {
+xss.extend(xss.MainStage.prototype, xss.SelectStage.prototype);
+xss.extend(xss.MainStage.prototype, /** @lends {xss.MainStage.prototype} */ {
 
     construct: function() {
         this.data = {};

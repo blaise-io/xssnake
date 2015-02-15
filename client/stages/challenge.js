@@ -24,8 +24,8 @@ xss.ChallengeStage = function() {
     xss.InputStage.call(this);
 };
 
-xss.util.extend(xss.ChallengeStage.prototype, xss.InputStage.prototype);
-xss.util.extend(xss.ChallengeStage.prototype, /** @lends {xss.ChallengeStage.prototype} */ {
+xss.extend(xss.ChallengeStage.prototype, xss.InputStage.prototype);
+xss.extend(xss.ChallengeStage.prototype, /** @lends {xss.ChallengeStage.prototype} */ {
 
     inputSubmit: function(error, value, top) {
         var shape, text = '> ACCESS DENIED!!';

@@ -15,8 +15,8 @@ xss.room.ClientRound = function(players, options) {
     this.bindEvents();
 };
 
-xss.util.extend(xss.room.ClientRound.prototype, xss.room.Round.prototype);
-xss.util.extend(xss.room.ClientRound.prototype, /** @lends {xss.room.ClientRound.prototype} */ {
+xss.extend(xss.room.ClientRound.prototype, xss.room.Round.prototype);
+xss.extend(xss.room.ClientRound.prototype, /** @lends {xss.room.ClientRound.prototype} */ {
 
     destruct: function() {
         this.unbindEvents();

@@ -18,9 +18,9 @@ xss.Form = function(header, footer) {
 xss.Form.prototype = {
 
     /**
-     * @param {Number} id
+     * @param {number} id
      * @param {string} label
-     * @param {Array.<Array>} options
+     * @param {Array.<Array>=} options
      */
     addField: function(id, label, options) {
         this.fields.push({

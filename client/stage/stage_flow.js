@@ -44,7 +44,7 @@ xss.StageFlow.prototype = {
     getData: function() {
         var value = {};
         for (var i = 0, m = this._history.length; i < m; i++) {
-            xss.util.extend(value, this._history[i].getData());
+            xss.extend(value, this._history[i].getData());
         }
         return value;
     },

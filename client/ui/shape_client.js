@@ -3,7 +3,7 @@
 /**
  * Extend xss.Shape with client-only effects.
  */
-xss.util.extend(xss.Shape.prototype, /** @lends xss.Shape.prototype */ {
+xss.extend(xss.Shape.prototype, /** @lends {xss.Shape.prototype} */ {
 
     /**
      * @param {number=} width

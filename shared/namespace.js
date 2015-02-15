@@ -16,3 +16,18 @@ xss.stage = {};
 xss.stages = {};
 xss.util = {};
 xss.ui = {};
+
+/**
+ * @param {Object} target
+ * @param {...Object} varArgs
+ */
+xss.extend = function(target, varArgs) {
+    for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for (var k in source) {
+            if (source.hasOwnProperty(k)) {
+                target[k] = source[k];
+            }
+        }
+    }
+};

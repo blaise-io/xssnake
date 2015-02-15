@@ -109,6 +109,9 @@ xss.ui.MessageBox.prototype = {
         shape.isOverlay = true;
     },
 
+    /**
+     * @param {boolean=} flash
+     */
     hideEnterKey: function(flash) {
         var speed = xss.FRAME * 4;
         if (flash) {

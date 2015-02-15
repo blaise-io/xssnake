@@ -7,15 +7,15 @@
  * @extends {xss.room.Player}
  */
 xss.room.ClientPlayer = function(name) {
-    xss.room.Player.call(this);
+    xss.room.Player.apply(this, arguments);
     /** @type {xss.game.ClientSnake} */
     this.snake = null;
     this.local = false;
     this.name = name || '';
 };
 
-xss.util.extend(xss.room.ClientPlayer.prototype, xss.room.Player.prototype);
-xss.util.extend(xss.room.ClientPlayer.prototype, /** @lends {xss.room.ClientPlayer.prototype} */ {
+xss.extend(xss.room.ClientPlayer.prototype, xss.room.Player.prototype);
+xss.extend(xss.room.ClientPlayer.prototype, /** @lends {xss.room.ClientPlayer.prototype} */ {
 
     /**
      * @param {number} index

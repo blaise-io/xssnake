@@ -1,9 +1,9 @@
 'use strict';
 
 /**
-* Generates shapes
-* @constructor
-*/
+ * Generates shapes
+ * @constructor
+ */
 xss.ShapeGenerator = function() {
     /** @private */
     this._cache = {};

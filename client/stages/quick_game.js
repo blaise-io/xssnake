@@ -9,8 +9,8 @@ xss.stage.QuickGame = function() {
     xss.stage.Game.call(this);
 };
 
-xss.util.extend(xss.stage.QuickGame.prototype, xss.stage.Game.prototype);
-xss.util.extend(xss.stage.QuickGame.prototype, /** @lends {xss.stage.QuickGame.prototype} */ {
+xss.extend(xss.stage.QuickGame.prototype, xss.stage.Game.prototype);
+xss.extend(xss.stage.QuickGame.prototype, /** @lends {xss.stage.QuickGame.prototype} */ {
 
     getSerializedGameOptions: function(name) {
         var options = new xss.room.ClientOptions(name);
