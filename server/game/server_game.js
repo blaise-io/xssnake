@@ -13,8 +13,6 @@ xss.game.ServerGame = function(roomEmitter, level, players) {
     this.players = players;
 
     this.items = new xss.game.ServerItems(level, players);
-    this.score = new xss.game.ServerScore(level, players);
-
     this.tick = 0;
     this.lastTick = +new Date();
     this.averageLatencyInTicks = 1;
@@ -36,12 +34,10 @@ xss.game.ServerGame.prototype = {
         this.unbindEvents();
 
         this.items.destruct();
-        this.score.destruct();
 
         this.level = null;
         this.players = null;
         this.items = null;
-        this.score = null;
     },
 
     bindEvents: function() {
@@ -74,6 +70,19 @@ xss.game.ServerGame.prototype = {
      */
     ncPong: function() {
         this.averageLatencyInTicks = this.getAverageLatencyInTicks();
+    },
+
+    /**
+     * @return {number}
+     */
+    getCrashedCount: function() {
+        var count = 0;
+        for (var i = 0, m = this.players.players.length; i < m; i++) {
+            if (this.players.players[i].snake.crashed) {
+                count++;
+            }
+        }
+        return count;
     },
 
     /**
@@ -119,16 +128,8 @@ xss.game.ServerGame.prototype = {
             // Emit crashed snakes.
             this.players.emit(xss.NC_SNAKE_CRASH, collisions);
 
-            // Handout knockout points.
-            // TODO Should be handled by round instead.
-            if (this.score.dealKnockoutPoints(crashingPlayers)) {
-                this.score.emitScore();
-            }
-
-            // TODO for snake crashing:
-            // Client should flash dead snake
-            // Handout knockout points for remaining snakes.
-            // Detect round end.
+            // Let round manager know.
+            this.roomEmitter.emit(xss.SE_PLAYER_COLLISION, crashingPlayers);
         }
     },
 

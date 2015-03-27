@@ -15,7 +15,7 @@ xss.room.ServerRoom = function(server, options, key) {
 
     this.emitter = new events.EventEmitter();
     this.players = new xss.room.ServerPlayerRegistry();
-    this.rounds  = new xss.room.ServerRoundManager(this.emitter, this.players, this.options);
+    this.rounds  = new xss.room.ServerRoundSet(this.emitter, this.players, this.options);
     this.bindEvents();
 };
 

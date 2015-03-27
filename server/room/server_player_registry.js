@@ -28,7 +28,7 @@ xss.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerP
 
     /**
      * Emit players.
-     * Players get their own version because seriaize contains local flag.
+     * Players get their own version because serialize contains local flag.
      */
     emitPlayers: function() {
         for (var i = 0, m = this.players.length; i < m; i++) {
@@ -36,6 +36,14 @@ xss.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerP
                 xss.NC_ROOM_PLAYERS_SERIALIZE,
                 this.serialize(this.players[i])
             );
+        }
+    },
+
+    removeDisconnectedPlayers: function() {
+        for (var i = 0; i < this.players.length; i++) {
+            if (!this.players[i].connected) {
+                this.remove(this.players[i]);
+            }
         }
     },
 

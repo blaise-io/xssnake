@@ -1,12 +1,10 @@
 'use strict';
 
 /**
- * @param {xss.level.Level} level
  * @param {xss.room.ServerPlayerRegistry} players
  * @constructor
  */
-xss.game.ServerScore = function(level, players) {
-    this.level = level;
+xss.game.ServerScore = function(players) {
     this.players = players;
 };
 
@@ -14,24 +12,28 @@ xss.game.ServerScore.prototype = {
 
     destruct: function() {
         this.players = null;
-        this.level = null;
     },
 
     /**
      * @param {Array.<xss.room.ServerPlayer>} crashedPlayers
+     * @param {xss.level.Level} level
      * @return {boolean} Player score is affected.
      */
-    dealKnockoutPoints: function(crashedPlayers) {
+    update: function(crashedPlayers, level) {
         var points, scoreUpdated = false;
-        points = crashedPlayers.length * this.level.config.pointsKnockout;
-        for (var i = 0, m = this.players.players.length; i < m; i++) {
-            var player = this.players.players[i];
-            if (-1 === crashedPlayers.indexOf(player) && !player.snake.crashed) {
-                player.score += points;
-                scoreUpdated = true;
+        points = crashedPlayers.length * level.config.pointsKnockout;
+        if (points) {
+            for (var i = 0, m = this.players.players.length; i < m; i++) {
+                var player = this.players.players[i];
+                if (-1 === crashedPlayers.indexOf(player) && !player.snake.crashed) {
+                    player.score += points;
+                    scoreUpdated = true;
+                }
             }
         }
-        return scoreUpdated && points > 0;
+        if (scoreUpdated) {
+            this.emitScore();
+        }
     },
 
     /**

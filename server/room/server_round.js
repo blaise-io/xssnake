@@ -50,8 +50,8 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
     },
 
     unbindEvents: function() {
-        this.roomEmitter.off(xss.SE_PLAYER_DISCONNECT);
-        this.roomEmitter.off(xss.NC_ROOM_START);
+        this.roomEmitter.removeAllListeners(xss.SE_PLAYER_DISCONNECT);
+        this.roomEmitter.removeAllListeners(xss.NC_ROOM_START);
     },
 
     /**
@@ -59,6 +59,17 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
      */
     emit: function(player) {
         player.emit(xss.NC_ROUND_SERIALIZE, this.serialize());
+    },
+
+    /**
+     * @return {number}
+     */
+    getRemainingPlayers: function() {
+        return this.players.getTotal() - this.game.getCrashedCount();
+    },
+
+    startEndSequence: function(hasWinner) {
+        // Emit winner
     },
 
     /**

@@ -43,7 +43,7 @@ xss.NC_XSS = 666;
 
 // Server EventEmitters
 xss.SE_PLAYER_DISCONNECT = 101;
-
+xss.SE_PLAYER_COLLISION = 102;
 
 xss.HEARTBEAT_INTERVAL_MS = 5000;
 
