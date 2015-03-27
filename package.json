@@ -22,10 +22,10 @@
   "devDependencies": {
     "grunt-contrib-concat": "0.3.x",
     "grunt-contrib-cssmin": "0.7.x",
-    "grunt-contrib-jasmine": "^0.8.0",
+    "grunt-contrib-jasmine": "0.8.0",
     "grunt-contrib-uglify": "0.4.x",
     "grunt-css-url-embed": "0.1.x",
-    "grunt-env": "^0.4.1",
+    "grunt-env": "0.4.4",
     "grunt-gcc-rest": "0.1.x",
     "grunt-jasmine-node": "0.2.x",
     "grunt-karma": "~0.9.0",
