@@ -89,6 +89,7 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
     },
 
     startRound: function() {
+        this.unbindEvents();
         this.level = this.getLevel(this.levelsetIndex, this.levelIndex);
         this.game = new xss.game.ServerGame(this.roomEmitter, this.level, this.players);
         this.started = true;
