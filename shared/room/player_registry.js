@@ -14,6 +14,11 @@ xss.room.PlayerRegistry.prototype = {
         this.players.length = 0;
     },
 
+    /** @return {Array.<xss.room.Player>} */
+    filter: function(filter) {
+        return xss.util.filter(this.players, filter);
+    },
+
     /**
      * @param {xss.room.Player} localPlayer
      * @return {Array}

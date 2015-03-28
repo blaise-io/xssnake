@@ -13,15 +13,15 @@ xss.util.noop = function(varArgs) {};
  * @param {Object} obj Object to clone.
  * @return {?} Clone of the input object.
  */
-    xss.util.clone = function(obj) {
-        var res = {};
-        for (var k in obj) {
-            if (obj.hasOwnProperty(k)) {
-                res[k] = obj[k];
-            }
+xss.util.clone = function(obj) {
+    var res = {};
+    for (var k in obj) {
+        if (obj.hasOwnProperty(k)) {
+            res[k] = obj[k];
         }
-        return res;
-    };
+    }
+    return res;
+};
 
 /**
  * @param {Object} target
@@ -36,6 +36,44 @@ xss.util.extend = function(target, varArgs) {
             }
         }
     }
+};
+
+/**
+ * @param {Array} haystack
+ * @param {*} needle
+ * @returns {Array}
+ */
+xss.util.filter = function(haystack, needle) {
+    var filtered = [];
+    for (var i = 0, m = haystack.length; i < m; i++) {
+        if (xss.util.compareProperties(haystack[i], needle)) {
+            filtered.push(haystack[i]);
+        }
+    }
+    return filtered;
+};
+
+/**
+ * @param {*} completeObject
+ * @param {*} subsetObject
+ * @returns {boolean}
+ */
+xss.util.compareProperties = function(completeObject, subsetObject) {
+    if (completeObject === subsetObject) {
+        return true;
+    } else if (subsetObject instanceof Object) {
+        var keys = Object.keys(subsetObject);
+        for (var i = 0, l = keys.length; i < l; i++) {
+            if (!xss.util.compareProperties(
+                completeObject[keys[i]],
+                subsetObject[keys[i]])
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 };
 
 /**

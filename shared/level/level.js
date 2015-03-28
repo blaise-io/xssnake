@@ -17,12 +17,33 @@ xss.level.Level.prototype = {
 
     registerAnimations: xss.util.noop,
 
+    /**
+     * Client-Only!
+     * TODO: Create and add to xss.level.ClientLevel instead.
+     */
     destruct: function() {
-        xss.shapes.level = null;
-        xss.shapes.innerborder = null;
-        xss.shapegen.outerBorder(function(k) {
-            xss.shapes[k] = null;
-        });
+        if (xss.IS_CLIENT) {
+            xss.shapes.level = null;
+            xss.shapes.innerborder = null;
+            xss.shapegen.outerBorder(function(k) {
+                xss.shapes[k] = null;
+            });
+        }
+    },
+
+    /**
+     * Client-Only!
+     * TODO: Create and add to xss.level.ClientLevel instead.
+     */
+    paint: function() {
+        if (xss.IS_CLIENT) {
+            xss.shapes.level = new xss.Shape(this.data.walls);
+            xss.shapes.level.setGameTransform();
+            xss.shapes.innerborder = xss.shapegen.innerBorder();
+            xss.shapegen.outerBorder(function(k, border) {
+                xss.shapes[k] = border;
+            });
+        }
     },
 
     /**
@@ -41,18 +62,5 @@ xss.level.Level.prototype = {
                 continueFn();
             }.bind(this));
         }
-    },
-
-    /**
-     * Client-Only!
-     */
-    paint: function() {
-        xss.shapes.level = new xss.Shape(this.data.walls);
-        xss.shapes.level.setGameTransform();
-        xss.shapes.innerborder = xss.shapegen.innerBorder();
-
-        xss.shapegen.outerBorder(function(k, border) {
-            xss.shapes[k] = border;
-        });
     }
 };

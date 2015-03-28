@@ -46,8 +46,8 @@ xss.game.ServerGame.prototype = {
     },
 
     unbindEvents: function() {
-        this.roomEmitter.off(xss.NC_SNAKE_UPDATE);
-        this.roomEmitter.off(xss.NC_PONG);
+        this.roomEmitter.removeAllListeners(xss.NC_SNAKE_UPDATE);
+        this.roomEmitter.removeAllListeners(xss.NC_PONG);
     },
 
     /**

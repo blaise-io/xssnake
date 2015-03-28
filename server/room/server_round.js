@@ -28,10 +28,14 @@ xss.extend(xss.room.ServerRound.prototype, xss.room.Round.prototype);
 xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prototype} */ {
 
     destruct: function() {
+        clearTimeout(this.countdownTimer);
+        this.unbindEvents();
+
         if (this.game) {
             this.game.destruct();
             this.game = null;
         }
+
         if (this.level) {
             this.level.destruct();
             this.level = null;
@@ -39,9 +43,6 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
 
         this.roomEmitter = null;
         this.levelset = null;
-
-        clearTimeout(this.countdownTimer);
-        this.unbindEvents();
     },
 
     bindEvents: function() {
@@ -65,11 +66,17 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
      * @return {number}
      */
     getRemainingPlayers: function() {
-        return this.players.getTotal() - this.game.getCrashedCount();
+        return this.players.filter({snake: {crashed: false}});
     },
 
-    startEndSequence: function(hasWinner) {
-        // Emit winner
+    /**
+     * @param {xss.room.ServerPlayer} winner
+     */
+    startEndSequence: function(winner) {
+        this.players.emit(
+            xss.NC_ROUND_WINNER,
+            [this.players.players.indexOf(winner)]
+        );
     },
 
     /**

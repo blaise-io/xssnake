@@ -40,12 +40,15 @@ xss.room.ServerRoundSet.prototype = {
         this.roomEmitter.on(xss.SE_PLAYER_COLLISION, this.handleCollisions.bind(this));
     },
 
-    switchRounds: function(hasWinner) {
-        var delay = hasWinner ? xss.TIME_ROUND_GLOAT : xss.TIME_ROUND_PAUSE;
+    /**
+     * @param {xss.room.ServerPlayer} winner
+     */
+    switchRounds: function(winner) {
+        var delay = winner ? xss.TIME_ROUND_GLOAT : xss.TIME_ROUND_PAUSE;
         if (this.hasSetWinner()) {
             // TODO
         } else {
-            this.round.startEndSequence(hasWinner);
+            this.round.startEndSequence(winner);
             this.nextRoundTimeout = setTimeout(this.startNewRound.bind(this), delay);
         }
     },
@@ -64,8 +67,8 @@ xss.room.ServerRoundSet.prototype = {
     handleCollisions: function(crashingPlayers) {
         var remaining = this.round.getRemainingPlayers();
         this.score.update(crashingPlayers, this.round.level);
-        if (remaining <= 1) {
-            this.switchRounds(remaining === 1);
+        if (remaining.length <= 1) {
+            this.switchRounds(remaining[0] || null);
         }
     },
 
