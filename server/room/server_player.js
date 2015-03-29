@@ -38,7 +38,6 @@ xss.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.pr
         this.unbindEvents();
         this.heartbeat.destruct(); // Awww.
 
-        this.connected = false;
         this.server = null;
         this.snake = null;
         this.room = null;
@@ -52,6 +51,7 @@ xss.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.pr
             this.connection = null;
         }
         this.emitter.removeAllListeners();
+        this.connected = false;
     },
 
     /**
@@ -115,8 +115,11 @@ xss.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.pr
     emit: function(event, data) {
         var emit;
 
-        if (!this.heartbeat.isAlive()) {
+        if (!this.connected) {
+            return false;
+        } else if (!this.heartbeat.isAlive()) {
             this.disconnect();
+            return false;
         } else if (this.connection) {
             if (data) {
                 emit = data.slice();

@@ -42,6 +42,7 @@ xss.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerP
     removeDisconnectedPlayers: function() {
         for (var i = 0; i < this.players.length; i++) {
             if (!this.players[i].connected) {
+                this.players[i].destruct();
                 this.remove(this.players[i]);
             }
         }
