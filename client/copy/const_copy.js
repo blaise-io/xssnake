@@ -101,3 +101,7 @@ xss.COPY_PLAYER_QUIT = '{0} quit.';
 // Notify snake crashes.
 xss.COPY_SNAKE_CRASHED = ' crashed.';
 
+// Round winner.
+xss.COPY_ROUND_DRAW_TITLE = 'Round ended in a draw'.toUpperCase();
+xss.COPY_ROUND_WINNER_TITLE = '{0} won!'.toUpperCase();
+xss.COPY_ROUND_NEW_BODY = 'New round starting in: {0}';

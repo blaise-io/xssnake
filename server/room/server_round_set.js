@@ -47,8 +47,8 @@ xss.room.ServerRoundSet.prototype = {
         var delay = winner ? xss.TIME_ROUND_GLOAT : xss.TIME_ROUND_PAUSE;
         if (this.hasSetWinner()) {
             // TODO
-        } else {
-            this.round.startEndSequence(winner);
+        } else if (!this.round.wrappingUp) {
+            this.round.wrapUp(winner);
             this.nextRoundTimeout = setTimeout(this.startNewRound.bind(this), delay);
         }
     },
@@ -56,7 +56,10 @@ xss.room.ServerRoundSet.prototype = {
     startNewRound: function() {
         this.round.destruct();
         this.players.removeDisconnectedPlayers();
-        this.round = new xss.room.ServerRound(this.roomEmitter, this.players, this.options, this.levelHistory);
+        this.round = new xss.room.ServerRound(
+            this.roomEmitter, this.players, this.options, this.levelHistory
+        );
+        this.round.emitAll();
         this.round.toggleCountdown(true);
     },
 
@@ -65,10 +68,10 @@ xss.room.ServerRoundSet.prototype = {
     },
 
     handleCollisions: function(crashingPlayers) {
-        var remaining = this.round.getRemainingPlayers();
+        var alive = this.round.getAlivePlayers();
         this.score.update(crashingPlayers, this.round.level);
-        if (remaining.length <= 1) {
-            this.switchRounds(remaining[0] || null);
+        if (alive.length <= 1) {
+            this.switchRounds(alive[0] || null);
         }
     },
 

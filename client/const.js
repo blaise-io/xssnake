@@ -51,6 +51,7 @@ xss.HASH_ROOM = 'room';
 xss.NS_DEBUG = 'DEBUG';
 xss.NS_ANIM = 'ANM';
 xss.NS_ACTION = 'ACT';
+xss.NS_BETWEEN_GAME = 'BGM';
 xss.NS_EXPLOSION = 'EXPL';
 xss.NS_FLOW = 'FLW';
 xss.NS_CHAT = 'CHT';

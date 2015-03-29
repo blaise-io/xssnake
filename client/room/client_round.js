@@ -11,7 +11,11 @@ xss.room.ClientRound = function(players, options) {
     this.players = players;
     this.level = new xss.levels.BlankLevel(new xss.levelset.Config());
     this.game = new xss.game.ClientGame(this.level, this.players);
+
     this.preGameUI = new xss.ui.PreGame(players, options);
+    /** @type {xss.ui.WrapupGame} */
+    this.wrapupGameUI = null;
+
     this.bindEvents();
 };
 
@@ -22,8 +26,14 @@ xss.extend(xss.room.ClientRound.prototype, /** @lends {xss.room.ClientRound.prot
         this.unbindEvents();
         this.game.destruct();
         this.game = null;
-        this.preGameUI.destruct();
-        this.preGameUI = null;
+        if (this.preGameUI) {
+            this.preGameUI.destruct();
+            this.preGameUI = null;
+        }
+        if (this.wrapupGameUI) {
+            this.wrapupGameUI.destruct();
+            this.wrapupGameUI = null;
+        }
     },
 
     bindEvents: function() {
@@ -31,6 +41,7 @@ xss.extend(xss.room.ClientRound.prototype, /** @lends {xss.room.ClientRound.prot
         xss.event.on(xss.NC_ROUND_SERIALIZE, xss.NS_ROUND, this.updateRound.bind(this));
         xss.event.on(xss.NC_ROUND_COUNTDOWN, xss.NS_ROUND, this.updateCountdown.bind(this));
         xss.event.on(xss.NC_ROUND_START, xss.NS_ROUND, this.startGame.bind(this));
+        xss.event.on(xss.NC_ROUND_WRAPUP, xss.NS_ROUND, this.wrapupGame.bind(this));
     },
 
     unbindEvents: function() {
@@ -60,6 +71,13 @@ xss.extend(xss.room.ClientRound.prototype, /** @lends {xss.room.ClientRound.prot
         this.unbindEvents();
         this.preGameUI.destruct();
         this.game.start();
+    },
+
+    wrapupGame: function(winnerIndex) {
+        this.wrapupGameUI = new xss.ui.WrapupGame(
+            this.players,
+            this.players.players[winnerIndex] || null
+        );
     }
 
 });

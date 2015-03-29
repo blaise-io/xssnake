@@ -19,7 +19,10 @@ xss.room.ServerRound = function(roomEmitter, players, options, levelsPlayed) {
     this.game = null;
     /** @type {xss.level.Level} */
     this.level = null;
+
     this.countdownStarted = false;
+    this.wrappingUp = false;
+
     this.bindEvents();
 };
 
@@ -62,21 +65,24 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
         player.emit(xss.NC_ROUND_SERIALIZE, this.serialize());
     },
 
+    emitAll: function() {
+        this.players.emit(xss.NC_ROUND_SERIALIZE, this.serialize());
+    },
+
     /**
      * @return {number}
      */
-    getRemainingPlayers: function() {
+    getAlivePlayers: function() {
         return this.players.filter({snake: {crashed: false}});
     },
 
     /**
      * @param {xss.room.ServerPlayer} winner
      */
-    startEndSequence: function(winner) {
-        this.players.emit(
-            xss.NC_ROUND_WINNER,
-            [this.players.players.indexOf(winner)]
-        );
+    wrapUp: function(winner) {
+        var data = [this.players.players.indexOf(winner)];
+        this.players.emit(xss.NC_ROUND_WRAPUP, data);
+        this.wrappingUp = true;
     },
 
     /**
