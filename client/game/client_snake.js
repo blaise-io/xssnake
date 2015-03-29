@@ -93,11 +93,15 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
         this.controls = new xss.game.ClientSnakeControls(this);
     },
 
+    /**
+     * @return {xss.Shape}
+     */
     updateShape: function() {
         var shape = new xss.Shape();
         shape.pixels.addPairs(this.parts);
         shape.setGameTransform();
         xss.shapes[this.shapeKeys.snake] = shape;
+        return shape;
     },
 
     /**
@@ -121,7 +125,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
             // made a turn in time.
             if (move.collision) {
                 if (this.local) {
-                    this.crash(move.collision.location);
+                    this.setCrashed(move.collision.location);
                 } else {
                     this.collision = move.collision;
                 }
@@ -133,27 +137,17 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
     },
 
     /**
-     * @param {xss.game.SnakeParts} parts
      * @param {xss.Coordinate=} crashingPart
      */
-    setCrashed: function(parts, crashingPart) {
-        this.parts = parts;
-        this.crash(crashingPart);
-    },
-
-    /**
-     * @param {xss.Coordinate=} part
-     */
-    crash: function(part) {
+    setCrashed: function(crashingPart) {
         this.crashed = true;
         if (this.controls) {
             this.controls.destruct();
         }
-        this.updateShape();
         if (!this.exploded) {
             this.exploded = true;
-            this.explodeParticles(part);
-            this.getShape().lifetime(0, 1000).flash(xss.FRAME * 5, xss.FRAME * 10);
+            this.explodeParticles(crashingPart);
+            this.updateShape().lifetime(0, xss.FRAME * 50).flash(xss.FRAME * 5, xss.FRAME * 10);
         }
     },
 

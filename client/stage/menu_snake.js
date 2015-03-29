@@ -41,7 +41,7 @@ xss.stage.MenuSnake.prototype = {
 
         nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {
-            snake.crash();
+            snake.setCrashed();
             this.timeouts.push(
                 setTimeout(snake.destruct.bind(snake), 2200)
             );
