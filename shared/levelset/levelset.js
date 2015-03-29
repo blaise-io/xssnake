@@ -67,7 +67,7 @@ xss.levelset.Levelset.prototype = {
         }
 
         // All levels were played.
-        // Play any level except other than the one just played.
+        // Play any level except the one just played.
         if (this.levels.length === levelsPlayed.length) {
             levelsPlayed.splice(0, levelsPlayed.length - 1);
         }

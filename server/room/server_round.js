@@ -4,16 +4,16 @@
  * @param {EventEmitter} roomEmitter
  * @param {xss.room.ServerPlayerRegistry} players
  * @param {xss.room.Options} options
- * @param {Array.<number>} levelsPlayed
+ * @param {xss.LevelPlayset} levelPlayset
  * @constructor
  * @extends {xss.room.Round}
  */
-xss.room.ServerRound = function(roomEmitter, players, options, levelsPlayed) {
+xss.room.ServerRound = function(roomEmitter, players, options, levelPlayset) {
     xss.room.Round.call(this, players, options);
     this.roomEmitter = roomEmitter;
     this.levelsetIndex = options.levelset;
     this.levelset = xss.levelsetRegistry.getLevelset(this.levelsetIndex);
-    this.levelIndex = this.levelset.getRandomLevelIndex(levelsPlayed);
+    this.levelIndex = levelPlayset.getNext();
 
     /** @type {xss.game.ServerGame} */
     this.game = null;

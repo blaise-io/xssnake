@@ -14,10 +14,8 @@ xss.room.ServerRoundSet = function(roomEmitter, players, options) {
     this.players = players;
     this.options = options;
 
-    /** @type {Array.<number>} */
-    this.levelHistory = [];
-
-    this.round = new xss.room.ServerRound(roomEmitter, players, options, this.levelHistory);
+    this.levelPlayset = new xss.LevelPlayset(options.levelset);
+    this.round = new xss.room.ServerRound(roomEmitter, players, options, this.levelPlayset);
     this.score = new xss.game.ServerScore(players);
     this.roundIndex = 0;
 
@@ -29,11 +27,18 @@ xss.room.ServerRoundSet.prototype = {
     destruct: function() {
         this.roomEmitter.removeAllListeners(xss.SE_PLAYER_COLLISION);
         clearTimeout(this.nextRoundTimeout);
+
+        this.levelPlayset.destruct();
+        this.levelPlayset = null;
+
         this.round.destruct();
+        this.round = null;
+
         this.score.destruct();
+        this.score = null;
+
         this.players = null;
         this.options = null;
-        this.round = null;
     },
 
     bindEvents: function() {
@@ -59,7 +64,7 @@ xss.room.ServerRoundSet.prototype = {
         this.round.destruct();
         this.players.removeDisconnectedPlayers();
         this.round = new xss.room.ServerRound(
-            this.roomEmitter, this.players, this.options, this.levelHistory
+            this.roomEmitter, this.players, this.options, this.levelPlayset
         );
         this.round.emitAll();
         this.round.toggleCountdown(true);
