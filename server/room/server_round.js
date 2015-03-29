@@ -23,6 +23,8 @@ xss.room.ServerRound = function(roomEmitter, players, options, levelPlayset) {
     this.countdownStarted = false;
     this.wrappingUp = false;
 
+    this.handleDisconnectBound = this.handleDisconnect.bind(this);
+
     this.bindEvents();
 };
 
@@ -44,17 +46,18 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
             this.level = null;
         }
 
+        this.handleDisconnectBound = null;
         this.roomEmitter = null;
         this.levelset = null;
     },
 
     bindEvents: function() {
-        this.roomEmitter.on(xss.SE_PLAYER_DISCONNECT, this.handleDisconnect.bind(this));
+        this.roomEmitter.on(xss.SE_PLAYER_DISCONNECT, this.handleDisconnectBound);
         this.roomEmitter.on(xss.NC_ROOM_START, this.handleManualRoomStart.bind(this));
     },
 
     unbindEvents: function() {
-        this.roomEmitter.removeAllListeners(xss.SE_PLAYER_DISCONNECT);
+        this.roomEmitter.removeListener(xss.SE_PLAYER_DISCONNECT, this.handleDisconnectBound);
         this.roomEmitter.removeAllListeners(xss.NC_ROOM_START);
     },
 

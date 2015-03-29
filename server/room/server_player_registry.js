@@ -44,6 +44,7 @@ xss.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerP
             if (!this.players[i].connected) {
                 this.players[i].destruct();
                 this.remove(this.players[i]);
+                this.emitPlayers();
             }
         }
     },

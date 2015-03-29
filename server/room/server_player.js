@@ -45,13 +45,13 @@ xss.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.pr
     },
 
     disconnect: function() {
+        this.connected = false;
         this.emitMessage(xss.SE_PLAYER_DISCONNECT, this);
         if (this.connection) {
             this.connection.close();
             this.connection = null;
         }
         this.emitter.removeAllListeners();
-        this.connected = false;
     },
 
     /**
