@@ -16,16 +16,16 @@ xss.extend(xss.CreditsStage.prototype, /** @lends {xss.CreditsStage.prototype} *
         var body, icons, left = xss.MENU_LEFT, top = xss.MENU_TOP;
 
         icons = [
-            '{}',
             xss.UC_BULB,
+            '{}',
             xss.UC_FONT,
             xss.UC_BUG,
             xss.UC_MUSIC,
             xss.UC_SKULL
         ];
 
-        body = icons.join(' ') + '\n' +
-            'Blaise Kal - 2012-2014.\n\n' +
+        body = icons.join(' + ') + '\n' +
+            'BLAISE KAL  2012 - 2015\n\n' +
             'www.blaise.io\n' +
             'blaise.kal@gmail.com\n\n' +
             'Thank you for playing!\n' +
