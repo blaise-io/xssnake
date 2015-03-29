@@ -164,7 +164,7 @@ xss.room.ServerRoomManager.prototype = {
             room = this.getRoomByKey(key);
             player.emit(xss.NC_ROOM_SERIALIZE, room.serialize());
             player.emit(xss.NC_OPTIONS_SERIALIZE, room.options.serialize());
-            player.emit(xss.NC_ROOM_PLAYERS_SERIALIZE, room.players.serialize());
+            player.emit(xss.NC_PLAYERS_SERIALIZE, room.players.serialize());
         } else {
             player.emit(xss.NC_ROOM_JOIN_ERROR, [status]);
         }

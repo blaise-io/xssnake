@@ -151,7 +151,7 @@ xss.ui.PreGame.prototype = {
     },
 
     getCountdownRemaining: function() {
-        var remaining = xss.TIME_ROUND_COUNTDOWN;
+        var remaining = xss.SECONDS_ROUND_COUNTDOWN;
         remaining -= (+new Date() - this.countdownStarted) / 1000;
         return Math.max(0, Math.round(remaining));
     },

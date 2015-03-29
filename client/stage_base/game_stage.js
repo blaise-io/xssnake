@@ -18,7 +18,7 @@ xss.stage.Game.prototype = {
     },
 
     construct: function() {
-        this.connectToRoom();
+        this.connectServer();
     },
 
     destruct: function() {
@@ -52,15 +52,17 @@ xss.stage.Game.prototype = {
         return this.getSerializedGameOptions();
     },
 
-    connectToRoom: function() {
+    connectServer: function() {
         xss.shapes.CONNECTING = this.getConnectingShape();
-        xss.player = new xss.room.ClientSocketPlayer(function() {
-            xss.player.room = new xss.room.ClientRoom();
-            xss.player.room.propagateToPlayer();
-            xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
-            xss.player.emit(xss.NC_ROOM_JOIN_MATCHING, this.getEmitData());
-            this.destructStageLeftovers();
-        }.bind(this));
+        xss.player = new xss.room.ClientSocketPlayer(this.connectRoom.bind(this));
+    },
+
+    connectRoom: function(){
+        xss.player.room = new xss.room.ClientRoom();
+        xss.player.room.setupComponents();
+        xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
+        xss.player.emit(xss.NC_ROOM_JOIN_MATCHING, this.getEmitData());
+        this.destructStageLeftovers();
     },
 
     getConnectingShape: function() {

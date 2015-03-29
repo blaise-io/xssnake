@@ -33,7 +33,7 @@ xss.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerP
     emitPlayers: function() {
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].emit(
-                xss.NC_ROOM_PLAYERS_SERIALIZE,
+                xss.NC_PLAYERS_SERIALIZE,
                 this.serialize(this.players[i])
             );
         }

@@ -21,7 +21,7 @@ xss.room.Scoreboard.prototype = {
 
     bindEvents: function() {
         xss.event.on(
-            xss.NC_ROOM_PLAYERS_SERIALIZE,
+            xss.NC_PLAYERS_SERIALIZE,
             xss.NS_SCORE,
             this.ui.debounceUpdate.bind(this.ui)
         );
@@ -33,7 +33,7 @@ xss.room.Scoreboard.prototype = {
     },
 
     unbindEvents: function() {
-        xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_SCORE);
+        xss.event.off(xss.NC_PLAYERS_SERIALIZE, xss.NS_SCORE);
         xss.event.off(xss.NC_SCORE_UPDATE, xss.NS_SCORE);
     },
 

@@ -4,17 +4,13 @@
  * @constructor
  */
 xss.room.ClientRoom = function() {
-    /** @type {String} */
-    this.key = null;
-
-    this.game = null;
+    this.key = '';
 
     this.players = new xss.room.ClientPlayerRegistry();
     this.options = new xss.room.ClientOptions();
+    this.roundSet = new xss.room.ClientRoundSet(this.players, this.options);
 
-    /** @typedef {xss.room.ClientRound} */
-    this.round = null;
-    this.messagebox = null;
+    this.messageBox = null;
     this.scoreboard = null;
 
     this.bindEvents();
@@ -27,15 +23,16 @@ xss.room.ClientRoom.prototype = {
         this.unbindEvents();
         this.players.destruct();
         this.options.destruct();
+        this.roundSet.destruct();
         this.round.destruct();
-        this.messagebox.destruct();
+        this.messageBox.destruct();
         this.scoreboard.destruct();
     },
 
     bindEvents: function() {
         xss.event.on(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM, this.setRoom.bind(this));
         xss.event.on(xss.NC_OPTIONS_SERIALIZE, xss.NS_ROOM, this.updateOptions.bind(this));
-        xss.event.on(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM, this.updatePlayers.bind(this));
+        xss.event.on(xss.NC_PLAYERS_SERIALIZE, xss.NS_ROOM, this.updatePlayers.bind(this));
 
         // TODO: Move to a new notifier class
         xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_ROOM, this.ncNotifySnakesCrashed.bind(this));
@@ -50,13 +47,13 @@ xss.room.ClientRoom.prototype = {
     unbindEvents: function() {
         xss.event.off(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.NC_OPTIONS_SERIALIZE, xss.NS_ROOM);
-        xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_ROOM);
+        xss.event.off(xss.NC_PLAYERS_SERIALIZE, xss.NS_ROOM);
     },
 
-    propagateToPlayer: function() {
-        this.round = new xss.room.ClientRound(this.players, this.options);
+    setupComponents: function() {
+        this.roundSet.setupRound();
         this.scoreboard = new xss.room.Scoreboard(this.players);
-        this.messagebox = new xss.room.MessageBox(this.players);
+        this.messageBox = new xss.room.MessageBox(this.players);
     },
 
     setRoom: function(serializedRoom) {
@@ -71,14 +68,6 @@ xss.room.ClientRoom.prototype = {
     updatePlayers: function(serializedPlayers) {
         this.players.deserialize(serializedPlayers);
         xss.event.trigger(xss.EV_PLAYERS_UPDATED, this.players);
-    },
-
-    gameHasStarted: function() {
-        return (
-            this.round &&
-            this.round.game &&
-            this.round.game.started
-        );
     },
 
     ncNotifySnakesCrashed: function(serializedCollisions) {
@@ -98,11 +87,11 @@ xss.room.ClientRoom.prototype = {
                 if (i + 1 < m) { // Continuing.
                     notification += xss.COPY_ELLIPSIS;
                 }
-                this.messagebox.addNotification(notification);
+                this.messageBox.addNotification(notification);
                 notification = '';
             }
         }
-        this.messagebox.ui.debounceUpdate();
+        this.messageBox.ui.debounceUpdate();
     }
 
 //    /**

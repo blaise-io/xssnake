@@ -78,6 +78,13 @@ xss.extend(xss.room.ClientRound.prototype, /** @lends {xss.room.ClientRound.prot
             this.players,
             this.players.players[winnerIndex] || null
         );
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasStarted: function() {
+        return this.game.started;
     }
 
 });

@@ -61,6 +61,7 @@ xss.NS_GAME = 'GAM';
 xss.NS_MSGBOX = 'MSG';
 xss.NS_ROOM = 'ROM';
 xss.NS_ROUND = 'RND';
+xss.NS_ROUND_SET = 'RST';
 xss.NS_PRE_GAME = 'PGM';
 xss.NS_SCORE = 'SCR';
 xss.NS_SNAKE = 'SNK';

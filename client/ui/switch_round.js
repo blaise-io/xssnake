@@ -10,10 +10,10 @@ xss.ui.WrapupGame = function(players, winner) {
     this.winner = winner;
 
     this.dialog = null;
-    
+
     this.countdownStarted = new Date();
     this.countdownInterval = null;
-    
+
     this.showCountdown();
 };
 
@@ -31,8 +31,8 @@ xss.ui.WrapupGame.prototype = {
 
     getCountdownRemaining: function() {
         var remaining = this.winner ?
-            xss.TIME_ROUND_GLOAT :
-            xss.TIME_ROUND_PAUSE;
+            xss.SECONDS_ROUND_GLOAT :
+            xss.SECONDS_ROUND_PAUSE;
         remaining -= (+new Date() - this.countdownStarted) / 1000;
         return Math.max(0, Math.round(remaining));
     },

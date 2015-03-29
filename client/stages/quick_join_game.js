@@ -12,8 +12,8 @@ xss.stage.QuickJoinGame = function() {
 xss.extend(xss.stage.QuickJoinGame.prototype, xss.stage.Game.prototype);
 xss.extend(xss.stage.QuickJoinGame.prototype, /** @lends {xss.stage.QuickJoinGame.prototype} */ {
 
-    connectToRoom: function() {
-        xss.player.room.propagateToPlayer();
+    connectServer: function() {
+        xss.player.room.setupComponents();
         xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
         xss.player.emit(xss.NC_ROOM_JOIN_KEY, [xss.player.room.key]);
         this.bindEvents();
@@ -21,7 +21,7 @@ xss.extend(xss.stage.QuickJoinGame.prototype, /** @lends {xss.stage.QuickJoinGam
 
     bindEvents: function() {
         xss.event.on(
-            xss.NC_ROOM_PLAYERS_SERIALIZE,
+            xss.NC_PLAYERS_SERIALIZE,
             xss.NS_STAGES,
             this.setupRoom.bind(this)
         );
@@ -34,7 +34,7 @@ xss.extend(xss.stage.QuickJoinGame.prototype, /** @lends {xss.stage.QuickJoinGam
     },
 
     unbindEvents: function() {
-        xss.event.off(xss.NC_ROOM_PLAYERS_SERIALIZE, xss.NS_STAGES);
+        xss.event.off(xss.NC_PLAYERS_SERIALIZE, xss.NS_STAGES);
         xss.event.off(xss.NC_ROOM_JOIN_ERROR, xss.NS_STAGES);
     },
 

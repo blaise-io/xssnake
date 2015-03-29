@@ -85,9 +85,9 @@ xss.game.ClientSnakeControls.prototype = {
      * @param {number} direction
      */
     emitNewDirection: function(direction) {
-        if (xss.player && xss.player.room && xss.player.room.gameHasStarted()) {
+//        if (xss.player && xss.player.room && xss.player.room.gameHasStarted()) {
             this.snake.emit(direction);
-        }
+//        }
     },
 
     /**

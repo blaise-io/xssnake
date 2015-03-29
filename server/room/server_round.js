@@ -96,7 +96,7 @@ xss.extend(xss.room.ServerRound.prototype, /** @lends {xss.room.ServerRound.prot
         if (enabled) {
             this.countdownTimer = setTimeout(
                 this.startRound.bind(this),
-                xss.TIME_ROUND_COUNTDOWN * 1000
+                xss.SECONDS_ROUND_COUNTDOWN * 1000
             );
         }
     },

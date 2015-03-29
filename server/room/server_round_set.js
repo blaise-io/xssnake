@@ -44,12 +44,14 @@ xss.room.ServerRoundSet.prototype = {
      * @param {xss.room.ServerPlayer} winner
      */
     switchRounds: function(winner) {
-        var delay = winner ? xss.TIME_ROUND_GLOAT : xss.TIME_ROUND_PAUSE;
+        var delay = winner ? xss.SECONDS_ROUND_GLOAT : xss.SECONDS_ROUND_PAUSE;
         if (this.hasSetWinner()) {
             // TODO
         } else if (!this.round.wrappingUp) {
             this.round.wrapUp(winner);
-            this.nextRoundTimeout = setTimeout(this.startNewRound.bind(this), delay);
+            this.nextRoundTimeout = setTimeout(
+                this.startNewRound.bind(this), delay * 1000
+            );
         }
     },
 
