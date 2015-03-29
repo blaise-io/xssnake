@@ -19,6 +19,7 @@ xss.room.ClientRoundSet.prototype = {
         this.players = null;
         this.options = null;
         this.round.destruct();
+        this.round = null;
     },
 
     bindEvents: function() {
@@ -34,9 +35,7 @@ xss.room.ClientRoundSet.prototype = {
     },
 
     updateRound: function(serializedRound) {
-        console.log(this.round.hasStarted());
         if (this.round.hasStarted()) {
-            console.log('Create new round');
             this.round.destruct();
             this.round = new xss.room.ClientRound(this.players, this.options);
             this.round.updateRound(serializedRound);

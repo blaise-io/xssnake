@@ -46,7 +46,7 @@ xss.ui.WrapupGame.prototype = {
 
     showCountdown: function() {
         var title = this.winner ?
-            xss.util.format(xss.COPY_ROUND_WINNER_TITLE, this.winner.name) :
+            xss.util.format(xss.COPY_ROUND_WINNER_TITLE, String(this.winner.name)) :
             xss.COPY_ROUND_DRAW_TITLE;
 
         this.dialog = new xss.Dialog(title, this.getBody(), {

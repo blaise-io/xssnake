@@ -1,12 +1,12 @@
 'use strict';
 
 /**
- * @param {String=} name
+ * @param {string=} name
  * @constructor
  */
 xss.room.Player = function(name) {
-    /** @type {String} */
-    this.name = name || null;
+    /** @type {string} */
+    this.name = name || '';
     this.connected = false;
     this.score = 0;
     /** @type {xss.game.Snake} */

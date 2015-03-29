@@ -24,7 +24,6 @@ xss.room.ClientRoom.prototype = {
         this.players.destruct();
         this.options.destruct();
         this.roundSet.destruct();
-        this.round.destruct();
         this.messageBox.destruct();
         this.scoreboard.destruct();
     },
