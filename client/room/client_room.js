@@ -65,6 +65,11 @@ xss.room.ClientRoom.prototype = {
     },
 
     updatePlayers: function(serializedPlayers) {
+        try {
+            console.log('XXX', this.roundSet.round.game.started);
+        } catch(err) {
+            console.log('FCK', err);
+        }
         if (this.roundSet.round && this.roundSet.round.isMidgame()) {
             this.players.deserialize(serializedPlayers);
         } else {

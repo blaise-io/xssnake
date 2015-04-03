@@ -62,11 +62,11 @@ xss.room.ServerRoundSet.prototype = {
 
     startNewRound: function() {
         this.round.destruct();
-        this.players.removeDisconnectedPlayers();
         this.round = new xss.room.ServerRound(
             this.roomEmitter, this.players, this.options, this.levelPlayset
         );
         this.round.emitAll();
+        this.players.removeDisconnectedPlayers();
         this.round.toggleCountdown(true);
     },
 
