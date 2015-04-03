@@ -35,7 +35,8 @@ xss.netcode.ClientHeartbeat.prototype = {
     ping: function() {
         if (this.pingSent) {
             // Last ping did not pong.
-            return this.player.timeout();
+            // return this.player.timeout();
+            console.error('this.player.timeout()');
         }
         this.pingSent = +new Date();
         this.player.emit(xss.NC_PING);

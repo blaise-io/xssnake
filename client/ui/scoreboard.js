@@ -115,7 +115,7 @@ xss.ui.Scoreboard.prototype = {
     getPlayerScoreShape: function(player, coordinate) {
         var shape, scoreX, name = '-', score = 0;
 
-        if (player) {
+        if (player && player.connected) {
             name = player.name;
             score = player.score;
         }
@@ -151,7 +151,7 @@ xss.ui.Scoreboard.prototype = {
             this.x0 + (index + 1 <= this.podiumSize / 2 ? 0 : this.itemWidth()),
             this.y0 + (index % (this.podiumSize / 2)) * this.lineHeight
         ];
-        // Too chaotic?
+        // More chaotic?
         // 0 1
         // 2 3
         // 4 5
@@ -164,7 +164,7 @@ xss.ui.Scoreboard.prototype = {
     getPlayersSortedByScore: function() {
         var players = this.players.players.slice();
         players.sort(function(a, b) {
-            return b.score - a.score;
+            return (b.connected ? b.score : -1) - (a.connected ? a.score : -1);
         });
         return players;
     }
