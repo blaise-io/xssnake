@@ -35,7 +35,7 @@ xss.room.ClientRoundSet.prototype = {
     },
 
     updateRound: function(serializedRound) {
-        if (this.round.hasStarted()) {
+        if (this.round.isMidgame()) {
             this.round.destruct();
             this.round = new xss.room.ClientRound(this.players, this.options);
             this.round.updateRound(serializedRound);

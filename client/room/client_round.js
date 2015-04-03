@@ -83,7 +83,7 @@ xss.extend(xss.room.ClientRound.prototype, /** @lends {xss.room.ClientRound.prot
     /**
      * @return {boolean}
      */
-    hasStarted: function() {
+    isMidgame: function() {
         return this.game.started;
     }
 
