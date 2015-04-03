@@ -36,9 +36,6 @@ xss.room.ClientRoom.prototype = {
         // TODO: Move to a new notifier class
         xss.event.on(xss.NC_SNAKE_CRASH, xss.NS_ROOM, this.ncNotifySnakesCrashed.bind(this));
 
-        //xss.event.on(xss.DOM_EVENT_KEYDOWN, xss.NS_ROOM, this._handleKeys.bind(this));
-        //xss.event.on(xss.NC_ROUND_COUNTDOWN, xss.NS_ROOM, this._unbindKeys.bind(this));
-        //xss.event.on(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM, this._initRoom.bind(this));
         //xss.event.on(xss.NC_XSS, xss.NS_ROOM, this._requestXss.bind(this));
         //xss.event.on(xss.NC_XSS, xss.NS_ROOM, this._evalXss.bind(this));
     },
