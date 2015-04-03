@@ -18,6 +18,8 @@ xss.room.MessageBox = function(players) {
     this.ui = new xss.ui.MessageBox(this.messages, xss.player);
     this.ui.sendMessageFn = this.sendMessage.bind(this);
 
+    this.playerChangeNotified = false;
+
     this.bindEvents();
 };
 
@@ -36,7 +38,6 @@ xss.room.MessageBox.prototype = {
     },
 
     unbindEvents: function() {
-        xss.event.off(xss.NC_ROOM_SERIALIZE, xss.NS_MSGBOX);
         xss.event.off(xss.NC_CHAT_MESSAGE, xss.NS_MSGBOX);
         xss.event.off(xss.EV_PLAYERS_UPDATED, xss.NS_MSGBOX);
     },
@@ -54,19 +55,16 @@ xss.room.MessageBox.prototype = {
     updatePlayers: function() {
         var disconnectedPlayer = this.players.filter({connected: false})[0];
         if (disconnectedPlayer) {
-            xss.event.once(xss.NC_ROOM_SERIALIZE, xss.NS_MSGBOX, function() {
-                // Prevent initial comparison after new round has started:
-                // Old player disconnects have already been announced.
-                this.previousPlayers = null;
-            }.bind(this));
             this.notifyMidgameDisconnect(disconnectedPlayer);
+            this.playerChangeNotified = true;
         } else {
             // Pre-game player updates.
-            if (this.previousPlayers) {
+            if (this.previousPlayers && !this.playerChangeNotified) {
                 this.notifyPlayersChange();
             }
             this.previousPlayers = new xss.room.ClientPlayerRegistry();
             this.previousPlayers.clone(this.players);
+            this.playerChangeNotified = false;
         }
     },
 
