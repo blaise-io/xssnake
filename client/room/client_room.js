@@ -65,8 +65,11 @@ xss.room.ClientRoom.prototype = {
     },
 
     updatePlayers: function(serializedPlayers) {
-        var started = this.roundSet.round && this.roundSet.round.isMidgame();
-        this.players.deserialize(serializedPlayers, !started);
+        if (this.roundSet.round && this.roundSet.round.isMidgame()) {
+            this.players.deserialize(serializedPlayers);
+        } else {
+            this.players.reconstruct(serializedPlayers);
+        }
         xss.event.trigger(xss.EV_PLAYERS_UPDATED, this.players);
     },
 

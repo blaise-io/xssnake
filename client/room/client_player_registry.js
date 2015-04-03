@@ -28,35 +28,36 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
 
     /**
      * @param {Array.<Array>} serializedPlayers
-     * @param {boolean=} destruct
      */
-    deserialize: function(serializedPlayers, destruct) {
-        if (destruct) {
-            this.destruct();
-        }
+    deserialize: function(serializedPlayers) {
         for (var i = 0, m = serializedPlayers.length; i < m; i++) {
-            if (destruct) {
-                this.recreatePlayer(serializedPlayers[i]);
-            } else {
-                this.players[i].deserialize(serializedPlayers[i]);
-            }
+            this.players[i].deserialize(serializedPlayers[i]);
+        }
+    },
+
+    /**
+     * @param {Array.<Array>} serializedPlayers
+     */
+    reconstruct: function(serializedPlayers) {
+        this.destruct();
+        for (var i = 0, m = serializedPlayers.length; i < m; i++) {
+            this.reconstructPlayer(serializedPlayers[i]);
         }
     },
 
     /**
      * @param {Array} serialized
      */
-    recreatePlayer: function(serialized) {
+    reconstructPlayer: function(serialized) {
         var player = new xss.room.ClientPlayer();
         player.deserialize(serialized);
 
         if (player.local) {
             xss.player.deserialize(serialized);
-            this.localPlayer = xss.player;
-            this.add(xss.player);
-        } else {
-            this.add(player);
+            player = this.localPlayer = xss.player;
         }
+
+        this.add(player);
     },
 
     /**
