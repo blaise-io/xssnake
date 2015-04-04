@@ -20,7 +20,7 @@ xss.extend(xss.room.ClientPlayer.prototype, /** @lends {xss.room.ClientPlayer.pr
      * @param {Array} serialized
      */
     deserialize: function(serialized) {
-        xss.room.Player.deserialize.apply(this, arguments);
+        xss.room.Player.prototype.deserialize.apply(this, arguments);
         if (!this.connected && this.snake) {
             this.snake.setCrashed();
         }

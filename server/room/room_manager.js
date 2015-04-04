@@ -26,21 +26,9 @@ xss.room.ServerRoomManager.prototype = {
 
     bindEvents: function() {
         var emitter = this.server.emitter;
-
-        emitter.on(
-            xss.NC_ROOM_STATUS,
-            this.emitRoomStatus.bind(this)
-        );
-
-        emitter.on(
-            xss.NC_ROOM_JOIN_KEY,
-            this.autojoinRoom.bind(this)
-        );
-
-        emitter.on(
-            xss.NC_ROOM_JOIN_MATCHING,
-            this.findAndJoinMatchingRoom.bind(this)
-        );
+        emitter.on(xss.NC_ROOM_STATUS, this.emitRoomStatus.bind(this));
+        emitter.on(xss.NC_ROOM_JOIN_KEY, this.autojoinRoom.bind(this));
+        emitter.on(xss.NC_ROOM_JOIN_MATCHING, this.joinMatchingRoom.bind(this));
     },
 
     /**
@@ -55,16 +43,19 @@ xss.room.ServerRoomManager.prototype = {
      * @param {xss.room.ServerRoom} room
      */
     remove: function(room) {
-        delete this.rooms[room.key];
         room.destruct();
+        for (var i = 0, m = this.rooms.length; i < m; i++) {
+            if (room === this.rooms[i]) {
+                this.rooms.splice(i, 1);
+            }
+        }
     },
 
     removeAllRooms: function() {
-        for (var k in this.rooms) {
-            if (this.rooms.hasOwnProperty(k)) {
-                this.remove(this.rooms[k]);
-            }
+        for (var i = 0, m = this.rooms.length; i < m; i++) {
+            this.rooms[i].destruct();
         }
+        this.rooms.length = 0;
     },
 
     /**
@@ -102,7 +93,7 @@ xss.room.ServerRoomManager.prototype = {
      * @param {xss.room.ServerPlayer} player
      * @private
      */
-    findAndJoinMatchingRoom: function(dirtySerializeOptions, player) {
+    joinMatchingRoom: function(dirtySerializeOptions, player) {
         var options, room, emitDataArr;
 
         emitDataArr = new xss.util.Sanitizer(dirtySerializeOptions)

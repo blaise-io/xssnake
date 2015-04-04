@@ -90,11 +90,18 @@ xss.room.ServerRoom.prototype = {
 
     handlePlayerDisconnect: function(player) {
         // Remove immediately if rounds have not started.
+        // [else: set player.connected to false]
         if (!this.rounds.hasStarted()) {
             this.players.remove(player);
         }
-        // Notify users that someone disconnected.
         this.players.emitPlayers();
+        this.detectEmptyRoom();
+    },
+
+    detectEmptyRoom: function() {
+        if (!this.players.filter({connected: true}).length) {
+            this.server.roomManager.remove(this);
+        }
     },
 
     /**
