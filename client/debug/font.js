@@ -15,7 +15,7 @@ if (xss.debug.tab) {
             // Problematic chars:
             '0124zZ2bdp14MN'
         ].join('\n');
-        xss.util.benchmark(10, function() {
+        xss.util.benchmark(20, function() {
             xss.shapes.testtabs = new xss.Shape(xss.transform.zoomAnti(xss.font.pixels(text)));
         });
     }, 200);
