@@ -199,7 +199,11 @@ xss.util.benchmark = function(iterations, fn, label) {
         fn();
     }
     duration = +new Date() - start;
-    console.log(label || 'Benchmark', duration, duration / iterations);
+    console.log(label || 'Benchmark', {
+        x: iterations,
+        avg: duration / iterations,
+        total: duration
+    });
 };
 
 /**

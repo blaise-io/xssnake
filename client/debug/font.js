@@ -1,11 +1,12 @@
 'use strict';
 
 // Debug URL: client.html?debug=tab
-xss.debug.tab = location.search.match(/debug=antialiasing/);
+xss.debug.tab = location.search.match(/debug=font/);
 if (xss.debug.tab) {
     xss.menuSnake = true; // Prevent spawn.
     setTimeout(function() {
-        xss.shapes = {};
+        xss.flow.destruct();
+
         var text = [
             'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             'abcdefghijklmnopqrstuvwxyz',
@@ -14,12 +15,8 @@ if (xss.debug.tab) {
             // Problematic chars:
             '0124zZ2bdp14MN'
         ].join('\n');
-        console.time('Time');
-        xss.shapes.testtabs = new xss.Shape(
-            xss.transform.zoomAnti(
-                xss.font.pixels(text)
-            )
-        );
-        console.timeEnd('Time');
+        xss.util.benchmark(10, function() {
+            xss.shapes.testtabs = new xss.Shape(xss.transform.zoomAnti(xss.font.pixels(text)));
+        });
     }, 200);
 }
