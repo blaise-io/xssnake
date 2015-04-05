@@ -120,7 +120,7 @@ xss.Form.prototype = {
      */
     _getHeaderPixels: function(x, y) {
         var header = xss.font.pixels(this.header);
-        return xss.transform.zoomX2(header, x, y, true);
+        return xss.transform.zoom(2, header, x, y);
     },
 
     /**

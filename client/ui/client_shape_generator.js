@@ -204,7 +204,7 @@ xss.extend(xss.ClientShapeGenerator.prototype, /** @lends {xss.ShapeGenerator.pr
         x = xss.MENU_LEFT - 2;
         y = xss.MENU_TOP - 34;
 
-        shape = new xss.Shape(xss.transform.zoomX4(welcome, x, y, true));
+        shape = new xss.Shape(xss.transform.zoom(4, welcome, x, y));
         x += 2;
         y += 28;
         shape.add(this.line(x, y, x + xss.MENU_WIDTH, y));

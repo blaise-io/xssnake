@@ -175,7 +175,7 @@ xss.Dialog.prototype = {
     _getHeaderPixels: function() {
         var header;
         header = xss.font.pixels(this.header, 0, 0);
-        header = xss.transform.zoomX2(header, 0, 0, true);
+        header = xss.transform.zoom(2, header, 0, 0);
         return header;
     },
 

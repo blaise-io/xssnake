@@ -65,8 +65,8 @@ xss.stage.MenuSnake.prototype = {
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
         } else if (snakeShape) {
-            var pixels = xss.transform.zoomX4(
-                snakeShape.pixels, xss.GAME_LEFT, xss.GAME_TOP
+            var pixels = xss.transform.zoom(
+                4, snakeShape.pixels, xss.GAME_LEFT, xss.GAME_TOP, false
             );
             pixels.each(function(x, y) {
                 if (this.overlaysShape(snakeShape, x, y)) {
