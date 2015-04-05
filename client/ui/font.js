@@ -142,18 +142,48 @@ xss.Font.prototype = {
      * @private
      */
     _appendChr: function(x, y, shape, chr, pointer) {
-        var chrProperties, shiftedPixels;
+        var chrProperties, shiftedPixels, kerning = 0;
 
         chrProperties = this._chrProperties(chr);
 
+        kerning = this.getKerning(shape, pointer, chrProperties);
+
         shiftedPixels = xss.transform.shift(
             chrProperties.pixels,
-            pointer.x + x,
+            pointer.x + x + kerning,
             pointer.y + y
         );
 
         shape.add(shiftedPixels);
-        return chrProperties.width;
+        return chrProperties.width + kerning;
+    },
+
+    getMaxes: function(shape, pointer) {
+        var maxes = [];
+        for (var i = 0; i < xss.Font.LINE_HEIGHT; i++) {
+            if (shape.pixels.pixels[pointer.y + i]) {
+                maxes[i] = Math.max.apply(this, shape.pixels.pixels[pointer.y + i]);
+            }
+        }
+        return maxes;
+    },
+
+    getKerning: function(shape, pointer, chrProperties) {
+        var gap, gaps = [], maxes = this.getMaxes(shape, pointer);
+
+        for (var i = 0; i < xss.Font.LINE_HEIGHT; i++) {
+            var min = null, max;
+            if (chrProperties.pixels.pixels[i]) {
+                min = Math.min.apply(this, chrProperties.pixels.pixels[i]);
+            }
+            max = Math.max(maxes[i - 1] || 0, maxes[i] || 0, maxes[i + 1] || 0);
+            if (min !== null) {
+                gaps.push((pointer.x - max) + min);
+            }
+        }
+
+        gap = gaps.length ? Math.min.apply(this, gaps) : 2;
+        return Math.max(-1, 2 - gap);
     },
 
     /**
@@ -237,7 +267,7 @@ xss.Font.prototype = {
 
         // Handle whitespace characters
         if (chr.match(/\s/)) {
-            return {width: 1, pixels: pixels};
+            return {width: 3, pixels: pixels};
         }
 
         this._ctx.fillStyle = '#000';
