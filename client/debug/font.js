@@ -11,12 +11,16 @@ if (xss.debug.tab) {
             'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             'abcdefghijklmnopqrstuvwxyz',
             '1234567890 ~@#$%^&*()?/',
-            '<XSSNAKE>',
             // Problematic chars:
             '0124zZ2bdp14MN'
         ].join('\n');
         xss.util.benchmark(20, function() {
-            xss.shapes.testtabs = new xss.Shape(xss.transform.zoomAnti(xss.font.pixels(text)));
+            xss.shapes.testtabs = new xss.Shape(
+                xss.transform.zoom(2, xss.font.pixels(text))
+            );
+            xss.shapes.testtabs2 = new xss.Shape(
+                xss.transform.zoom(4, xss.font.pixels('<XSSNAKE>'), 0, 70)
+            );
         });
     }, 200);
 }

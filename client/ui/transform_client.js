@@ -50,10 +50,9 @@ xss.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
      * @param {xss.PixelCollection} pixels
      * @param {number=} xshift
      * @param {number=} yshift
-     * @param {boolean=} antiAlias
      * @return {xss.PixelCollection}
      */
-    zoomX2: function(pixels, xshift, yshift, antiAlias) {
+    zoomIn: function(pixels, xshift, yshift) {
         var ret = new xss.PixelCollection();
 
         xshift = xshift || 0;
@@ -68,223 +67,138 @@ xss.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
             ret.add(xx + 1, yy + 1);
         });
 
-        if (antiAlias) {
-            ret = this._antiAlias(pixels, ret, xshift, yshift);
-        }
-
         return ret;
     },
 
     /**
+     * @param {number} zoomlevel (2 or 4)
      * @param {xss.PixelCollection} pixels
      * @param {number=} shiftX
      * @param {number=} shiftY
-     * @param {boolean=} antiAlias
-     * @return {xss.PixelCollection}
+     * @param {boolean=} antiAlising
+     * @returns {xss.PixelCollection}
      */
-    zoomX4: function(pixels, shiftX, shiftY, antiAlias) {
-        return this.zoomX2(
-            this.zoomX2(pixels, 0, 0, antiAlias),
-            shiftX || 0,
-            shiftY || 0,
-            antiAlias
-        );
-    },
-    
-    zoomAnti: function(pixels, shiftX, shiftY) {
-        var gaps = [
-            new xss.PixelCollection(),
-            new xss.PixelCollection(),
-            new xss.PixelCollection(),
-            new xss.PixelCollection()
-        ]; // tl, tr, bl, br.
-
-        var zoomedPixels = new xss.PixelCollection();
+    zoom: function(zoomlevel, pixels, shiftX, shiftY, antiAlising) {
+        var zoomedPixels;
 
         shiftX = shiftX || 0;
         shiftY = shiftY || 0;
 
-        pixels.each(function(x, y) {
-            var i = 0;
-            for (var xx = -1; xx <= 1; xx += 2) {
-                for (var yy = -1; yy <= 1; yy += 2) {
-                    var gap = gaps[i++];
-                    // !X
-                    // #!
-                    if (!pixels.has(x, y - yy) &&
-                        !pixels.has(x + xx, y) &&
-                        pixels.has(x + xx, y - yy)) {
-                        gap.add(x, y - yy);
-                    }
+        if (2 === zoomlevel) {
+            zoomedPixels = xss.transform.zoomIn(pixels, shiftX, shiftY);
+        } else if (4 === zoomlevel) {
+            zoomedPixels = xss.transform.zoomIn(pixels);
+            zoomedPixels = xss.transform.zoomIn(zoomedPixels, shiftX, shiftY);
+        } else {
+            return pixels; // Unsupported zoom level.
+        }
 
-                    // !X
-                    // #X
-                    if (!pixels.has(x - xx, y - yy - yy) &&
-                        !pixels.has(x - xx, y - yy) &&
-                        !pixels.has(x, y - yy - yy) &&
-                        !pixels.has(x, y - yy) &&
-                        pixels.has(x + xx, y) &&
-                        pixels.has(x + xx, y - yy) && (
-                            // !XX
-                            // #X
-                            // Fixes: 0
-                            pixels.has(x + xx + xx, y - yy) ||
-                            //  !X
-                            // !X!
-                            // #X
-                            // Fixes: z, Z, 2
-                            (
-                                pixels.has(x + xx + xx, y - yy - yy) &&
-                                !pixels.has(x + xx, y - yy - yy) &&
-                                !pixels.has(x + xx + xx, y - yy)
-                            ) ||
-                            //  !X!
-                            //  #X!
-                            //   X!
-                            //   XO
-                            //    O
-                            // Fixes: 1, 4, M, N
-                            (
-                                pixels.has(x + xx, y + yy) &&
-                                pixels.has(x + xx, y + yy + yy) &&
-                                !pixels.has(x - xx, y) &&
-                                !pixels.has(x + xx + xx, y - yy) &&
-                                !pixels.has(x + xx + xx, y) &&
-                                !pixels.has(x + xx + xx, y + yy) && (
-                                    !pixels.has(x - xx, y + yy + yy) || // Excludes b, d, p
-                                    pixels.has(x + xx + xx, y + yy + yy + yy) || // 1
-                                    pixels.has(x + xx + xx, y + yy + yy)  // 4
-                                )
-                            )
-                        )
-                    ) {
-                        gap.add(x, y - yy);
+        if (antiAlising !== false) {
+            pixels.each(function(x, y) {
+                for (var dirX = -1; dirX <= 1; dirX += 2) {
+                    for (var dirY = -1; dirY <= 1; dirY += 2) {
+                        handlePixel(x, y, dirX, dirY);
+                    }
+                }
+            });
+        }
+
+        function add(dirX, dirY, x, y) {
+            var baseY, baseX;
+
+            baseX = x * zoomlevel + shiftX;
+            baseY = y * zoomlevel + shiftY;
+
+            if (2 === zoomlevel) {
+                x = baseX + (dirX === -1 ? 0 : 1);
+                y = baseY + (dirY === -1 ? 0 : 1);
+                zoomedPixels.add(x, y);
+            }
+
+            if (4 === zoomlevel) {
+                // Anti-aliasing in all directions.
+                for (var dirX2 = -1; dirX2 <= 1; dirX2 += 2) {
+                    for (var dirY2 = -1; dirY2 <= 1; dirY2 += 2) {
+                        if (dirX === dirX2 && dirY === dirY2) {
+                            addX4s(baseX, dirX2, baseY, dirY2);
+                        }
                     }
                 }
             }
-        });
+        }
 
-        // Zoom pixels x2 or x4
-        pixels.each(function(x,y) {
-            var xx = x * 2 + shiftX,
-                yy = y * 2 + shiftY;
-            zoomedPixels.add(xx, yy);
-            zoomedPixels.add(xx, yy + 1);
-            zoomedPixels.add(xx + 1, yy);
-            zoomedPixels.add(xx + 1, yy + 1);
-        });
+        // XX#
+        //  XX
+        //   X
+        function addX4s(baseX, dirX2, baseY, dirY2) {
+            var compX, compY;
 
-        // Top-left gaps
-        gaps[0].each(function(x, y) {
-            var xx = x * 2 + shiftX,
-                yy = y * 2 + shiftY;
-            zoomedPixels.add(xx, yy);
-        });
+            compX = baseX + (dirX2 === -1 ? 0 : 3);
+            compY = baseY + (dirY2 === -1 ? 0 : 3);
 
-        // Top-right gaps
-        gaps[1].each(function(x, y) {
-            var xx = x * 2 + shiftX,
-                yy = y * 2 + shiftY;
-            zoomedPixels.add(xx, yy+1);
-        });
+            zoomedPixels.add(compX, compY);
+            zoomedPixels.add(compX - 1 * dirX2, compY);
+            zoomedPixels.add(compX - 2 * dirX2, compY);
+            zoomedPixels.add(compX - 1 * dirX2, compY - dirY2);
+            zoomedPixels.add(compX, compY - dirY2);
+            zoomedPixels.add(compX, compY - 2 * dirY2);
+        }
 
-        // Bottom-left gaps
-        gaps[2].each(function(x, y) {
-            var xx = x * 2 + shiftX,
-                yy = y * 2 + shiftY;
-            zoomedPixels.add(xx+1, yy);
-        });
+        function handlePixel(x, y, dirX, dirY) {
+            // !X
+            // #!
+            if (!pixels.has(x, y - dirY) &&
+                !pixels.has(x + dirX, y) &&
+                pixels.has(x + dirX, y - dirY)) {
+                add(dirX, dirY, x, y - dirY);
+            }
 
-        // Bottom-right gaps
-        gaps[3].each(function(x, y) {
-            var xx = x * 2 + shiftX,
-                yy = y * 2 + shiftY;
-            zoomedPixels.add(xx+1, yy+1);
-        });
+            // !X
+            // #X
+            if (!pixels.has(x - dirX, y - dirY - dirY) &&
+                !pixels.has(x - dirX, y - dirY) &&
+                !pixels.has(x, y - dirY - dirY) &&
+                !pixels.has(x, y - dirY) &&
+                pixels.has(x + dirX, y) &&
+                pixels.has(x + dirX, y - dirY) && (
+                    // !XX
+                    // #X
+                    // Fixes: 0
+                    pixels.has(x + dirX + dirX, y - dirY) ||
+                    //  !X
+                    // !X!
+                    // #X
+                    // Fixes: z, Z, 2
+                    (
+                        pixels.has(x + dirX + dirX, y - dirY - dirY) &&
+                        !pixels.has(x + dirX, y - dirY - dirY) &&
+                        !pixels.has(x + dirX + dirX, y - dirY)
+                    ) ||
+                    //  !X!
+                    //  #X!
+                    //   X!
+                    //   XO
+                    //    O
+                    // Fixes: 1, 4, M, N
+                    (
+                        pixels.has(x + dirX, y + dirY) &&
+                        pixels.has(x + dirX, y + dirY + dirY) &&
+                        !pixels.has(x - dirX, y) &&
+                        !pixels.has(x + dirX + dirX, y - dirY) &&
+                        !pixels.has(x + dirX + dirX, y) &&
+                        !pixels.has(x + dirX + dirX, y + dirY) && (
+                            !pixels.has(x - dirX, y + dirY + dirY) || // Exclude b, d, p
+                            pixels.has(x + dirX + dirX, y + dirY + dirY + dirY) || // 1
+                            pixels.has(x + dirX + dirX, y + dirY + dirY)  // 4
+                        )
+                    )
+                )
+            ) {
+                add(dirX, dirY, x, y - dirY);
+            }
+        }
 
         return zoomedPixels;
-    },
-
-    /**
-     * @param {xss.PixelCollection} x0Pixels
-     * @param {xss.PixelCollection} x1Pixels
-     * @param {number=} xshift
-     * @param {number=} yshift
-     * @return {xss.PixelCollection}
-     * @private
-     */
-    _antiAlias: function(x0Pixels, x1Pixels, xshift, yshift) {
-        // Walk through pixels, see if neighbour pixels match a pattern where
-        // pixels are visually missing, and fill those gaps.
-        x0Pixels.each(function(x, y) {
-            var xx, yy, px, py, push;
-
-            push = function(xdelta, ydelta) {
-                var xfill = x * 2 + xdelta + xshift,
-                    yfill = y * 2 + ydelta + yshift;
-                if (!x1Pixels.has(xfill, yfill)) {
-                    x1Pixels.add(xfill, yfill);
-                }
-            };
-
-            // Vertical bottom-left to top-right fill.
-            // Mainly for 2x zoom.
-            if (x0Pixels.has(x + 1, y - 1) &&
-                !x0Pixels.has(x, y - 1) &&
-                !x0Pixels.has(x + 1, y)
-            ) {
-                push(2, 0);
-                push(1, -1);
-            }
-
-            // Vertical top-left to bottom-right fill.
-            // Mainly for 2x zoom.
-            if (x0Pixels.has(x + 1, y + 1) &&
-                !x0Pixels.has(x + 1, y) &&
-                !x0Pixels.has(x, y + 1)
-            ) {
-                push(2, 1);
-                push(1, 2);
-            }
-
-            // Vertical bottom-left and top-right fill.
-            // 4x zoom, 4 directions.
-            for (xx = -1; xx <= 1; xx += 2) {
-                for (yy = -1; yy <= 1; yy += 2) {
-                    if (x0Pixels.has(x + xx, y + yy) &&
-                        x0Pixels.has(x + xx * 2, y + yy * 2) &&
-                        !x0Pixels.has(x + xx, y) &&
-                        !x0Pixels.has(x + xx * 2, y + yy)
-                    ) {
-                        px = (xx < 0) ? -1 : 2;
-                        py = (yy < 0) ? 0 : 1;
-                        push(px, py);
-
-                        px = (xx < 0) ? -3 : 4;
-                        py = (yy < 0) ? -2 : 3;
-                        push(px, py);
-                    }
-                }
-            }
-
-            // Misc square corners fill.
-            // 4x zoom, 4 directions.
-            for (xx = -1; xx <= 1; xx += 2) {
-                for (yy = -1; yy <= 1; yy += 2) {
-                    if (x0Pixels.has(x - xx, y + yy) &&
-                        x0Pixels.has(x + xx, y + yy) &&
-                        x0Pixels.has(x + xx * -2, y + yy * 3) &&
-                        !x0Pixels.has(x + xx * -2, y + yy * 2)
-                    ) {
-                        px = (xx < 0) ? 4 : -3;
-                        py = (yy < 0) ? -1 : 2;
-                        push(px, py);
-                    }
-                }
-            }
-
-        });
-        return x1Pixels;
     }
 
 });

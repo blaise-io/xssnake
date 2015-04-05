@@ -32,7 +32,7 @@ xss.extend(xss.CreditsStage.prototype, /** @lends {xss.CreditsStage.prototype} *
             'KEEP THE SNAKE ALIVE';
 
         return new xss.Shape(
-            xss.transform.zoomX2(xss.font.pixels('CREDITS'), left, top, true),
+            xss.transform.zoom(2, xss.font.pixels('CREDITS'), left, top),
             xss.font.pixels(body, left, top + xss.MENU_TITLE_HEIGHT)
         );
     }

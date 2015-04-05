@@ -147,7 +147,7 @@ xss.InputStage.prototype = {
      */
     _getShapeExcludeValue: function() {
         var pixels = xss.font.pixels(this.header);
-        pixels = xss.transform.zoomX2(pixels, xss.MENU_LEFT, xss.MENU_TOP, true);
+        pixels = xss.transform.zoom(2, pixels, xss.MENU_LEFT, xss.MENU_TOP);
         return new xss.Shape(pixels);
     },
 

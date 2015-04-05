@@ -93,7 +93,7 @@ xss.SelectMenu.prototype = {
         // Header
         header = (typeof this.header === 'string') ? this.header : this.header();
         headerPixels = xss.font.pixels(header);
-        headerPixels = xss.transform.zoomX2(headerPixels, x, y, true);
+        headerPixels = xss.transform.zoom(2, headerPixels, x, y);
         shape = new xss.Shape(headerPixels);
         y += xss.MENU_TITLE_HEIGHT;
 
