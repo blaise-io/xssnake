@@ -146,7 +146,9 @@ xss.Font.prototype = {
 
         chrProperties = this._chrProperties(chr);
 
-        kerning = this.getKerning(shape, pointer, chrProperties);
+        if (pointer.x) {
+            kerning = this.getKerning(x, y, shape, pointer, chrProperties);
+        }
 
         shiftedPixels = xss.transform.shift(
             chrProperties.pixels,
@@ -158,18 +160,18 @@ xss.Font.prototype = {
         return chrProperties.width + kerning;
     },
 
-    getMaxes: function(shape, pointer) {
+    getMaxes: function(x, y, shape, pointer) {
         var maxes = [];
         for (var i = 0; i < xss.Font.LINE_HEIGHT; i++) {
-            if (shape.pixels.pixels[pointer.y + i]) {
-                maxes[i] = Math.max.apply(this, shape.pixels.pixels[pointer.y + i]);
+            if (shape.pixels.pixels[y + pointer.y + i]) {
+                maxes[i] = Math.max.apply(this, shape.pixels.pixels[y + pointer.y + i]) - x;
             }
         }
         return maxes;
     },
 
-    getKerning: function(shape, pointer, chrProperties) {
-        var gap, gaps = [], maxes = this.getMaxes(shape, pointer);
+    getKerning: function(x, y, shape, pointer, chrProperties) {
+        var gap, gaps = [], maxes = this.getMaxes(x, y, shape, pointer);
 
         for (var i = 0; i < xss.Font.LINE_HEIGHT; i++) {
             var min = null, max;
@@ -182,7 +184,7 @@ xss.Font.prototype = {
             }
         }
 
-        gap = gaps.length ? Math.min.apply(this, gaps) : 2;
+        gap = Math.min.apply(this, gaps);
         return Math.max(-1, 2 - gap);
     },
 
