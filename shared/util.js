@@ -41,7 +41,7 @@ xss.util.extend = function(target, varArgs) {
 /**
  * @param {Array} haystack
  * @param {*} needle
- * @returns {Array}
+ * @return {Array}
  */
 xss.util.filter = function(haystack, needle) {
     var filtered = [];
@@ -56,7 +56,7 @@ xss.util.filter = function(haystack, needle) {
 /**
  * @param {*} completeObject
  * @param {*} subsetObject
- * @returns {boolean}
+ * @return {boolean}
  */
 xss.util.compareProperties = function(completeObject, subsetObject) {
     if (completeObject === subsetObject) {

@@ -76,7 +76,7 @@ xss.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
      * @param {number=} shiftX
      * @param {number=} shiftY
      * @param {boolean=} antiAlising
-     * @returns {xss.PixelCollection}
+     * @return {xss.PixelCollection}
      */
     zoom: function(zoomlevel, pixels, shiftX, shiftY, antiAlising) {
         var zoomedPixels;

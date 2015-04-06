@@ -87,10 +87,11 @@ xss.Font.prototype = {
      * @return {number}
      */
     height: function(str, x, y, options) {
-        var lineHeight = xss.Font.LINE_HEIGHT;
-        return 1 + Math.ceil(
-                this.pixels(str, x, y, options).pixels.length / lineHeight
-            ) * lineHeight;
+        var remainder, height, LH = xss.Font.LINE_HEIGHT;
+        height = this.pixels(str, x, y, options).pixels.length + 1;
+        // Don't allow absence of font descenders affect height.
+        remainder = LH - ((height - (y || 0)) % LH || LH);
+        return height + remainder;
     },
 
     /**
@@ -119,8 +120,8 @@ xss.Font.prototype = {
 
     /**
      * Ignores kerning.
-     * @param {number} str
-     * @returns {number}
+     * @param {string} str
+     * @return {number}
      */
     fastWidth: function(str) {
         var chrs, width = 0;
@@ -141,7 +142,10 @@ xss.Font.prototype = {
      * @return {Array}
      */
     endPos: function(str, x, y, options) {
-        return [this.width(str, x, y, options), this.height(str, x, y, options) - xss.Font.LINE_HEIGHT];
+        return [
+            this.width(str, x, y, options),
+            this.height(str, x, y, options) - xss.Font.LINE_HEIGHT
+        ];
     },
 
     /**

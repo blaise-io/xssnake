@@ -60,7 +60,7 @@ xss.extend(xss.room.ServerPlayerRegistry.prototype, /** @lends {xss.room.ServerP
 
     /**
      * @param {number} tick
-     * @returns {Array.<xss.room.ServerPlayer>}
+     * @return {Array.<xss.room.ServerPlayer>}
      */
     getCollisionsOnTick: function(tick) {
         var crashingPlayers = [];
