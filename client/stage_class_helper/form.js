@@ -161,8 +161,8 @@ xss.Form.prototype = {
         props.right = col2X + this.maxwidth + xss.font.width(' ');
 
         shape.add(
-            xss.font.pixels(active ? xss.UC_TR_LEFT : '<', props.left, y),
-            xss.font.pixels(active ? xss.UC_TR_RIGHT : '>', props.right, y)
+            xss.font.pixels('<', props.left, y),
+            xss.font.pixels('>', props.right, y)
         );
 
         return shape;

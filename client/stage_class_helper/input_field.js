@@ -4,12 +4,14 @@
  * @param {number} x
  * @param {number} y
  * @param {string=} prefix
+ * @param {Object=} fontOptions
  * @constructor
  */
-xss.InputField = function(x, y, prefix) {
+xss.InputField = function(x, y, prefix, fontOptions) {
     this.x = x;
     this.y = y;
     this.prefix = prefix || '';
+    this.fontOptions = fontOptions;
 
     this.callback = xss.util.noop;
     this.maxValWidth = null;
@@ -90,8 +92,8 @@ xss.InputField.prototype = {
 
         segments = this.getSelectionSegments();
         untilCaretStr = segments[0] + segments[1];
-        endPos = xss.font.endPos(this.prefix + untilCaretStr);
-        caret = [this.x + endPos[0] - 1, this.y + endPos[1]];
+        endPos = xss.font.endPos(this.prefix + untilCaretStr, this.x, this.y, this.fontOptions);
+        caret = [endPos[0] - 1, endPos[1]];
 
         caretShape = xss.shapegen.lineShape(
             caret[0], caret[1] - 1,
@@ -107,23 +109,29 @@ xss.InputField.prototype = {
      * @return {xss.Shape}
      */
     getInputValueShape: function() {
-        var pos, shape, values, endpos;
+        var shape, values, endpos;
 
         values = this.getSelectionSegments();
         shape = new xss.Shape();
-        shape.add(xss.font.pixels(this.prefix + values[0], this.x, this.y));
+        shape.add(xss.font.pixels(
+            this.prefix + values[0], this.x, this.y, this.fontOptions
+        ));
 
         if (values[1]) { // Selection
-            endpos = xss.font.endPos(this.prefix + values[0]);
-            pos = [this.x + endpos[0], this.y + endpos[1]];
-            shape.add(xss.font.pixels(values[1], pos[0], pos[1], {invert: true}));
+            endpos = xss.font.endPos(
+                this.prefix + values[0], this.x, this.y, this.fontOptions
+            );
+            shape.add(xss.font.pixels(values[1], endpos[0], endpos[1], {invert: true}));
         }
 
-        endpos = xss.font.endPos(this.prefix + values[0] + values[1]);
+        endpos = xss.font.endPos(
+            this.prefix + values[0] + values[1], this.x, this.y, this.fontOptions
+        );
+
         shape.add(
             xss.font.pixels(values[2],
-            this.x + endpos[0],
-            this.y + endpos[1])
+            endpos[0],
+            endpos[1])
         );
 
         return shape;

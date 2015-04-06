@@ -76,18 +76,53 @@ xss.Font.prototype = {
      * @return {xss.PixelCollection}
      */
     pixels: function(str, x, y, options) {
-        return this.shape.apply(this, arguments).pixels;
-    },
-
-    height: function(str) {
-        return str.split(/\n/g).length * xss.Font.LINE_HEIGHT;
+        return this.shape(str, x, y, options).pixels;
     },
 
     /**
      * @param {string} str
+     * @param {number=} x
+     * @param {number=} y
+     * @param {Object=} options
      * @return {number}
      */
-    width: function(str) {
+    height: function(str, x, y, options) {
+        var lineHeight = xss.Font.LINE_HEIGHT;
+        return 1 + Math.ceil(
+                this.pixels(str, x, y, options).pixels.length / lineHeight
+            ) * lineHeight;
+    },
+
+    /**
+     * @param {string} str
+     * @param {number=} x
+     * @param {number=} y
+     * @param {Object=} options
+     * @return {number}
+     */
+    width: function(str, x, y, options) {
+        var pixels, width, maxes = [0];
+        pixels = this.pixels(str, x, y, options);
+        for (var i = pixels.pixels.length - xss.Font.LINE_HEIGHT + 1,
+            m = pixels.pixels.length; i < m; i++) {
+            if ( pixels.pixels[i]) {
+                maxes.push(Math.max.apply(this, pixels.pixels[i]));
+            }
+        }
+        width = Math.max.apply(this, maxes) + 2;
+        // Ends with a space. Ending with multiple spaces not supported.
+        if (' ' === str.slice(-1)) {
+            width += 3;
+        }
+        return width;
+    },
+
+    /**
+     * Ignores kerning.
+     * @param {number} str
+     * @returns {number}
+     */
+    fastWidth: function(str) {
         var chrs, width = 0;
         chrs = str.split('\n');
         chrs = chrs[chrs.length - 1].split('');
@@ -99,11 +134,14 @@ xss.Font.prototype = {
     },
 
     /**
-     * @param str
+     * @param {string} str
+     * @param {number=} x
+     * @param {number=} y
+     * @param {Object=} options
      * @return {Array}
      */
-    endPos: function(str) {
-        return [this.width(str), this.height(str) - xss.Font.LINE_HEIGHT];
+    endPos: function(str, x, y, options) {
+        return [this.width(str, x, y, options), this.height(str, x, y, options) - xss.Font.LINE_HEIGHT];
     },
 
     /**
@@ -199,7 +237,7 @@ xss.Font.prototype = {
      */
     _nextWordFit: function(str, i, pointer, wrap) {
         var nextWord = str.substr(i + 1).split(/[\s\-]/)[0];
-        return (pointer.x + this.width(nextWord) <= wrap);
+        return (pointer.x + this.fastWidth(nextWord) <= wrap);
     },
 
     /**

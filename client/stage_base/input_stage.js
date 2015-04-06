@@ -10,6 +10,7 @@ xss.InputStage = function() {
     /** @type {string} */
     this.value = xss.util.storage(this.name) || '';
     this._inputTop = xss.MENU_TOP + 17;
+    this.fontOptions = {wrap: xss.MENU_LEFT + xss.MENU_WIDTH - 25};
     this._shape = this._getShape();
 };
 
@@ -78,7 +79,9 @@ xss.InputStage.prototype = {
     },
 
     _setupInputField: function() {
-        var input = new xss.InputField(xss.MENU_LEFT, this._inputTop, this.label);
+        var input = new xss.InputField(
+            xss.MENU_LEFT, this._inputTop, this.label, this.fontOptions
+        );
 
         input.maxValWidth = this.maxwidth || input.maxValWidth;
         input.displayWidth = this.displayWidth || input.displayWidth;
@@ -103,7 +106,7 @@ xss.InputStage.prototype = {
      * @private
      */
     _handleKeys: function(ev) {
-        var value, labelHeight, top;
+        var value, top;
         switch (ev.keyCode) {
             case xss.KEY_ESCAPE:
                 xss.flow.previousStage();
@@ -111,8 +114,12 @@ xss.InputStage.prototype = {
                 break;
             case xss.KEY_ENTER:
                 value = this.value.trim();
-                labelHeight = xss.font.height(this.label);
-                top = labelHeight + xss.MENU_TOP + xss.MENU_TITLE_HEIGHT - 3;
+                top = xss.font.height(
+                    this.label,
+                    xss.MENU_LEFT,
+                    this._inputTop,
+                    this.fontOptions
+                );
                 this.inputSubmit(this._getInputError(value), value, top);
         }
     },
@@ -157,7 +164,9 @@ xss.InputStage.prototype = {
      */
     _getDataShape: function() {
         var value = this.label + this.value;
-        return new xss.Shape(xss.font.pixels(value, xss.MENU_LEFT, this._inputTop));
+        return new xss.Shape(xss.font.pixels(
+            value, xss.MENU_LEFT, this._inputTop, this.fontOptions
+        ));
     }
 
 };

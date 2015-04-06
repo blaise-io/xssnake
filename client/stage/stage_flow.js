@@ -38,7 +38,7 @@ xss.StageFlow.prototype = {
         this._history = [];
         this._bindGlobalEvents();
         this._setupMenuSkeletton();
-        this._setStage(new this._FirstStage(), false);
+        this._setStage(new (this._FirstStage)(), false);
     },
 
     getData: function() {
