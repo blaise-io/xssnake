@@ -19,9 +19,9 @@ export class LevelAnimationRegistry {
     }
 
     public updateAnimations() {
-        var walls = [];
-        for (var i = 0, m = this.animations.length; i < m; i++) {
-            var shapeCollection = this.updateAnimation(this.animations[i]);
+        const walls = [];
+        for (let i = 0, m = this.animations.length; i < m; i++) {
+            const shapeCollection = this.updateAnimation(this.animations[i]);
             if (shapeCollection) {
                 walls.push(shapeCollection);
             }
@@ -34,7 +34,7 @@ export class LevelAnimationRegistry {
     }
 
     public updateShapes() {
-        for (var i = 0, m = this.walls.length; i < m; i++) {
+        for (let i = 0, m = this.walls.length; i < m; i++) {
             if (this.walls[i]) {
                 this._updateShapes(i, this.walls[i]);
             }
@@ -42,8 +42,8 @@ export class LevelAnimationRegistry {
     }
 
     private _updateShapes(animIndex, shapeCollection) {
-        var shapes = shapeCollection.shapes;
-        for (var i = 0, m = shapes.length; i < m; i++) {
+        const shapes = shapeCollection.shapes;
+        for (let i = 0, m = shapes.length; i < m; i++) {
             this._updateShape([NS_ANIM, animIndex, i].join('_'), shapes[i]);
         }
     }

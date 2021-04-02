@@ -1,5 +1,3 @@
-'use strict';
-
 import { randomArrIndex } from "../util";
 import { Levelset } from "./levelset";
 
@@ -29,7 +27,7 @@ export class Registry {
             }
         }.bind(this);
 
-        for (var i = 0, m = this.levelsets.length; i < m; i++) {
+        for (let i = 0, m = this.levelsets.length; i < m; i++) {
             this.levelsets[i].preload(checkAllLoaded);
         }
     }
@@ -42,8 +40,8 @@ export class Registry {
      * @return {Array.<Array.<number|string>>}
      */
     getAsFieldValues() {
-        var values = [];
-        for (var i = 0, m = this.levelsets.length; i < m; i++) {
+        const values = [];
+        for (let i = 0, m = this.levelsets.length; i < m; i++) {
             values.push([i, this.levelsets[i].title.toUpperCase()]);
         }
         return values;

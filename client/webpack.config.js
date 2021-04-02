@@ -1,4 +1,5 @@
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     entry: __dirname + "/index.ts",
@@ -18,7 +19,10 @@ module.exports = {
         filename: "client.js",
         path: __dirname + "/../build",
     },
-    plugins: [new webpack.DefinePlugin({
-        __IS_CLIENT__: true,
-  })]
+    plugins: [
+        new webpack.DefinePlugin({
+            __IS_CLIENT__: true,
+        }),
+        new HtmlWebpackPlugin({}),
+    ],
 };

@@ -1,16 +1,21 @@
+import { ImageDecoder } from "../../client/level/imageDecoder";
 import { State } from "../../client/state/state";
+import { innerBorder, outerBorder } from "../../client/ui/clientShapes";
 import { LevelAnimationRegistry } from "../levelanim/registry";
 import { Config } from "../levelset/config";
+import { Shape } from "../shape";
+import { LevelData } from "./data";
+import { Gravity } from "./gravity";
 
 export class Level {
-    private animations: any;
-    private gravity: any;
-    private data: any;
+    animations: any;
+    gravity: any;
+    data: any;
 
     constructor(public config: Config) {
         this.config = config;
         this.animations = new LevelAnimationRegistry();
-        this.gravity = new xss.level.Gravity(this.config.gravity);
+        this.gravity = new Gravity(this.config.gravity);
         this.data = config.level.cache || null;
     }
 
@@ -20,7 +25,7 @@ export class Level {
 
     /**
      * Client-Only!
-     * TODO: Create and add to xss.level.ClientLevel instead.
+     * TODO: Create and add to level.ClientLevel instead.
      */
     public destruct() {
         if (__IS_CLIENT__) {
@@ -34,26 +39,26 @@ export class Level {
 
     /**
      * Client-Only!
-     * TODO: Create and add to xss.level.ClientLevel instead.
+     * TODO: Create and add to level.ClientLevel instead.
      */
     public paint() {
         if (__IS_CLIENT__) {
-            State.shapes.level = new xss.Shape(this.data.walls);
+            State.shapes.level = new Shape(this.data.walls);
             State.shapes.level.setGameTransform();
-            State.shapes.innerborder = xss.shapegen.innerBorder();
-            xss.shapegen.outerBorder(function(k, border) {
+            State.shapes.innerborder = innerBorder();
+            outerBorder(function(k, border) {
                 State.shapes[k] = border;
             });
         }
     }
 
     public preload(continueFn) {
-        var level = this.config.level;
+        const level = this.config.level;
         if (level.cache) {
             continueFn();
         } else {
-            new xss.level.ImageDecoder(level.imagedata).then(function(data) {
-                level.cache = new xss.level.Data(data, this.animations);
+            new ImageDecoder(level.imagedata).then(function(data) {
+                level.cache = new LevelData(data, this.animations);
                 level.imagedata = null;
                 this.data = level.cache;
                 this.registerAnimations();
@@ -61,4 +66,4 @@ export class Level {
             }.bind(this));
         }
     }
-};
+}

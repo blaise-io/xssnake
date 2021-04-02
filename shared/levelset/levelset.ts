@@ -26,7 +26,7 @@ export class Levelset {
     }
 
     preload(continueFn: Function) {
-        var checkAllLoaded, loaded = 0;
+        let checkAllLoaded, loaded = 0;
 
         checkAllLoaded = function() {
             if (++loaded === this.levels.length) {
@@ -35,7 +35,7 @@ export class Levelset {
         }.bind(this);
 
         if (this.levels.length) {
-            for (var i = 0, m = this.levels.length; i < m; i++) {
+            for (let i = 0, m = this.levels.length; i < m; i++) {
                 this.levels[i].preload(checkAllLoaded);
             }
         } else {
@@ -44,7 +44,7 @@ export class Levelset {
     }
 
     getRandomLevelIndex(levelsPlayed: number[]): number {
-        var notPlayed = this.levels.slice();
+        const notPlayed = this.levels.slice();
 
         if (notPlayed.length <= 1) {
             return 0;
@@ -56,11 +56,11 @@ export class Levelset {
             levelsPlayed.splice(0, levelsPlayed.length - 1);
         }
 
-        for (var i = 0, m = levelsPlayed.length; i < m; i++) {
+        for (let i = 0, m = levelsPlayed.length; i < m; i++) {
             notPlayed.splice(levelsPlayed[i], 1);
         }
 
         return randomArrIndex(notPlayed);
     }
 
-};
+}

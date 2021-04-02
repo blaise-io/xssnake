@@ -1,5 +1,3 @@
-'use strict';
-
 export class ColorScheme {
     constructor(
         public title: string,

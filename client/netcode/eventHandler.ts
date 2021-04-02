@@ -1,11 +1,5 @@
-'use strict';
-
-import { State } from "../state/state";
-
-State.shapes.push(2)
-
 export class EventHandler {
-    private _topics: {};
+    _topics: any;
 
     constructor() {
         this._topics = {};
@@ -15,14 +9,14 @@ export class EventHandler {
      * @param {number|string} topic
      * @param {...*} eventData
      */
-    trigger(topic, eventData) {
-        var topicKeys, topics = this._topics[topic];
+    trigger(topic, ...eventData) {
+        let topicKeys, topics = this._topics[topic];
         if (topics) {
             topicKeys = Object.keys(topics);
-            for (var i = 0, m = topicKeys.length; i < m; i++) {
-                var key = topicKeys[i];
+            for (let i = 0, m = topicKeys.length; i < m; i++) {
+                const key = topicKeys[i];
                 if (topics.hasOwnProperty(key)) {
-                    topics[key].apply(topics[key], [].slice.call(arguments, 1));
+                    topics[key](...eventData);
                 }
             }
         }
@@ -49,7 +43,7 @@ export class EventHandler {
      * @param {function((Event|null))} callback
      */
     once(topic, key, callback) {
-        var callbackAndOff = function() {
+        const callbackAndOff = function() {
             callback.apply(callback, arguments);
             this.off(topic, key);
         }.bind(this);
@@ -61,7 +55,7 @@ export class EventHandler {
      * @param {string=} key
      */
     off(topic, key) {
-        var callback;
+        let callback;
         if (topic in this._topics) {
             if (typeof key !== 'undefined') {
                 if ('on' + topic in document) {

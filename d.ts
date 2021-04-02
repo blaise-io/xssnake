@@ -1,4 +1,4 @@
-declare var __IS_CLIENT__: boolean;
+declare let __IS_CLIENT__: boolean;
 
 /** @deprecated */
-declare var x: boolean;
+declare let x: boolean;

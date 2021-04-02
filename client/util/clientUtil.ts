@@ -1,22 +1,19 @@
-'use strict';
-
 import { GAME_TILE, HEIGHT, WIDTH } from "../../shared/const";
-import { GAME_LEFT, GAME_TOP } from "../const";
-
-const xss: any = {}
+import { GAME_LEFT, GAME_TOP, UC_ENTER_KEY } from "../const";
+import { State } from "../state/state";
+import { Dialog } from "../ui/dialog";
+import { font, fontHeight, fontWidth } from "../ui/font";
 
 /**
  * @param {string} str
  * @param {number=} duration
  * @param {boolean=} flash
  */
-function instruct(str, duration, flash) {
-    var shape, x, y;
+export function instruct(str, duration=2000, flash=false) {
+    const x = WIDTH - fontWidth(str) - 2;
+    const y = HEIGHT - fontHeight(str) - 2;
 
-    x = WIDTH - xss.font.width(str) - 2;
-    y = HEIGHT - xss.font.height(str) - 2;
-
-    shape = xss.font.shape(str, x, y, {invert: true});
+    const shape = font(str, x, y, {invert: true});
     shape.isOverlay = true;
     shape.lifetime(0, duration);
 
@@ -24,32 +21,30 @@ function instruct(str, duration, flash) {
         shape.flash();
     }
 
-    xss.shapes.INSTRUCTION = shape;
+    State.shapes.INSTRUCTION = shape;
 }
 
 /**
  * @param {string} str
  * @param {Function=} callback
  */
-function error(str, callback) {
-    var exit, dialog, body;
+export function error(str, callback?) {
+    urlHash();
 
-    hash();
-
-    exit = function() {
+    const exit = function() {
         dialog.destruct();
         if (callback) {
             callback();
         }
-        xss.flow.restart();
+        State.flow.restart();
     };
 
-    body = 'Press ' + xss.UC_ENTER_KEY + ' to continue';
-    dialog = new xss.Dialog(str, body, {
-        type: xss.Dialog.TYPE.ALERT,
+    const body = 'Press ' + UC_ENTER_KEY + ' to continue';
+    const dialog = new Dialog(str, body, {
+        type: Dialog.TYPE.ALERT,
         ok  : exit
     });
-};
+}
 
 /**
  * Simple wrapper for localStorage
@@ -57,7 +52,7 @@ function error(str, callback) {
  * @param {*=} value
  * @return {?}
  */
-function storage(key, value) {
+export function storage(key, value?) {
     if (arguments.length === 1) {
         try {
             return JSON.parse(localStorage.getItem(key));
@@ -73,7 +68,7 @@ function storage(key, value) {
             return localStorage.setItem(key, JSON.stringify(value));
         }
     }
-};
+}
 
 /**
  * @return {boolean}
@@ -88,14 +83,14 @@ export function isMac() {
  * @param {*=} value
  * @return {?}
  */
-export function hash(key="", value="") {
-    var hash, arr, newhash = '', dict = {};
+export function urlHash(key="", value="") {
+    let hash, arr, newhash = '', dict = {};
 
     hash = location.hash.substr(1);
     arr = hash.split(/[:;]/g);
 
     // Populate dict
-    for (var i = 0, m = arr.length; i < m; i += 2) {
+    for (let i = 0, m = arr.length; i < m; i += 2) {
         dict[arr[i]] = arr[i + 1];
     }
 
@@ -109,7 +104,7 @@ export function hash(key="", value="") {
             return dict[key] || '';
         case 2: // Set value
             dict[key] = value;
-            for (var k in dict) {
+            for (const k in dict) {
                 if (dict.hasOwnProperty(k)) {
                     if (k && dict[k]) {
                         newhash += k + ':' + dict[k] + ';';
@@ -128,31 +123,31 @@ export function hash(key="", value="") {
  * @param {string=} plural
  * @return {string}
  */
-function pluralize(num, single, plural) {
+export function pluralize(num, single, plural) {
     return (num === 1) ? (single || '') : (plural || 's');
-};
+}
 
 /**
  * @param {string} str
  * @param {...(string|number)} varArgs
  * @return {string}
  */
-function format(str, varArgs) {
-    var args = Array.prototype.slice.call(arguments, 1);
+export function format(str, varArgs) {
+    const args = Array.prototype.slice.call(arguments, 1);
     return str.replace(/\{(\d+)\}/g, function(match, number) {
         return args[number];
     });
-};
+}
 
 /**
- * @param {xss.Coordinate} coordinate
- * @return {xss.Coordinate}
+ * @param {Coordinate} coordinate
+ * @return {Coordinate}
  */
-function translateGame(coordinate) {
+export function translateGame(coordinate) {
     coordinate[0] = translateGameX(coordinate[0]);
     coordinate[1] = translateGameY(coordinate[1]);
     return coordinate;
-};
+}
 
 /**
  * @param {number} x
@@ -160,7 +155,7 @@ function translateGame(coordinate) {
  */
 function translateGameX(x) {
     return (x * GAME_TILE) + GAME_LEFT;
-};
+}
 
 /**
  * @param {number} y
@@ -168,22 +163,21 @@ function translateGameX(x) {
  */
 function translateGameY(y) {
     return (y * GAME_TILE) + GAME_TOP;
-};
+}
 
 /**
  * @param {Function} fn
  * @param {number=} delay
  * @return {Function}
  */
-function debounce(fn, delay) {
-    var timeout;
+export function debounce(fn, delay=100) {
+    let timeout;
     return function() {
-        var context = this, args = arguments;
+        const context = this, args = arguments;
         clearTimeout(timeout);
         timeout = setTimeout(function() {
             timeout = null;
             fn.apply(context, args);
-        }, delay || 100);
+        }, 100);
     };
-};
-
+}

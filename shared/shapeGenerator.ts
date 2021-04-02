@@ -1,14 +1,15 @@
-'use strict';
-
 /**
  * @param {number} x0
  * @param {number} y0
  * @param {number} x1
  * @param {number} y1
- * @return {xss.Shape}
+ * @return {Shape}
  */
+import { PixelCollection } from "./pixelCollection";
+import { Shape } from "./shape";
+
 export function lineShape(x0, y0, x1, y1) {
-    return new xss.Shape(this.line(x0, y0, x1, y1));
+    return new Shape(this.line(x0, y0, x1, y1));
 }
 
 /**
@@ -16,10 +17,10 @@ export function lineShape(x0, y0, x1, y1) {
  * @param {number} yc
  * @param {number} radian
  * @param {number} length
- * @return {xss.PixelCollection}
+ * @return {PixelCollection}
  */
 export function radianLine(xc, yc, radian, length) {
-    var x0, y0, x1, y1;
+    let x0, y0, x1, y1;
 
     x0 = xc + length / 2 * Math.cos(radian);
     y0 = yc + length / 2 * Math.sin(radian);
@@ -40,12 +41,12 @@ export function radianLine(xc, yc, radian, length) {
  * @param {number} y0
  * @param {number} x1
  * @param {number} y1
- * @return {xss.PixelCollection}
+ * @return {PixelCollection}
  */
 export function line(x0, y0, x1, y1) {
-    var pixels, dx, sx, dy, sy, err, err2;
+    let pixels, dx, sx, dy, sy, err, err2;
 
-    pixels = new xss.PixelCollection();
+    pixels = new PixelCollection();
 
     dx = Math.abs(x1 - x0);
     sx = x0 < x1 ? 1 : -1;

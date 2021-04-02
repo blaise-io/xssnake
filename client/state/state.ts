@@ -1,13 +1,18 @@
-export class State {
-    private static _shapes: any; // TODO: {str: Shape}
+import { Registry } from "../../shared/levelset/registry";
+import { Shape } from "../../shared/shape";
+import { EventHandler } from "../netcode/eventHandler";
+import { StageFlow } from "../stage/stageFlow";
+import { AudioPlayer } from "../ui/audioPlayer";
+import { Canvas } from "../ui/canvas";
 
-    public static get shapes() {
-        if (!State._shapes) {
-            console.log("Create!");
-            State._shapes = [];
-        } else {
-            console.log("Get existing?");
-        }
-        return State._shapes;
-    }
+export class State {
+    public static audio: AudioPlayer
+    public static canvas: Canvas
+    public static events: EventHandler
+    public static flow: StageFlow
+    public static shapes: Record<string, Shape>
+    public static levelsetRegistry: Registry
+    public static menuSnake
+    public static keysBlocked: boolean
+    public static player: ClientPlayer
 }

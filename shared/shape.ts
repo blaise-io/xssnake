@@ -1,23 +1,27 @@
-/**
- * xss.Shape
- * @constructor
- * @param {...xss.PixelCollection} varArgs
- */
+import { outline } from "../client/ui/transformClient";
+import { BoundingBox } from "./boundingBox";
+import { PixelCollection } from "./pixelCollection";
+
 export class Shape {
-    [x: string]: boolean;
-    pixels: any;
+    _bbox: BoundingBox
+    pixels: PixelCollection
     cache: any;
-    private enabled: boolean;
+    enabled: boolean;
     effects: any;
     expand: any;
     headers: any
     transform: any
+    isOverlay: boolean;
+    mask: null;
+
+    lifetime: any
+    flash: any
 
     constructor(...pixelCollections) {
-        /** @type {xss.PixelCollection} */
-        this.pixels = new xss.PixelCollection();
+        /** @type {PixelCollection} */
+        this.pixels = new PixelCollection();
 
-        /** @type {xss.ShapeCache} */
+        /** @type {ShapeCache} */
         this.cache = null;
 
         /** @type {boolean} */
@@ -43,7 +47,7 @@ export class Shape {
 
         /**
          * Transform is applied at paint time, does not affect PixelCollection.
-         * @type {{translate: xss.Shift, scale: number}}
+         * @type {{translate: Shift, scale: number}}
          */
         this.transform = {
             translate: [0, 0], // x,y
@@ -54,34 +58,34 @@ export class Shape {
     }
 
     /**
-     * @return {xss.Shape}
+     * @return {Shape}
      */
     clone() {
-        return new xss.Shape(this.pixels);
+        return new Shape(this.pixels);
     }
 
     /**
      * @param {number=} hPadding
      * @param {number=} vPadding
-     * @return {xss.Shape}
+     * @return {Shape}
      */
     outline(hPadding, vPadding) {
-        xss.transform.outline(this, hPadding, vPadding);
+        outline(this, hPadding, vPadding);
         return this;
     }
 
     /**
-     * @param {xss.BoundingBox=} bbox
-     * @return {xss.Shape}
+     * @param {BoundingBox=} bbox
+     * @return {Shape}
      */
     invert(bbox) {
-        var pixels = this.pixels, inverted;
+        let pixels = this.pixels, inverted;
 
-        inverted = new xss.PixelCollection();
+        inverted = new PixelCollection();
         bbox = bbox || this.bbox();
 
-        for (var x = bbox.x0; x <= bbox.x1; x++) {
-            for (var y = bbox.y0; y < bbox.y1; y++) {
+        for (let x = bbox.x0; x <= bbox.x1; x++) {
+            for (let y = bbox.y0; y < bbox.y1; y++) {
                 if (!pixels.has(x, y)) {
                     inverted.add(x, y);
                 }
@@ -92,7 +96,7 @@ export class Shape {
     }
 
     /**
-     * @return {xss.Shape}
+     * @return {Shape}
      */
     uncache() {
         this.cache = null;
@@ -101,33 +105,33 @@ export class Shape {
     }
 
     /**
-     * @param {...xss.PixelCollection} varArgs
-     * @return {xss.Shape}
+     * @param {...PixelCollection} varArgs
+     * @return {Shape}
      */
     set(varArgs) {
-        this.pixels = new xss.PixelCollection();
+        this.pixels = new PixelCollection();
         return this.add.apply(this, arguments);
     }
 
     /**
-     * @param {...xss.PixelCollection} pixelCollections
-     * @return {xss.Shape}
+     * @param {...PixelCollection} pixelCollections
+     * @return {Shape}
      */
     add(...pixelCollections) {
-        var add = this.pixels.add.bind(this.pixels);
-        for (var i = 0, m = pixelCollections.length; i < m; i++) {
+        const add = this.pixels.add.bind(this.pixels);
+        for (let i = 0, m = pixelCollections.length; i < m; i++) {
             arguments[i].each(add);
         }
         return this.uncache();
     }
 
     /**
-     * @param {...xss.PixelCollection} pixels
-     * @return {xss.Shape}
+     * @param {...PixelCollection} pixels
+     * @return {Shape}
      */
     remove(pixels) {
-        var remove = this.pixels.remove.bind(this.pixels);
-        for (var i = 0, m = arguments.length; i < m; i++) {
+        const remove = this.pixels.remove.bind(this.pixels);
+        for (let i = 0, m = arguments.length; i < m; i++) {
             arguments[i].each(remove);
         }
         return this.uncache();
@@ -135,12 +139,9 @@ export class Shape {
 
     /**
      * @param {number=} expand
-     * @return {xss.BoundingBox}
+     * @return {BoundingBox}
      */
-    bbox(expand) {
-        if (typeof expand === 'undefined') {
-            expand = this.expand || 0;
-        }
+    bbox(expand=0) {
         if (!this._bbox || this.expand !== expand) {
             this._bbox = this.pixels.bbox();
             if (expand) {
@@ -151,4 +152,4 @@ export class Shape {
         return this._bbox;
     }
 
-};
+}

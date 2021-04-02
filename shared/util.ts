@@ -3,8 +3,8 @@
  * @return {?} Clone of the input object.
  */
 export function clone(obj) {
-    var res = {}
-    for (var k in obj) {
+    const res = {}
+    for (const k in obj) {
         if (obj.hasOwnProperty(k)) {
             res[k] = obj[k];
         }
@@ -17,9 +17,9 @@ export function clone(obj) {
  * @param {...Object} varArgs
  */
 export function extend(target, varArgs) {
-    for (var i = 1; i < arguments.length; i++) {
-        var source = arguments[i];
-        for (var k in source) {
+    for (let i = 1; i < arguments.length; i++) {
+        const source = arguments[i];
+        for (const k in source) {
             if (source.hasOwnProperty(k)) {
                 target[k] = source[k];
             }
@@ -33,8 +33,8 @@ export function extend(target, varArgs) {
  * @return {Array}
  */
 export function filter(haystack, needle) {
-    var filtered = [];
-    for (var i = 0, m = haystack.length; i < m; i++) {
+    const filtered = [];
+    for (let i = 0, m = haystack.length; i < m; i++) {
         if (compareProperties(haystack[i], needle)) {
             filtered.push(haystack[i]);
         }
@@ -51,8 +51,8 @@ export function compareProperties(completeObject, subsetObject) {
     if (completeObject === subsetObject) {
         return true;
     } else if (subsetObject instanceof Object) {
-        var keys = Object.keys(subsetObject);
-        for (var i = 0, l = keys.length; i < l; i++) {
+        const keys = Object.keys(subsetObject);
+        for (let i = 0, l = keys.length; i < l; i++) {
             if (!compareProperties(
                 completeObject[keys[i]],
                 subsetObject[keys[i]])
@@ -105,7 +105,7 @@ export function randomStr(len=3) {
  * @return {number}
  */
 export function ensureIndexWithinBounds(index, arr) {
-    var len = arr.length;
+    const len = arr.length;
     if (index >= len) {
         return 0;
     } else if (index < 0) {
@@ -119,7 +119,7 @@ export function ensureIndexWithinBounds(index, arr) {
  * @return {number}
  */
 export function average(numbers) {
-    var total = 0;
+    let total = 0;
     for (var i = 0, m = numbers.length; i < m; i++) {
         total += numbers[i];
     }
@@ -127,8 +127,8 @@ export function average(numbers) {
 }
 
 /**
- * @param {xss.Coordinate} a
- * @param {xss.Coordinate} b
+ * @param {Coordinate} a
+ * @param {Coordinate} b
  * @return {number}
  */
 export function delta(a, b) {
@@ -136,8 +136,8 @@ export function delta(a, b) {
 }
 
 /**
- * @param {xss.Coordinate} a
- * @param {xss.Coordinate} b
+ * @param {Coordinate} a
+ * @param {Coordinate} b
  * @return {boolean}
  */
 export function eq(a, b) {
@@ -150,7 +150,7 @@ export function eq(a, b) {
  * @return {?string}
  */
 export function getKey(obj, val) {
-    for (var k in obj) {
+    for (const k in obj) {
         if (obj.hasOwnProperty(k) && val === obj[k]) {
             return k;
         }
@@ -166,8 +166,8 @@ export function getKey(obj, val) {
  * @return {Array.<number>}
  */
 export function sort(arr) {
-    for (var i = 1; i < arr.length; i++) {
-        var tmp = arr[i], index = i;
+    for (let i = 1; i < arr.length; i++) {
+        let tmp = arr[i], index = i;
         while (arr[index - 1] > tmp) {
             arr[index] = arr[index - 1];
             --index;
@@ -182,8 +182,8 @@ export function sort(arr) {
  * @param {Function} fn
  * @param {string|number=} label
  */
-export function benchmark(iterations, fn, label) {
-    var duration, i = iterations, start = +new Date();
+export function benchmark(iterations, fn, label="") {
+    let duration, i = iterations, start = +new Date();
     while (i--) {
         fn();
     }
@@ -199,7 +199,7 @@ export function benchmark(iterations, fn, label) {
  * @return {string}
  */
 export function getRandomName() {
-    var name = randomArrItem([
+    const name = randomArrItem([
         'Ant', 'Bat', 'Bear', 'Bird', 'Cat', 'Cow', 'Crab', 'Croc', 'Deer',
         'Dodo', 'Dog', 'Duck', 'Emu', 'Fish', 'Fly', 'Fox', 'Frog', 'Goat',
         'Hare', 'Ibis', 'Kiwi', 'Lion', 'Lynx', 'Miao', 'Mole', 'Moth', 'Mule',

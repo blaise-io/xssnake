@@ -1,26 +1,36 @@
-'use strict';
-
-import { DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_UP, HEIGHT, WIDTH } from "../../shared/const";
+import {
+    DIRECTION_DOWN,
+    DIRECTION_LEFT,
+    DIRECTION_RIGHT,
+    DIRECTION_UP,
+    GAME_TILE,
+    HEIGHT,
+    WIDTH
+} from "../../shared/const";
+import { PixelCollection } from "../../shared/pixelCollection";
+import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { randomRange, randomStr } from "../../shared/util";
-import { MENU_LEFT, MENU_TOP, NS_ACTION, NS_EXPLOSION } from "../const";
+import { MENU_LEFT, MENU_TOP, MENU_WIDTH, NS_ACTION, NS_EXPLOSION } from "../const";
 import { State } from "../state/state";
+import { font, fontWidth } from "./font";
+import { zoom } from "./transformClient";
 
 /**
  * @param {string} text
  * @param {number} x
  * @param {number} y
  * @param {number} direction
- * @return {xss.Shape}
+ * @return {Shape}
  */
 export function tooltip(text, x, y, direction) {
-    var width, shape, hw;
+    let width, shape, hw;
 
-    width = xss.font.width(text);
+    width = fontWidth(text);
 
     switch (direction) {
         case 0:
-            shape = xss.font.shape(text, x - width - 6, y - 4);
+            shape = font(text, x - width - 6, y - 4);
             // Left
             shape.add(line(x - width - 9, y - 5, x - width - 9, y + 3));
             // Top
@@ -37,7 +47,7 @@ export function tooltip(text, x, y, direction) {
             break;
         case 1:
             hw = Math.ceil(width / 2);
-            shape = xss.font.shape(text, x - hw, y - 13);
+            shape = font(text, x - hw, y - 13);
             // Top
             shape.add(line(x - hw - 2, y - 15, x + hw + 1, y - 15));
             // Left
@@ -56,7 +66,7 @@ export function tooltip(text, x, y, direction) {
             shape.remove(line(x - 3, y - 5, x + 3, y - 5));
             break;
         case 2:
-            shape = xss.font.shape(text, x + 8, y - 4);
+            shape = font(text, x + 8, y - 4);
             // Right
             shape.add(line(x + width + 9, y - 5, x + width + 9, y + 3));
             // Top
@@ -73,7 +83,7 @@ export function tooltip(text, x, y, direction) {
             break;
         case 3:
             hw = Math.ceil(width / 2);
-            shape = xss.font.shape(text, x - hw, y + 6);
+            shape = font(text, x - hw, y + 6);
             // Top
             shape.add(line(x + -hw - 2, y + 4, x + hw + 1, y + 4));
             // Left
@@ -96,12 +106,12 @@ export function tooltip(text, x, y, direction) {
 
 /**
  * @param {string} text
- * @param {xss.Coordinate} part
+ * @param {Coordinate} part
  * @param {number} direction
- * @return {xss.Shape}
+ * @return {Shape}
  */
 export function tooltipName(text, part, direction) {
-    var x, y, t = xss.GAME_TILE, d = xss.GAME_TILE * 2.5;
+    let x, y, t = GAME_TILE, d = GAME_TILE * 2.5;
 
     x = part[0] * t;
     y = part[1] * t;
@@ -118,72 +128,66 @@ export function tooltipName(text, part, direction) {
 
 /**
  * @param {string} label
- * @param {xss.Coordinate} coordinate
+ * @param {Coordinate} coordinate
  * @param {number} duration
  * @param {number=} amount
  */
-export function showAction(label, coordinate, duration, amount) {
-    amount = amount || 3;
-
-    var randomRange = function() {
-        return randomRangeomRange(-12, 12);
-    };
-
-    for (var s = 0; s <= duration * amount; s += duration) {
+export function showAction(label, coordinate, duration, amount=3) {
+    for (let s = 0; s <= duration * amount; s += duration) {
         var shape, name;
-        shape = xss.font.shape(
+        shape = font(
             label,
-            coordinate[0] * xss.GAME_TILE + randomRange(),
-            coordinate[1] * xss.GAME_TILE + randomRange()
+            coordinate[0] * GAME_TILE + randomRange(-12, 12),
+            coordinate[1] * GAME_TILE + randomRange(-12, 12)
         );
-        name = NS_ACTION + randomRangeomStr();
+        name = NS_ACTION + randomStr();
         State.shapes[name] = shape.lifetime(s, s + duration);
     }
 }
 
 /**
- * @return {xss.Shape}
+ * @return {Shape}
  */
-export function innerBorderfunction() {
-    var w = WIDTH - 1,
+export function innerBorder() {
+    const w = WIDTH - 1,
         h = HEIGHT - 1;
-    return new xss.Shape(
+    return new Shape(
         this.line(2, h - 25, w - 2, h - 25),
         this.line(2, h - 26, w - 2, h - 26)
     );
 }
 
 /**
- * @param {function(string, xss.Shape)} callbackFn
+ * @param {function(string, Shape)} callbackFn
  */
 export function outerBorder(callbackFn) {
-    var shapes: any = {}, w, h;
+    let shapes: any = {}, w, h;
 
     w = WIDTH - 1;
     h = HEIGHT - 1;
 
     // Splitting this up or it spans too big of an area
-    shapes.outerBorderTop = new xss.Shape(
+    shapes.outerBorderTop = new Shape(
         this.line(1, 0, w - 1, 0),
         this.line(0, 1, w, 1)
     );
 
-    shapes.outerBorderRight = new xss.Shape(
+    shapes.outerBorderRight = new Shape(
         this.line(w, 2, w, h - 2),
         this.line(w - 1, 2, w - 1, h - 2)
     );
 
-    shapes.outerBorderBottom = new xss.Shape(
+    shapes.outerBorderBottom = new Shape(
         this.line(1, h, w - 1, h),
         this.line(0, h - 1, w, h - 1)
     );
 
-    shapes.outerBorderLeft = new xss.Shape(
+    shapes.outerBorderLeft = new Shape(
         this.line(0, 2, 0, h - 2),
         this.line(1, 2, 1, h - 2)
     );
 
-    for (var k in shapes) {
+    for (const k in shapes) {
         if (shapes.hasOwnProperty(k)) {
             callbackFn(k, shapes[k]);
         }
@@ -191,29 +195,29 @@ export function outerBorder(callbackFn) {
 }
 
 /**
- * @return {xss.Shape}
+ * @return {Shape}
  */
-export function header() {
-    var x, y, shape, welcome = xss.font.pixels('<XSSNAKE>');
+export function xssnakeHeader() {
+    let x, y, shape, welcome = font('<XSSNAKE>').pixels;
 
     x = MENU_LEFT - 2;
     y = MENU_TOP - 34;
 
-    shape = new xss.Shape(xss.transform.zoom(4, welcome, x, y));
+    shape = new Shape(zoom(4, welcome, x, y));
     x += 2;
     y += 28;
-    shape.add(this.line(x, y, x + xss.MENU_WIDTH, y));
+    shape.add(this.line(x, y, x + MENU_WIDTH, y));
 
     return shape;
 }
 
 /**
- * @param {xss.Coordinate} location
+ * @param {Coordinate} location
  * @param {number=} direction
  * @param {number=} intensity
  */
 export function explosion(location, direction, intensity) {
-    var pixel, shape, to, duration, w, d;
+    let pixel, shape, to, duration, w, d;
 
     w = 10;
     d = 20;
@@ -221,27 +225,27 @@ export function explosion(location, direction, intensity) {
     intensity = intensity || 16;
     while (intensity--) {
         switch (direction) {
-            case xss.DIRECTION_LEFT:
+            case DIRECTION_LEFT:
                 to = [randomRange(-w, d), randomRange(-w, w)];
                 break;
-            case xss.DIRECTION_UP:
+            case DIRECTION_UP:
                 to = [randomRange(-w, w), randomRange(-d, w)];
                 break;
-            case xss.DIRECTION_RIGHT:
+            case DIRECTION_RIGHT:
                 to = [randomRange(-d, w), randomRange(-w, w)];
                 break;
-            case xss.DIRECTION_DOWN:
+            case DIRECTION_DOWN:
                 to = [randomRange(-w, w), randomRange(-w, d)];
                 break;
             default:
                 to = [randomRange(-d, d), randomRange(-d, d)];
         }
 
-        pixel = new xss.PixelCollection().add(location[0], location[1]);
+        pixel = new PixelCollection().add(location[0], location[1]);
         duration = Math.pow(randomRange(1, 10), 3);
 
-        shape = new xss.Shape(pixel);
+        shape = new Shape(pixel);
         shape.animate({to: to, duration: duration}).lifetime(0, duration);
-        xss.shapes[NS_EXPLOSION + randomStr(3)] = shape;
+        State.shapes[NS_EXPLOSION + randomStr(3)] = shape;
     }
 }
