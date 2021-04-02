@@ -21,6 +21,10 @@ xss.game.ServerScore.prototype = {
      */
     update: function(crashedPlayers, level) {
         var points, scoreUpdated = false;
+        if (!level) {
+            console.error("FIXME");
+            return false;
+        }
         points = crashedPlayers.length * level.config.pointsKnockout;
         if (points) {
             for (var i = 0, m = this.players.players.length; i < m; i++) {
