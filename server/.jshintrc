@@ -1,9 +1,0 @@
-{
-    "node": true,
-    "expr": true,
-    "globalstrict": true,
-    "sub": true,
-    "globals": {
-        "xss": false
-    }
-}

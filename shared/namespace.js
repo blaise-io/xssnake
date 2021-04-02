@@ -1,23 +1,25 @@
 'use strict';
 
-xss.debug = {};
-xss.data = {};
-xss.bootstrap = {};
-xss.room = {};
-xss.game = {};
-xss.level = {};
-xss.levels = {};
-xss.levelanim = {};
-xss.levelanims = {};
-xss.levelset = {};
-xss.levelsets = {};
-xss.netcode = {};
-xss.stage = {};
-xss.stages = {};
-xss.util = {};
-xss.ui = {};
+
+/** @deprecated */xss.debug = {};
+/** @deprecated */xss.data = {};
+/** @deprecated */xss.bootstrap = {};
+/** @deprecated */xss.room = {};
+/** @deprecated */xss.game = {};
+/** @deprecated */xss.level = {};
+/** @deprecated */xss.levels = {};
+/** @deprecated */xss.levelanim = {};
+/** @deprecated */xss.levelanims = {};
+/** @deprecated */xss.levelset = {};
+/** @deprecated */xss.levelsets = {};
+/** @deprecated */xss.netcode = {};
+/** @deprecated */xss.stage = {};
+/** @deprecated */xss.stages = {};
+/** @deprecated */xss.util = {};
+/** @deprecated */xss.ui = {};
 
 /**
+ * @deprecated
  * @param {Object} target
  * @param {...Object} varArgs
  */

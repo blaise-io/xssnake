@@ -2,7 +2,7 @@
 
 /**
  * @param {ImageData} imagedata
- * @param {xss.levelanim.Registry} animations
+ * @param {LevelAnimationRegistry} animations
  * @constructor
  */
 xss.level.Data = function(imagedata, animations) {
@@ -71,7 +71,7 @@ xss.level.Data.prototype = {
      */
     convertToGameSystem: function(coordinate, translate) {
         var tx, ty;
-        if (xss.IS_CLIENT) {
+        if (xss.__IS_CLIENT__) {
             // In Client, Game transforms left/top. Not ideal, but it is done
             // so that we can move shapes without losing cache => performance.
             tx = (translate[0] - xss.GAME_LEFT) / xss.GAME_TILE;
