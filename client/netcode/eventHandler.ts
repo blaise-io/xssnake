@@ -32,7 +32,7 @@ export class EventHandler {
             this._topics[topic] = {};
         }
         this._topics[topic][key] = callback;
-        if ('on' + topic in document) {
+        if ("on" + topic in document) {
             document.addEventListener(String(topic), callback, false);
         }
     }
@@ -57,8 +57,8 @@ export class EventHandler {
     off(topic, key) {
         let callback;
         if (topic in this._topics) {
-            if (typeof key !== 'undefined') {
-                if ('on' + topic in document) {
+            if (typeof key !== "undefined") {
+                if ("on" + topic in document) {
                     callback = this._topics[topic][key];
                     document.removeEventListener(String(topic), callback, false);
                 }

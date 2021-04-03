@@ -19,7 +19,7 @@ class Sanitizer {
      */
     assertType(type) {
         if (typeof this._value !== type) {
-            this._log('assertType', this._value, type);
+            this._log("assertType", this._value, type);
             this._valid = false;
         }
         return this;
@@ -30,7 +30,7 @@ class Sanitizer {
      */
     assertArray() {
         if (!(this._value instanceof Array)) {
-            this._log('assertArray', this._value);
+            this._log("assertArray", this._value);
             this._valid = false;
         }
         return this;
@@ -44,7 +44,7 @@ class Sanitizer {
             try {
                 this._json = JSON.parse(this._value);
             } catch(err) {
-                this._log('assertJSON', this._value);
+                this._log("assertJSON", this._value);
                 this._valid = false;
             }
         }
@@ -57,7 +57,7 @@ class Sanitizer {
      */
     assertInArray(arr) {
         if (-1 === arr.indexOf(this._value)) {
-            this._log('assertInArray', this._value, arr);
+            this._log("assertInArray", this._value, arr);
             this._valid = false;
         }
         return this;
@@ -69,11 +69,11 @@ class Sanitizer {
      * @return {Sanitizer}
      */
     assertBetween(min, max) {
-        if (typeof this._value !== 'number') {
-            this._log('assertRange type', this._value);
+        if (typeof this._value !== "number") {
+            this._log("assertRange type", this._value);
             this._valid = false;
         } else if (this._value < min || this._value > max) {
-            this._log('assertRange range', this._value, min, max);
+            this._log("assertRange range", this._value, min, max);
             this._valid = false;
         }
         return this;
@@ -93,12 +93,12 @@ class Sanitizer {
      * @return {Sanitizer}
      */
     assertStringOfLength(min, max) {
-        max = typeof max === 'undefined' ? min : max;
-        if (typeof this._value !== 'string') {
-            this._log('assertStringOfLength type', this._value);
+        max = typeof max === "undefined" ? min : max;
+        if (typeof this._value !== "string") {
+            this._log("assertStringOfLength type", this._value);
             this._valid = false;
         } else if (!this._assertLength(min, max)) {
-            this._log('assertStringOfLength length', this._value, min, max);
+            this._log("assertStringOfLength length", this._value, min, max);
             this._valid = false;
         }
         return this;
@@ -111,10 +111,10 @@ class Sanitizer {
      */
     assertArrayLengthBetween(min, max) {
         if (!(this._value instanceof Array)) {
-            this._log('assertArrayOfLength type', this._value);
+            this._log("assertArrayOfLength type", this._value);
             this._valid = false;
         } else if (!this._assertLength(min, max)) {
-            this._log('assertArrayOfLength length', this._value, min, max);
+            this._log("assertArrayOfLength length", this._value, min, max);
             this._valid = false;
         }
         return this;
@@ -159,7 +159,7 @@ class Sanitizer {
      * @private
      */
     _log(message, value, ...varArgs) {
-        console.warn('Validation Error', message, JSON.stringify(value), varArgs);
+        console.warn("Validation Error", message, JSON.stringify(value), varArgs);
     }
 
 }

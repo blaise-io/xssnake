@@ -4,13 +4,14 @@ import { Levelset } from "../../shared/levelset/levelset";
 import { ClientGame } from "../game/clientGame";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
+import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { State } from "../state/state";
 
 const match = location.search.match(/debug=(.+Level)$/);
 if (match) {
-    State.menuSnake = "block";
+    State.menuSnake = new NeuteredMenuSnake();
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function() {
 
         const player = new ClientPlayer();
         player.local = true;

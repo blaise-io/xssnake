@@ -3,14 +3,14 @@
 import { Player } from "../../shared/room/player";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
-import { MessageBox } from "../room/messageBox";
 import { Scoreboard } from "../room/scoreboard";
+import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { State } from "../state/state";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
 if (location.search.match(/debug=scoreboard/)) {
-    State.menuSnake = "block";
+    State.menuSnake = new NeuteredMenuSnake();
     setTimeout(function() {
 
         State.flow.destruct();
@@ -21,15 +21,15 @@ if (location.search.match(/debug=scoreboard/)) {
         });
 
         const messages = [
-            new Message(null, 'This is a notification'),
-            new Message('Player 1', 'Hello world')
+            new Message(null, "This is a notification"),
+            new Message("Player 1", "Hello world")
         ];
-        const author = new Player('Dummy');
+        const author = new Player("Dummy");
         new MessageBoxUI(messages, author);
 
         const players = new ClientPlayerRegistry();
         for (let i = 0, m = 5; i < m; i++) {
-            const player = new Player('Player ' + (i+1));
+            const player = new Player("Player " + (i+1));
             if (i === 0) {
                 player.local = true;
             }
@@ -43,7 +43,7 @@ if (location.search.match(/debug=scoreboard/)) {
         players.players.splice(2, 1); // PLayer 3 leaves.
         scoreboard.ui.debounceUpdate();
         setTimeout(function() {
-            players.add(new Player('Player 6')); // Player 6 joins.
+            players.add(new Player("Player 6")); // Player 6 joins.
             scoreboard.ui.debounceUpdate();
         }, 1000);
 

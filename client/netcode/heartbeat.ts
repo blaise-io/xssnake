@@ -35,7 +35,7 @@ export class ClientHeartbeat {
         if (this.pingSent) {
             // Last ping did not pong.
             // return this.player.timeout();
-            console.error('this.player.timeout()');
+            console.error("this.player.timeout()");
         }
         this.pingSent = +new Date();
         this.player.emit(NC_PING);

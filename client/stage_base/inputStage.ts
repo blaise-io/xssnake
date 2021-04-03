@@ -6,7 +6,8 @@
  */
 import { Shape } from "../../shared/shape";
 import {
-    DOM_EVENT_KEYDOWN, KEY_ENTER, KEY_ESCAPE, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS_INPUT, NS_STAGES
+    DOM_EVENT_KEYDOWN, KEY_ENTER, KEY_ESCAPE, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS_INPUT, NS_STAGES,
+    STORAGE_NAME
 } from "../const";
 import { InputField } from "../stage_class_helper/inputField";
 import { State } from "../state/state";
@@ -24,15 +25,15 @@ export class InputStage {
 
     constructor() {
         /** @type {string} */
-        this.value = storage(this.name) || '';
+        this.value = storage(STORAGE_NAME) || "";
         this._inputTop = MENU_TOP + 17;
         this.fontOptions = {wrap: MENU_LEFT + MENU_WIDTH - 25};
         this._shape = this._getShape();
     }
 
-    name = ''
-    header = ''
-    label = ''
+    name = ""
+    header = ""
+    label = ""
     next: any = InputStage // TODO: StageInterface
 
     minlength = 0
@@ -60,11 +61,16 @@ export class InputStage {
      */
     getValue() {
         return this.value;
-    }    construct() {
+    }
+
+    construct() {
         this.input = this._setupInputField();
         this._shape = this._getShapeExcludeValue();
+        console.log(this);
         this._bindEvents();
-    }    destruct() {
+    }
+
+    destruct() {
         State.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
         State.shapes.message = null;
         this._shape = this._getShape();
@@ -87,7 +93,9 @@ export class InputStage {
             State.shapes.message = font(error, MENU_LEFT, top);
             lifetime(State.shapes.message, 0, 500);
         }
-    }    _setupInputField() {
+    }
+
+    _setupInputField() {
         const input = new InputField(
             MENU_LEFT, this._inputTop, this.label, this.fontOptions
         );
@@ -96,6 +104,7 @@ export class InputStage {
         input.displayWidth = this.displayWidth || input.displayWidth;
 
         input.callback = function(value) {
+            console.log(value, this, "UPD");
             this.value = value;
         }.bind(this);
 
@@ -108,6 +117,7 @@ export class InputStage {
      * @private
      */
     _bindEvents() {
+        console.log(this);
         State.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys.bind(this));
     }
 
@@ -115,7 +125,9 @@ export class InputStage {
      * @private
      */
     _handleKeys(ev) {
-        let value; let top;
+        console.log(this);
+        let value;
+        let top;
         switch (ev.keyCode) {
         case KEY_ESCAPE:
             State.flow.previousStage();
@@ -140,11 +152,11 @@ export class InputStage {
      */
     _getInputError(val) {
         if (val.length < this.minlength) {
-            return 'Too short!!';
+            return "Too short!!";
         } else if (this.maxChars && val.length > this.maxChars) {
-            return 'Too long!!';
+            return "Too long!!";
         }
-        return '';
+        return "";
     }
 
     /**

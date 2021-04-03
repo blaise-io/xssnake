@@ -200,7 +200,7 @@ export function outerBorder(callbackFn) {
  * @return {Shape}
  */
 export function xssnakeHeader() {
-    let x; let y; let shape; const welcome = font('<XSSNAKE>').pixels;
+    let x; let y; let shape; const welcome = font("<XSSNAKE>").pixels;
 
     x = MENU_LEFT - 2;
     y = MENU_TOP - 34;

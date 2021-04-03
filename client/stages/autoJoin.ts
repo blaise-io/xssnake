@@ -20,7 +20,7 @@ export class AutoJoinStage extends InputStage {
       /** @type {room.ClientRoom} */
       this.room = State.player.room;
 
-      this.header = 'JOiN GAME';
+      this.header = "JOiN GAME";
       this.label = this.getRoomSummary();
       this.name = STORAGE_NAME;
 
@@ -39,31 +39,31 @@ export class AutoJoinStage extends InputStage {
       summary.push(
           format(
               COPY_AUTOJOIN_PLAYERS, this.room.players.getTotal()
-          ) + '\t' +
+          ) + "\t" +
       this.room.players.getNames().join(COPY_COMMA_SPACE)
       );
 
       summary.push(
-          COPY_FIELD_MAX_PLAYERS + '\t' +
+          COPY_FIELD_MAX_PLAYERS + "\t" +
       this.room.options.maxPlayers
       );
 
       summary.push(
-          COPY_FIELD_LEVEL_SET + '\t' +
+          COPY_FIELD_LEVEL_SET + "\t" +
       State.levelsetRegistry.getLevelset(this.room.options.levelset).title
       );
 
       summary.push(
-          COPY_FIELD_POWERUPS + '\t' +
+          COPY_FIELD_POWERUPS + "\t" +
       COPY_BOOL[Number(this.room.options.hasPowerups)]
       );
 
       summary.push(
-          COPY_FIELD_XSS + '\t' +
+          COPY_FIELD_XSS + "\t" +
       COPY_BOOL[Number(this.room.options.isXSS)]
       );
 
-      return summary.join('\n') + '\n\n' + COPY_AUTOJOIN_ENTER_NAME;
+      return summary.join("\n") + "\n\n" + COPY_AUTOJOIN_ENTER_NAME;
   }
 
 }

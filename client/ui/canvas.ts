@@ -29,7 +29,7 @@ export class Canvas {
 
         this.fps = [];
         this.canvas = this._setupCanvas();
-        this.context = this.canvas.getContext('2d');
+        this.context = this.canvas.getContext("2d");
         this.tile = new CanvasTile(colorSchemes[color] || colorSchemes[0]);
 
         this._setCanvasDimensions();
@@ -158,7 +158,7 @@ export class Canvas {
     reportFps(fps) {
         this.fps.unshift(fps);
         this.fps.length = 10;
-        document.title = 'XXSNAKE ' + Math.round(average(this.fps));
+        document.title = "XXSNAKE " + Math.round(average(this.fps));
     }
 
     /**
@@ -265,7 +265,7 @@ export class Canvas {
      * @private
      */
     _handleFocusChange(ev) {
-        this.focus = (ev.type !== 'blur');
+        this.focus = (ev.type !== "blur");
         State.events.trigger(EV_WIN_FOCUS_CHANGE, this.focus);
     }
 
@@ -277,7 +277,7 @@ export class Canvas {
         if (Number(ev.which) !== 1) { // Only LMB
             return;
         }
-        instruct('No mousing please', 2000);
+        instruct("No mousing please", 2000);
     }
 
     /** @private */
@@ -306,9 +306,9 @@ export class Canvas {
         const top = this._snapCanvasToTiles(windowMiddle - (this.canvasHeight / 2));
 
         const style = this.canvas.style;
-        style.position = 'absolute';
-        style.left = Math.max(0, left) + 'px';
-        style.top = Math.max(0, top) + 'px';
+        style.position = "absolute";
+        style.left = Math.max(0, left) + "px";
+        style.top = Math.max(0, top) + "px";
     }
 
     /**
@@ -316,7 +316,7 @@ export class Canvas {
      * @private
      */
     _setupCanvas() {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         document.body.appendChild(canvas);
         return canvas;
     }

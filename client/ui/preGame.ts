@@ -103,7 +103,7 @@ export class PreGameUI {
         let body = format(COPY_AWAITING_PLAYERS_BODY, remaining, remaining === 1 ? "" : "s");
 
         if (this.playerCanStartRound()) {
-            body += '\n\n' + COPY_AWAITING_PLAYERS_START_NOW;
+            body += "\n\n" + COPY_AWAITING_PLAYERS_START_NOW;
         }
 
         this.dialog = new Dialog(COPY_AWAITING_PLAYERS_HEADER, body, {
@@ -170,7 +170,7 @@ export class PreGameUI {
             window.clearInterval(this.countdownInterval);
         }
         this.countdownInterval = window.setInterval(function() {
-            State.audio.play('menu_alt');
+            State.audio.play("menu_alt");
             // Prevent re-creating dialog which destroys button selection.
             if (!this.confirmExit) {
                 this.updateUI();

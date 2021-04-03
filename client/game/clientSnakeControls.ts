@@ -31,7 +31,7 @@ export class ClientSnakeControls {
      */
     handleKeys(event) {
         const direction = KEY_TO_DIRECTION[event.keyCode];
-        if (!State.keysBlocked && typeof direction !== 'undefined') {
+        if (!State.keysBlocked && typeof direction !== "undefined") {
             this.setDirection(direction);
         }
     }

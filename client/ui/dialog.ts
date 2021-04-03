@@ -85,7 +85,7 @@ export class Dialog {
      * @param {string} body
      */
     setBody(body) {
-        State.audio.play('menu_alt');
+        State.audio.play("menu_alt");
         this._body = body;
         this._updateShape();
     }
@@ -117,7 +117,7 @@ export class Dialog {
         case KEY_RIGHT:
         case KEY_TAB:
             if (this.settings.type === Dialog.TYPE.CONFIRM) {
-                State.audio.play('menu_alt');
+                State.audio.play("menu_alt");
                 this._okSelected = !this._okSelected;
                 this._updateShape();
             }

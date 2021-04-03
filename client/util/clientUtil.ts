@@ -40,7 +40,7 @@ export function error(str, callback?) {
         State.flow.restart();
     };
 
-    const body = 'Press ' + UC_ENTER_KEY + ' to continue';
+    const body = "Press " + UC_ENTER_KEY + " to continue";
     const dialog = new Dialog(str, body, {
         type: Dialog.TYPE.ALERT,
         ok  : exit
@@ -60,11 +60,11 @@ export function storage(key, value?) {
         } catch (err) {
             localStorage.removeItem(key);
         }
-        return '';
+        return "";
     } else if (arguments.length === 2) {
         if (value === null) {
             localStorage.removeItem(key);
-            return '';
+            return "";
         } else {
             return localStorage.setItem(key, JSON.stringify(value));
         }
@@ -85,7 +85,7 @@ export function isMac() {
  * @return {?}
  */
 export function urlHash(key="", value="") {
-    let hash; let arr; let newhash = ''; const dict = {};
+    let hash; let arr; let newhash = ""; const dict = {};
 
     hash = location.hash.substr(1);
     arr = hash.split(/[:;]/g);
@@ -98,21 +98,21 @@ export function urlHash(key="", value="") {
     switch (arguments.length) {
     case 0: // Empty
         if (location.hash) {
-            history.replaceState(null, '', location.pathname + location.search);
+            history.replaceState(null, "", location.pathname + location.search);
         }
         return;
     case 1: // Return value
-        return dict[key] || '';
+        return dict[key] || "";
     case 2: // Set value
         dict[key] = value;
         for (const k in dict) {
             if (dict.hasOwnProperty(k)) {
                 if (k && dict[k]) {
-                    newhash += k + ':' + dict[k] + ';';
+                    newhash += k + ":" + dict[k] + ";";
                 }
             }
         }
-        location.replace('#' + newhash.replace(/;$/, ''));
+        location.replace("#" + newhash.replace(/;$/, ""));
         return value;
     }
 }

@@ -11,7 +11,7 @@ export class Player {
     snake: Snake;
     local: boolean;
 
-    constructor(public name='') {
+    constructor(public name="") {
         this.connected = false;
         this.score = 0;
         this.snake = null;

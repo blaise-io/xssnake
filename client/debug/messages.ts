@@ -5,15 +5,16 @@ import { COPY_CHAT_INSTRUCT } from "../copy/copy";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
+import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { State } from "../state/state";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
 if (location.search.match(/debug=messages/)) {
-    State.menuSnake = "block";
+    State.menuSnake = new NeuteredMenuSnake();
     setTimeout(function() {
         const messages = [];
-        const author = new Player('Dummy');
+        const author = new Player("Dummy");
         const ui = new MessageBoxUI(messages, author);
 
         State.flow.destruct();
@@ -31,7 +32,7 @@ if (location.search.match(/debug=messages/)) {
             for (let i = 0, m = randomRange(1, 6); i < m; i++) {
                 body.push(randomStr(randomRange(2, 7)));
             }
-            return body.join(' ');
+            return body.join(" ");
         }
 
         function addMessage() {

@@ -1,5 +1,5 @@
-const events = require('events');
-const WebSocketServer = require('ws').Server;
+const events = require("events");
+const WebSocketServer = require("ws").Server;
 
 /**
  * @constructor
@@ -26,7 +26,7 @@ export class Server {
             path: SERVER_PATH
         });
 
-        ws.on('connection', function(connection) {
+        ws.on("connection", function(connection) {
             new ServerPlayer(this, connection);
         }.bind(this));
 

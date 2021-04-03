@@ -76,7 +76,7 @@ export class Form {
       y = MENU_TOP;
 
       optionX = MENU_LEFT + 2 + MENU_WIDTH -
-      this.maxwidth - fontWidth(' ' + UC_TR_LEFT);
+      this.maxwidth - fontWidth(" " + UC_TR_LEFT);
 
       shape = new Shape();
       shape.add(this._getHeaderPixels(x, y));
@@ -161,12 +161,12 @@ export class Form {
       pixels = fontPixels(value, props.option, y);
       shape.add(pixels);
 
-      props.left = col2X - fontWidth(UC_TR_LEFT + ' ');
-      props.right = col2X + this.maxwidth + fontWidth(' ');
+      props.left = col2X - fontWidth(UC_TR_LEFT + " ");
+      props.right = col2X + this.maxwidth + fontWidth(" ");
 
       shape.add(
-          fontPixels('<', props.left, y),
-          fontPixels('>', props.right, y)
+          fontPixels("<", props.left, y),
+          fontPixels(">", props.right, y)
       );
 
       return shape;

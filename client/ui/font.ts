@@ -20,7 +20,7 @@ export function font(str: string, x=0, y=0, options: any={}): Shape {
     const shape = new Shape();
     const pointer = {x: 0, y: 0};
 
-    const chrs = str.split('');
+    const chrs = str.split("");
 
     for (let i = 0, m = chrs.length; i < m; i++) {
         let nextWordFit = true;
@@ -31,13 +31,13 @@ export function font(str: string, x=0, y=0, options: any={}): Shape {
             nextWordFit = _nextWordFit(str, i, pointer, options.wrap);
         }
 
-        if (chr === '\t') {
+        if (chr === "\t") {
             if (tabx1) {
                 pointer.x = tabx1;
             } else {
                 pointer.x = tabx1 = _getTabx1(str);
             }
-        } else if (chr === '\n' || !nextWordFit) {
+        } else if (chr === "\n" || !nextWordFit) {
             pointer.x = 0;
             pointer.y += LINE_HEIGHT;
         } else {
@@ -89,7 +89,7 @@ export function fontWidth(str, x=0, y=0, options={}) {
     }
     width = Math.max.apply(this, maxes) + 2;
     // Ends with a space. Ending with multiple spaces not supported.
-    if (' ' === str.slice(-1)) {
+    if (" " === str.slice(-1)) {
         width += 3;
     }
     return width;
@@ -102,8 +102,8 @@ export function fontWidth(str, x=0, y=0, options={}) {
  */
 export function fastWidth(str) {
     let chrs; let width = 0;
-    chrs = str.split('\n');
-    chrs = chrs[chrs.length - 1].split('');
+    chrs = str.split("\n");
+    chrs = chrs[chrs.length - 1].split("");
     for (let i = 0, m = chrs.length; i < m; i++) {
         width += _chrProperties(chrs[i]).width;
         width += 2;
@@ -219,9 +219,9 @@ function _getTabx1(str) {
     let maxtab = 0;
     const lines = str.split(/\n/g);
     for (let i = 0, m = lines.length; i < m; i++) {
-        const segments = lines[i].split('\t');
+        const segments = lines[i].split("\t");
         if (segments.length >= 2) {
-            maxtab = Math.max(maxtab, fontWidth('  ' + segments[0]));
+            maxtab = Math.max(maxtab, fontWidth("  " + segments[0]));
         }
     }
     return maxtab;
@@ -247,17 +247,17 @@ function _invert(shape, y) {
 function _getContext() {
     let canvas; let context; let font;
 
-    canvas = document.createElement('canvas');
+    canvas = document.createElement("canvas");
     canvas.width = MAX_WIDTH;
     canvas.height = MAX_HEIGHT;
 
-    context = canvas.getContext('2d');
+    context = canvas.getContext("2d");
 
     // "xssnake" is a special font that was crafted for this game.
-    font = '8px xssnake';
+    font = "8px xssnake";
     // Specify blurry fonts in the fallback, to make it easier to detect
     // glyphs that are (un)supported by the xssnake font.
-    font += ', courier new, serif';
+    font += ", courier new, serif";
     context.font = font;
 
     return context;
@@ -278,10 +278,10 @@ function _getChrProperties(chr) {
         return {width: 3, pixels: pixels};
     }
 
-    _ctx.fillStyle = '#000';
+    _ctx.fillStyle = "#000";
     _ctx.fillRect(0, 0, w, h);
 
-    _ctx.fillStyle = '#fff';
+    _ctx.fillStyle = "#fff";
     _ctx.fillText(chr, 0, BASELINE);
 
     data = _ctx.getImageData(0, 0, w, h).data;

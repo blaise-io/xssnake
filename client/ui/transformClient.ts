@@ -13,8 +13,8 @@ export function outline(shape, hPadding=6, vPadding=6, round=true) {
 
     r = round ? 1 : 0;
 
-    hPadding = typeof hPadding === 'number' ? hPadding : 6;
-    vPadding = typeof vPadding === 'number' ? vPadding : 6;
+    hPadding = typeof hPadding === "number" ? hPadding : 6;
+    vPadding = typeof vPadding === "number" ? vPadding : 6;
 
     // Keep in viewport
     if (bbox.y0 - vPadding < 0) {

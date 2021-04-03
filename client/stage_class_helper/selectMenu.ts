@@ -9,8 +9,8 @@ export class SelectMenu {
   private _options: any[];
 
   constructor(public header: string, public footer: string = "") {
-      this.header = header || '';
-      this.footer = footer || '';
+      this.header = header || "";
+      this.footer = footer || "";
       this._selected = 0;
       this._options = [];
   }
@@ -46,7 +46,7 @@ export class SelectMenu {
   select(select) {
       const max = this._options.length - 1;
 
-      if (typeof select !== 'number') {
+      if (typeof select !== "number") {
           select = 0;
       }
       if (select < 0) {

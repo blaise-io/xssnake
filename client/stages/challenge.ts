@@ -20,25 +20,25 @@ export class ChallengeStage extends InputStage {
         this._challenge = this._getRandomChallenge();
 
         this.maxwidth = 80;
-        this.header = 'DANGER DANGER';
-        this.label = '' +
-            'XSS mode allows the winner of a game to execute ' +
-            'JavaScript in the browser of every loser. This may ' +
-            'damage you and/or your computer. To confirm that ' +
-            'you know JavaScript and accept the risk, enter the ' +
-            'result of the following statement:\n\n> ' +
-            this._challenge + '\n> ';
+        this.header = "DANGER DANGER";
+        this.label = "" +
+            "XSS mode allows the winner of a game to execute " +
+            "JavaScript in the browser of every loser. This may " +
+            "damage you and/or your computer. To confirm that " +
+            "you know JavaScript and accept the risk, enter the " +
+            "result of the following statement:\n\n> " +
+            this._challenge + "\n> ";
 
         this.next = InputXssStage;
     }
 
     inputSubmit(error, value, top) {
-        let shape; let text = 'ACCESS DENIED!!';
+        let shape; let text = "ACCESS DENIED!!";
 
         // Evalevaleval!!!
         // Tolerate answers where user is quoting strings.
-        if (value.replace(/['"]/g, '').trim() === String(eval(this._challenge))) {
-            text = '> bleep!';
+        if (value.replace(/['"]/g, "").trim() === String(eval(this._challenge))) {
+            text = "> bleep!";
             State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
             setTimeout(function() {
                 State.flow.switchStage(this.next);
@@ -52,25 +52,25 @@ export class ChallengeStage extends InputStage {
     }
 
     _challenges = [
-        'document.scripts[0].tagName',
-        'document.documentElement.tagName',
-        'location.protocol.split(\'\').reverse().join(\'\')[%d]',
-        '\'OUIMERCI!\'.charAt(Math.ceil(Math.random())*%d)',
-        'Array(%d).join(encodeURI(\' \'))',
-        'parseInt(\'1000\',%d+2)',
-        '2e%d',
-        'String([1,2,3][3]).charAt(%d)',
-        'String(typeof []).charAt(%d)',
-        'String(typeof (5%2)).charAt(%d)',
-        '(/%s/).test(\'%s\')',
-        '\'%s%s\'.replace(/%s/, \'mew\')',
-        '\'012345\'.lastIndexOf(\'%d\')',
-        '\'%s\'+\'A\'+Math.pow(%d,2)',
-        'new Date(\'2013,0%d,0%d\').getMonth()',
-        'var A=%d,B=3;do{A++}while(B--); A;',
-        'var A=3,B=%d;do{A++}while(B--); B;',
-        'var A=%d;A++;++A;A+=1; A;',
-        'var A=%d;A--;--A;A-=1; A;',
+        "document.scripts[0].tagName",
+        "document.documentElement.tagName",
+        "location.protocol.split('').reverse().join('')[%d]",
+        "'OUIMERCI!'.charAt(Math.ceil(Math.random())*%d)",
+        "Array(%d).join(encodeURI(' '))",
+        "parseInt('1000',%d+2)",
+        "2e%d",
+        "String([1,2,3][3]).charAt(%d)",
+        "String(typeof []).charAt(%d)",
+        "String(typeof (5%2)).charAt(%d)",
+        "(/%s/).test('%s')",
+        "'%s%s'.replace(/%s/, 'mew')",
+        "'012345'.lastIndexOf('%d')",
+        "'%s'+'A'+Math.pow(%d,2)",
+        "new Date('2013,0%d,0%d').getMonth()",
+        "var A=%d,B=3;do{A++}while(B--); A;",
+        "var A=3,B=%d;do{A++}while(B--); B;",
+        "var A=%d;A++;++A;A+=1; A;",
+        "var A=%d;A--;--A;A-=1; A;",
         '"%d"+%d'
     ]
 

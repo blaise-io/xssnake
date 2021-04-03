@@ -10,12 +10,19 @@
   ],
   "rules": {
     "semi": [
-      2,
+      "error",
       "always"
     ],
     "indent": [
       "error",
       4
+    ],
+    "quotes": [
+      "error",
+      "double",
+      {
+        "avoidEscape": true
+      }
     ]
   }
 }

@@ -47,12 +47,12 @@ export class SelectStage {
             break;
         case KEY_UP:
             this.menu.prev();
-            State.audio.play('menu');
+            State.audio.play("menu");
             State.flow.refreshShapes();
             break;
         case KEY_DOWN:
             this.menu.next();
-            State.audio.play('menu');
+            State.audio.play("menu");
             State.flow.refreshShapes();
         }
     }

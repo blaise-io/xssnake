@@ -50,22 +50,22 @@ export class FormStage {
           break;
       case KEY_UP:
           this.form.selectField(-1);
-          State.audio.play('menu');
+          State.audio.play("menu");
           State.flow.refreshShapes();
           break;
       case KEY_DOWN:
           this.form.selectField(1);
-          State.audio.play('menu');
+          State.audio.play("menu");
           State.flow.refreshShapes();
           break;
       case KEY_LEFT:
           this.form.selectOption(-1);
-          State.audio.play('menu_alt');
+          State.audio.play("menu_alt");
           State.flow.refreshShapes();
           break;
       case KEY_RIGHT:
           this.form.selectOption(1);
-          State.audio.play('menu_alt');
+          State.audio.play("menu_alt");
           State.flow.refreshShapes();
           break;
       }

@@ -34,8 +34,8 @@ export class ClientSnake extends Snake {
         /** @type {Object.<string,string>} */
         this.shapeKeys = {
             snake: NS_SNAKE + index,
-            name: NS_SNAKE + 'TAG' + index,
-            direction: NS_SNAKE + 'DIR' + index
+            name: NS_SNAKE + "TAG" + index,
+            direction: NS_SNAKE + "DIR" + index
         };
 
         this.updateShape();

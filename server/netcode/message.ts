@@ -39,7 +39,7 @@ export class Message {
         }
 
         eventNumberValidator = new Sanitizer(messageJson[0])
-            .assertType('number');
+            .assertType("number");
         if (!eventNumberValidator.valid()) {
             return null;
         }

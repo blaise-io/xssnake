@@ -11,14 +11,14 @@ export class Message {
     constructor(public author, public body) {
         this.author = author;
         this.body = body;
-        this.notificationPrefix = '#';
+        this.notificationPrefix = "#";
     }
 
     getFormatted() {
         if (this.author === null) {
             return this.notificationPrefix + this.body;
         } else {
-            return this.author + ': ' + this.body;
+            return this.author + ": " + this.body;
         }
     }
 

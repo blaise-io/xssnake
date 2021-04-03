@@ -16,12 +16,12 @@ export class ShapeCache {
     constructor(public shape: Shape, public tile: CanvasTile) {
         this.bbox = this._getBBox();
         this.canvas = this._getCanvas();
-        this.context = this.canvas.getContext('2d');
+        this.context = this.canvas.getContext("2d");
         this._paintShapePixels();
     }
 
     _getCanvas() {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = this.bbox.width + this._getSize();
         canvas.height = this.bbox.height + this._getSize();
         return canvas;

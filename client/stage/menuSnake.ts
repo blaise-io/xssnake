@@ -18,9 +18,7 @@ export class MenuSnake {
     }
 
     construct() {
-        let snake;
-
-        snake = new ClientSnake(0, false, '', this.level);
+        const snake = new ClientSnake(0, false, "", this.level);
         snake.addControls();
         snake.showDirection();
         snake.removeNameAndDirection();
@@ -99,4 +97,11 @@ export class MenuSnake {
         return false;
     }
 
+}
+
+
+export class NeuteredMenuSnake extends MenuSnake {
+    construct(): void {
+        this.snake = null;
+    }
 }

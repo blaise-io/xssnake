@@ -1,31 +1,15 @@
-/**
- * @param {number} x0
- * @param {number} y0
- * @param {number} x1
- * @param {number} y1
- * @return {Shape}
- */
 import { PixelCollection } from "./pixelCollection";
 import { Shape } from "./shape";
 
-export function lineShape(x0, y0, x1, y1) {
-    return new Shape(this.line(x0, y0, x1, y1));
+export function lineShape(x0: number, y0: number, x1: number, y1: number): Shape {
+    return new Shape(line(x0, y0, x1, y1));
 }
 
-/**
- * @param {number} xc
- * @param {number} yc
- * @param {number} radian
- * @param {number} length
- * @return {PixelCollection}
- */
-export function radianLine(xc, yc, radian, length) {
-    let x0; let y0; let x1; let y1;
-
-    x0 = xc + length / 2 * Math.cos(radian);
-    y0 = yc + length / 2 * Math.sin(radian);
-    x1 = xc + length / 2 * Math.cos(radian + Math.PI);
-    y1 = yc + length / 2 * Math.sin(radian + Math.PI);
+export function radianLine(xc: number, yc: number, radian: number, length: number): PixelCollection {
+    const x0 = xc + length / 2 * Math.cos(radian);
+    const y0 = yc + length / 2 * Math.sin(radian);
+    const x1 = xc + length / 2 * Math.cos(radian + Math.PI);
+    const y1 = yc + length / 2 * Math.sin(radian + Math.PI);
 
     return line(
         Math.round(x0),

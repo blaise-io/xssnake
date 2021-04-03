@@ -29,26 +29,23 @@ export class AudioPlayer {
             !storage(STORAGE_MUTE) &&
             State.canvas.focus
         ) {
-            new Audio('data:' + this.mimetype + ';base64,' + this.files[file]).play();
+            new Audio("data:" + this.mimetype + ";base64," + this.files[file]).play();
         }
     }
 
     getSupportedAudioFiles() {
-        let audioElement; let mimetypes;
-
-        audioElement = document.createElement('audio');
-
-        mimetypes = {
-            mp3: 'audio/mpeg',
-            ogg: 'audio/ogg'
+        const audioElement = document.createElement("audio");
+        const mimetypes = {
+            mp3: "audio/mpeg",
+            ogg: "audio/ogg"
         };
 
         if (audioElement.canPlayType) {
             // Prefer ogg over mp3 because of this Firefox bug:
             // https://bugzilla.mozilla.org/show_bug.cgi?id=849264
-            if (audioElement.canPlayType(mimetypes.ogg).replace(/no/, '')) {
+            if (audioElement.canPlayType(mimetypes.ogg).replace(/no/, "")) {
                 return {mimetype: mimetypes.ogg, files: OGG_FILES};
-            } else if (audioElement.canPlayType(mimetypes.mp3).replace(/no/, '')) {
+            } else if (audioElement.canPlayType(mimetypes.mp3).replace(/no/, "")) {
                 return {mimetype: mimetypes.mp3, files: MP3_FILES};
             }
         }
@@ -56,7 +53,7 @@ export class AudioPlayer {
         return null;
     }
 
-    setupFiles() {
+    setupFiles(): void {
         const audioFiles = this.getSupportedAudioFiles();
         if (audioFiles) {
             this.mimetype = audioFiles.mimetype;

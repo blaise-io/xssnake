@@ -20,7 +20,7 @@ export class ClientRoom {
     private messageBox: any;
     private scoreboard: any;
     constructor() {
-        this.key = '';
+        this.key = "";
 
         this.players = new ClientPlayerRegistry();
         this.options = new ClientOptions();
@@ -86,7 +86,7 @@ export class ClientRoom {
     }
 
     ncNotifySnakesCrashed(serializedCollisions) {
-        let notification = ''; const names = this.players.getNames();
+        let notification = ""; const names = this.players.getNames();
         for (let i = 0, m = serializedCollisions.length; i < m; i++) {
             notification += names[serializedCollisions[i][0]];
 
@@ -103,7 +103,7 @@ export class ClientRoom {
                     notification += COPY_ELLIPSIS;
                 }
                 this.messageBox.addNotification(notification);
-                notification = '';
+                notification = "";
             }
         }
         this.messageBox.ui.debounceUpdate();

@@ -17,7 +17,7 @@ export class ColorStage extends SelectStage {
    * @private
    */
     _getMenu() {
-        const menu = new SelectMenu('COLOR SCHEME');
+        const menu = new SelectMenu("COLOR SCHEME");
         for (let i = 0, m = colorSchemes.length; i < m; i++) {
             const title = colorSchemes[i].title; const desc = colorSchemes[i].desc;
             menu.addOption(null, null, title, desc, this._setColor.bind(this));

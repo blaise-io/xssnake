@@ -8,7 +8,7 @@ export class Levelset {
     public loaded: boolean;
 
     constructor() {
-        this.title = '';
+        this.title = "";
         this.levels = [];
         this.loaded = false;
     }

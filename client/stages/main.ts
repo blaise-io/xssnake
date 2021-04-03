@@ -52,15 +52,15 @@ export class MainStage extends SelectStage {
         const name = storage(STORAGE_NAME);
 
         const header = name ?
-            'YAY ' + name.toUpperCase() + ' IS BACK!' :
-            'MULTIPLAYER SNAKE!';
+            "YAY " + name.toUpperCase() + " IS BACK!" :
+            "MULTIPLAYER SNAKE!";
 
         const menu = new SelectMenu(header, COPY_MAIN_INSTRUCT);
-        menu.addOption(null, QuickGame, 'QUICK GAME');
-        menu.addOption(null, NameStage, 'MULTIPLAYER');
-        menu.addOption(null, SinglePlayer, 'SINGLE PLAYER');
-        menu.addOption(null, ColorStage, 'COLOR SCHEME');
-        menu.addOption(null, CreditsStage, 'CREDITS');
+        menu.addOption(null, QuickGame, "QUICK GAME");
+        menu.addOption(null, NameStage, "MULTIPLAYER");
+        menu.addOption(null, SinglePlayer, "SINGLE PLAYER");
+        menu.addOption(null, ColorStage, "COLOR SCHEME");
+        menu.addOption(null, CreditsStage, "CREDITS");
 
         return menu;
     }

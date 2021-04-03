@@ -81,7 +81,7 @@ export class Parser {
         } else if (rgbEquals(0, 255, 255)) {
             this.spawnCoordinates[5] = coordinate;
         } else if (!rgbEquals(255, 255, 255)) {
-            throw new Error('Unknown color: ' + rgb + ' ' + 'at ' + coordinate);
+            throw new Error("Unknown color: " + rgb + " " + "at " + coordinate);
         }
     }
 
@@ -95,7 +95,7 @@ export class Parser {
                     this.getDirectionForSpawn(spawnCoordinate)
                 );
             } else {
-                throw new Error('Missing spawn with index: ' + i);
+                throw new Error("Missing spawn with index: " + i);
             }
         }
     }
@@ -124,6 +124,6 @@ export class Parser {
             }
         }
 
-        throw new Error('Spawn at ' + spawn + ' is missing a direction');
+        throw new Error("Spawn at " + spawn + " is missing a direction");
     }
 }

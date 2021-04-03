@@ -61,7 +61,7 @@ export class WrapupGame {
         });
 
         this.countdownInterval = window.setInterval(function() {
-            State.audio.play('menu_alt');
+            State.audio.play("menu_alt");
             this.dialog.setBody(this.getBody());
         }.bind(this), 1000);
     }

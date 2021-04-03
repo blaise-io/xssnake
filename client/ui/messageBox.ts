@@ -81,16 +81,16 @@ export class MessageBoxUI {
     showInput() {
         let x; let y; let prefix;
 
-        x = this.x0 + this.padding.x1 + new Message('', '').getOffset();
+        x = this.x0 + this.padding.x1 + new Message("", "").getOffset();
         y = this.y1 - this.padding.y1 - this.lineHeight;
-        prefix = this.localAuthor.name + ': ';
+        prefix = this.localAuthor.name + ": ";
 
         this.inputField = new InputField(x, y, prefix);
         this.inputField.maxValWidth = this.x1 - x - fontWidth(prefix);
         this.inputField.maxValWidth -= this.padding.x0 + this.padding.x1;
         this.inputField.displayWidth = this.inputField.maxValWidth;
         this.inputField.displayWidth -= fontWidth(UC_ENTER_KEY) + 1;
-        this.inputField.setValue('');
+        this.inputField.setValue("");
 
         this.updateMessages();
         this.showEnterKey();

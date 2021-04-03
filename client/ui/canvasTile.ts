@@ -39,21 +39,21 @@ export class CanvasTile {
     updatePatterns() {
         let canvas; let backgroundImage;
 
-        canvas = document.createElement('canvas');
-        canvas.setAttribute('width', String(this.size));
-        canvas.setAttribute('height', String(this.size));
+        canvas = document.createElement("canvas");
+        canvas.setAttribute("width", String(this.size));
+        canvas.setAttribute("height", String(this.size));
 
         this.on = this._getTileForColor(canvas, this.colorScheme.on);
         this.off = this._getTileForColor(canvas, this.colorScheme.off);
 
-        backgroundImage = ' url(' + canvas.toDataURL('image/png') + ')';
+        backgroundImage = " url(" + canvas.toDataURL("image/png") + ")";
         document.body.style.background = this.colorScheme.bg + backgroundImage;
     }
 
     _getTileForColor(canvas, color) {
         let context; let pixelSize;
 
-        context = canvas.getContext('2d');
+        context = canvas.getContext("2d");
         // Prevent completely transparent borders for visibility.
         pixelSize = this.size === 1 ? 1 : this.size - 0.35;
 
@@ -62,6 +62,6 @@ export class CanvasTile {
         context.fillStyle = color;
         context.fillRect(0, 0, pixelSize, pixelSize);
 
-        return context.createPattern(canvas, 'repeat');
+        return context.createPattern(canvas, "repeat");
     }
 }

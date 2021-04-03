@@ -14,15 +14,15 @@ export class InputXssStage extends InputStage {
     constructor() {
         super();
         this.name = STORAGE_XSS;
-        this.header = 'ENTER YOUR EVAL';
-        this.label = '' +
-      'Paste your JS. Keep it short; max 256 chars.\n' +
-      'Line breaks will be removed.\n\n' +
-      '> ';
+        this.header = "ENTER YOUR EVAL";
+        this.label = "" +
+      "Paste your JS. Keep it short; max 256 chars.\n" +
+      "Line breaks will be removed.\n\n" +
+      "> ";
 
         this.minlength = 2;
         this.maxChars = 256;
-        this.displayWidth = MENU_WIDTH - fontWidth('> ');
+        this.displayWidth = MENU_WIDTH - fontWidth("> ");
         this.next = State.flow.GameStage;
 
         InputStage.call(this);

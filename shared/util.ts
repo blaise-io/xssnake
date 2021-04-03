@@ -188,7 +188,7 @@ export function benchmark(iterations, fn, label="") {
         fn();
     }
     duration = +new Date() - start;
-    console.log(label || 'Benchmark', {
+    console.log(label || "Benchmark", {
         x: iterations,
         avg: duration / iterations,
         total: duration
@@ -200,10 +200,10 @@ export function benchmark(iterations, fn, label="") {
  */
 export function getRandomName() {
     const name = randomArrItem([
-        'Ant', 'Bat', 'Bear', 'Bird', 'Cat', 'Cow', 'Crab', 'Croc', 'Deer',
-        'Dodo', 'Dog', 'Duck', 'Emu', 'Fish', 'Fly', 'Fox', 'Frog', 'Goat',
-        'Hare', 'Ibis', 'Kiwi', 'Lion', 'Lynx', 'Miao', 'Mole', 'Moth', 'Mule',
-        'Oger', 'Pig', 'Pika', 'Poke', 'Puma', 'Puss', 'Rat', 'Seal', 'Swan',
-        'Wasp', 'Wolf', 'Yak', 'Zeb']);
-    return name + '.' + randomRange(10, 99);
+        "Ant", "Bat", "Bear", "Bird", "Cat", "Cow", "Crab", "Croc", "Deer",
+        "Dodo", "Dog", "Duck", "Emu", "Fish", "Fly", "Fox", "Frog", "Goat",
+        "Hare", "Ibis", "Kiwi", "Lion", "Lynx", "Miao", "Mole", "Moth", "Mule",
+        "Oger", "Pig", "Pika", "Poke", "Puma", "Puss", "Rat", "Seal", "Swan",
+        "Wasp", "Wolf", "Yak", "Zeb"]);
+    return name + "." + randomRange(10, 99);
 }

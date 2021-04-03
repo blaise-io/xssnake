@@ -35,7 +35,7 @@ export class ScoreboardUI {
         this.lineHeight = 7;
         this.animationDuration = 200;
         this.animationPause = 200;
-        this.columnSpacing = fontWidth(' ');
+        this.columnSpacing = fontWidth(" ");
 
         this.oldPlayerOrder = this.getPlayersSortedByScore();
 
@@ -72,7 +72,7 @@ export class ScoreboardUI {
                 // New player.
                 this.paint(this.players.players[i], i, i);
                 this.queue = true;
-            } else if (typeof oldOrder[i] === 'undefined') {
+            } else if (typeof oldOrder[i] === "undefined") {
                 // Player placeholder.
                 this.paint(null, i, i);
             } else if (-1 === this.players.players.indexOf(oldOrder[i])) {
@@ -128,7 +128,7 @@ export class ScoreboardUI {
     }
 
     getPlayerScoreShape(player, coordinate) {
-        let shape; let scoreX; let name = '-'; let score = 0;
+        let shape; let scoreX; let name = "-"; let score = 0;
 
         if (player && player.connected) {
             name = player.name;

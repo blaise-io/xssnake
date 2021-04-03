@@ -11,6 +11,7 @@ import { lineShape } from "../../shared/shapeGenerator";
 import { DOM_EVENT_KEYDOWN, DOM_EVENT_KEYPRESS, DOM_EVENT_KEYUP, FRAME, NS_INPUT } from "../const";
 import { State } from "../state/state";
 import { fontEndPos, fontPixels, fontWidth } from "../ui/font";
+import { flash } from "../ui/shapeClient";
 
 export class InputField {
     maxValWidth: number;
@@ -49,7 +50,7 @@ export class InputField {
 
     bindEvents() {
         State.events.on(DOM_EVENT_KEYPRESS, NS_INPUT, function() {
-            State.audio.play('menu_alt');
+            State.audio.play("menu_alt");
         });
         State.events.on(DOM_EVENT_KEYDOWN, NS_INPUT, this.updateShapes.bind(this));
         State.events.on(DOM_EVENT_KEYUP, NS_INPUT, this.updateShapes.bind(this));
@@ -75,7 +76,7 @@ export class InputField {
 
     updateShapes() {
         this.maxwidthCutOff();
-        this.callback(this.input.getAttribute("value"));
+        this.callback(this.input.value);
         State.shapes.INPUT_CARET = this.getCaretShape();
         State.shapes.INPUT_VALUE = this.getInputValueShape();
     }
@@ -84,42 +85,33 @@ export class InputField {
      * @return {Element}
      */
     addInputToDom() {
-        const input = document.createElement('input');
-        input.setAttribute('maxlength', String(this.maxlength));
+        const input = document.createElement("input");
+        input.setAttribute("maxlength", String(this.maxlength));
         input.focus();
         document.body.appendChild(input);
         return input;
     }
 
-    /**
-     * @return {Shape}
-     */
-    getCaretShape() {
-        let segments; let untilCaretStr; let caret; let caretShape;
-
-        segments = this.getSelectionSegments();
-        untilCaretStr = segments[0] + segments[1];
+    getCaretShape(): Shape {
+        const segments = this.getSelectionSegments();
+        const untilCaretStr = segments[0] + segments[1];
         const endPos = fontEndPos(this.prefix + untilCaretStr, this.x, this.y, this.fontOptions);
-        caret = [endPos[0] - 1, endPos[1]];
+        const caret = [endPos[0] - 1, endPos[1]];
 
-        caretShape = lineShape(
+        const caretShape = lineShape(
             caret[0], caret[1] - 1,
             caret[0], caret[1] + 7
         );
 
-        caretShape.flash(FRAME * 20, FRAME * 20);
+        flash(caretShape, FRAME * 20, FRAME * 20);
 
         return caretShape;
     }
 
-    /**
-     * @return {Shape}
-     */
-    getInputValueShape() {
-        let shape; let values; let endpos;
-
-        values = this.getSelectionSegments();
-        shape = new Shape();
+    getInputValueShape(): Shape {
+        let endpos;
+        const values = this.getSelectionSegments();
+        const shape = new Shape();
         shape.add(fontPixels(
             this.prefix + values[0], this.x, this.y, this.fontOptions
         ));

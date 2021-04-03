@@ -143,10 +143,10 @@ export class StageFlow {
             // Mute/Unmute
             if (ev.keyCode === KEY_MUTE) {
                 mute = !storage(STORAGE_MUTE);
-                instruct = 'Sounds ' + (mute ? 'muted' : 'unmuted');
+                instruct = "Sounds " + (mute ? "muted" : "unmuted");
                 storage(STORAGE_MUTE, mute);
                 instruct(instruct, 1000);
-                State.audio.play('menu_alt');
+                State.audio.play("menu_alt");
             }
         }
     }
@@ -172,9 +172,9 @@ export class StageFlow {
         newStageAnim.doneCallback = callback;
 
         if (back) {
-            State.audio.play('swoosh_rev');
+            State.audio.play("swoosh_rev");
         } else {
-            State.audio.play('swoosh');
+            State.audio.play("swoosh");
         }
 
         State.shapes.oldstage = animate(oldShape, oldStageAnim);
@@ -182,7 +182,7 @@ export class StageFlow {
     }
 
     // TODO: StageInterface
-    private _setStage(stage: never, back: false) {
+    private _setStage(stage: any, back: false) {
         // Remove animated stages
         State.shapes.oldstage = null;
         State.shapes.newstage = null;

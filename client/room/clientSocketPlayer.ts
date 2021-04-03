@@ -21,7 +21,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.room = null;
 
         // Vanilla websockets.
-        this.connection = new WebSocket('ws://' + this.SERVER_ENDPOINT);
+        this.connection = new WebSocket("ws://" + this.SERVER_ENDPOINT);
         this.connection.onopen = this.onopen.bind(this);
         this.connection.onclose = this.onclose.bind(this);
         this.connection.onerror = this.onclose.bind(this);
@@ -83,7 +83,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         } else {
             emit = [event];
         }
-        console.log('OUT', emit);
+        console.log("OUT", emit);
         this.connection.send(JSON.stringify(emit));
     }
 
@@ -92,7 +92,7 @@ export class ClientSocketPlayer extends ClientPlayer {
      */
     onmessage(ev) {
         const data = JSON.parse(ev.data);
-        console.log('IN ', data);
+        console.log("IN ", data);
         State.events.trigger(data[0], data.slice(1));
     }
 
