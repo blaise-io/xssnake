@@ -1,34 +1,50 @@
-/**
- * @param {Array.<room.Message>} messages
- * @param {room.Player} localAuthor
- * @constructor
- */
-export class ui.MessageBox {
-    constructor(messages, localAuthor) {
-    this.messages = messages;
-    this.localAuthor = localAuthor;
+import { HEIGHT, WIDTH } from "../../shared/const";
+import { Player } from "../../shared/room/player";
+import { Shape } from "../../shared/shape";
+import { DOM_EVENT_KEYDOWN, FRAME, KEY_ENTER, KEY_ESCAPE, NS_CHAT, UC_ENTER_KEY } from "../const";
+import { Message } from "../room/message";
+import { InputField } from "../stage_class_helper/inputField";
+import { State } from "../state/state";
+import { font, fontPixels, fontWidth } from "./font";
+import { animate, flash, lifetime } from "./shapeClient";
 
-    this.animating = false;
-    this.skipQueue = false;
-    this.queued = 0;
+export class MessageBoxUI {
+    private animating: boolean;
+    private skipQueue: boolean;
+    private queued: number;
+    private inputField: InputField;
+    sendMessageFn: any;
+    private lineHeight: number;
+    private animationDuration: number;
+    private x0: number;
+    private x1: number;
+    private y0: number;
+    private y1: number;
+    private padding: { y0: number; x0: number; y1: number; x1: number };
 
-    this.inputField = null;
-    this.sendMessageFn = noop;
+    constructor(public messages: Message[], public localAuthor: Player) {
 
-    this.lineHeight = 7;
-    this.animationDuration = 200;
+        this.animating = false;
+        this.skipQueue = false;
+        this.queued = 0;
 
-    this.x0 = 109;
-    this.x1 = WIDTH - 2;
-    this.y0 = HEIGHT - 25;
-    this.y1 = HEIGHT - 2;
+        this.inputField = null;
+        this.sendMessageFn = () => {
+        };
 
-    this.padding = {x0: 0, x1: 0, y0: 1, y1: 1};
+        this.lineHeight = 7;
+        this.animationDuration = 200;
 
-    this.bindEvents();
-    this.updateMessages();
-};
+        this.x0 = 109;
+        this.x1 = WIDTH - 2;
+        this.y0 = HEIGHT - 25;
+        this.y1 = HEIGHT - 2;
 
+        this.padding = {x0: 0, x1: 0, y0: 1, y1: 1};
+
+        this.bindEvents();
+        this.updateMessages();
+    }
 
 
     destruct() {
@@ -37,33 +53,33 @@ export class ui.MessageBox {
             this.inputField.destruct();
             this.inputField = null;
         }
-    },
+    }
 
     bindEvents() {
         State.events.on(DOM_EVENT_KEYDOWN, NS_CHAT, this.handleKeys.bind(this));
-    },
+    }
 
     handleKeys(ev) {
         switch (ev.keyCode) {
-            case KEY_ESCAPE:
+        case KEY_ESCAPE:
+            this.hideInput();
+            this.hideEnterKey();
+            ev.preventDefault();
+            break;
+        case KEY_ENTER:
+            if (this.inputField) {
+                this.sendMessage(this.inputField.getValue());
                 this.hideInput();
-                this.hideEnterKey();
-                ev.preventDefault();
-                break;
-            case KEY_ENTER:
-                if (this.inputField) {
-                    this.sendMessage(this.inputField.getValue());
-                    this.hideInput();
-                } else if (!State.keysBlocked) {
-                    this.showInput();
-                }
-                ev.preventDefault();
-                break;
+            } else if (!State.keysBlocked) {
+                this.showInput();
+            }
+            ev.preventDefault();
+            break;
         }
-    },
+    }
 
     showInput() {
-        var x, y, prefix;
+        let x; let y; let prefix;
 
         x = this.x0 + this.padding.x1 + new Message('', '').getOffset();
         y = this.y1 - this.padding.y1 - this.lineHeight;
@@ -78,7 +94,7 @@ export class ui.MessageBox {
 
         this.updateMessages();
         this.showEnterKey();
-    },
+    }
 
     hideInput() {
         if (this.inputField) {
@@ -86,20 +102,20 @@ export class ui.MessageBox {
             this.inputField = null;
         }
         this.updateMessages();
-    },
+    }
 
     sendMessage(body) {
-        var author = String(this.localAuthor.name);
+        const author = String(this.localAuthor.name);
         if (body.trim()) {
             this.messages.push(new Message(author, body));
             this.sendMessageFn(body);
             this.skipQueue = true;
         }
         this.hideEnterKey(!!body.trim());
-    },
+    }
 
     showEnterKey() {
-        var x, y, shape;
+        let x; let y; let shape;
 
         x = this.x1 - this.padding.x1 - fontWidth(UC_ENTER_KEY);
         y = this.y1 - this.lineHeight - this.padding.y1 + 1;
@@ -107,33 +123,34 @@ export class ui.MessageBox {
         shape = State.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y);
         shape.invert(shape.bbox(2));
         shape.isOverlay = true;
-    },
+    }
 
     /**
-     * @param {boolean=} flash
+     * @param {boolean=} flashKey
      */
-    hideEnterKey(flash) {
-        var speed = FRAME * 4;
-        if (flash) {
-            State.shapes.MSG_ENTER.flash(speed, speed).lifetime(0, speed);
+    hideEnterKey(flashKey?: boolean) {
+        const speed = FRAME * 4;
+        if (flashKey) {
+            flash(State.shapes.MSG_ENTER, speed, speed)
+            lifetime(State.shapes.MSG_ENTER, 0, speed);
         } else {
             State.shapes.MSG_ENTER = null;
         }
-    },
+    }
 
     getDisplayMessages(num) {
         return this.messages.slice(
             -num - 1 - this.queued,
             this.messages.length - this.queued
         );
-    },
+    }
 
     getNumMessagesFit() {
-        var fits = (this.y1 - this.padding.y1) - (this.y0 + this.padding.y0);
+        let fits = (this.y1 - this.padding.y1) - (this.y0 + this.padding.y0);
         fits = Math.floor(fits / this.lineHeight);
         fits -= this.inputField === null ? 0 : 1;
         return fits;
-    },
+    }
 
     debounceUpdate() {
         if (this.animating && !this.skipQueue) {
@@ -141,10 +158,10 @@ export class ui.MessageBox {
         } else {
             this.updateMessages();
         }
-    },
+    }
 
     updateMessages() {
-        var num, shape, messages;
+        let num; let shape; let messages;
 
         shape = new Shape();
         shape.mask = [
@@ -161,7 +178,7 @@ export class ui.MessageBox {
             return false;
         }
 
-        for (var i = 0, m = messages.length; i < m; i++) {
+        for (let i = 0, m = messages.length; i < m; i++) {
             shape.add(this.getMessagePixels(i, messages[i]));
         }
 
@@ -174,33 +191,33 @@ export class ui.MessageBox {
         } else if (messages.length === num + 1) {
             this.animate(shape);
         }
-    },
+    }
 
     getMessagePixels(lineIndex, message) {
-        var x, y;
+        let x; let y;
         x = this.x0 + this.padding.x0;
         y = this.y0 + this.padding.y0 + (lineIndex * this.lineHeight);
         return fontPixels(
             message.getFormatted(), x + message.getOffset(), y
         );
-    },
+    }
 
     animate(shape) {
         this.animating = true;
-        var anim = {
+        const anim = {
             to: [0, -this.lineHeight],
             duration: this.animationDuration,
             callback: this.animateCallback.bind(this)
         };
-        shape.animate(anim);
-    },
+        animate(shape, anim);
+    }
 
     animateCallback(shape) {
         shape.transform.translate = [0, -this.lineHeight];
         shape.pixels.removeLine(this.y0 + this.lineHeight);
         shape.uncache();
         setTimeout(this.processQueue.bind(this), 200);
-    },
+    }
 
     processQueue() {
         this.animating = false;
@@ -210,4 +227,4 @@ export class ui.MessageBox {
         }
     }
 
-};
+}

@@ -23,7 +23,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
                 this.players[i].emit(type, data);
             }
         }
-    },
+    }
 
     /**
      * Emit players.
@@ -36,7 +36,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
                 this.serialize(this.players[i])
             );
         }
-    },
+    }
 
     removeDisconnectedPlayers() {
         for (var i = 0; i < this.players.length; i++) {
@@ -46,7 +46,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
                 this.emitPlayers();
             }
         }
-    },
+    }
 
     /**
      * @param {level.Level} level
@@ -55,7 +55,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].setSnake(i, level);
         }
-    },
+    }
 
     /**
      * @param {number} tick
@@ -69,7 +69,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
             }
         }
         return crashingPlayers;
-    },
+    }
 
     /**
      * @param {number} tick

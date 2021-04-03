@@ -4,12 +4,12 @@
  */
 export class ServerRoomManager {
     constructor(ServerRoomManager) {
-    this.server = server;
-    /** @type {Array.<room.ServerRoom>} */
-    this.rooms = [];
-    this.matcher = new Matcher(this.rooms);
-    this.bindEvents();
-};
+        this.server = server;
+        /** @type {Array.<room.ServerRoom>} */
+        this.rooms = [];
+        this.matcher = new Matcher(this.rooms);
+        this.bindEvents();
+    }
 
 
 
@@ -21,14 +21,14 @@ export class ServerRoomManager {
             NC_ROOM_JOIN_KEY,
             NC_ROOM_JOIN_MATCHING
         ]);
-    },
+    }
 
     bindEvents() {
-        var emitter = this.server.emitter;
+        const emitter = this.server.emitter;
         emitter.on(NC_ROOM_STATUS, this.emitRoomStatus.bind(this));
         emitter.on(NC_ROOM_JOIN_KEY, this.autojoinRoom.bind(this));
         emitter.on(NC_ROOM_JOIN_MATCHING, this.joinMatchingRoom.bind(this));
-    },
+    }
 
     /**
      * @param {string} key
@@ -36,44 +36,44 @@ export class ServerRoomManager {
      */
     room(key) {
         return this.rooms[key];
-    },
+    }
 
     /**
      * @param {room.ServerRoom} room
      */
     remove(room) {
         room.destruct();
-        for (var i = 0, m = this.rooms.length; i < m; i++) {
+        for (let i = 0, m = this.rooms.length; i < m; i++) {
             if (room === this.rooms[i]) {
                 this.rooms.splice(i, 1);
             }
         }
-    },
+    }
 
     removeAllRooms() {
-        for (var i = 0, m = this.rooms.length; i < m; i++) {
+        for (let i = 0, m = this.rooms.length; i < m; i++) {
             this.rooms[i].destruct();
         }
         this.rooms.length = 0;
-    },
+    }
 
     /**
      * @param {room.ServerOptions} preferences
      * @return {room.ServerRoom}
      */
     createRoom(preferences) {
-        var room, id = randomStr(ROOM_KEY_LENGTH);
+        let room; const id = randomStr(ROOM_KEY_LENGTH);
         room = new ServerRoom(this.server, preferences, id);
         this.rooms.push(room);
         return room;
-    },
+    }
 
     /**
      * @param {Array.<?>} dirtyKeyArr
      * @param {room.ServerPlayer} player
      */
     autojoinRoom(dirtyKeyArr, player) {
-        var room, key, status;
+        let room; let key; let status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);
 
@@ -85,7 +85,7 @@ export class ServerRoomManager {
         } else {
             player.emit(NC_ROOM_JOIN_ERROR, [status]);
         }
-    },
+    }
 
     /**
      * @param {Array.<?>} dirtySerializeOptions
@@ -93,10 +93,10 @@ export class ServerRoomManager {
      * @private
      */
     joinMatchingRoom(dirtySerializeOptions, player) {
-        var options, room, emitDataArr;
+        let options; let room; let emitDataArr;
 
         emitDataArr = new Sanitizer(dirtySerializeOptions)
-                                  .assertArray().getValueOr([]);
+            .assertArray().getValueOr([]);
         options = new ServerOptions(emitDataArr);
 
         room = this.matcher.getRoomMatching(options);
@@ -104,29 +104,29 @@ export class ServerRoomManager {
         room.addPlayer(player);
         room.emitAll(player);
         room.detectAutostart();
-    },
+    }
 
     getRoomByKey(key) {
-        for (var i = 0, m = this.rooms.length; i < m; i++) {
+        for (let i = 0, m = this.rooms.length; i < m; i++) {
             if (key === this.rooms[i].key) {
                 return this.rooms[i];
             }
         }
         return null;
-    },
+    }
 
     getSanitizedRoomKey(dirtyKeyArr) {
-        var keySanitizer = new Sanitizer(dirtyKeyArr[0]);
+        const keySanitizer = new Sanitizer(dirtyKeyArr[0]);
         keySanitizer.assertStringOfLength(ROOM_KEY_LENGTH);
         return keySanitizer.getValueOr();
-    },
+    }
 
     /**
      * @param {string} key
      * @return {number}
      */
     getRoomStatus(key) {
-        var room;
+        let room;
         if (!key) {
             return ROOM_INVALID_KEY;
         }
@@ -139,14 +139,14 @@ export class ServerRoomManager {
             return ROOM_IN_PROGRESS;
         }
         return ROOM_JOINABLE;
-    },
+    }
 
     /**
      * @param {Array.<?>} dirtyKeyArr
      * @param {room.ServerPlayer} player
      */
     emitRoomStatus(dirtyKeyArr, player) {
-        var room, key, status;
+        let room; let key; let status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);
 
@@ -160,4 +160,4 @@ export class ServerRoomManager {
         }
     }
 
-};
+}

@@ -11,6 +11,7 @@ import {
 import { InputField } from "../stage_class_helper/inputField";
 import { State } from "../state/state";
 import { font, fontHeight, fontPixels } from "../ui/font";
+import { lifetime } from "../ui/shapeClient";
 import { zoom } from "../ui/transformClient";
 import { storage } from "../util/clientUtil";
 
@@ -18,7 +19,7 @@ export class InputStage {
     private _shape: Shape;
     private fontOptions: any;
     private _inputTop: number;
-    private value: any;
+    public value: any;
     private input: any;
 
     constructor() {
@@ -27,13 +28,12 @@ export class InputStage {
         this._inputTop = MENU_TOP + 17;
         this.fontOptions = {wrap: MENU_LEFT + MENU_WIDTH - 25};
         this._shape = this._getShape();
-
     }
 
     name = ''
     header = ''
     label = ''
-    next = InputStage
+    next: any = InputStage // TODO: StageInterface
 
     minlength = 0
     maxChars = 0
@@ -85,10 +85,10 @@ export class InputStage {
             State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
         } else {
             State.shapes.message = font(error, MENU_LEFT, top);
-            State.shapes.message.lifetime(0, 500);
+            lifetime(State.shapes.message, 0, 500);
         }
     }    _setupInputField() {
-        var input = new InputField(
+        const input = new InputField(
             MENU_LEFT, this._inputTop, this.label, this.fontOptions
         );
 
@@ -115,21 +115,21 @@ export class InputStage {
      * @private
      */
     _handleKeys(ev) {
-        var value, top;
+        let value; let top;
         switch (ev.keyCode) {
-            case KEY_ESCAPE:
-                State.flow.previousStage();
-                ev.preventDefault();
-                break;
-            case KEY_ENTER:
-                value = this.value.trim();
-                top = fontHeight(
-                    this.label,
-                    MENU_LEFT,
-                    this._inputTop,
-                    this.fontOptions
-                );
-                this.inputSubmit(this._getInputError(value), value, top);
+        case KEY_ESCAPE:
+            State.flow.previousStage();
+            ev.preventDefault();
+            break;
+        case KEY_ENTER:
+            value = this.value.trim();
+            top = fontHeight(
+                this.label,
+                MENU_LEFT,
+                this._inputTop,
+                this.fontOptions
+            );
+            this.inputSubmit(this._getInputError(value), value, top);
         }
     }
 
@@ -152,7 +152,7 @@ export class InputStage {
      * @private
      */
     _getShape() {
-        var shape = this._getShapeExcludeValue();
+        const shape = this._getShapeExcludeValue();
         shape.add(this._getDataShape().pixels);
         return shape;
     }
@@ -162,7 +162,7 @@ export class InputStage {
      * @private
      */
     _getShapeExcludeValue() {
-        var pixels = fontPixels(this.header);
+        let pixels = fontPixels(this.header);
         pixels = zoom(2, pixels, MENU_LEFT, MENU_TOP);
         return new Shape(pixels);
     }
@@ -172,10 +172,10 @@ export class InputStage {
      * @private
      */
     _getDataShape() {
-        var value = this.label + this.value;
+        const value = this.label + this.value;
         return new Shape(fontPixels(
             value, MENU_LEFT, this._inputTop, this.fontOptions
         ));
     }
 
-};
+}

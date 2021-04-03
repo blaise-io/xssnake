@@ -48,35 +48,35 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
         this.handleDisconnectBound = null;
         this.roomEmitter = null;
         this.levelset = null;
-    },
+    }
 
     bindEvents() {
         this.roomEmitter.on(SE_PLAYER_DISCONNECT, this.handleDisconnectBound);
         this.roomEmitter.on(NC_ROOM_START, this.handleManualRoomStart.bind(this));
-    },
+    }
 
     unbindEvents() {
         this.roomEmitter.removeListener(SE_PLAYER_DISCONNECT, this.handleDisconnectBound);
         this.roomEmitter.removeAllListeners(NC_ROOM_START);
-    },
+    }
 
     /**
      * @param {room.ServerPlayer} player
      */
     emit(player) {
         player.emit(NC_ROUND_SERIALIZE, this.serialize());
-    },
+    }
 
     emitAll() {
         this.players.emit(NC_ROUND_SERIALIZE, this.serialize());
-    },
+    }
 
     /**
      * @return {number}
      */
     getAlivePlayers() {
         return this.players.filter({snake: {crashed: false}});
-    },
+    }
 
     /**
      * @param {room.ServerPlayer} winner
@@ -85,7 +85,7 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
         var data = [this.players.players.indexOf(winner)];
         this.players.emit(NC_ROUND_WRAPUP, data);
         this.wrappingUp = true;
-    },
+    }
 
     /**
      * @param {boolean} enabled
@@ -101,7 +101,7 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
                 SECONDS_ROUND_COUNTDOWN * 1000
             );
         }
-    },
+    }
 
     startRound() {
         this.unbindEvents();
@@ -109,13 +109,13 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
         this.game = new ServerGame(this.roomEmitter, this.level, this.players);
         this.started = true;
         this.players.emit(NC_ROUND_START);
-    },
+    }
 
     handleManualRoomStart(nodata, player) {
         if (this.players.isHost(player) && !this.countdownTimer) {
             this.toggleCountdown(true);
         }
-    },
+    }
 
     handleDisconnect() {
         if (this.countdownStarted) {

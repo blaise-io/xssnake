@@ -13,10 +13,10 @@ export class SnakeMove {
 
     constructor(public snake, public players, public level, public location) {
         this.collision = this.getCollission();
-    };
+    }
 
     getParts(part) {
-        var parts = this.snake.parts.slice();
+        const parts = this.snake.parts.slice();
         parts.unshift();
         parts.push(part);
         return parts;
@@ -26,9 +26,9 @@ export class SnakeMove {
      * @return {game.Collision}
      */
     getCollission() {
-        var parts = this.getParts(this.location);
-        for (var i = 0, m = parts.length; i < m; i++) {
-            var collision = this.getCollisionPart(i, parts[i]);
+        const parts = this.getParts(this.location);
+        for (let i = 0, m = parts.length; i < m; i++) {
+            const collision = this.getCollisionPart(i, parts[i]);
             if (collision) {
                 return collision;
             }
@@ -42,7 +42,7 @@ export class SnakeMove {
      * @return {game.Collision}
      */
     getCollisionPart(index, part) {
-        var players, levelData, partIndex;
+        let players; let levelData; let partIndex;
         players = this.players;
         levelData = this.level.data;
 
@@ -61,8 +61,8 @@ export class SnakeMove {
             return new Collision(part, CRASH_MOVING_WALL);
         }
 
-        for (var i = 0, m = players.length; i < m; i++) {
-            var opponentSnake = players[i].snake;
+        for (let i = 0, m = players.length; i < m; i++) {
+            const opponentSnake = players[i].snake;
             if (opponentSnake.crashed === false &&
                 opponentSnake !== this.snake &&
                 opponentSnake.hasPart(part)
@@ -74,4 +74,4 @@ export class SnakeMove {
         return null;
     }
 
-};
+}

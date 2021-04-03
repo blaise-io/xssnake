@@ -1,6 +1,7 @@
 import { ImageDecoder } from "../../client/level/imageDecoder";
 import { State } from "../../client/state/state";
-import { innerBorder, outerBorder } from "../../client/ui/clientShapes";
+import { innerBorder, outerBorder } from "../../client/ui/clientShapeGenerator";
+import { setGameTransform } from "../../client/ui/shapeClient";
 import { LevelAnimationRegistry } from "../levelanim/registry";
 import { Config } from "../levelset/config";
 import { Shape } from "../shape";
@@ -20,7 +21,7 @@ export class Level {
     }
 
     public registerAnimations() {
-        // noop?
+        // () => {}?
     }
 
     /**
@@ -44,7 +45,7 @@ export class Level {
     public paint() {
         if (__IS_CLIENT__) {
             State.shapes.level = new Shape(this.data.walls);
-            State.shapes.level.setGameTransform();
+            setGameTransform(State.shapes.level);
             State.shapes.innerborder = innerBorder();
             outerBorder(function(k, border) {
                 State.shapes[k] = border;

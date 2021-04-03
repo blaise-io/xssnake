@@ -31,10 +31,10 @@ export class ScreenStage {
 
     _handleKeys(ev) {
         switch (ev.keyCode) {
-            case KEY_BACKSPACE:
-            case KEY_ESCAPE:
-            case KEY_ENTER:
-                State.flow.previousStage();
+        case KEY_BACKSPACE:
+        case KEY_ESCAPE:
+        case KEY_ENTER:
+            State.flow.previousStage();
         }
     }
 

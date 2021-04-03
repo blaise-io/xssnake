@@ -4,14 +4,14 @@
  */
 export class ServerScore {
     constructor(ServerScore) {
-    this.players = players;
-};
+        this.players = players;
+    }
 
 
 
     destruct() {
         this.players = null;
-    },
+    }
 
     /**
      * @param {Array.<room.ServerPlayer>} crashedPlayers
@@ -19,15 +19,15 @@ export class ServerScore {
      * @return {boolean} Player score is affected.
      */
     update(crashedPlayers, level) {
-        var points, scoreUpdated = false;
+        let points; let scoreUpdated = false;
         if (!level) {
             console.error("FIXME");
             return false;
         }
         points = crashedPlayers.length * level.config.pointsKnockout;
         if (points) {
-            for (var i = 0, m = this.players.players.length; i < m; i++) {
-                var player = this.players.players[i];
+            for (let i = 0, m = this.players.players.length; i < m; i++) {
+                const player = this.players.players[i];
                 if (-1 === crashedPlayers.indexOf(player) && !player.snake.crashed) {
                     player.score += points;
                     scoreUpdated = true;
@@ -37,18 +37,18 @@ export class ServerScore {
         if (scoreUpdated) {
             this.emitScore();
         }
-    },
+    }
 
     /**
      * @return {Array.<number>}
      */
     serialize() {
-        var score = [];
-        for (var i = 0, m = this.players.players.length; i < m; i++) {
+        const score = [];
+        for (let i = 0, m = this.players.players.length; i < m; i++) {
             score.push(this.players.players[i].score);
         }
         return score;
-    },
+    }
 
     emitScore() {
         this.players.emit(NC_SCORE_UPDATE, this.serialize());
@@ -104,4 +104,4 @@ export class ServerScore {
     //        return position > 0 ? SCORE_LEADING : SCORE_BEHIND;
     //    }
     //}
-};
+}

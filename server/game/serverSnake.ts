@@ -20,14 +20,14 @@ extend(game.ServerSnake.prototype, /** @lends {game.ServerSnake.prototype} */ {
 
     destruct() {
         this.level = null;
-    },
+    }
 
     /**
      * @return {Array}
      */
     serialize() {
         return [this.index, this.direction, this.parts];
-    },
+    }
 
     /**
      * @param {number} tick
@@ -53,7 +53,7 @@ extend(game.ServerSnake.prototype, /** @lends {game.ServerSnake.prototype} */ {
                 this.collision.tick = tick;
             }
         }
-    },
+    }
 
     /**
      * @return {Coordinate}
@@ -62,7 +62,7 @@ extend(game.ServerSnake.prototype, /** @lends {game.ServerSnake.prototype} */ {
         var shift, head = this.getHead();
         shift = GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
-    },
+    }
 
     /**
      * @param {number} tick

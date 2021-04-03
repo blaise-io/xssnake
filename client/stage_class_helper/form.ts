@@ -1,168 +1,175 @@
-/**
- * Form with choice fields
- * @param {string} header
- * @param {string=} footer
- * @constructor
- */
+import { HEIGHT } from "../../shared/const";
+import { Shape } from "../../shared/shape";
+import { ensureIndexWithinBounds } from "../../shared/util";
+import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC_TR_LEFT } from "../const";
+import { font, fontHeight, fontPixels, fontWidth, LINE_HEIGHT, LINE_HEIGHT_MENU } from "../ui/font";
+import { zoom } from "../ui/transformClient";
+
+
 export class Form {
-    constructor(header, footer) {
-    this.header = header.toUpperCase();
-    this.footer = footer || '';
-    this.selectedField = 0;
-    this.selectedOption = [];
-    this.fields = [];
-    this.maxwidth = 0;
-};
+  private selectedField: number;
+  private selectedOption: any[];
+  private fields: any[];
+  private maxwidth: number;
 
+  constructor(public header: string, public footer: string = "") {
+      this.header = header.toUpperCase();
 
+      this.selectedField = 0;
+      this.selectedOption = [];
+      this.fields = [];
+      this.maxwidth = 0;
+  }
 
-    /**
-     * @param {number} id
-     * @param {string} label
-     * @param {Array.<Array>=} options
-     */
-    addField(id, label, options) {
-        this.fields.push({
-            id     : id,
-            label  : label.toUpperCase(),
-            options: options
-        });
+  /**
+   * @param {number} id
+   * @param {string} label
+   * @param {Array.<Array>=} options
+   */
+  addField(id, label, options) {
+      this.fields.push({
+          id: id,
+          label: label.toUpperCase(),
+          options: options
+      });
 
-        this.selectedOption.push(0);
+      this.selectedOption.push(0);
 
-        for (var i = 0, m = options.length; i < m; i++) {
-            this.maxwidth = Math.max(
-                this.maxwidth,
-                fontWidth(options[i][1].toUpperCase())
-            );
-        }
-    }
+      for (let i = 0, m = options.length; i < m; i++) {
+          this.maxwidth = Math.max(
+              this.maxwidth,
+              fontWidth(options[i][1].toUpperCase())
+          );
+      }
+  }
 
-    /**
-     * @param {number} delta
-     */
-    selectField(delta) {
-        this.selectedField = ensureIndexWithinBounds(
-            this.selectedField + delta,
-            this.fields
-        );
-    }
+  /**
+   * @param {number} delta
+   */
+  selectField(delta) {
+      this.selectedField = ensureIndexWithinBounds(
+          this.selectedField + delta,
+          this.fields
+      );
+  }
 
-    /**
-     * @param {number} delta
-     */
-    selectOption(delta) {
-        var focusField = this.fields[this.selectedField];
-        if (focusField) {
-            this.selectedOption[this.selectedField] = ensureIndexWithinBounds(
-                this.selectedOption[this.selectedField] + delta,
-                focusField.options
-            );
-        }
-    }
+  /**
+   * @param {number} delta
+   */
+  selectOption(delta) {
+      const focusField = this.fields[this.selectedField];
+      if (focusField) {
+          this.selectedOption[this.selectedField] = ensureIndexWithinBounds(
+              this.selectedOption[this.selectedField] + delta,
+              focusField.options
+          );
+      }
+  }
 
-    /**
-     * @return {Shape}
-     */
-    getShape() {
-        var x, optionX, y, shape;
+  /**
+   * @return {Shape}
+   */
+  getShape() {
+      let x; let optionX; let y; let shape;
 
-        x = MENU_LEFT;
-        y = MENU_TOP;
+      x = MENU_LEFT;
+      y = MENU_TOP;
 
-        optionX = MENU_LEFT + 2 + MENU_WIDTH -
-                  this.maxwidth - fontWidth(' ' + UC_TR_LEFT);
+      optionX = MENU_LEFT + 2 + MENU_WIDTH -
+      this.maxwidth - fontWidth(' ' + UC_TR_LEFT);
 
-        shape = new Shape();
-        shape.add(this._getHeaderPixels(x, y));
-        shape.add(this._getFooterPixels(x));
+      shape = new Shape();
+      shape.add(this._getHeaderPixels(x, y));
+      shape.add(this._getFooterPixels(x));
 
-        y += MENU_TITLE_HEIGHT;
+      y += MENU_TITLE_HEIGHT;
 
-        // Draw options
-        for (var i = 0, m = this.fields.length; i < m; i++) {
-            var option, bbox, active = (this.selectedField === i);
+      // Draw options
+      for (let i = 0, m = this.fields.length; i < m; i++) {
+          var option; var bbox; const active = (this.selectedField === i);
 
-            option = this._getOptionsShape(i, x, optionX, y, active);
+          option = this._getOptionsShape(i, x, optionX, y, active);
 
-            if (active) {
-                bbox = option.bbox();
-                bbox.x0 -= 1;
-                bbox.x1 += 1;
-                bbox.y0 = y - 1;
-                bbox.y1 = y + Font.LINE_HEIGHT;
-                option.invert();
-            }
+          if (active) {
+              bbox = option.bbox();
+              bbox.x0 -= 1;
+              bbox.x1 += 1;
+              bbox.y0 = y - 1;
+              bbox.y1 = y + LINE_HEIGHT;
+              option.invert();
+          }
 
-            shape.add(option.pixels);
-            y += Font.LINE_HEIGHT_MENU;
-        }
+          shape.add(option.pixels);
+          y += LINE_HEIGHT_MENU;
+      }
 
-        return shape;
-    }    getData() {
-        var values = [];
-        for (var i = 0, m = this.fields.length; i < m; i++) {
-            var field = this.fields[i],
-            optionIndex = this.selectedOption[i];
-            values[field.id] = field.options[optionIndex][0];
-        }
-        return values;
-    }
+      return shape;
+  }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {PixelCollection}
-     * @private
-     */
-    _getHeaderPixels(x, y) {
-        var header = fontPixels(this.header);
-        return zoom(2, header, x, y);
-    }
+  getData() {
+      const values = [];
+      for (let i = 0, m = this.fields.length; i < m; i++) {
+          const field = this.fields[i];
+          const optionIndex = this.selectedOption[i];
+          values[field.id] = field.options[optionIndex][0];
+      }
+      return values;
+  }
 
-    /**
-     * @param {number} x
-     * @return {PixelCollection}
-     * @private
-     */
-    _getFooterPixels(x) {
-        var height = fontHeight(this.footer);
-        return fontPixels(this.footer, x, HEIGHT - 3 - height);
-    }
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @return {PixelCollection}
+   * @private
+   */
+  _getHeaderPixels(x, y) {
+      const header = fontPixels(this.header);
+      return zoom(2, header, x, y);
+  }
 
-    /**
-     * @param {number} i
-     * @param {number} x
-     * @param {number} col2X
-     * @param {number} y
-     * @param {boolean} active
-     * @return {Shape}
-     * @private
-     */
-    _getOptionsShape(i, x, col2X, y, active) {
-        var label, shape, value, option, pixels, props = {};
+  /**
+   * @param {number} x
+   * @return {PixelCollection}
+   * @private
+   */
+  _getFooterPixels(x) {
+      const height = fontHeight(this.footer);
+      return fontPixels(this.footer, x, HEIGHT - 3 - height);
+  }
 
-        label = this.fields[i].label;
-        shape = font(label, x, y);
+  /**
+   * @param {number} i
+   * @param {number} x
+   * @param {number} col2X
+   * @param {number} y
+   * @param {boolean} active
+   * @return {Shape}
+   * @private
+   */
+  _getOptionsShape(i, x, col2X, y, active) {
+      let label; let shape; let value; let option; let pixels; const props: any = {};
 
-        option = this.fields[i].options[this.selectedOption[i] || 0];
-        value = option[1].toUpperCase();
+      label = this.fields[i].label;
+      shape = font(label, x, y);
 
-        props.option = col2X + (this.maxwidth - fontWidth(value)) / 2;
-        props.option = Math.floor(props.option);
+      option = this.fields[i].options[this.selectedOption[i] || 0];
+      value = option[1].toUpperCase();
 
-        pixels = fontPixels(value, props.option, y);
-        shape.add(pixels);
+      props.option = col2X + (this.maxwidth - fontWidth(value)) / 2;
+      props.option = Math.floor(props.option);
 
-        props.left = col2X - fontWidth(UC_TR_LEFT + ' ');
-        props.right = col2X + this.maxwidth + fontWidth(' ');
+      pixels = fontPixels(value, props.option, y);
+      shape.add(pixels);
 
-        shape.add(
-            fontPixels('<', props.left, y),
-            fontPixels('>', props.right, y)
-        );
+      props.left = col2X - fontWidth(UC_TR_LEFT + ' ');
+      props.right = col2X + this.maxwidth + fontWidth(' ');
 
-        return shape;
-    }
+      shape.add(
+          fontPixels('<', props.left, y),
+          fontPixels('>', props.right, y)
+      );
 
-};
+      return shape;
+  }
+
+}

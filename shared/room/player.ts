@@ -6,18 +6,14 @@ import { Snake } from "../snake";
 
 export class Player {
 
-    name: void | string;
     connected: boolean;
     score: number;
     snake: Snake;
     local: boolean;
 
-    constructor(name) {
-        /** @type {string} */
-        this.name = name || '';
+    constructor(public name='') {
         this.connected = false;
         this.score = 0;
-        /** @type {game.Snake} */
         this.snake = null;
     }
 

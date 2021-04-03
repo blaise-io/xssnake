@@ -1,37 +1,36 @@
-/**
- * @extends {SelectStage}
- * @implements {StageInterface}
- * @constructor
- */
-ColorStage = function() {
-    this.menu = this._getMenu();
-    this.menu.select(storage(STORAGE_COLOR));
-    SelectStage.call(this);
-};
+import { colorSchemes } from "../bootstrap/registerColorSchemes";
+import { STORAGE_COLOR } from "../const";
+import { SelectStage } from "../stage_base/selectStage";
+import { SelectMenu } from "../stage_class_helper/selectMenu";
+import { State } from "../state/state";
+import { storage } from "../util/clientUtil";
 
-extend(ColorStage.prototype, SelectStage.prototype);
-extend(ColorStage.prototype, /** @lends {ColorStage.prototype} */ {
+export class ColorStage extends SelectStage {
+    constructor() {
+        super();
+        this.menu = this._getMenu();
+        this.menu.select(storage(STORAGE_COLOR));
+    }
 
     /**
-     * @return {SelectMenu}
-     * @private
-     */
+   * @return {SelectMenu}
+   * @private
+   */
     _getMenu() {
-        var menu = new SelectMenu('COLOR SCHEME');
-        for (var i = 0, m = colorSchemes.length; i < m; i++) {
-            var title = colorSchemes[i].title, desc = colorSchemes[i].desc;
+        const menu = new SelectMenu('COLOR SCHEME');
+        for (let i = 0, m = colorSchemes.length; i < m; i++) {
+            const title = colorSchemes[i].title; const desc = colorSchemes[i].desc;
             menu.addOption(null, null, title, desc, this._setColor.bind(this));
         }
         return menu;
     }
 
     /**
-     * @param {number} index
-     * @private
-     */
+   * @param {number} index
+   * @private
+   */
     _setColor(index) {
-        canvas.setColorScheme(colorSchemes[index]);
+        State.canvas.setColorScheme(colorSchemes[index]);
         storage(STORAGE_COLOR, index);
     }
-});
-
+}

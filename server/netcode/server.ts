@@ -1,15 +1,15 @@
-var events = require('events');
-var WebSocketServer = require('ws').Server;
+const events = require('events');
+const WebSocketServer = require('ws').Server;
 
 /**
  * @constructor
  */
 export class Server {
     constructor(Server) {
-    this.emitter = new events.EventEmitter();
-    this.roomManager = new ServerRoomManager(this);
-    this.ws = this.start();
-};
+        this.emitter = new events.EventEmitter();
+        this.roomManager = new ServerRoomManager(this);
+        this.ws = this.start();
+    }
 
 
 
@@ -17,10 +17,10 @@ export class Server {
         this.roomManager.destruct();
         this.roomManager = null;
         this.ws.close();
-    },
+    }
 
     start() {
-        var ws = new WebSocketServer({
+        const ws = new WebSocketServer({
             host: SERVER_HOST,
             port: SERVER_PORT,
             path: SERVER_PATH
@@ -33,4 +33,4 @@ export class Server {
         return ws;
     }
 
-};
+}

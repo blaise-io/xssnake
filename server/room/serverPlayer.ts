@@ -41,7 +41,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
         this.snake = null;
         this.room = null;
         this.heartbeat = null;
-    },
+    }
 
     disconnect() {
         this.connected = false;
@@ -55,7 +55,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
             this.connection = null;
         }
         this.emitter.removeAllListeners();
-    },
+    }
 
     /**
      * @param {string} jsonStr
@@ -66,7 +66,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
         if (message.isClean) {
             this.emitMessage(message.event, message.data);
         }
-    },
+    }
 
     emitMessage(event, data) {
         var playerEmits, roomEmits;
@@ -78,7 +78,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
         if (!playerEmits && !roomEmits) {
             this.server.emitter.emit(event, data, this);
         }
-    },
+    }
 
     onclose() {
         if (this.room && this.room.rounds && this.room.rounds.hasStarted()) {
@@ -89,15 +89,15 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
         } else {
             this.destruct();
         }
-    },
+    }
 
     bindEvents() {
         this.emitter.on(NC_PLAYER_NAME, this.setName.bind(this));
-    },
+    }
 
     unbindEvents() {
         this.emitter.removeAllListeners(NC_PLAYER_NAME);
-    },
+    }
 
     /**
      * @param {?} dirtyNameArr
@@ -108,7 +108,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
             .assertStringOfLength(PLAYER_NAME_MINLENGTH, 20)
             .getValueOr(getRandomName());
         return this.name;
-    },
+    }
 
     /**
      * Send data to client
@@ -137,7 +137,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
                 }
             }.bind(this));
         }
-    },
+    }
 
     /**
      * @param {string} type
@@ -147,7 +147,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
         if (this.room) {
             this.room.players.emit(type, data, this);
         }
-    },
+    }
 
     /**
      * @param {number} index
@@ -155,13 +155,13 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      */
     setSnake(index, level) {
         this.snake = new ServerSnake(index, level);
-    },
+    }
 
     unsetSnake() {
         if (this.snake) {
             this.snake.destruct();
         }
-    },
+    }
 
     /**
      * @return {number}

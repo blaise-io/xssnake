@@ -16,8 +16,13 @@ State.levelsetRegistry = new Registry();
 State.levelsetRegistry.register(basic);
 State.levelsetRegistry.preloadLevels();
 
-State.shapes = {}
-State.events = new EventHandler()
+State.shapes = {};
+State.events = new EventHandler();
 State.canvas = new Canvas();
 State.audio = new AudioPlayer();
 State.flow = new StageFlow();
+
+window.onerror = (error) => {
+    console.error(error);
+    State.canvas.error = true;  // Stop the paint!
+};

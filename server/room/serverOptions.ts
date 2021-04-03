@@ -20,7 +20,7 @@ extend(room.ServerOptions.prototype, /** @lends {room.ServerOptions.prototype} *
      */
     emit(player) {
         player.emit(NC_OPTIONS_SERIALIZE, this.serialize());
-    },
+    }
 
     /**
      * @param {room.ServerOptions} request

@@ -4,24 +4,24 @@
  */
 export class Matcher {
     constructor(Matcher) {
-    this.rooms = rooms;
-};
+        this.rooms = rooms;
+    }
 
 
 
     destruct() {
         this.rooms = null;
-    },
+    }
 
     /**
      * @param {room.ServerOptions} requestOptions
      * @return {room.ServerRoom}
      */
     getRoomMatching(requestOptions) {
-        var rooms = this.rooms;
+        const rooms = this.rooms;
         if (!requestOptions.isPrivate) { // Shortcut.
-            for (var i = 0, m = rooms.length; i < m; i++) {
-                var room = rooms[i];
+            for (let i = 0, m = rooms.length; i < m; i++) {
+                const room = rooms[i];
                 if (room.isAwaitingPlayers()) {
                     if (room.options.matches(requestOptions)) {
                         return room;
@@ -32,4 +32,4 @@ export class Matcher {
         return null;
     }
 
-};
+}

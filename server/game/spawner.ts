@@ -5,18 +5,18 @@
  */
 export class Spawner {
     constructor(Spawner) {
-    this.game = game;
-    this.spawns = [];
-    this.locations = []; // Keep separate list for getEmptyLocation speed
-};
+        this.game = game;
+        this.spawns = [];
+        this.locations = []; // Keep separate list for getEmptyLocation speed
+    }
 
 
 
     destruct() {
-        for (var i = 0, m = this.spawns.length; i < m; i++) {
+        for (let i = 0, m = this.spawns.length; i < m; i++) {
             this._destructSpawn(i);
         }
-    },
+    }
 
     /**
      * @param {number} type
@@ -25,7 +25,7 @@ export class Spawner {
      * @return {Object}
      */
     spawn(type, location, buffer) {
-        var spawn, index, data, game = this.game;
+        let spawn; let index; let data; const game = this.game;
 
         spawn = {
             location: location || game.getEmptyLocation(),
@@ -45,25 +45,25 @@ export class Spawner {
         }
 
         return spawn;
-    },
+    }
 
     /**
      * @param {netcode.Client} client
      * @param {number} index
      */
     hit(client, index) {
-        var spawn = this.spawns[index];
+        const spawn = this.spawns[index];
         this._destructSpawn(index);
 
         switch (spawn.type) {
-            case SPAWN_APPLE:
-                this.game.hitApple(client, index);
-                break;
-            case SPAWN_POWERUP:
-                this.game.hitPowerup(client, index);
-                break;
+        case SPAWN_APPLE:
+            this.game.hitApple(client, index);
+            break;
+        case SPAWN_POWERUP:
+            this.game.hitPowerup(client, index);
+            break;
         }
-    },
+    }
 
     /**
      * @param {netcode.Client} client
@@ -71,29 +71,29 @@ export class Spawner {
      * @return {Array}
      */
     handleHits(client, location) {
-        var hits = [];
-        for (var i = 0, m = this.spawns.length; i < m; i++) {
+        const hits = [];
+        for (let i = 0, m = this.spawns.length; i < m; i++) {
             if (this.spawns[i] && eq(this.spawns[i].location, location)) {
                 hits.push(i);
                 this.hit(client, i);
             }
         }
         return hits;
-    },
+    }
 
     /**
      * @param {number} type
      * @return {number}
      */
     numOfType(type) {
-        var num = 0;
-        for (var i = 0, m = this.spawns.length; i < m; i++) {
+        let num = 0;
+        for (let i = 0, m = this.spawns.length; i < m; i++) {
             if (this.spawns[i] && this.spawns[i].type === type) {
                 num++;
             }
         }
         return num;
-    },
+    }
 
     /**
      * @param {number} index
@@ -104,4 +104,4 @@ export class Spawner {
         this.locations[index] = null;
     }
 
-};
+}

@@ -1,4 +1,4 @@
-var png = require('pngparse');
+const png = require('pngparse');
 
 /**
  * Level image decoder for Server
@@ -7,12 +7,12 @@ var png = require('pngparse');
  */
 export class ImageDecoder {
     constructor(ImageDecoder) {
-    this.successFn = noop;
-    var buffer = new Buffer(data, 'base64');
-    png.parse(buffer, function(err, data) {
-        this.successFn(data);
-    }.bind(this));
-};
+        this.successFn = () => {};
+        const buffer = new Buffer(data, 'base64');
+        png.parse(buffer, function(err, data) {
+            this.successFn(data);
+        }.bind(this));
+    }
 
 
     /**
@@ -21,4 +21,4 @@ export class ImageDecoder {
     then(successFn) {
         this.successFn = successFn;
     }
-};
+}

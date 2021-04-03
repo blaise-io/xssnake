@@ -12,8 +12,8 @@ export class ClientPlayer extends Player {
     snake: ClientSnake;
     local: boolean;
 
-    constructor(name) {
-        super(name)
+    constructor(name="") {
+        super(name);
         this.snake = null;
         this.local = false;
     }
@@ -42,4 +42,4 @@ export class ClientPlayer extends Player {
         }
     }
 
-});
+}

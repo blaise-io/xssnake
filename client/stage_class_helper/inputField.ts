@@ -13,13 +13,13 @@ import { State } from "../state/state";
 import { fontEndPos, fontPixels, fontWidth } from "../ui/font";
 
 export class InputField {
-    private callback: any;
-    private maxValWidth: null;
-    private displayWidth: number;
-    private maxlength: number;
+    maxValWidth: number;
+    displayWidth: number;
+    maxlength: number;
+    callback: any;
     private input: HTMLInputElement;
 
-    constructor(public x, public y, public prefix, public fontOptions) {
+    constructor(public x: number, public y: number, public prefix: string, public fontOptions?: any) {
         this.callback = () => {};
         this.maxValWidth = null;
         this.displayWidth = WIDTH - x - 8;
@@ -29,7 +29,7 @@ export class InputField {
         this.input.focus();
 
         State.keysBlocked = true;
-    };
+    }
 
     destruct() {
         if (this.input && this.input.parentNode) {
@@ -84,7 +84,7 @@ export class InputField {
      * @return {Element}
      */
     addInputToDom() {
-        var input = document.createElement('input');
+        const input = document.createElement('input');
         input.setAttribute('maxlength', String(this.maxlength));
         input.focus();
         document.body.appendChild(input);
@@ -95,7 +95,7 @@ export class InputField {
      * @return {Shape}
      */
     getCaretShape() {
-        var segments, untilCaretStr, caret, caretShape;
+        let segments; let untilCaretStr; let caret; let caretShape;
 
         segments = this.getSelectionSegments();
         untilCaretStr = segments[0] + segments[1];
@@ -116,7 +116,7 @@ export class InputField {
      * @return {Shape}
      */
     getInputValueShape() {
-        var shape, values, endpos;
+        let shape; let values; let endpos;
 
         values = this.getSelectionSegments();
         shape = new Shape();
@@ -149,7 +149,7 @@ export class InputField {
      * @private
      */
     getSelectionSegments() {
-        var input, value, start, end;
+        let input; let value; let start; let end;
 
         input = this.input;
         value = input.value;
@@ -182,4 +182,4 @@ export class InputField {
         }
     }
 
-};
+}

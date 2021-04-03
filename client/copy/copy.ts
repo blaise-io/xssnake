@@ -1,6 +1,6 @@
 import { ROOM_FULL, ROOM_IN_PROGRESS, ROOM_INVALID_KEY, ROOM_NOT_FOUND, ROOM_UNKNOWN_ERROR } from "../../shared/const";
 import { isMac } from "../util/clientUtil";
-import { UC_ARR_DOWN, UC_ARR_LEFT, UC_ARR_RIGHT, UC_ARR_UP, UC_BUG, UC_ENTER_KEY, UC_YES } from "../const"
+import { UC_ARR_DOWN, UC_ARR_LEFT, UC_ARR_RIGHT, UC_ARR_UP, UC_BUG, UC_ENTER_KEY, UC_YES } from "../const";
 
 export const COPY_AWAITING_PLAYERS_HEADER = 'Msg your friends';
 export const COPY_AWAITING_PLAYERS_BODY = 'You can fit {0} more player{1} in this room! Share the current page URL with your online friends to allow direct access.';

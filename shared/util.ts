@@ -3,7 +3,7 @@
  * @return {?} Clone of the input object.
  */
 export function clone(obj) {
-    const res = {}
+    const res = {};
     for (const k in obj) {
         if (obj.hasOwnProperty(k)) {
             res[k] = obj[k];
@@ -167,7 +167,7 @@ export function getKey(obj, val) {
  */
 export function sort(arr) {
     for (let i = 1; i < arr.length; i++) {
-        let tmp = arr[i], index = i;
+        const tmp = arr[i]; let index = i;
         while (arr[index - 1] > tmp) {
             arr[index] = arr[index - 1];
             --index;
@@ -183,7 +183,7 @@ export function sort(arr) {
  * @param {string|number=} label
  */
 export function benchmark(iterations, fn, label="") {
-    let duration, i = iterations, start = +new Date();
+    let duration; let i = iterations; const start = +new Date();
     while (i--) {
         fn();
     }

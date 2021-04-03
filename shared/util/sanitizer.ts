@@ -3,12 +3,15 @@
  * @param {?=} value
  * @constructor
  */
-Sanitizer = function(value) {
-    this._value = value;
-    this._valid = true;
-};
+class Sanitizer {
+    private _value: any;
+    private _json: any;
+    private _valid: boolean;
 
-
+    constructor(value: any) {
+        this._value = value;
+        this._valid = true;
+    }
 
     /**
      * @param {string} type
@@ -20,7 +23,7 @@ Sanitizer = function(value) {
             this._valid = false;
         }
         return this;
-    },
+    }
 
     /**
      * @return {Sanitizer}
@@ -31,7 +34,7 @@ Sanitizer = function(value) {
             this._valid = false;
         }
         return this;
-    },
+    }
 
     /**
      * @return {Sanitizer}
@@ -46,7 +49,7 @@ Sanitizer = function(value) {
             }
         }
         return this;
-    },
+    }
 
     /**
      * @param {Array} arr
@@ -58,7 +61,7 @@ Sanitizer = function(value) {
             this._valid = false;
         }
         return this;
-    },
+    }
 
     /**
      * @param {number} min
@@ -74,7 +77,7 @@ Sanitizer = function(value) {
             this._valid = false;
         }
         return this;
-    },
+    }
 
     /**
      *
@@ -82,7 +85,7 @@ Sanitizer = function(value) {
      */
     assertIntAsBoolean() {
         return this.assertBetween(0, 1);
-    },
+    }
 
     /**
      * @param {number} min
@@ -99,7 +102,7 @@ Sanitizer = function(value) {
             this._valid = false;
         }
         return this;
-    },
+    }
 
     /**
      * @param {number} min
@@ -115,7 +118,7 @@ Sanitizer = function(value) {
             this._valid = false;
         }
         return this;
-    },
+    }
 
     /**
      * @param {number} min
@@ -124,14 +127,14 @@ Sanitizer = function(value) {
      */
     _assertLength(min, max) {
         return this._value.length >= min && this._value.length <= max;
-    },
+    }
 
     /**
      * @return {boolean}
      */
     valid() {
         return this._valid;
-    },
+    }
 
     /**
      * @param {*=} def
@@ -139,7 +142,7 @@ Sanitizer = function(value) {
      */
     getValueOr(def) {
         return (this._valid) ? this._value : def;
-    },
+    }
 
     /**
      * @param {*=} def
@@ -147,7 +150,7 @@ Sanitizer = function(value) {
      */
     json(def) {
         return (this._valid) ? this._json : def;
-    },
+    }
 
     /**
      * @param {string} message
@@ -155,9 +158,8 @@ Sanitizer = function(value) {
      * @param {...*} varArgs
      * @private
      */
-    _log(message, value, varArgs) {
-        var args = Array.prototype.slice.call(arguments, 2);
-        console.warn('Validation Error', message, JSON.stringify(value), args);
+    _log(message, value, ...varArgs) {
+        console.warn('Validation Error', message, JSON.stringify(value), varArgs);
     }
 
-};
+}

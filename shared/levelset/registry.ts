@@ -18,7 +18,7 @@ export class Registry {
     }
 
     preloadLevels(continueFn=() => {}) {
-        let checkAllLoaded, loaded = 0;
+        let checkAllLoaded; let loaded = 0;
 
         checkAllLoaded = function () {
             if (++loaded === this.levelsets.length) {

@@ -19,7 +19,7 @@ export class Snake {
     gravity: any;
 
     constructor(public index, level) {
-        var spawn = level.data.spawns[index];
+        const spawn = level.data.spawns[index];
 
         /** @type game.SnakeParts, head is last item */
         this.parts = [spawn.location];
@@ -30,7 +30,7 @@ export class Snake {
         this.crashed = false;
         this.collision = null;
         this.gravity = null;
-    };
+    }
 
     /**
      * @param {Coordinate} position
@@ -52,7 +52,7 @@ export class Snake {
      * @return {boolean}
      */
     hasPartPredict(part) {
-        var treshold = this.crashed ? -1 : 0;
+        const treshold = this.crashed ? -1 : 0;
         return (this.getPartIndex(part) > treshold);
     }
 
@@ -75,8 +75,8 @@ export class Snake {
      * @return {number}
      */
     getPartIndex(part) {
-        var parts = this.parts;
-        for (var i = 0, m = parts.length; i < m; i++) {
+        const parts = this.parts;
+        for (let i = 0, m = parts.length; i < m; i++) {
             if (parts[i][0] === part[0] && parts[i][1] === part[1]) {
                 return i;
             }
@@ -88,9 +88,9 @@ export class Snake {
      * @param {Shift} shift
      */
     shiftParts(shift) {
-        var x = shift[0] || 0, y = shift[1] || 0;
+        const x = shift[0] || 0; const y = shift[1] || 0;
         if (x || y) {
-            for (var i = 0, m = this.parts.length; i < m; i++) {
+            for (let i = 0, m = this.parts.length; i < m; i++) {
                 this.parts[i][0] += x;
                 this.parts[i][1] += y;
             }
@@ -101,7 +101,7 @@ export class Snake {
      * Head-tail switch.
      */
     reverse() {
-        var dx, dy;
+        let dx; let dy;
 
         dx = this.parts[0][0] - this.parts[1][0];
         dy = this.parts[0][1] - this.parts[1][1];

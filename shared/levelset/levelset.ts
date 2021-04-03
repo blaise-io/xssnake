@@ -26,9 +26,9 @@ export class Levelset {
     }
 
     preload(continueFn: Function) {
-        let checkAllLoaded, loaded = 0;
+        let loaded = 0;
 
-        checkAllLoaded = function() {
+        const checkAllLoaded = function() {
             if (++loaded === this.levels.length) {
                 continueFn();
             }

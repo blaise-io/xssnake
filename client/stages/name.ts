@@ -3,23 +3,32 @@
  * @implements {StageInterface}
  * @constructor
  */
-NameStage = function() {
-    this.next = MultiplayerStage;
-    this.name = STORAGE_NAME;
-    this.header = 'HELLO';
-    this.label = 'My name is ';
-    this.minlength = PLAYER_NAME_MINLENGTH;
-    this.maxwidth = PLAYER_NAME_MAXWIDTH;
+import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
+import { randomArrItem } from "../../shared/util";
+import {
+    DOM_EVENT_KEYDOWN, MENU_LEFT, NS_INPUT, STORAGE_NAME, UC_SKULL, UC_WHITE_HEART
+} from "../const";
+import { InputStage } from "../stage_base/inputStage";
+import { State } from "../state/state";
+import { font } from "../ui/font";
+import { lifetime } from "../ui/shapeClient";
+import { MultiplayerStage } from "./multiplayer";
 
-    InputStage.call(this);
-};
+export class NameStage extends InputStage {
+    constructor() {
+        super();
+        this.next = MultiplayerStage;
+        this.name = STORAGE_NAME;
+        this.header = 'HELLO';
+        this.label = 'My name is ';
+        this.minlength = PLAYER_NAME_MINLENGTH;
+        this.maxwidth = PLAYER_NAME_MAXWIDTH;
 
-extend(NameStage.prototype, InputStage.prototype);
-extend(NameStage.prototype, /** @lends {NameStage.prototype} */ {
+    }
 
     /**
-     * @return {Object}
-     */
+   * @return {Object}
+   */
     getData() {
         return {
             name: this.getValue()
@@ -27,13 +36,13 @@ extend(NameStage.prototype, /** @lends {NameStage.prototype} */ {
     }
 
     /**
-     * @param {string} error
-     * @param {string} value
-     * @param {number} top
-     * @private
-     */
+   * @param {string} error
+   * @param {string} value
+   * @param {number} top
+   * @private
+   */
     inputSubmit(error, value, top) {
-        var shape, text, duration = 500;
+        let shape; let text; let duration = 500;
         if (error) {
             text = error;
         } else {
@@ -46,37 +55,38 @@ extend(NameStage.prototype, /** @lends {NameStage.prototype} */ {
         }
 
         shape = font(text, MENU_LEFT, top);
-        shape.lifetime(0, duration);
+        lifetime(shape, 0, duration);
 
         State.shapes.message = shape;
-    }    _wits: [
-        '%s%s%s!!!',
-        'You have the same name as my mom',
-        'LOVELY ' + new Array(4).join(UC_WHITE_HEART),
-        UC_SKULL,
-        'Lamest name EVER',
-        'Clever name!',
-        'Mmm I love the way you handled that keyboard',
-        'asdasdasdasd',
-        'Please dont touch anything',
-        'Hello %s',
-        'Are you excited?',
-        'ARE YOU READY TO PARTY???',
-        'Is that your real name?',
-        'You dont look like a %s…',
-        'Are you new here?',
-        'I remember you',
-        'I dont believe that\'s your name, but continue anyway',
-        'Can I have your number?',
-        'My name is NaN',
-        '#$%^&*!!',
-        'I thought I banned you?',
-        'Jesus saves',
-        'Is this your first time online?',
-        'Are you from the internet?',
-        '%s? OMGOMG',
-        'Your soul is beautiful!',
-        'Your soul is delicous'
-    ]
-});
+    }
 
+  _wits = [
+      '%s%s%s!!!',
+      'You have the same name as my mom',
+      'LOVELY ' + new Array(4).join(UC_WHITE_HEART),
+      UC_SKULL,
+      'Lamest name EVER',
+      'Clever name!',
+      'Mmm I love the way you handled that keyboard',
+      'asdasdasdasd',
+      'Please dont touch anything',
+      'Hello %s',
+      'Are you excited?',
+      'ARE YOU READY TO PARTY???',
+      'Is that your real name?',
+      'You dont look like a %s…',
+      'Are you new here?',
+      'I remember you',
+      'I dont believe that\'s your name, but continue anyway',
+      'Can I have your number?',
+      'My name is NaN',
+      '#$%^&*!!',
+      'I thought I banned you?',
+      'Jesus saves',
+      'Is this your first time online?',
+      'Are you from the internet?',
+      '%s? OMGOMG',
+      'Your soul is beautiful!',
+      'Your soul is delicous'
+  ]
+}

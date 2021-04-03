@@ -1,10 +1,3 @@
-/**
- * @constructor
- */
-game.SpawnableRegistry = function(){};
+class SpawnableRegistry {
 
-
-    destruct() {
-
-    }
-};
+}

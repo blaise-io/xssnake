@@ -1,37 +1,41 @@
-/**
- * @param {number} seed
- * @implements {levelanim.Interface}
- * @constructor
- */
+import { GAME_TILE } from "../const";
+import { Shape } from "../shape";
+import { ShapeCollection } from "../shapeCollection";
+import { line } from "../shapeGenerator";
+import { average } from "../util";
+
 export class ScrollingCave {
-    constructor(ScrollingCave) {
-    this.seed = seed;
-    this.seedIteration = 0;
+    private seedIteration: number;
+    private _shapes: ShapeCollection;
+    private _scroll: number;
+    private _scrollPref: number;
+    private _max: { stalactite: number; stalagmite: number };
+    private gameStartedAtMs: number;
+    constructor(public seed: number) {
+        this.seedIteration = 0;
 
-    this._shapes = new ShapeCollection();
-    this._scroll = this._scrollPref = 0;
+        this._shapes = new ShapeCollection();
+        this._scroll = this._scrollPref = 0;
 
-    this._max = {
-        // Stalactite ‾\/‾
-        // Mnemonic: They hang...
-        stalactite: this._LEVEL_WIDTH,
-        // Stalagmite _/\_
-        stalagmite: this._LEVEL_WIDTH + Math.round(
-            average(this._BUMP_WIDTH)
-        )
-    };
-};
+        this._max = {
+            // Stalactite ‾\/‾
+            // Mnemonic: They hang...
+            stalactite: this._LEVEL_WIDTH,
+            // Stalagmite _/\_
+            stalagmite: this._LEVEL_WIDTH + Math.round(
+                average(this._BUMP_WIDTH)
+            )
+        };
+    }
 
+    _SPEED = 0.47
 
+    _BUMP_WIDTH = [15, 25]
+    _BUMP_HEIGHT = [20, 40]
+    _BUMP_DECREASE = [0, 2]
 
-    _SPEED        : 0.47,
-
-    _BUMP_WIDTH   : [15, 25],
-    _BUMP_HEIGHT  : [20, 40],
-    _BUMP_DECREASE: [0, 2],
-
-    _LEVEL_WIDTH  : 63,
-    _LEVEL_HEIGHT : 33,
+    _LEVEL_WIDTH = 63
+    _LEVEL_HEIGHT = 33
 
     /**
      * @param {number} ms
@@ -56,10 +60,10 @@ export class ScrollingCave {
             this._scrollPref = this._scroll;
             return this._shapes;
         }
-    },
+    }
 
     _updateShapePixelsArrs(offset) {
-        var max = this._max;
+        const max = this._max;
 
         this._shapes.each(function(shape, index) {
             this._updateShape(shape, index, offset);
@@ -75,12 +79,12 @@ export class ScrollingCave {
         if (max.stalagmite < this._LEVEL_WIDTH) {
             max.stalagmite = this._spawnStalagmite(max.stalagmite + 1);
         }
-    },
+    }
 
     _updateShape(shape, index, offset) {
-        var translate = shape.transform.translate;
+        const translate = shape.transform.translate;
 
-        var gameTileNormalized = Math.abs(translate[0]) / GAME_TILE;
+        const gameTileNormalized = Math.abs(translate[0]) / GAME_TILE;
         if (gameTileNormalized - shape.bbox().width > this._LEVEL_WIDTH) {
             // No longer visible, despawn shape.
             this._shapes.set(index, null);
@@ -88,16 +92,16 @@ export class ScrollingCave {
             // Visible, move shape.
             translate[0] += offset * GAME_TILE;
         }
-    },
+    }
 
     _scrambleDecimals(seed, cutat) {
-        var max = 16, dec0, dec1, pow;
+        const max = 16; let dec0; let dec1; let pow;
         pow = Math.pow(10, max);
         cutat = cutat % max;
         dec0 = seed * Math.pow(10, cutat) / pow;
         dec1 = seed * pow / Math.pow(10, max - cutat) % 1;
         return dec0 + dec1;
-    },
+    }
 
     /**
      * @param {Array.<number>} range
@@ -107,28 +111,28 @@ export class ScrollingCave {
     _random(range) {
         this.seed = this._scrambleDecimals(this.seed, ++this.seedIteration);
         return range[0] + Math.floor(this.seed * (range[1] - range[0] + 1));
-    },
+    }
 
     _spawnStalactite(x0) {
-        var x1 = x0 + this._random(this._BUMP_WIDTH);
+        const x1 = x0 + this._random(this._BUMP_WIDTH);
         this._spawnFormation(true, x0, x1);
         return x1;
-    },
+    }
 
     _spawnStalagmite(x0) {
-        var x1 = x0 + this._random(this._BUMP_WIDTH);
+        const x1 = x0 + this._random(this._BUMP_WIDTH);
         this._spawnFormation(false, x0, x1);
         return x1;
-    },
+    }
 
     _spawnFormation(isStalactite, x0, x1) {
-        var y1, shape;
+        let y1; let shape;
 
         y1 = this._random(this._BUMP_HEIGHT);
         shape = new Shape();
 
-        for (var y0 = 0; y0 < y1; y0++) {
-            var y0Ite, xRow1Prev = x1;
+        for (let y0 = 0; y0 < y1; y0++) {
+            var y0Ite; let xRow1Prev = x1;
             if (y0) {
                 x0 += this._random(this._BUMP_DECREASE);
                 x1 -= this._random(this._BUMP_DECREASE);
@@ -147,4 +151,4 @@ export class ScrollingCave {
         this._shapes.add(shape);
     }
 
-};
+}

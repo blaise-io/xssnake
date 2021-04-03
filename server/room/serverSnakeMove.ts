@@ -1,23 +1,21 @@
 class ServerSnakeMove {
     constructor(ServerSnakeMove) {
-    this.dirtyMove = dirtyMove;
-    this.player = player;
-    this.parts = null;
-    this.direction = null;
-    this.status = -1;
-};
-
-
+        this.dirtyMove = dirtyMove;
+        this.player = player;
+        this.parts = null;
+        this.direction = null;
+        this.status = -1;
+    }
 
     isValid() {
         if (this.isValidJson()) {
             this.status = this.getStatus();
             return VALIDATE_SUCCES === this.status;
         }
-    },
+    }
 
     isValidJson() {
-        var snake, parts, direction;
+        let snake; let parts; let direction;
 
         snake = new Sanitizer(this.dirtyMove);
         snake.assertArrayLengthBetween(2, 2);
@@ -44,10 +42,10 @@ class ServerSnakeMove {
         this.direction = direction.getValueOr();
 
         return true;
-    },
+    }
 
     getStatus() {
-        var numSyncParts, serverParts, commonPartIndices, mismatches, snake, clientParts;
+        let numSyncParts; let serverParts; let commonPartIndices; let mismatches; let snake; let clientParts;
 
         snake = this.player.snake;
         clientParts = this.parts;
@@ -84,14 +82,14 @@ class ServerSnakeMove {
         );
 
         return VALIDATE_SUCCES;
-    },
+    }
 
     /**
      * @param {Array.<Array>} parts
      * @return {boolean}
      */
     hasGaps(parts) {
-        for (var i = 1, m = parts.length; i < m; i++) {
+        for (let i = 1, m = parts.length; i < m; i++) {
             // Sanity check
             if (parts[i].length !== 2 ||
                 typeof parts[i][0] !== 'number' ||
@@ -105,7 +103,7 @@ class ServerSnakeMove {
             }
         }
         return false;
-    },
+    }
 
     /**
      * @param {Array.<Array>} clientParts
@@ -113,8 +111,8 @@ class ServerSnakeMove {
      * @return {Array.<Array>} common
      */
     getCommonPartIndices(clientParts, serverParts) {
-        for (var i = clientParts.length - 1; i >= 0; i--) {
-            for (var ii = serverParts.length - 1; ii >= 0; ii--) {
+        for (let i = clientParts.length - 1; i >= 0; i--) {
+            for (let ii = serverParts.length - 1; ii >= 0; ii--) {
                 if (eq(clientParts[i], serverParts[ii])) {
                     return [i, ii];
                 }
@@ -123,4 +121,4 @@ class ServerSnakeMove {
         return null;
     }
 
-};
+}

@@ -1,14 +1,6 @@
-/**
- * @extends {levelset.Levelset}
- * @constructor
- */
-export class Moving {
-    constructor(Moving) {
-    levelset.Levelset.apply(this, arguments);
-    this.title = COPY_LEVELSET_MOVING;
-};
+import { COPY_LEVELSET_MOVING } from "../../client/copy/copy";
+import { Levelset } from "../levelset/levelset";
 
-extend(levelset.Moving.prototype, levelset.Levelset.prototype);
-extend(levelset.Moving.prototype, /** @lends {levelset.Moving.prototype} */ {
-
-});
+export class Moving extends Levelset {
+    title = COPY_LEVELSET_MOVING;
+}

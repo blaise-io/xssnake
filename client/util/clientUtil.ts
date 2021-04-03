@@ -3,22 +3,23 @@ import { GAME_LEFT, GAME_TOP, UC_ENTER_KEY } from "../const";
 import { State } from "../state/state";
 import { Dialog } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
+import { flash, lifetime } from "../ui/shapeClient";
 
 /**
  * @param {string} str
  * @param {number=} duration
- * @param {boolean=} flash
+ * @param {boolean=} flashInstruct
  */
-export function instruct(str, duration=2000, flash=false) {
+export function instruct(str, duration=2000, flashInstruct=false) {
     const x = WIDTH - fontWidth(str) - 2;
     const y = HEIGHT - fontHeight(str) - 2;
 
     const shape = font(str, x, y, {invert: true});
     shape.isOverlay = true;
-    shape.lifetime(0, duration);
+    lifetime(shape, 0, duration);
 
-    if (flash) {
-        shape.flash();
+    if (flashInstruct) {
+        flash(shape);
     }
 
     State.shapes.INSTRUCTION = shape;
@@ -84,7 +85,7 @@ export function isMac() {
  * @return {?}
  */
 export function urlHash(key="", value="") {
-    let hash, arr, newhash = '', dict = {};
+    let hash; let arr; let newhash = ''; const dict = {};
 
     hash = location.hash.substr(1);
     arr = hash.split(/[:;]/g);
@@ -95,47 +96,31 @@ export function urlHash(key="", value="") {
     }
 
     switch (arguments.length) {
-        case 0: // Empty
-            if (location.hash) {
-                history.replaceState(null, '', location.pathname + location.search);
-            }
-            return;
-        case 1: // Return value
-            return dict[key] || '';
-        case 2: // Set value
-            dict[key] = value;
-            for (const k in dict) {
-                if (dict.hasOwnProperty(k)) {
-                    if (k && dict[k]) {
-                        newhash += k + ':' + dict[k] + ';';
-                    }
+    case 0: // Empty
+        if (location.hash) {
+            history.replaceState(null, '', location.pathname + location.search);
+        }
+        return;
+    case 1: // Return value
+        return dict[key] || '';
+    case 2: // Set value
+        dict[key] = value;
+        for (const k in dict) {
+            if (dict.hasOwnProperty(k)) {
+                if (k && dict[k]) {
+                    newhash += k + ':' + dict[k] + ';';
                 }
             }
-            location.replace('#' + newhash.replace(/;$/, ''));
-            return value;
+        }
+        location.replace('#' + newhash.replace(/;$/, ''));
+        return value;
     }
 }
 
-
-/**
- * @param {number} num
- * @param {string=} single
- * @param {string=} plural
- * @return {string}
- */
-export function pluralize(num, single, plural) {
-    return (num === 1) ? (single || '') : (plural || 's');
-}
-
-/**
- * @param {string} str
- * @param {...(string|number)} varArgs
- * @return {string}
- */
-export function format(str, varArgs) {
-    const args = Array.prototype.slice.call(arguments, 1);
-    return str.replace(/\{(\d+)\}/g, function(match, number) {
-        return args[number];
+export function format(str: string, ...data: (string|number)[]): string {
+    // @ts-ignore
+    return str.replace(/{(\d+)}/g, (match, number) => {
+        return data[number];
     });
 }
 
@@ -153,7 +138,7 @@ export function translateGame(coordinate) {
  * @param {number} x
  * @return {number}
  */
-function translateGameX(x) {
+export function translateGameX(x) {
     return (x * GAME_TILE) + GAME_LEFT;
 }
 
@@ -161,7 +146,7 @@ function translateGameX(x) {
  * @param {number} y
  * @return {number}
  */
-function translateGameY(y) {
+export function translateGameY(y) {
     return (y * GAME_TILE) + GAME_TOP;
 }
 
@@ -173,7 +158,7 @@ function translateGameY(y) {
 export function debounce(fn, delay=100) {
     let timeout;
     return function() {
-        const context = this, args = arguments;
+        const context = this; const args = arguments;
         clearTimeout(timeout);
         timeout = setTimeout(function() {
             timeout = null;

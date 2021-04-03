@@ -23,6 +23,8 @@ module.exports = {
         new webpack.DefinePlugin({
             __IS_CLIENT__: true,
         }),
-        new HtmlWebpackPlugin({}),
+        new HtmlWebpackPlugin({
+            template: __dirname + "/client.ejs"
+        }),
     ],
 };

@@ -20,14 +20,14 @@ export function lineShape(x0, y0, x1, y1) {
  * @return {PixelCollection}
  */
 export function radianLine(xc, yc, radian, length) {
-    let x0, y0, x1, y1;
+    let x0; let y0; let x1; let y1;
 
     x0 = xc + length / 2 * Math.cos(radian);
     y0 = yc + length / 2 * Math.sin(radian);
     x1 = xc + length / 2 * Math.cos(radian + Math.PI);
     y1 = yc + length / 2 * Math.sin(radian + Math.PI);
 
-    return this.line(
+    return line(
         Math.round(x0),
         Math.round(y0),
         Math.round(x1),
@@ -44,7 +44,7 @@ export function radianLine(xc, yc, radian, length) {
  * @return {PixelCollection}
  */
 export function line(x0, y0, x1, y1) {
-    let pixels, dx, sx, dy, sy, err, err2;
+    let pixels; let dx; let sx; let dy; let sy; let err; let err2;
 
     pixels = new PixelCollection();
 

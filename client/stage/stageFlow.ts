@@ -8,19 +8,23 @@ import { extend } from "../../shared/util";
 import {
     DOM_EVENT_KEYDOWN, HASH_ROOM, KEY_ESCAPE, KEY_MUTE, KEY_TAB, MENU_LEFT, NS_FLOW, STORAGE_MUTE
 } from "../const";
+import { MainStage } from "../stages/main";
+import { StartGameStage } from "../stages/startGame";
 import { State } from "../state/state";
-import { outerBorder, xssnakeHeader } from "../ui/clientShapes";
-import { storage, urlHash } from "../util/client_util";
+import { outerBorder, xssnakeHeader } from "../ui/clientShapeGenerator";
+import { animate } from "../ui/shapeClient";
+import { storage, urlHash } from "../util/clientUtil";
 
 export class StageFlow {
     GameStage: any;
     private stage: any;
     private _history: any[];
-    _FirstStage: any;
+    private _FirstStage: any;
 
     constructor(stage = MainStage) {
-        this.start()
+        this._FirstStage = stage;
         this.GameStage = StartGameStage;
+        this.start();
     }
 
     destruct() {
@@ -45,9 +49,9 @@ export class StageFlow {
         this._setStage(new (this._FirstStage)(), false);
     }
 
-    getData() {
-        var value = {};
-        for (var i = 0, m = this._history.length; i < m; i++) {
+    getData(): any {
+        const value = {};
+        for (let i = 0, m = this._history.length; i < m; i++) {
             extend(value, this._history[i].getData());
         }
         return value;
@@ -58,7 +62,7 @@ export class StageFlow {
      * @param {Object=} options
      */
     switchStage(Stage, options: any={}) {
-        var switchToStage;
+        let switchToStage;
 
         if (Stage && !options.back) {
             switchToStage = new Stage();
@@ -125,7 +129,7 @@ export class StageFlow {
      * @private
      */
     _handleKeys(ev) {
-        var mute, instruct;
+        let mute; let instruct;
 
         // Firefox disconnects websocket on Esc. Disable that.
         // Also prevent the tab key focusing things outside canvas.
@@ -155,7 +159,7 @@ export class StageFlow {
      * @private
      */
     _switchStageAnimate(oldShape, newShape, back, callback) {
-        var oldStageAnim, newStageAnim, width = WIDTH - MENU_LEFT;
+        let oldStageAnim; let newStageAnim; const width = WIDTH - MENU_LEFT;
 
         if (back) {
             oldStageAnim = {to: [width, 0]};
@@ -165,7 +169,7 @@ export class StageFlow {
             newStageAnim = {from: [width, 0]};
         }
 
-        newStageAnim.callback = callback;
+        newStageAnim.doneCallback = callback;
 
         if (back) {
             State.audio.play('swoosh_rev');
@@ -173,16 +177,12 @@ export class StageFlow {
             State.audio.play('swoosh');
         }
 
-        State.shapes.oldstage = oldShape.animate(oldStageAnim);
-        State.shapes.newstage = newShape.animate(newStageAnim);
+        State.shapes.oldstage = animate(oldShape, oldStageAnim);
+        State.shapes.newstage = animate(newShape, newStageAnim);
     }
 
-    /**
-     * @param {StageInterface} stage
-     * @param {boolean} back
-     * @private
-     */
-    _setStage(stage, back) {
+    // TODO: StageInterface
+    private _setStage(stage: never, back: false) {
         // Remove animated stages
         State.shapes.oldstage = null;
         State.shapes.newstage = null;

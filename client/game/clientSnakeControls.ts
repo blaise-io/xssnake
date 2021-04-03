@@ -1,23 +1,24 @@
-/**
- * @param {game.ClientSnake} snake
- * @constructor
- */
+import { DOM_EVENT_KEYDOWN, KEY_TO_DIRECTION, NS_SNAKE_CONTROLS } from "../const";
+import { State } from "../state/state";
+import { ClientSnake } from "./clientSnake";
+
 export class ClientSnakeControls {
-    constructor(snake) {
-    this.snake = snake;
-    this.bindEvents();
-    // Allow buffering the next move.
-    this.upcomingDirections = [];
-};
+    private upcomingDirections: number[];
 
-
+    constructor(public snake: ClientSnake) {
+        this.bindEvents();
+        // Allow buffering the next move.
+        this.upcomingDirections = [];
+    }
 
     destruct() {
         State.events.off(
             DOM_EVENT_KEYDOWN,
             NS_SNAKE_CONTROLS
         );
-    }    bindEvents() {
+    }
+
+    bindEvents() {
         State.events.on(
             DOM_EVENT_KEYDOWN,
             NS_SNAKE_CONTROLS,
@@ -29,7 +30,7 @@ export class ClientSnakeControls {
      * @param {Event} event
      */
     handleKeys(event) {
-        var direction = KEY_TO_DIRECTION[event.keyCode];
+        const direction = KEY_TO_DIRECTION[event.keyCode];
         if (!State.keysBlocked && typeof direction !== 'undefined') {
             this.setDirection(direction);
         }
@@ -60,7 +61,7 @@ export class ClientSnakeControls {
      * @return {boolean}
      */
     isDirectionAllowed(direction, prevDirection) {
-        var turn = Math.abs(direction - prevDirection);
+        const turn = Math.abs(direction - prevDirection);
         return (
             this.upcomingDirections.length <= 2 &&
             this.snake.parts.length >= 2 && // Must go to blinkie at start.
@@ -82,9 +83,9 @@ export class ClientSnakeControls {
      * @param {number} direction
      */
     emitNewDirection(direction) {
-//        if (State.player && State.player.room && State.player.room.gameHasStarted()) {
-            this.snake.emit(direction);
-//        }
+        //        if (State.player && State.player.room && State.player.room.gameHasStarted()) {
+        this.snake.emit(direction);
+        //        }
     }
 
     /**
@@ -96,4 +97,4 @@ export class ClientSnakeControls {
         }
     }
 
-};
+}

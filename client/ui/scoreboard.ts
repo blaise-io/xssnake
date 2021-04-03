@@ -1,42 +1,58 @@
-/**
- * @param {room.ClientPlayerRegistry} players
- * @constructor
- */
-export class ui.Scoreboard {
-    constructor(players) {
-    this.players = players;
+import { HEIGHT } from "../../shared/const";
+import { Player } from "../../shared/room/player";
+import { NS_SCORE } from "../const";
+import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
+import { State } from "../state/state";
+import { font, fontPixels, fontWidth } from "./font";
+import { animate } from "./shapeClient";
 
-    this.animating = false;
-    this.queue = false;
-    this.queueTimer = 0;
+export class ScoreboardUI {
+    private x0: number;
+    private x1: number;
+    private animating: boolean;
+    private queue: boolean;
+    private queueTimer: number;
+    private y0: number;
+    private y1: number;
+    private podiumSize: number;
+    private lineHeight: number;
+    private animationDuration: number;
+    private animationPause: number;
+    private columnSpacing: any;
+    private oldPlayerOrder: Player[];
 
-    this.x0 = 3;
-    this.x1 = 56;
-    this.y0 = HEIGHT - 24;
-    this.y1 = HEIGHT - 2;
-    this.podiumSize = 6;
-    this.lineHeight = 7;
-    this.animationDuration = 200;
-    this.animationPause = 200;
-    this.columnSpacing = fontWidth(' ');
+    constructor(public players: ClientPlayerRegistry) {
 
-    this.oldPlayerOrder = this.getPlayersSortedByScore();
+        this.animating = false;
+        this.queue = false;
+        this.queueTimer = 0;
 
-    this.updateScoreboard();
-};
+        this.x0 = 3;
+        this.x1 = 56;
+        this.y0 = HEIGHT - 24;
+        this.y1 = HEIGHT - 2;
+        this.podiumSize = 6;
+        this.lineHeight = 7;
+        this.animationDuration = 200;
+        this.animationPause = 200;
+        this.columnSpacing = fontWidth(' ');
 
+        this.oldPlayerOrder = this.getPlayersSortedByScore();
+
+        this.updateScoreboard();
+    }
 
 
     destruct() {
         clearInterval(this.queueTimer);
         this.destructShapes();
-    },
+    }
 
     destructShapes() {
-        for (var i = 0; i < this.podiumSize; i++) {
+        for (let i = 0; i < this.podiumSize; i++) {
             State.shapes[NS_SCORE + i] = null;
         }
-    },
+    }
 
     debounceUpdate() {
         if (this.animating) {
@@ -44,14 +60,14 @@ export class ui.Scoreboard {
         } else {
             this.updateScoreboard();
         }
-    },
+    }
 
     updateScoreboard() {
-        var indexNew, newOrder, oldOrder;
+        let indexNew; let newOrder; let oldOrder;
         newOrder = this.getPlayersSortedByScore();
         oldOrder = this.oldPlayerOrder;
 
-        for (var i = 0, m = this.podiumSize; i < m; i++) {
+        for (let i = 0, m = this.podiumSize; i < m; i++) {
             if (i >= oldOrder.length) {
                 // New player.
                 this.paint(this.players.players[i], i, i);
@@ -70,10 +86,10 @@ export class ui.Scoreboard {
             }
         }
         this.oldPlayerOrder = newOrder;
-    },
+    }
 
     paint(player, oldIndex, newIndex) {
-        var oldCoordinate, newCoordinate, shape;
+        let oldCoordinate; let newCoordinate; let shape;
         oldCoordinate = this.getCoordinatesForIndex(oldIndex);
         shape = this.getPlayerScoreShape(player, oldCoordinate);
         State.shapes[NS_SCORE + oldIndex] = shape;
@@ -82,26 +98,26 @@ export class ui.Scoreboard {
             newCoordinate = this.getCoordinatesForIndex(newIndex);
             this.animateToNewPos(shape, oldCoordinate, newCoordinate);
         }
-    },
+    }
 
     animateToNewPos(shape, oldCoordinate, newCoordinate) {
         this.animating = true;
-        shape.animate({
+        animate(shape, {
             to: [
                 newCoordinate[0] - oldCoordinate[0],
                 newCoordinate[1] - oldCoordinate[1]
             ],
-            callback: this.animateCallback.bind(this),
-            duration: this.animationDuration
+            duration: this.animationDuration,
+            doneCallback: this.animateCallback.bind(this),
         });
-    },
+    }
 
     animateCallback() {
-        this.queueTimer = setTimeout(
+        this.queueTimer = window.setTimeout(
             this.queueUpdate.bind(this),
             this.animationPause
         );
-    },
+    }
 
     queueUpdate() {
         this.animating = false;
@@ -109,10 +125,10 @@ export class ui.Scoreboard {
             this.queue = false;
             this.updateScoreboard();
         }
-    },
+    }
 
     getPlayerScoreShape(player, coordinate) {
-        var shape, scoreX, name = '-', score = 0;
+        let shape; let scoreX; let name = '-'; let score = 0;
 
         if (player && player.connected) {
             name = player.name;
@@ -129,18 +145,18 @@ export class ui.Scoreboard {
         }
 
         return shape;
-    },
+    }
 
     markLocalPlayer(shape) {
-        var bbox = shape.bbox(1);
+        const bbox = shape.bbox(1);
         bbox.y1 = bbox.y0 + this.lineHeight;
         bbox.setDimensions();
         shape.invert();
-    },
+    }
 
     itemWidth() {
         return Math.floor(this.x1 - this.x0 / 2);
-    },
+    }
 
     getCoordinatesForIndex(index) {
         // 0 3
@@ -158,14 +174,14 @@ export class ui.Scoreboard {
         //    this.x0 + (index % 2 ? this.itemWidth() : 0),
         //    this.y0 + (Math.floor(index / 2) * this.lineHeight)
         //];
-    },
+    }
 
     getPlayersSortedByScore() {
-        var players = this.players.players.slice();
+        const players = this.players.players.slice();
         players.sort(function(a, b) {
             return (b.connected ? b.score : -1) - (a.connected ? a.score : -1);
         });
         return players;
     }
 
-};
+}

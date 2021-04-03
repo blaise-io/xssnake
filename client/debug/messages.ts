@@ -6,14 +6,15 @@ import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
 import { State } from "../state/state";
-import { innerBorder, outerBorder } from "../ui/clientShapes";
+import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
+import { MessageBoxUI } from "../ui/messageBox";
 
 if (location.search.match(/debug=messages/)) {
     State.menuSnake = true; // Prevent spawn.
     setTimeout(function() {
-        var messages = [];
-        var author = new Player('Dummy');
-        var ui = new ui.MessageBox(messages, author);
+        const messages = [];
+        const author = new Player('Dummy');
+        const ui = new MessageBoxUI(messages, author);
 
         State.flow.destruct();
 
@@ -22,12 +23,12 @@ if (location.search.match(/debug=messages/)) {
             State.shapes[a] = b;
         });
 
-        var players = new ClientPlayerRegistry();
+        const players = new ClientPlayerRegistry();
         new Scoreboard(players);
 
         function randomBody() {
-            var body = [];
-            for (var i = 0, m = randomRange(1, 6); i < m; i++) {
+            const body = [];
+            for (let i = 0, m = randomRange(1, 6); i < m; i++) {
                 body.push(randomStr(randomRange(2, 7)));
             }
             return body.join(' ');

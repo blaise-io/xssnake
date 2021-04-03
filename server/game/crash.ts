@@ -1,27 +1,23 @@
-/**
- * @param {number} type
- * @param {netcode.Client} client
- * @param {netcode.Client=} opponent
- * @constructor
- */
+import { CRASH_OPPONENT_DRAW} from "../../shared/const";
+import { Player } from "../../shared/room/player";
+
+// TODO: Not used?
 export class Crash {
-    constructor(Crash) {
-    this.type = type;
-    this.client = client;
+    location: Coordinate;
+    parts: Coordinate[];
+    time: Date;
+    draw: boolean;
 
-    this.opponent = opponent;
-    /** @type {Coordinate} */
-    this.location = null;
+    constructor(public type: number, public client: Player, public opponent: Player) {
+        this.location = null;
 
-    this.parts = client.snake.parts.slice();
-    this.time = new Date();
-    this.draw = this.detectDraw();
-};
-
-
+        this.parts = client.snake.parts.slice();
+        this.time = new Date();
+        this.draw = this.detectDraw();
+    }
 
     detectDraw() {
-        var diff;
+        let diff;
         if (this.opponent) {
             diff = this.client.snake.direction + this.opponent.snake.direction;
             if (Math.abs(diff) === 2) {
@@ -30,18 +26,18 @@ export class Crash {
             }
         }
         return false;
-    },
-
-    emitNotice() {
-        var data = [
-            NOTICE_CRASH,
-            this.type,
-            this.client.model.index
-        ];
-        if (this.opponent) {
-            data.push(this.opponent.model.index);
-        }
-        this.client.room.emit(NC_CHAT_NOTICE, data);
     }
 
-};
+    // emitNotice() {
+    //     var data = [
+    //         NOTICE_CRASH,
+    //         this.type,
+    //         this.client.model.index
+    //     ];
+    //     if (this.opponent) {
+    //         data.push(this.opponent.model.index);
+    //     }
+    //     this.client.room.emit(NC_CHAT_NOTICE, data);
+    // }
+
+}

@@ -3,7 +3,7 @@
  * @param {number=} seed
  */
 export class Interface {
-    constructor(Interface) {};
+    constructor(Interface) {}
 
 
     /**
@@ -17,4 +17,4 @@ export class Interface {
         return null;
     }
 
-};
+}

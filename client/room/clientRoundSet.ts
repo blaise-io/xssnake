@@ -1,31 +1,40 @@
-/**
- * @param {room.ClientPlayerRegistry} players
- * @param {room.ClientOptions} options
- * @constructor
- */
+import { NC_ROUND_SERIALIZE } from "../../shared/const";
+import { NS_ROUND_SET } from "../const";
+import { State } from "../state/state";
+import { ClientPlayerRegistry } from "./clientPlayerRegistry";
+import { ClientRound } from "./clientRound";
+import { ClientOptions } from "./options";
+
 export class ClientRoundSet {
-    constructor(players, options) {
-    this.players = players;
-    this.options = options;
-    /** @typedef {room.ClientRound} */
-    this.round = null;
-    this.bindEvents();
-};
+    round: ClientRound;
 
-
+    constructor(public players: ClientPlayerRegistry, public options: ClientOptions) {
+        this.players = players;
+        this.options = options;
+        this.round = null;
+        this.bindEvents();
+    }
 
     destruct() {
         this.players = null;
         this.options = null;
         this.round.destruct();
         this.round = null;
-    }    bindEvents() {
+    }
+
+    bindEvents() {
         State.events.on(NC_ROUND_SERIALIZE, NS_ROUND_SET, this.updateRound.bind(this));
-    }    unbindEvents() {
+    }
+
+    unbindEvents() {
         State.events.off(NC_ROUND_SERIALIZE, NS_ROUND_SET);
-    }    setupRound() {
+    }
+
+    setupRound() {
         this.round = new ClientRound(this.players, this.options);
-    }    updateRound(serializedRound) {
+    }
+
+    updateRound(serializedRound) {
         if (this.round.isMidgame()) {
             this.round.destruct();
             this.round = new ClientRound(this.players, this.options);
@@ -33,4 +42,4 @@ export class ClientRoundSet {
         }
     }
 
-};
+}

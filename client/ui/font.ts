@@ -1,15 +1,17 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { shift } from "../../shared/transform";
-import { UC_SQUARE } from "../const";
+import { EV_FONT_LOAD, UC_HOURGLASS, UC_SQUARE } from "../const";
+import { State } from "../state/state";
 
 export const MAX_WIDTH = 9;
 export const MAX_HEIGHT = 7;
 export const BASELINE = 6;
 export const LINE_HEIGHT = 8;
+export const LINE_HEIGHT_MENU = 9;
 export const BLURRY_TRESHOLD = 3;
 
-const _cache: any = {}
+const _cache: any = {};
 const _ctx = _getContext();
 
 export function font(str: string, x=0, y=0, options: any={}): Shape {
@@ -62,7 +64,7 @@ export function fontPixels(str: string, x=0, y=0, options: any={}) {
  * @return {number}
  */
 export function fontHeight(str, x=0, y=0, options={}) {
-    let remainder, height, LH = LINE_HEIGHT;
+    let remainder; let height; const LH = LINE_HEIGHT;
     height = font(str, x, y, options).pixels.pixels.length + 1;
     // Don't allow absence of font descenders affect height.
     remainder = LH - ((height - (y || 0)) % LH || LH);
@@ -77,7 +79,7 @@ export function fontHeight(str, x=0, y=0, options={}) {
  * @return {number}
  */
 export function fontWidth(str, x=0, y=0, options={}) {
-    let pixels, width, maxes = [0];
+    let pixels; let width; const maxes = [0];
     pixels = font(str, x, y, options).pixels;
     for (let i = pixels.pixels.length - LINE_HEIGHT + 1,
         m = pixels.pixels.length; i < m; i++) {
@@ -99,7 +101,7 @@ export function fontWidth(str, x=0, y=0, options={}) {
  * @return {number}
  */
 export function fastWidth(str) {
-    let chrs, width = 0;
+    let chrs; let width = 0;
     chrs = str.split('\n');
     chrs = chrs[chrs.length - 1].split('');
     for (let i = 0, m = chrs.length; i < m; i++) {
@@ -122,19 +124,6 @@ export function fontEndPos(str, x, y, options) {
         fontHeight(str, x, y, options) - LINE_HEIGHT
     ];
 }
-
-// /**
-//  * @private
-//  */
-// function _detectFontLoad() {
-//     var props = _getChrProperties(UC_HOURGLASS);
-//     if (props && 8 === props.width) {
-//         loaded = true;
-//         State.event.trigger(EV_FONT_LOAD);
-//     } else {
-//         window.setTimeout(_detectFontLoad.bind(this), 0);
-//     }
-// }
 
 /**
  * @param chr
@@ -159,7 +148,7 @@ function _chrProperties(chr) {
  * @private
  */
 function _appendChr(x, y, shape, chr, pointer) {
-    let chrProperties, shiftedPixels, kerning = 0;
+    let chrProperties; let shiftedPixels; let kerning = 0;
 
     chrProperties = _chrProperties(chr);
 
@@ -188,10 +177,10 @@ export function getMaxes(x, y, shape, pointer) {
 }
 
 export function getKerning(x, y, shape, pointer, chrProperties) {
-    let gap, gaps = [], maxes = getMaxes(x, y, shape, pointer);
+    let gap; const gaps = []; const maxes = getMaxes(x, y, shape, pointer);
 
     for (let i = 0; i < LINE_HEIGHT; i++) {
-        var min = null, max;
+        let min = null; var max;
         if (chrProperties.pixels.pixels[i]) {
             min = Math.min.apply(this, chrProperties.pixels.pixels[i]);
         }
@@ -256,7 +245,7 @@ function _invert(shape, y) {
  * @private
  */
 function _getContext() {
-    let canvas, context, font;
+    let canvas; let context; let font;
 
     canvas = document.createElement('canvas');
     canvas.width = MAX_WIDTH;
@@ -280,9 +269,9 @@ function _getContext() {
  * @private
  */
 function _getChrProperties(chr) {
-    let data, pixels = new PixelCollection(), width = 0, len = 0, blurry = 0, valid,
-        w = MAX_WIDTH,
-        h = MAX_HEIGHT;
+    let data; const pixels = new PixelCollection(); let width = 0; let len = 0; let blurry = 0; let valid;
+    const w = MAX_WIDTH;
+    const h = MAX_HEIGHT;
 
     // Handle whitespace characters
     if (chr.match(/\s/)) {
@@ -300,9 +289,9 @@ function _getChrProperties(chr) {
         // When this does not work on some OS, try a few presets until
         // it matches a known pattern.
         if (data[i] + data[i + 1] + data[i + 2] > 650) {
-            const seq = i / 4,
-                x = seq % w,
-                y = Math.floor(seq / w);
+            const seq = i / 4;
+            const x = seq % w;
+            const y = Math.floor(seq / w);
             pixels.add(x, y);
             len++;
             width = Math.max(x, width);

@@ -6,15 +6,15 @@
  * @implements {levelanim.Interface}
  * @constructor
  */
+import { Shape } from "../shape";
+import { ShapeCollection } from "../shapeCollection";
+import { radianLine } from "../shapeGenerator";
+
 export class RotatingLine {
-    constructor(RotatingLine) {
-    this.x = x;
-    this.y = y;
-    this.len = len;
-    this.speed = speed || 0.5;
-};
+    private radian: number;
 
-
+    constructor(public x: number, public y: number, public len: number, public speed: number = 0.5) {
+    }
 
     /**
      * @param {number} ms
@@ -22,14 +22,14 @@ export class RotatingLine {
      * @return {ShapeCollection|null}
      */
     update(ms, gameStarted) {
-        var radian = ms / Math.pow(1 - this.speed, 1.5) / 2500;
+        let radian = ms / Math.pow(1 - this.speed, 1.5) / 2500;
         radian = Math.round(radian * 20) / 20; // No need for 60 fps.
         if (radian !== this.radian) {
             this.radian = radian;
             return this._update(radian);
         }
         return null;
-    },
+    }
 
     /**
      * @param {number} radian
@@ -37,9 +37,9 @@ export class RotatingLine {
      * @private
      */
     _update(radian) {
-        var shape = new Shape(
+        const shape = new Shape(
             radianLine(this.x, this.y, radian, this.len)
         );
-        return new ShapeCollection([shape]);
+        return new ShapeCollection(shape);
     }
-};
+}

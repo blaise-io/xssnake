@@ -1,14 +1,11 @@
-/**
- * @extends {levelset.Levelset}
- * @constructor
- */
-export class Game {
-    constructor(Game) {
-    levelset.Levelset.apply(this, arguments);
-    this.title = COPY_LEVELSET_GAME;
-};
+import { COPY_LEVELSET_GAME } from "../../client/copy/copy";
+import { Levelset } from "../levelset/levelset";
 
-extend(levelset.Game.prototype, levelset.Levelset.prototype);
-extend(levelset.Game.prototype, /** @lends {levelset.Game.prototype} */ {
+export class Game extends Levelset {
 
-});
+    constructor() {
+        super();
+        this.title = COPY_LEVELSET_GAME;
+    }
+
+}

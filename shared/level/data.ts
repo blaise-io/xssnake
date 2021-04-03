@@ -59,7 +59,7 @@ export class LevelData {
      */
     inShapes(shapeCollection, coordinate) {
         for (let i = 0, m = shapeCollection.shapes.length; i < m; i++) {
-            var translate, translated, shape = shapeCollection.shapes[i];
+            var translate; var translated; const shape = shapeCollection.shapes[i];
             if (shape) {
                 translate = shape.transform.translate;
                 translated = this.convertToGameSystem(coordinate, translate);
@@ -78,7 +78,7 @@ export class LevelData {
      * @param {Shift} translate
      */
     convertToGameSystem(coordinate, translate) {
-        let tx, ty;
+        let tx; let ty;
         if (__IS_CLIENT__) {
             // In Client, Game transforms left/top. Not ideal, but it is done
             // so that we can move shapes without losing cache => performance.

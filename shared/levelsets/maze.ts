@@ -1,14 +1,6 @@
-/**
- * @extends {levelset.Levelset}
- * @constructor
- */
-export class Maze {
-    constructor(Maze) {
-    levelset.Levelset.apply(this, arguments);
-    this.title = COPY_LEVELSET_MAZE;
-};
+import { COPY_LEVELSET_MAZE } from "../../client/copy/copy";
+import { Levelset } from "../levelset/levelset";
 
-extend(levelset.Maze.prototype, levelset.Levelset.prototype);
-extend(levelset.Maze.prototype, /** @lends {levelset.Maze.prototype} */ {
-
-});
+export class Maze extends Levelset {
+    title = COPY_LEVELSET_MAZE;
+}

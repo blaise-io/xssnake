@@ -9,7 +9,6 @@ import { State } from "../state/state";
 
 export class SelectStage {
 
-
     menu = null;
 
     getShape() {
@@ -33,28 +32,28 @@ export class SelectStage {
         if (State.keysBlocked) {
             return;
         }
+        const next = this.menu.getNextStage();
         switch (ev.keyCode) {
-            case KEY_BACKSPACE:
-            case KEY_ESCAPE:
+        case KEY_BACKSPACE:
+        case KEY_ESCAPE:
+            State.flow.previousStage();
+            break;
+        case KEY_ENTER:
+            if (next) {
+                State.flow.switchStage(next);
+            } else {
                 State.flow.previousStage();
-                break;
-            case KEY_ENTER:
-                var next = this.menu.getNextStage();
-                if (next) {
-                    State.flow.switchStage(next);
-                } else {
-                    State.flow.previousStage();
-                }
-                break;
-            case KEY_UP:
-                this.menu.prev();
-                State.audio.play('menu');
-                State.flow.refreshShapes();
-                break;
-            case KEY_DOWN:
-                this.menu.next();
-                State.audio.play('menu');
-                State.flow.refreshShapes();
+            }
+            break;
+        case KEY_UP:
+            this.menu.prev();
+            State.audio.play('menu');
+            State.flow.refreshShapes();
+            break;
+        case KEY_DOWN:
+            this.menu.next();
+            State.audio.play('menu');
+            State.flow.refreshShapes();
         }
     }
 

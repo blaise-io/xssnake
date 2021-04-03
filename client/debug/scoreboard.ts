@@ -1,6 +1,15 @@
 // Debug URL: client.html?debug=tab
-debug.messages = location.search.match(/debug=scoreboard/);
-if (debug.messages) {
+
+import { Player } from "../../shared/room/player";
+import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
+import { Message } from "../room/message";
+import { MessageBox } from "../room/messageBox";
+import { Scoreboard } from "../room/scoreboard";
+import { State } from "../state/state";
+import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
+import { MessageBoxUI } from "../ui/messageBox";
+
+if (location.search.match(/debug=scoreboard/)) {
     State.menuSnake = true; // Prevent spawn.
     setTimeout(function() {
 
@@ -11,22 +20,22 @@ if (debug.messages) {
             State.shapes[a] = b;
         });
 
-        var messages = [
+        const messages = [
             new Message(null, 'This is a notification'),
             new Message('Player 1', 'Hello world')
         ];
-        var author = new Player('Dummy');
-        new ui.MessageBox(messages, author);
+        const author = new Player('Dummy');
+        new MessageBoxUI(messages, author);
 
-        var players = new ClientPlayerRegistry();
-        for (var i = 0, m = 5; i < m; i++) {
-            var player = new Player('Player ' + (i+1));
+        const players = new ClientPlayerRegistry();
+        for (let i = 0, m = 5; i < m; i++) {
+            const player = new Player('Player ' + (i+1));
             if (i === 0) {
                 player.local = true;
             }
             players.add(player);
         }
-        var scoreboard = new Scoreboard(players);
+        const scoreboard = new Scoreboard(players);
 
         // Mimic player leaving, joining during lobby.
         players.players[2].score = 1; // Player 3 leads.

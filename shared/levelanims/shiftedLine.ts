@@ -10,20 +10,19 @@
  * @implements {levelanim.Interface}
  * @constructor
  */
+import { Shape } from "../shape";
+import { ShapeCollection } from "../shapeCollection";
+import { lineShape } from "../shapeGenerator";
+
 export class ShiftedLine {
-    constructor(ShiftedLine) {
-    this._lineShape = lineShape(x0, y0, x1, y1);
-    this._lineShape.transform.translate = [sx, sy];
-};
+    private _lineShape: Shape;
 
-
-
-    /**
-     * @param {number} ms
-     * @param {boolean} gameStarted
-     * @return {ShapeCollection}
-     */
-    update(ms, gameStarted) {
-        return new ShapeCollection([this._lineShape]);
+    constructor(x0: number, y0: number, x1: number, y1: number, sx: number, sy: number) {
+        this._lineShape = lineShape(x0, y0, x1, y1);
+        this._lineShape.transform.translate = [sx, sy];
     }
-};
+
+    update(ms: number, gameStarted: boolean): ShapeCollection {
+        return new ShapeCollection(this._lineShape);
+    }
+}

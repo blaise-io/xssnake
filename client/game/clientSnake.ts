@@ -12,7 +12,8 @@ import { Shape } from "../../shared/shape";
 import { Snake } from "../../shared/snake";
 import { FRAME, NS_SNAKE } from "../const";
 import { State } from "../state/state";
-import { explosion, showAction, tooltipName } from "../ui/clientShapes";
+import { explosion, showAction, tooltipName } from "../ui/clientShapeGenerator";
+import { flash, lifetime, setGameTransform } from "../ui/shapeClient";
 import { translateGame } from "../util/clientUtil";
 import { ClientSnakeControls } from "./clientSnakeControls";
 
@@ -38,13 +39,13 @@ export class ClientSnake extends Snake {
         };
 
         this.updateShape();
-    };
+    }
 
     destruct() {
         // Remove any related shape.
-        var keys = Object.keys(this.shapeKeys);
-        for (var i = 0, m = keys.length; i < m; i++) {
-            var shapeKey = this.shapeKeys[keys[i]];
+        const keys = Object.keys(this.shapeKeys);
+        for (let i = 0, m = keys.length; i < m; i++) {
+            const shapeKey = this.shapeKeys[keys[i]];
             State.shapes[shapeKey] = null;
         }
 
@@ -52,8 +53,6 @@ export class ClientSnake extends Snake {
             this.controls.destruct();
             this.controls = null;
         }
-
-        this.level = null;
     }
 
     move(coordinate) {
@@ -78,14 +77,14 @@ export class ClientSnake extends Snake {
     }
 
     showDirection() {
-        var shift, head, shape;
+        let shift; let head; let shape;
         shift = GAME_SHIFT_MAP[this.direction];
         head = this.getHead();
 
         shape = new Shape();
         shape.pixels.add(head[0] + shift[0], head[1] + shift[1]);
-        shape.setGameTransform();
-        shape.flash();
+        setGameTransform(shape);
+        flash(shape);
 
         State.shapes[this.shapeKeys.direction] = shape;
     }
@@ -103,9 +102,9 @@ export class ClientSnake extends Snake {
      * @return {Shape}
      */
     updateShape() {
-        var shape = new Shape();
+        const shape = new Shape();
         shape.pixels.addPairs(this.parts);
-        shape.setGameTransform();
+        setGameTransform(shape);
         State.shapes[this.shapeKeys.snake] = shape;
         return shape;
     }
@@ -120,7 +119,7 @@ export class ClientSnake extends Snake {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
-            var move = new SnakeMove(
+            const move = new SnakeMove(
                 this, players, level, this.getNextPosition()
             );
 
@@ -145,7 +144,7 @@ export class ClientSnake extends Snake {
     /**
      * @param {Coordinate=} crashingPart
      */
-    setCrashed(crashingPart) {
+    setCrashed(crashingPart?: Coordinate) {
         this.crashed = true;
         if (this.controls) {
             this.controls.destruct();
@@ -153,7 +152,9 @@ export class ClientSnake extends Snake {
         if (!this.exploded) {
             this.exploded = true;
             this.explodeParticles(crashingPart);
-            this.updateShape().lifetime(0, FRAME * 50).flash(FRAME * 5, FRAME * 10);
+            const shape = this.updateShape();
+            lifetime(shape, 0, FRAME * 50);
+            flash(shape, FRAME * 5, FRAME * 10);
         }
     }
 
@@ -161,7 +162,7 @@ export class ClientSnake extends Snake {
      * @param {Coordinate=} part
      */
     explodeParticles(part) {
-        var direction, location;
+        let direction; let location;
 
         if (part) {
             // Crashed part is specified.
@@ -195,7 +196,7 @@ export class ClientSnake extends Snake {
      */
     emit(direction) {
         if (State.player) {
-            var sync = Math.round(NETCODE_SYNC_MS / this.speed);
+            const sync = Math.round(NETCODE_SYNC_MS / this.speed);
             State.player.emit(NC_SNAKE_UPDATE, [
                 direction, this.parts.slice(-sync)
             ]);
@@ -206,7 +207,7 @@ export class ClientSnake extends Snake {
      * @return {Coordinate}
      */
     getNextPosition() {
-        var shift, head = this.getHead();
+        let shift; const head = this.getHead();
         if (this.controls) {
             this.direction = this.controls.getNextDirection();
         }

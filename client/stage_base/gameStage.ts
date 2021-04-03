@@ -13,12 +13,13 @@ import { ClientSocketPlayer } from "../room/clientSocketPlayer";
 import { ClientOptions } from "../room/options";
 import { State } from "../state/state";
 import { font } from "../ui/font";
+import { center, flash, lifetime } from "../ui/shapeClient";
 import { storage } from "../util/clientUtil";
 
 export class Game {
-    constructor(Game) {
-    };
 
+    constructor() {
+    }
 
     getShape() {
         return new Shape();
@@ -44,14 +45,14 @@ export class Game {
     }
 
     getSerializedGameOptions() {
-        var options, data = State.flow.getData();
+        let options; const data = State.flow.getData();
         options = new ClientOptions();
         options.setOptionsFromForm(data.multiplayer);
         return options.serialize();
     }
 
     getPlayerName() {
-        var name = storage(STORAGE_NAME);
+        let name = storage(STORAGE_NAME);
         if (!name) {
             name = getRandomName();
             storage(name, STORAGE_NAME);
@@ -77,10 +78,10 @@ export class Game {
     }
 
     getConnectingShape() {
-        var shape = font(COPY_CONNECTING);
-        shape.center(WIDTH, HEIGHT - 20);
-        shape.lifetime(2000);
-        shape.flash();
+        const shape = font(COPY_CONNECTING);
+        center(shape, WIDTH, HEIGHT - 20);
+        lifetime(shape, 2000);
+        flash(shape);
         return shape;
     }
 
@@ -92,4 +93,4 @@ export class Game {
         State.shapes.HEADER = null;
     }
 
-};
+}

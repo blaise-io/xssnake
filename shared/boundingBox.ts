@@ -13,7 +13,7 @@ export class BoundingBox {
     width: number;
     height: number;
 
-    constructor(pixels: PixelCollection) {
+    constructor(pixels?: PixelCollection) {
         this.x0 = 0;
         this.x1 = 0;
         this.y0 = 0;
@@ -45,10 +45,10 @@ export class BoundingBox {
      * @private
      */
     calculate(pixels) {
-        let x0 = WIDTH,
-            x1 = 0,
-            y0 = HEIGHT,
-            y1 = 0;
+        let x0 = WIDTH;
+        let x1 = 0;
+        let y0 = HEIGHT;
+        let y1 = 0;
 
         pixels.each(function(x, y) {
             if (x0 > x) {x0 = x;}

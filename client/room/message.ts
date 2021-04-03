@@ -12,7 +12,7 @@ export class Message {
         this.author = author;
         this.body = body;
         this.notificationPrefix = '#';
-    };
+    }
 
     getFormatted() {
         if (this.author === null) {

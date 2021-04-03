@@ -8,7 +8,7 @@ export class ImageDecoder {
     private image: HTMLImageElement;
 
     constructor(data) {
-        this.successFn = () => {}
+        this.successFn = () => {};
 
         this.image = new Image();
         this.image.src = 'data:image/png;base64,' + data;
@@ -16,7 +16,7 @@ export class ImageDecoder {
     }
 
     readFromCanvas() {
-        let canvas, ctx, imagedata;
+        let canvas; let ctx; let imagedata;
 
         canvas = document.createElement('canvas');
         canvas.width = this.image.width;

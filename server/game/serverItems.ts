@@ -5,9 +5,9 @@
  */
 export class ServerItems {
     constructor(ServerItems) {
-    this.level = level;
-    this.players = players;
-};
+        this.level = level;
+        this.players = players;
+    }
 
 
 
@@ -16,4 +16,4 @@ export class ServerItems {
         this.players = null;
     }
 
-};
+}

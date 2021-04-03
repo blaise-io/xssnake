@@ -14,7 +14,7 @@ LevelPlayset = function(levelsetIndex) {
     destruct() {
         this.levelset = null;
         this.played = null;
-    },
+    }
 
     getNext() {
         var nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);

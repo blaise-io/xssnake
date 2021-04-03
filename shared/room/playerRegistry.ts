@@ -8,7 +8,7 @@ export class PlayerRegistry {
 
     constructor() {
         this.players = [];
-    };
+    }
 
 
     destruct() {
@@ -25,8 +25,8 @@ export class PlayerRegistry {
      * @return {Array}
      */
     serialize(localPlayer) {
-        var serialized = [];
-        for (var i = 0, m = this.players.length; i < m; i++) {
+        const serialized = [];
+        for (let i = 0, m = this.players.length; i < m; i++) {
             serialized.push(this.players[i].serialize(localPlayer === this.players[i]));
         }
         return serialized;
@@ -43,7 +43,7 @@ export class PlayerRegistry {
      * @param {room.Player} player
      */
     remove(player) {
-        var index = this.players.indexOf(player);
+        const index = this.players.indexOf(player);
         if (-1 !== index) {
             this.players.splice(index, 1);
         }

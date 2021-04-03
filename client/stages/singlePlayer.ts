@@ -1,21 +1,13 @@
-/**
- * @constructor
- * @implements {StageInterface}
- * @extends {Game}
- */
-export class SinglePlayer {
-    constructor(SinglePlayer) {
-    Game.call(this);
-};
+import { ClientOptions } from "../room/options";
+import { Game } from "../stage_base/gameStage";
 
-extend(SinglePlayer.prototype, Game.prototype);
-extend(SinglePlayer.prototype, /** @lends {SinglePlayer.prototype} */ {
+export class SinglePlayer extends Game {
 
     getSerializedGameOptions() {
-        var options = new ClientOptions();
+        const options = new ClientOptions();
         options.maxPlayers = 1;
         options.isPrivate = true;
         return options.serialize();
     }
 
-});
+}

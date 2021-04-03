@@ -1,6 +1,3 @@
-/**
- * @constructor
- */
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Config } from "../../shared/levelset/config";
 import { GAME_LEFT, GAME_TOP } from "../const";
@@ -18,10 +15,10 @@ export class MenuSnake {
         this.timeouts = [];
         this.level = new BlankLevel(new Config());
         this.level.preload(this.construct.bind(this));
-    };
+    }
 
     construct() {
-        var snake;
+        let snake;
 
         snake = new ClientSnake(0, false, '', this.level);
         snake.addControls();
@@ -35,7 +32,7 @@ export class MenuSnake {
     }
 
     destruct() {
-        for (var i = 0, m = this.timeouts.length; i < m; i++) {
+        for (let i = 0, m = this.timeouts.length; i < m; i++) {
             clearTimeout(this.timeouts[i]);
         }
         this.snake.destruct();
@@ -43,7 +40,7 @@ export class MenuSnake {
     }
 
     move() {
-        var nextpos, snake = this.snake;
+        let nextpos; const snake = this.snake;
 
         snake.collision = null;
 
@@ -69,11 +66,11 @@ export class MenuSnake {
      * @return {boolean}
      */
     isCrash(snake, nextpos) {
-        var snakeShape = snake.getShape(), crash = false;
+        const snakeShape = snake.getShape(); let crash = false;
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
         } else if (snakeShape) {
-            var pixels = zoom(
+            const pixels = zoom(
                 4, snakeShape.pixels, GAME_LEFT, GAME_TOP, false
             );
             pixels.each(function(x, y) {
@@ -92,7 +89,7 @@ export class MenuSnake {
      * @return {boolean}
      */
     overlaysShape(snakeShape, x, y) {
-        for (var k in State.shapes) {
+        for (const k in State.shapes) {
             if (State.shapes.hasOwnProperty(k) && State.shapes[k] !== snakeShape) {
                 if (State.shapes[k] && State.shapes[k].pixels.has(x, y)) {
                     return true;
@@ -102,4 +99,4 @@ export class MenuSnake {
         return false;
     }
 
-};
+}

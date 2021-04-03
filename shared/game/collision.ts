@@ -8,7 +8,7 @@ export class Collision {
 
     constructor(public location, public into) {
         this.tick = 0;
-    };
+    }
 
     serialize() {
         return this.location;

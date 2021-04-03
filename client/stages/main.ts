@@ -2,16 +2,27 @@
  * @constructor
  * @extends {SelectStage}
  */
+import { HASH_ROOM, STORAGE_NAME } from "../const";
+import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { MenuSnake } from "../stage/menuSnake";
+import { SelectStage } from "../stage_base/selectStage";
+import { SelectMenu } from "../stage_class_helper/selectMenu";
 import { State } from "../state/state";
+import { storage, urlHash } from "../util/clientUtil";
 import { AutoJoinWizard } from "./autoJoinWizard";
+import { ColorStage } from "./color";
+import { CreditsStage } from "./credits";
+import { NameStage } from "./name";
+import { QuickGame } from "./quickGame";
+import { SinglePlayer } from "./singlePlayer";
 
 export class MainStage extends SelectStage {
+    private data: any;
 
     constructor() {
-        super()
+        super();
 
-        var roomKey = urlHash(HASH_ROOM);
+        const roomKey = urlHash(HASH_ROOM);
         this.menu = this._getMenu();
 
         if (roomKey) {
@@ -19,7 +30,7 @@ export class MainStage extends SelectStage {
         } else if (!State.menuSnake) {
             State.menuSnake = new MenuSnake();
         }
-    };
+    }
 
     construct() {
         this.data = {};
@@ -38,18 +49,13 @@ export class MainStage extends SelectStage {
      * @private
      */
     _getMenu() {
-        var menu, header, footer;
+        const name = storage(STORAGE_NAME);
 
-        header = function() {
-            var name = storage(STORAGE_NAME);
-            return name ?
-                'YAY ' + name.toUpperCase() + ' IS BACK!' :
-                'MULTIPLAYER SNAKE!';
-        };
+        const header = name ?
+            'YAY ' + name.toUpperCase() + ' IS BACK!' :
+            'MULTIPLAYER SNAKE!';
 
-        footer = COPY_MAIN_INSTRUCT;
-
-        menu = new SelectMenu(header, footer);
+        const menu = new SelectMenu(header, COPY_MAIN_INSTRUCT);
         menu.addOption(null, QuickGame, 'QUICK GAME');
         menu.addOption(null, NameStage, 'MULTIPLAYER');
         menu.addOption(null, SinglePlayer, 'SINGLE PLAYER');
@@ -58,6 +64,4 @@ export class MainStage extends SelectStage {
 
         return menu;
     }
-
-});
-
+}

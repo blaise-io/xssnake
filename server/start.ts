@@ -1,12 +1,12 @@
 // Global namespace.
 // This is to allow code sharing between client and server.
-global.xss = {};
+import { SERVER_ENDPOINT } from "../shared/config";
 
 // Include all server dependencies.
-var grunt = require('grunt');
-var server = require('../build/server.js');
-var files = grunt.file.expand(server.concat.src);
-for (var i = 0, m = files.length; i < m; i++) {
+const grunt = require('grunt');
+let server = require('../build/server.js');
+const files = grunt.file.expand(server.concat.src);
+for (let i = 0, m = files.length; i < m; i++) {
     require(__dirname + '/../' + files[i]);
 }
 

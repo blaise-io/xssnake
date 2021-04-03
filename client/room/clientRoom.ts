@@ -7,10 +7,13 @@ import { COPY_COMMA_SPACE, COPY_ELLIPSIS, COPY_SNAKE_CRASHED, COPY_SPACE_AND_SPA
 import { State } from "../state/state";
 import { urlHash } from "../util/clientUtil";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
+import { ClientRoundSet } from "./clientRoundSet";
+import { MessageBox } from "./messageBox";
 import { ClientOptions } from "./options";
+import { Scoreboard } from "./scoreboard";
 
 export class ClientRoom {
-    private key: string;
+    key: string;
     private players: ClientPlayerRegistry;
     private options: ClientOptions;
     private roundSet: ClientRoundSet;
@@ -27,7 +30,7 @@ export class ClientRoom {
         this.scoreboard = null;
 
         this.bindEvents();
-    };
+    }
 
 
     destruct() {
@@ -83,8 +86,8 @@ export class ClientRoom {
     }
 
     ncNotifySnakesCrashed(serializedCollisions) {
-        var notification = '', names = this.players.getNames();
-        for (var i = 0, m = serializedCollisions.length; i < m; i++) {
+        let notification = ''; const names = this.players.getNames();
+        for (let i = 0, m = serializedCollisions.length; i < m; i++) {
             notification += names[serializedCollisions[i][0]];
 
             if (i + 1 === m) {
@@ -106,18 +109,18 @@ export class ClientRoom {
         this.messageBox.ui.debounceUpdate();
     }
 
-//    /**
-//     * @param {Array.<string>} names
-//     * @return {Array.<string>}
-//     * @private
-//     */
-//    _sanitizeNames(names) {
-//        for (var i = 0, m = names.length; i < m; i++) {
-//            while (fontWidth(names[i]) > UI_WIDTH_NAME) {
-//                names[i] = names[i].slice(0, -1);
-//            }
-//        }
-//        return names;
-//    }
+    //    /**
+    //     * @param {Array.<string>} names
+    //     * @return {Array.<string>}
+    //     * @private
+    //     */
+    //    _sanitizeNames(names) {
+    //        for (var i = 0, m = names.length; i < m; i++) {
+    //            while (fontWidth(names[i]) > UI_WIDTH_NAME) {
+    //                names[i] = names[i].slice(0, -1);
+    //            }
+    //        }
+    //        return names;
+    //    }
 
-};
+}

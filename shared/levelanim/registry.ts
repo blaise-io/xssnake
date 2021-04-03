@@ -1,5 +1,6 @@
 import { NS_ANIM } from "../../client/const";
 import { State } from "../../client/state/state";
+import { setGameTransform } from "../../client/ui/shapeClient";
 
 export class LevelAnimationRegistry {
     public animations = []
@@ -51,7 +52,7 @@ export class LevelAnimationRegistry {
     private _updateShape(key: string, shape) {
         if (shape) {
             if (!shape.headers.transformed) {
-                shape.setGameTransform();
+                setGameTransform(shape);
                 shape.headers.transformed = true;
             }
             State.shapes[key] = shape;

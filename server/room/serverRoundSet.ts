@@ -9,17 +9,17 @@
  */
 export class ServerRoundSet {
     constructor(ServerRoundSet) {
-    this.roomEmitter = roomEmitter;
-    this.players = players;
-    this.options = options;
+        this.roomEmitter = roomEmitter;
+        this.players = players;
+        this.options = options;
 
-    this.levelPlayset = new LevelPlayset(options.levelset);
-    this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
-    this.score = new ServerScore(players);
-    this.roundIndex = 0;
+        this.levelPlayset = new LevelPlayset(options.levelset);
+        this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
+        this.score = new ServerScore(players);
+        this.roundIndex = 0;
 
-    this.bindEvents();
-};
+        this.bindEvents();
+    }
 
 
 
@@ -38,17 +38,17 @@ export class ServerRoundSet {
 
         this.players = null;
         this.options = null;
-    },
+    }
 
     bindEvents() {
         this.roomEmitter.on(SE_PLAYER_COLLISION, this.handleCollisions.bind(this));
-    },
+    }
 
     /**
      * @param {room.ServerPlayer} winner
      */
     switchRounds(winner) {
-        var delay = winner ? SECONDS_ROUND_GLOAT : SECONDS_ROUND_PAUSE;
+        const delay = winner ? SECONDS_ROUND_GLOAT : SECONDS_ROUND_PAUSE;
         if (this.hasSetWinner()) {
             // TODO
         } else if (!this.round.wrappingUp) {
@@ -57,7 +57,7 @@ export class ServerRoundSet {
                 this.startNewRound.bind(this), delay * 1000
             );
         }
-    },
+    }
 
     startNewRound() {
         this.round.destruct();
@@ -67,23 +67,23 @@ export class ServerRoundSet {
         this.round.emitAll();
         this.players.removeDisconnectedPlayers();
         this.round.toggleCountdown(true);
-    },
+    }
 
     hasSetWinner() {
         return false;
-    },
+    }
 
     handleCollisions(crashingPlayers) {
-        var alive = this.round.getAlivePlayers();
+        const alive = this.round.getAlivePlayers();
         this.score.update(crashingPlayers, this.round.level);
         if (alive.length <= 1) {
             this.switchRounds(alive[0] || null);
         }
-    },
+    }
 
     hasStarted() {
         return (this.roundIndex >= 1 || this.round.started);
-    },
+    }
 
     detectAutostart(full) {
         if (full && 0 === this.roundIndex) {
@@ -91,4 +91,4 @@ export class ServerRoundSet {
         }
     }
 
-};
+}

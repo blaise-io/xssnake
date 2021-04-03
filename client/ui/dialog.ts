@@ -1,10 +1,3 @@
-/** @typedef {{
-     keysBlocked: (boolean|undefined),
-     type       : (number|undefined),
-     width      : (number|undefined),
-     ok         : (Function|undefined),
-     cancel     : (Function|undefined)
-   }} */
 import { HEIGHT } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
@@ -27,12 +20,11 @@ import { zoom } from "./transformClient";
  * @constructor
  */
 export class Dialog {
-    private header: string;
     private settings: any;
     private _body: any;
     private _okSelected: boolean;
 
-    constructor(header, body, settings={}) {
+    constructor(public header: string, public body: string, settings={}) {
         this.header = header.toUpperCase();
         this._body = body;
 
@@ -41,8 +33,8 @@ export class Dialog {
             keysBlocked: true,
             type       : Dialog.TYPE.INFO,
             width      : 80,
-            ok         : noop,
-            cancel     : noop
+            ok         : () => {},
+            cancel     : () => {}
         };
 
         extend(this.settings, settings);
@@ -80,15 +72,15 @@ export class Dialog {
         this.settings.cancel();
     }
 
-//    /**
-//     * @param {string} header
-//     */
-//    setHeader(header) {
-//        State.audio.play('menu_alt');
-//        this._header = header.toUpperCase();
-//        this._updateShape();
-//    }
-//
+    //    /**
+    //     * @param {string} header
+    //     */
+    //    setHeader(header) {
+    //        State.audio.play('menu_alt');
+    //        this._header = header.toUpperCase();
+    //        this._updateShape();
+    //    }
+    //
     /**
      * @param {string} body
      */
@@ -119,33 +111,33 @@ export class Dialog {
      */
     _handleKeys(ev) {
         switch (ev.keyCode) {
-            case KEY_LEFT:
-            case KEY_UP:
-            case KEY_DOWN:
-            case KEY_RIGHT:
-            case KEY_TAB:
-                if (this.settings.type === Dialog.TYPE.CONFIRM) {
-                    State.audio.play('menu_alt');
-                    this._okSelected = !this._okSelected;
-                    this._updateShape();
-                }
-                break;
-            case KEY_BACKSPACE:
-            case KEY_ESCAPE:
-                if (this.settings.type === Dialog.TYPE.CONFIRM) {
-                    this.cancel();
-                } else {
-                    this.ok();
-                }
-                break;
-            case KEY_ENTER:
-            case KEY_SPACE:
-                if (this._okSelected) {
-                    this.ok();
-                } else {
-                    this.cancel();
-                }
-                break;
+        case KEY_LEFT:
+        case KEY_UP:
+        case KEY_DOWN:
+        case KEY_RIGHT:
+        case KEY_TAB:
+            if (this.settings.type === Dialog.TYPE.CONFIRM) {
+                State.audio.play('menu_alt');
+                this._okSelected = !this._okSelected;
+                this._updateShape();
+            }
+            break;
+        case KEY_BACKSPACE:
+        case KEY_ESCAPE:
+            if (this.settings.type === Dialog.TYPE.CONFIRM) {
+                this.cancel();
+            } else {
+                this.ok();
+            }
+            break;
+        case KEY_ENTER:
+        case KEY_SPACE:
+            if (this._okSelected) {
+                this.ok();
+            } else {
+                this.cancel();
+            }
+            break;
         }
     }
 
@@ -154,11 +146,11 @@ export class Dialog {
      * @private
      */
     _getAreaHeight() {
-//        if (remoteRoom && remoteRoom.rounds.round.game && remoteRoom.rounds.round.game.level) {
-//            return remoteRoom.rounds.round.game.level.data.height * GAME_TILE;
-//        } else {
-//            return HEIGHT;
-//        }
+        //        if (remoteRoom && remoteRoom.rounds.round.game && remoteRoom.rounds.round.game.level) {
+        //            return remoteRoom.rounds.round.game.level.data.height * GAME_TILE;
+        //        } else {
+        //            return HEIGHT;
+        //        }
         return Math.round(HEIGHT / 3 * 2);
     }
 
@@ -178,7 +170,7 @@ export class Dialog {
      * @private
      */
     _getButtonPosition() {
-        var bodyBBox = this._getBodyPixels().bbox();
+        const bodyBBox = this._getBodyPixels().bbox();
         return MAX_HEIGHT * 3 + bodyBBox.height + 4;
     }
 
@@ -187,7 +179,7 @@ export class Dialog {
      * @private
      */
     _getHeaderPixels() {
-        var header;
+        let header;
         header = fontPixels(this.header, 0, 0);
         header = zoom(2, header, 0, 0);
         return header;
@@ -198,7 +190,7 @@ export class Dialog {
      * @private
      */
     _getBodyPixels() {
-        var y, settings = {wrap: this._getContentWidth()};
+        let y; const settings = {wrap: this._getContentWidth()};
         y = 1 + MAX_HEIGHT * 2;
         return fontPixels(this._body, 0, y, settings);
     }
@@ -219,7 +211,7 @@ export class Dialog {
      * @private
      */
     _getCancelButton(x, y) {
-        var settings = {invert: !this._okSelected};
+        const settings = {invert: !this._okSelected};
         return fontPixels(COPY_DIALOG_CANCEL, x, y, settings);
     }
 
@@ -230,7 +222,7 @@ export class Dialog {
      * @private
      */
     _getOkButton(x, y) {
-        var settings = {invert: this._okSelected};
+        const settings = {invert: this._okSelected};
         return fontPixels(COPY_DIALOG_OK, x, y, settings);
     }
 
@@ -239,7 +231,7 @@ export class Dialog {
      * @private
      */
     _getAlertPixels() {
-        var y, ok, line;
+        let y; let ok; let line;
 
         y = this._getButtonPosition();
         ok = this._getOkButton(1, y);
@@ -253,7 +245,7 @@ export class Dialog {
      * @private
      */
     _getConfirmPixels() {
-        var x, y, cancel, ok, line;
+        let x; let y; let cancel; let ok; let line;
 
         x = fontWidth(COPY_DIALOG_CANCEL) + 5;
         y = this._getButtonPosition();
@@ -268,18 +260,18 @@ export class Dialog {
      * @private
      */
     _updateShape() {
-        var shape, header, body, buttons = new PixelCollection();
+        let shape; let header; let body; let buttons = new PixelCollection();
 
         header = this._getHeaderPixels();
         body = this._getBodyPixels();
 
         switch (this.settings.type) {
-            case Dialog.TYPE.ALERT:
-                buttons = this._getAlertPixels();
-                break;
-            case Dialog.TYPE.CONFIRM:
-                buttons = this._getConfirmPixels();
-                break;
+        case Dialog.TYPE.ALERT:
+            buttons = this._getAlertPixels();
+            break;
+        case Dialog.TYPE.CONFIRM:
+            buttons = this._getConfirmPixels();
+            break;
         }
 
         shape = new Shape(header, body, buttons);
@@ -292,5 +284,5 @@ export class Dialog {
         State.shapes.dialog = shape;
     }
 
-};
+}
 

@@ -1,154 +1,113 @@
 /**
- * Extend Shape with client-only effects.
+ * @param {number=} width
+ * @param {number=} height
+ * @return {Shape}
  */
-extend(Shape.prototype, /** @lends {Shape.prototype} */ {
+import { GAME_TILE, HEIGHT, WIDTH } from "../../shared/const";
+import { Shape } from "../../shared/shape";
+import { delta, getKey } from "../../shared/util";
+import { FRAME, GAME_LEFT, GAME_TOP } from "../const";
+import { State } from "../state/state";
 
-    /**
-     * @param {number=} width
-     * @param {number=} height
-     * @return {Shape}
-     */
-    center(width, height) {
-        var x, y, bbox = this.bbox();
+export function center(shape: Shape, width = WIDTH, height = HEIGHT) {
+    let x; let y; const bbox = shape.bbox();
 
-        width = width || WIDTH;
-        height = height || HEIGHT;
+    x = Math.round((width - bbox.width) / 2);
+    y = Math.round((height - bbox.height) / 2);
 
-        x = Math.round((width - bbox.width) / 2);
-        y = Math.round((height - bbox.height) / 2);
+    shape.transform.translate = [x - bbox.x0, y - bbox.y0];
+}
 
-        this.transform.translate = [x - bbox.x0, y - bbox.y0];
+export function setGameTransform(shape) {
+    shape.transform.scale = GAME_TILE;
+    shape.transform.translate[0] = shape.transform.translate[0] * GAME_TILE + GAME_TILE / GAME_LEFT;
+    shape.transform.translate[1] = shape.transform.translate[1] * GAME_TILE + GAME_TILE / GAME_TOP;
+}
 
-        return this;
-    },
+export function flash(shape: Shape, on: number=FRAME * 24, off: number=FRAME * 6): Shape {
+    let progress = 0;
+    const duration = [on, off];
 
-    setGameTransform() {
-        var transform = this.transform, t = GAME_TILE;
-        transform.scale = t;
-        transform.translate[0] = transform.translate[0] * t + t / GAME_LEFT;
-        transform.translate[1] = transform.translate[1] * t + t / GAME_TOP;
-    },
+    shape.effects.flash = (delta) => {
+        progress += delta;
+        if (progress > duration[+!shape.enabled]) {
+            progress -= duration[+!shape.enabled];
+            shape.enabled = !shape.enabled;
+        }
+    };
 
-    /**
-     * @param {number=} on Visible duration
-     * @param {number=} off Invisible duration
-     * @return {Shape}
-     */
-    flash(on, off) {
-        this.effects.flash = this._flashEffect.apply(this, arguments);
-        return this;
-    },
+    return shape;
+}
 
-    /**
-     * @param {number} start
-     * @param {number=} end
-     * @return {Shape}
-     */
-    lifetime(start, end) {
-        this.effects.lifetime = this._lifetimeEffect.apply(this, arguments);
-        return this;
-    },
 
-    /**
-     * @param {Object=} options
-     * @return {Shape}
-     */
-    animate(options) {
-        this.effects.animate = this._animateEffect.apply(this, arguments);
-        return this;
-    },
 
-    /**
-     * @param {number} delta
-     */
-    applyEffects(delta) {
-        for (var k in this.effects) {
-            if (this.effects.hasOwnProperty(k)) {
-                this.effects[k].call(this, delta);
+export function lifetime(shape: Shape, start: number, end?: number): Shape {
+    let progress = 0;
+    let started = false;
+
+    shape.effects.lifetime = (delta) => {
+        // Start time reached.
+        if (start && progress >= start && !started) {
+            started = true;
+            shape.enabled = true;
+        }
+
+        // Stop time reached.
+        if (end && progress >= end) {
+            const key = getKey(State.shapes, shape);
+            if (key) {
+                State.shapes[key] = null;
             }
         }
-    },
 
-    /**
-     * @param {number=} on
-     * @param {number=} off
-     * @return {function({number})}
-     * @private
-     */
-    _flashEffect(on, off) {
-        var duration, progress = 0;
+        progress += delta;
+    };
 
-        duration = [
-            on || FRAME * 24,
-            off || FRAME * 6
-        ];
+    return shape;
+}
 
-        return /** @this Shape */ function(delta) {
-            progress += delta;
-            if (progress > duration[+!this.enabled]) {
-                progress -= duration[+!this.enabled];
-                this.enabled = !this.enabled;
-            }
-        };
-    },
 
-    /**
-     * @param {number} start
-     * @param {number=} end
-     * @return {function({number})}
-     * @private
-     */
-    _lifetimeEffect(start, end) {
-        var key, progress = 0;
-
-        return /** @this Shape */ function(delta) {
-            // Start time reached.
-            if (start && progress >= start) {
-                start = 0; // Prevent re-setting enabled, conflicts with flash()
-                this.enabled = true;
-            }
-
-            // Stop time reached.
-            if (end && progress >= end) {
-                key = getKey(State.shapes, this);
-                if (key) {
-                    State.shapes[key] = null;
-                }
-            }
-
-            progress += delta;
-        };
-    },
-
-    /**
-     * @param {Object=} options
-     * @return {function({number})}
-     * @private
-     */
-    _animateEffect(options) {
-        var from, to, duration, doneCallback, progressCallback, progress = 0;
-
-        options  = options || {};
-        from     = options.from || [0, 0];
-        to       = options.to || [0, 0];
-        duration = typeof options.duration === 'number' ? options.duration : 200;
-        doneCallback = options.callback || noop;
-        progressCallback = options.progress || noop;
-
-        return function(delta) {
-            var x, y, percent;
-            progress += delta;
-            percent = Math.sqrt(progress / duration);
-            if (progress < duration) {
-                x = Math.round(from[0] - ((from[0] - to[0]) * percent));
-                y = Math.round(from[1] - ((from[1] - to[1]) * percent));
-                this.transform.translate = [x, y];
-                progressCallback(this, x, y);
-            } else {
-                this.transform.translate = to;
-                delete this.effects.animate;
-                doneCallback(this);
-            }
-        }.bind(this);
+export function animate(
+    shape: Shape,
+    options: {
+        from?: Coordinate,
+        to?: Coordinate,
+        duration?: number,
+        doneCallback?: (shape: Shape) => any,
+        progressCallback?: (shape: Shape, x: number, y: number) => any,
     }
-});
+) {
+    let progress = 0;
+    options = {
+        from: [0, 0],
+        to: [0, 0],
+        duration: 200,
+        doneCallback: (shape) => {},
+        progressCallback: (shape, x, y) => {},
+        ...options,
+    };
+
+    shape.effects.animate = (delta) => {
+        progress += delta;
+        const percent = Math.sqrt(progress / options.duration);
+        if (progress < options.duration) {
+            const x = Math.round(options.from[0] - ((options.from[0] - options.to[0]) * percent));
+            const y = Math.round(options.from[1] - ((options.from[1] - options.to[1]) * percent));
+            shape.transform.translate = [x, y];
+            options.progressCallback(shape, x, y);
+        } else {
+            shape.transform.translate = options.to;
+            delete shape.effects.animate;
+            options.doneCallback(shape);
+        }
+    };
+
+    return shape;
+}
+
+
+export function applyEffects(shape: Shape, delta: number) {
+    for (const k in shape.effects) {
+        shape.effects[k](delta);
+    }
+}

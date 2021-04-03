@@ -34,7 +34,7 @@ export class AudioPlayer {
     }
 
     getSupportedAudioFiles() {
-        var audioElement, mimetypes;
+        let audioElement; let mimetypes;
 
         audioElement = document.createElement('audio');
 

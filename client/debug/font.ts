@@ -8,7 +8,7 @@ if (location.search.match(/debug=font/)) {
     State.menuSnake = true; // Prevent spawn.
     setTimeout(function() {
         State.flow.destruct();
-        var text = [
+        const text = [
             'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             'abcdefghijklmnopqrstuvwxyz',
             '1234567890 ~@#$%^&*()?/',

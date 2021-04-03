@@ -14,7 +14,7 @@ export class ServerHeartbeat {
         this.latency = 0;
         this.pingSent = 0;
         this.bindEvents();
-    };
+    }
 
     destruct() {
         this.player.emitter.removeAllListeners([
@@ -24,7 +24,7 @@ export class ServerHeartbeat {
     }
 
     isAlive() {
-        var pingSent = this.pingSent || +new Date();
+        const pingSent = this.pingSent || +new Date();
         return +new Date() - pingSent < HEARTBEAT_INTERVAL_MS * 2;
     }
 
@@ -45,4 +45,4 @@ export class ServerHeartbeat {
         );
     }
 
-};
+}

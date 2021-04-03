@@ -1,10 +1,7 @@
-/**
- * @extends {Game}
- * @implements {StageInterface}
- * @constructor
- */
-StartGameStage = function() {
-    Game.call(this);
-};
+import { Game } from "../stage_base/gameStage";
 
-extend(StartGameStage.prototype, Game.prototype);
+export class StartGameStage extends Game {
+    constructor() {
+        super();
+    }
+}

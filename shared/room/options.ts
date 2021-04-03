@@ -1,19 +1,27 @@
 /**
  * @constructor
  */
+import { State } from "../../client/state/state";
+import { ROOM_CAPACITY } from "../const";
+
 export class Options {
-    constructor(Options) {
-    this.isQuickGame = false;
-    this.maxPlayers  = 6;
-    this.levelset    = 0;
-    this.hasPowerups = true;
-    this.isPrivate   = false;
-    this.isXSS       = false;
-};
+    isQuickGame: boolean;
+    maxPlayers: number;
+    levelset: number;
+    hasPowerups: boolean;
+    isPrivate: boolean;
+    isXSS: boolean;
 
+    constructor() {
+        this.isQuickGame = false;
+        this.maxPlayers = 6;
+        this.levelset = 0;
+        this.hasPowerups = true;
+        this.isPrivate = false;
+        this.isXSS = false;
+    }
 
-
-    destruct: noop,
+    destruct() {}
 
     /**
      * @return {Array.<number>}
@@ -27,7 +35,7 @@ export class Options {
             Number(this.isPrivate),
             Number(this.isXSS)
         ];
-    },
+    }
 
     /**
      * @param {?} serialized
@@ -43,8 +51,8 @@ export class Options {
 
         this.isQuickGame = Boolean(serialized[2]);
         this.hasPowerups = Boolean(serialized[3]);
-        this.isPrivate   = Boolean(serialized[4]);
-        this.isXSS       = Boolean(serialized[5]);
+        this.isPrivate = Boolean(serialized[4]);
+        this.isXSS = Boolean(serialized[5]);
     }
 
-};
+}

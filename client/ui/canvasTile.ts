@@ -6,19 +6,14 @@ import { HEIGHT, WIDTH } from "../../shared/const";
 import { ColorScheme } from "./colorScheme";
 
 export class CanvasTile {
-    size: any;
-    private on: HTMLCanvasElement | null;
-    private off: HTMLCanvasElement | null;
+    size: number;
+    on: string;
+    off: string;
 
     constructor(public colorScheme: ColorScheme) {
-
-        /** @type {HTMLCanvasElement} */
         this.on = null;
-        /** @type {HTMLCanvasElement} */
         this.off = null;
-        /** @type {number} */
         this.size = 0;
-
     }
 
     /**
@@ -33,14 +28,16 @@ export class CanvasTile {
      * @return {number}
      */
     updateSize() {
-        var minWidth, minHeight;
+        let minWidth; let minHeight;
         minWidth = window.innerWidth / WIDTH;
         minHeight = window.innerHeight / HEIGHT;
         this.size = Math.floor(Math.min(minWidth, minHeight)) || 1;
         this.updatePatterns();
         return this.size;
-    }    updatePatterns() {
-        var canvas, backgroundImage;
+    }
+
+    updatePatterns() {
+        let canvas; let backgroundImage;
 
         canvas = document.createElement('canvas');
         canvas.setAttribute('width', String(this.size));
@@ -51,8 +48,10 @@ export class CanvasTile {
 
         backgroundImage = ' url(' + canvas.toDataURL('image/png') + ')';
         document.body.style.background = this.colorScheme.bg + backgroundImage;
-    }    _getTileForColor(canvas, color) {
-        var context, pixelSize;
+    }
+
+    _getTileForColor(canvas, color) {
+        let context; let pixelSize;
 
         context = canvas.getContext('2d');
         // Prevent completely transparent borders for visibility.

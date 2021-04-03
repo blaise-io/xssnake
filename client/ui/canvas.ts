@@ -4,9 +4,13 @@
  */
 import { HEIGHT, WIDTH } from "../../shared/const";
 import { average } from "../../shared/util";
+import { colorSchemes } from "../bootstrap/registerColorSchemes";
 import { EV_GAME_TICK, EV_WIN_FOCUS_CHANGE, MAX_FRAME_DELTA, MIN_FRAME_DELTA, STORAGE_COLOR } from "../const";
 import { State } from "../state/state";
-import { debounce, instruct, storage } from "../util/client_util";
+import { debounce, instruct, storage } from "../util/clientUtil";
+import { CanvasTile } from "./canvasTile";
+import { ShapeCache } from "./shapeCache";
+import { applyEffects } from "./shapeClient";
 
 export class Canvas {
     fps: any
@@ -18,6 +22,7 @@ export class Canvas {
     _frameBound: any
     canvasWidth: number
     canvasHeight: number
+    error: boolean;
 
     constructor() {
         const color = storage(STORAGE_COLOR);
@@ -96,7 +101,7 @@ export class Canvas {
      * @private
      */
     _paintShapes(delta) {
-        const overlays = [], shapeKeys = Object.keys(State.shapes);
+        const overlays = []; const shapeKeys = Object.keys(State.shapes);
 
         // Avoid looping over an uncached keyval object.
         for (let i = 0, m = shapeKeys.length; i < m; i++) {
@@ -136,7 +141,9 @@ export class Canvas {
     /** @private */
     _frame(now) {
         // Make appointment for next paint.
-        window.requestAnimationFrame(this._frameBound);
+        if (!this.error) {
+            window.requestAnimationFrame(this._frameBound);
+        }
 
         // Time since last paint
         const delta = now - this._prevFrame;
@@ -167,7 +174,7 @@ export class Canvas {
         // if a browser is "catching up" frames after being focused after
         // a blur, where it tries to make up for slow frames.
         if (delta > MIN_FRAME_DELTA && delta < MAX_FRAME_DELTA) {
-            shape.applyEffects(delta);
+            applyEffects(shape, delta);
         }
 
         // Draw on canvas if shape is enabled and visible

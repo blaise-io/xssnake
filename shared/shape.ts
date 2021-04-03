@@ -79,7 +79,7 @@ export class Shape {
      * @return {Shape}
      */
     invert(bbox) {
-        let pixels = this.pixels, inverted;
+        const pixels = this.pixels; let inverted;
 
         inverted = new PixelCollection();
         bbox = bbox || this.bbox();

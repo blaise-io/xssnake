@@ -33,4 +33,4 @@ export const colorSchemes = [
         '(O)____(o)',
         '#000', '#111', '#fff'
     )
-]
+];

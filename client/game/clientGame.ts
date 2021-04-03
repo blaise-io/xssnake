@@ -28,7 +28,7 @@ export class ClientGame {
 
         this.spawnables = new SpawnableRegistry();
         this.bindEvents();
-    };
+    }
 
 
     destruct() {
@@ -87,7 +87,7 @@ export class ClientGame {
      * @param {Array} serializedSnake
      */
     ncUpdateSnake(serializedSnake) {
-        var clientIndex = serializedSnake.shift();
+        const clientIndex = serializedSnake.shift();
         this.players.players[clientIndex].snake.deserialize(serializedSnake);
     }
 
@@ -95,8 +95,8 @@ export class ClientGame {
      * @param {Array} serializedCollisions
      */
     ncSetSnakesCrashed(serializedCollisions) {
-        for (var i = 0, m = serializedCollisions.length; i < m; i++) {
-            var snake, collision = serializedCollisions[i];
+        for (let i = 0, m = serializedCollisions.length; i < m; i++) {
+            var snake; const collision = serializedCollisions[i];
             snake = this.players.players[collision[0]].snake;
             snake.parts = collision[1];
             snake.setCrashed(collision[2]);
@@ -108,7 +108,7 @@ export class ClientGame {
      * @param {number} elapsed
      */
     gameloop(elapsed) {
-        var shift = this.level.gravity.getShift(elapsed);
+        const shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
 
         if (this.started) {
@@ -124,4 +124,4 @@ export class ClientGame {
         this.players.hideMeta();
         this.players.addControls();
     }
-};
+}

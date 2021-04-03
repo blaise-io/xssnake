@@ -4,25 +4,25 @@
  */
 export class Message {
     constructor(Message) {
-    this.isClean = null;
-    this.event = null;
-    this.data = null;
-    this.process(jsonStr);
-};
+        this.isClean = null;
+        this.event = null;
+        this.data = null;
+        this.process(jsonStr);
+    }
 
 
 
     process(jsonStr) {
-        var message = this.sanitize(jsonStr);
+        const message = this.sanitize(jsonStr);
         if (message) {
             this.isClean = true;
             this.event = message.event;
             this.data = message.data;
         }
-    },
+    }
 
     sanitize(messageJsonStr) {
-        var sanitizer, arrayValidator, eventNumberValidator, messageJson;
+        let sanitizer; let arrayValidator; let eventNumberValidator; let messageJson;
 
         sanitizer = new Sanitizer(messageJsonStr)
             .assertStringOfLength(3, 512)
@@ -53,4 +53,4 @@ export class Message {
         };
     }
 
-};
+}

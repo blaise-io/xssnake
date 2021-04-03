@@ -106,7 +106,7 @@ export class Parser {
      */
     getDirectionForSpawn(spawn: number[]): number {
         for (let i = 0, m = this.spawnDirections.length; i < m; i++) {
-            var dx, dy;
+            var dx; var dy;
 
             if (!this.spawnDirections[i]) {
                 continue;

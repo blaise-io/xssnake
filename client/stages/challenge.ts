@@ -4,6 +4,8 @@ import { DOM_EVENT_KEYDOWN, MENU_LEFT, NS_INPUT } from "../const";
 import { InputStage } from "../stage_base/inputStage";
 import { State } from "../state/state";
 import { font } from "../ui/font";
+import { lifetime } from "../ui/shapeClient";
+import { InputXssStage } from "./inputXss";
 
 /**
  * @extends {InputStage}
@@ -31,7 +33,7 @@ export class ChallengeStage extends InputStage {
     }
 
     inputSubmit(error, value, top) {
-        var shape, text = 'ACCESS DENIED!!';
+        let shape; let text = 'ACCESS DENIED!!';
 
         // Evalevaleval!!!
         // Tolerate answers where user is quoting strings.
@@ -44,7 +46,7 @@ export class ChallengeStage extends InputStage {
         }
 
         shape = font(text, MENU_LEFT, top);
-        shape.lifetime(0, 1000);
+        lifetime(shape, 0, 1000);
 
         State.shapes.message = shape;
     }
@@ -73,7 +75,7 @@ export class ChallengeStage extends InputStage {
     ]
 
     _getRandomChallenge() {
-        var randomStr, randomDigit, challenge;
+        let randomStr; let randomDigit; let challenge;
 
         randomStr = randomStr().substr(0, 3).toUpperCase();
         randomDigit = String(randomRange(0, 5));

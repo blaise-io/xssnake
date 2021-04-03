@@ -1,9 +1,3 @@
-/**
- * Pings server every N seconds.
- *
- * @param {room.ClientSocketPlayer} player
- * @constructor
- */
 import { HEARTBEAT_INTERVAL_MS, NC_PING, NC_PONG } from "../../shared/const";
 import { NS_HEARTBEAT } from "../const";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
@@ -25,7 +19,7 @@ export class ClientHeartbeat {
             this.ping.bind(this),
             HEARTBEAT_INTERVAL_MS
         );
-    };
+    }
 
     destruct() {
         this.player = null;
@@ -53,4 +47,4 @@ export class ClientHeartbeat {
         this.pingSent = null;
     }
 
-};
+}

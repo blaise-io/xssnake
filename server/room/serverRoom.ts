@@ -1,4 +1,4 @@
-var events = require('events');
+const events = require('events');
 
 /**
  * @param {netcode.Server} server
@@ -8,15 +8,15 @@ var events = require('events');
  */
 export class ServerRoom {
     constructor(ServerRoom) {
-    this.server = server;
-    this.options = options;
-    this.key = key;
+        this.server = server;
+        this.options = options;
+        this.key = key;
 
-    this.emitter = new events.EventEmitter();
-    this.players = new ServerPlayerRegistry();
-    this.rounds  = new ServerRoundSet(this.emitter, this.players, this.options);
-    this.bindEvents();
-};
+        this.emitter = new events.EventEmitter();
+        this.players = new ServerPlayerRegistry();
+        this.rounds  = new ServerRoundSet(this.emitter, this.players, this.options);
+        this.bindEvents();
+    }
 
 
 
@@ -27,15 +27,15 @@ export class ServerRoom {
         this.server = null;
         this.players = null;
         this.rounds = null;
-    },
+    }
 
     bindEvents() {
         this.emitter.on(NC_CHAT_MESSAGE, this.ncChatMessage.bind(this));
         this.emitter.on(SE_PLAYER_DISCONNECT, this.handlePlayerDisconnect.bind(this));
-    },
+    }
 
     ncChatMessage(serializedMessage, player) {
-        var sanitizer = new Sanitizer(serializedMessage[0]);
+        const sanitizer = new Sanitizer(serializedMessage[0]);
         sanitizer.assertStringOfLength(1, 64);
         if (sanitizer.valid()) {
             // TODO Prevent spam.
@@ -44,25 +44,25 @@ export class ServerRoom {
                 sanitizer.getValueOr()
             ]);
         }
-    },
+    }
 
     restartRounds() {
-//        this.rounds.destruct();
-//        this.rounds = new RoundManager(this);
-//        this.rounds.detectAutoStart();
-//        this.emitState();
-    },
+        //        this.rounds.destruct();
+        //        this.rounds = new RoundManager(this);
+        //        this.rounds.detectAutoStart();
+        //        this.emitState();
+    }
 
     isAwaitingPlayers() {
         return !this.isFull() && !this.rounds.hasStarted();
-    },
+    }
 
     /**
      * @return {Array.<string>}
      */
     serialize() {
         return [this.key];
-    },
+    }
 
     /**
      * @param {room.ServerPlayer} player
@@ -71,21 +71,21 @@ export class ServerRoom {
         this.players.add(player);
         player.room = this;
         this.players.emitPlayers();
-    },
+    }
 
     detectAutostart() {
         this.rounds.detectAutostart(this.isFull());
-    },
+    }
 
     emit(player) {
         player.emit(NC_ROOM_SERIALIZE, this.serialize());
-    },
+    }
 
     emitAll(player) {
         this.emit(player);
         this.options.emit(player);
         this.rounds.round.emit(player);
-    },
+    }
 
     handlePlayerDisconnect(player) {
         // Remove immediately if rounds have not started.
@@ -95,13 +95,13 @@ export class ServerRoom {
         }
         this.players.emitPlayers();
         this.detectEmptyRoom();
-    },
+    }
 
     detectEmptyRoom() {
         if (!this.players.filter({connected: true}).length) {
             this.server.roomManager.remove(this);
         }
-    },
+    }
 
     /**
      * @return {boolean}
@@ -110,4 +110,4 @@ export class ServerRoom {
         return this.players.getTotal() === this.options.maxPlayers;
     }
 
-};
+}

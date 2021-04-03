@@ -9,7 +9,7 @@ import { PixelCollection } from "../../shared/pixelCollection";
 import { line } from "../../shared/shapeGenerator";
 
 export function outline(shape, hPadding=6, vPadding=6, round=true) {
-    let r, x0, x1, y0, y1, bbox = shape.bbox();
+    let r; let x0; let x1; let y0; let y1; let bbox = shape.bbox();
 
     r = round ? 1 : 0;
 
@@ -52,8 +52,8 @@ export function zoomIn(pixels, xshift=0, yshift=0) {
     const ret = new PixelCollection();
 
     pixels.each(function(x,y) {
-        const xx = x * 2 + xshift,
-            yy = y * 2 + yshift;
+        const xx = x * 2 + xshift;
+        const yy = y * 2 + yshift;
         ret.add(xx, yy);
         ret.add(xx, yy + 1);
         ret.add(xx + 1, yy);
@@ -97,7 +97,7 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
     }
 
     function add(dirX, dirY, x, y) {
-        let baseY, baseX;
+        let baseY; let baseX;
 
         baseX = x * zoomlevel + shiftX;
         baseY = y * zoomlevel + shiftY;
@@ -124,7 +124,7 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
     //  XX
     //   X
     function addX4s(baseX, dirX2, baseY, dirY2) {
-        let compX, compY;
+        let compX; let compY;
 
         compX = baseX + (dirX2 === -1 ? 0 : 3);
         compY = baseY + (dirY2 === -1 ? 0 : 3);
@@ -154,10 +154,10 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
             !pixels.has(x, y - dirY) &&
             pixels.has(x + dirX, y) &&
             pixels.has(x + dirX, y - dirY) && (
-                // !XX
-                // #X
-                // Fixes: 0
-                pixels.has(x + dirX + dirX, y - dirY) ||
+        // !XX
+        // #X
+        // Fixes: 0
+            pixels.has(x + dirX + dirX, y - dirY) ||
                 //  !X
                 // !X!
                 // #X
@@ -185,7 +185,7 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
                         pixels.has(x + dirX + dirX, y + dirY + dirY)  // 4
                     )
                 )
-            )
+        )
         ) {
             add(dirX, dirY, x, y - dirY);
         }

@@ -35,7 +35,7 @@ export class Powerup {
                 break;
             }
         }
-    },
+    }
 
     /**
      * @return {Array}
@@ -90,7 +90,7 @@ export class Powerup {
             //  - Invincible snake
             //  - More neutral power-ups
         ];
-    },
+    }
 
     /**
      * @return {Array.<netcode.Client>}
@@ -100,7 +100,7 @@ export class Powerup {
         var clients = this.room.players.slice();
         clients.splice(this.client.model.index, 1);
         return clients;
-    },
+    }
 
     /**
      * @param {number} delay
@@ -110,7 +110,7 @@ export class Powerup {
     _resetState(delay, callback) {
         var timer = setTimeout(callback, delay);
         this.game.timeouts.push(timer);
-    },
+    }
 
     _speedIncPerm() {
         var room = this.room,
@@ -119,23 +119,23 @@ export class Powerup {
         snake.speed -= 15;
         room.buffer(NC_SNAKE_SPEED, [index, snake.speed]);
         room.buffer(NC_SNAKE_ACTION, [index, '+Speed']).flush();
-    },
+    }
 
     _speedBoostSelf() {
         this._speed([this.client], -50, '5s Fast', 5000);
-    },
+    }
 
     _speedBoostOthers() {
         this._speed(this._others(), -50, '5s Fast', 5000);
-    },
+    }
 
     _speedDownSelf() {
         this._speed([this.client], 100, '10s S.l.o.o.w', 10 * 1000);
-    },
+    }
 
     _speedDownOthers() {
         this._speed(this._others(), 100, '10s S.l.o.o.w', 10 * 1000);
-    },
+    }
 
     /**
      * @param {Array.<netcode.Client>} clients
@@ -164,17 +164,17 @@ export class Powerup {
             }
             room.flush();
         });
-    },
+    }
 
     _spawnApples() {
         var r = randomRange(3, 10);
         this._spawn(SPAWN_APPLE, r, '+Apples');
-    },
+    }
 
     _spawnPowerups() {
         var r = randomRange(2, 5);
         this._spawn(SPAWN_POWERUP, r, '+Power-ups');
-    },
+    }
 
     /**
      * @param {number} type
@@ -186,8 +186,8 @@ export class Powerup {
         var index, spawn, game = this.game;
 
         index = this.client.model.index;
-        spawn = function() {
-            game.spawner.spawn(type);
+class         spawn {
+  constructor() {            game.spawner.spawn(type);
         };
 
         game.room.emit(NC_SNAKE_ACTION, [index, message]);
@@ -195,15 +195,15 @@ export class Powerup {
         for (var i = 0; i < amount; i++) {
             setTimeout(spawn, i * 100);
         }
-    },
+    }
 
     _reverseSelf() {
         this._reverse([this.client]);
-    },
+    }
 
     _reverseOthers() {
         this._reverse(this._others());
-    },
+    }
 
     /**
      * @param {Array.<netcode.Client>} clients
@@ -218,23 +218,23 @@ export class Powerup {
             room.buffer(NC_SNAKE_UPDATE, [i, snake.parts, snake.direction]);
         }
         room.flush();
-    },
+    }
 
     _IncTailSelf() {
         this._tail([this.client], 20, 'Long tail');
-    },
+    }
 
     _incTailOthers() {
         this._tail(this._others(), 20, 'Long tail');
-    },
+    }
 
     _cutTailSelf() {
         this._tail([this.client], -10, 'Cut tail');
-    },
+    }
 
     _cutTailOthers() {
         this._tail(this._others(), -10, 'Cut tail');
-    },
+    }
 
     /**
      * @param {Array.<netcode.Client>} clients

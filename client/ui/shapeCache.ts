@@ -4,24 +4,28 @@
  * @param {CanvasTile} tile
  * @constructor
  */
+import { BoundingBox } from "../../shared/boundingBox";
+import { Shape } from "../../shared/shape";
+import { CanvasTile } from "./canvasTile";
+
 export class ShapeCache {
-    constructor(shape, tile) {
-    this.shape = shape;
-    this.tile = tile;
-    this.bbox = this._getBBox();
-    this.canvas = this._getCanvas();
-    this.context = this.canvas.getContext('2d');
-    this._paintShapePixels();
-};
+    private bbox: BoundingBox;
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
 
-
+    constructor(public shape: Shape, public tile: CanvasTile) {
+        this.bbox = this._getBBox();
+        this.canvas = this._getCanvas();
+        this.context = this.canvas.getContext('2d');
+        this._paintShapePixels();
+    }
 
     _getCanvas() {
-        var canvas = document.createElement('canvas');
+        const canvas = document.createElement('canvas');
         canvas.width = this.bbox.width + this._getSize();
         canvas.height = this.bbox.height + this._getSize();
         return canvas;
-    },
+    }
 
     /**
      * Save paint calls by merging pixels.
@@ -33,9 +37,9 @@ export class ShapeCache {
      * @private
      */
     _mergePixels(shapePixels) {
-        var lines = this._getLines(shapePixels);
+        const lines = this._getLines(shapePixels);
         return this._getRectangles(lines);
-    },
+    }
 
     /**
      * Group pixels to horizontal lines.
@@ -44,7 +48,7 @@ export class ShapeCache {
      * @private
      */
     _getLines(shapePixels) {
-        var cache = null, lines = [];
+        let cache = null; const lines = [];
 
         shapePixels.sort().each(function(x, y) {
             // cache: x,y,w
@@ -63,7 +67,7 @@ export class ShapeCache {
         }
 
         return lines;
-    },
+    }
 
     /**
      * Group pixels to rectangles.
@@ -72,13 +76,13 @@ export class ShapeCache {
      * @private
      */
     _getRectangles(lines) {
-        var cache = null, rectangles = [];
+        let cache = null; const rectangles = [];
 
         lines.sort(function(a, b) {
             return a[0] - b[0];
         });
 
-        for (var i = 0, m = lines.length; i < m; i++) {
+        for (let i = 0, m = lines.length; i < m; i++) {
             // cache: x,y,w,h
             if (cache &&
                 lines[i][0] === cache[0] &&
@@ -99,10 +103,10 @@ export class ShapeCache {
         }
 
         return rectangles;
-    },
+    }
 
     _fillBackground() {
-        var expand = this.shape.expand * this.tile.size * -1;
+        const expand = this.shape.expand * this.tile.size * -1;
         this.context.fillStyle = this.tile.off;
         this.context.fillRect(
             expand,
@@ -110,14 +114,14 @@ export class ShapeCache {
             this.bbox.width + this.tile.size - expand,
             this.bbox.height + this.tile.size - expand
         );
-    },
+    }
 
     _getSize() {
         return this.tile.size * this.shape.transform.scale;
-    },
+    }
 
     _paintShapePixels() {
-        var size = this._getSize(), rectangles;
+        const size = this._getSize(); let rectangles;
 
         rectangles = this._mergePixels(this.shape.pixels);
 
@@ -126,7 +130,7 @@ export class ShapeCache {
         }
 
         this.context.fillStyle = this.tile.on;
-        for (var i = 0, m = rectangles.length; i < m; i++) {
+        for (let i = 0, m = rectangles.length; i < m; i++) {
             this.context.fillRect(
                 rectangles[i][0] * size - this.bbox.x0,
                 rectangles[i][1] * size - this.bbox.y0,
@@ -134,25 +138,25 @@ export class ShapeCache {
                 rectangles[i][3] * size
             );
         }
-    },
+    }
 
     /**
      * @return {BoundingBox}
      * @private
      */
     _getBBox() {
-        var size, pixelBBox, tileBBox, tileBBoxKeys;
+        let size; let pixelBBox; let tileBBox; let tileBBoxKeys;
 
         size = this._getSize();
         pixelBBox = this.shape.pixels.bbox();
         tileBBox = new BoundingBox();
         tileBBoxKeys = Object.keys(pixelBBox);
 
-        for (var i = 0, m = tileBBoxKeys.length; i < m; i++) {
-            var k = tileBBoxKeys[i];
+        for (let i = 0, m = tileBBoxKeys.length; i < m; i++) {
+            const k = tileBBoxKeys[i];
             tileBBox[k] = pixelBBox[k] * size;
         }
 
         return tileBBox;
     }
-};
+}
