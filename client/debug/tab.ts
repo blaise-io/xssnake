@@ -3,7 +3,7 @@ import { State } from "../state/state";
 import { font } from "../ui/font";
 
 if (location.search.match(/debug=tab/)) {
-    State.menuSnake = true; // Prevent spawn.
+    State.menuSnake = "block";
     setTimeout(function() {
         State.shapes = {};
         const text = [

@@ -5,7 +5,7 @@ import { font, fontPixels } from "../ui/font";
 import { zoom } from "../ui/transformClient";
 
 if (location.search.match(/debug=font/)) {
-    State.menuSnake = true; // Prevent spawn.
+    State.menuSnake = "block";
     setTimeout(function() {
         State.flow.destruct();
         const text = [

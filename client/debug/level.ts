@@ -6,12 +6,13 @@ import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state/state";
 
-const match = location.search.match(/debug=(.+Level)$/)
+const match = location.search.match(/debug=(.+Level)$/);
 if (match) {
-    State.menuSnake = true; // Prevent spawn.
+    State.menuSnake = "block";
+
     document.addEventListener('DOMContentLoaded', function() {
 
-    const player = new ClientPlayer();
+        const player = new ClientPlayer();
         player.local = true;
 
         const players = new ClientPlayerRegistry();

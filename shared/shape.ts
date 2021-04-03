@@ -57,31 +57,19 @@ export class Shape {
         this.add(...pixelCollections);
     }
 
-    /**
-     * @return {Shape}
-     */
-    clone() {
+    clone(): Shape {
         return new Shape(this.pixels);
     }
 
-    /**
-     * @param {number=} hPadding
-     * @param {number=} vPadding
-     * @return {Shape}
-     */
-    outline(hPadding, vPadding) {
+    outline(hPadding=0, vPadding=0): Shape {
         outline(this, hPadding, vPadding);
         return this;
     }
 
-    /**
-     * @param {BoundingBox=} bbox
-     * @return {Shape}
-     */
-    invert(bbox) {
-        const pixels = this.pixels; let inverted;
+    invert(bbox?: BoundingBox): Shape {
+        const pixels = this.pixels;
 
-        inverted = new PixelCollection();
+        const inverted = new PixelCollection();
         bbox = bbox || this.bbox();
 
         for (let x = bbox.x0; x <= bbox.x1; x++) {

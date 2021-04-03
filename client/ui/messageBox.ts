@@ -131,7 +131,7 @@ export class MessageBoxUI {
     hideEnterKey(flashKey?: boolean) {
         const speed = FRAME * 4;
         if (flashKey) {
-            flash(State.shapes.MSG_ENTER, speed, speed)
+            flash(State.shapes.MSG_ENTER, speed, speed);
             lifetime(State.shapes.MSG_ENTER, 0, speed);
         } else {
             State.shapes.MSG_ENTER = null;

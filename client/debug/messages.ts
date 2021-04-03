@@ -10,7 +10,7 @@ import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
 if (location.search.match(/debug=messages/)) {
-    State.menuSnake = true; // Prevent spawn.
+    State.menuSnake = "block";
     setTimeout(function() {
         const messages = [];
         const author = new Player('Dummy');

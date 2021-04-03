@@ -246,7 +246,7 @@ export function explosion(location, direction, intensity=16) {
         duration = Math.pow(randomRange(1, 10), 3);
 
         shape = new Shape(pixel);
-        animate(shape, {to: to, duration: duration})
+        animate(shape, {to: to, duration: duration});
         lifetime(shape, 0, duration);
         State.shapes[NS_EXPLOSION + randomStr(3)] = shape;
     }

@@ -14,7 +14,7 @@ export class State {
     public static flow: StageFlow
     public static shapes: Record<string, Shape>
     public static levelsetRegistry: Registry
-    public static menuSnake: MenuSnake
+    public static menuSnake: MenuSnake | string
     public static keysBlocked = false
     public static player: ClientSocketPlayer
 }
