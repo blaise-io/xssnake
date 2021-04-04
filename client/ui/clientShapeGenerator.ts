@@ -158,42 +158,28 @@ export function innerBorder() {
     );
 }
 
-/**
- * @param {function(string, Shape)} callbackFn
- */
-export function outerBorder(callbackFn) {
-    const shapes: any = {}; let w; let h;
+export function outerBorder(): Record<string, Shape> {
+    const w = WIDTH - 1;
+    const h = HEIGHT - 1;
 
-    w = WIDTH - 1;
-    h = HEIGHT - 1;
-
-    // TODO: Figure out whether still an issue:
-    // Splitting this up or it spans too big of an area
-    shapes.outerBorderTop = new Shape(
-        line(1, 0, w - 1, 0),
-        line(0, 1, w, 1)
-    );
-
-    shapes.outerBorderRight = new Shape(
-        line(w, 2, w, h - 2),
-        line(w - 1, 2, w - 1, h - 2)
-    );
-
-    shapes.outerBorderBottom = new Shape(
-        line(1, h, w - 1, h),
-        line(0, h - 1, w, h - 1)
-    );
-
-    shapes.outerBorderLeft = new Shape(
-        line(0, 2, 0, h - 2),
-        line(1, 2, 1, h - 2)
-    );
-
-    for (const k in shapes) {
-        if (shapes.hasOwnProperty(k)) {
-            callbackFn(k, shapes[k]);
-        }
-    }
+    return {
+        outerBorderTop: new Shape(
+            line(1, 0, w - 1, 0),
+            line(0, 1, w, 1)
+        ),
+        outerBorderRight: new Shape(
+            line(w, 2, w, h - 2),
+            line(w - 1, 2, w - 1, h - 2)
+        ),
+        outerBorderBottom: new Shape(
+            line(1, h, w - 1, h),
+            line(0, h - 1, w, h - 1)
+        ),
+        outerBorderLeft: new Shape(
+            line(0, 2, 0, h - 2),
+            line(1, 2, 1, h - 2)
+        ),
+    };
 }
 
 /**

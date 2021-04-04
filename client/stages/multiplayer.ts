@@ -37,7 +37,7 @@ export class MultiplayerStage extends FormStage {
      * @return {Function}
      * @private
      */
-    getNextStage(values) {
+    getNextStage(values)): void {
         if (values[FIELD_XSS]) {
             return ChallengeStage;
         } else {

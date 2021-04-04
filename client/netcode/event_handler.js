@@ -14,7 +14,7 @@ xss.EventHandler.prototype = {
      * @param {number|string} topic
      * @param {...*} eventData
      */
-    trigger: function(topic, eventData) {
+    trigger: function(topic, eventData)): void {
         var topicKeys, topics = this._topics[topic];
         if (topics) {
             topicKeys = Object.keys(topics);
@@ -32,7 +32,7 @@ xss.EventHandler.prototype = {
      * @param {string} key
      * @param {Function} callback
      */
-    on: function(topic, key, callback) {
+    on: function(topic, key, callback)): void {
         if (!this._topics[topic]) {
             this._topics[topic] = {};
         }
@@ -47,7 +47,7 @@ xss.EventHandler.prototype = {
      * @param {string} key
      * @param {function((Event|null))} callback
      */
-    once: function(topic, key, callback) {
+    once: function(topic, key, callback)): void {
         var callbackAndOff = function() {
             callback.apply(callback, arguments);
             this.off(topic, key);
@@ -59,7 +59,7 @@ xss.EventHandler.prototype = {
      * @param {number|string} topic
      * @param {string=} key
      */
-    off: function(topic, key) {
+    off: function(topic, key)): void {
         var callback;
         if (topic in this._topics) {
             if (typeof key !== 'undefined') {

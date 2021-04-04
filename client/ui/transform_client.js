@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Extend Transform with client-only methods.
@@ -15,10 +15,10 @@ xss.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
     outline: function(shape, hPadding, vPadding, round) {
         var r, x0, x1, y0, y1, bbox = shape.bbox();
 
-        r = (typeof round === 'undefined') ? 1 : 0;
+        r = (typeof round === "undefined") ? 1 : 0;
 
-        hPadding = typeof hPadding === 'number' ? hPadding : 6;
-        vPadding = typeof vPadding === 'number' ? vPadding : 6;
+        hPadding = typeof hPadding === "number" ? hPadding : 6;
+        vPadding = typeof vPadding === "number" ? vPadding : 6;
 
         // Keep in viewport
         if (bbox.y0 - vPadding < 0) {
@@ -161,10 +161,10 @@ xss.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
                 !pixels.has(x, y - dirY) &&
                 pixels.has(x + dirX, y) &&
                 pixels.has(x + dirX, y - dirY) && (
-                    // !XX
-                    // #X
-                    // Fixes: 0
-                    pixels.has(x + dirX + dirX, y - dirY) ||
+            // !XX
+            // #X
+            // Fixes: 0
+                pixels.has(x + dirX + dirX, y - dirY) ||
                     //  !X
                     // !X!
                     // #X
@@ -192,7 +192,7 @@ xss.extend(xss.Transform.prototype, /** @lends {xss.Transform.prototype} */{
                             pixels.has(x + dirX + dirX, y + dirY + dirY)  // 4
                         )
                     )
-                )
+            )
             ) {
                 add(dirX, dirY, x, y - dirY);
             }

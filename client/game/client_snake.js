@@ -110,7 +110,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
      * @param shift
      * @param {Array.<xss.room.Player>} players
      */
-    handleNextMove: function(level, elapsed, shift, players) {
+    handleNextMove: function(level, elapsed, shift, players)): void {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
@@ -139,7 +139,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
     /**
      * @param {xss.Coordinate=} crashingPart
      */
-    setCrashed: function(crashingPart) {
+    setCrashed: function(crashingPart)): void {
         this.crashed = true;
         if (this.controls) {
             this.controls.destruct();
@@ -154,7 +154,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
     /**
      * @param {xss.Coordinate=} part
      */
-    explodeParticles: function(part) {
+    explodeParticles: function(part)): void {
         var direction, location;
 
         if (part) {
@@ -176,7 +176,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
     /**
      * @param {Array} serializedSnake
      */
-    deserialize: function(serializedSnake) {
+    deserialize: function(serializedSnake)): void {
         this.direction = serializedSnake[0];
         this.parts = serializedSnake[1];
         // If server updated snake, client prediction
@@ -187,7 +187,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
     /**
      * @param {number} direction
      */
-    emit: function(direction) {
+    emit: function(direction)): void {
         if (xss.player) {
             var sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
             xss.player.emit(xss.NC_SNAKE_UPDATE, [

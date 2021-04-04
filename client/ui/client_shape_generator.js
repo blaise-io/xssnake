@@ -18,7 +18,7 @@ xss.extend(xss.ClientShapeGenerator.prototype, /** @lends {xss.ShapeGenerator.pr
      * @param {number} direction
      * @return {xss.Shape}
      */
-    tooltip: function(text, x, y, direction) {
+    tooltip: function(text, x, y, direction)): void {
         var width, shape, hw, line = xss.shapegen.line.bind(xss.shapegen);
 
         width = xss.font.width(text);
@@ -105,7 +105,7 @@ xss.extend(xss.ClientShapeGenerator.prototype, /** @lends {xss.ShapeGenerator.pr
      * @param {number} direction
      * @return {xss.Shape}
      */
-    tooltipName: function(text, part, direction) {
+    tooltipName: function(text, part, direction)): void {
         var x, y, t = xss.GAME_TILE, d = xss.GAME_TILE * 2.5;
 
         x = part[0] * t;
@@ -127,7 +127,7 @@ xss.extend(xss.ClientShapeGenerator.prototype, /** @lends {xss.ShapeGenerator.pr
      * @param {number} duration
      * @param {number=} amount
      */
-    showAction: function(label, coordinate, duration, amount) {
+    showAction: function(label, coordinate, duration, amount)): void {
         amount = amount || 3;
 
         var rand = function() {
@@ -161,7 +161,7 @@ xss.extend(xss.ClientShapeGenerator.prototype, /** @lends {xss.ShapeGenerator.pr
     /**
      * @param {function(string, xss.Shape)} callbackFn
      */
-    outerBorder: function(callbackFn) {
+    outerBorder: function(callbackFn)): void {
         var shapes = {}, w, h;
 
         w = xss.WIDTH - 1;
@@ -217,7 +217,7 @@ xss.extend(xss.ClientShapeGenerator.prototype, /** @lends {xss.ShapeGenerator.pr
      * @param {number=} direction
      * @param {number=} intensity
      */
-    explosion: function(location, direction, intensity) {
+    explosion: function(location, direction, intensity)): void {
         var pixel, shape, to, duration, w, d, rand;
 
         w = 10;

@@ -59,7 +59,7 @@ export class InputField {
     /**
      * @param {string} value
      */
-    setValue(value) {
+    setValue(value)): void {
         this.input.focus();
         this.input.value = value;
         this.input.setSelectionRange(value.length, value.length);

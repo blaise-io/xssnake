@@ -59,7 +59,7 @@ xss.game.ClientGame.prototype = {
      * Don't call this mid-game.
      * @param {xss.room.ClientPlayerRegistry} players
      */
-    updatePlayers: function(players) {
+    updatePlayers: function(players)): void {
         players.unsetSnakes();
         players.setSnakes(this.level);
         players.showMeta();
@@ -69,7 +69,7 @@ xss.game.ClientGame.prototype = {
     /**
      * @param {xss.level.Level} level
      */
-    updateLevel: function(level) {
+    updateLevel: function(level)): void {
         this.level.destruct();
         this.level = level;
         this.level.paint();
@@ -80,7 +80,7 @@ xss.game.ClientGame.prototype = {
     /**
      * @param {Array} serializedSnake
      */
-    ncUpdateSnake: function(serializedSnake) {
+    ncUpdateSnake: function(serializedSnake)): void {
         var clientIndex = serializedSnake.shift();
         this.players.players[clientIndex].snake.deserialize(serializedSnake);
     },
@@ -88,7 +88,7 @@ xss.game.ClientGame.prototype = {
     /**
      * @param {Array} serializedCollisions
      */
-    ncSetSnakesCrashed: function(serializedCollisions) {
+    ncSetSnakesCrashed: function(serializedCollisions)): void {
         for (var i = 0, m = serializedCollisions.length; i < m; i++) {
             var snake, collision = serializedCollisions[i];
             snake = this.players.players[collision[0]].snake;
@@ -101,7 +101,7 @@ xss.game.ClientGame.prototype = {
      * Runs ~ every 16 ms (60 fps)
      * @param {number} elapsed
      */
-    gameloop: function(elapsed) {
+    gameloop: function(elapsed)): void {
         var shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
 

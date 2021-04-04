@@ -36,7 +36,7 @@ export class ShapeCache {
      * @return {Array.<Array.<number>>}
      * @private
      */
-    _mergePixels(shapePixels) {
+    _mergePixels(shapePixels)): void {
         const lines = this._getLines(shapePixels);
         return this._getRectangles(lines);
     }
@@ -47,7 +47,7 @@ export class ShapeCache {
      * @return {Array.<Array.<number>>}
      * @private
      */
-    _getLines(shapePixels) {
+    _getLines(shapePixels)): void {
         let cache = null; const lines = [];
 
         shapePixels.sort().each(function(x, y) {
@@ -75,7 +75,7 @@ export class ShapeCache {
      * @return {Array.<Array.<number>>}
      * @private
      */
-    _getRectangles(lines) {
+    _getRectangles(lines)): void {
         let cache = null; const rectangles = [];
 
         lines.sort(function(a, b) {

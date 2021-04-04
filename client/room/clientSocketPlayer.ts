@@ -90,7 +90,7 @@ export class ClientSocketPlayer extends ClientPlayer {
     /**
      * @param {Object} ev
      */
-    onmessage(ev) {
+    onmessage(ev)): void {
         const data = JSON.parse(ev.data);
         console.log("IN ", data);
         State.events.trigger(data[0], data.slice(1));

@@ -29,7 +29,7 @@ export class ClientSnakeControls {
     /**
      * @param {Event} event
      */
-    handleKeys(event) {
+    handleKeys(event)): void {
         const direction = KEY_TO_DIRECTION[event.keyCode];
         if (!State.keysBlocked && typeof direction !== "undefined") {
             this.setDirection(direction);
@@ -39,7 +39,7 @@ export class ClientSnakeControls {
     /**
      * @param {number} direction
      */
-    setDirection(direction) {
+    setDirection(direction)): void {
         if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
             this.upcomingDirections.push(direction);
         }
@@ -60,7 +60,7 @@ export class ClientSnakeControls {
      * @param {number} prevDirection
      * @return {boolean}
      */
-    isDirectionAllowed(direction, prevDirection) {
+    isDirectionAllowed(direction, prevDirection)): void {
         const turn = Math.abs(direction - prevDirection);
         return (
             this.upcomingDirections.length <= 2 &&
@@ -82,7 +82,7 @@ export class ClientSnakeControls {
     /**
      * @param {number} direction
      */
-    emitNewDirection(direction) {
+    emitNewDirection(direction)): void {
         //        if (State.player && State.player.room && State.player.room.gameHasStarted()) {
         this.snake.emit(direction);
         //        }

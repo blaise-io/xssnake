@@ -16,7 +16,7 @@ xss.AudioPlayer.prototype = {
     /**
      * @param {string} file
      */
-    play: function(file) {
+    play: function(file)): void {
         if (
             this.files &&
             this.files[file] &&

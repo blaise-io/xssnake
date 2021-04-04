@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 xss.game.ServerSnakeMove = function(dirtyMove, player) {
     this.dirtyMove = dirtyMove;
@@ -95,8 +95,8 @@ xss.game.ServerSnakeMove.prototype = {
         for (var i = 1, m = parts.length; i < m; i++) {
             // Sanity check
             if (parts[i].length !== 2 ||
-                typeof parts[i][0] !== 'number' ||
-                typeof parts[i][1] !== 'number'
+                typeof parts[i][0] !== "number" ||
+                typeof parts[i][1] !== "number"
             ) {
                 return false;
             }

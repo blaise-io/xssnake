@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Extend xss.Shape with client-only effects.
@@ -133,7 +133,7 @@ xss.extend(xss.Shape.prototype, /** @lends {xss.Shape.prototype} */ {
         options  = options || {};
         from     = options.from || [0, 0];
         to       = options.to || [0, 0];
-        duration = typeof options.duration === 'number' ? options.duration : 200;
+        duration = typeof options.duration === "number" ? options.duration : 200;
         doneCallback = options.callback || xss.util.noop;
         progressCallback = options.progress || xss.util.noop;
 

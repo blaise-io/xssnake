@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * A set of rounds.

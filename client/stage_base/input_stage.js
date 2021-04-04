@@ -68,7 +68,7 @@ xss.InputStage.prototype = {
      * @param {string} value
      * @param {number} top
      */
-    inputSubmit: function(error, value, top) {
+    inputSubmit: function(error, value, top)): void {
         if (!error && value && top) {
             xss.flow.switchStage(this.next);
             xss.event.off(xss.DOM_EVENT_KEYDOWN, xss.NS_INPUT);
@@ -105,7 +105,7 @@ xss.InputStage.prototype = {
     /**
      * @private
      */
-    _handleKeys: function(ev) {
+    _handleKeys: function(ev)): void {
         var value, top;
         switch (ev.keyCode) {
             case xss.KEY_ESCAPE:
@@ -129,7 +129,7 @@ xss.InputStage.prototype = {
      * @return {string}
      * @private
      */
-    _getInputError: function(val) {
+    _getInputError: function(val)): void {
         if (val.length < this.minlength) {
             return 'Too short!!';
         } else if (this.maxChars && val.length > this.maxChars) {

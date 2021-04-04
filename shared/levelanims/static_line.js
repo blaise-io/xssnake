@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Static Line -- for debugging

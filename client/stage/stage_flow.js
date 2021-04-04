@@ -53,7 +53,7 @@ xss.StageFlow.prototype = {
      * @param {Function} Stage
      * @param {Object=} options
      */
-    switchStage: function(Stage, options) {
+    switchStage: function(Stage, options)): void {
         var switchToStage;
 
         options = options || {};
@@ -122,7 +122,7 @@ xss.StageFlow.prototype = {
      * @param {Event} ev
      * @private
      */
-    _handleKeys: function(ev) {
+    _handleKeys: function(ev)): void {
         var mute, instruct;
 
         // Firefox disconnects websocket on Esc. Disable that.
@@ -152,7 +152,7 @@ xss.StageFlow.prototype = {
      * @param {function()} callback
      * @private
      */
-    _switchStageAnimate: function(oldShape, newShape, back, callback) {
+    _switchStageAnimate: function(oldShape, newShape, back, callback)): void {
         var oldStageAnim, newStageAnim, width = xss.WIDTH - xss.MENU_LEFT;
 
         if (back) {
@@ -180,7 +180,7 @@ xss.StageFlow.prototype = {
      * @param {boolean} back
      * @private
      */
-    _setStage: function(stage, back) {
+    _setStage: function(stage, back)): void {
         // Remove animated stages
         xss.shapes.oldstage = null;
         xss.shapes.newstage = null;

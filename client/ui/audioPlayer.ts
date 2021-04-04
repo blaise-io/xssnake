@@ -22,7 +22,7 @@ export class AudioPlayer {
     /**
      * @param {string} file
      */
-    play(file) {
+    play(file)): void {
         if (
             this.files &&
             this.files[file] &&

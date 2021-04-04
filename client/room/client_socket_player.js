@@ -73,7 +73,7 @@ xss.extend(xss.room.ClientSocketPlayer.prototype, /** @lends {xss.room.ClientSoc
      * @param {number} event
      * @param {Array.<string|number>=} data
      */
-    emit: function(event, data) {
+    emit: function(event, data)): void {
         var emit;
         if (data) {
             emit = data;
@@ -88,7 +88,7 @@ xss.extend(xss.room.ClientSocketPlayer.prototype, /** @lends {xss.room.ClientSoc
     /**
      * @param {Object} ev
      */
-    onmessage: function(ev) {
+    onmessage: function(ev)): void {
         var data = JSON.parse(ev.data);
         console.log('IN ', data);
         xss.event.trigger(data[0], data.slice(1));

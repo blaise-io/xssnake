@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Shifted Line -- for debugging

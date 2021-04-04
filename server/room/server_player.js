@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var events = require('events');
+var events = require("events");
 
 /**
  * @param {xss.netcode.Server} server
@@ -18,8 +18,8 @@ xss.room.ServerPlayer = function(server, connection) {
     this.room = null;
 
     this.connection = connection;
-    this.connection.on('message', this.onmessage.bind(this));
-    this.connection.on('close', this.onclose.bind(this));
+    this.connection.on("message", this.onmessage.bind(this));
+    this.connection.on("close", this.onclose.bind(this));
 
     this.connected = true;
 
@@ -63,7 +63,7 @@ xss.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.pr
      */
     onmessage: function(jsonStr) {
         var message = new xss.netcode.Message(jsonStr);
-        console.log('IN ', this.name, jsonStr);
+        console.log("IN ", this.name, jsonStr);
         if (message.isClean) {
             this.emitMessage(message.event, message.data);
         }
@@ -131,10 +131,10 @@ xss.extend(xss.room.ServerPlayer.prototype, /** @lends {xss.room.ServerPlayer.pr
             } else {
                 emit = [event];
             }
-            console.log('OUT', this.name, JSON.stringify(emit));
+            console.log("OUT", this.name, JSON.stringify(emit));
             this.connection.send(JSON.stringify(emit), function(error) {
                 if (error) {
-                    console.error('Error sending message', error);
+                    console.error("Error sending message", error);
                 }
             }.bind(this));
         }

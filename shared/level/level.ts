@@ -32,9 +32,10 @@ export class Level {
         if (__IS_CLIENT__) {
             State.shapes.level = null;
             State.shapes.innerborder = null;
-            outerBorder(function(k) {
-                State.shapes[k] = null;
-            });
+            State.shapes.outerBorderLeft = null;
+            State.shapes.outerBorderRight = null;
+            State.shapes.outerBorderTop = null;
+            State.shapes.outerBorderBottom = null;
         }
     }
 
@@ -47,9 +48,7 @@ export class Level {
             State.shapes.level = new Shape(this.data.walls);
             setGameTransform(State.shapes.level);
             State.shapes.innerborder = innerBorder();
-            outerBorder(function(k, border) {
-                State.shapes[k] = border;
-            });
+            Object.assign(State.shapes, outerBorder());
         }
     }
 

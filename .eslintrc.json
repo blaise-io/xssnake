@@ -23,6 +23,9 @@
       {
         "avoidEscape": true
       }
-    ]
+    ],
+    "no-empty-function": "off",
+    "no-extend-native": "error",
+    "explicit-function-return-type": "error"
   }
 }

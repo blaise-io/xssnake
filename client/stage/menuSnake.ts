@@ -1,13 +1,15 @@
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Config } from "../../shared/levelset/config";
+import { Shape } from "../../shared/shape";
 import { GAME_LEFT, GAME_TOP } from "../const";
 import { ClientSnake } from "../game/clientSnake";
 import { State } from "../state/state";
 import { zoom } from "../ui/transformClient";
+import { instruct } from "../util/clientUtil";
 
 export class MenuSnake {
     snake: ClientSnake;
-    timeouts: any[];
+    timeouts: number[];
     level: BlankLevel;
 
     constructor() {
@@ -17,7 +19,7 @@ export class MenuSnake {
         this.level.preload(this.construct.bind(this));
     }
 
-    construct() {
+    construct(): void {
         const snake = new ClientSnake(0, false, "", this.level);
         snake.addControls();
         snake.showDirection();
@@ -25,11 +27,11 @@ export class MenuSnake {
 
         this.snake = snake;
         this.timeouts.push(
-            setTimeout(this.move.bind(this), 1500)
+            window.setTimeout(this.move.bind(this), 1500)
         );
     }
 
-    destruct() {
+    destruct(): void {
         for (let i = 0, m = this.timeouts.length; i < m; i++) {
             clearTimeout(this.timeouts[i]);
         }
@@ -37,33 +39,29 @@ export class MenuSnake {
         this.level.destruct();
     }
 
-    move() {
-        let nextpos; const snake = this.snake;
+    move(): void {
+        const snake = this.snake;
 
         snake.collision = null;
 
-        nextpos = snake.getNextPosition();
+        const nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {
             snake.setCrashed();
+            instruct("Have you seen my snake?");
             this.timeouts.push(
-                setTimeout(snake.destruct.bind(snake), 2200)
+                window.setTimeout(snake.destruct.bind(snake), 2200)
             );
         } else {
             snake.elapsed = 1000; // Trigger move.
             snake.move(snake.getNextPosition());
             snake.updateShape();
             this.timeouts.push(
-                setTimeout(this.move.bind(this), 100)
+                window.setTimeout(this.move.bind(this), 100)
             );
         }
     }
 
-    /**
-     * @param {game.ClientSnake} snake
-     * @param {Coordinate} nextpos
-     * @return {boolean}
-     */
-    isCrash(snake, nextpos) {
+    isCrash(snake: ClientSnake, nextpos: Coordinate): boolean {
         const snakeShape = snake.getShape(); let crash = false;
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
@@ -80,15 +78,9 @@ export class MenuSnake {
         return crash;
     }
 
-    /**
-     * @param {Shape} snakeShape
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
-     */
-    overlaysShape(snakeShape, x, y) {
+    overlaysShape(snakeShape: Shape, x: number, y: number): boolean {
         for (const k in State.shapes) {
-            if (State.shapes.hasOwnProperty(k) && State.shapes[k] !== snakeShape) {
+            if (State.shapes[k] !== snakeShape) {
                 if (State.shapes[k] && State.shapes[k].pixels.has(x, y)) {
                     return true;
                 }

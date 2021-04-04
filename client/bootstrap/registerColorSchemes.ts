@@ -1,6 +1,6 @@
 import { ColorScheme } from "../ui/colorScheme";
 
-export const colorSchemes = [
+export const colorSchemes: ColorScheme[] = [
     new ColorScheme(
         "My First LED Screen",
         "Without backlight in the sun",

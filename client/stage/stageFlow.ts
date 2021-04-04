@@ -13,7 +13,7 @@ import { StartGameStage } from "../stages/startGame";
 import { State } from "../state/state";
 import { outerBorder, xssnakeHeader } from "../ui/clientShapeGenerator";
 import { animate } from "../ui/shapeClient";
-import { storage, urlHash } from "../util/clientUtil";
+import { instruct, storage, urlHash } from "../util/clientUtil";
 
 export class StageFlow {
     GameStage: any;
@@ -44,8 +44,14 @@ export class StageFlow {
 
     start() {
         this._history = [];
-        this._bindGlobalEvents();
-        this._setupMenuSkeletton();
+
+        window.onhashchange = this._hashChange.bind(this);
+        State.events.on(DOM_EVENT_KEYDOWN, NS_FLOW, this._handleKeys.bind(this));
+
+        Object.assign(State.shapes, outerBorder());
+
+        State.shapes.HEADER = xssnakeHeader();
+
         this._setStage(new (this._FirstStage)(), false);
     }
 
@@ -61,7 +67,7 @@ export class StageFlow {
      * @param {Function} Stage
      * @param {Object=} options
      */
-    switchStage(Stage, options: any={}) {
+    switchStage(Stage, options: any={})): void {
         let switchToStage;
 
         if (Stage && !options.back) {
@@ -97,25 +103,7 @@ export class StageFlow {
         State.shapes.stage = this.stage.getShape();
     }
 
-    _setupMenuSkeletton() {
-        outerBorder(function(k, border) {
-            State.shapes[k] = border;
-        });
-        State.shapes.HEADER = xssnakeHeader();
-    }
-
-    /**
-     * @private
-     */
-    _bindGlobalEvents() {
-        window.onhashchange = this._hashChange.bind(this);
-        State.events.on(DOM_EVENT_KEYDOWN, NS_FLOW, this._handleKeys.bind(this));
-    }
-
-    /**
-     * @private
-     */
-    _hashChange() {
+    private _hashChange(): void {
         if (
             urlHash(HASH_ROOM).length === ROOM_KEY_LENGTH &&
             1 === this._history.length
@@ -124,13 +112,7 @@ export class StageFlow {
         }
     }
 
-    /**
-     * @param {Event} ev
-     * @private
-     */
-    _handleKeys(ev) {
-        let mute; let instruct;
-
+    private _handleKeys(ev: KeyboardEvent): void {
         // Firefox disconnects websocket on Esc. Disable that.
         // Also prevent the tab key focusing things outside canvas.
         if (ev.keyCode === KEY_ESCAPE || ev.keyCode === KEY_TAB) {
@@ -142,10 +124,9 @@ export class StageFlow {
         if (!State.shapes.INPUT_CARET) {
             // Mute/Unmute
             if (ev.keyCode === KEY_MUTE) {
-                mute = !storage(STORAGE_MUTE);
-                instruct = "Sounds " + (mute ? "muted" : "unmuted");
+                const mute = !storage(STORAGE_MUTE) as boolean;
                 storage(STORAGE_MUTE, mute);
-                instruct(instruct, 1000);
+                instruct("Sounds " + (mute ? "muted" : "unmuted"), 1000);
                 State.audio.play("menu_alt");
             }
         }
@@ -158,7 +139,7 @@ export class StageFlow {
      * @param {function()} callback
      * @private
      */
-    _switchStageAnimate(oldShape, newShape, back, callback) {
+    _switchStageAnimate(oldShape, newShape, back, callback)): void {
         let oldStageAnim; let newStageAnim; const width = WIDTH - MENU_LEFT;
 
         if (back) {

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @param {xss.netcode.Server} server
@@ -97,7 +97,7 @@ xss.room.ServerRoomManager.prototype = {
         var options, room, emitDataArr;
 
         emitDataArr = new xss.util.Sanitizer(dirtySerializeOptions)
-                                  .assertArray().getValueOr([]);
+            .assertArray().getValueOr([]);
         options = new xss.room.ServerOptions(emitDataArr);
 
         room = this.matcher.getRoomMatching(options);

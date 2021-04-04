@@ -47,13 +47,7 @@ export function error(str, callback?) {
     });
 }
 
-/**
- * Simple wrapper for localStorage
- * @param {string=} key
- * @param {*=} value
- * @return {?}
- */
-export function storage(key, value?) {
+export function storage(key?: string, value?: unknown): unknown {
     if (arguments.length === 1) {
         try {
             return JSON.parse(localStorage.getItem(key));
@@ -71,24 +65,16 @@ export function storage(key, value?) {
     }
 }
 
-/**
- * @return {boolean}
- */
-export function isMac() {
-    return (/Macintosh/).test(navigator.appVersion);
+export function isMac(): boolean {
+    return /Macintosh/.test(navigator.appVersion);
 }
 
-/**
- * Simple wrapper for location.hash
- * @param {string=} key
- * @param {*=} value
- * @return {?}
- */
-export function urlHash(key="", value="") {
-    let hash; let arr; let newhash = ""; const dict = {};
+export function urlHash(key="", value=""): string {
+    let newhash = "";
+    const dict = {};
 
-    hash = location.hash.substr(1);
-    arr = hash.split(/[:;]/g);
+    const hash = location.hash.substr(1);
+    const arr = hash.split(/[:;]/g);
 
     // Populate dict
     for (let i = 0, m = arr.length; i < m; i += 2) {
@@ -106,10 +92,8 @@ export function urlHash(key="", value="") {
     case 2: // Set value
         dict[key] = value;
         for (const k in dict) {
-            if (dict.hasOwnProperty(k)) {
-                if (k && dict[k]) {
-                    newhash += k + ":" + dict[k] + ";";
-                }
+            if (k && dict[k]) {
+                newhash += k + ":" + dict[k] + ";";
             }
         }
         location.replace("#" + newhash.replace(/;$/, ""));
@@ -124,29 +108,17 @@ export function format(str: string, ...data: (string|number)[]): string {
     });
 }
 
-/**
- * @param {Coordinate} coordinate
- * @return {Coordinate}
- */
-export function translateGame(coordinate) {
+export function translateGame(coordinate: Coordinate): Coordinate {
     coordinate[0] = translateGameX(coordinate[0]);
     coordinate[1] = translateGameY(coordinate[1]);
     return coordinate;
 }
 
-/**
- * @param {number} x
- * @return {number}
- */
-export function translateGameX(x) {
+export function translateGameX(x: number): number {
     return (x * GAME_TILE) + GAME_LEFT;
 }
 
-/**
- * @param {number} y
- * @return {number}
- */
-export function translateGameY(y) {
+export function translateGameY(y: number): number {
     return (y * GAME_TILE) + GAME_TOP;
 }
 
@@ -157,12 +129,12 @@ export function translateGameY(y) {
  */
 export function debounce(fn, delay=100) {
     let timeout;
-    return function() {
-        const context = this; const args = arguments;
+    return function(...args) {
         clearTimeout(timeout);
         timeout = setTimeout(function() {
             timeout = null;
-            fn.apply(context, args);
+            // TODO: Promise.
+            fn(...args);
         }, 100);
     };
 }

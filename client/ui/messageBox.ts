@@ -128,7 +128,7 @@ export class MessageBoxUI {
     /**
      * @param {boolean=} flashKey
      */
-    hideEnterKey(flashKey?: boolean) {
+    hideEnterKey(flashKey?: boolean)): void {
         const speed = FRAME * 4;
         if (flashKey) {
             flash(State.shapes.MSG_ENTER, speed, speed);

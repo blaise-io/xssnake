@@ -84,7 +84,7 @@ export class Dialog {
     /**
      * @param {string} body
      */
-    setBody(body) {
+    setBody(body)): void {
         State.audio.play("menu_alt");
         this._body = body;
         this._updateShape();
@@ -109,7 +109,7 @@ export class Dialog {
      * @param {Event} ev
      * @private
      */
-    _handleKeys(ev) {
+    _handleKeys(ev)): void {
         switch (ev.keyCode) {
         case KEY_LEFT:
         case KEY_UP:
@@ -200,7 +200,7 @@ export class Dialog {
      * @return {PixelCollection}
      * @private
      */
-    _getLine(y) {
+    _getLine(y)): void {
         return line(0, y - 5, this._getContentWidth(), y - 5);
     }
 
@@ -210,7 +210,7 @@ export class Dialog {
      * @return {PixelCollection}
      * @private
      */
-    _getCancelButton(x, y) {
+    _getCancelButton(x, y)): void {
         const settings = {invert: !this._okSelected};
         return fontPixels(COPY_DIALOG_CANCEL, x, y, settings);
     }
@@ -221,7 +221,7 @@ export class Dialog {
      * @return {PixelCollection}
      * @private
      */
-    _getOkButton(x, y) {
+    _getOkButton(x, y)): void {
         const settings = {invert: this._okSelected};
         return fontPixels(COPY_DIALOG_OK, x, y, settings);
     }

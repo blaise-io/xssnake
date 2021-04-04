@@ -31,7 +31,7 @@ xss.game.ClientSnakeControls.prototype = {
     /**
      * @param {Event} event
      */
-    handleKeys: function(event) {
+    handleKeys: function(event)): void {
         var direction = xss.KEY_TO_DIRECTION[event.keyCode];
         if (!xss.keysBlocked && typeof direction !== 'undefined') {
             this.setDirection(direction);
@@ -41,7 +41,7 @@ xss.game.ClientSnakeControls.prototype = {
     /**
      * @param {number} direction
      */
-    setDirection: function(direction) {
+    setDirection: function(direction)): void {
         if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
             this.upcomingDirections.push(direction);
         }
@@ -62,7 +62,7 @@ xss.game.ClientSnakeControls.prototype = {
      * @param {number} prevDirection
      * @return {boolean}
      */
-    isDirectionAllowed: function(direction, prevDirection) {
+    isDirectionAllowed: function(direction, prevDirection)): void {
         var turn = Math.abs(direction - prevDirection);
         return (
             this.upcomingDirections.length <= 2 &&
@@ -84,7 +84,7 @@ xss.game.ClientSnakeControls.prototype = {
     /**
      * @param {number} direction
      */
-    emitNewDirection: function(direction) {
+    emitNewDirection: function(direction)): void {
 //        if (xss.player && xss.player.room && xss.player.room.gameHasStarted()) {
             this.snake.emit(direction);
 //        }

@@ -113,7 +113,7 @@ xss.ui.MessageBox.prototype = {
     /**
      * @param {boolean=} flash
      */
-    hideEnterKey: function(flash) {
+    hideEnterKey: function(flash)): void {
         var speed = xss.FRAME * 4;
         if (flash) {
             xss.shapes.MSG_ENTER.flash(speed, speed).lifetime(0, speed);
@@ -210,5 +210,5 @@ xss.ui.MessageBox.prototype = {
             this.queued--;
         }
     }
-    
+
 };

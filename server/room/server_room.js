@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var events = require('events');
+var events = require("events");
 
 /**
  * @param {xss.netcode.Server} server
@@ -48,10 +48,10 @@ xss.room.ServerRoom.prototype = {
     },
 
     restartRounds: function() {
-//        this.rounds.destruct();
-//        this.rounds = new xss.room.RoundManager(this);
-//        this.rounds.detectAutoStart();
-//        this.emitState();
+        //        this.rounds.destruct();
+        //        this.rounds = new xss.room.RoundManager(this);
+        //        this.rounds.detectAutoStart();
+        //        this.emitState();
     },
 
     isAwaitingPlayers: function() {

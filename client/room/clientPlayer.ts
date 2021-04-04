@@ -21,7 +21,7 @@ export class ClientPlayer extends Player {
     /**
      * @param {Array} serialized
      */
-    deserialize(serialized) {
+    deserialize(serialized)): void {
         Player.prototype.deserialize.apply(this, arguments);
         if (!this.connected && this.snake) {
             this.snake.setCrashed();
@@ -32,7 +32,7 @@ export class ClientPlayer extends Player {
      * @param {number} index
      * @param {level.Level} level
      */
-    setSnake(index, level) {
+    setSnake(index, level)): void {
         this.snake = new ClientSnake(
             index, this.local, this.name, level
         );

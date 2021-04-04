@@ -28,12 +28,12 @@ xss.ShapeCache.prototype = {
      * Save paint calls by merging pixels.
      * First to lines, then combine lines to rectangles.
      * Belance processing costs with paint saving costs.
-     * 
+     *
      * @param {xss.PixelCollection} shapePixels
      * @return {Array.<Array.<number>>}
      * @private
      */
-    _mergePixels: function(shapePixels) {
+    _mergePixels: function(shapePixels)): void {
         var lines = this._getLines(shapePixels);
         return this._getRectangles(lines);
     },
@@ -44,7 +44,7 @@ xss.ShapeCache.prototype = {
      * @return {Array.<Array.<number>>}
      * @private
      */
-    _getLines: function(shapePixels) {
+    _getLines: function(shapePixels)): void {
         var cache = null, lines = [];
 
         shapePixels.sort().each(function(x, y) {
@@ -72,7 +72,7 @@ xss.ShapeCache.prototype = {
      * @return {Array.<Array.<number>>}
      * @private
      */
-    _getRectangles: function(lines) {
+    _getRectangles: function(lines)): void {
         var cache = null, rectangles = [];
 
         lines.sort(function(a, b) {

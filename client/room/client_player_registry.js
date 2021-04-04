@@ -21,7 +21,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     /**
      * @param {xss.room.ClientPlayerRegistry} playerRegistry
      */
-    clone: function(playerRegistry) {
+    clone: function(playerRegistry)): void {
         this.players = playerRegistry.players.slice();
         this.localPlayer = playerRegistry.localPlayer;
     },
@@ -29,7 +29,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     /**
      * @param {Array.<Array>} serializedPlayers
      */
-    deserialize: function(serializedPlayers) {
+    deserialize: function(serializedPlayers)): void {
         for (var i = 0, m = serializedPlayers.length; i < m; i++) {
             this.players[i].deserialize(serializedPlayers[i]);
         }
@@ -38,7 +38,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     /**
      * @param {Array.<Array>} serializedPlayers
      */
-    reconstruct: function(serializedPlayers) {
+    reconstruct: function(serializedPlayers)): void {
         this.destruct();
         for (var i = 0, m = serializedPlayers.length; i < m; i++) {
             this.reconstructPlayer(serializedPlayers[i]);
@@ -48,7 +48,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     /**
      * @param {Array} serialized
      */
-    reconstructPlayer: function(serialized) {
+    reconstructPlayer: function(serialized)): void {
         var player = new xss.room.ClientPlayer();
         player.deserialize(serialized);
 
@@ -74,7 +74,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     /**
      * @param {Array.<number>} scores
      */
-    setScores: function(scores) {
+    setScores: function(scores)): void {
         for (var i = 0, m = scores.length; i < m; i++) {
             this.players[i].score = scores[i];
         }
@@ -83,7 +83,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
     /**
      * @param {xss.level.Level} level
      */
-    setSnakes: function(level) {
+    setSnakes: function(level)): void {
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].setSnake(i, level);
         }
@@ -111,7 +111,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
      * @param {number} elapsed
      * @param {xss.Shift} shift
      */
-    moveSnakes: function(level, elapsed, shift) {
+    moveSnakes: function(level, elapsed, shift)): void {
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.handleNextMove(level, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);
@@ -143,7 +143,7 @@ xss.extend(xss.room.ClientPlayerRegistry.prototype, /** @lends {xss.room.ClientP
      * @param {xss.room.ClientPlayerRegistry} prevPlayers
      * @return {string|null}
      */
-    getQuitName: function(prevPlayers) {
+    getQuitName: function(prevPlayers)): void {
         var prevNames, newNames;
         prevNames = prevPlayers.getNames();
         newNames = this.getNames();

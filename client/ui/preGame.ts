@@ -150,7 +150,7 @@ export class PreGameUI {
     /**
      * @param {boolean} started
      */
-    toggleCountdown(started) {
+    toggleCountdown(started)): void {
         if (started) {
             this.countdownStarted = new Date();
         } else {

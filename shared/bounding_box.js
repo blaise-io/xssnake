@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @param {xss.PixelCollection=} pixels

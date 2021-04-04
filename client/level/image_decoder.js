@@ -33,7 +33,7 @@ xss.level.ImageDecoder.prototype = {
     /**
      * @param {Function} successFn
      */
-    then: function(successFn) {
+    then: function(successFn)): void {
         this.successFn = successFn;
     }
 };

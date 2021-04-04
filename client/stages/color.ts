@@ -29,7 +29,7 @@ export class ColorStage extends SelectStage {
    * @param {number} index
    * @private
    */
-    _setColor(index) {
+    _setColor(index)): void {
         State.canvas.setColorScheme(colorSchemes[index]);
         storage(STORAGE_COLOR, index);
     }

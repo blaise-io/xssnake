@@ -141,7 +141,7 @@ xss.ui.PreGame.prototype = {
     /**
      * @param {boolean} started
      */
-    toggleCountdown: function(started) {
+    toggleCountdown: function(started)): void {
         if (started) {
             this.countdownStarted = new Date();
         } else {

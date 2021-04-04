@@ -45,14 +45,14 @@ export class Game {
     }
 
     getSerializedGameOptions() {
-        let options; const data = State.flow.getData();
-        options = new ClientOptions();
+        const data = State.flow.getData();
+        const options = new ClientOptions();
         options.setOptionsFromForm(data.multiplayer);
         return options.serialize();
     }
 
     getPlayerName() {
-        let name = storage(STORAGE_NAME);
+        let name = storage(STORAGE_NAME) as string;
         if (!name) {
             name = getRandomName();
             storage(name, STORAGE_NAME);

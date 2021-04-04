@@ -60,7 +60,7 @@ xss.stage.MenuSnake.prototype = {
      * @param {xss.Coordinate} nextpos
      * @return {boolean}
      */
-    isCrash: function(snake, nextpos) {
+    isCrash: function(snake, nextpos)): void {
         var snakeShape = snake.getShape(), crash = false;
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
@@ -83,7 +83,7 @@ xss.stage.MenuSnake.prototype = {
      * @param {number} y
      * @return {boolean}
      */
-    overlaysShape: function(snakeShape, x, y) {
+    overlaysShape: function(snakeShape, x, y)): void {
         for (var k in xss.shapes) {
             if (xss.shapes.hasOwnProperty(k) && xss.shapes[k] !== snakeShape) {
                 if (xss.shapes[k] && xss.shapes[k].pixels.has(x, y)) {

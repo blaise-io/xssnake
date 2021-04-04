@@ -20,7 +20,7 @@ xss.CanvasTile.prototype = {
     /**
      * @param {xss.ColorScheme} colorScheme
      */
-    setColorScheme: function(colorScheme) {
+    setColorScheme: function(colorScheme)): void {
         this.colorScheme = colorScheme;
         this.updatePatterns();
     },

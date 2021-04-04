@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * xss.Shape pixels stored in a multi-dimensional array.

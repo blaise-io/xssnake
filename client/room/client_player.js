@@ -19,7 +19,7 @@ xss.extend(xss.room.ClientPlayer.prototype, /** @lends {xss.room.ClientPlayer.pr
     /**
      * @param {Array} serialized
      */
-    deserialize: function(serialized) {
+    deserialize: function(serialized)): void {
         xss.room.Player.prototype.deserialize.apply(this, arguments);
         if (!this.connected && this.snake) {
             this.snake.setCrashed();
@@ -30,7 +30,7 @@ xss.extend(xss.room.ClientPlayer.prototype, /** @lends {xss.room.ClientPlayer.pr
      * @param {number} index
      * @param {xss.level.Level} level
      */
-    setSnake: function(index, level) {
+    setSnake: function(index, level)): void {
         this.snake = new xss.game.ClientSnake(
             index, this.local, this.name, level
         );

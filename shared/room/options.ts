@@ -26,7 +26,7 @@ export class Options {
     /**
      * @return {Array.<number>}
      */
-    serialize() {
+    serialize(): number[] {
         return [
             this.maxPlayers,
             this.levelset,

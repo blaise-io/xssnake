@@ -23,7 +23,7 @@ xss.SelectMenu.prototype = {
      * @param {string=} description
      * @param {function(number)=} callback
      */
-    addOption: function(value, next, title, description, callback) {
+    addOption: function(value, next, title, description, callback)): void {
         this._options.push({
             value      : value,
             next       : next,
@@ -51,7 +51,7 @@ xss.SelectMenu.prototype = {
      * @param {number} select
      * @return {number}
      */
-    select: function(select) {
+    select: function(select)): void {
         var max = this._options.length - 1;
 
         if (typeof select !== 'number') {

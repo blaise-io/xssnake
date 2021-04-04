@@ -65,7 +65,7 @@ export class ClientGame {
      * Don't call this mid-game.
      * @param {room.ClientPlayerRegistry} players
      */
-    updatePlayers(players) {
+    updatePlayers(players)): void {
         players.unsetSnakes();
         players.setSnakes(this.level);
         players.showMeta();
@@ -75,7 +75,7 @@ export class ClientGame {
     /**
      * @param {level.Level} level
      */
-    updateLevel(level) {
+    updateLevel(level)): void {
         this.level.destruct();
         this.level = level;
         this.level.paint();
@@ -86,7 +86,7 @@ export class ClientGame {
     /**
      * @param {Array} serializedSnake
      */
-    ncUpdateSnake(serializedSnake) {
+    ncUpdateSnake(serializedSnake)): void {
         const clientIndex = serializedSnake.shift();
         this.players.players[clientIndex].snake.deserialize(serializedSnake);
     }
@@ -94,7 +94,7 @@ export class ClientGame {
     /**
      * @param {Array} serializedCollisions
      */
-    ncSetSnakesCrashed(serializedCollisions) {
+    ncSetSnakesCrashed(serializedCollisions)): void {
         for (let i = 0, m = serializedCollisions.length; i < m; i++) {
             var snake; const collision = serializedCollisions[i];
             snake = this.players.players[collision[0]].snake;
@@ -107,7 +107,7 @@ export class ClientGame {
      * Runs ~ every 16 ms (60 fps)
      * @param {number} elapsed
      */
-    gameloop(elapsed) {
+    gameloop(elapsed)): void {
         const shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
 

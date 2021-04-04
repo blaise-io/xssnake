@@ -16,9 +16,7 @@ if (location.search.match(/debug=scoreboard/)) {
         State.flow.destruct();
 
         State.shapes.innerBorder = innerBorder();
-        outerBorder(function(a, b) {
-            State.shapes[a] = b;
-        });
+        Object.assign(State.shapes, outerBorder());
 
         const messages = [
             new Message(null, "This is a notification"),

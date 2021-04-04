@@ -1,9 +1,3 @@
-/**
- * BaseInputStage
- * Stage with a form input
- * @implements {StageInterface}
- * @constructor
- */
 import { Shape } from "../../shared/shape";
 import {
     DOM_EVENT_KEYDOWN, KEY_ENTER, KEY_ESCAPE, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS_INPUT, NS_STAGES,
@@ -18,16 +12,13 @@ import { storage } from "../util/clientUtil";
 
 export class InputStage {
     private _shape: Shape;
-    private fontOptions: any;
-    private _inputTop: number;
-    public value: any;
-    private input: any;
+    private fontOptions = {wrap: MENU_LEFT + MENU_WIDTH - 25};
+    private _inputTop = MENU_TOP + 17;
+    public value: string;
+    private input: InputField;
 
     constructor() {
-        /** @type {string} */
-        this.value = storage(STORAGE_NAME) || "";
-        this._inputTop = MENU_TOP + 17;
-        this.fontOptions = {wrap: MENU_LEFT + MENU_WIDTH - 25};
+        this.value = storage(STORAGE_NAME) as string || "";
         this._shape = this._getShape();
     }
 
@@ -85,7 +76,7 @@ export class InputStage {
      * @param {string} value
      * @param {number} top
      */
-    inputSubmit(error, value, top) {
+    inputSubmit(error, value, top)): void {
         if (!error && value && top) {
             State.flow.switchStage(this.next);
             State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
@@ -124,7 +115,7 @@ export class InputStage {
     /**
      * @private
      */
-    _handleKeys(ev) {
+    _handleKeys(ev)): void {
         console.log(this);
         let value;
         let top;
@@ -150,7 +141,7 @@ export class InputStage {
      * @return {string}
      * @private
      */
-    _getInputError(val) {
+    _getInputError(val)): void {
         if (val.length < this.minlength) {
             return "Too short!!";
         } else if (this.maxChars && val.length > this.maxChars) {

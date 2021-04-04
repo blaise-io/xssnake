@@ -7,8 +7,8 @@ import { ColorScheme } from "./colorScheme";
 
 export class CanvasTile {
     size: number;
-    on: string;
-    off: string;
+    on: CanvasPattern;
+    off: CanvasPattern;
 
     constructor(public colorScheme: ColorScheme) {
         this.on = null;
@@ -16,46 +16,38 @@ export class CanvasTile {
         this.size = 0;
     }
 
-    /**
-     * @param {ColorScheme} colorScheme
-     */
-    setColorScheme(colorScheme) {
+    setColorScheme(colorScheme: ColorScheme): void {
         this.colorScheme = colorScheme;
         this.updatePatterns();
     }
 
-    /**
-     * @return {number}
-     */
-    updateSize() {
-        let minWidth; let minHeight;
-        minWidth = window.innerWidth / WIDTH;
-        minHeight = window.innerHeight / HEIGHT;
+    updateSize(): number {
+        const minWhitespace = 10;
+        const minWidth = ((window.innerWidth - minWhitespace) * window.devicePixelRatio) / WIDTH;
+        const minHeight = ((window.innerHeight - minWhitespace) * window.devicePixelRatio) / HEIGHT;
         this.size = Math.floor(Math.min(minWidth, minHeight)) || 1;
         this.updatePatterns();
         return this.size;
     }
 
-    updatePatterns() {
-        let canvas; let backgroundImage;
-
-        canvas = document.createElement("canvas");
+    updatePatterns(): void {
+        const canvas = document.createElement("canvas");
         canvas.setAttribute("width", String(this.size));
         canvas.setAttribute("height", String(this.size));
 
         this.on = this._getTileForColor(canvas, this.colorScheme.on);
         this.off = this._getTileForColor(canvas, this.colorScheme.off);
 
-        backgroundImage = " url(" + canvas.toDataURL("image/png") + ")";
-        document.body.style.background = this.colorScheme.bg + backgroundImage;
+        document.body.style.backgroundImage = "url(" + canvas.toDataURL("image/png") + ")";
+        document.body.style.backgroundColor = this.colorScheme.bg;
+        document.body.style.backgroundSize = (this.size / 2) + "px";
     }
 
-    _getTileForColor(canvas, color) {
-        let context; let pixelSize;
+    private _getTileForColor(canvas: HTMLCanvasElement, color: string): CanvasPattern {
+        const context = canvas.getContext("2d");
 
-        context = canvas.getContext("2d");
-        // Prevent completely transparent borders for visibility.
-        pixelSize = this.size === 1 ? 1 : this.size - 0.35;
+        // Prevent completely transparent borders for visibility:
+        const pixelSize = this.size === 1 ? 1 : this.size - 0.35;
 
         context.fillStyle = this.colorScheme.bg;
         context.fillRect(0, 0, this.size, this.size);

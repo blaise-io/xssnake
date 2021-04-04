@@ -41,7 +41,7 @@ export class NameStage extends InputStage {
    * @param {number} top
    * @private
    */
-    inputSubmit(error, value, top) {
+    inputSubmit(error, value, top)): void {
         let shape; let text; let duration = 500;
         if (error) {
             text = error;

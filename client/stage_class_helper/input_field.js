@@ -51,7 +51,7 @@ xss.InputField.prototype = {
     /**
      * @param {string} value
      */
-    setValue: function(value) {
+    setValue: function(value)): void {
         this.input.focus();
         this.input.value = value;
         this.input.setSelectionRange(value.length, value.length);

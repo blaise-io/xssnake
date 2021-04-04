@@ -115,7 +115,7 @@ export class ClientSnake extends Snake {
      * @param shift
      * @param {Array.<room.Player>} players
      */
-    handleNextMove(level, elapsed, shift, players) {
+    handleNextMove(level, elapsed, shift, players)): void {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
@@ -144,7 +144,7 @@ export class ClientSnake extends Snake {
     /**
      * @param {Coordinate=} crashingPart
      */
-    setCrashed(crashingPart?: Coordinate) {
+    setCrashed(crashingPart?: Coordinate)): void {
         this.crashed = true;
         if (this.controls) {
             this.controls.destruct();
@@ -161,7 +161,7 @@ export class ClientSnake extends Snake {
     /**
      * @param {Coordinate=} part
      */
-    explodeParticles(part) {
+    explodeParticles(part)): void {
         let direction; let location;
 
         if (part) {
@@ -183,7 +183,7 @@ export class ClientSnake extends Snake {
     /**
      * @param {Array} serializedSnake
      */
-    deserialize(serializedSnake) {
+    deserialize(serializedSnake)): void {
         this.direction = serializedSnake[0];
         this.parts = serializedSnake[1];
         // If server updated snake, client prediction
@@ -194,7 +194,7 @@ export class ClientSnake extends Snake {
     /**
      * @param {number} direction
      */
-    emit(direction) {
+    emit(direction)): void {
         if (State.player) {
             const sync = Math.round(NETCODE_SYNC_MS / this.speed);
             State.player.emit(NC_SNAKE_UPDATE, [

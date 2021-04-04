@@ -20,9 +20,7 @@ if (location.search.match(/debug=messages/)) {
         State.flow.destruct();
 
         State.shapes.innerBorder = innerBorder();
-        outerBorder(function(a, b) {
-            State.shapes[a] = b;
-        });
+        Object.assign(State.shapes, outerBorder());
 
         const players = new ClientPlayerRegistry();
         new Scoreboard(players);

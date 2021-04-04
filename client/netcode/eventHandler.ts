@@ -9,7 +9,7 @@ export class EventHandler {
      * @param {number|string} topic
      * @param {...*} eventData
      */
-    trigger(topic, ...eventData) {
+    trigger(topic, ...eventData)): void {
         let topicKeys, topics = this._topics[topic];
         if (topics) {
             topicKeys = Object.keys(topics);
@@ -27,7 +27,7 @@ export class EventHandler {
      * @param {string} key
      * @param {Function} callback
      */
-    on(topic, key, callback) {
+    on(topic, key, callback)): void {
         if (!this._topics[topic]) {
             this._topics[topic] = {};
         }
@@ -42,7 +42,7 @@ export class EventHandler {
      * @param {string} key
      * @param {function((Event|null))} callback
      */
-    once(topic, key, callback) {
+    once(topic, key, callback)): void {
         const callbackAndOff = function() {
             callback.apply(callback, arguments);
             this.off(topic, key);
@@ -54,7 +54,7 @@ export class EventHandler {
      * @param {number|string} topic
      * @param {string=} key
      */
-    off(topic, key) {
+    off(topic, key)): void {
         let callback;
         if (topic in this._topics) {
             if (typeof key !== "undefined") {
