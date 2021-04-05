@@ -44,6 +44,7 @@
     "karma-jasmine": "0.2.x",
     "karma-phantomjs-launcher": "0.1.x",
     "karma-spec-reporter": "0.0.x",
+    "prettier": "^2.2.1",
     "typescript": "^4.2.3"
   },
   "engines": {
@@ -51,7 +52,7 @@
   },
   "scripts": {
     "client": "webpack --mode development --watch --config client/webpack.config.js",
-    "lint": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint .  --fix --ext .ts,.tsx; prettier --write '**/*.ts'",
     "start": "node server/start.js",
     "restart": "supervisor --no-restart-on error --watch server,shared server/start.js",
     "test": "grunt test"

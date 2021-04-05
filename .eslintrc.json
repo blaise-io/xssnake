@@ -13,6 +13,6 @@
     "@typescript-eslint/no-explicit-any": "warn",
     "prefer-const": "warn",
     "no-extend-native": "error",
-    "init-declarations": ["warn", "always"]
+    "init-declarations": ["warn", "always"] // temporary
   }
 }
