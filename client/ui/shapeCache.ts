@@ -5,6 +5,7 @@
  * @constructor
  */
 import { BoundingBox } from "../../shared/boundingBox";
+import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { CanvasTile } from "./canvasTile";
 
@@ -30,27 +31,17 @@ export class ShapeCache {
     /**
      * Save paint calls by merging pixels.
      * First to lines, then combine lines to rectangles.
-     * Belance processing costs with paint saving costs.
-     *
-     * @param {PixelCollection} shapePixels
-     * @return {Array.<Array.<number>>}
-     * @private
+     * Balance processing costs with paint saving costs.
      */
-    _mergePixels(shapePixels)): void {
+    _mergePixels(shapePixels: PixelCollection): number[][] {
         const lines = this._getLines(shapePixels);
         return this._getRectangles(lines);
     }
 
-    /**
-     * Group pixels to horizontal lines.
-     * @param {PixelCollection} shapePixels
-     * @return {Array.<Array.<number>>}
-     * @private
-     */
-    _getLines(shapePixels)): void {
+    private _getLines(pixels: PixelCollection): Coordinate[] {
         let cache = null; const lines = [];
 
-        shapePixels.sort().each(function(x, y) {
+        pixels.sort().each(function(x, y) {
             // cache: x,y,w
             if (cache && x === cache[0] + cache[2] && y === cache[1]) {
                 cache[2]++;
@@ -69,13 +60,7 @@ export class ShapeCache {
         return lines;
     }
 
-    /**
-     * Group pixels to rectangles.
-     * @param {Array.<Array.<number>>} lines
-     * @return {Array.<Array.<number>>}
-     * @private
-     */
-    _getRectangles(lines)): void {
+    private _getRectangles(lines: number[][]): number[][] {
         let cache = null; const rectangles = [];
 
         lines.sort(function(a, b) {
@@ -121,11 +106,10 @@ export class ShapeCache {
     }
 
     _paintShapePixels() {
-        const size = this._getSize(); let rectangles;
+        const size = this._getSize();
+        const rectangles = this._mergePixels(this.shape.pixels);
 
-        rectangles = this._mergePixels(this.shape.pixels);
-
-        if (this.shape.isOverlay) {
+        if (this.shape.flags.isOverlay) {
             this._fillBackground();
         }
 
@@ -140,17 +124,11 @@ export class ShapeCache {
         }
     }
 
-    /**
-     * @return {BoundingBox}
-     * @private
-     */
-    _getBBox() {
-        let size; let pixelBBox; let tileBBox; let tileBBoxKeys;
-
-        size = this._getSize();
-        pixelBBox = this.shape.pixels.bbox();
-        tileBBox = new BoundingBox();
-        tileBBoxKeys = Object.keys(pixelBBox);
+    private _getBBox(): BoundingBox {
+        const size = this._getSize();
+        const pixelBBox = this.shape.pixels.bbox();
+        const tileBBox = new BoundingBox();
+        const tileBBoxKeys = Object.keys(pixelBBox);
 
         for (let i = 0, m = tileBBoxKeys.length; i < m; i++) {
             const k = tileBBoxKeys[i];

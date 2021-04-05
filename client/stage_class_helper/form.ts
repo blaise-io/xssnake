@@ -30,7 +30,7 @@ export class Form {
       this.fields.push({
           id: id,
           label: label.toUpperCase(),
-          options: options
+          options: options,
       });
 
       this.selectedOption.push(0);

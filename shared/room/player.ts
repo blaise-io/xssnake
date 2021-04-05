@@ -1,7 +1,3 @@
-/**
- * @param {string=} name
- * @constructor
- */
 import { Snake } from "../snake";
 
 export class Player {
@@ -17,23 +13,18 @@ export class Player {
         this.snake = null;
     }
 
-    /**
-     * @param {Array} serialized
-     */
-    deserialize(serialized) {
-        this.name = serialized[0];
-        this.connected = Boolean((serialized[1] & 1) >> 0);
-        this.local = Boolean((serialized[1] & 2) >> 1);
-        this.score = serialized[1] >> 2;
+    deserialize(serialized: [string, number]): void {
+        let byte;
+        [this.name, byte] = serialized;
+        this.connected = Boolean((byte & 1) >> 0);
+        this.local = Boolean((byte & 2) >> 1);
+        this.score = byte >> 2;
     }
 
-    /**
-     * @param {boolean} local
-     * @return {Array.<string|number>}
-     */
-    serialize(local) {
+    serialize(local: boolean): [string, number] {
         return [
-            this.name, (Number(this.connected) << 0) | (local << 1) | (this.score << 2)
+            this.name,
+            Number(this.connected) << 0 | Number(local) << 1 | this.score << 2,
         ];
     }
 

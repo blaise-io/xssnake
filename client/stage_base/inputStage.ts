@@ -1,7 +1,7 @@
 import { Shape } from "../../shared/shape";
 import {
     DOM_EVENT_KEYDOWN, KEY_ENTER, KEY_ESCAPE, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS_INPUT, NS_STAGES,
-    STORAGE_NAME
+    STORAGE_NAME,
 } from "../const";
 import { InputField } from "../stage_class_helper/inputField";
 import { State } from "../state/state";
@@ -32,36 +32,26 @@ export class InputStage {
     maxwidth = 0
     displayWidth = 0
 
-
-    /**
-     * @return {Shape}
-     */
-    getShape() {
+    getShape(): Shape {
         return this._shape;
     }
 
-    /**
-     * @return {Object}
-     */
-    getData() {
+    getData(): Record<string, string> {
         return {};
     }
 
-    /**
-     * @return {string}
-     */
-    getValue() {
+    getValue(): string {
         return this.value;
     }
 
-    construct() {
+    construct(): void {
         this.input = this._setupInputField();
         this._shape = this._getShapeExcludeValue();
         console.log(this);
         this._bindEvents();
     }
 
-    destruct() {
+    destruct(): void {
         State.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
         State.shapes.message = null;
         this._shape = this._getShape();
@@ -71,12 +61,7 @@ export class InputStage {
         }
     }
 
-    /**
-     * @param {string} error
-     * @param {string} value
-     * @param {number} top
-     */
-    inputSubmit(error, value, top)): void {
+    inputSubmit(error: string, value: string, top: number): void {
         if (!error && value && top) {
             State.flow.switchStage(this.next);
             State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
@@ -86,7 +71,7 @@ export class InputStage {
         }
     }
 
-    _setupInputField() {
+    private _setupInputField(): InputField {
         const input = new InputField(
             MENU_LEFT, this._inputTop, this.label, this.fontOptions
         );
@@ -104,10 +89,7 @@ export class InputStage {
         return input;
     }
 
-    /**
-     * @private
-     */
-    _bindEvents() {
+    private _bindEvents(): void {
         console.log(this);
         State.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys.bind(this));
     }
@@ -115,7 +97,7 @@ export class InputStage {
     /**
      * @private
      */
-    _handleKeys(ev)): void {
+    _handleKeys(ev): void {
         console.log(this);
         let value;
         let top;
@@ -136,12 +118,7 @@ export class InputStage {
         }
     }
 
-    /**
-     * @param {string} val
-     * @return {string}
-     * @private
-     */
-    _getInputError(val)): void {
+    private _getInputError(val: string): string {
         if (val.length < this.minlength) {
             return "Too short!!";
         } else if (this.maxChars && val.length > this.maxChars) {
@@ -150,31 +127,19 @@ export class InputStage {
         return "";
     }
 
-    /**
-     * @return {Shape}
-     * @private
-     */
-    _getShape() {
+    private _getShape(): Shape {
         const shape = this._getShapeExcludeValue();
         shape.add(this._getDataShape().pixels);
         return shape;
     }
 
-    /**
-     * @return {Shape}
-     * @private
-     */
-    _getShapeExcludeValue() {
+    private _getShapeExcludeValue(): Shape {
         let pixels = fontPixels(this.header);
         pixels = zoom(2, pixels, MENU_LEFT, MENU_TOP);
         return new Shape(pixels);
     }
 
-    /**
-     * @return {Shape}
-     * @private
-     */
-    _getDataShape() {
+    private _getDataShape(): Shape {
         const value = this.label + this.value;
         return new Shape(fontPixels(
             value, MENU_LEFT, this._inputTop, this.fontOptions

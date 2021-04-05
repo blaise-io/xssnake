@@ -105,7 +105,7 @@ export class ScoreboardUI {
         animate(shape, {
             to: [
                 newCoordinate[0] - oldCoordinate[0],
-                newCoordinate[1] - oldCoordinate[1]
+                newCoordinate[1] - oldCoordinate[1],
             ],
             duration: this.animationDuration,
             doneCallback: this.animateCallback.bind(this),
@@ -164,7 +164,7 @@ export class ScoreboardUI {
         // 2 5
         return [
             this.x0 + (index + 1 <= this.podiumSize / 2 ? 0 : this.itemWidth()),
-            this.y0 + (index % (this.podiumSize / 2)) * this.lineHeight
+            this.y0 + (index % (this.podiumSize / 2)) * this.lineHeight,
         ];
         // More chaotic?
         // 0 1

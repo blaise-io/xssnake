@@ -41,7 +41,7 @@ export class ServerRoom {
             // TODO Prevent spam.
             player.broadcast(NC_CHAT_MESSAGE, [
                 this.players.players.indexOf(player),
-                sanitizer.getValueOr()
+                sanitizer.getValueOr(),
             ]);
         }
     }
@@ -67,7 +67,7 @@ export class ServerRoom {
     /**
      * @param {room.ServerPlayer} player
      */
-    addPlayer(player) {
+    addPlayer(player): void {
         this.players.add(player);
         player.room = this;
         this.players.emitPlayers();

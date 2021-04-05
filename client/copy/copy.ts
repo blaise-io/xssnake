@@ -42,14 +42,14 @@ export const COPY_DEF = ":  ";
 export const COPY_MAIN_INSTRUCT = [
     "M to mute/unmute sounds",
     (isMac() ? "Cmd+Ctrl+F11" : "F11") + " to enter/exit fullscreen",
-    "Arrow keys, Esc and " + UC_ENTER_KEY + " to navigate"
+    "Arrow keys, Esc and " + UC_ENTER_KEY + " to navigate",
 ].join(COPY_JOINER);
 
 // Form stage.
 export const COPY_FORM_INSTRUCT = [
     UC_ARR_UP + " & " + UC_ARR_DOWN + " to select an option",
     UC_ARR_LEFT + " & " + UC_ARR_RIGHT + " to change the value",
-    UC_ENTER_KEY + " to continue"
+    UC_ENTER_KEY + " to continue",
 ].join(COPY_JOINER);
 
 // Pre-game dialog.

@@ -23,7 +23,7 @@ export class Server {
         const ws = new WebSocketServer({
             host: SERVER_HOST,
             port: SERVER_PORT,
-            path: SERVER_PATH
+            path: SERVER_PATH,
         });
 
         ws.on("connection", function(connection) {

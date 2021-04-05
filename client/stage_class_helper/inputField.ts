@@ -59,7 +59,7 @@ export class InputField {
     /**
      * @param {string} value
      */
-    setValue(value)): void {
+    setValue(value): void {
         this.input.focus();
         this.input.value = value;
         this.input.setSelectionRange(value.length, value.length);
@@ -162,7 +162,7 @@ export class InputField {
         return [
             value.substring(0, start),
             value.substring(start, end),
-            value.substring(end)
+            value.substring(end),
         ];
     }
 

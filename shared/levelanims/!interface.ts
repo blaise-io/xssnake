@@ -13,7 +13,7 @@ export class Interface {
      * @param {boolean} preGame
      * @return {ShapeCollection}
      */
-    update(ms, preGame) {
+    update(ms, preGame): void {
         return null;
     }
 

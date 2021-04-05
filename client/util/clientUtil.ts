@@ -5,17 +5,12 @@ import { Dialog } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
 import { flash, lifetime } from "../ui/shapeClient";
 
-/**
- * @param {string} str
- * @param {number=} duration
- * @param {boolean=} flashInstruct
- */
-export function instruct(str, duration=2000, flashInstruct=false) {
+export function instruct(str: string, duration=2000, flashInstruct=false): void {
     const x = WIDTH - fontWidth(str) - 2;
     const y = HEIGHT - fontHeight(str) - 2;
 
     const shape = font(str, x, y, {invert: true});
-    shape.isOverlay = true;
+    shape.flags.isOverlay = true;
     lifetime(shape, 0, duration);
 
     if (flashInstruct) {
@@ -25,11 +20,7 @@ export function instruct(str, duration=2000, flashInstruct=false) {
     State.shapes.INSTRUCTION = shape;
 }
 
-/**
- * @param {string} str
- * @param {Function=} callback
- */
-export function error(str, callback?) {
+export function error(str: string, callback?: CallableFunction): void {
     urlHash();
 
     const exit = function() {
@@ -43,7 +34,7 @@ export function error(str, callback?) {
     const body = "Press " + UC_ENTER_KEY + " to continue";
     const dialog = new Dialog(str, body, {
         type: Dialog.TYPE.ALERT,
-        ok  : exit
+        ok  : exit,
     });
 }
 
@@ -102,9 +93,8 @@ export function urlHash(key="", value=""): string {
 }
 
 export function format(str: string, ...data: (string|number)[]): string {
-    // @ts-ignore
     return str.replace(/{(\d+)}/g, (match, number) => {
-        return data[number];
+        return String(data[number]);
     });
 }
 
@@ -122,19 +112,14 @@ export function translateGameY(y: number): number {
     return (y * GAME_TILE) + GAME_TOP;
 }
 
-/**
- * @param {Function} fn
- * @param {number=} delay
- * @return {Function}
- */
-export function debounce(fn, delay=100) {
+export function debounce(fn: CallableFunction, delay=100): CallableFunction {
     let timeout;
-    return function(...args) {
+    return (...args) => {
         clearTimeout(timeout);
         timeout = setTimeout(function() {
             timeout = null;
-            // TODO: Promise.
+            // TODO: Promise, await, async.
             fn(...args);
-        }, 100);
+        }, delay);
     };
 }

@@ -3,11 +3,11 @@
  * @constructor
  */
 import {
-    NC_OPTIONS_SERIALIZE, NC_PLAYERS_SERIALIZE, NC_ROOM_JOIN_ERROR, NC_ROOM_SERIALIZE, NC_ROOM_STATUS
+    NC_OPTIONS_SERIALIZE, NC_PLAYERS_SERIALIZE, NC_ROOM_JOIN_ERROR, NC_ROOM_SERIALIZE, NC_ROOM_STATUS,
 } from "../../shared/const";
 import { NS_STAGES } from "../const";
 import {
-    COPY_AUTOJOIN_CONNECTING, COPY_AUTOJOIN_FETCHING, COPY_AUTOJOIN_HEADER, COPY_ERROR
+    COPY_AUTOJOIN_CONNECTING, COPY_AUTOJOIN_FETCHING, COPY_AUTOJOIN_HEADER, COPY_ERROR,
 } from "../copy/copy";
 import { ClientRoom } from "../room/clientRoom";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";

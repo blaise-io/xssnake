@@ -18,7 +18,7 @@ extend(room.ServerOptions.prototype, /** @lends {room.ServerOptions.prototype} *
     /**
      * @param {room.ServerPlayer} player
      */
-    emit(player) {
+    emit(player): void {
         player.emit(NC_OPTIONS_SERIALIZE, this.serialize());
     }
 
@@ -26,7 +26,7 @@ extend(room.ServerOptions.prototype, /** @lends {room.ServerOptions.prototype} *
      * @param {room.ServerOptions} request
      * @return {boolean}
      */
-    matches(request) {
+    matches(request): void {
         return (
             !this.isPrivate &&
             !request.isPrivate &&

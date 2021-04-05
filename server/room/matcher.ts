@@ -17,7 +17,7 @@ export class Matcher {
      * @param {room.ServerOptions} requestOptions
      * @return {room.ServerRoom}
      */
-    getRoomMatching(requestOptions) {
+    getRoomMatching(requestOptions): void {
         const rooms = this.rooms;
         if (!requestOptions.isPrivate) { // Shortcut.
             for (let i = 0, m = rooms.length; i < m; i++) {

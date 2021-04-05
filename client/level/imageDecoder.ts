@@ -33,7 +33,7 @@ export class ImageDecoder {
     /**
      * @param {Function} successFn
      */
-    then(successFn)): void {
+    then(successFn): void {
         // TODO: uses async
         this.successFn = successFn;
     }

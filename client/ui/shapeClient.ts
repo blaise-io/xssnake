@@ -1,24 +1,19 @@
-/**
- * @param {number=} width
- * @param {number=} height
- * @return {Shape}
- */
 import { GAME_TILE, HEIGHT, WIDTH } from "../../shared/const";
 import { Shape } from "../../shared/shape";
-import { delta, getKey } from "../../shared/util";
+import { getKey } from "../../shared/util";
 import { FRAME, GAME_LEFT, GAME_TOP } from "../const";
 import { State } from "../state/state";
 
-export function center(shape: Shape, width = WIDTH, height = HEIGHT) {
-    let x; let y; const bbox = shape.bbox();
+export function center(shape: Shape, width = WIDTH, height = HEIGHT): void {
+    const bbox = shape.bbox();
 
-    x = Math.round((width - bbox.width) / 2);
-    y = Math.round((height - bbox.height) / 2);
+    const x = Math.round((width - bbox.width) / 2);
+    const y = Math.round((height - bbox.height) / 2);
 
     shape.transform.translate = [x - bbox.x0, y - bbox.y0];
 }
 
-export function setGameTransform(shape) {
+export function setGameTransform(shape: Shape): void {
     shape.transform.scale = GAME_TILE;
     shape.transform.translate[0] = shape.transform.translate[0] * GAME_TILE + GAME_TILE / GAME_LEFT;
     shape.transform.translate[1] = shape.transform.translate[1] * GAME_TILE + GAME_TILE / GAME_TOP;
@@ -30,9 +25,9 @@ export function flash(shape: Shape, on: number=FRAME * 24, off: number=FRAME * 6
 
     shape.effects.flash = (delta) => {
         progress += delta;
-        if (progress > duration[+!shape.enabled]) {
-            progress -= duration[+!shape.enabled];
-            shape.enabled = !shape.enabled;
+        if (progress > duration[+!shape.flags.enabled]) {
+            progress -= duration[+!shape.flags.enabled];
+            shape.flags.enabled = !shape.flags.enabled;
         }
     };
 
@@ -49,7 +44,7 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
         // Start time reached.
         if (start && progress >= start && !started) {
             started = true;
-            shape.enabled = true;
+            shape.flags.enabled = true;
         }
 
         // Stop time reached.
@@ -76,14 +71,14 @@ export function animate(
         doneCallback?: (shape: Shape) => any,
         progressCallback?: (shape: Shape, x: number, y: number) => any,
     }
-) {
+): Shape {
     let progress = 0;
     options = {
         from: [0, 0],
         to: [0, 0],
         duration: 200,
-        doneCallback: (shape) => {},
-        progressCallback: (shape, x, y) => {},
+        doneCallback: () => {},
+        progressCallback: () => {},
         ...options,
     };
 
@@ -106,7 +101,7 @@ export function animate(
 }
 
 
-export function applyEffects(shape: Shape, delta: number) {
+export function applyEffects(shape: Shape, delta: number): void {
     for (const k in shape.effects) {
         shape.effects[k](delta);
     }

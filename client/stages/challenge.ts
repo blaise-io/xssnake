@@ -71,7 +71,7 @@ export class ChallengeStage extends InputStage {
         "var A=3,B=%d;do{A++}while(B--); B;",
         "var A=%d;A++;++A;A+=1; A;",
         "var A=%d;A--;--A;A-=1; A;",
-        '"%d"+%d'
+        '"%d"+%d',
     ]
 
     _getRandomChallenge() {

@@ -109,7 +109,7 @@ class Sanitizer {
      * @param {number} max
      * @return {Sanitizer}
      */
-    assertArrayLengthBetween(min, max) {
+    assertArrayLengthBetween(min, max): Sanitizer {
         if (!(this._value instanceof Array)) {
             this._log("assertArrayOfLength type", this._value);
             this._valid = false;
@@ -120,12 +120,7 @@ class Sanitizer {
         return this;
     }
 
-    /**
-     * @param {number} min
-     * @param {number} max
-     * @return {boolean}
-     */
-    _assertLength(min, max) {
+    _assertLength(min: number, max: number): boolean {
         return this._value.length >= min && this._value.length <= max;
     }
 

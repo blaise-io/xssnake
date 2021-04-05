@@ -32,5 +32,5 @@ export const colorSchemes: ColorScheme[] = [
         "Panda",
         "(O)____(o)",
         "#000", "#111", "#fff"
-    )
+    ),
 ];

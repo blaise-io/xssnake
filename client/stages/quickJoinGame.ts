@@ -1,5 +1,5 @@
 import {
-    NC_PLAYER_NAME, NC_PLAYERS_SERIALIZE, NC_ROOM_JOIN_ERROR, NC_ROOM_JOIN_KEY
+    NC_PLAYER_NAME, NC_PLAYERS_SERIALIZE, NC_ROOM_JOIN_ERROR, NC_ROOM_JOIN_KEY,
 } from "../../shared/const";
 import { NS_STAGES } from "../const";
 import { COPY_ERROR } from "../copy/copy";

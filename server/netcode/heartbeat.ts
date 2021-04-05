@@ -18,7 +18,7 @@ export class ServerHeartbeat {
 
     destruct() {
         this.player.emitter.removeAllListeners([
-            NC_PING, NC_PONG
+            NC_PING, NC_PONG,
         ]);
         this.player = null;
     }

@@ -121,7 +121,7 @@ export function fastWidth(str) {
 export function fontEndPos(str, x, y, options) {
     return [
         fontWidth(str, x, y, options),
-        fontHeight(str, x, y, options) - LINE_HEIGHT
+        fontHeight(str, x, y, options) - LINE_HEIGHT,
     ];
 }
 

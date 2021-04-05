@@ -53,7 +53,7 @@ export class ServerGame {
      * @param {?} dirtySnake
      * @param {room.ServerPlayer} player
      */
-    ncSnakeUpdate(dirtySnake, player) {
+    ncSnakeUpdate(dirtySnake, player): void {
         const move = new ServerSnakeMove(dirtySnake, player);
         if (move.isValid()) {
             this.applyMove(player.snake, move);
@@ -120,7 +120,7 @@ export class ServerGame {
                 collisions.push([
                     snake.index,
                     snake.parts,
-                    snake.collision.serialize()
+                    snake.collision.serialize(),
                 ]);
             }
 
@@ -136,7 +136,7 @@ export class ServerGame {
      * @param {game.Snake} snake
      * @param {game.ServerSnakeMove} move
      */
-    applyMove(snake, move) {
+    applyMove(snake, move): void {
         snake.direction = move.direction;
         snake.parts = move.parts;
         snake.trimParts();

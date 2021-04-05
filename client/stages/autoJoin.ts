@@ -3,7 +3,7 @@ import { STORAGE_NAME } from "../const";
 import {
     COPY_AUTOJOIN_ENTER_NAME,
     COPY_AUTOJOIN_PLAYERS, COPY_BOOL, COPY_COMMA_SPACE, COPY_FIELD_LEVEL_SET, COPY_FIELD_MAX_PLAYERS,
-    COPY_FIELD_POWERUPS, COPY_FIELD_XSS
+    COPY_FIELD_POWERUPS, COPY_FIELD_XSS,
 } from "../copy/copy";
 import { InputStage } from "../stage_base/inputStage";
 import { State } from "../state/state";

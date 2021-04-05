@@ -9,6 +9,12 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
     "semi": [
       "error",
       "always"
@@ -24,8 +30,7 @@
         "avoidEscape": true
       }
     ],
-    "no-empty-function": "off",
-    "no-extend-native": "error",
-    "explicit-function-return-type": "error"
+    "prefer-const": "warn",
+    "no-extend-native": "error"
   }
 }

@@ -3,14 +3,18 @@
  * @param {game.Game} game
  * @constructor
  */
+import { NC_GAME_SPAWN, SPAWN_APPLE, SPAWN_POWERUP } from "../../shared/const";
+import { eq } from "../../shared/util";
+import { ServerGame } from "./serverGame";
+
 export class Spawner {
-    constructor(Spawner) {
-        this.game = game;
+    private spawns: any[];
+    private locations: any[];
+
+    constructor(public game: ServerGame) {
         this.spawns = [];
         this.locations = []; // Keep separate list for getEmptyLocation speed
     }
-
-
 
     destruct() {
         for (let i = 0, m = this.spawns.length; i < m; i++) {
@@ -24,12 +28,15 @@ export class Spawner {
      * @param {boolean=} buffer
      * @return {Object}
      */
-    spawn(type, location, buffer) {
-        let spawn; let index; let data; const game = this.game;
+    spawn(type, location, buffer): void {
+        let spawn;
+        let index;
+        let data;
+        const game = this.game;
 
         spawn = {
             location: location || game.getEmptyLocation(),
-            type    : type
+            type: type,
         };
 
         index = this.spawns.length;
@@ -51,7 +58,7 @@ export class Spawner {
      * @param {netcode.Client} client
      * @param {number} index
      */
-    hit(client, index) {
+    hit(client, index): void {
         const spawn = this.spawns[index];
         this._destructSpawn(index);
 
@@ -70,7 +77,7 @@ export class Spawner {
      * @param {Coordinate} location
      * @return {Array}
      */
-    handleHits(client, location) {
+    handleHits(client, location): void {
         const hits = [];
         for (let i = 0, m = this.spawns.length; i < m; i++) {
             if (this.spawns[i] && eq(this.spawns[i].location, location)) {
@@ -85,7 +92,7 @@ export class Spawner {
      * @param {number} type
      * @return {number}
      */
-    numOfType(type) {
+    numOfType(type): void {
         let num = 0;
         for (let i = 0, m = this.spawns.length; i < m; i++) {
             if (this.spawns[i] && this.spawns[i].type === type) {
@@ -99,7 +106,7 @@ export class Spawner {
      * @param {number} index
      * @private
      */
-    _destructSpawn(index) {
+    _destructSpawn(index): void {
         this.spawns[index] = null;
         this.locations[index] = null;
     }

@@ -49,7 +49,7 @@ export class Message {
 
         return {
             event: eventNumberValidator.getValueOr(-1),
-            data: messageJson.slice(1) // Validate in event listener.
+            data: messageJson.slice(1), // Validate in event listener.
         };
     }
 

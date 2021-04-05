@@ -8,6 +8,8 @@
  */
 import { GAME_SHIFT_MAP, NC_SNAKE_UPDATE, NETCODE_SYNC_MS } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
+import { Level } from "../../shared/level/level";
+import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { Snake } from "../../shared/snake";
 import { FRAME, NS_SNAKE } from "../const";
@@ -35,7 +37,7 @@ export class ClientSnake extends Snake {
         this.shapeKeys = {
             snake: NS_SNAKE + index,
             name: NS_SNAKE + "TAG" + index,
-            direction: NS_SNAKE + "DIR" + index
+            direction: NS_SNAKE + "DIR" + index,
         };
 
         this.updateShape();
@@ -109,13 +111,7 @@ export class ClientSnake extends Snake {
         return shape;
     }
 
-    /**
-     * @param {level.Level} level
-     * @param {number} elapsed
-     * @param shift
-     * @param {Array.<room.Player>} players
-     */
-    handleNextMove(level, elapsed, shift, players)): void {
+    handleNextMove(level: Level, elapsed: number, shift: Shift, players: Player[]): void {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
@@ -144,7 +140,7 @@ export class ClientSnake extends Snake {
     /**
      * @param {Coordinate=} crashingPart
      */
-    setCrashed(crashingPart?: Coordinate)): void {
+    setCrashed(crashingPart?: Coordinate): void {
         this.crashed = true;
         if (this.controls) {
             this.controls.destruct();
@@ -158,32 +154,27 @@ export class ClientSnake extends Snake {
         }
     }
 
-    /**
-     * @param {Coordinate=} part
-     */
-    explodeParticles(part)): void {
-        let direction; let location;
+    // TODO: pass direction instead.
+    explodeParticles(collisionPart?: Coordinate): void {
+        let direction;
 
-        if (part) {
+        if (collisionPart) {
             // Crashed part is specified.
             direction = -1;
         } else {
             // Assume head has crashed.
             direction = this.direction;
-            part = this.getHead();
+            collisionPart = this.getHead();
         }
 
-        location = translateGame(part);
+        const location = translateGame(collisionPart);
         location[0] += 1;
         location[1] += 2;
 
         explosion(location, direction);
     }
 
-    /**
-     * @param {Array} serializedSnake
-     */
-    deserialize(serializedSnake)): void {
+    deserialize(serializedSnake: [number, Coordinate[]]): void {
         this.direction = serializedSnake[0];
         this.parts = serializedSnake[1];
         // If server updated snake, client prediction
@@ -191,27 +182,21 @@ export class ClientSnake extends Snake {
         this.collision = null;
     }
 
-    /**
-     * @param {number} direction
-     */
-    emit(direction)): void {
+    emit(direction: number): void {
         if (State.player) {
             const sync = Math.round(NETCODE_SYNC_MS / this.speed);
             State.player.emit(NC_SNAKE_UPDATE, [
-                direction, this.parts.slice(-sync)
+                direction, this.parts.slice(-sync),
             ]);
         }
     }
 
-    /**
-     * @return {Coordinate}
-     */
-    getNextPosition() {
-        let shift; const head = this.getHead();
+    getNextPosition(): Coordinate {
+        const head = this.getHead();
         if (this.controls) {
             this.direction = this.controls.getNextDirection();
         }
-        shift = GAME_SHIFT_MAP[this.direction];
+        const shift = GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
     }
 

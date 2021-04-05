@@ -6,7 +6,7 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { randomArrItem } from "../../shared/util";
 import {
-    DOM_EVENT_KEYDOWN, MENU_LEFT, NS_INPUT, STORAGE_NAME, UC_SKULL, UC_WHITE_HEART
+    DOM_EVENT_KEYDOWN, MENU_LEFT, NS_INPUT, STORAGE_NAME, UC_SKULL, UC_WHITE_HEART,
 } from "../const";
 import { InputStage } from "../stage_base/inputStage";
 import { State } from "../state/state";
@@ -26,12 +26,9 @@ export class NameStage extends InputStage {
 
     }
 
-    /**
-   * @return {Object}
-   */
-    getData() {
+    getData(): Record<string, string> {
         return {
-            name: this.getValue()
+            name: this.getValue(),
         };
     }
 
@@ -41,7 +38,7 @@ export class NameStage extends InputStage {
    * @param {number} top
    * @private
    */
-    inputSubmit(error, value, top)): void {
+    inputSubmit(error, value, top): void {
         let shape; let text; let duration = 500;
         if (error) {
             text = error;
@@ -87,6 +84,6 @@ export class NameStage extends InputStage {
       "Are you from the internet?",
       "%s? OMGOMG",
       "Your soul is beautiful!",
-      "Your soul is delicous"
+      "Your soul is delicous",
   ]
 }

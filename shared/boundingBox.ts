@@ -1,10 +1,6 @@
 import { HEIGHT, WIDTH } from "./const";
 import { PixelCollection } from "./pixelCollection";
 
-/**
- * @param {PixelCollection=} pixels
- * @constructor
- */
 export class BoundingBox {
     x0: number;
     x1: number;
@@ -26,11 +22,7 @@ export class BoundingBox {
         }
     }
 
-    /**
-     * @param {number} expand
-     * @return {BoundingBox}
-     */
-    expand(expand) {
+    expand(expand: number): BoundingBox {
         this.x0 -= expand;
         this.y0 -= expand;
         this.x1 += expand;
@@ -39,12 +31,7 @@ export class BoundingBox {
         return this;
     }
 
-    /**
-     * @param {PixelCollection} pixels
-     * @return {BoundingBox}
-     * @private
-     */
-    calculate(pixels) {
+    private calculate(pixels: PixelCollection): BoundingBox {
         let x0 = WIDTH;
         let x1 = 0;
         let y0 = HEIGHT;
@@ -67,7 +54,7 @@ export class BoundingBox {
         return this;
     }
 
-    setDimensions() {
+    setDimensions(): void {
         this.width = this.x1 - this.x0;
         this.height = this.y1 - this.y0;
     }

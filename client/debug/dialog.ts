@@ -6,7 +6,7 @@ if (location.search.match(/debug=dialog/)) {
         new Dialog(
             "HEADER TITLE",
             "Body text lol", {
-                type: Dialog.TYPE.ALERT
+                type: Dialog.TYPE.ALERT,
             });
     }, 500);
 }

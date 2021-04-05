@@ -107,7 +107,7 @@ export class Powerup {
      * @param {Function} callback
      * @private
      */
-    _resetState(delay, callback) {
+    _resetState(delay, callback): void {
         var timer = setTimeout(callback, delay);
         this.game.timeouts.push(timer);
     }
@@ -144,7 +144,7 @@ export class Powerup {
      * @param {number} duration
      * @private
      */
-    _speed(clients, delta, label, duration) {
+    _speed(clients, delta, label, duration): void {
         var room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
             var index = clients[i].model.index,
@@ -182,7 +182,7 @@ export class Powerup {
      * @param {string} message
      * @private
      */
-    _spawn(type, amount, message) {
+    _spawn(type, amount, message): void {
         var index, spawn, game = this.game;
 
         index = this.client.model.index;
@@ -209,7 +209,7 @@ class         spawn {
      * @param {Array.<netcode.Client>} clients
      * @private
      */
-    _reverse(clients) {
+    _reverse(clients): void {
         var snake, room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
             snake = clients[i].snake;
@@ -242,7 +242,7 @@ class         spawn {
      * @param {string} message
      * @private
      */
-    _tail(clients, delta, message) {
+    _tail(clients, delta, message): void {
         var room = this.room;
         for (var i = 0, m = clients.length; i < m; i++) {
             var index = clients[i].model.index,

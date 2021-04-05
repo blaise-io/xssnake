@@ -20,7 +20,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     /**
      * @param {room.ClientPlayerRegistry} playerRegistry
      */
-    clone(playerRegistry)): void {
+    clone(playerRegistry): void {
         this.players = playerRegistry.players.slice();
         this.localPlayer = playerRegistry.localPlayer;
     }
@@ -28,7 +28,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     /**
      * @param {Array.<Array>} serializedPlayers
      */
-    deserialize(serializedPlayers)): void {
+    deserialize(serializedPlayers): void {
         for (let i = 0, m = serializedPlayers.length; i < m; i++) {
             this.players[i].deserialize(serializedPlayers[i]);
         }
@@ -37,7 +37,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     /**
      * @param {Array.<Array>} serializedPlayers
      */
-    reconstruct(serializedPlayers)): void {
+    reconstruct(serializedPlayers): void {
         this.destruct();
         for (let i = 0, m = serializedPlayers.length; i < m; i++) {
             this.reconstructPlayer(serializedPlayers[i]);
@@ -47,7 +47,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     /**
      * @param {Array} serialized
      */
-    reconstructPlayer(serialized)): void {
+    reconstructPlayer(serialized): void {
         let player = new ClientPlayer();
         player.deserialize(serialized);
 
@@ -73,7 +73,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     /**
      * @param {Array.<number>} scores
      */
-    setScores(scores)): void {
+    setScores(scores): void {
         for (let i = 0, m = scores.length; i < m; i++) {
             this.players[i].score = scores[i];
         }
@@ -82,7 +82,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     /**
      * @param {level.Level} level
      */
-    setSnakes(level)): void {
+    setSnakes(level): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].setSnake(i, level);
         }
@@ -110,7 +110,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
      * @param {number} elapsed
      * @param {Shift} shift
      */
-    moveSnakes(level, elapsed, shift)): void {
+    moveSnakes(level, elapsed, shift): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.handleNextMove(level, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);
@@ -142,7 +142,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
      * @param {room.ClientPlayerRegistry} prevPlayers
      * @return {string|null}
      */
-    getQuitName(prevPlayers)): void {
+    getQuitName(prevPlayers): void {
         let prevNames; let newNames;
         prevNames = prevPlayers.getNames();
         newNames = this.getNames();

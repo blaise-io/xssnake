@@ -24,7 +24,7 @@ export class ScrollingCave {
             // Stalagmite _/\_
             stalagmite: this._LEVEL_WIDTH + Math.round(
                 average(this._BUMP_WIDTH)
-            )
+            ),
         };
     }
 
@@ -37,12 +37,7 @@ export class ScrollingCave {
     _LEVEL_WIDTH = 63
     _LEVEL_HEIGHT = 33
 
-    /**
-     * @param {number} ms
-     * @param {boolean} gameStarted
-     * @return {ShapeCollection|null}
-     */
-    update(ms, gameStarted) {
+    update(ms: number, gameStarted: boolean): ShapeCollection|null {
 
         if (!gameStarted) {
             return null;
@@ -62,7 +57,7 @@ export class ScrollingCave {
         }
     }
 
-    _updateShapePixelsArrs(offset) {
+    _updateShapePixelsArrs(offset: number): void {
         const max = this._max;
 
         this._shapes.each(function(shape, index) {
@@ -81,7 +76,7 @@ export class ScrollingCave {
         }
     }
 
-    _updateShape(shape, index, offset) {
+    _updateShape(shape: Shape, index: number, offset: number): void {
         const translate = shape.transform.translate;
 
         const gameTileNormalized = Math.abs(translate[0]) / GAME_TILE;
@@ -94,50 +89,43 @@ export class ScrollingCave {
         }
     }
 
-    _scrambleDecimals(seed, cutat) {
-        const max = 16; let dec0; let dec1; let pow;
-        pow = Math.pow(10, max);
+    _scrambleDecimals(seed: number, cutat: number): number {
+        const max = 16;
+        const pow = Math.pow(10, max);
         cutat = cutat % max;
-        dec0 = seed * Math.pow(10, cutat) / pow;
-        dec1 = seed * pow / Math.pow(10, max - cutat) % 1;
+        const dec0 = seed * Math.pow(10, cutat) / pow;
+        const dec1 = seed * pow / Math.pow(10, max - cutat) % 1;
         return dec0 + dec1;
     }
 
-    /**
-     * @param {Array.<number>} range
-     * @return {number}
-     * @private
-     */
-    _random(range) {
+    private _random(range: number[]): number {
         this.seed = this._scrambleDecimals(this.seed, ++this.seedIteration);
         return range[0] + Math.floor(this.seed * (range[1] - range[0] + 1));
     }
 
-    _spawnStalactite(x0) {
+    _spawnStalactite(x0: number): number {
         const x1 = x0 + this._random(this._BUMP_WIDTH);
         this._spawnFormation(true, x0, x1);
         return x1;
     }
 
-    _spawnStalagmite(x0) {
+    _spawnStalagmite(x0: number): number {
         const x1 = x0 + this._random(this._BUMP_WIDTH);
         this._spawnFormation(false, x0, x1);
         return x1;
     }
 
-    _spawnFormation(isStalactite, x0, x1) {
-        let y1; let shape;
-
-        y1 = this._random(this._BUMP_HEIGHT);
-        shape = new Shape();
+    _spawnFormation(isStalactite: boolean, x0: number, x1: number): void {
+        const y1 = this._random(this._BUMP_HEIGHT);
+        const shape = new Shape();
 
         for (let y0 = 0; y0 < y1; y0++) {
-            var y0Ite; let xRow1Prev = x1;
+            let xRow1Prev = x1;
             if (y0) {
                 x0 += this._random(this._BUMP_DECREASE);
                 x1 -= this._random(this._BUMP_DECREASE);
             }
-            y0Ite = isStalactite ? y0 : this._LEVEL_HEIGHT - y0 - 1;
+            const y0Ite = isStalactite ? y0 : this._LEVEL_HEIGHT - y0 - 1;
             if (x0 < x1 && x1 <= xRow1Prev) {
                 shape.add(
                     line(x0, y0Ite, x1, y0Ite)

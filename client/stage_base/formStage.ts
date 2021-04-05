@@ -1,6 +1,6 @@
 import {
     DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_DOWN, KEY_ENTER, KEY_ESCAPE, KEY_LEFT, KEY_RIGHT, KEY_UP,
-    NS_STAGES
+    NS_STAGES,
 } from "../const";
 import { State } from "../state/state";
 

@@ -63,7 +63,7 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
     /**
      * @param {room.ServerPlayer} player
      */
-    emit(player) {
+    emit(player): void {
         player.emit(NC_ROUND_SERIALIZE, this.serialize());
     }
 
@@ -81,7 +81,7 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
     /**
      * @param {room.ServerPlayer} winner
      */
-    wrapUp(winner) {
+    wrapUp(winner): void {
         var data = [this.players.players.indexOf(winner)];
         this.players.emit(NC_ROUND_WRAPUP, data);
         this.wrappingUp = true;
@@ -90,7 +90,7 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
     /**
      * @param {boolean} enabled
      */
-    toggleCountdown(enabled) {
+    toggleCountdown(enabled): void {
         clearTimeout(this.countdownTimer);
         this.countdownStarted = enabled;
         this.players.emit(NC_ROUND_COUNTDOWN, [+enabled]);

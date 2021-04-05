@@ -1,7 +1,3 @@
-/**
- * @constructor
- * @extends {SelectStage}
- */
 import { HASH_ROOM, STORAGE_NAME } from "../const";
 import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { MenuSnake } from "../stage/menuSnake";
@@ -17,7 +13,7 @@ import { QuickGame } from "./quickGame";
 import { SinglePlayer } from "./singlePlayer";
 
 export class MainStage extends SelectStage {
-    private data: any;
+    private data: Record<string, never>;
 
     constructor() {
         super();
@@ -32,24 +28,17 @@ export class MainStage extends SelectStage {
         }
     }
 
-    construct() {
+    construct(): void {
         this.data = {};
         super.construct();
     }
 
-    /**
-     * @return {Object}
-     */
-    getData() {
+    getData(): Record<string, never> {
         return this.data;
     }
 
-    /**
-     * @return {SelectMenu}
-     * @private
-     */
-    _getMenu() {
-        const name = storage(STORAGE_NAME);
+    private _getMenu(): SelectMenu {
+        const name = storage(STORAGE_NAME) as string;
 
         const header = name ?
             "YAY " + name.toUpperCase() + " IS BACK!" :

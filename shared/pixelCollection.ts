@@ -3,24 +3,16 @@ import { sort } from "./util";
 
 /**
  * Shape pixels stored in a multi-dimensional array.
- * I tried using an Uint8Array, but performance was bad.
- * @param {Array.<Array.<number>>=} pixels
- * @constructor
+ * I tried using Uint8Array, but performance was bad.
  */
 export class PixelCollection {
-    public pixels: any[];
+    public pixels: number[][];
 
     constructor(pixels=[]) {
-        /** @type {Array.<Array.<number>>} */
         this.pixels = pixels;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {PixelCollection}
-     */
-    add(x, y) {
+    add(x: number, y: number): PixelCollection {
         const pixels = this.pixels;
         if (pixels[y]) {
             pixels[y].push(x);
@@ -30,28 +22,18 @@ export class PixelCollection {
         return this;
     }
 
-    /**
-     * @return {!BoundingBox}
-     */
-    bbox() {
+    bbox(): BoundingBox {
         return new BoundingBox(this);
     }
 
-    /**
-     * @param {Array.<Coordinate>} pairs
-     * @return {PixelCollection}
-     */
-    addPairs(pairs) {
+    addPairs(pairs: Coordinate[]): PixelCollection {
         for (let i = 0, m = pairs.length; i < m; i++) {
             this.add(pairs[i][0], pairs[i][1]);
         }
         return this;
     }
 
-    /**
-     * @return {PixelCollection}
-     */
-    sort() {
+    sort(): PixelCollection {
         const pixels = this.pixels;
         for (let i = 0, m = pixels.length; i < m; i++) {
             if (pixels[i]) {
@@ -61,10 +43,7 @@ export class PixelCollection {
         return this;
     }
 
-    /**
-     * @param {function(number,number)} callback
-     */
-    each(callback) {
+    each(callback: (x: number, y: number) => void): void {
         const pixels = this.pixels;
         for (let y = 0, m = pixels.length; y < m; y++) {
             const row = pixels[y];
@@ -76,12 +55,7 @@ export class PixelCollection {
         }
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {number}
-     */
-    index(x, y) {
+    index(x: number, y: number): number {
         const row = this.pixels[y];
         if (row) {
             for (let i = 0, m = row.length; i < m; i++) {
@@ -93,21 +67,11 @@ export class PixelCollection {
         return -1;
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {boolean}
-     */
-    has(x, y) {
+    has(x: number, y: number): boolean {
         return -1 !== this.index(x, y);
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {PixelCollection}
-     */
-    remove(x, y) {
+    remove(x: number, y: number): PixelCollection {
         const index = this.index(x, y);
         if (-1 !== index) {
             this.pixels[y].splice(index, 1);
@@ -115,11 +79,7 @@ export class PixelCollection {
         return this;
     }
 
-    /**
-     * @param {number} y
-     * @return {PixelCollection}
-     */
-    removeLine(y) {
+    removeLine(y: number): PixelCollection {
         if (this.pixels[y]) {
             this.pixels[y].length = 0;
         }

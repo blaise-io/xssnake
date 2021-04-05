@@ -55,7 +55,7 @@ export class MessageBox {
     }
 
     updatePlayers() {
-        const disconnectedPlayer = this.players.filter({connected: false})[0];
+        const disconnectedPlayer = this.players.players.filter(p => p.connected === false)[0];
         if (disconnectedPlayer) {
             this.notifyMidgameDisconnect(disconnectedPlayer);
             this.playerChangeNotified = true;

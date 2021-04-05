@@ -18,7 +18,7 @@ export class ServerScore {
      * @param {level.Level} level
      * @return {boolean} Player score is affected.
      */
-    update(crashedPlayers, level) {
+    update(crashedPlayers, level): void {
         let points; let scoreUpdated = false;
         if (!level) {
             console.error("FIXME");

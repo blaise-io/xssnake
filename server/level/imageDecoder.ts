@@ -1,12 +1,9 @@
-const png = require("pngparse");
+import png from "pngparse";
 
-/**
- * Level image decoder for Server
- * @param data
- * @constructor
- */
 export class ImageDecoder {
-    constructor(ImageDecoder) {
+    private successFn: CallableFunction;
+
+    constructor(data: string) {
         this.successFn = () => {};
         const buffer = new Buffer(data, "base64");
         png.parse(buffer, function(err, data) {
@@ -14,11 +11,7 @@ export class ImageDecoder {
         }.bind(this));
     }
 
-
-    /**
-     * @param {Function} successFn
-     */
-    then(successFn) {
+    then(successFn: CallableFunction): void {
         this.successFn = successFn;
     }
 }

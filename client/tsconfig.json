@@ -5,7 +5,7 @@
         "target": "es6"
     },
     "include": [
-        "../d.ts",
+        "../index.d.ts",
         "../shared/**/*.ts",
         "./**/*.ts"
     ]

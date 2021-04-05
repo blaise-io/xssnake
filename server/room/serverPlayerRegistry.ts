@@ -17,7 +17,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
      * @param {*=} data
      * @param {room.ServerPlayer=} exclude
      */
-    emit(type, data, exclude) {
+    emit(type, data, exclude): void {
         for (var i = 0, m = this.players.length; i < m; i++) {
             if (exclude !== this.players[i]) {
                 this.players[i].emit(type, data);
@@ -51,7 +51,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
     /**
      * @param {level.Level} level
      */
-    setSnakes(level) {
+    setSnakes(level): void {
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].setSnake(i, level);
         }
@@ -61,7 +61,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
      * @param {number} tick
      * @return {Array.<room.ServerPlayer>}
      */
-    getCollisionsOnTick(tick) {
+    getCollisionsOnTick(tick): void {
         var crashingPlayers = [];
         for (var i = 0, m = this.players.length; i < m; i++) {
             if (this.players[i].snake.hasCollisionLteTick(tick)) {
@@ -76,7 +76,7 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
      * @param {number} elapsed
      * @param {Shift} shift
      */
-    moveSnakes(tick, elapsed, shift) {
+    moveSnakes(tick, elapsed, shift): void {
         for (var i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.handleNextMove(tick, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);

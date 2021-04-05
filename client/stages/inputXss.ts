@@ -32,7 +32,7 @@ export class InputXssStage extends InputStage {
 
     getData() {
         return {
-            xss: this.getValue()
+            xss: this.getValue(),
         };
     }
 

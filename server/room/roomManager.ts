@@ -19,7 +19,7 @@ export class ServerRoomManager {
         this.server.emitter.removeAllListeners([
             NC_ROOM_STATUS,
             NC_ROOM_JOIN_KEY,
-            NC_ROOM_JOIN_MATCHING
+            NC_ROOM_JOIN_MATCHING,
         ]);
     }
 
@@ -34,14 +34,14 @@ export class ServerRoomManager {
      * @param {string} key
      * @return {room.ServerRoom}
      */
-    room(key) {
+    room(key): void {
         return this.rooms[key];
     }
 
     /**
      * @param {room.ServerRoom} room
      */
-    remove(room) {
+    remove(room): void {
         room.destruct();
         for (let i = 0, m = this.rooms.length; i < m; i++) {
             if (room === this.rooms[i]) {
@@ -61,7 +61,7 @@ export class ServerRoomManager {
      * @param {room.ServerOptions} preferences
      * @return {room.ServerRoom}
      */
-    createRoom(preferences) {
+    createRoom(preferences): void {
         let room; const id = randomStr(ROOM_KEY_LENGTH);
         room = new ServerRoom(this.server, preferences, id);
         this.rooms.push(room);
@@ -72,7 +72,7 @@ export class ServerRoomManager {
      * @param {Array.<?>} dirtyKeyArr
      * @param {room.ServerPlayer} player
      */
-    autojoinRoom(dirtyKeyArr, player) {
+    autojoinRoom(dirtyKeyArr, player): void {
         let room; let key; let status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);
@@ -92,7 +92,7 @@ export class ServerRoomManager {
      * @param {room.ServerPlayer} player
      * @private
      */
-    joinMatchingRoom(dirtySerializeOptions, player) {
+    joinMatchingRoom(dirtySerializeOptions, player): void {
         let options; let room; let emitDataArr;
 
         emitDataArr = new Sanitizer(dirtySerializeOptions)
@@ -125,7 +125,7 @@ export class ServerRoomManager {
      * @param {string} key
      * @return {number}
      */
-    getRoomStatus(key) {
+    getRoomStatus(key): void {
         let room;
         if (!key) {
             return ROOM_INVALID_KEY;
@@ -145,7 +145,7 @@ export class ServerRoomManager {
      * @param {Array.<?>} dirtyKeyArr
      * @param {room.ServerPlayer} player
      */
-    emitRoomStatus(dirtyKeyArr, player) {
+    emitRoomStatus(dirtyKeyArr, player): void {
         let room; let key; let status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);

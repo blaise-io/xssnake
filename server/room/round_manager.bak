@@ -109,7 +109,7 @@ xss.room.RoundManager.prototype = {
     /**
      * @param {xss.netcode.Client} winner
      */
-    endAllRounds: function(winner) {
+    endAllRounds: function(winner): void {
         if (this.room.options[xss.FIELD_XSS]) {
             this._xssFetch(winner);
         } else {
@@ -124,7 +124,7 @@ xss.room.RoundManager.prototype = {
     /**
      * @param {xss.netcode.Client} winner
      */
-    _xssFetch: function(winner) {
+    _xssFetch: function(winner): void {
         var pubsub = this.room.server.emitter;
 
         this._xssListener = function(xss, client) {
@@ -150,7 +150,7 @@ xss.room.RoundManager.prototype = {
      * @param {xss.netcode.Client} winner
      * @param {string} code
      */
-    _xssFire: function(winner, code) {
+    _xssFire: function(winner, code): void {
         winner.broadcast(xss.NC_XSS_RES, code);
     }
 

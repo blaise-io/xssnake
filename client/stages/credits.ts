@@ -5,7 +5,7 @@
  */
 import { Shape } from "../../shared/shape";
 import {
-    MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, UC_BUG, UC_BULB, UC_FONT, UC_MUSIC, UC_SKULL
+    MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, UC_BUG, UC_BULB, UC_FONT, UC_MUSIC, UC_SKULL,
 } from "../const";
 import { ScreenStage } from "../stage_base/screenStage";
 import { fontPixels } from "../ui/font";
@@ -22,7 +22,7 @@ export class CreditsStage extends ScreenStage {
             UC_FONT,
             UC_BUG,
             UC_MUSIC,
-            UC_SKULL
+            UC_SKULL,
         ];
 
         body = icons.join(" + ") + "\n" +

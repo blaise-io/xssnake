@@ -7,7 +7,7 @@ import {
     COPY_AWAITING_PLAYERS_HEADER, COPY_AWAITING_PLAYERS_START_NOW, COPY_CONFIRM_EXIT_BODY,
     COPY_CONFIRM_EXIT_BODY_DRAMATIC, COPY_CONFIRM_EXIT_HEADER, COPY_CONFIRM_START_BODY,
     COPY_CONFIRM_START_HEADER, COPY_COUNTDOWN_BODY,
-    COPY_COUNTDOWN_TITLE
+    COPY_COUNTDOWN_TITLE,
 } from "../copy/copy";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state/state";
@@ -107,7 +107,7 @@ export class PreGameUI {
         }
 
         this.dialog = new Dialog(COPY_AWAITING_PLAYERS_HEADER, body, {
-            keysBlocked: false
+            keysBlocked: false,
         });
     }
 
@@ -118,7 +118,7 @@ export class PreGameUI {
             ok: function() {
                 this.destruct();
                 State.flow.restart();
-            }.bind(this)
+            }.bind(this),
         };
 
         this.dialog = new Dialog(
@@ -137,7 +137,7 @@ export class PreGameUI {
             ok: function() {
                 State.player.emit(NC_ROOM_START);
                 this.hideConfirmDialog();
-            }.bind(this)
+            }.bind(this),
         };
 
         this.dialog = new Dialog(
@@ -150,7 +150,7 @@ export class PreGameUI {
     /**
      * @param {boolean} started
      */
-    toggleCountdown(started)): void {
+    toggleCountdown(started): void {
         if (started) {
             this.countdownStarted = new Date();
         } else {
@@ -185,7 +185,7 @@ export class PreGameUI {
         );
         this.startCountdownTimer();
         this.dialog = new Dialog(COPY_COUNTDOWN_TITLE, body, {
-            keysBlocked: false
+            keysBlocked: false,
         });
     }
 

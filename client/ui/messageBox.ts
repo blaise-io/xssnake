@@ -115,20 +115,18 @@ export class MessageBoxUI {
     }
 
     showEnterKey() {
-        let x; let y; let shape;
+        const x = this.x1 - this.padding.x1 - fontWidth(UC_ENTER_KEY);
+        const y = this.y1 - this.lineHeight - this.padding.y1 + 1;
 
-        x = this.x1 - this.padding.x1 - fontWidth(UC_ENTER_KEY);
-        y = this.y1 - this.lineHeight - this.padding.y1 + 1;
-
-        shape = State.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y);
+        const shape = State.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y);
         shape.invert(shape.bbox(2));
-        shape.isOverlay = true;
+        shape.flags.isOverlay = true;
     }
 
     /**
      * @param {boolean=} flashKey
      */
-    hideEnterKey(flashKey?: boolean)): void {
+    hideEnterKey(flashKey?: boolean): void {
         const speed = FRAME * 4;
         if (flashKey) {
             flash(State.shapes.MSG_ENTER, speed, speed);
@@ -166,7 +164,7 @@ export class MessageBoxUI {
         shape = new Shape();
         shape.mask = [
             this.x0, this.y0, this.x1,
-            this.y1 - (this.inputField ? this.lineHeight - this.padding.y1 : 0)
+            this.y1 - (this.inputField ? this.lineHeight - this.padding.y1 : 0),
         ];
 
         num = this.getNumMessagesFit();
@@ -202,12 +200,12 @@ export class MessageBoxUI {
         );
     }
 
-    animate(shape) {
+    animate(shape): void {
         this.animating = true;
         const anim = {
-            to: [0, -this.lineHeight],
+            to: [0, -this.lineHeight] as Coordinate,
             duration: this.animationDuration,
-            callback: this.animateCallback.bind(this)
+            doneCallback: this.animateCallback.bind(this),
         };
         animate(shape, anim);
     }

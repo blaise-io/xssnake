@@ -1,3 +1,4 @@
+import { ShapeCache } from "../client/ui/shapeCache";
 import { outline } from "../client/ui/transformClient";
 import { BoundingBox } from "./boundingBox";
 import { PixelCollection } from "./pixelCollection";
@@ -5,55 +6,21 @@ import { PixelCollection } from "./pixelCollection";
 export class Shape {
     _bbox: BoundingBox
     pixels: PixelCollection
-    cache: any;
+    cache: ShapeCache = null;
     enabled: boolean;
-    effects: any;
-    expand: any;
-    headers: any
-    transform: any
+    effects: Record<string, (delta) => void> = {};
+    expand = 0;
+    flags: Record<string, boolean> = {
+        enabled: true,
+        isOverlay: false,
+    }
+    transform: {translate: [number,number], scale: number}
     isOverlay: boolean;
-    mask: null;
+    mask: number[]=null;
 
-    lifetime: any
-    flash: any
-
-    constructor(...pixelCollections) {
-        /** @type {PixelCollection} */
+    constructor(...pixelCollections: PixelCollection[]) {
         this.pixels = new PixelCollection();
-
-        /** @type {ShapeCache} */
-        this.cache = null;
-
-        /** @type {boolean} */
-        this.enabled = true;
-
-        /** @type {boolean} */
-        this.isOverlay = false;
-
-        /** @type {Object.<string,*>} */
-        this.effects = {};
-
-        /** @type {number} */
-        this.expand = 0;
-
-        /** @type {Object.<string,*>} */
-        this.headers = {};
-
-        /**
-         * x0, y0, x1, y2
-         * @type {Array.<number>}
-         */
-        this.mask = null;
-
-        /**
-         * Transform is applied at paint time, does not affect PixelCollection.
-         * @type {{translate: Shift, scale: number}}
-         */
-        this.transform = {
-            translate: [0, 0], // x,y
-            scale: 1
-        };
-
+        this.transform = {translate: [0, 0], scale: 1};
         this.add(...pixelCollections);
     }
 
@@ -83,44 +50,29 @@ export class Shape {
         return this.set(inverted);
     }
 
-    /**
-     * @return {Shape}
-     */
-    uncache() {
+    uncache(): Shape {
         this.cache = null;
         this._bbox = null;
         return this;
     }
 
-    /**
-     * @param {...PixelCollection} varArgs
-     * @return {Shape}
-     */
-    set(varArgs) {
+    set(...pixelCollections: PixelCollection[]): Shape {
         this.pixels = new PixelCollection();
-        return this.add.apply(this, arguments);
+        return this.add(...pixelCollections);
     }
 
-    /**
-     * @param {...PixelCollection} pixelCollections
-     * @return {Shape}
-     */
-    add(...pixelCollections) {
+    add(...pixelCollections: PixelCollection[]): Shape {
         const add = this.pixels.add.bind(this.pixels);
         for (let i = 0, m = pixelCollections.length; i < m; i++) {
-            arguments[i].each(add);
+            pixelCollections[i].each(add);
         }
         return this.uncache();
     }
 
-    /**
-     * @param {...PixelCollection} pixels
-     * @return {Shape}
-     */
-    remove(pixels) {
+    remove(...pixelCollections: PixelCollection[]): Shape {
         const remove = this.pixels.remove.bind(this.pixels);
-        for (let i = 0, m = arguments.length; i < m; i++) {
-            arguments[i].each(remove);
+        for (let i = 0, m = pixelCollections.length; i < m; i++) {
+            pixelCollections[i].each(remove);
         }
         return this.uncache();
     }
@@ -129,7 +81,7 @@ export class Shape {
      * @param {number=} expand
      * @return {BoundingBox}
      */
-    bbox(expand=0) {
+    bbox(expand=0): BoundingBox {
         if (!this._bbox || this.expand !== expand) {
             this._bbox = this.pixels.bbox();
             if (expand) {

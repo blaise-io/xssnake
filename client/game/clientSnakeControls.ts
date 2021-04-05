@@ -3,64 +3,41 @@ import { State } from "../state/state";
 import { ClientSnake } from "./clientSnake";
 
 export class ClientSnakeControls {
-    private upcomingDirections: number[];
+    private upcomingDirections: number[] = [];
 
     constructor(public snake: ClientSnake) {
         this.bindEvents();
-        // Allow buffering the next move.
-        this.upcomingDirections = [];
     }
 
-    destruct() {
-        State.events.off(
-            DOM_EVENT_KEYDOWN,
-            NS_SNAKE_CONTROLS
-        );
+    destruct(): void {
+        State.events.off(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS);
     }
 
-    bindEvents() {
-        State.events.on(
-            DOM_EVENT_KEYDOWN,
-            NS_SNAKE_CONTROLS,
-            this.handleKeys.bind(this)
-        );
+    bindEvents(): void {
+        State.events.on(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS, this.handleKeys.bind(this));
     }
 
-    /**
-     * @param {Event} event
-     */
-    handleKeys(event)): void {
+    handleKeys(event: KeyboardEvent): void {
         const direction = KEY_TO_DIRECTION[event.keyCode];
         if (!State.keysBlocked && typeof direction !== "undefined") {
             this.setDirection(direction);
         }
     }
 
-    /**
-     * @param {number} direction
-     */
-    setDirection(direction)): void {
+    setDirection(direction: number): void {
         if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
             this.upcomingDirections.push(direction);
         }
     }
 
-    /**
-     * @return {number}
-     */
-    getPreviousDirection() {
+    getPreviousDirection(): number {
         if (this.upcomingDirections.length) {
             return this.upcomingDirections[0];
         }
         return this.snake.direction;
     }
 
-    /**
-     * @param {number} direction
-     * @param {number} prevDirection
-     * @return {boolean}
-     */
-    isDirectionAllowed(direction, prevDirection)): void {
+    isDirectionAllowed(direction: number, prevDirection: number): boolean {
         const turn = Math.abs(direction - prevDirection);
         return (
             this.upcomingDirections.length <= 2 &&
@@ -69,29 +46,20 @@ export class ClientSnakeControls {
         );
     }
 
-    /**
-     * @return {number}
-     */
-    getNextDirection() {
+    getNextDirection(): number {
         if (this.upcomingDirections.length) {
             this.snake.direction = this.upcomingDirections[0];
         }
         return this.snake.direction;
     }
 
-    /**
-     * @param {number} direction
-     */
-    emitNewDirection(direction)): void {
+    emitNewDirection(direction: number): void {
         //        if (State.player && State.player.room && State.player.room.gameHasStarted()) {
         this.snake.emit(direction);
         //        }
     }
 
-    /**
-     * Snake moved. Administrate!
-     */
-    move() {
+    move(): void {
         if (this.upcomingDirections.length) {
             this.emitNewDirection(this.upcomingDirections.shift());
         }

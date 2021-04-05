@@ -10,21 +10,11 @@ export class PlayerRegistry {
         this.players = [];
     }
 
-
-    destruct() {
+    destruct(): void {
         this.players.length = 0;
     }
 
-    /** @return {Array.<room.Player>} */
-    filter(filter) {
-        return filter(this.players, filter);
-    }
-
-    /**
-     * @param {room.Player} localPlayer
-     * @return {Array}
-     */
-    serialize(localPlayer) {
+    serialize(localPlayer: Player): any[] {
         const serialized = [];
         for (let i = 0, m = this.players.length; i < m; i++) {
             serialized.push(this.players[i].serialize(localPlayer === this.players[i]));
@@ -32,35 +22,22 @@ export class PlayerRegistry {
         return serialized;
     }
 
-    /**
-     * @param {room.Player} player
-     */
-    add(player) {
+    add(player: Player): void {
         this.players.push(player);
     }
 
-    /**
-     * @param {room.Player} player
-     */
-    remove(player) {
+    remove(player: Player): void {
         const index = this.players.indexOf(player);
         if (-1 !== index) {
             this.players.splice(index, 1);
         }
     }
 
-    /**
-     * @return {number}
-     */
-    getTotal() {
+    getTotal(): number {
         return this.players.length;
     }
 
-    /**
-     * @param {room.Player} player
-     * @return {boolean}
-     */
-    isHost(player) {
+    isHost(player: Player): boolean {
         return 0 === this.players.indexOf(player);
     }
 

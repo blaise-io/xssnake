@@ -4,6 +4,8 @@
  * @param {number=} progress Animation progress (in ms)
  * @constructor
  */
+import { ShapeCollection } from "../shapeCollection";
+
 export class LevelAnimation {
     private _animations: any;
     private _progressMs: number;
@@ -28,12 +30,8 @@ export class LevelAnimation {
     /**
      * Returns an array of animations.
      * Every levelanim is an array of shapes, or null
-     *
-     * @param {number} delta
-     * @param {boolean} gameStarted
-     * @return {Array.<ShapeCollection>}
      */
-    update(delta, gameStarted) {
+    update(delta: number, gameStarted: boolean): ShapeCollection[] {
         const shapeCollections = [];
         this._progressMs += delta;
         for (let i = 0, m = this._animations.length; i < m; i++) {

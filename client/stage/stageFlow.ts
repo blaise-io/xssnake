@@ -6,7 +6,7 @@
 import { ROOM_KEY_LENGTH, WIDTH } from "../../shared/const";
 import { extend } from "../../shared/util";
 import {
-    DOM_EVENT_KEYDOWN, HASH_ROOM, KEY_ESCAPE, KEY_MUTE, KEY_TAB, MENU_LEFT, NS_FLOW, STORAGE_MUTE
+    DOM_EVENT_KEYDOWN, HASH_ROOM, KEY_ESCAPE, KEY_MUTE, KEY_TAB, MENU_LEFT, NS_FLOW, STORAGE_MUTE,
 } from "../const";
 import { MainStage } from "../stages/main";
 import { StartGameStage } from "../stages/startGame";
@@ -67,7 +67,7 @@ export class StageFlow {
      * @param {Function} Stage
      * @param {Object=} options
      */
-    switchStage(Stage, options: any={})): void {
+    switchStage(Stage, options: any={}): void {
         let switchToStage;
 
         if (Stage && !options.back) {
@@ -139,7 +139,7 @@ export class StageFlow {
      * @param {function()} callback
      * @private
      */
-    _switchStageAnimate(oldShape, newShape, back, callback)): void {
+    _switchStageAnimate(oldShape, newShape, back, callback): void {
         let oldStageAnim; let newStageAnim; const width = WIDTH - MENU_LEFT;
 
         if (back) {

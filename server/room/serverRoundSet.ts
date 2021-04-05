@@ -47,7 +47,7 @@ export class ServerRoundSet {
     /**
      * @param {room.ServerPlayer} winner
      */
-    switchRounds(winner) {
+    switchRounds(winner): void {
         const delay = winner ? SECONDS_ROUND_GLOAT : SECONDS_ROUND_PAUSE;
         if (this.hasSetWinner()) {
             // TODO

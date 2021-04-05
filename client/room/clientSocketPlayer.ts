@@ -13,14 +13,12 @@ export class ClientSocketPlayer extends ClientPlayer {
     public room: ClientRoom;
     private heartbeat: ClientHeartbeat;
 
-    constructor(public onopenCallback) {
+    constructor(public onopenCallback: CallableFunction) {
         super("");
 
         this.local = true;
-
         this.room = null;
 
-        // Vanilla websockets.
         this.connection = new WebSocket("ws://" + this.SERVER_ENDPOINT);
         this.connection.onopen = this.onopen.bind(this);
         this.connection.onclose = this.onclose.bind(this);
@@ -28,7 +26,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.onmessage = this.onmessage.bind(this);
     }
 
-    destruct() {
+    destruct(): void {
         this.connected = false;
 
         if (this.heartbeat) {
@@ -50,13 +48,13 @@ export class ClientSocketPlayer extends ClientPlayer {
         }
     }
 
-    onopen() {
+    onopen(): void {
         this.connected = true;
         this.onopenCallback();
         this.heartbeat = new ClientHeartbeat(this);
     }
 
-    onclose() {
+    onclose(): void {
         if (this.connected) {
             error(COPY_SOCKET_CONNECTION_LOST);
         } else {
@@ -65,17 +63,15 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.destruct();
     }
 
-    timeout() {
+    timeout(): void {
         error(COPY_SOCKET_SERVER_AWAY);
         this.destruct();
     }
 
     /**
      * Send messages as [event, eventdata1, eventdata2]
-     * @param {number} event
-     * @param {Array.<string|number>=} data
      */
-    emit(event, data?:(string|number)[]) {
+    emit(event: number, data?: any): void {
         let emit;
         if (data) {
             emit = data;
@@ -87,10 +83,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.send(JSON.stringify(emit));
     }
 
-    /**
-     * @param {Object} ev
-     */
-    onmessage(ev)): void {
+    onmessage(ev: MessageEvent): void {
         const data = JSON.parse(ev.data);
         console.log("IN ", data);
         State.events.trigger(data[0], data.slice(1));

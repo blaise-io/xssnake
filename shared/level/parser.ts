@@ -12,9 +12,9 @@ export class Parser {
     height: number
     walls: PixelCollection
     unreachables: PixelCollection
-    spawns: any[]
-    spawnCoordinates: any[]
-    spawnDirections: any[]
+    spawns: Spawn[]
+    spawnCoordinates: Coordinate[]
+    spawnDirections: Coordinate[]
 
     constructor(imagedata) {
         this.width = imagedata.width;
@@ -22,42 +22,31 @@ export class Parser {
         this.walls = new PixelCollection();
         this.unreachables = new PixelCollection();
 
-        /** @type {Array.<level.Spawn>} */
         this.spawns = new Array(ROOM_CAPACITY);
-
-        /** @type {Array.<Coordinate>} */
         this.spawnCoordinates = new Array(ROOM_CAPACITY);
-
-        /** @type {Array.<Coordinate>} */
         this.spawnDirections = [];
 
-        this.parsePixels(imagedata.data);
+        this.parsePixels(imagedata);
         this.generateSpawns();
     }
 
-    /**
-     * @param {Object} imagedata
-     */
-    parsePixels(imagedata) {
-        for (let i = 0, m = imagedata.length / 4; i < m; i++) {
+    parsePixels(imagedata: ImageData): void {
+        const data = imagedata.data;
+        for (let i = 0, m = data.length / 4; i < m; i++) {
             this.parsePixel(
                 [
-                    imagedata[i * 4],
-                    imagedata[i * 4 + 1],
-                    imagedata[i * 4 + 2]
+                    data[i * 4],
+                    data[i * 4 + 1],
+                    data[i * 4 + 2],
                 ], [
                     i % this.width,
-                    Math.floor(i / this.width)
+                    Math.floor(i / this.width),
                 ]
             );
         }
     }
 
-    /**
-     * @param {Array.<number>} rgb
-     * @param {Coordinate} coordinate
-     */
-    parsePixel(rgb, coordinate) {
+    parsePixel(rgb: number[], coordinate: Coordinate): void {
         function rgbEquals(r, g, b) {
             return rgb[0] === r && rgb[1] === g && rgb[2] === b;
         }
@@ -85,7 +74,7 @@ export class Parser {
         }
     }
 
-    generateSpawns() {
+    generateSpawns(): void {
         for (let i = 0, m = this.spawnCoordinates.length; i < m; i++) {
             const spawnCoordinate = this.spawnCoordinates[i];
 
@@ -100,21 +89,15 @@ export class Parser {
         }
     }
 
-    /**
-     * @param {Coordinate} spawn
-     * @return {number}
-     */
-    getDirectionForSpawn(spawn: number[]): number {
+    getDirectionForSpawn(spawn: Coordinate): number {
         for (let i = 0, m = this.spawnDirections.length; i < m; i++) {
-            var dx; var dy;
 
             if (!this.spawnDirections[i]) {
                 continue;
             }
 
-            dx = spawn[0] - this.spawnDirections[i][0];
-            dy = spawn[1] - this.spawnDirections[i][1];
-
+            const dx = spawn[0] - this.spawnDirections[i][0];
+            const dy = spawn[1] - this.spawnDirections[i][1];
             if (1 === Math.abs(dx) + Math.abs(dy)) {
                 if (dx === 0) {
                     return (dy === 1) ? DIRECTION_UP : DIRECTION_DOWN;

@@ -33,14 +33,14 @@ export class Options {
             Number(this.isQuickGame),
             Number(this.hasPowerups),
             Number(this.isPrivate),
-            Number(this.isXSS)
+            Number(this.isXSS),
         ];
     }
 
     /**
      * @param {?} serialized
      */
-    deserialize(serialized) {
+    deserialize(serialized): void {
         this.maxPlayers = new Sanitizer(serialized[0])
             .assertBetween(1, ROOM_CAPACITY)
             .getValueOr(ROOM_CAPACITY);

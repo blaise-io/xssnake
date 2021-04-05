@@ -42,7 +42,7 @@ export class Canvas {
     /**
      * @param {ColorScheme} colorScheme
      */
-    setColorScheme(colorScheme)): void {
+    setColorScheme(colorScheme): void {
         this.tile.setColorScheme(colorScheme);
         this._flushShapeCache();
     }
@@ -50,7 +50,7 @@ export class Canvas {
     /**
      * @param {number} delta
      */
-    paint(delta)): void {
+    paint(delta): void {
         // Abuse this loop to trigger game tick
         State.events.trigger(EV_GAME_TICK, delta, this.focus);
 
@@ -96,7 +96,7 @@ export class Canvas {
      * @param {number} delta
      * @private
      */
-    _paintShapes(delta)): void {
+    _paintShapes(delta): void {
         const overlays = []; const shapeKeys = Object.keys(State.shapes);
 
         // Avoid looping over an uncached keyval object.
@@ -113,9 +113,9 @@ export class Canvas {
      * @param {string} key
      * @private
      */
-    _paintDispatch(delta, overlays, key)): void {
+    _paintDispatch(delta, overlays, key): void {
         if (State.shapes[key]) {
-            if (State.shapes[key].isOverlay) {
+            if (State.shapes[key].flags.isOverlay) {
                 overlays.push(State.shapes[key]);
             } else {
                 this._paintShape(State.shapes[key], delta);
@@ -128,14 +128,14 @@ export class Canvas {
      * @param {Array.<Shape>} overlays
      * @private
      */
-    _paintOverlays(delta, overlays)): void {
+    _paintOverlays(delta, overlays): void {
         for (let i = 0, m = overlays.length; i < m; i++) {
             this._paintShape(overlays[i], delta);
         }
     }
 
     /** @private */
-    _frame(now)): void {
+    _frame(now): void {
         // Make appointment for next paint.
         if (!this.error) {
             window.requestAnimationFrame(this._frameBound);
@@ -151,7 +151,7 @@ export class Canvas {
         this.paint(delta);
     }
 
-    reportFps(fps) {
+    reportFps(fps: number): void {
         this.fps.unshift(fps);
         this.fps.length = 10;
         document.title = "XXSNAKE " + Math.round(average(this.fps));
@@ -162,7 +162,7 @@ export class Canvas {
      * @param {number} delta
      * @private
      */
-    _paintShape(shape, delta)): void {
+    _paintShape(shape, delta): void {
         const translate = shape.transform.translate;
 
         // Apply effects if FPS is in a normal range. If window is out
@@ -174,7 +174,7 @@ export class Canvas {
         }
 
         // Draw on canvas if shape is enabled and visible
-        if (!shape.enabled) {
+        if (!shape.flags.enabled) {
             return;
         }
 
@@ -201,7 +201,7 @@ export class Canvas {
      * @param {Shape} shape
      * @private
      */
-    _drawMaskedShape(shape)): void {
+    _drawMaskedShape(shape): void {
         const translate = shape.transform.translate;
 
         const mx0 = shape.mask[0] * this.tile.size;
@@ -248,36 +248,30 @@ export class Canvas {
         );
     }
 
-    /** @private */
-    _bindEvents() {
+    private _bindEvents(): void {
         this.canvas.onclick = this._promoteKeyboard.bind(this);
-        window.onresize = debounce(this._positionCanvas.bind(this));
+        window.onresize = debounce(() => {
+            this._setCanvasDimensions();
+            this._flushShapeCache();
+            this._positionCanvas();
+        }) as any;
         window.onfocus = this._handleFocusChange.bind(this);
         window.onblur = this._handleFocusChange.bind(this);
     }
 
-    /**
-     * @param {Event} ev
-     * @private
-     */
-    _handleFocusChange(ev)): void {
+    private _handleFocusChange(ev: Event): void {
         this.focus = (ev.type !== "blur");
         State.events.trigger(EV_WIN_FOCUS_CHANGE, this.focus);
     }
 
-    /**
-     * @param {Event} ev
-     * @private
-     */
-    _promoteKeyboard(ev)): void {
+    _promoteKeyboard(ev: KeyboardEvent): void {
         if (Number(ev.which) !== 1) { // Only LMB
             return;
         }
         instruct("No mousing please", 2000);
     }
 
-    /** @private */
-    _setCanvasDimensions() {
+    private _setCanvasDimensions(): void {
         const size = this.tile.updateSize();
         this.canvasWidth = size * WIDTH;
         this.canvasHeight = size * HEIGHT;
@@ -287,16 +281,7 @@ export class Canvas {
         this.canvas.style.height = `${this.canvasHeight / window.devicePixelRatio}px`;
     }
 
-    /**
-     * @param {Event=} ev
-     * @private
-     */
-    _positionCanvas(ev=null)): void {
-        if (ev) {
-            this._setCanvasDimensions();
-            this._flushShapeCache();
-        }
-
+    private _positionCanvas(): void {
         const windowCenter = window.innerWidth / 2;
         const windowMiddle = window.innerHeight / 2;
 
@@ -311,22 +296,13 @@ export class Canvas {
         style.top = Math.max(0, top) + "px";
     }
 
-    /**
-     * @return {Element}
-     * @private
-     */
-    _setupCanvas() {
+    private _setupCanvas(): HTMLCanvasElement {
         const canvas = document.createElement("canvas");
         document.body.appendChild(canvas);
         return canvas;
     }
 
-    /**
-     * @param {number} num
-     * @return {number}
-     * @private
-     */
-    _snapCanvasToTiles(num)): void {
+    private _snapCanvasToTiles(num: number): number {
         return Math.floor(num / this.tile.size) * this.tile.size;
     }
 

@@ -1,60 +1,45 @@
 export class EventHandler {
-    _topics: any;
+    _topics: Record<string, Record<string, CallableFunction>>;
 
     constructor() {
         this._topics = {};
     }
 
-    /**
-     * @param {number|string} topic
-     * @param {...*} eventData
-     */
-    trigger(topic, ...eventData)): void {
-        let topicKeys, topics = this._topics[topic];
+    trigger(topic: string, ...eventData: unknown[]): void {
+        let topicKeys;
+        const topics = this._topics[topic];
         if (topics) {
             topicKeys = Object.keys(topics);
             for (let i = 0, m = topicKeys.length; i < m; i++) {
                 const key = topicKeys[i];
-                if (topics.hasOwnProperty(key)) {
-                    topics[key](...eventData);
-                }
+                topics[key](...eventData);
             }
         }
     }
 
-    /**
-     * @param {number|string} topic
-     * @param {string} key
-     * @param {Function} callback
-     */
-    on(topic, key, callback)): void {
+    on(topic: number|string, key: string, callback: CallableFunction): void {
         if (!this._topics[topic]) {
             this._topics[topic] = {};
         }
         this._topics[topic][key] = callback;
         if ("on" + topic in document) {
-            document.addEventListener(String(topic), callback, false);
+            document.addEventListener(
+                topic as keyof DocumentEventMap,
+                callback as (Event) => void,
+                false
+            );
         }
     }
 
-    /**
-     * @param {number|string} topic
-     * @param {string} key
-     * @param {function((Event|null))} callback
-     */
-    once(topic, key, callback)): void {
-        const callbackAndOff = function() {
-            callback.apply(callback, arguments);
+    once(topic: number|string, key: string, callback: CallableFunction): void {
+        const callbackAndOff = function(...args) {
+            callback(...args);
             this.off(topic, key);
         }.bind(this);
         this.on(topic, key, callbackAndOff);
     }
 
-    /**
-     * @param {number|string} topic
-     * @param {string=} key
-     */
-    off(topic, key)): void {
+    off(topic: number|string, key?: string): void {
         let callback;
         if (topic in this._topics) {
             if (typeof key !== "undefined") {

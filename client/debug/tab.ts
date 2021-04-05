@@ -12,7 +12,7 @@ if (location.search.match(/debug=tab/)) {
             "",
             "Label\tValue A",
             "Second Label\tAligned with A",
-            "\tEmpty label"
+            "\tEmpty label",
         ].join("\n");
         State.shapes.testtabs = font(text, 10, 10);
     }, 200);

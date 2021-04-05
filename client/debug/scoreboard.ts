@@ -20,7 +20,7 @@ if (location.search.match(/debug=scoreboard/)) {
 
         const messages = [
             new Message(null, "This is a notification"),
-            new Message("Player 1", "Hello world")
+            new Message("Player 1", "Hello world"),
         ];
         const author = new Player("Dummy");
         new MessageBoxUI(messages, author);

@@ -14,7 +14,7 @@ if (location.search.match(/debug=font/)) {
             "abcdefghijklmnopqrstuvwxyz",
             "1234567890 ~@#$%^&*()?/",
             // Problematic chars and kerning:
-            "0124zZ2bdp14MN Kern: LYABLE"
+            "0124zZ2bdp14MN Kern: LYABLE",
         ].join("\n");
         benchmark(20, function() {
             State.shapes.A = new Shape(zoom(2, fontPixels(text)));

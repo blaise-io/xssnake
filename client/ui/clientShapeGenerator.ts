@@ -5,7 +5,7 @@ import {
     DIRECTION_UP,
     GAME_TILE,
     HEIGHT,
-    WIDTH
+    WIDTH,
 } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
@@ -100,7 +100,7 @@ export function tooltip(text, x, y, direction) {
         shape.remove(line(x - 3, y + 4, x + 3, y + 4));
         break;
     }
-    shape.isOverlay = true;
+    shape.flags.isOverlay = true;
     shape.bbox();
     return shape;
 }
@@ -182,10 +182,7 @@ export function outerBorder(): Record<string, Shape> {
     };
 }
 
-/**
- * @return {Shape}
- */
-export function xssnakeHeader() {
+export function xssnakeHeader(): Shape {
     let x; let y; let shape; const welcome = font("<XSSNAKE>").pixels;
 
     x = MENU_LEFT - 2;
@@ -199,17 +196,10 @@ export function xssnakeHeader() {
     return shape;
 }
 
-/**
- * @param {Coordinate} location
- * @param {number=} direction
- * @param {number=} intensity
- */
-export function explosion(location, direction, intensity=16) {
-    let pixel; let shape; let to; let duration; let w; let d;
-
-    w = 10;
-    d = 20;
-
+export function explosion(location: Coordinate, direction=-1, intensity=16): void {
+    let to;
+    const w = 10;
+    const d = 20;
     while (intensity--) {
         switch (direction) {
         case DIRECTION_LEFT:
@@ -228,10 +218,9 @@ export function explosion(location, direction, intensity=16) {
             to = [randomRange(-d, d), randomRange(-d, d)];
         }
 
-        pixel = new PixelCollection().add(location[0], location[1]);
-        duration = Math.pow(randomRange(1, 10), 3);
-
-        shape = new Shape(pixel);
+        const pixel = new PixelCollection().add(location[0], location[1]);
+        const duration = Math.pow(randomRange(1, 10), 3);
+        const shape = new Shape(pixel);
         animate(shape, {to: to, duration: duration});
         lifetime(shape, 0, duration);
         State.shapes[NS_EXPLOSION + randomStr(3)] = shape;

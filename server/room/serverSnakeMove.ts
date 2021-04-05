@@ -88,7 +88,7 @@ class ServerSnakeMove {
      * @param {Array.<Array>} parts
      * @return {boolean}
      */
-    hasGaps(parts) {
+    hasGaps(parts): void {
         for (let i = 1, m = parts.length; i < m; i++) {
             // Sanity check
             if (parts[i].length !== 2 ||
@@ -110,7 +110,7 @@ class ServerSnakeMove {
      * @param {Array.<Array>} serverParts
      * @return {Array.<Array>} common
      */
-    getCommonPartIndices(clientParts, serverParts) {
+    getCommonPartIndices(clientParts, serverParts): void {
         for (let i = clientParts.length - 1; i >= 0; i--) {
             for (let ii = serverParts.length - 1; ii >= 0; ii--) {
                 if (eq(clientParts[i], serverParts[ii])) {

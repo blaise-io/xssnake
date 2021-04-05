@@ -21,7 +21,7 @@ export class SelectMenu {
           next: next,
           title: title.toUpperCase(),
           description: description,
-          callback: callback
+          callback: callback,
       });
   }
 

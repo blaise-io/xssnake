@@ -27,43 +27,30 @@ export function extend(target, varArgs) {
     }
 }
 
-/**
- * @param {Array} haystack
- * @param {*} needle
- * @return {Array}
- */
-export function filter(haystack, needle) {
-    const filtered = [];
-    for (let i = 0, m = haystack.length; i < m; i++) {
-        if (compareProperties(haystack[i], needle)) {
-            filtered.push(haystack[i]);
-        }
-    }
-    return filtered;
-}
-
-/**
- * @param {*} completeObject
- * @param {*} subsetObject
- * @return {boolean}
- */
-export function compareProperties(completeObject, subsetObject) {
-    if (completeObject === subsetObject) {
-        return true;
-    } else if (subsetObject instanceof Object) {
-        const keys = Object.keys(subsetObject);
-        for (let i = 0, l = keys.length; i < l; i++) {
-            if (!compareProperties(
-                completeObject[keys[i]],
-                subsetObject[keys[i]])
-            ) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return false;
-}
+// export function filter<Type>(haystack: Type[], needle: Record<string, boolean|string|null>): Type[] {
+//     const filtered = [];
+//     for (let i = 0, m = haystack.length; i < m; i++) {
+//         if (compareProperties(haystack[i], needle)) {
+//             filtered.push(haystack[i]);
+//         }
+//     }
+//     return filtered;
+// }
+//
+// export function compareProperties<Type>(completeObject: Type, subsetObject: Record<string, boolean|string|null>): boolean {
+//     if (completeObject === subsetObject) {
+//         return true;
+//     } else if (subsetObject instanceof Object) {
+//         const keys = Object.keys(subsetObject);
+//         for (let i = 0, l = keys.length; i < l; i++) {
+//             if (!compareProperties(completeObject[keys[i]], subsetObject[keys[i]])) {
+//                 return false;
+//             }
+//         }
+//         return true;
+//     }
+//     return false;
+// }
 
 /**
  * @param {number} min
@@ -191,7 +178,7 @@ export function benchmark(iterations, fn, label="") {
     console.log(label || "Benchmark", {
         x: iterations,
         avg: duration / iterations,
-        total: duration
+        total: duration,
     });
 }
 

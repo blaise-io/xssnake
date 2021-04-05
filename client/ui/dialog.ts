@@ -6,7 +6,7 @@ import { extend } from "../../shared/util";
 import {
     DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_DOWN, KEY_ENTER, KEY_ESCAPE, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_TAB, KEY_UP,
     MENU_TOP,
-    NS_DIALOG
+    NS_DIALOG,
 } from "../const";
 import { COPY_DIALOG_CANCEL, COPY_DIALOG_OK } from "../copy/copy";
 import { State } from "../state/state";
@@ -34,7 +34,7 @@ export class Dialog {
             type       : Dialog.TYPE.INFO,
             width      : 80,
             ok         : () => {},
-            cancel     : () => {}
+            cancel     : () => {},
         };
 
         extend(this.settings, settings);
@@ -48,7 +48,7 @@ export class Dialog {
     static TYPE = {
         INFO   : 0, // No buttons, not closable
         ALERT  : 1, // OK button, closable
-        CONFIRM: 2  // OK and CANCEL button
+        CONFIRM: 2,  // OK and CANCEL button
     }
 
     destruct() {
@@ -84,7 +84,7 @@ export class Dialog {
     /**
      * @param {string} body
      */
-    setBody(body)): void {
+    setBody(body): void {
         State.audio.play("menu_alt");
         this._body = body;
         this._updateShape();
@@ -109,7 +109,7 @@ export class Dialog {
      * @param {Event} ev
      * @private
      */
-    _handleKeys(ev)): void {
+    _handleKeys(ev): void {
         switch (ev.keyCode) {
         case KEY_LEFT:
         case KEY_UP:
@@ -200,7 +200,7 @@ export class Dialog {
      * @return {PixelCollection}
      * @private
      */
-    _getLine(y)): void {
+    _getLine(y): void {
         return line(0, y - 5, this._getContentWidth(), y - 5);
     }
 
@@ -210,7 +210,7 @@ export class Dialog {
      * @return {PixelCollection}
      * @private
      */
-    _getCancelButton(x, y)): void {
+    _getCancelButton(x, y): PixelCollection {
         const settings = {invert: !this._okSelected};
         return fontPixels(COPY_DIALOG_CANCEL, x, y, settings);
     }
@@ -221,7 +221,7 @@ export class Dialog {
      * @return {PixelCollection}
      * @private
      */
-    _getOkButton(x, y)): void {
+    _getOkButton(x, y): PixelCollection {
         const settings = {invert: this._okSelected};
         return fontPixels(COPY_DIALOG_OK, x, y, settings);
     }
@@ -275,7 +275,7 @@ export class Dialog {
         }
 
         shape = new Shape(header, body, buttons);
-        shape.isOverlay = true;
+        shape.flags.isOverlay = true;
 
         shape.outline();
         shape.center(0, 0);

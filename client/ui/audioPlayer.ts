@@ -22,7 +22,7 @@ export class AudioPlayer {
     /**
      * @param {string} file
      */
-    play(file)): void {
+    play(file): void {
         if (
             this.files &&
             this.files[file] &&
@@ -37,7 +37,7 @@ export class AudioPlayer {
         const audioElement = document.createElement("audio");
         const mimetypes = {
             mp3: "audio/mpeg",
-            ogg: "audio/ogg"
+            ogg: "audio/ogg",
         };
 
         if (audioElement.canPlayType) {

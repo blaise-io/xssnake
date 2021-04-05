@@ -1,9 +1,4 @@
-/**
- * @param {Coordinate} location
- * @param {number} direction
- * @constructor
- */
 export class Spawn {
-    constructor(public location: number[], public direction: number) {
+    constructor(public location: Coordinate, public direction: number) {
     }
 }

@@ -1,31 +1,29 @@
-/**
- * @param {game.Snake} snake
- * @param {Array.<room.Player>} players
- * @param {level.Level} level
- * @param {Coordinate} location
- * @constructor
- */
 import { CRASH_MOVING_WALL, CRASH_OPPONENT, CRASH_SELF, CRASH_WALL } from "../const";
+import { Level } from "../level/level";
+import { Player } from "../room/player";
+import { Snake } from "../snake";
 import { Collision } from "./collision";
 
 export class SnakeMove {
     public collision: Collision;
 
-    constructor(public snake, public players, public level, public location) {
+    constructor(
+        public snake: Snake,
+        public players: Player[],
+        public level: Level,
+        public location: Coordinate
+    ) {
         this.collision = this.getCollission();
     }
 
-    getParts(part) {
+    getParts(part: Coordinate): Coordinate[] {
         const parts = this.snake.parts.slice();
         parts.unshift();
         parts.push(part);
         return parts;
     }
 
-    /**
-     * @return {game.Collision}
-     */
-    getCollission() {
+    getCollission(): Collision {
         const parts = this.getParts(this.location);
         for (let i = 0, m = parts.length; i < m; i++) {
             const collision = this.getCollisionPart(i, parts[i]);
@@ -36,13 +34,10 @@ export class SnakeMove {
         return null;
     }
 
-    /**
-     * @param {number} index
-     * @param {Coordinate} part
-     * @return {game.Collision}
-     */
-    getCollisionPart(index, part) {
-        let players; let levelData; let partIndex;
+    getCollisionPart(index: number, part: Coordinate): Collision {
+        let players;
+        let levelData;
+        let partIndex;
         players = this.players;
         levelData = this.level.data;
 

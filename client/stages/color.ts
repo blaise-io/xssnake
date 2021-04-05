@@ -8,28 +8,17 @@ import { storage } from "../util/clientUtil";
 export class ColorStage extends SelectStage {
     constructor() {
         super();
-        this.menu = this._getMenu();
+
+        this.menu = new SelectMenu("COLOR SCHEME");
+        for (let i = 0, m = colorSchemes.length; i < m; i++) {
+            this.menu.addOption(
+                null, null, colorSchemes[i].title, colorSchemes[i].desc, this.setColor.bind(this)
+            );
+        }
         this.menu.select(storage(STORAGE_COLOR));
     }
 
-    /**
-   * @return {SelectMenu}
-   * @private
-   */
-    _getMenu() {
-        const menu = new SelectMenu("COLOR SCHEME");
-        for (let i = 0, m = colorSchemes.length; i < m; i++) {
-            const title = colorSchemes[i].title; const desc = colorSchemes[i].desc;
-            menu.addOption(null, null, title, desc, this._setColor.bind(this));
-        }
-        return menu;
-    }
-
-    /**
-   * @param {number} index
-   * @private
-   */
-    _setColor(index)): void {
+    private setColor(index: number): void {
         State.canvas.setColorScheme(colorSchemes[index]);
         storage(STORAGE_COLOR, index);
     }

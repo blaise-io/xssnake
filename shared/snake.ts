@@ -1,16 +1,7 @@
-/**
- * @typedef {Array.<Coordinate>}
- * @example [[0,0], [1,0], [2,0]]
- */
+import { Level } from "./level/level";
 
-/**
- * Snake
- * @param {number} index
- * @param {level.Level} level
- * @constructor
- */
 export class Snake {
-    parts: any[];
+    parts: Coordinate[];
     direction: any;
     size: number;
     speed: number;
@@ -18,10 +9,10 @@ export class Snake {
     collision: any;
     gravity: any;
 
-    constructor(public index, level) {
+    constructor(public index: number, level: Level) {
         const spawn = level.data.spawns[index];
 
-        /** @type game.SnakeParts, head is last item */
+        /** Head is last in array */
         this.parts = [spawn.location];
         this.direction = spawn.direction;
         this.size = level.config.snakeSize;
@@ -35,7 +26,7 @@ export class Snake {
     /**
      * @param {Coordinate} position
      */
-    move(position) {
+    move(position): void {
         this.parts.push(position);
         this.trimParts();
     }
@@ -47,13 +38,9 @@ export class Snake {
         return this.parts[this.parts.length - 1];
     }
 
-    /**
-     * @param {Coordinate} part
-     * @return {boolean}
-     */
-    hasPartPredict(part) {
+    hasPartPredict(part: Coordinate): boolean {
         const treshold = this.crashed ? -1 : 0;
-        return (this.getPartIndex(part) > treshold);
+        return this.getPartIndex(part) > treshold;
     }
 
     trimParts() {
@@ -62,19 +49,11 @@ export class Snake {
         }
     }
 
-    /**
-     * @param {Coordinate} part
-     * @return {boolean}
-     */
-    hasPart(part) {
+    hasPart(part: Coordinate): boolean {
         return (-1 !== this.getPartIndex(part));
     }
 
-    /**
-     * @param {Coordinate} part
-     * @return {number}
-     */
-    getPartIndex(part) {
+    getPartIndex(part: Coordinate): number {
         const parts = this.parts;
         for (let i = 0, m = parts.length; i < m; i++) {
             if (parts[i][0] === part[0] && parts[i][1] === part[1]) {
@@ -84,10 +63,7 @@ export class Snake {
         return -1;
     }
 
-    /**
-     * @param {Shift} shift
-     */
-    shiftParts(shift) {
+    shiftParts(shift: Shift): void {
         const x = shift[0] || 0; const y = shift[1] || 0;
         if (x || y) {
             for (let i = 0, m = this.parts.length; i < m; i++) {

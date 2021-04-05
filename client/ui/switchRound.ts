@@ -57,7 +57,7 @@ export class WrapupGame {
 
         this.dialog = new Dialog(title, this.getBody(), {
             keysBlocked: false,
-            width: 100
+            width: 100,
         });
 
         this.countdownInterval = window.setInterval(function() {

@@ -60,7 +60,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
     /**
      * @param {string} jsonStr
      */
-    onmessage(jsonStr) {
+    onmessage(jsonStr): void {
         var message = new netcode.Message(jsonStr);
         console.log('IN ', this.name, jsonStr);
         if (message.isClean) {
@@ -103,7 +103,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @param {?} dirtyNameArr
      * @return {string}
      */
-    setName(dirtyNameArr) {
+    setName(dirtyNameArr): void {
         this.name = new Sanitizer(dirtyNameArr[0])
             .assertStringOfLength(PLAYER_NAME_MINLENGTH, 20)
             .getValueOr(getRandomName());
@@ -115,7 +115,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @param {number} event
      * @param {Array.<string|number|Array>=} data
      */
-    emit(event, data) {
+    emit(event, data): void {
         var emit;
 
         if (!this.connected) {
@@ -143,7 +143,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @param {string} type
      * @param {*=} data
      */
-    broadcast(type, data) {
+    broadcast(type, data): void {
         if (this.room) {
             this.room.players.emit(type, data, this);
         }
@@ -153,7 +153,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @param {number} index
      * @param {level.Level} level
      */
-    setSnake(index, level) {
+    setSnake(index, level): void {
         this.snake = new ServerSnake(index, level);
     }
 

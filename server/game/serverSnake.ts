@@ -35,7 +35,7 @@ extend(game.ServerSnake.prototype, /** @lends {game.ServerSnake.prototype} */ {
      * @param shift
      * @param {Array.<room.Player>} players
      */
-    handleNextMove(tick, elapsed, shift, players) {
+    handleNextMove(tick, elapsed, shift, players): void {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
@@ -68,7 +68,7 @@ extend(game.ServerSnake.prototype, /** @lends {game.ServerSnake.prototype} */ {
      * @param {number} tick
      * @return {boolean}
      */
-    hasCollisionLteTick(tick) {
+    hasCollisionLteTick(tick): void {
         return !this.crashed && this.collision && this.collision.tick <= tick;
     }
 
