@@ -8,7 +8,7 @@ import { ServerPlayer } from "../room/serverPlayer";
 
 export class ServerHeartbeat {
     latency: number;
-    pingSent: number
+    pingSent: number;
 
     constructor(public player: ServerPlayer) {
         this.latency = 0;
@@ -17,9 +17,7 @@ export class ServerHeartbeat {
     }
 
     destruct() {
-        this.player.emitter.removeAllListeners([
-            NC_PING, NC_PONG,
-        ]);
+        this.player.emitter.removeAllListeners([NC_PING, NC_PONG]);
         this.player = null;
     }
 
@@ -39,10 +37,6 @@ export class ServerHeartbeat {
     }
 
     pong() {
-        this.latency = Math.min(
-            SERVER_MAX_TOLERATED_LATENCY,
-            (+new Date() - this.pingSent) / 2
-        );
+        this.latency = Math.min(SERVER_MAX_TOLERATED_LATENCY, (+new Date() - this.pingSent) / 2);
     }
-
 }

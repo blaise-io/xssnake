@@ -5,7 +5,6 @@
 export class Interface {
     constructor(Interface) {}
 
-
     /**
      * Return one or more {PixelCollection}'s.
      * Return null if animation was not updated.
@@ -16,5 +15,4 @@ export class Interface {
     update(ms, preGame): void {
         return null;
     }
-
 }

@@ -23,14 +23,12 @@ export class MessageBoxUI {
     private padding: { y0: number; x0: number; y1: number; x1: number };
 
     constructor(public messages: Message[], public localAuthor: Player) {
-
         this.animating = false;
         this.skipQueue = false;
         this.queued = 0;
 
         this.inputField = null;
-        this.sendMessageFn = () => {
-        };
+        this.sendMessageFn = () => {};
 
         this.lineHeight = 7;
         this.animationDuration = 200;
@@ -40,12 +38,11 @@ export class MessageBoxUI {
         this.y0 = HEIGHT - 25;
         this.y1 = HEIGHT - 2;
 
-        this.padding = {x0: 0, x1: 0, y0: 1, y1: 1};
+        this.padding = { x0: 0, x1: 0, y0: 1, y1: 1 };
 
         this.bindEvents();
         this.updateMessages();
     }
-
 
     destruct() {
         State.events.off(DOM_EVENT_KEYDOWN, NS_CHAT);
@@ -61,25 +58,27 @@ export class MessageBoxUI {
 
     handleKeys(ev) {
         switch (ev.keyCode) {
-        case KEY_ESCAPE:
-            this.hideInput();
-            this.hideEnterKey();
-            ev.preventDefault();
-            break;
-        case KEY_ENTER:
-            if (this.inputField) {
-                this.sendMessage(this.inputField.getValue());
+            case KEY_ESCAPE:
                 this.hideInput();
-            } else if (!State.keysBlocked) {
-                this.showInput();
-            }
-            ev.preventDefault();
-            break;
+                this.hideEnterKey();
+                ev.preventDefault();
+                break;
+            case KEY_ENTER:
+                if (this.inputField) {
+                    this.sendMessage(this.inputField.getValue());
+                    this.hideInput();
+                } else if (!State.keysBlocked) {
+                    this.showInput();
+                }
+                ev.preventDefault();
+                break;
         }
     }
 
     showInput() {
-        let x; let y; let prefix;
+        let x;
+        let y;
+        let prefix;
 
         x = this.x0 + this.padding.x1 + new Message("", "").getOffset();
         y = this.y1 - this.padding.y1 - this.lineHeight;
@@ -118,7 +117,7 @@ export class MessageBoxUI {
         const x = this.x1 - this.padding.x1 - fontWidth(UC_ENTER_KEY);
         const y = this.y1 - this.lineHeight - this.padding.y1 + 1;
 
-        const shape = State.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y);
+        const shape = (State.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y));
         shape.invert(shape.bbox(2));
         shape.flags.isOverlay = true;
     }
@@ -137,14 +136,11 @@ export class MessageBoxUI {
     }
 
     getDisplayMessages(num) {
-        return this.messages.slice(
-            -num - 1 - this.queued,
-            this.messages.length - this.queued
-        );
+        return this.messages.slice(-num - 1 - this.queued, this.messages.length - this.queued);
     }
 
     getNumMessagesFit() {
-        let fits = (this.y1 - this.padding.y1) - (this.y0 + this.padding.y0);
+        let fits = this.y1 - this.padding.y1 - (this.y0 + this.padding.y0);
         fits = Math.floor(fits / this.lineHeight);
         fits -= this.inputField === null ? 0 : 1;
         return fits;
@@ -159,11 +155,15 @@ export class MessageBoxUI {
     }
 
     updateMessages() {
-        let num; let shape; let messages;
+        let num;
+        let shape;
+        let messages;
 
         shape = new Shape();
         shape.mask = [
-            this.x0, this.y0, this.x1,
+            this.x0,
+            this.y0,
+            this.x1,
             this.y1 - (this.inputField ? this.lineHeight - this.padding.y1 : 0),
         ];
 
@@ -192,12 +192,11 @@ export class MessageBoxUI {
     }
 
     getMessagePixels(lineIndex, message) {
-        let x; let y;
+        let x;
+        let y;
         x = this.x0 + this.padding.x0;
-        y = this.y0 + this.padding.y0 + (lineIndex * this.lineHeight);
-        return fontPixels(
-            message.getFormatted(), x + message.getOffset(), y
-        );
+        y = this.y0 + this.padding.y0 + lineIndex * this.lineHeight;
+        return fontPixels(message.getFormatted(), x + message.getOffset(), y);
     }
 
     animate(shape): void {
@@ -224,5 +223,4 @@ export class MessageBoxUI {
             this.queued--;
         }
     }
-
 }

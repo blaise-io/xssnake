@@ -14,7 +14,7 @@ for (let i = 0, m = files.length; i < m; i++) {
 // istanbul ignore if
 if (typeof jasmine === "undefined") {
     bootstrap.server();
-    bootstrap.registerLevels(function() {
+    bootstrap.registerLevels(function () {
         server = new netcode.Server();
         console.log("XSSnake running at " + SERVER_ENDPOINT);
     });

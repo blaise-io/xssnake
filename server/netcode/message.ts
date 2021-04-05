@@ -10,8 +10,6 @@ export class Message {
         this.process(jsonStr);
     }
 
-
-
     process(jsonStr) {
         const message = this.sanitize(jsonStr);
         if (message) {
@@ -22,24 +20,23 @@ export class Message {
     }
 
     sanitize(messageJsonStr) {
-        let sanitizer; let arrayValidator; let eventNumberValidator; let messageJson;
+        let sanitizer;
+        let arrayValidator;
+        let eventNumberValidator;
+        let messageJson;
 
-        sanitizer = new Sanitizer(messageJsonStr)
-            .assertStringOfLength(3, 512)
-            .assertJSON();
+        sanitizer = new Sanitizer(messageJsonStr).assertStringOfLength(3, 512).assertJSON();
         if (!sanitizer.valid()) {
             return null;
         }
 
         messageJson = sanitizer.json();
-        arrayValidator = new Sanitizer(messageJson)
-            .assertArrayLengthBetween(1, 20);
+        arrayValidator = new Sanitizer(messageJson).assertArrayLengthBetween(1, 20);
         if (!arrayValidator.valid()) {
             return null;
         }
 
-        eventNumberValidator = new Sanitizer(messageJson[0])
-            .assertType("number");
+        eventNumberValidator = new Sanitizer(messageJson[0]).assertType("number");
         if (!eventNumberValidator.valid()) {
             return null;
         }
@@ -52,5 +49,4 @@ export class Message {
             data: messageJson.slice(1), // Validate in event listener.
         };
     }
-
 }

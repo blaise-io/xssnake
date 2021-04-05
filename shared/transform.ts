@@ -17,7 +17,7 @@ export function shift(pixels, xshift, yshift) {
     xshift = xshift || 0;
     yshift = yshift || 0;
 
-    pixels.each(function(x, y) {
+    pixels.each(function (x, y) {
         ret.add(x + xshift, y + yshift);
     });
 

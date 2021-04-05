@@ -6,7 +6,14 @@
 import { ROOM_KEY_LENGTH, WIDTH } from "../../shared/const";
 import { extend } from "../../shared/util";
 import {
-    DOM_EVENT_KEYDOWN, HASH_ROOM, KEY_ESCAPE, KEY_MUTE, KEY_TAB, MENU_LEFT, NS_FLOW, STORAGE_MUTE,
+    DOM_EVENT_KEYDOWN,
+    HASH_ROOM,
+    KEY_ESCAPE,
+    KEY_MUTE,
+    KEY_TAB,
+    MENU_LEFT,
+    NS_FLOW,
+    STORAGE_MUTE,
 } from "../const";
 import { MainStage } from "../stages/main";
 import { StartGameStage } from "../stages/startGame";
@@ -52,7 +59,7 @@ export class StageFlow {
 
         State.shapes.HEADER = xssnakeHeader();
 
-        this._setStage(new (this._FirstStage)(), false);
+        this._setStage(new this._FirstStage(), false);
     }
 
     getData(): any {
@@ -67,7 +74,7 @@ export class StageFlow {
      * @param {Function} Stage
      * @param {Object=} options
      */
-    switchStage(Stage, options: any={}): void {
+    switchStage(Stage, options: any = {}): void {
         let switchToStage;
 
         if (Stage && !options.back) {
@@ -87,7 +94,7 @@ export class StageFlow {
             this.stage.getShape(),
             switchToStage.getShape(),
             options.back,
-            function() {
+            function () {
                 this._setStage(switchToStage, options.back);
             }.bind(this)
         );
@@ -95,7 +102,7 @@ export class StageFlow {
 
     previousStage() {
         if (this._history.length > 1) {
-            this.switchStage(null, {back: true});
+            this.switchStage(null, { back: true });
         }
     }
 
@@ -104,10 +111,7 @@ export class StageFlow {
     }
 
     private _hashChange(): void {
-        if (
-            urlHash(HASH_ROOM).length === ROOM_KEY_LENGTH &&
-            1 === this._history.length
-        ) {
+        if (urlHash(HASH_ROOM).length === ROOM_KEY_LENGTH && 1 === this._history.length) {
             State.flow.restart();
         }
     }
@@ -140,14 +144,16 @@ export class StageFlow {
      * @private
      */
     _switchStageAnimate(oldShape, newShape, back, callback): void {
-        let oldStageAnim; let newStageAnim; const width = WIDTH - MENU_LEFT;
+        let oldStageAnim;
+        let newStageAnim;
+        const width = WIDTH - MENU_LEFT;
 
         if (back) {
-            oldStageAnim = {to: [width, 0]};
-            newStageAnim = {from: [-width, 0]};
+            oldStageAnim = { to: [width, 0] };
+            newStageAnim = { from: [-width, 0] };
         } else {
-            oldStageAnim = {to: [-width, 0]};
-            newStageAnim = {from: [width, 0]};
+            oldStageAnim = { to: [-width, 0] };
+            newStageAnim = { from: [width, 0] };
         }
 
         newStageAnim.doneCallback = callback;
@@ -179,5 +185,4 @@ export class StageFlow {
             this._history.push(stage);
         }
     }
-
 }

@@ -42,7 +42,8 @@ export class ClientSnakeControls {
         return (
             this.upcomingDirections.length <= 2 &&
             this.snake.parts.length >= 2 && // Must go to blinkie at start.
-            turn !== 0 && turn !== 2 // No turn and 180 turn not allowed.
+            turn !== 0 &&
+            turn !== 2 // No turn and 180 turn not allowed.
         );
     }
 
@@ -64,5 +65,4 @@ export class ClientSnakeControls {
             this.emitNewDirection(this.upcomingDirections.shift());
         }
     }
-
 }

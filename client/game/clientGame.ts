@@ -30,7 +30,6 @@ export class ClientGame {
         this.bindEvents();
     }
 
-
     destruct() {
         this.unbindEvents();
 
@@ -96,7 +95,8 @@ export class ClientGame {
      */
     ncSetSnakesCrashed(serializedCollisions): void {
         for (let i = 0, m = serializedCollisions.length; i < m; i++) {
-            var snake; const collision = serializedCollisions[i];
+            var snake;
+            const collision = serializedCollisions[i];
             snake = this.players.players[collision[0]].snake;
             snake.parts = collision[1];
             snake.setCrashed(collision[2]);

@@ -11,8 +11,6 @@ export class Server {
         this.ws = this.start();
     }
 
-
-
     destruct() {
         this.roomManager.destruct();
         this.roomManager = null;
@@ -26,11 +24,13 @@ export class Server {
             path: SERVER_PATH,
         });
 
-        ws.on("connection", function(connection) {
-            new ServerPlayer(this, connection);
-        }.bind(this));
+        ws.on(
+            "connection",
+            function (connection) {
+                new ServerPlayer(this, connection);
+            }.bind(this)
+        );
 
         return ws;
     }
-
 }

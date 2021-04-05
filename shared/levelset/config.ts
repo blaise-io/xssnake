@@ -1,10 +1,11 @@
+import { Powerup } from "../../server/game/powerup";
 import { levels } from "../data/levels";
 
 export class Config {
-    public level: any;
-    public gravity: number[];
+    public level: { imagedata: string; cache?: any };
+    public gravity: Shift;
     public enableApples: boolean;
-    public enablePowerups: any[];
+    public enablePowerups: Powerup[];
     public snakeSize: number;
     public snakeSpeed: number;
     public snakeIncrease: number;

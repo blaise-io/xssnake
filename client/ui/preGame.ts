@@ -4,9 +4,14 @@ import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_ESCAPE, KEY_START, NS_PRE_GAME } from "../const";
 import {
     COPY_AWAITING_PLAYERS_BODY,
-    COPY_AWAITING_PLAYERS_HEADER, COPY_AWAITING_PLAYERS_START_NOW, COPY_CONFIRM_EXIT_BODY,
-    COPY_CONFIRM_EXIT_BODY_DRAMATIC, COPY_CONFIRM_EXIT_HEADER, COPY_CONFIRM_START_BODY,
-    COPY_CONFIRM_START_HEADER, COPY_COUNTDOWN_BODY,
+    COPY_AWAITING_PLAYERS_HEADER,
+    COPY_AWAITING_PLAYERS_START_NOW,
+    COPY_CONFIRM_EXIT_BODY,
+    COPY_CONFIRM_EXIT_BODY_DRAMATIC,
+    COPY_CONFIRM_EXIT_HEADER,
+    COPY_CONFIRM_START_BODY,
+    COPY_CONFIRM_START_HEADER,
+    COPY_COUNTDOWN_BODY,
     COPY_COUNTDOWN_TITLE,
 } from "../copy/copy";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
@@ -22,7 +27,6 @@ export class PreGameUI {
     private confirmStart: boolean;
 
     constructor(public players: ClientPlayerRegistry, public options: Options) {
-
         this.dialog = null;
 
         this.countdownStarted = null;
@@ -33,7 +37,6 @@ export class PreGameUI {
         this.bindKeys();
         this.updateUI();
     }
-
 
     destruct() {
         window.clearInterval(this.countdownInterval);
@@ -58,17 +61,17 @@ export class PreGameUI {
             return;
         }
         switch (ev.keyCode) {
-        case KEY_BACKSPACE:
-        case KEY_ESCAPE:
-            this.confirmExit = true;
-            this.updateUI();
-            break;
-        case KEY_START:
-            if (this.playerCanStartRound()) {
-                this.confirmStart = true;
+            case KEY_BACKSPACE:
+            case KEY_ESCAPE:
+                this.confirmExit = true;
                 this.updateUI();
-            }
-            break;
+                break;
+            case KEY_START:
+                if (this.playerCanStartRound()) {
+                    this.confirmStart = true;
+                    this.updateUI();
+                }
+                break;
         }
     }
 
@@ -115,7 +118,7 @@ export class PreGameUI {
         const settings = {
             type: Dialog.TYPE.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
-            ok: function() {
+            ok: function () {
                 this.destruct();
                 State.flow.restart();
             }.bind(this),
@@ -123,9 +126,9 @@ export class PreGameUI {
 
         this.dialog = new Dialog(
             COPY_CONFIRM_EXIT_HEADER,
-            this.players.getTotal() === 2 ?
-                COPY_CONFIRM_EXIT_BODY_DRAMATIC :
-                COPY_CONFIRM_EXIT_BODY,
+            this.players.getTotal() === 2
+                ? COPY_CONFIRM_EXIT_BODY_DRAMATIC
+                : COPY_CONFIRM_EXIT_BODY,
             settings
         );
     }
@@ -134,17 +137,13 @@ export class PreGameUI {
         const settings = {
             type: Dialog.TYPE.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
-            ok: function() {
+            ok: function () {
                 State.player.emit(NC_ROOM_START);
                 this.hideConfirmDialog();
             }.bind(this),
         };
 
-        this.dialog = new Dialog(
-            COPY_CONFIRM_START_HEADER,
-            COPY_CONFIRM_START_BODY,
-            settings
-        );
+        this.dialog = new Dialog(COPY_CONFIRM_START_HEADER, COPY_CONFIRM_START_BODY, settings);
     }
 
     /**
@@ -169,24 +168,23 @@ export class PreGameUI {
         if (this.countdownInterval) {
             window.clearInterval(this.countdownInterval);
         }
-        this.countdownInterval = window.setInterval(function() {
-            State.audio.play("menu_alt");
-            // Prevent re-creating dialog which destroys button selection.
-            if (!this.confirmExit) {
-                this.updateUI();
-            }
-        }.bind(this), 1000);
+        this.countdownInterval = window.setInterval(
+            function () {
+                State.audio.play("menu_alt");
+                // Prevent re-creating dialog which destroys button selection.
+                if (!this.confirmExit) {
+                    this.updateUI();
+                }
+            }.bind(this),
+            1000
+        );
     }
 
     showCountdown() {
-        const body = format(
-            COPY_COUNTDOWN_BODY,
-            this.getCountdownRemaining()
-        );
+        const body = format(COPY_COUNTDOWN_BODY, this.getCountdownRemaining());
         this.startCountdownTimer();
         this.dialog = new Dialog(COPY_COUNTDOWN_TITLE, body, {
             keysBlocked: false,
         });
     }
-
 }

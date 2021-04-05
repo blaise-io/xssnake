@@ -8,7 +8,7 @@ import { sort } from "./util";
 export class PixelCollection {
     public pixels: number[][];
 
-    constructor(pixels=[]) {
+    constructor(pixels = []) {
         this.pixels = pixels;
     }
 
@@ -85,5 +85,4 @@ export class PixelCollection {
         }
         return this;
     }
-
 }

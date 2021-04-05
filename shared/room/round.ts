@@ -34,5 +34,4 @@ export class Round {
         const levelset = State.levelsetRegistry.getLevelset(levelsetIndex);
         return levelset.getLevel(levelIndex);
     }
-
 }

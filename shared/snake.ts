@@ -50,7 +50,7 @@ export class Snake {
     }
 
     hasPart(part: Coordinate): boolean {
-        return (-1 !== this.getPartIndex(part));
+        return -1 !== this.getPartIndex(part);
     }
 
     getPartIndex(part: Coordinate): number {
@@ -64,7 +64,8 @@ export class Snake {
     }
 
     shiftParts(shift: Shift): void {
-        const x = shift[0] || 0; const y = shift[1] || 0;
+        const x = shift[0] || 0;
+        const y = shift[1] || 0;
         if (x || y) {
             for (let i = 0, m = this.parts.length; i < m; i++) {
                 this.parts[i][0] += x;
@@ -77,18 +78,18 @@ export class Snake {
      * Head-tail switch.
      */
     reverse() {
-        let dx; let dy;
+        let dx;
+        let dy;
 
         dx = this.parts[0][0] - this.parts[1][0];
         dy = this.parts[0][1] - this.parts[1][1];
 
         if (dx === 0) {
-            this.direction = (dy === -1) ? 1 : 3;
+            this.direction = dy === -1 ? 1 : 3;
         } else {
-            this.direction = (dx === -1) ? 0 : 2;
+            this.direction = dx === -1 ? 0 : 2;
         }
 
         this.parts.reverse();
     }
-
 }

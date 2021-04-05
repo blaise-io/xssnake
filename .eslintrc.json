@@ -11,26 +11,8 @@
   "rules": {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/comma-dangle": [
-      "error",
-      "always-multiline"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "indent": [
-      "error",
-      4
-    ],
-    "quotes": [
-      "error",
-      "double",
-      {
-        "avoidEscape": true
-      }
-    ],
     "prefer-const": "warn",
-    "no-extend-native": "error"
+    "no-extend-native": "error",
+    "init-declarations": ["warn", "always"]
   }
 }

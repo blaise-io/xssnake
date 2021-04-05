@@ -41,5 +41,4 @@ export class ClientRoundSet {
             this.round.updateRound(serializedRound);
         }
     }
-
 }

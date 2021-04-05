@@ -1,20 +1,25 @@
-import { DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_UP, ROOM_CAPACITY } from "../const";
+import {
+    DIRECTION_DOWN,
+    DIRECTION_LEFT,
+    DIRECTION_RIGHT,
+    DIRECTION_UP,
+    ROOM_CAPACITY,
+} from "../const";
 import { PixelCollection } from "../pixelCollection";
 import { Spawn } from "./spawn";
-
 
 /**
  * @param {ImageData} imagedata
  * @constructor
  */
 export class Parser {
-    width: number
-    height: number
-    walls: PixelCollection
-    unreachables: PixelCollection
-    spawns: Spawn[]
-    spawnCoordinates: Coordinate[]
-    spawnDirections: Coordinate[]
+    width: number;
+    height: number;
+    walls: PixelCollection;
+    unreachables: PixelCollection;
+    spawns: Spawn[];
+    spawnCoordinates: Coordinate[];
+    spawnDirections: Coordinate[];
 
     constructor(imagedata) {
         this.width = imagedata.width;
@@ -34,14 +39,8 @@ export class Parser {
         const data = imagedata.data;
         for (let i = 0, m = data.length / 4; i < m; i++) {
             this.parsePixel(
-                [
-                    data[i * 4],
-                    data[i * 4 + 1],
-                    data[i * 4 + 2],
-                ], [
-                    i % this.width,
-                    Math.floor(i / this.width),
-                ]
+                [data[i * 4], data[i * 4 + 1], data[i * 4 + 2]],
+                [i % this.width, Math.floor(i / this.width)]
             );
         }
     }
@@ -91,7 +90,6 @@ export class Parser {
 
     getDirectionForSpawn(spawn: Coordinate): number {
         for (let i = 0, m = this.spawnDirections.length; i < m; i++) {
-
             if (!this.spawnDirections[i]) {
                 continue;
             }
@@ -100,9 +98,9 @@ export class Parser {
             const dy = spawn[1] - this.spawnDirections[i][1];
             if (1 === Math.abs(dx) + Math.abs(dy)) {
                 if (dx === 0) {
-                    return (dy === 1) ? DIRECTION_UP : DIRECTION_DOWN;
+                    return dy === 1 ? DIRECTION_UP : DIRECTION_DOWN;
                 } else {
-                    return (dx === 1) ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                    return dx === 1 ? DIRECTION_LEFT : DIRECTION_RIGHT;
                 }
             }
         }

@@ -17,9 +17,7 @@ import { center, flash, lifetime } from "../ui/shapeClient";
 import { storage } from "../util/clientUtil";
 
 export class Game {
-
-    constructor() {
-    }
+    constructor() {}
 
     getShape() {
         return new Shape();
@@ -92,5 +90,4 @@ export class Game {
         State.shapes.CONNECTING = null;
         State.shapes.HEADER = null;
     }
-
 }

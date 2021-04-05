@@ -39,9 +39,10 @@ export class ShapeCache {
     }
 
     private _getLines(pixels: PixelCollection): Coordinate[] {
-        let cache = null; const lines = [];
+        let cache = null;
+        const lines = [];
 
-        pixels.sort().each(function(x, y) {
+        pixels.sort().each(function (x, y) {
             // cache: x,y,w
             if (cache && x === cache[0] + cache[2] && y === cache[1]) {
                 cache[2]++;
@@ -61,18 +62,21 @@ export class ShapeCache {
     }
 
     private _getRectangles(lines: number[][]): number[][] {
-        let cache = null; const rectangles = [];
+        let cache = null;
+        const rectangles = [];
 
-        lines.sort(function(a, b) {
+        lines.sort(function (a, b) {
             return a[0] - b[0];
         });
 
         for (let i = 0, m = lines.length; i < m; i++) {
             // cache: x,y,w,h
-            if (cache &&
+            if (
+                cache &&
                 lines[i][0] === cache[0] &&
                 lines[i][1] === cache[1] + cache[3] &&
-                lines[i][2] === cache[2]) {
+                lines[i][2] === cache[2]
+            ) {
                 cache[3]++;
             } else {
                 if (cache) {

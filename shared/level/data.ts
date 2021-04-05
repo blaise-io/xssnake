@@ -60,7 +60,8 @@ export class LevelData {
      * Translate coordinate to game coordinate system.
      */
     convertToGameSystem(coordinate: Coordinate, translate: Shift): Coordinate {
-        let tx; let ty;
+        let tx;
+        let ty;
         if (__IS_CLIENT__) {
             // In Client, Game transforms left/top. Not ideal, but it is done
             // so that we can move shapes without losing cache => performance.
@@ -119,5 +120,4 @@ export class LevelData {
             return x >= this.width || y >= this.height;
         }
     }
-
 }

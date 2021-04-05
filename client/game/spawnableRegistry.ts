@@ -1,3 +1,1 @@
-class SpawnableRegistry {
-
-}
+class SpawnableRegistry {}

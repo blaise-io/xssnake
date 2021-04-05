@@ -1,8 +1,3 @@
-/**
- * @param {room.PlayerRegistry} players
- * @param {room.Player} winner
- * @constructor
- */
 import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
@@ -17,7 +12,6 @@ export class WrapupGame {
     private countdownInterval: number;
 
     constructor(public players: PlayerRegistry, public winner: Player) {
-
         this.dialog = null;
 
         this.countdownStarted = new Date();
@@ -26,8 +20,7 @@ export class WrapupGame {
         this.showCountdown();
     }
 
-
-    destruct() {
+    destruct(): void {
         window.clearInterval(this.countdownInterval);
         this.players = null;
         this.winner = null;
@@ -37,33 +30,32 @@ export class WrapupGame {
         }
     }
 
-    getCountdownRemaining() {
+    getCountdownRemaining(): number {
         let remaining = this.winner ? SECONDS_ROUND_GLOAT : SECONDS_ROUND_PAUSE;
         remaining -= (+new Date() - +this.countdownStarted) / 1000;
         return Math.max(0, Math.round(remaining));
     }
 
-    getBody() {
-        return format(
-            COPY_ROUND_NEW_BODY,
-            this.getCountdownRemaining()
-        );
+    getBody(): string {
+        return format(COPY_ROUND_NEW_BODY, this.getCountdownRemaining());
     }
 
-    showCountdown() {
-        const title = this.winner ?
-            format(COPY_ROUND_WINNER_TITLE, String(this.winner.name)) :
-            COPY_ROUND_DRAW_TITLE;
+    showCountdown(): void {
+        const title = this.winner
+            ? format(COPY_ROUND_WINNER_TITLE, String(this.winner.name))
+            : COPY_ROUND_DRAW_TITLE;
 
         this.dialog = new Dialog(title, this.getBody(), {
             keysBlocked: false,
             width: 100,
         });
 
-        this.countdownInterval = window.setInterval(function() {
-            State.audio.play("menu_alt");
-            this.dialog.setBody(this.getBody());
-        }.bind(this), 1000);
+        this.countdownInterval = window.setInterval(
+            function () {
+                State.audio.play("menu_alt");
+                this.dialog.setBody(this.getBody());
+            }.bind(this),
+            1000
+        );
     }
-
 }

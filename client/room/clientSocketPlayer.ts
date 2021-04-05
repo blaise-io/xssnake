@@ -1,6 +1,10 @@
 import { NC_PING, NC_PONG } from "../../shared/const";
 import { NS_SOCKET } from "../const";
-import { COPY_SOCKET_CANNOT_CONNECT, COPY_SOCKET_CONNECTION_LOST, COPY_SOCKET_SERVER_AWAY } from "../copy/copy";
+import {
+    COPY_SOCKET_CANNOT_CONNECT,
+    COPY_SOCKET_CONNECTION_LOST,
+    COPY_SOCKET_SERVER_AWAY,
+} from "../copy/copy";
 import { ClientHeartbeat } from "../netcode/heartbeat";
 import { State } from "../state/state";
 import { error } from "../util/clientUtil";
@@ -88,5 +92,4 @@ export class ClientSocketPlayer extends ClientPlayer {
         console.log("IN ", data);
         State.events.trigger(data[0], data.slice(1));
     }
-
 }

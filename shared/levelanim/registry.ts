@@ -3,10 +3,10 @@ import { State } from "../../client/state/state";
 import { setGameTransform } from "../../client/ui/shapeClient";
 
 export class LevelAnimationRegistry {
-    public animations = []
-    public walls = []
-    public started = false
-    public progress = 0
+    public animations = [];
+    public walls = [];
+    public started = false;
+    public progress = 0;
 
     public register(animation) {
         this.animations.push(animation);
@@ -60,5 +60,4 @@ export class LevelAnimationRegistry {
             State.shapes[key] = null;
         }
     }
-
 }

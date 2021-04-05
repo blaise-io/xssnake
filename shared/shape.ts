@@ -4,8 +4,8 @@ import { BoundingBox } from "./boundingBox";
 import { PixelCollection } from "./pixelCollection";
 
 export class Shape {
-    _bbox: BoundingBox
-    pixels: PixelCollection
+    _bbox: BoundingBox;
+    pixels: PixelCollection;
     cache: ShapeCache = null;
     enabled: boolean;
     effects: Record<string, (delta) => void> = {};
@@ -13,14 +13,14 @@ export class Shape {
     flags: Record<string, boolean> = {
         enabled: true,
         isOverlay: false,
-    }
-    transform: {translate: [number,number], scale: number}
+    };
+    transform: { translate: [number, number]; scale: number };
     isOverlay: boolean;
-    mask: number[]=null;
+    mask: number[] = null;
 
     constructor(...pixelCollections: PixelCollection[]) {
         this.pixels = new PixelCollection();
-        this.transform = {translate: [0, 0], scale: 1};
+        this.transform = { translate: [0, 0], scale: 1 };
         this.add(...pixelCollections);
     }
 
@@ -28,7 +28,7 @@ export class Shape {
         return new Shape(this.pixels);
     }
 
-    outline(hPadding=0, vPadding=0): Shape {
+    outline(hPadding = 0, vPadding = 0): Shape {
         outline(this, hPadding, vPadding);
         return this;
     }
@@ -81,7 +81,7 @@ export class Shape {
      * @param {number=} expand
      * @return {BoundingBox}
      */
-    bbox(expand=0): BoundingBox {
+    bbox(expand = 0): BoundingBox {
         if (!this._bbox || this.expand !== expand) {
             this._bbox = this.pixels.bbox();
             if (expand) {
@@ -91,5 +91,4 @@ export class Shape {
         this.expand = expand;
         return this._bbox;
     }
-
 }

@@ -4,7 +4,16 @@ import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { extend } from "../../shared/util";
 import {
-    DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_DOWN, KEY_ENTER, KEY_ESCAPE, KEY_LEFT, KEY_RIGHT, KEY_SPACE, KEY_TAB, KEY_UP,
+    DOM_EVENT_KEYDOWN,
+    KEY_BACKSPACE,
+    KEY_DOWN,
+    KEY_ENTER,
+    KEY_ESCAPE,
+    KEY_LEFT,
+    KEY_RIGHT,
+    KEY_SPACE,
+    KEY_TAB,
+    KEY_UP,
     MENU_TOP,
     NS_DIALOG,
 } from "../const";
@@ -24,17 +33,17 @@ export class Dialog {
     private _body: any;
     private _okSelected: boolean;
 
-    constructor(public header: string, public body: string, settings={}) {
+    constructor(public header: string, public body: string, settings = {}) {
         this.header = header.toUpperCase();
         this._body = body;
 
         /** @type {DialogSettings} */
         this.settings = {
             keysBlocked: true,
-            type       : Dialog.TYPE.INFO,
-            width      : 80,
-            ok         : () => {},
-            cancel     : () => {},
+            type: Dialog.TYPE.INFO,
+            width: 80,
+            ok: () => {},
+            cancel: () => {},
         };
 
         extend(this.settings, settings);
@@ -46,10 +55,10 @@ export class Dialog {
 
     /** @enum {number} */
     static TYPE = {
-        INFO   : 0, // No buttons, not closable
-        ALERT  : 1, // OK button, closable
-        CONFIRM: 2,  // OK and CANCEL button
-    }
+        INFO: 0, // No buttons, not closable
+        ALERT: 1, // OK button, closable
+        CONFIRM: 2, // OK and CANCEL button
+    };
 
     destruct() {
         State.shapes.dialog = null;
@@ -111,33 +120,33 @@ export class Dialog {
      */
     _handleKeys(ev): void {
         switch (ev.keyCode) {
-        case KEY_LEFT:
-        case KEY_UP:
-        case KEY_DOWN:
-        case KEY_RIGHT:
-        case KEY_TAB:
-            if (this.settings.type === Dialog.TYPE.CONFIRM) {
-                State.audio.play("menu_alt");
-                this._okSelected = !this._okSelected;
-                this._updateShape();
-            }
-            break;
-        case KEY_BACKSPACE:
-        case KEY_ESCAPE:
-            if (this.settings.type === Dialog.TYPE.CONFIRM) {
-                this.cancel();
-            } else {
-                this.ok();
-            }
-            break;
-        case KEY_ENTER:
-        case KEY_SPACE:
-            if (this._okSelected) {
-                this.ok();
-            } else {
-                this.cancel();
-            }
-            break;
+            case KEY_LEFT:
+            case KEY_UP:
+            case KEY_DOWN:
+            case KEY_RIGHT:
+            case KEY_TAB:
+                if (this.settings.type === Dialog.TYPE.CONFIRM) {
+                    State.audio.play("menu_alt");
+                    this._okSelected = !this._okSelected;
+                    this._updateShape();
+                }
+                break;
+            case KEY_BACKSPACE:
+            case KEY_ESCAPE:
+                if (this.settings.type === Dialog.TYPE.CONFIRM) {
+                    this.cancel();
+                } else {
+                    this.ok();
+                }
+                break;
+            case KEY_ENTER:
+            case KEY_SPACE:
+                if (this._okSelected) {
+                    this.ok();
+                } else {
+                    this.cancel();
+                }
+                break;
         }
     }
 
@@ -151,7 +160,7 @@ export class Dialog {
         //        } else {
         //            return HEIGHT;
         //        }
-        return Math.round(HEIGHT / 3 * 2);
+        return Math.round((HEIGHT / 3) * 2);
     }
 
     /**
@@ -159,10 +168,7 @@ export class Dialog {
      * @private
      */
     _getContentWidth() {
-        return Math.max(
-            this.settings.width,
-            -2 + fontWidth(this.header) * 2
-        );
+        return Math.max(this.settings.width, -2 + fontWidth(this.header) * 2);
     }
 
     /**
@@ -190,7 +196,8 @@ export class Dialog {
      * @private
      */
     _getBodyPixels() {
-        let y; const settings = {wrap: this._getContentWidth()};
+        let y;
+        const settings = { wrap: this._getContentWidth() };
         y = 1 + MAX_HEIGHT * 2;
         return fontPixels(this._body, 0, y, settings);
     }
@@ -211,7 +218,7 @@ export class Dialog {
      * @private
      */
     _getCancelButton(x, y): PixelCollection {
-        const settings = {invert: !this._okSelected};
+        const settings = { invert: !this._okSelected };
         return fontPixels(COPY_DIALOG_CANCEL, x, y, settings);
     }
 
@@ -222,7 +229,7 @@ export class Dialog {
      * @private
      */
     _getOkButton(x, y): PixelCollection {
-        const settings = {invert: this._okSelected};
+        const settings = { invert: this._okSelected };
         return fontPixels(COPY_DIALOG_OK, x, y, settings);
     }
 
@@ -231,7 +238,9 @@ export class Dialog {
      * @private
      */
     _getAlertPixels() {
-        let y; let ok; let line;
+        let y;
+        let ok;
+        let line;
 
         y = this._getButtonPosition();
         ok = this._getOkButton(1, y);
@@ -245,7 +254,11 @@ export class Dialog {
      * @private
      */
     _getConfirmPixels() {
-        let x; let y; let cancel; let ok; let line;
+        let x;
+        let y;
+        let cancel;
+        let ok;
+        let line;
 
         x = fontWidth(COPY_DIALOG_CANCEL) + 5;
         y = this._getButtonPosition();
@@ -260,18 +273,21 @@ export class Dialog {
      * @private
      */
     _updateShape() {
-        let shape; let header; let body; let buttons = new PixelCollection();
+        let shape;
+        let header;
+        let body;
+        let buttons = new PixelCollection();
 
         header = this._getHeaderPixels();
         body = this._getBodyPixels();
 
         switch (this.settings.type) {
-        case Dialog.TYPE.ALERT:
-            buttons = this._getAlertPixels();
-            break;
-        case Dialog.TYPE.CONFIRM:
-            buttons = this._getConfirmPixels();
-            break;
+            case Dialog.TYPE.ALERT:
+                buttons = this._getAlertPixels();
+                break;
+            case Dialog.TYPE.CONFIRM:
+                buttons = this._getConfirmPixels();
+                break;
         }
 
         shape = new Shape(header, body, buttons);
@@ -283,6 +299,4 @@ export class Dialog {
 
         State.shapes.dialog = shape;
     }
-
 }
-

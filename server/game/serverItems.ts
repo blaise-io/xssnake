@@ -9,11 +9,8 @@ export class ServerItems {
         this.players = players;
     }
 
-
-
     destruct() {
         this.level = null;
         this.players = null;
     }
-
 }

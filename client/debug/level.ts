@@ -11,8 +11,7 @@ const match = location.search.match(/debug=(.+Level)$/);
 if (match) {
     State.menuSnake = new NeuteredMenuSnake();
 
-    document.addEventListener("DOMContentLoaded", function() {
-
+    document.addEventListener("DOMContentLoaded", function () {
         const player = new ClientPlayer();
         player.local = true;
 
@@ -24,11 +23,10 @@ if (match) {
         const levelset = new Levelset();
         const level = new levels[levelObject](levelset.getConfig());
 
-        level.preload(function() {
+        level.preload(function () {
             State.flow.destruct();
             const game = new ClientGame(level, players);
             game.start();
         });
-
     });
 }

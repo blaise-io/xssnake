@@ -57,13 +57,15 @@ export class Level {
         if (level.cache) {
             continueFn();
         } else {
-            new ImageDecoder(level.imagedata).then(function(data) {
-                level.cache = new LevelData(data, this.animations);
-                level.imagedata = null;
-                this.data = level.cache;
-                this.registerAnimations();
-                continueFn();
-            }.bind(this));
+            new ImageDecoder(level.imagedata).then(
+                function (data) {
+                    level.cache = new LevelData(data, this.animations);
+                    level.imagedata = null;
+                    this.data = level.cache;
+                    this.registerAnimations();
+                    continueFn();
+                }.bind(this)
+            );
         }
     }
 }

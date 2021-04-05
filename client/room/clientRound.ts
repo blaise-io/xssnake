@@ -1,4 +1,9 @@
-import { NC_ROUND_COUNTDOWN, NC_ROUND_SERIALIZE, NC_ROUND_START, NC_ROUND_WRAPUP } from "../../shared/const";
+import {
+    NC_ROUND_COUNTDOWN,
+    NC_ROUND_SERIALIZE,
+    NC_ROUND_START,
+    NC_ROUND_WRAPUP,
+} from "../../shared/const";
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Config } from "../../shared/levelset/config";
 import { Options } from "../../shared/room/options";
@@ -79,14 +84,10 @@ export class ClientRound extends Round {
     }
 
     wrapupGame(winnerIndex) {
-        this.wrapupGameUI = new WrapupGame(
-            this.players,
-            this.players.players[winnerIndex] || null
-        );
+        this.wrapupGameUI = new WrapupGame(this.players, this.players.players[winnerIndex] || null);
     }
 
     isMidgame() {
         return this.game.started;
     }
-
 }

@@ -1,7 +1,13 @@
 import { HEIGHT, WIDTH } from "../../shared/const";
 import { average } from "../../shared/util";
 import { colorSchemes } from "../bootstrap/registerColorSchemes";
-import { EV_GAME_TICK, EV_WIN_FOCUS_CHANGE, MAX_FRAME_DELTA, MIN_FRAME_DELTA, STORAGE_COLOR } from "../const";
+import {
+    EV_GAME_TICK,
+    EV_WIN_FOCUS_CHANGE,
+    MAX_FRAME_DELTA,
+    MIN_FRAME_DELTA,
+    STORAGE_COLOR,
+} from "../const";
 import { State } from "../state/state";
 import { debounce, instruct, storage } from "../util/clientUtil";
 import { CanvasTile } from "./canvasTile";
@@ -9,15 +15,15 @@ import { ShapeCache } from "./shapeCache";
 import { applyEffects } from "./shapeClient";
 
 export class Canvas {
-    fps: any
-    canvas: HTMLCanvasElement
-    context: CanvasRenderingContext2D
-    tile: CanvasTile
-    focus: boolean
-    _prevFrame: any
-    _frameBound: any
-    canvasWidth: number
-    canvasHeight: number
+    fps: any;
+    canvas: HTMLCanvasElement;
+    context: CanvasRenderingContext2D;
+    tile: CanvasTile;
+    focus: boolean;
+    _prevFrame: any;
+    _frameBound: any;
+    canvasWidth: number;
+    canvasHeight: number;
     error: boolean;
 
     constructor() {
@@ -97,7 +103,8 @@ export class Canvas {
      * @private
      */
     _paintShapes(delta): void {
-        const overlays = []; const shapeKeys = Object.keys(State.shapes);
+        const overlays = [];
+        const shapeKeys = Object.keys(State.shapes);
 
         // Avoid looping over an uncached keyval object.
         for (let i = 0, m = shapeKeys.length; i < m; i++) {
@@ -191,8 +198,8 @@ export class Canvas {
             // Paint cached image on canvas
             this.context.drawImage(
                 shape.cache.canvas,
-                shape.cache.bbox.x0 + (translate[0] * this.tile.size),
-                shape.cache.bbox.y0 + (translate[1] * this.tile.size)
+                shape.cache.bbox.x0 + translate[0] * this.tile.size,
+                shape.cache.bbox.y0 + translate[1] * this.tile.size
             );
         }
     }
@@ -214,8 +221,8 @@ export class Canvas {
         let width = shape.cache.bbox.width + this.tile.size;
         let height = shape.cache.bbox.height + this.tile.size;
 
-        let dx = shape.cache.bbox.x0 + (translate[0] * this.tile.size);
-        let dy = shape.cache.bbox.y0 + (translate[1] * this.tile.size);
+        let dx = shape.cache.bbox.x0 + translate[0] * this.tile.size;
+        let dy = shape.cache.bbox.y0 + translate[1] * this.tile.size;
 
         // Cut top off
         if (dy < my0) {
@@ -233,19 +240,15 @@ export class Canvas {
 
         // Cut bottom off
         if (dy + height > my1) {
-            height -= (dy + height) - my1;
+            height -= dy + height - my1;
         }
 
         // Cut right off
         if (dx + width > mx1) {
-            width -= (dx + width) - mx1;
+            width -= dx + width - mx1;
         }
 
-        this.context.drawImage(
-            shape.cache.canvas,
-            sx, sy, width, height,
-            dx, dy, width, height
-        );
+        this.context.drawImage(shape.cache.canvas, sx, sy, width, height, dx, dy, width, height);
     }
 
     private _bindEvents(): void {
@@ -260,12 +263,13 @@ export class Canvas {
     }
 
     private _handleFocusChange(ev: Event): void {
-        this.focus = (ev.type !== "blur");
+        this.focus = ev.type !== "blur";
         State.events.trigger(EV_WIN_FOCUS_CHANGE, this.focus);
     }
 
     _promoteKeyboard(ev: KeyboardEvent): void {
-        if (Number(ev.which) !== 1) { // Only LMB
+        if (Number(ev.which) !== 1) {
+            // Only LMB
             return;
         }
         instruct("No mousing please", 2000);
@@ -287,8 +291,8 @@ export class Canvas {
 
         const offset = 2 * window.devicePixelRatio;
 
-        const left = this._snapCanvasToTiles(windowCenter - (this.canvasWidth / offset));
-        const top = this._snapCanvasToTiles(windowMiddle - (this.canvasHeight / offset));
+        const left = this._snapCanvasToTiles(windowCenter - this.canvasWidth / offset);
+        const top = this._snapCanvasToTiles(windowMiddle - this.canvasHeight / offset);
 
         const style = this.canvas.style;
         style.position = "absolute";
@@ -305,5 +309,4 @@ export class Canvas {
     private _snapCanvasToTiles(num: number): number {
         return Math.floor(num / this.tile.size) * this.tile.size;
     }
-
 }

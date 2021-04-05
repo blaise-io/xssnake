@@ -14,11 +14,11 @@ export const BLURRY_TRESHOLD = 3;
 const _cache: any = {};
 const _ctx = _getContext();
 
-export function font(str: string, x=0, y=0, options: any={}): Shape {
+export function font(str: string, x = 0, y = 0, options: any = {}): Shape {
     let tabx1;
 
     const shape = new Shape();
-    const pointer = {x: 0, y: 0};
+    const pointer = { x: 0, y: 0 };
 
     const chrs = str.split("");
 
@@ -52,7 +52,7 @@ export function font(str: string, x=0, y=0, options: any={}): Shape {
     return shape;
 }
 
-export function fontPixels(str: string, x=0, y=0, options: any={}) {
+export function fontPixels(str: string, x = 0, y = 0, options: any = {}) {
     return font(str, x, y, options).pixels;
 }
 
@@ -63,8 +63,10 @@ export function fontPixels(str: string, x=0, y=0, options: any={}) {
  * @param {Object=} options
  * @return {number}
  */
-export function fontHeight(str, x=0, y=0, options={}) {
-    let remainder; let height; const LH = LINE_HEIGHT;
+export function fontHeight(str, x = 0, y = 0, options = {}) {
+    let remainder;
+    let height;
+    const LH = LINE_HEIGHT;
     height = font(str, x, y, options).pixels.pixels.length + 1;
     // Don't allow absence of font descenders affect height.
     remainder = LH - ((height - (y || 0)) % LH || LH);
@@ -78,12 +80,13 @@ export function fontHeight(str, x=0, y=0, options={}) {
  * @param {Object=} options
  * @return {number}
  */
-export function fontWidth(str, x=0, y=0, options={}) {
-    let pixels; let width; const maxes = [0];
+export function fontWidth(str, x = 0, y = 0, options = {}) {
+    let pixels;
+    let width;
+    const maxes = [0];
     pixels = font(str, x, y, options).pixels;
-    for (let i = pixels.pixels.length - LINE_HEIGHT + 1,
-        m = pixels.pixels.length; i < m; i++) {
-        if ( pixels.pixels[i]) {
+    for (let i = pixels.pixels.length - LINE_HEIGHT + 1, m = pixels.pixels.length; i < m; i++) {
+        if (pixels.pixels[i]) {
             maxes.push(Math.max.apply(this, pixels.pixels[i]));
         }
     }
@@ -101,7 +104,8 @@ export function fontWidth(str, x=0, y=0, options={}) {
  * @return {number}
  */
 export function fastWidth(str) {
-    let chrs; let width = 0;
+    let chrs;
+    let width = 0;
     chrs = str.split("\n");
     chrs = chrs[chrs.length - 1].split("");
     for (let i = 0, m = chrs.length; i < m; i++) {
@@ -119,10 +123,7 @@ export function fastWidth(str) {
  * @return {Array}
  */
 export function fontEndPos(str, x, y, options) {
-    return [
-        fontWidth(str, x, y, options),
-        fontHeight(str, x, y, options) - LINE_HEIGHT,
-    ];
+    return [fontWidth(str, x, y, options), fontHeight(str, x, y, options) - LINE_HEIGHT];
 }
 
 /**
@@ -148,7 +149,9 @@ function _chrProperties(chr) {
  * @private
  */
 function _appendChr(x, y, shape, chr, pointer) {
-    let chrProperties; let shiftedPixels; let kerning = 0;
+    let chrProperties;
+    let shiftedPixels;
+    let kerning = 0;
 
     chrProperties = _chrProperties(chr);
 
@@ -156,11 +159,7 @@ function _appendChr(x, y, shape, chr, pointer) {
         kerning = getKerning(x, y, shape, pointer, chrProperties);
     }
 
-    shiftedPixels = shift(
-        chrProperties.pixels,
-        pointer.x + x + kerning,
-        pointer.y + y
-    );
+    shiftedPixels = shift(chrProperties.pixels, pointer.x + x + kerning, pointer.y + y);
 
     shape.add(shiftedPixels);
     return chrProperties.width + kerning;
@@ -177,16 +176,19 @@ export function getMaxes(x, y, shape, pointer) {
 }
 
 export function getKerning(x, y, shape, pointer, chrProperties) {
-    let gap; const gaps = []; const maxes = getMaxes(x, y, shape, pointer);
+    let gap;
+    const gaps = [];
+    const maxes = getMaxes(x, y, shape, pointer);
 
     for (let i = 0; i < LINE_HEIGHT; i++) {
-        let min = null; var max;
+        let min = null;
+        var max;
         if (chrProperties.pixels.pixels[i]) {
             min = Math.min.apply(this, chrProperties.pixels.pixels[i]);
         }
         max = Math.max(maxes[i - 1] || 0, maxes[i] || 0, maxes[i + 1] || 0);
         if (min !== null) {
-            gaps.push((pointer.x - max) + min);
+            gaps.push(pointer.x - max + min);
         }
     }
 
@@ -205,7 +207,7 @@ export function getKerning(x, y, shape, pointer, chrProperties) {
  */
 function _nextWordFit(str, i, pointer, wrap) {
     const nextWord = str.substr(i + 1).split(/[\s\-]/)[0];
-    return (pointer.x + fastWidth(nextWord) <= wrap);
+    return pointer.x + fastWidth(nextWord) <= wrap;
 }
 
 /**
@@ -245,7 +247,9 @@ function _invert(shape, y) {
  * @private
  */
 function _getContext() {
-    let canvas; let context; let font;
+    let canvas;
+    let context;
+    let font;
 
     canvas = document.createElement("canvas");
     canvas.width = MAX_WIDTH;
@@ -269,13 +273,18 @@ function _getContext() {
  * @private
  */
 function _getChrProperties(chr) {
-    let data; const pixels = new PixelCollection(); let width = 0; let len = 0; let blurry = 0; let valid;
+    let data;
+    const pixels = new PixelCollection();
+    let width = 0;
+    let len = 0;
+    let blurry = 0;
+    let valid;
     const w = MAX_WIDTH;
     const h = MAX_HEIGHT;
 
     // Handle whitespace characters
     if (chr.match(/\s/)) {
-        return {width: 3, pixels: pixels};
+        return { width: 3, pixels: pixels };
     }
 
     _ctx.fillStyle = "#000";
@@ -301,5 +310,5 @@ function _getChrProperties(chr) {
     }
 
     valid = len && blurry / len <= BLURRY_TRESHOLD;
-    return (valid) ? {width: width, pixels: pixels} : null;
+    return valid ? { width: width, pixels: pixels } : null;
 }

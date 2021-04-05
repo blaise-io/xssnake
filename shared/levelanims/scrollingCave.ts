@@ -22,23 +22,20 @@ export class ScrollingCave {
             // Mnemonic: They hang...
             stalactite: this._LEVEL_WIDTH,
             // Stalagmite _/\_
-            stalagmite: this._LEVEL_WIDTH + Math.round(
-                average(this._BUMP_WIDTH)
-            ),
+            stalagmite: this._LEVEL_WIDTH + Math.round(average(this._BUMP_WIDTH)),
         };
     }
 
-    _SPEED = 0.47
+    _SPEED = 0.47;
 
-    _BUMP_WIDTH = [15, 25]
-    _BUMP_HEIGHT = [20, 40]
-    _BUMP_DECREASE = [0, 2]
+    _BUMP_WIDTH = [15, 25];
+    _BUMP_HEIGHT = [20, 40];
+    _BUMP_DECREASE = [0, 2];
 
-    _LEVEL_WIDTH = 63
-    _LEVEL_HEIGHT = 33
+    _LEVEL_WIDTH = 63;
+    _LEVEL_HEIGHT = 33;
 
-    update(ms: number, gameStarted: boolean): ShapeCollection|null {
-
+    update(ms: number, gameStarted: boolean): ShapeCollection | null {
         if (!gameStarted) {
             return null;
         } else if (!this.gameStartedAtMs) {
@@ -46,7 +43,7 @@ export class ScrollingCave {
         }
 
         ms -= this.gameStartedAtMs;
-        this._scroll = Math.round(ms / (1000 - (this._SPEED * 2000)));
+        this._scroll = Math.round(ms / (1000 - this._SPEED * 2000));
 
         if (this._scrollPref === this._scroll) {
             return null;
@@ -60,9 +57,11 @@ export class ScrollingCave {
     _updateShapePixelsArrs(offset: number): void {
         const max = this._max;
 
-        this._shapes.each(function(shape, index) {
-            this._updateShape(shape, index, offset);
-        }.bind(this));
+        this._shapes.each(
+            function (shape, index) {
+                this._updateShape(shape, index, offset);
+            }.bind(this)
+        );
 
         max.stalactite += offset;
         max.stalagmite += offset;
@@ -93,8 +92,8 @@ export class ScrollingCave {
         const max = 16;
         const pow = Math.pow(10, max);
         cutat = cutat % max;
-        const dec0 = seed * Math.pow(10, cutat) / pow;
-        const dec1 = seed * pow / Math.pow(10, max - cutat) % 1;
+        const dec0 = (seed * Math.pow(10, cutat)) / pow;
+        const dec1 = ((seed * pow) / Math.pow(10, max - cutat)) % 1;
         return dec0 + dec1;
     }
 
@@ -127,9 +126,7 @@ export class ScrollingCave {
             }
             const y0Ite = isStalactite ? y0 : this._LEVEL_HEIGHT - y0 - 1;
             if (x0 < x1 && x1 <= xRow1Prev) {
-                shape.add(
-                    line(x0, y0Ite, x1, y0Ite)
-                );
+                shape.add(line(x0, y0Ite, x1, y0Ite));
                 xRow1Prev = x1;
             } else {
                 break;
@@ -138,5 +135,4 @@ export class ScrollingCave {
 
         this._shapes.add(shape);
     }
-
 }

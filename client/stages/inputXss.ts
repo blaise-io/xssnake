@@ -10,15 +10,15 @@ import { State } from "../state/state";
 import { fontWidth } from "../ui/font";
 
 export class InputXssStage extends InputStage {
-
     constructor() {
         super();
         this.name = STORAGE_XSS;
         this.header = "ENTER YOUR EVAL";
-        this.label = "" +
-      "Paste your JS. Keep it short; max 256 chars.\n" +
-      "Line breaks will be removed.\n\n" +
-      "> ";
+        this.label =
+            "" +
+            "Paste your JS. Keep it short; max 256 chars.\n" +
+            "Line breaks will be removed.\n\n" +
+            "> ";
 
         this.minlength = 2;
         this.maxChars = 256;
@@ -35,5 +35,4 @@ export class InputXssStage extends InputStage {
             xss: this.getValue(),
         };
     }
-
 }

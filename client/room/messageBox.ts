@@ -8,7 +8,7 @@ import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { Message } from "./message";
 
 export class MessageBox {
-    private previousPlayers: ClientPlayerRegistry;  // Keep old registry until player leaving is propagated.
+    private previousPlayers: ClientPlayerRegistry; // Keep old registry until player leaving is propagated.
     private messages: Message[];
     private ui: MessageBoxUI;
     private playerChangeNotified: boolean;
@@ -25,7 +25,6 @@ export class MessageBox {
 
         this.bindEvents();
     }
-
 
     destruct() {
         this.messages.length = 0;
@@ -55,7 +54,7 @@ export class MessageBox {
     }
 
     updatePlayers() {
-        const disconnectedPlayer = this.players.players.filter(p => p.connected === false)[0];
+        const disconnectedPlayer = this.players.players.filter((p) => p.connected === false)[0];
         if (disconnectedPlayer) {
             this.notifyMidgameDisconnect(disconnectedPlayer);
             this.playerChangeNotified = true;
@@ -83,10 +82,7 @@ export class MessageBox {
     notifyPlayersChange() {
         let message;
         if (this.players.getTotal() > this.previousPlayers.getTotal()) {
-            message = format(
-                COPY_PLAYER_JOINED,
-                String(this.players.getJoinName())
-            );
+            message = format(COPY_PLAYER_JOINED, String(this.players.getJoinName()));
         } else if (this.players.getTotal() < this.previousPlayers.getTotal()) {
             message = format(
                 COPY_PLAYER_QUIT,
@@ -101,5 +97,4 @@ export class MessageBox {
     sendMessage(body) {
         State.player.emit(NC_CHAT_MESSAGE, [body]);
     }
-
 }

@@ -12,7 +12,7 @@ import { MessageBoxUI } from "../ui/messageBox";
 
 if (location.search.match(/debug=messages/)) {
     State.menuSnake = new NeuteredMenuSnake();
-    setTimeout(function() {
+    setTimeout(function () {
         const messages = [];
         const author = new Player("Dummy");
         const ui = new MessageBoxUI(messages, author);
@@ -42,6 +42,5 @@ if (location.search.match(/debug=messages/)) {
         messages.push(new Message(null, COPY_CHAT_INSTRUCT));
         ui.debounceUpdate();
         addMessage();
-
     }, 200);
 }

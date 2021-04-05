@@ -1,5 +1,8 @@
 import {
-    NC_PLAYER_NAME, NC_PLAYERS_SERIALIZE, NC_ROOM_JOIN_ERROR, NC_ROOM_JOIN_KEY,
+    NC_PLAYER_NAME,
+    NC_PLAYERS_SERIALIZE,
+    NC_ROOM_JOIN_ERROR,
+    NC_ROOM_JOIN_KEY,
 } from "../../shared/const";
 import { NS_STAGES } from "../const";
 import { COPY_ERROR } from "../copy/copy";
@@ -8,7 +11,6 @@ import { State } from "../state/state";
 import { error } from "../util/clientUtil";
 
 export class QuickJoinGame extends Game {
-
     connectServer() {
         State.player.room.setupComponents();
         State.player.emit(NC_PLAYER_NAME, [this.getPlayerName()]);
@@ -17,17 +19,9 @@ export class QuickJoinGame extends Game {
     }
 
     bindEvents() {
-        State.events.on(
-            NC_PLAYERS_SERIALIZE,
-            NS_STAGES,
-            this.setupRoom.bind(this)
-        );
+        State.events.on(NC_PLAYERS_SERIALIZE, NS_STAGES, this.setupRoom.bind(this));
 
-        State.events.on(
-            NC_ROOM_JOIN_ERROR,
-            NS_STAGES,
-            this.handleError.bind(this)
-        );
+        State.events.on(NC_ROOM_JOIN_ERROR, NS_STAGES, this.handleError.bind(this));
     }
 
     unbindEvents() {
@@ -45,5 +39,4 @@ export class QuickJoinGame extends Game {
         error(COPY_ERROR[data[0]]);
         State.player = null;
     }
-
 }

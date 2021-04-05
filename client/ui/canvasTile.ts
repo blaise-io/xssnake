@@ -1,7 +1,3 @@
-/**
- * @param {ColorScheme} colorScheme
- * @constructor
- */
 import { HEIGHT, WIDTH } from "../../shared/const";
 import { ColorScheme } from "./colorScheme";
 
@@ -40,7 +36,7 @@ export class CanvasTile {
 
         document.body.style.backgroundImage = "url(" + canvas.toDataURL("image/png") + ")";
         document.body.style.backgroundColor = this.colorScheme.bg;
-        document.body.style.backgroundSize = (this.size / 2) + "px";
+        document.body.style.backgroundSize = this.size / 2 + "px";
     }
 
     private _getTileForColor(canvas: HTMLCanvasElement, color: string): CanvasPattern {

@@ -1,60 +1,48 @@
 import { HEIGHT } from "../../shared/const";
-import { Player } from "../../shared/room/player";
+import { Shape } from "../../shared/shape";
 import { NS_SCORE } from "../const";
+import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state/state";
 import { font, fontPixels, fontWidth } from "./font";
 import { animate } from "./shapeClient";
 
 export class ScoreboardUI {
-    private x0: number;
-    private x1: number;
+    private x0 = 3;
+    private x1 = 56;
+    private y0 = HEIGHT - 24;
+    private y1 = HEIGHT - 2;
     private animating: boolean;
     private queue: boolean;
     private queueTimer: number;
-    private y0: number;
-    private y1: number;
-    private podiumSize: number;
-    private lineHeight: number;
-    private animationDuration: number;
-    private animationPause: number;
-    private columnSpacing: any;
-    private oldPlayerOrder: Player[];
+    private podiumSize = 6;
+    private lineHeight = 7;
+    private animationDuration = 200;
+    private animationPause = 200;
+    private columnSpacing = fontWidth(" ");
+    private oldPlayerOrder: ClientPlayer[];
 
     constructor(public players: ClientPlayerRegistry) {
-
         this.animating = false;
         this.queue = false;
         this.queueTimer = 0;
-
-        this.x0 = 3;
-        this.x1 = 56;
-        this.y0 = HEIGHT - 24;
-        this.y1 = HEIGHT - 2;
-        this.podiumSize = 6;
-        this.lineHeight = 7;
-        this.animationDuration = 200;
-        this.animationPause = 200;
-        this.columnSpacing = fontWidth(" ");
-
         this.oldPlayerOrder = this.getPlayersSortedByScore();
 
         this.updateScoreboard();
     }
 
-
-    destruct() {
+    destruct(): void {
         clearInterval(this.queueTimer);
         this.destructShapes();
     }
 
-    destructShapes() {
+    destructShapes(): void {
         for (let i = 0; i < this.podiumSize; i++) {
             State.shapes[NS_SCORE + i] = null;
         }
     }
 
-    debounceUpdate() {
+    debounceUpdate(): void {
         if (this.animating) {
             this.queue = true;
         } else {
@@ -62,11 +50,9 @@ export class ScoreboardUI {
         }
     }
 
-    updateScoreboard() {
-        let indexNew; let newOrder; let oldOrder;
-        newOrder = this.getPlayersSortedByScore();
-        oldOrder = this.oldPlayerOrder;
-
+    updateScoreboard(): void {
+        const newOrder = this.getPlayersSortedByScore();
+        const oldOrder = this.oldPlayerOrder;
         for (let i = 0, m = this.podiumSize; i < m; i++) {
             if (i >= oldOrder.length) {
                 // New player.
@@ -81,45 +67,38 @@ export class ScoreboardUI {
                 this.queue = true;
             } else {
                 // Existing player.
-                indexNew = newOrder.indexOf(oldOrder[i]);
+                const indexNew = newOrder.indexOf(oldOrder[i]);
                 this.paint(oldOrder[i], i, indexNew);
             }
         }
         this.oldPlayerOrder = newOrder;
     }
 
-    paint(player, oldIndex, newIndex) {
-        let oldCoordinate; let newCoordinate; let shape;
-        oldCoordinate = this.getCoordinatesForIndex(oldIndex);
-        shape = this.getPlayerScoreShape(player, oldCoordinate);
+    paint(player: ClientPlayer, oldIndex: number, newIndex: number): void {
+        const oldCoordinate = this.getCoordinatesForIndex(oldIndex);
+        const shape = this.getPlayerScoreShape(player, oldCoordinate);
         State.shapes[NS_SCORE + oldIndex] = shape;
 
         if (oldIndex !== newIndex) {
-            newCoordinate = this.getCoordinatesForIndex(newIndex);
+            const newCoordinate = this.getCoordinatesForIndex(newIndex);
             this.animateToNewPos(shape, oldCoordinate, newCoordinate);
         }
     }
 
-    animateToNewPos(shape, oldCoordinate, newCoordinate) {
+    animateToNewPos(shape: Shape, oldCoordinate: Coordinate, newCoordinate: Coordinate): void {
         this.animating = true;
         animate(shape, {
-            to: [
-                newCoordinate[0] - oldCoordinate[0],
-                newCoordinate[1] - oldCoordinate[1],
-            ],
+            to: [newCoordinate[0] - oldCoordinate[0], newCoordinate[1] - oldCoordinate[1]],
             duration: this.animationDuration,
             doneCallback: this.animateCallback.bind(this),
         });
     }
 
-    animateCallback() {
-        this.queueTimer = window.setTimeout(
-            this.queueUpdate.bind(this),
-            this.animationPause
-        );
+    animateCallback(): void {
+        this.queueTimer = window.setTimeout(this.queueUpdate.bind(this), this.animationPause);
     }
 
-    queueUpdate() {
+    queueUpdate(): void {
         this.animating = false;
         if (this.queue) {
             this.queue = false;
@@ -127,17 +106,17 @@ export class ScoreboardUI {
         }
     }
 
-    getPlayerScoreShape(player, coordinate) {
-        let shape; let scoreX; let name = "-"; let score = 0;
-
+    getPlayerScoreShape(player: ClientPlayer, coordinate: Coordinate): Shape {
+        let name = "-",
+            score = 0;
         if (player && player.connected) {
             name = player.name;
             score = player.score;
         }
 
-        scoreX = coordinate[0] + this.itemWidth();
+        let scoreX = coordinate[0] + this.itemWidth();
         scoreX -= fontWidth(String(score)) + this.columnSpacing;
-        shape = font(name, coordinate[0], coordinate[1]);
+        const shape = font(name, coordinate[0], coordinate[1]);
         shape.add(fontPixels(String(score), scoreX, coordinate[1]));
 
         if (player && player.local) {
@@ -147,18 +126,18 @@ export class ScoreboardUI {
         return shape;
     }
 
-    markLocalPlayer(shape) {
+    markLocalPlayer(shape: Shape): void {
         const bbox = shape.bbox(1);
         bbox.y1 = bbox.y0 + this.lineHeight;
         bbox.setDimensions();
         shape.invert();
     }
 
-    itemWidth() {
+    itemWidth(): number {
         return Math.floor(this.x1 - this.x0 / 2);
     }
 
-    getCoordinatesForIndex(index) {
+    getCoordinatesForIndex(index: number): Coordinate {
         // 0 3
         // 1 4
         // 2 5
@@ -176,12 +155,11 @@ export class ScoreboardUI {
         //];
     }
 
-    getPlayersSortedByScore() {
+    getPlayersSortedByScore(): ClientPlayer[] {
         const players = this.players.players.slice();
-        players.sort(function(a, b) {
+        players.sort(function (a, b) {
             return (b.connected ? b.score : -1) - (a.connected ? a.score : -1);
         });
         return players;
     }
-
 }

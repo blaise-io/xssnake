@@ -16,10 +16,7 @@ export class Gravity {
     }
 
     getShift(elapsed: number): Shift {
-        return [
-            this.updateInDirection(elapsed, 0),
-            this.updateInDirection(elapsed, 1),
-        ];
+        return [this.updateInDirection(elapsed, 0), this.updateInDirection(elapsed, 1)];
     }
 
     updateInDirection(delta: number, direction: number): number {

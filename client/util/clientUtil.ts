@@ -5,11 +5,11 @@ import { Dialog } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
 import { flash, lifetime } from "../ui/shapeClient";
 
-export function instruct(str: string, duration=2000, flashInstruct=false): void {
+export function instruct(str: string, duration = 2000, flashInstruct = false): void {
     const x = WIDTH - fontWidth(str) - 2;
     const y = HEIGHT - fontHeight(str) - 2;
 
-    const shape = font(str, x, y, {invert: true});
+    const shape = font(str, x, y, { invert: true });
     shape.flags.isOverlay = true;
     lifetime(shape, 0, duration);
 
@@ -23,7 +23,7 @@ export function instruct(str: string, duration=2000, flashInstruct=false): void 
 export function error(str: string, callback?: CallableFunction): void {
     urlHash();
 
-    const exit = function() {
+    const exit = function () {
         dialog.destruct();
         if (callback) {
             callback();
@@ -34,7 +34,7 @@ export function error(str: string, callback?: CallableFunction): void {
     const body = "Press " + UC_ENTER_KEY + " to continue";
     const dialog = new Dialog(str, body, {
         type: Dialog.TYPE.ALERT,
-        ok  : exit,
+        ok: exit,
     });
 }
 
@@ -60,7 +60,7 @@ export function isMac(): boolean {
     return /Macintosh/.test(navigator.appVersion);
 }
 
-export function urlHash(key="", value=""): string {
+export function urlHash(key = "", value = ""): string {
     let newhash = "";
     const dict = {};
 
@@ -73,26 +73,26 @@ export function urlHash(key="", value=""): string {
     }
 
     switch (arguments.length) {
-    case 0: // Empty
-        if (location.hash) {
-            history.replaceState(null, "", location.pathname + location.search);
-        }
-        return;
-    case 1: // Return value
-        return dict[key] || "";
-    case 2: // Set value
-        dict[key] = value;
-        for (const k in dict) {
-            if (k && dict[k]) {
-                newhash += k + ":" + dict[k] + ";";
+        case 0: // Empty
+            if (location.hash) {
+                history.replaceState(null, "", location.pathname + location.search);
             }
-        }
-        location.replace("#" + newhash.replace(/;$/, ""));
-        return value;
+            return;
+        case 1: // Return value
+            return dict[key] || "";
+        case 2: // Set value
+            dict[key] = value;
+            for (const k in dict) {
+                if (k && dict[k]) {
+                    newhash += k + ":" + dict[k] + ";";
+                }
+            }
+            location.replace("#" + newhash.replace(/;$/, ""));
+            return value;
     }
 }
 
-export function format(str: string, ...data: (string|number)[]): string {
+export function format(str: string, ...data: (string | number)[]): string {
     return str.replace(/{(\d+)}/g, (match, number) => {
         return String(data[number]);
     });
@@ -105,18 +105,18 @@ export function translateGame(coordinate: Coordinate): Coordinate {
 }
 
 export function translateGameX(x: number): number {
-    return (x * GAME_TILE) + GAME_LEFT;
+    return x * GAME_TILE + GAME_LEFT;
 }
 
 export function translateGameY(y: number): number {
-    return (y * GAME_TILE) + GAME_TOP;
+    return y * GAME_TILE + GAME_TOP;
 }
 
-export function debounce(fn: CallableFunction, delay=100): CallableFunction {
+export function debounce(fn: CallableFunction, delay = 100): CallableFunction {
     let timeout;
     return (...args) => {
         clearTimeout(timeout);
-        timeout = setTimeout(function() {
+        timeout = setTimeout(function () {
             timeout = null;
             // TODO: Promise, await, async.
             fn(...args);

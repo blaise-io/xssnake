@@ -19,7 +19,7 @@ export function setGameTransform(shape: Shape): void {
     shape.transform.translate[1] = shape.transform.translate[1] * GAME_TILE + GAME_TILE / GAME_TOP;
 }
 
-export function flash(shape: Shape, on: number=FRAME * 24, off: number=FRAME * 6): Shape {
+export function flash(shape: Shape, on: number = FRAME * 24, off: number = FRAME * 6): Shape {
     let progress = 0;
     const duration = [on, off];
 
@@ -33,8 +33,6 @@ export function flash(shape: Shape, on: number=FRAME * 24, off: number=FRAME * 6
 
     return shape;
 }
-
-
 
 export function lifetime(shape: Shape, start: number, end?: number): Shape {
     let progress = 0;
@@ -61,15 +59,14 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
     return shape;
 }
 
-
 export function animate(
     shape: Shape,
     options: {
-        from?: Coordinate,
-        to?: Coordinate,
-        duration?: number,
-        doneCallback?: (shape: Shape) => any,
-        progressCallback?: (shape: Shape, x: number, y: number) => any,
+        from?: Coordinate;
+        to?: Coordinate;
+        duration?: number;
+        doneCallback?: (shape: Shape) => void;
+        progressCallback?: (shape: Shape, x: number, y: number) => void;
     }
 ): Shape {
     let progress = 0;
@@ -86,8 +83,8 @@ export function animate(
         progress += delta;
         const percent = Math.sqrt(progress / options.duration);
         if (progress < options.duration) {
-            const x = Math.round(options.from[0] - ((options.from[0] - options.to[0]) * percent));
-            const y = Math.round(options.from[1] - ((options.from[1] - options.to[1]) * percent));
+            const x = Math.round(options.from[0] - (options.from[0] - options.to[0]) * percent);
+            const y = Math.round(options.from[1] - (options.from[1] - options.to[1]) * percent);
             shape.transform.translate = [x, y];
             options.progressCallback(shape, x, y);
         } else {
@@ -99,7 +96,6 @@ export function animate(
 
     return shape;
 }
-
 
 export function applyEffects(shape: Shape, delta: number): void {
     for (const k in shape.effects) {

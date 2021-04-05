@@ -54,5 +54,4 @@ export class Options {
         this.isPrivate = Boolean(serialized[4]);
         this.isXSS = Boolean(serialized[5]);
     }
-
 }

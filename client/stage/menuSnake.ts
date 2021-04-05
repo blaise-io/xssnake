@@ -26,9 +26,7 @@ export class MenuSnake {
         snake.removeNameAndDirection();
 
         this.snake = snake;
-        this.timeouts.push(
-            window.setTimeout(this.move.bind(this), 1500)
-        );
+        this.timeouts.push(window.setTimeout(this.move.bind(this), 1500));
     }
 
     destruct(): void {
@@ -48,32 +46,29 @@ export class MenuSnake {
         if (this.isCrash(snake, nextpos)) {
             snake.setCrashed();
             instruct("Have you seen my snake?");
-            this.timeouts.push(
-                window.setTimeout(snake.destruct.bind(snake), 2200)
-            );
+            this.timeouts.push(window.setTimeout(snake.destruct.bind(snake), 2200));
         } else {
             snake.elapsed = 1000; // Trigger move.
             snake.move(snake.getNextPosition());
             snake.updateShape();
-            this.timeouts.push(
-                window.setTimeout(this.move.bind(this), 100)
-            );
+            this.timeouts.push(window.setTimeout(this.move.bind(this), 100));
         }
     }
 
     isCrash(snake: ClientSnake, nextpos: Coordinate): boolean {
-        const snakeShape = snake.getShape(); let crash = false;
+        const snakeShape = snake.getShape();
+        let crash = false;
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
         } else if (snakeShape) {
-            const pixels = zoom(
-                4, snakeShape.pixels, GAME_LEFT, GAME_TOP, false
+            const pixels = zoom(4, snakeShape.pixels, GAME_LEFT, GAME_TOP, false);
+            pixels.each(
+                function (x, y) {
+                    if (this.overlaysShape(snakeShape, x, y)) {
+                        crash = true;
+                    }
+                }.bind(this)
             );
-            pixels.each(function(x, y) {
-                if (this.overlaysShape(snakeShape, x, y)) {
-                    crash = true;
-                }
-            }.bind(this));
         }
         return crash;
     }
@@ -88,9 +83,7 @@ export class MenuSnake {
         }
         return false;
     }
-
 }
-
 
 export class NeuteredMenuSnake extends MenuSnake {
     construct(): void {

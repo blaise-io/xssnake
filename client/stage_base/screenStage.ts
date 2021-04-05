@@ -8,9 +8,8 @@ import { DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_ENTER, KEY_ESCAPE, NS_STAGES } fr
 import { State } from "../state/state";
 
 export class ScreenStage {
-
     /** @type {Shape} */
-    screen = null
+    screen = null;
 
     getShape() {
         return this.screen;
@@ -31,11 +30,10 @@ export class ScreenStage {
 
     _handleKeys(ev) {
         switch (ev.keyCode) {
-        case KEY_BACKSPACE:
-        case KEY_ESCAPE:
-        case KEY_ENTER:
-            State.flow.previousStage();
+            case KEY_BACKSPACE:
+            case KEY_ESCAPE:
+            case KEY_ENTER:
+                State.flow.previousStage();
         }
     }
-
 }

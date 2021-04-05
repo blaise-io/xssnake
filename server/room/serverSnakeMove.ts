@@ -15,7 +15,9 @@ class ServerSnakeMove {
     }
 
     isValidJson() {
-        let snake; let parts; let direction;
+        let snake;
+        let parts;
+        let direction;
 
         snake = new Sanitizer(this.dirtyMove);
         snake.assertArrayLengthBetween(2, 2);
@@ -45,7 +47,12 @@ class ServerSnakeMove {
     }
 
     getStatus() {
-        let numSyncParts; let serverParts; let commonPartIndices; let mismatches; let snake; let clientParts;
+        let numSyncParts;
+        let serverParts;
+        let commonPartIndices;
+        let mismatches;
+        let snake;
+        let clientParts;
 
         snake = this.player.snake;
         clientParts = this.parts;
@@ -91,7 +98,8 @@ class ServerSnakeMove {
     hasGaps(parts): void {
         for (let i = 1, m = parts.length; i < m; i++) {
             // Sanity check
-            if (parts[i].length !== 2 ||
+            if (
+                parts[i].length !== 2 ||
                 typeof parts[i][0] !== "number" ||
                 typeof parts[i][1] !== "number"
             ) {
@@ -120,5 +128,4 @@ class ServerSnakeMove {
         }
         return null;
     }
-
 }

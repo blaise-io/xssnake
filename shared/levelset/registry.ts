@@ -17,8 +17,9 @@ export class Registry {
         this.levelsets.push(levelset);
     }
 
-    preloadLevels(continueFn=() => {}) {
-        let checkAllLoaded; let loaded = 0;
+    preloadLevels(continueFn = () => {}) {
+        let checkAllLoaded;
+        let loaded = 0;
 
         checkAllLoaded = function () {
             if (++loaded === this.levelsets.length) {
@@ -53,5 +54,4 @@ export class Registry {
     getRandomLevelsetIndex() {
         return randomArrIndex(this.levelsets);
     }
-
 }

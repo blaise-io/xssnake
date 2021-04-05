@@ -7,8 +7,6 @@ export class ServerScore {
         this.players = players;
     }
 
-
-
     destruct() {
         this.players = null;
     }
@@ -19,7 +17,8 @@ export class ServerScore {
      * @return {boolean} Player score is affected.
      */
     update(crashedPlayers, level): void {
-        let points; let scoreUpdated = false;
+        let points;
+        let scoreUpdated = false;
         if (!level) {
             console.error("FIXME");
             return false;

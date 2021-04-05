@@ -22,5 +22,4 @@ export class ShapeCollection {
             }
         }
     }
-
 }

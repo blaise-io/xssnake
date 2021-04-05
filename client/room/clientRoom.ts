@@ -1,9 +1,19 @@
 /**
  * @constructor
  */
-import { NC_OPTIONS_SERIALIZE, NC_PLAYERS_SERIALIZE, NC_ROOM_SERIALIZE, NC_SNAKE_CRASH } from "../../shared/const";
+import {
+    NC_OPTIONS_SERIALIZE,
+    NC_PLAYERS_SERIALIZE,
+    NC_ROOM_SERIALIZE,
+    NC_SNAKE_CRASH,
+} from "../../shared/const";
 import { EV_PLAYERS_UPDATED, HASH_ROOM, NS_ROOM } from "../const";
-import { COPY_COMMA_SPACE, COPY_ELLIPSIS, COPY_SNAKE_CRASHED, COPY_SPACE_AND_SPACE } from "../copy/copy";
+import {
+    COPY_COMMA_SPACE,
+    COPY_ELLIPSIS,
+    COPY_SNAKE_CRASHED,
+    COPY_SPACE_AND_SPACE,
+} from "../copy/copy";
 import { State } from "../state/state";
 import { urlHash } from "../util/clientUtil";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
@@ -31,7 +41,6 @@ export class ClientRoom {
 
         this.bindEvents();
     }
-
 
     destruct() {
         urlHash();
@@ -86,7 +95,8 @@ export class ClientRoom {
     }
 
     ncNotifySnakesCrashed(serializedCollisions) {
-        let notification = ""; const names = this.players.getNames();
+        let notification = "";
+        const names = this.players.getNames();
         for (let i = 0, m = serializedCollisions.length; i < m; i++) {
             notification += names[serializedCollisions[i][0]];
 
@@ -98,8 +108,10 @@ export class ClientRoom {
                 notification += COPY_COMMA_SPACE;
             }
 
-            if (1 === i % 2 || m === i + 1) { // Line end.
-                if (i + 1 < m) { // Continuing.
+            if (1 === i % 2 || m === i + 1) {
+                // Line end.
+                if (i + 1 < m) {
+                    // Continuing.
                     notification += COPY_ELLIPSIS;
                 }
                 this.messageBox.addNotification(notification);
@@ -122,5 +134,4 @@ export class ClientRoom {
     //        }
     //        return names;
     //    }
-
 }

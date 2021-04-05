@@ -24,5 +24,5 @@ State.flow = new StageFlow();
 
 window.onerror = (error) => {
     console.error(error);
-    State.canvas.error = true;  // Stop the paint!
+    State.canvas.error = true; // Stop the paint!
 };

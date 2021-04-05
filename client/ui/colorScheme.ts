@@ -5,6 +5,6 @@ export class ColorScheme {
         public bg: string,
         public off: string,
         public on: string,
-        public ghosting: number=0.6,
+        public ghosting: number = 0.6
     ) {}
 }

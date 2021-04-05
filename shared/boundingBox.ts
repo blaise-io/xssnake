@@ -37,11 +37,19 @@ export class BoundingBox {
         let y0 = HEIGHT;
         let y1 = 0;
 
-        pixels.each(function(x, y) {
-            if (x0 > x) {x0 = x;}
-            if (x1 < x) {x1 = x;}
-            if (y0 > y) {y0 = y;}
-            if (y1 < y) {y1 = y;}
+        pixels.each(function (x, y) {
+            if (x0 > x) {
+                x0 = x;
+            }
+            if (x1 < x) {
+                x1 = x;
+            }
+            if (y0 > y) {
+                y0 = y;
+            }
+            if (y1 < y) {
+                y1 = y;
+            }
         });
 
         this.x0 = x0;
@@ -58,5 +66,4 @@ export class BoundingBox {
         this.width = this.x1 - this.x0;
         this.height = this.y1 - this.y0;
     }
-
 }

@@ -16,7 +16,9 @@ export class ImageDecoder {
     }
 
     readFromCanvas() {
-        let canvas; let ctx; let imagedata;
+        let canvas;
+        let ctx;
+        let imagedata;
 
         canvas = document.createElement("canvas");
         canvas.width = this.image.width;

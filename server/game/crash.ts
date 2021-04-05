@@ -1,4 +1,4 @@
-import { CRASH_OPPONENT_DRAW} from "../../shared/const";
+import { CRASH_OPPONENT_DRAW } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 
 // TODO: Not used?
@@ -39,5 +39,4 @@ export class Crash {
     //     }
     //     this.client.room.emit(NC_CHAT_NOTICE, data);
     // }
-
 }

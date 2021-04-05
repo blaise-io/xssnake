@@ -24,19 +24,20 @@ export class Spawnable {
     }
 
     _getShape(): Shape {
-        let shape; const x = this.x; const y = this.y;
+        let shape;
+        const x = this.x;
+        const y = this.y;
 
         switch (this.type) {
-        case SPAWN_APPLE:
-            shape = font(UC_APPLE, x - 1, y - 2);
-            break;
-        case SPAWN_POWERUP:
-            shape = font(UC_ELECTRIC, x - 1, y - 1);
-            break;
+            case SPAWN_APPLE:
+                shape = font(UC_APPLE, x - 1, y - 2);
+                break;
+            case SPAWN_POWERUP:
+                shape = font(UC_ELECTRIC, x - 1, y - 1);
+                break;
         }
 
         flash(shape);
         return shape;
     }
-
 }

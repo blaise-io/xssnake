@@ -11,8 +11,6 @@ export class ServerRoomManager {
         this.bindEvents();
     }
 
-
-
     destruct() {
         this.removeAllRooms();
         this.matcher.destruct();
@@ -62,7 +60,8 @@ export class ServerRoomManager {
      * @return {room.ServerRoom}
      */
     createRoom(preferences): void {
-        let room; const id = randomStr(ROOM_KEY_LENGTH);
+        let room;
+        const id = randomStr(ROOM_KEY_LENGTH);
         room = new ServerRoom(this.server, preferences, id);
         this.rooms.push(room);
         return room;
@@ -73,7 +72,9 @@ export class ServerRoomManager {
      * @param {room.ServerPlayer} player
      */
     autojoinRoom(dirtyKeyArr, player): void {
-        let room; let key; let status;
+        let room;
+        let key;
+        let status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);
 
@@ -93,10 +94,11 @@ export class ServerRoomManager {
      * @private
      */
     joinMatchingRoom(dirtySerializeOptions, player): void {
-        let options; let room; let emitDataArr;
+        let options;
+        let room;
+        let emitDataArr;
 
-        emitDataArr = new Sanitizer(dirtySerializeOptions)
-            .assertArray().getValueOr([]);
+        emitDataArr = new Sanitizer(dirtySerializeOptions).assertArray().getValueOr([]);
         options = new ServerOptions(emitDataArr);
 
         room = this.matcher.getRoomMatching(options);
@@ -146,7 +148,9 @@ export class ServerRoomManager {
      * @param {room.ServerPlayer} player
      */
     emitRoomStatus(dirtyKeyArr, player): void {
-        let room; let key; let status;
+        let room;
+        let key;
+        let status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);
 
@@ -159,5 +163,4 @@ export class ServerRoomManager {
             player.emit(NC_ROOM_JOIN_ERROR, [status]);
         }
     }
-
 }

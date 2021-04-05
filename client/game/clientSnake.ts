@@ -69,9 +69,7 @@ export class ClientSnake extends Snake {
     }
 
     showName() {
-        State.shapes[this.shapeKeys.name] = tooltipName(
-            this.name, this.parts[0], this.direction
-        );
+        State.shapes[this.shapeKeys.name] = tooltipName(this.name, this.parts[0], this.direction);
     }
 
     showAction(label) {
@@ -79,7 +77,9 @@ export class ClientSnake extends Snake {
     }
 
     showDirection() {
-        let shift; let head; let shape;
+        let shift;
+        let head;
+        let shape;
         shift = GAME_SHIFT_MAP[this.direction];
         head = this.getHead();
 
@@ -115,9 +115,7 @@ export class ClientSnake extends Snake {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
-            const move = new SnakeMove(
-                this, players, level, this.getNextPosition()
-            );
+            const move = new SnakeMove(this, players, level, this.getNextPosition());
 
             this.elapsed -= this.speed;
 
@@ -185,9 +183,7 @@ export class ClientSnake extends Snake {
     emit(direction: number): void {
         if (State.player) {
             const sync = Math.round(NETCODE_SYNC_MS / this.speed);
-            State.player.emit(NC_SNAKE_UPDATE, [
-                direction, this.parts.slice(-sync),
-            ]);
+            State.player.emit(NC_SNAKE_UPDATE, [direction, this.parts.slice(-sync)]);
         }
     }
 
@@ -199,5 +195,4 @@ export class ClientSnake extends Snake {
         const shift = GAME_SHIFT_MAP[this.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
     }
-
 }

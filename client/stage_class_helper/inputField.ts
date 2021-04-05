@@ -20,7 +20,12 @@ export class InputField {
     callback: any;
     private input: HTMLInputElement;
 
-    constructor(public x: number, public y: number, public prefix: string, public fontOptions?: any) {
+    constructor(
+        public x: number,
+        public y: number,
+        public prefix: string,
+        public fontOptions?: any
+    ) {
         this.callback = () => {};
         this.maxValWidth = null;
         this.displayWidth = WIDTH - x - 8;
@@ -49,7 +54,7 @@ export class InputField {
     }
 
     bindEvents() {
-        State.events.on(DOM_EVENT_KEYPRESS, NS_INPUT, function() {
+        State.events.on(DOM_EVENT_KEYPRESS, NS_INPUT, function () {
             State.audio.play("menu_alt");
         });
         State.events.on(DOM_EVENT_KEYDOWN, NS_INPUT, this.updateShapes.bind(this));
@@ -98,10 +103,7 @@ export class InputField {
         const endPos = fontEndPos(this.prefix + untilCaretStr, this.x, this.y, this.fontOptions);
         const caret = [endPos[0] - 1, endPos[1]];
 
-        const caretShape = lineShape(
-            caret[0], caret[1] - 1,
-            caret[0], caret[1] + 7
-        );
+        const caretShape = lineShape(caret[0], caret[1] - 1, caret[0], caret[1] + 7);
 
         flash(caretShape, FRAME * 20, FRAME * 20);
 
@@ -112,26 +114,17 @@ export class InputField {
         let endpos;
         const values = this.getSelectionSegments();
         const shape = new Shape();
-        shape.add(fontPixels(
-            this.prefix + values[0], this.x, this.y, this.fontOptions
-        ));
+        shape.add(fontPixels(this.prefix + values[0], this.x, this.y, this.fontOptions));
 
-        if (values[1]) { // Selection
-            endpos = fontEndPos(
-                this.prefix + values[0], this.x, this.y, this.fontOptions
-            );
-            shape.add(fontPixels(values[1], endpos[0], endpos[1], {invert: true}));
+        if (values[1]) {
+            // Selection
+            endpos = fontEndPos(this.prefix + values[0], this.x, this.y, this.fontOptions);
+            shape.add(fontPixels(values[1], endpos[0], endpos[1], { invert: true }));
         }
 
-        endpos = fontEndPos(
-            this.prefix + values[0] + values[1], this.x, this.y, this.fontOptions
-        );
+        endpos = fontEndPos(this.prefix + values[0] + values[1], this.x, this.y, this.fontOptions);
 
-        shape.add(
-            fontPixels(values[2],
-                endpos[0],
-                endpos[1])
-        );
+        shape.add(fontPixels(values[2], endpos[0], endpos[1]));
 
         return shape;
     }
@@ -141,7 +134,10 @@ export class InputField {
      * @private
      */
     getSelectionSegments() {
-        let input; let value; let start; let end;
+        let input;
+        let value;
+        let start;
+        let end;
 
         input = this.input;
         value = input.value;
@@ -159,11 +155,7 @@ export class InputField {
             }
         }
 
-        return [
-            value.substring(0, start),
-            value.substring(start, end),
-            value.substring(end),
-        ];
+        return [value.substring(0, start), value.substring(start, end), value.substring(end)];
     }
 
     maxwidthCutOff() {
@@ -173,5 +165,4 @@ export class InputField {
             }
         }
     }
-
 }

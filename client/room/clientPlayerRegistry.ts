@@ -1,3 +1,4 @@
+import { Level } from "../../shared/level/level";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { NS_SNAKE } from "../const";
 import { State } from "../state/state";
@@ -12,42 +13,30 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         this.localPlayer = null;
     }
 
-    destruct() {
+    destruct(): void {
         this.localPlayer = null;
         super.destruct();
     }
 
-    /**
-     * @param {room.ClientPlayerRegistry} playerRegistry
-     */
-    clone(playerRegistry): void {
+    clone(playerRegistry: ClientPlayerRegistry): void {
         this.players = playerRegistry.players.slice();
         this.localPlayer = playerRegistry.localPlayer;
     }
 
-    /**
-     * @param {Array.<Array>} serializedPlayers
-     */
-    deserialize(serializedPlayers): void {
+    deserialize(serializedPlayers: Coordinate[][][]): void {
         for (let i = 0, m = serializedPlayers.length; i < m; i++) {
             this.players[i].deserialize(serializedPlayers[i]);
         }
     }
 
-    /**
-     * @param {Array.<Array>} serializedPlayers
-     */
-    reconstruct(serializedPlayers): void {
+    reconstruct(serializedPlayers: Coordinate[][][]): void {
         this.destruct();
         for (let i = 0, m = serializedPlayers.length; i < m; i++) {
             this.reconstructPlayer(serializedPlayers[i]);
         }
     }
 
-    /**
-     * @param {Array} serialized
-     */
-    reconstructPlayer(serialized): void {
+    reconstructPlayer(serialized: Coordinate[][]): void {
         let player = new ClientPlayer();
         player.deserialize(serialized);
 
@@ -59,10 +48,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         this.add(player);
     }
 
-    /**
-     * @return {Array.<string>}
-     */
-    getNames() {
+    getNames(): string[] {
         const names = [];
         for (let i = 0, m = this.players.length; i < m; i++) {
             names.push(this.players[i].name);
@@ -70,25 +56,19 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         return names;
     }
 
-    /**
-     * @param {Array.<number>} scores
-     */
-    setScores(scores): void {
+    setScores(scores: number[]): void {
         for (let i = 0, m = scores.length; i < m; i++) {
             this.players[i].score = scores[i];
         }
     }
 
-    /**
-     * @param {level.Level} level
-     */
-    setSnakes(level): void {
+    setSnakes(level: Level): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].setSnake(i, level);
         }
     }
 
-    unsetSnakes() {
+    unsetSnakes(): void {
         // There may still be a few shapes lingering around.
         this.clearSnakeShapes();
         for (let i = 0, m = this.players.length; i < m; i++) {
@@ -96,7 +76,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         }
     }
 
-    clearSnakeShapes() {
+    clearSnakeShapes(): void {
         const keys = Object.keys(State.shapes);
         for (let i = 0, m = keys.length; i < m; i++) {
             if (keys[i].substr(0, NS_SNAKE.length) === NS_SNAKE) {
@@ -105,19 +85,14 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         }
     }
 
-    /**
-     * @param {level.Level} level
-     * @param {number} elapsed
-     * @param {Shift} shift
-     */
-    moveSnakes(level, elapsed, shift): void {
+    moveSnakes(level: Level, elapsed: number, shift: Shift): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.handleNextMove(level, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);
         }
     }
 
-    showMeta() {
+    showMeta(): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.showName();
         }
@@ -126,27 +101,21 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         }
     }
 
-    hideMeta() {
+    hideMeta(): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.removeNameAndDirection();
         }
     }
 
-    addControls() {
+    addControls(): void {
         if (this.localPlayer) {
             this.localPlayer.snake.addControls();
         }
     }
 
-    /**
-     * @param {room.ClientPlayerRegistry} prevPlayers
-     * @return {string|null}
-     */
-    getQuitName(prevPlayers): void {
-        let prevNames; let newNames;
-        prevNames = prevPlayers.getNames();
-        newNames = this.getNames();
-
+    getQuitName(prevPlayers: ClientPlayerRegistry): string | null {
+        const prevNames = prevPlayers.getNames();
+        const newNames = this.getNames();
         for (let i = 0, m = prevNames.length; i < m; i++) {
             if (-1 === newNames.indexOf(prevNames[i])) {
                 return prevNames[i];
@@ -157,25 +126,21 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     }
 
     /**
-     * Assume last player that joined to be last item in players array.
-     * @return {string|null}
+     * Assume last joined player is last in this.players.
      */
-    getJoinName() {
+    getJoinName(): string | null {
         if (this.getTotal()) {
             return this.players[this.players.length - 1].name;
         }
         return null;
     }
 
-    /**
-     * @return {boolean}
-     */
-    localPlayerIsHost() {
+    localPlayerIsHost(): boolean {
         return Boolean(
-            this.localPlayer && State.player &&
-            this.localPlayer === State.player &&
-            0 === this.players.indexOf(State.player)
+            this.localPlayer &&
+                State.player &&
+                this.localPlayer === State.player &&
+                0 === this.players.indexOf(State.player)
         );
     }
-
 }

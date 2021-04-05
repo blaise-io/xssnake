@@ -14,11 +14,9 @@ export class ServerRoom {
 
         this.emitter = new events.EventEmitter();
         this.players = new ServerPlayerRegistry();
-        this.rounds  = new ServerRoundSet(this.emitter, this.players, this.options);
+        this.rounds = new ServerRoundSet(this.emitter, this.players, this.options);
         this.bindEvents();
     }
-
-
 
     destruct() {
         this.emitter.removeAllListeners();
@@ -98,7 +96,7 @@ export class ServerRoom {
     }
 
     detectEmptyRoom() {
-        if (!this.players.filter({connected: true}).length) {
+        if (!this.players.filter({ connected: true }).length) {
             this.server.roomManager.remove(this);
         }
     }
@@ -109,5 +107,4 @@ export class ServerRoom {
     isFull() {
         return this.players.getTotal() === this.options.maxPlayers;
     }
-
 }

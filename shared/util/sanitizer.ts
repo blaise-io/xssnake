@@ -40,10 +40,11 @@ class Sanitizer {
      * @return {Sanitizer}
      */
     assertJSON() {
-        if (this._valid) { // Don't parse if already invalid
+        if (this._valid) {
+            // Don't parse if already invalid
             try {
                 this._json = JSON.parse(this._value);
-            } catch(err) {
+            } catch (err) {
                 this._log("assertJSON", this._value);
                 this._valid = false;
             }
@@ -136,7 +137,7 @@ class Sanitizer {
      * @return {?}
      */
     getValueOr(def) {
-        return (this._valid) ? this._value : def;
+        return this._valid ? this._value : def;
     }
 
     /**
@@ -144,7 +145,7 @@ class Sanitizer {
      * @return {?}
      */
     json(def) {
-        return (this._valid) ? this._json : def;
+        return this._valid ? this._json : def;
     }
 
     /**
@@ -156,5 +157,4 @@ class Sanitizer {
     _log(message, value, ...varArgs) {
         console.warn("Validation Error", message, JSON.stringify(value), varArgs);
     }
-
 }

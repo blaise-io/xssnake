@@ -40,5 +40,4 @@ export class PlayerRegistry {
     isHost(player: Player): boolean {
         return 0 === this.players.indexOf(player);
     }
-
 }

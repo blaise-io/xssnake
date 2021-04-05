@@ -1,5 +1,5 @@
 // Client-only extension of server/shared/const.js
-import {DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_UP} from "../shared/const";
+import { DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_UP } from "../shared/const";
 
 export const FRAME = 1000 / 60;
 export const MIN_FRAME_DELTA = 5;

@@ -63,12 +63,12 @@ export class Spawner {
         this._destructSpawn(index);
 
         switch (spawn.type) {
-        case SPAWN_APPLE:
-            this.game.hitApple(client, index);
-            break;
-        case SPAWN_POWERUP:
-            this.game.hitPowerup(client, index);
-            break;
+            case SPAWN_APPLE:
+                this.game.hitApple(client, index);
+                break;
+            case SPAWN_POWERUP:
+                this.game.hitPowerup(client, index);
+                break;
         }
     }
 
@@ -110,5 +110,4 @@ export class Spawner {
         this.spawns[index] = null;
         this.locations[index] = null;
     }
-
 }

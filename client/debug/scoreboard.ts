@@ -11,8 +11,7 @@ import { MessageBoxUI } from "../ui/messageBox";
 
 if (location.search.match(/debug=scoreboard/)) {
     State.menuSnake = new NeuteredMenuSnake();
-    setTimeout(function() {
-
+    setTimeout(function () {
         State.flow.destruct();
 
         State.shapes.innerBorder = innerBorder();
@@ -27,7 +26,7 @@ if (location.search.match(/debug=scoreboard/)) {
 
         const players = new ClientPlayerRegistry();
         for (let i = 0, m = 5; i < m; i++) {
-            const player = new Player("Player " + (i+1));
+            const player = new Player("Player " + (i + 1));
             if (i === 0) {
                 player.local = true;
             }
@@ -40,7 +39,7 @@ if (location.search.match(/debug=scoreboard/)) {
         scoreboard.ui.updateScoreboard();
         players.players.splice(2, 1); // PLayer 3 leaves.
         scoreboard.ui.debounceUpdate();
-        setTimeout(function() {
+        setTimeout(function () {
             players.add(new Player("Player 6")); // Player 6 joins.
             scoreboard.ui.debounceUpdate();
         }, 1000);
@@ -52,6 +51,5 @@ if (location.search.match(/debug=scoreboard/)) {
         //    setTimeout(increase, randomRange(0, 500));
         //}
         //increase();
-
     }, 200);
 }

@@ -12,7 +12,11 @@ export class ColorStage extends SelectStage {
         this.menu = new SelectMenu("COLOR SCHEME");
         for (let i = 0, m = colorSchemes.length; i < m; i++) {
             this.menu.addOption(
-                null, null, colorSchemes[i].title, colorSchemes[i].desc, this.setColor.bind(this)
+                null,
+                null,
+                colorSchemes[i].title,
+                colorSchemes[i].desc,
+                this.setColor.bind(this)
             );
         }
         this.menu.select(storage(STORAGE_COLOR));

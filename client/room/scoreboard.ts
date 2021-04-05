@@ -22,16 +22,8 @@ export class Scoreboard {
     }
 
     bindEvents() {
-        State.events.on(
-            NC_PLAYERS_SERIALIZE,
-            NS_SCORE,
-            this.ui.debounceUpdate.bind(this.ui)
-        );
-        State.events.on(
-            NC_SCORE_UPDATE,
-            NS_SCORE,
-            this.updatePlayerScores.bind(this)
-        );
+        State.events.on(NC_PLAYERS_SERIALIZE, NS_SCORE, this.ui.debounceUpdate.bind(this.ui));
+        State.events.on(NC_SCORE_UPDATE, NS_SCORE, this.updatePlayerScores.bind(this));
     }
 
     unbindEvents() {
@@ -43,5 +35,4 @@ export class Scoreboard {
         this.players.setScores(scoreArray);
         this.ui.debounceUpdate();
     }
-
 }

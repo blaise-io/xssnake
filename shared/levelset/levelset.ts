@@ -28,7 +28,7 @@ export class Levelset {
     preload(continueFn: Function) {
         let loaded = 0;
 
-        const checkAllLoaded = function() {
+        const checkAllLoaded = function () {
             if (++loaded === this.levels.length) {
                 continueFn();
             }
@@ -62,5 +62,4 @@ export class Levelset {
 
         return randomArrIndex(notPlayed);
     }
-
 }

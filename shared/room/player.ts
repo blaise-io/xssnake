@@ -1,13 +1,12 @@
 import { Snake } from "../snake";
 
 export class Player {
-
     connected: boolean;
     score: number;
     snake: Snake;
     local: boolean;
 
-    constructor(public name="") {
+    constructor(public name = "") {
         this.connected = false;
         this.score = 0;
         this.snake = null;
@@ -24,8 +23,7 @@ export class Player {
     serialize(local: boolean): [string, number] {
         return [
             this.name,
-            Number(this.connected) << 0 | Number(local) << 1 | this.score << 2,
+            (Number(this.connected) << 0) | (Number(local) << 1) | (this.score << 2),
         ];
     }
-
 }

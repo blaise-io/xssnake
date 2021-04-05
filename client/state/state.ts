@@ -8,13 +8,13 @@ import { AudioPlayer } from "../ui/audioPlayer";
 import { Canvas } from "../ui/canvas";
 
 export class State {
-    public static audio: AudioPlayer
-    public static canvas: Canvas
-    public static events: EventHandler
-    public static flow: StageFlow
-    public static shapes: Record<string, Shape>
-    public static levelsetRegistry: Registry
-    public static menuSnake: MenuSnake
-    public static keysBlocked = false
-    public static player: ClientSocketPlayer
+    public static audio: AudioPlayer;
+    public static canvas: Canvas;
+    public static events: EventHandler;
+    public static flow: StageFlow;
+    public static shapes: Record<string, Shape>;
+    public static levelsetRegistry: Registry;
+    public static menuSnake: MenuSnake;
+    public static keysBlocked = false;
+    public static player: ClientSocketPlayer;
 }

@@ -5,7 +5,7 @@ import { font } from "../ui/font";
 
 if (location.search.match(/debug=tab/)) {
     State.menuSnake = new NeuteredMenuSnake();
-    setTimeout(function() {
+    setTimeout(function () {
         State.shapes = {};
         const text = [
             "This line does not affect alignment.",

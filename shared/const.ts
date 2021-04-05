@@ -41,14 +41,18 @@ export const NC_SNAKE_UPDATE = 74;
 
 export const NC_XSS = 666;
 
-
 // Server EventEmitters
 export const SE_PLAYER_DISCONNECT = 101;
 export const SE_PLAYER_COLLISION = 102;
 
 export const HEARTBEAT_INTERVAL_MS = 5000;
 
-export const GAME_SHIFT_MAP = [[-1, 0], [0, -1], [1, 0], [0, 1]];
+export const GAME_SHIFT_MAP = [
+    [-1, 0],
+    [0, -1],
+    [1, 0],
+    [0, 1],
+];
 
 export const DIRECTION_LEFT = 0;
 export const DIRECTION_UP = 1;

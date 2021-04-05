@@ -7,8 +7,6 @@ export class Matcher {
         this.rooms = rooms;
     }
 
-
-
     destruct() {
         this.rooms = null;
     }
@@ -19,7 +17,8 @@ export class Matcher {
      */
     getRoomMatching(requestOptions): void {
         const rooms = this.rooms;
-        if (!requestOptions.isPrivate) { // Shortcut.
+        if (!requestOptions.isPrivate) {
+            // Shortcut.
             for (let i = 0, m = rooms.length; i < m; i++) {
                 const room = rooms[i];
                 if (room.isAwaitingPlayers()) {
@@ -31,5 +30,4 @@ export class Matcher {
         }
         return null;
     }
-
 }

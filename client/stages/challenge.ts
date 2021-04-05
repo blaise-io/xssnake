@@ -21,28 +21,34 @@ export class ChallengeStage extends InputStage {
 
         this.maxwidth = 80;
         this.header = "DANGER DANGER";
-        this.label = "" +
+        this.label =
+            "" +
             "XSS mode allows the winner of a game to execute " +
             "JavaScript in the browser of every loser. This may " +
             "damage you and/or your computer. To confirm that " +
             "you know JavaScript and accept the risk, enter the " +
             "result of the following statement:\n\n> " +
-            this._challenge + "\n> ";
+            this._challenge +
+            "\n> ";
 
         this.next = InputXssStage;
     }
 
     inputSubmit(error, value, top) {
-        let shape; let text = "ACCESS DENIED!!";
+        let shape;
+        let text = "ACCESS DENIED!!";
 
         // Evalevaleval!!!
         // Tolerate answers where user is quoting strings.
         if (value.replace(/['"]/g, "").trim() === String(eval(this._challenge))) {
             text = "> bleep!";
             State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
-            setTimeout(function() {
-                State.flow.switchStage(this.next);
-            }.bind(this), 1000);
+            setTimeout(
+                function () {
+                    State.flow.switchStage(this.next);
+                }.bind(this),
+                1000
+            );
         }
 
         shape = font(text, MENU_LEFT, top);
@@ -72,10 +78,12 @@ export class ChallengeStage extends InputStage {
         "var A=%d;A++;++A;A+=1; A;",
         "var A=%d;A--;--A;A-=1; A;",
         '"%d"+%d',
-    ]
+    ];
 
     _getRandomChallenge() {
-        let randomStr; let randomDigit; let challenge;
+        let randomStr;
+        let randomDigit;
+        let challenge;
 
         randomStr = randomStr().substr(0, 3).toUpperCase();
         randomDigit = String(randomRange(0, 5));

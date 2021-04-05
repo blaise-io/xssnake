@@ -8,11 +8,10 @@ import { Player } from "../../shared/room/player";
 import { ClientSnake } from "../game/clientSnake";
 
 export class ClientPlayer extends Player {
-
     snake: ClientSnake;
     local: boolean;
 
-    constructor(name="") {
+    constructor(name = "") {
         super(name);
         this.snake = null;
         this.local = false;
@@ -33,13 +32,11 @@ export class ClientPlayer extends Player {
      * @param {level.Level} level
      */
     setSnake(index, level): void {
-        this.snake = new ClientSnake(
-            index, this.local, this.name, level
-        );
-    }    unsetSnake() {
+        this.snake = new ClientSnake(index, this.local, this.name, level);
+    }
+    unsetSnake() {
         if (this.snake) {
             this.snake.destruct();
         }
     }
-
 }

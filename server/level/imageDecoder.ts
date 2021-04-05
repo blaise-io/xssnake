@@ -6,9 +6,12 @@ export class ImageDecoder {
     constructor(data: string) {
         this.successFn = () => {};
         const buffer = new Buffer(data, "base64");
-        png.parse(buffer, function(err, data) {
-            this.successFn(data);
-        }.bind(this));
+        png.parse(
+            buffer,
+            function (err, data) {
+                this.successFn(data);
+            }.bind(this)
+        );
     }
 
     then(successFn: CallableFunction): void {

@@ -23,12 +23,7 @@ export class AudioPlayer {
      * @param {string} file
      */
     play(file): void {
-        if (
-            this.files &&
-            this.files[file] &&
-            !storage(STORAGE_MUTE) &&
-            State.canvas.focus
-        ) {
+        if (this.files && this.files[file] && !storage(STORAGE_MUTE) && State.canvas.focus) {
             new Audio("data:" + this.mimetype + ";base64," + this.files[file]).play();
         }
     }
@@ -44,9 +39,9 @@ export class AudioPlayer {
             // Prefer ogg over mp3 because of this Firefox bug:
             // https://bugzilla.mozilla.org/show_bug.cgi?id=849264
             if (audioElement.canPlayType(mimetypes.ogg).replace(/no/, "")) {
-                return {mimetype: mimetypes.ogg, files: OGG_FILES};
+                return { mimetype: mimetypes.ogg, files: OGG_FILES };
             } else if (audioElement.canPlayType(mimetypes.mp3).replace(/no/, "")) {
-                return {mimetype: mimetypes.mp3, files: MP3_FILES};
+                return { mimetype: mimetypes.mp3, files: MP3_FILES };
             }
         }
 
@@ -60,5 +55,4 @@ export class AudioPlayer {
             this.files = audioFiles.files;
         }
     }
-
 }

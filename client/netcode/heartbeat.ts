@@ -15,10 +15,7 @@ export class ClientHeartbeat {
         this.bindEvents();
         this.ping();
 
-        this.interval = window.setInterval(
-            this.ping.bind(this),
-            HEARTBEAT_INTERVAL_MS
-        );
+        this.interval = window.setInterval(this.ping.bind(this), HEARTBEAT_INTERVAL_MS);
     }
 
     destruct() {
@@ -46,5 +43,4 @@ export class ClientHeartbeat {
         this.player.emit(NC_PONG);
         this.pingSent = null;
     }
-
 }

@@ -20,13 +20,8 @@ export class ServerGame {
 
         this.bindEvents();
 
-        this.tickInterval = setInterval(
-            this.handleTick.bind(this),
-            SERVER_TICK_INTERVAL
-        );
+        this.tickInterval = setInterval(this.handleTick.bind(this), SERVER_TICK_INTERVAL);
     }
-
-
 
     destruct() {
         clearInterval(this.tickInterval);
@@ -109,7 +104,8 @@ export class ServerGame {
     }
 
     handleCrashingPlayers(tick) {
-        const collisions = []; let crashingPlayers;
+        const collisions = [];
+        let crashingPlayers;
 
         crashingPlayers = this.players.getCollisionsOnTick(tick);
 
@@ -117,11 +113,7 @@ export class ServerGame {
             for (let i = 0, m = crashingPlayers.length; i < m; i++) {
                 const snake = crashingPlayers[i].snake;
                 snake.crashed = true;
-                collisions.push([
-                    snake.index,
-                    snake.parts,
-                    snake.collision.serialize(),
-                ]);
+                collisions.push([snake.index, snake.parts, snake.collision.serialize()]);
             }
 
             // Emit crashed snakes.
@@ -141,5 +133,4 @@ export class ServerGame {
         snake.parts = move.parts;
         snake.trimParts();
     }
-
 }

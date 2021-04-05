@@ -8,8 +8,13 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { line } from "../../shared/shapeGenerator";
 
-export function outline(shape, hPadding=6, vPadding=6, round=true) {
-    let r; let x0; let x1; let y0; let y1; let bbox = shape.bbox();
+export function outline(shape, hPadding = 6, vPadding = 6, round = true) {
+    let r;
+    let x0;
+    let x1;
+    let y0;
+    let y1;
+    let bbox = shape.bbox();
 
     r = round ? 1 : 0;
 
@@ -28,11 +33,11 @@ export function outline(shape, hPadding=6, vPadding=6, round=true) {
     y1 = bbox.y1 + vPadding;
 
     shape.add(
-        line(x0, y0+1, x0, y1),      // Left
-        line(x0+r, y0, x1-r, y0),    // Top
-        line(x1, y0+1, x1, y1),      // Right
-        line(x0, y1, x1, y1),        // Bottom
-        line(x0+r, y1+1, x1-r, y1+1) // Bottom 2
+        line(x0, y0 + 1, x0, y1), // Left
+        line(x0 + r, y0, x1 - r, y0), // Top
+        line(x1, y0 + 1, x1, y1), // Right
+        line(x0, y1, x1, y1), // Bottom
+        line(x0 + r, y1 + 1, x1 - r, y1 + 1) // Bottom 2
     );
 
     // Don't clear the missing pixel in the corners
@@ -48,10 +53,10 @@ export function outline(shape, hPadding=6, vPadding=6, round=true) {
  * @param {number=} yshift
  * @return {PixelCollection}
  */
-export function zoomIn(pixels, xshift=0, yshift=0) {
+export function zoomIn(pixels, xshift = 0, yshift = 0) {
     const ret = new PixelCollection();
 
-    pixels.each(function(x,y) {
+    pixels.each(function (x, y) {
         const xx = x * 2 + xshift;
         const yy = y * 2 + yshift;
         ret.add(xx, yy);
@@ -71,7 +76,7 @@ export function zoomIn(pixels, xshift=0, yshift=0) {
  * @param {boolean=} antiAlising
  * @return {PixelCollection}
  */
-export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
+export function zoom(zoomlevel, pixels, shiftX = 0, shiftY = 0, antiAlising = true) {
     let zoomedPixels;
 
     shiftX = shiftX || 0;
@@ -87,7 +92,7 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
     }
 
     if (antiAlising !== false) {
-        pixels.each(function(x, y) {
+        pixels.each(function (x, y) {
             for (let dirX = -1; dirX <= 1; dirX += 2) {
                 for (let dirY = -1; dirY <= 1; dirY += 2) {
                     handlePixel(x, y, dirX, dirY);
@@ -97,7 +102,8 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
     }
 
     function add(dirX, dirY, x, y) {
-        let baseY; let baseX;
+        let baseY;
+        let baseX;
 
         baseX = x * zoomlevel + shiftX;
         baseY = y * zoomlevel + shiftY;
@@ -124,7 +130,8 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
     //  XX
     //   X
     function addX4s(baseX, dirX2, baseY, dirY2) {
-        let compX; let compY;
+        let compX;
+        let compY;
 
         compX = baseX + (dirX2 === -1 ? 0 : 3);
         compY = baseY + (dirY2 === -1 ? 0 : 3);
@@ -140,52 +147,49 @@ export function zoom(zoomlevel, pixels, shiftX=0, shiftY=0, antiAlising=true) {
     function handlePixel(x, y, dirX, dirY) {
         // !X
         // #!
-        if (!pixels.has(x, y - dirY) &&
+        if (
+            !pixels.has(x, y - dirY) &&
             !pixels.has(x + dirX, y) &&
-            pixels.has(x + dirX, y - dirY)) {
+            pixels.has(x + dirX, y - dirY)
+        ) {
             add(dirX, dirY, x, y - dirY);
         }
 
         // !X
         // #X
-        if (!pixels.has(x - dirX, y - dirY - dirY) &&
+        if (
+            !pixels.has(x - dirX, y - dirY - dirY) &&
             !pixels.has(x - dirX, y - dirY) &&
             !pixels.has(x, y - dirY - dirY) &&
             !pixels.has(x, y - dirY) &&
             pixels.has(x + dirX, y) &&
-            pixels.has(x + dirX, y - dirY) && (
-        // !XX
-        // #X
-        // Fixes: 0
-            pixels.has(x + dirX + dirX, y - dirY) ||
+            pixels.has(x + dirX, y - dirY) &&
+            // !XX
+            // #X
+            // Fixes: 0
+            (pixels.has(x + dirX + dirX, y - dirY) ||
                 //  !X
                 // !X!
                 // #X
                 // Fixes: z, Z, 2
-                (
-                    pixels.has(x + dirX + dirX, y - dirY - dirY) &&
+                (pixels.has(x + dirX + dirX, y - dirY - dirY) &&
                     !pixels.has(x + dirX, y - dirY - dirY) &&
-                    !pixels.has(x + dirX + dirX, y - dirY)
-                ) ||
+                    !pixels.has(x + dirX + dirX, y - dirY)) ||
                 //  !X!
                 //  #X!
                 //   X!
                 //   XO
                 //    O
                 // Fixes: 1, 4, M, N
-                (
-                    pixels.has(x + dirX, y + dirY) &&
+                (pixels.has(x + dirX, y + dirY) &&
                     pixels.has(x + dirX, y + dirY + dirY) &&
                     !pixels.has(x - dirX, y) &&
                     !pixels.has(x + dirX + dirX, y - dirY) &&
                     !pixels.has(x + dirX + dirX, y) &&
-                    !pixels.has(x + dirX + dirX, y + dirY) && (
-                        !pixels.has(x - dirX, y + dirY + dirY) || // Exclude b, d, p
+                    !pixels.has(x + dirX + dirX, y + dirY) &&
+                    (!pixels.has(x - dirX, y + dirY + dirY) || // Exclude b, d, p
                         pixels.has(x + dirX + dirX, y + dirY + dirY + dirY) || // 1
-                        pixels.has(x + dirX + dirX, y + dirY + dirY)  // 4
-                    )
-                )
-        )
+                        pixels.has(x + dirX + dirX, y + dirY + dirY)))) // 4
         ) {
             add(dirX, dirY, x, y - dirY);
         }

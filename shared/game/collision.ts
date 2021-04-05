@@ -13,5 +13,4 @@ export class Collision {
     serialize() {
         return this.location;
     }
-
 }

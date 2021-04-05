@@ -17,7 +17,7 @@ export class EventHandler {
         }
     }
 
-    on(topic: number|string, key: string, callback: CallableFunction): void {
+    on(topic: number | string, key: string, callback: CallableFunction): void {
         if (!this._topics[topic]) {
             this._topics[topic] = {};
         }
@@ -31,15 +31,15 @@ export class EventHandler {
         }
     }
 
-    once(topic: number|string, key: string, callback: CallableFunction): void {
-        const callbackAndOff = function(...args) {
+    once(topic: number | string, key: string, callback: CallableFunction): void {
+        const callbackAndOff = function (...args) {
             callback(...args);
             this.off(topic, key);
         }.bind(this);
         this.on(topic, key, callbackAndOff);
     }
 
-    off(topic: number|string, key?: string): void {
+    off(topic: number | string, key?: string): void {
         let callback;
         if (topic in this._topics) {
             if (typeof key !== "undefined") {

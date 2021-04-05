@@ -21,8 +21,6 @@ export class ServerRoundSet {
         this.bindEvents();
     }
 
-
-
     destruct() {
         this.roomEmitter.removeAllListeners(SE_PLAYER_COLLISION);
         clearTimeout(this.nextRoundTimeout);
@@ -53,16 +51,17 @@ export class ServerRoundSet {
             // TODO
         } else if (!this.round.wrappingUp) {
             this.round.wrapUp(winner);
-            this.nextRoundTimeout = setTimeout(
-                this.startNewRound.bind(this), delay * 1000
-            );
+            this.nextRoundTimeout = setTimeout(this.startNewRound.bind(this), delay * 1000);
         }
     }
 
     startNewRound() {
         this.round.destruct();
         this.round = new ServerRound(
-            this.roomEmitter, this.players, this.options, this.levelPlayset
+            this.roomEmitter,
+            this.players,
+            this.options,
+            this.levelPlayset
         );
         this.round.emitAll();
         this.players.removeDisconnectedPlayers();
@@ -82,7 +81,7 @@ export class ServerRoundSet {
     }
 
     hasStarted() {
-        return (this.roundIndex >= 1 || this.round.started);
+        return this.roundIndex >= 1 || this.round.started;
     }
 
     detectAutostart(full) {
@@ -90,5 +89,4 @@ export class ServerRoundSet {
             this.round.toggleCountdown(true);
         }
     }
-
 }

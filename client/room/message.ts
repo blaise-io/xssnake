@@ -25,5 +25,4 @@ export class Message {
     getOffset() {
         return this.author === null ? 0 : fontWidth(this.notificationPrefix);
     }
-
 }

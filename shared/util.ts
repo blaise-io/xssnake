@@ -81,7 +81,7 @@ export function randomArrIndex(arr) {
  * @param {number=} len
  * @return {string}
  */
-export function randomStr(len=3) {
+export function randomStr(len = 3) {
     return Math.random().toString(36).substr(2, len);
 }
 
@@ -154,7 +154,8 @@ export function getKey(obj, val) {
  */
 export function sort(arr) {
     for (let i = 1; i < arr.length; i++) {
-        const tmp = arr[i]; let index = i;
+        const tmp = arr[i];
+        let index = i;
         while (arr[index - 1] > tmp) {
             arr[index] = arr[index - 1];
             --index;
@@ -169,8 +170,10 @@ export function sort(arr) {
  * @param {Function} fn
  * @param {string|number=} label
  */
-export function benchmark(iterations, fn, label="") {
-    let duration; let i = iterations; const start = +new Date();
+export function benchmark(iterations, fn, label = "") {
+    let duration;
+    let i = iterations;
+    const start = +new Date();
     while (i--) {
         fn();
     }
@@ -187,10 +190,46 @@ export function benchmark(iterations, fn, label="") {
  */
 export function getRandomName() {
     const name = randomArrItem([
-        "Ant", "Bat", "Bear", "Bird", "Cat", "Cow", "Crab", "Croc", "Deer",
-        "Dodo", "Dog", "Duck", "Emu", "Fish", "Fly", "Fox", "Frog", "Goat",
-        "Hare", "Ibis", "Kiwi", "Lion", "Lynx", "Miao", "Mole", "Moth", "Mule",
-        "Oger", "Pig", "Pika", "Poke", "Puma", "Puss", "Rat", "Seal", "Swan",
-        "Wasp", "Wolf", "Yak", "Zeb"]);
+        "Ant",
+        "Bat",
+        "Bear",
+        "Bird",
+        "Cat",
+        "Cow",
+        "Crab",
+        "Croc",
+        "Deer",
+        "Dodo",
+        "Dog",
+        "Duck",
+        "Emu",
+        "Fish",
+        "Fly",
+        "Fox",
+        "Frog",
+        "Goat",
+        "Hare",
+        "Ibis",
+        "Kiwi",
+        "Lion",
+        "Lynx",
+        "Miao",
+        "Mole",
+        "Moth",
+        "Mule",
+        "Oger",
+        "Pig",
+        "Pika",
+        "Poke",
+        "Puma",
+        "Puss",
+        "Rat",
+        "Seal",
+        "Swan",
+        "Wasp",
+        "Wolf",
+        "Yak",
+        "Zeb",
+    ]);
     return name + "." + randomRange(10, 99);
 }

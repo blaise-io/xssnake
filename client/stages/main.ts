@@ -40,9 +40,7 @@ export class MainStage extends SelectStage {
     private _getMenu(): SelectMenu {
         const name = storage(STORAGE_NAME) as string;
 
-        const header = name ?
-            "YAY " + name.toUpperCase() + " IS BACK!" :
-            "MULTIPLAYER SNAKE!";
+        const header = name ? "YAY " + name.toUpperCase() + " IS BACK!" : "MULTIPLAYER SNAKE!";
 
         const menu = new SelectMenu(header, COPY_MAIN_INSTRUCT);
         menu.addOption(null, QuickGame, "QUICK GAME");

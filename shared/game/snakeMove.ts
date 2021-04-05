@@ -58,7 +58,8 @@ export class SnakeMove {
 
         for (let i = 0, m = players.length; i < m; i++) {
             const opponentSnake = players[i].snake;
-            if (opponentSnake.crashed === false &&
+            if (
+                opponentSnake.crashed === false &&
                 opponentSnake !== this.snake &&
                 opponentSnake.hasPart(part)
             ) {
@@ -68,5 +69,4 @@ export class SnakeMove {
 
         return null;
     }
-
 }

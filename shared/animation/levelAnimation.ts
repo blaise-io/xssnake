@@ -35,11 +35,8 @@ export class LevelAnimation {
         const shapeCollections = [];
         this._progressMs += delta;
         for (let i = 0, m = this._animations.length; i < m; i++) {
-            shapeCollections.push(
-                this._animations[i].update(this._progressMs, gameStarted)
-            );
+            shapeCollections.push(this._animations[i].update(this._progressMs, gameStarted));
         }
         return shapeCollections;
     }
-
 }

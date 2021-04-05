@@ -1,6 +1,13 @@
 import { Shape } from "../../shared/shape";
 import {
-    DOM_EVENT_KEYDOWN, KEY_ENTER, KEY_ESCAPE, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS_INPUT, NS_STAGES,
+    DOM_EVENT_KEYDOWN,
+    KEY_ENTER,
+    KEY_ESCAPE,
+    MENU_LEFT,
+    MENU_TOP,
+    MENU_WIDTH,
+    NS_INPUT,
+    NS_STAGES,
     STORAGE_NAME,
 } from "../const";
 import { InputField } from "../stage_class_helper/inputField";
@@ -12,25 +19,25 @@ import { storage } from "../util/clientUtil";
 
 export class InputStage {
     private _shape: Shape;
-    private fontOptions = {wrap: MENU_LEFT + MENU_WIDTH - 25};
+    private fontOptions = { wrap: MENU_LEFT + MENU_WIDTH - 25 };
     private _inputTop = MENU_TOP + 17;
     public value: string;
     private input: InputField;
 
     constructor() {
-        this.value = storage(STORAGE_NAME) as string || "";
+        this.value = (storage(STORAGE_NAME) as string) || "";
         this._shape = this._getShape();
     }
 
-    name = ""
-    header = ""
-    label = ""
-    next: any = InputStage // TODO: StageInterface
+    name = "";
+    header = "";
+    label = "";
+    next: any = InputStage; // TODO: StageInterface
 
-    minlength = 0
-    maxChars = 0
-    maxwidth = 0
-    displayWidth = 0
+    minlength = 0;
+    maxChars = 0;
+    maxwidth = 0;
+    displayWidth = 0;
 
     getShape(): Shape {
         return this._shape;
@@ -72,14 +79,12 @@ export class InputStage {
     }
 
     private _setupInputField(): InputField {
-        const input = new InputField(
-            MENU_LEFT, this._inputTop, this.label, this.fontOptions
-        );
+        const input = new InputField(MENU_LEFT, this._inputTop, this.label, this.fontOptions);
 
         input.maxValWidth = this.maxwidth || input.maxValWidth;
         input.displayWidth = this.displayWidth || input.displayWidth;
 
-        input.callback = function(value) {
+        input.callback = function (value) {
             console.log(value, this, "UPD");
             this.value = value;
         }.bind(this);
@@ -102,19 +107,14 @@ export class InputStage {
         let value;
         let top;
         switch (ev.keyCode) {
-        case KEY_ESCAPE:
-            State.flow.previousStage();
-            ev.preventDefault();
-            break;
-        case KEY_ENTER:
-            value = this.value.trim();
-            top = fontHeight(
-                this.label,
-                MENU_LEFT,
-                this._inputTop,
-                this.fontOptions
-            );
-            this.inputSubmit(this._getInputError(value), value, top);
+            case KEY_ESCAPE:
+                State.flow.previousStage();
+                ev.preventDefault();
+                break;
+            case KEY_ENTER:
+                value = this.value.trim();
+                top = fontHeight(this.label, MENU_LEFT, this._inputTop, this.fontOptions);
+                this.inputSubmit(this._getInputError(value), value, top);
         }
     }
 
@@ -141,9 +141,6 @@ export class InputStage {
 
     private _getDataShape(): Shape {
         const value = this.label + this.value;
-        return new Shape(fontPixels(
-            value, MENU_LEFT, this._inputTop, this.fontOptions
-        ));
+        return new Shape(fontPixels(value, MENU_LEFT, this._inputTop, this.fontOptions));
     }
-
 }
