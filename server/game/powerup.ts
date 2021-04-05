@@ -18,7 +18,7 @@ export class Powerup {
      * @private
      */
     _triggerPowerup() {
-        var i, m, random, powerups, cumulative = 0;
+        let i, m, random, powerups, cumulative = 0;
 
         powerups = this._getPowerups();
 
@@ -42,7 +42,7 @@ export class Powerup {
      * @private
      */
     _getPowerups() {
-        var rank, gainful, neutral, harmful, rounds;
+        let rank, gainful, neutral, harmful, rounds;
 
         rounds = this.room.rounds;
         rank = rounds.score.rank(this.client);
@@ -97,7 +97,7 @@ export class Powerup {
      * @private
      */
     _others() {
-        var clients = this.room.players.slice();
+        let clients = this.room.players.slice();
         clients.splice(this.client.model.index, 1);
         return clients;
     }
@@ -108,12 +108,12 @@ export class Powerup {
      * @private
      */
     _resetState(delay, callback): void {
-        var timer = setTimeout(callback, delay);
+        let timer = setTimeout(callback, delay);
         this.game.timeouts.push(timer);
     }
 
     _speedIncPerm() {
-        var room = this.room,
+        let room = this.room,
             index = this.client.model.index,
             snake = this.client.snake;
         snake.speed -= 15;
@@ -145,9 +145,9 @@ export class Powerup {
      * @private
      */
     _speed(clients, delta, label, duration): void {
-        var room = this.room;
-        for (var i = 0, m = clients.length; i < m; i++) {
-            var index = clients[i].model.index,
+        let room = this.room;
+        for (let i = 0, m = clients.length; i < m; i++) {
+            let index = clients[i].model.index,
                 snake = clients[i].snake;
             snake.speed += delta;
             room.buffer(NC_SNAKE_SPEED, [index, snake.speed]);
@@ -156,8 +156,8 @@ export class Powerup {
         room.flush();
 
         this._resetState(duration, function() {
-            for (var i = 0, m = clients.length; i < m; i++) {
-                var index = clients[i].model.index,
+            for (let i = 0, m = clients.length; i < m; i++) {
+                let index = clients[i].model.index,
                     snake = clients[i].snake;
                 snake.speed -= delta;
                 room.buffer(NC_SNAKE_SPEED, [index, snake.speed]);
@@ -167,12 +167,12 @@ export class Powerup {
     }
 
     _spawnApples() {
-        var r = randomRange(3, 10);
+        let r = randomRange(3, 10);
         this._spawn(SPAWN_APPLE, r, '+Apples');
     }
 
     _spawnPowerups() {
-        var r = randomRange(2, 5);
+        let r = randomRange(2, 5);
         this._spawn(SPAWN_POWERUP, r, '+Power-ups');
     }
 
@@ -183,7 +183,7 @@ export class Powerup {
      * @private
      */
     _spawn(type, amount, message): void {
-        var index, spawn, game = this.game;
+        let index, spawn, game = this.game;
 
         index = this.client.model.index;
 class         spawn {
@@ -192,7 +192,7 @@ class         spawn {
 
         game.room.emit(NC_SNAKE_ACTION, [index, message]);
 
-        for (var i = 0; i < amount; i++) {
+        for (let i = 0; i < amount; i++) {
             setTimeout(spawn, i * 100);
         }
     }
@@ -210,8 +210,8 @@ class         spawn {
      * @private
      */
     _reverse(clients): void {
-        var snake, room = this.room;
-        for (var i = 0, m = clients.length; i < m; i++) {
+        let snake, room = this.room;
+        for (let i = 0, m = clients.length; i < m; i++) {
             snake = clients[i].snake;
             snake.reverse();
             room.buffer(NC_SNAKE_ACTION, [i, 'Reverse']);
@@ -243,9 +243,9 @@ class         spawn {
      * @private
      */
     _tail(clients, delta, message): void {
-        var room = this.room;
-        for (var i = 0, m = clients.length; i < m; i++) {
-            var index = clients[i].model.index,
+        let room = this.room;
+        for (let i = 0, m = clients.length; i < m; i++) {
+            let index = clients[i].model.index,
                 snake = clients[i].snake;
             snake.size = Math.max(1, snake.size + delta);
             room.buffer(NC_SNAKE_ACTION, [index, message]);

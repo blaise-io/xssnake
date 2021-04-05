@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 /**
  * @constructor
  */
-xss.room.ClientRoom = function() {
-    this.key = '';
+xss.room.ClientRoom = function () {
+    this.key = "";
 
     this.players = new xss.room.ClientPlayerRegistry();
     this.options = new xss.room.ClientOptions();
@@ -17,8 +17,7 @@ xss.room.ClientRoom = function() {
 };
 
 xss.room.ClientRoom.prototype = {
-
-    destruct: function() {
+    destruct: function () {
         xss.util.hash();
         this.unbindEvents();
         this.players.destruct();
@@ -28,7 +27,7 @@ xss.room.ClientRoom.prototype = {
         this.scoreboard.destruct();
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
         xss.event.on(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM, this.setRoom.bind(this));
         xss.event.on(xss.NC_OPTIONS_SERIALIZE, xss.NS_ROOM, this.updateOptions.bind(this));
         xss.event.on(xss.NC_PLAYERS_SERIALIZE, xss.NS_ROOM, this.updatePlayers.bind(this));
@@ -40,28 +39,28 @@ xss.room.ClientRoom.prototype = {
         //xss.event.on(xss.NC_XSS, xss.NS_ROOM, this._evalXss.bind(this));
     },
 
-    unbindEvents: function() {
+    unbindEvents: function () {
         xss.event.off(xss.NC_ROOM_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.NC_OPTIONS_SERIALIZE, xss.NS_ROOM);
         xss.event.off(xss.NC_PLAYERS_SERIALIZE, xss.NS_ROOM);
     },
 
-    setupComponents: function() {
+    setupComponents: function () {
         this.roundSet.setupRound();
         this.scoreboard = new xss.room.Scoreboard(this.players);
         this.messageBox = new xss.room.MessageBox(this.players);
     },
 
-    setRoom: function(serializedRoom) {
+    setRoom: function (serializedRoom) {
         this.key = serializedRoom[0];
         xss.util.hash(xss.HASH_ROOM, this.key);
     },
 
-    updateOptions: function(serializedOptions) {
+    updateOptions: function (serializedOptions) {
         this.options.deserialize(serializedOptions);
     },
 
-    updatePlayers: function(serializedPlayers) {
+    updatePlayers: function (serializedPlayers) {
         if (this.roundSet.round && this.roundSet.round.isMidgame()) {
             this.players.deserialize(serializedPlayers);
         } else {
@@ -70,9 +69,10 @@ xss.room.ClientRoom.prototype = {
         xss.event.trigger(xss.EV_PLAYERS_UPDATED, this.players);
     },
 
-    ncNotifySnakesCrashed: function(serializedCollisions) {
-        var notification = '', names = this.players.getNames();
-        for (var i = 0, m = serializedCollisions.length; i < m; i++) {
+    ncNotifySnakesCrashed: function (serializedCollisions) {
+        let notification = "",
+            names = this.players.getNames();
+        for (let i = 0, m = serializedCollisions.length; i < m; i++) {
             notification += names[serializedCollisions[i][0]];
 
             if (i + 1 === m) {
@@ -83,29 +83,30 @@ xss.room.ClientRoom.prototype = {
                 notification += xss.COPY_COMMA_SPACE;
             }
 
-            if (1 === i % 2 || m === i + 1) { // Line end.
-                if (i + 1 < m) { // Continuing.
+            if (1 === i % 2 || m === i + 1) {
+                // Line end.
+                if (i + 1 < m) {
+                    // Continuing.
                     notification += xss.COPY_ELLIPSIS;
                 }
                 this.messageBox.addNotification(notification);
-                notification = '';
+                notification = "";
             }
         }
         this.messageBox.ui.debounceUpdate();
-    }
+    },
 
-//    /**
-//     * @param {Array.<string>} names
-//     * @return {Array.<string>}
-//     * @private
-//     */
-//    _sanitizeNames: function(names) {
-//        for (var i = 0, m = names.length; i < m; i++) {
-//            while (xss.font.width(names[i]) > xss.UI_WIDTH_NAME) {
-//                names[i] = names[i].slice(0, -1);
-//            }
-//        }
-//        return names;
-//    }
-
+    //    /**
+    //     * @param {Array.<string>} names
+    //     * @return {Array.<string>}
+    //     * @private
+    //     */
+    //    _sanitizeNames: function(names) {
+    //        for (let i = 0, m = names.length; i < m; i++) {
+    //            while (xss.font.width(names[i]) > xss.UI_WIDTH_NAME) {
+    //                names[i] = names[i].slice(0, -1);
+    //            }
+    //        }
+    //        return names;
+    //    }
 };

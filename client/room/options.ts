@@ -1,7 +1,3 @@
-/**
- * @constructor
- * @extends {room.Options}
- */
 import { Options } from "../../shared/room/options";
 import {
     FIELD_LEVEL_SET,
@@ -18,12 +14,12 @@ export class ClientOptions extends Options {
         this.levelset = State.levelsetRegistry.getRandomLevelsetIndex();
     }
 
-    setOptionsFromForm(indexedOptions) {
+    setOptionsFromForm(indexedOptions: (number | boolean)[]): void {
         this.isQuickGame = false;
-        this.maxPlayers = indexedOptions[FIELD_MAX_PLAYERS];
-        this.levelset = indexedOptions[FIELD_LEVEL_SET];
-        this.hasPowerups = indexedOptions[FIELD_POWERUPS];
-        this.isPrivate = indexedOptions[FIELD_PRIVATE];
-        this.isXSS = indexedOptions[FIELD_XSS];
+        this.maxPlayers = indexedOptions[FIELD_MAX_PLAYERS] as number;
+        this.levelset = indexedOptions[FIELD_LEVEL_SET] as number;
+        this.hasPowerups = indexedOptions[FIELD_POWERUPS] as boolean;
+        this.isPrivate = indexedOptions[FIELD_PRIVATE] as boolean;
+        this.isXSS = indexedOptions[FIELD_XSS] as boolean;
     }
 }

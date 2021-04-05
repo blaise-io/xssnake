@@ -17,7 +17,7 @@ LevelPlayset = function(levelsetIndex) {
     }
 
     getNext() {
-        var nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);
+        let nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);
         this.played.push(nextLevelsetIndex);
         return nextLevelsetIndex;
     }

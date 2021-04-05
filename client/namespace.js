@@ -1,2 +1,2 @@
-'use strict';
-var xss = {};
+"use strict";
+const xss = {};

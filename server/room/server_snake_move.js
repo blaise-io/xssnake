@@ -1,6 +1,6 @@
 "use strict";
 
-xss.game.ServerSnakeMove = function(dirtyMove, player) {
+xss.game.ServerSnakeMove = function (dirtyMove, player) {
     this.dirtyMove = dirtyMove;
     this.player = player;
     this.parts = null;
@@ -9,16 +9,15 @@ xss.game.ServerSnakeMove = function(dirtyMove, player) {
 };
 
 xss.game.ServerSnakeMove.prototype = {
-
-    isValid: function() {
+    isValid: function () {
         if (this.isValidJson()) {
             this.status = this.getStatus();
             return xss.VALIDATE_SUCCES === this.status;
         }
     },
 
-    isValidJson: function() {
-        var snake, parts, direction;
+    isValidJson: function () {
+        let snake, parts, direction;
 
         snake = new xss.util.Sanitizer(this.dirtyMove);
         snake.assertArrayLengthBetween(2, 2);
@@ -47,8 +46,8 @@ xss.game.ServerSnakeMove.prototype = {
         return true;
     },
 
-    getStatus: function() {
-        var numSyncParts, serverParts, commonPartIndices, mismatches, snake, clientParts;
+    getStatus: function () {
+        let numSyncParts, serverParts, commonPartIndices, mismatches, snake, clientParts;
 
         snake = this.player.snake;
         clientParts = this.parts;
@@ -91,10 +90,11 @@ xss.game.ServerSnakeMove.prototype = {
      * @param {Array.<Array>} parts
      * @return {boolean}
      */
-    hasGaps: function(parts) {
-        for (var i = 1, m = parts.length; i < m; i++) {
+    hasGaps: function (parts) {
+        for (let i = 1, m = parts.length; i < m; i++) {
             // Sanity check
-            if (parts[i].length !== 2 ||
+            if (
+                parts[i].length !== 2 ||
                 typeof parts[i][0] !== "number" ||
                 typeof parts[i][1] !== "number"
             ) {
@@ -113,15 +113,14 @@ xss.game.ServerSnakeMove.prototype = {
      * @param {Array.<Array>} serverParts
      * @return {Array.<Array>} common
      */
-    getCommonPartIndices: function(clientParts, serverParts) {
-        for (var i = clientParts.length - 1; i >= 0; i--) {
-            for (var ii = serverParts.length - 1; ii >= 0; ii--) {
+    getCommonPartIndices: function (clientParts, serverParts) {
+        for (let i = clientParts.length - 1; i >= 0; i--) {
+            for (let ii = serverParts.length - 1; ii >= 0; ii--) {
                 if (xss.util.eq(clientParts[i], serverParts[ii])) {
                     return [i, ii];
                 }
             }
         }
         return null;
-    }
-
+    },
 };

@@ -152,8 +152,8 @@ export function tooltipName(text, part, direction) {
  */
 export function showAction(label, coordinate, duration, amount = 3) {
     for (let s = 0; s <= duration * amount; s += duration) {
-        var shape;
-        var name;
+        let shape;
+        let name;
         shape = font(
             label,
             coordinate[0] * GAME_TILE + randomRange(-12, 12),

@@ -4,13 +4,12 @@
  * @param {xss.room.ServerPlayerRegistry} players
  * @constructor
  */
-xss.game.ServerScore = function(players) {
+xss.game.ServerScore = function (players) {
     this.players = players;
 };
 
 xss.game.ServerScore.prototype = {
-
-    destruct: function() {
+    destruct: function () {
         this.players = null;
     },
 
@@ -19,16 +18,17 @@ xss.game.ServerScore.prototype = {
      * @param {xss.level.Level} level
      * @return {boolean} Player score is affected.
      */
-    update: function(crashedPlayers, level) {
-        var points, scoreUpdated = false;
+    update: function (crashedPlayers, level) {
+        let points,
+            scoreUpdated = false;
         if (!level) {
             console.error("FIXME");
             return false;
         }
         points = crashedPlayers.length * level.config.pointsKnockout;
         if (points) {
-            for (var i = 0, m = this.players.players.length; i < m; i++) {
-                var player = this.players.players[i];
+            for (let i = 0, m = this.players.players.length; i < m; i++) {
+                const player = this.players.players[i];
                 if (-1 === crashedPlayers.indexOf(player) && !player.snake.crashed) {
                     player.score += points;
                     scoreUpdated = true;
@@ -43,23 +43,23 @@ xss.game.ServerScore.prototype = {
     /**
      * @return {Array.<number>}
      */
-    serialize: function() {
-        var score = [];
-        for (var i = 0, m = this.players.players.length; i < m; i++) {
+    serialize: function () {
+        const score = [];
+        for (let i = 0, m = this.players.players.length; i < m; i++) {
             score.push(this.players.players[i].score);
         }
         return score;
     },
 
-    emitScore: function() {
+    emitScore: function () {
         this.players.emit(xss.NC_SCORE_UPDATE, this.serialize());
-    }
+    },
 
     ///**
     // * @return {xss.netcode.Client}
     // */
     //getWinner: function() {
-    //    var sorted, last, index;
+    //    let sorted, last, index;
     //
     //    sorted = this.points.slice().sort();
     //    last = sorted.length - 1;
@@ -73,7 +73,7 @@ xss.game.ServerScore.prototype = {
     // * @param {xss.netcode.Client} client
     // */
     //bufferApplePoints: function(client) {
-    //    var points = ++this.points[client.model.index];
+    //    let points = ++this.points[client.model.index];
     //    this.room.buffer(
     //        xss.NC_SCORE_UPDATE, [client.model.index, points]
     //    );
@@ -84,14 +84,14 @@ xss.game.ServerScore.prototype = {
     // * @return {number}
     // */
     //rank: function(client) {
-    //    var clientPoints, points = this.points, position = 0;
+    //    let clientPoints, points = this.points, position = 0;
     //
     //    if (points.length === 1) {
     //        return xss.SCORE_NEUTRAL;
     //    }
     //
     //    clientPoints = points[client.model.index];
-    //    for (var i = 0, m = points.length; i < m; i++) {
+    //    for (let i = 0, m = points.length; i < m; i++) {
     //        if (clientPoints > points[i]) {
     //            position++;
     //        } else if (clientPoints < points[i]) {

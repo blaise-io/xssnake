@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-xss.bootstrap.registerLevels = function(continueFn) {
-    var basic, game, moving, maze;
+xss.bootstrap.registerLevels = function (continueFn) {
+    let basic, game, moving, maze;
 
     basic = new xss.levelset.Basic();
     //basic.register(xss.levels.ShiftedLineLevel);

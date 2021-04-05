@@ -1,27 +1,26 @@
-'use strict';
+"use strict";
 
 /**
  * Game Stage
  * @implements {xss.StageInterface}
  * @constructor
  */
-xss.stage.Game = function() {};
+xss.stage.Game = function () {};
 
 xss.stage.Game.prototype = {
-
-    getShape: function() {
+    getShape: function () {
         return new xss.Shape();
     },
 
-    getData: function() {
+    getData: function () {
         return {};
     },
 
-    construct: function() {
+    construct: function () {
         this.connectServer();
     },
 
-    destruct: function() {
+    destruct: function () {
         if (xss.player) {
             if (xss.player.room) {
                 xss.player.room.destruct();
@@ -32,15 +31,16 @@ xss.stage.Game.prototype = {
         xss.shapes.CONNECTING = null;
     },
 
-    getSerializedGameOptions: function() {
-        var options, data = xss.flow.getData();
+    getSerializedGameOptions: function () {
+        let options,
+            data = xss.flow.getData();
         options = new xss.room.ClientOptions();
         options.setOptionsFromForm(data.multiplayer);
         return options.serialize();
     },
 
-    getPlayerName: function() {
-        var name = xss.util.storage(xss.STORAGE_NAME);
+    getPlayerName: function () {
+        let name = xss.util.storage(xss.STORAGE_NAME);
         if (!name) {
             name = xss.util.getRandomName();
             xss.util.storage(name, xss.STORAGE_NAME);
@@ -48,16 +48,16 @@ xss.stage.Game.prototype = {
         return name;
     },
 
-    getEmitData: function() {
+    getEmitData: function () {
         return this.getSerializedGameOptions();
     },
 
-    connectServer: function() {
+    connectServer: function () {
         xss.shapes.CONNECTING = this.getConnectingShape();
         xss.player = new xss.room.ClientSocketPlayer(this.connectRoom.bind(this));
     },
 
-    connectRoom: function(){
+    connectRoom: function () {
         xss.player.room = new xss.room.ClientRoom();
         xss.player.room.setupComponents();
         xss.player.emit(xss.NC_PLAYER_NAME, [this.getPlayerName()]);
@@ -65,20 +65,19 @@ xss.stage.Game.prototype = {
         this.destructStageLeftovers();
     },
 
-    getConnectingShape: function() {
-        var shape = xss.font.shape(xss.COPY_CONNECTING);
+    getConnectingShape: function () {
+        const shape = xss.font.shape(xss.COPY_CONNECTING);
         shape.center(xss.WIDTH, xss.HEIGHT - 20);
         shape.lifetime(2000);
         shape.flash();
         return shape;
     },
 
-    destructStageLeftovers: function() {
+    destructStageLeftovers: function () {
         if (xss.menuSnake) {
             xss.menuSnake.destruct();
         }
         xss.shapes.CONNECTING = null;
         xss.shapes.HEADER = null;
-    }
-
+    },
 };

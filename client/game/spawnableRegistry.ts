@@ -1,1 +1,1 @@
-class SpawnableRegistry {}
+export class SpawnableRegistry {}

@@ -77,7 +77,7 @@ xss.InputField.prototype = {
      * @return {Element}
      */
     addInputToDom: function() {
-        var input = document.createElement('input');
+        let input = document.createElement('input');
         input.setAttribute('maxlength', String(this.maxlength));
         input.focus();
         document.body.appendChild(input);
@@ -88,7 +88,7 @@ xss.InputField.prototype = {
      * @return {xss.Shape}
      */
     getCaretShape: function() {
-        var segments, untilCaretStr, endPos, caret, caretShape;
+        let segments, untilCaretStr, endPos, caret, caretShape;
 
         segments = this.getSelectionSegments();
         untilCaretStr = segments[0] + segments[1];
@@ -109,7 +109,7 @@ xss.InputField.prototype = {
      * @return {xss.Shape}
      */
     getInputValueShape: function() {
-        var shape, values, endpos;
+        let shape, values, endpos;
 
         values = this.getSelectionSegments();
         shape = new xss.Shape();
@@ -142,7 +142,7 @@ xss.InputField.prototype = {
      * @private
      */
     getSelectionSegments: function() {
-        var input, value, start, end;
+        let input, value, start, end;
 
         input = this.input;
         value = input.value;

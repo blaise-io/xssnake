@@ -1,12 +1,12 @@
 'use strict';
 
-var assert = require('assert');
-var nodeEvents = require('events');
+let assert = require('assert');
+let nodeEvents = require('events');
 
 
 describe('Rooms', function() {
 
-    var server, roomManager, room, client, otherClient, roomPreferences, pubsubDummy,
+    let server, roomManager, room, client, otherClient, roomPreferences, pubsubDummy,
         connectionDummy;
 
     pubsubDummy = new nodeEvents.EventEmitter();
@@ -50,7 +50,7 @@ describe('Rooms', function() {
         });
 
         it('Removes room', function() {
-            var key = room.key;
+            let key = room.key;
             roomManager.remove(room);
             assert(typeof roomManager.rooms[key] === 'undefined');
         });
@@ -66,14 +66,14 @@ describe('Rooms', function() {
 
         it('Remove when last client leaves', function() {
             room = roomManager.createRoom(roomPreferences);
-            var key = room.key;
+            let key = room.key;
             room.addPlayer(client);
             room.removeClient(client);
             assert(typeof roomManager.rooms[key] === 'undefined');
         });
 
         it('Restarting', function() {
-            var otherClient = new xss.Client(pubsubDummy, connectionDummy);
+            let otherClient = new xss.Client(pubsubDummy, connectionDummy);
             room.addPlayer(otherClient);
             room.addPlayer(client);
             room.restartRounds();
@@ -93,59 +93,59 @@ describe('Rooms', function() {
         });
 
         it('Not matching when not equal', function() {
-            var notEqualGameOptions = xss.util.clone(roomPreferences);
+            let notEqualGameOptions = xss.util.clone(roomPreferences);
             notEqualGameOptions[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_EASY;
             assert(!roomManager.roomPreferencesMatch(notEqualGameOptions, room));
         });
 
         it('Not matching when requesting private room', function() {
-            var roomPreferencesPrivate = xss.util.clone(roomPreferences);
+            let roomPreferencesPrivate = xss.util.clone(roomPreferences);
             roomPreferencesPrivate[xss.FIELD_PRIVATE] = true;
             assert(!roomManager.roomPreferencesMatch(roomPreferencesPrivate, room));
         });
 
         it('Not matching when existing room is private', function() {
-            var privateGameoptions = xss.util.clone(roomPreferences);
+            let privateGameoptions = xss.util.clone(roomPreferences);
             privateGameoptions[xss.FIELD_PRIVATE] = true;
             room = roomManager.createRoom(privateGameoptions);
             assert(!roomManager.roomPreferencesMatch(roomPreferences, room));
         });
 
         it('Matching when quickjoin', function() {
-            var oddGameOptions = xss.util.clone(roomPreferences);
+            let oddGameOptions = xss.util.clone(roomPreferences);
             oddGameOptions[xss.FIELD_DIFFICULTY] = xss.FIELD_VALUE_EASY;
             oddGameOptions[xss.FIELD_POWERUPS] = false;
             room = roomManager.createRoom(oddGameOptions);
-            var quickJoinGameoptions = xss.util.clone(roomPreferences);
+            let quickJoinGameoptions = xss.util.clone(roomPreferences);
             quickJoinGameoptions[xss.FIELD_QUICK_GAME] = true;
             assert(roomManager.roomPreferencesMatch(quickJoinGameoptions, room));
         });
 
         it('Not matching quickjoin with private rooms', function() {
-            var privateGameoptions = xss.util.clone(roomPreferences);
+            let privateGameoptions = xss.util.clone(roomPreferences);
             privateGameoptions[xss.FIELD_PRIVATE] = true;
             room = roomManager.createRoom(privateGameoptions);
-            var quickGameOptions = xss.util.clone(roomPreferences);
+            let quickGameOptions = xss.util.clone(roomPreferences);
             quickGameOptions[xss.FIELD_QUICK_GAME] = true;
             assert(!roomManager.roomPreferencesMatch(quickGameOptions, room));
         });
 
         it('Not matching quickjoin with xss', function() {
-            var xssGameoptions = xss.util.clone(roomPreferences);
+            let xssGameoptions = xss.util.clone(roomPreferences);
             xssGameoptions[xss.FIELD_XSS] = true;
             room = roomManager.createRoom(xssGameoptions);
-            var quickGameOptions = xss.util.clone(roomPreferences);
+            let quickGameOptions = xss.util.clone(roomPreferences);
             quickGameOptions[xss.FIELD_QUICK_GAME] = true;
             assert(!roomManager.roomPreferencesMatch(quickGameOptions, room));
         });
 
         it('Not matching quickjoin with full rooms', function() {
-            var FullGameOptions = xss.util.clone(roomPreferences);
+            let FullGameOptions = xss.util.clone(roomPreferences);
             FullGameOptions[xss.FIELD_MAX_PLAYERS] = 2;
             room = roomManager.createRoom(FullGameOptions);
             room.addPlayer(client);
             room.addPlayer(otherClient);
-            var quickGameOptions = xss.util.clone(roomPreferences);
+            let quickGameOptions = xss.util.clone(roomPreferences);
             quickGameOptions[xss.FIELD_QUICK_GAME] = true;
             assert(!roomManager.roomPreferencesMatch(quickGameOptions, room));
         });
@@ -168,7 +168,7 @@ describe('Rooms', function() {
         });
 
         it('Become host when previous host leaves', function() {
-            var otherClient = new xss.Client(pubsubDummy, connectionDummy);
+            let otherClient = new xss.Client(pubsubDummy, connectionDummy);
             room.addPlayer(otherClient);
             room.removeClient(client);
             assert(room.isHost(otherClient));

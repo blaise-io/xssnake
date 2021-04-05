@@ -1,6 +1,6 @@
 // class registerLevels {
 //     constructor(registerLevels) {
-//         var basic, game, moving, maze;
+//         let basic, game, moving, maze;
 //
 //         basic = new levelset.Basic();
 //         //basic.register(levels.ShiftedLineLevel);

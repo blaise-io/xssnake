@@ -7,7 +7,7 @@
  * @param {xss.Coordinate} location
  * @constructor
  */
-xss.game.SnakeMove = function(snake, players, level, location) {
+xss.game.SnakeMove = function (snake, players, level, location) {
     this.snake = snake;
     this.level = level;
     this.players = players;
@@ -17,9 +17,8 @@ xss.game.SnakeMove = function(snake, players, level, location) {
 };
 
 xss.game.SnakeMove.prototype = {
-
-    getParts: function(part) {
-        var parts = this.snake.parts.slice();
+    getParts: function (part) {
+        const parts = this.snake.parts.slice();
         parts.unshift();
         parts.push(part);
         return parts;
@@ -28,10 +27,10 @@ xss.game.SnakeMove.prototype = {
     /**
      * @return {xss.game.Collision}
      */
-    getCollission: function() {
-        var parts = this.getParts(this.location);
-        for (var i = 0, m = parts.length; i < m; i++) {
-            var collision = this.getCollisionPart(i, parts[i]);
+    getCollission: function () {
+        const parts = this.getParts(this.location);
+        for (let i = 0, m = parts.length; i < m; i++) {
+            const collision = this.getCollisionPart(i, parts[i]);
             if (collision) {
                 return collision;
             }
@@ -44,8 +43,8 @@ xss.game.SnakeMove.prototype = {
      * @param {xss.Coordinate} part
      * @return {xss.game.Collision}
      */
-    getCollisionPart: function(index, part) {
-        var players, levelData, partIndex;
+    getCollisionPart: function (index, part) {
+        let players, levelData, partIndex;
         players = this.players;
         levelData = this.level.data;
 
@@ -64,9 +63,10 @@ xss.game.SnakeMove.prototype = {
             return new xss.game.Collision(part, xss.CRASH_MOVING_WALL);
         }
 
-        for (var i = 0, m = players.length; i < m; i++) {
-            var opponentSnake = players[i].snake;
-            if (opponentSnake.crashed === false &&
+        for (let i = 0, m = players.length; i < m; i++) {
+            const opponentSnake = players[i].snake;
+            if (
+                opponentSnake.crashed === false &&
                 opponentSnake !== this.snake &&
                 opponentSnake.hasPart(part)
             ) {
@@ -75,6 +75,5 @@ xss.game.SnakeMove.prototype = {
         }
 
         return null;
-    }
-
+    },
 };

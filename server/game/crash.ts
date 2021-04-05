@@ -29,7 +29,7 @@ export class Crash {
     }
 
     // emitNotice() {
-    //     var data = [
+    //     let data = [
     //         NOTICE_CRASH,
     //         this.type,
     //         this.client.model.index

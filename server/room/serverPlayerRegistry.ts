@@ -1,24 +1,22 @@
-/**
- * @constructor
- * @extends {room.PlayerRegistry}
- */
-export class ServerPlayerRegistry {
-    constructor(ServerPlayerRegistry) {
-    room.PlayerRegistry.call(this);
-    this.averageLatencyInTicks = 0;
-};
+import { NC_PLAYERS_SERIALIZE } from "../../shared/const";
+import { Level } from "../../shared/level/level";
+import { PlayerRegistry } from "../../shared/room/playerRegistry";
+import { ServerPlayer } from "./serverPlayer";
 
-extend(room.ServerPlayerRegistry.prototype, room.PlayerRegistry.prototype);
-extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistry.prototype} */ {
+export class ServerPlayerRegistry extends PlayerRegistry {
+    private averageLatencyInTicks: number;
+    public players: ServerPlayer[];
+
+    constructor() {
+        super();
+        this.averageLatencyInTicks = 0;
+    }
 
     /**
      * Send data to everyone in the room.
-     * @param {number} type
-     * @param {*=} data
-     * @param {room.ServerPlayer=} exclude
      */
-    emit(type, data, exclude): void {
-        for (var i = 0, m = this.players.length; i < m; i++) {
+    emit(type: number, data: any, exclude?: ServerPlayer): void {
+        for (let i = 0, m = this.players.length; i < m; i++) {
             if (exclude !== this.players[i]) {
                 this.players[i].emit(type, data);
             }
@@ -26,20 +24,16 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
     }
 
     /**
-     * Emit players.
-     * Players get their own version because serialize contains local flag.
+     * Players get their own message because serialize contains local flag.
      */
-    emitPlayers() {
-        for (var i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].emit(
-                NC_PLAYERS_SERIALIZE,
-                this.serialize(this.players[i])
-            );
+    emitPlayers(): void {
+        for (let i = 0, m = this.players.length; i < m; i++) {
+            this.players[i].emit(NC_PLAYERS_SERIALIZE, this.serialize(this.players[i]));
         }
     }
 
-    removeDisconnectedPlayers() {
-        for (var i = 0; i < this.players.length; i++) {
+    removeDisconnectedPlayers(): void {
+        for (let i = 0; i < this.players.length; i++) {
             if (!this.players[i].connected) {
                 this.players[i].destruct();
                 this.remove(this.players[i]);
@@ -48,22 +42,15 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
         }
     }
 
-    /**
-     * @param {level.Level} level
-     */
-    setSnakes(level): void {
-        for (var i = 0, m = this.players.length; i < m; i++) {
+    setSnakes(level: Level): void {
+        for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].setSnake(i, level);
         }
     }
 
-    /**
-     * @param {number} tick
-     * @return {Array.<room.ServerPlayer>}
-     */
-    getCollisionsOnTick(tick): void {
-        var crashingPlayers = [];
-        for (var i = 0, m = this.players.length; i < m; i++) {
+    getCollisionsOnTick(tick: number): ServerPlayer[] {
+        const crashingPlayers = [];
+        for (let i = 0, m = this.players.length; i < m; i++) {
             if (this.players[i].snake.hasCollisionLteTick(tick)) {
                 crashingPlayers.push(this.players[i]);
             }
@@ -77,10 +64,9 @@ extend(room.ServerPlayerRegistry.prototype, /** @lends {room.ServerPlayerRegistr
      * @param {Shift} shift
      */
     moveSnakes(tick, elapsed, shift): void {
-        for (var i = 0, m = this.players.length; i < m; i++) {
+        for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.handleNextMove(tick, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);
         }
     }
-
-});
+}

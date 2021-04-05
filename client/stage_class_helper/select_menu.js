@@ -52,7 +52,7 @@ xss.SelectMenu.prototype = {
      * @return {number}
      */
     select: function(select)): void {
-        var max = this._options.length - 1;
+        let max = this._options.length - 1;
 
         if (typeof select !== 'number') {
             select = 0;
@@ -85,7 +85,7 @@ xss.SelectMenu.prototype = {
      * @return {xss.Shape}
      */
     getShape: function() {
-        var x, y, header, headerPixels, shape, desc;
+        let x, y, header, headerPixels, shape, desc;
 
         x = xss.MENU_LEFT;
         y = xss.MENU_TOP;
@@ -103,8 +103,8 @@ xss.SelectMenu.prototype = {
         ));
 
         // Draw options
-        for (var i = 0, m = this._options.length; i < m; i++) {
-            var title, active = (this._selected === i);
+        for (let i = 0, m = this._options.length; i < m; i++) {
+            let title, active = (this._selected === i);
             title = this._options[i].title;
             shape.add(xss.font.pixels(title, x, y, {invert: active}));
             y += xss.Font.LINE_HEIGHT_MENU;

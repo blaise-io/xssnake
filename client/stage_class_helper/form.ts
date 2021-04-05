@@ -81,8 +81,8 @@ export class Form {
 
         // Draw options
         for (let i = 0, m = this.fields.length; i < m; i++) {
-            var option;
-            var bbox;
+            let option;
+            let bbox;
             const active = this.selectedField === i;
 
             option = this._getOptionsShape(i, x, optionX, y, active);

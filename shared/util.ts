@@ -107,7 +107,7 @@ export function ensureIndexWithinBounds(index, arr) {
  */
 export function average(numbers) {
     let total = 0;
-    for (var i = 0, m = numbers.length; i < m; i++) {
+    for (let i = 0, m = numbers.length; i < m; i++) {
         total += numbers[i];
     }
     return m ? total / m : 0;

@@ -28,7 +28,7 @@ xss.AudioPlayer.prototype = {
     },
 
     getSupportedAudioFiles: function() {
-        var audioElement, mimetypes;
+        let audioElement, mimetypes;
 
         audioElement = document.createElement('audio');
 
@@ -51,7 +51,7 @@ xss.AudioPlayer.prototype = {
     },
 
     setupFiles: function() {
-        var audioFiles = this.getSupportedAudioFiles();
+        let audioFiles = this.getSupportedAudioFiles();
         if (audioFiles) {
             this.mimetype = audioFiles.mimetype;
             this.files = audioFiles.files;

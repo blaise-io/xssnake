@@ -7,7 +7,7 @@
  * @param {xss.room.ServerPlayerRegistry} players
  * @constructor
  */
-xss.game.ServerGame = function(roomEmitter, level, players) {
+xss.game.ServerGame = function (roomEmitter, level, players) {
     this.roomEmitter = roomEmitter;
     this.level = level;
     this.players = players;
@@ -21,15 +21,11 @@ xss.game.ServerGame = function(roomEmitter, level, players) {
 
     this.bindEvents();
 
-    this.tickInterval = setInterval(
-        this.handleTick.bind(this),
-        xss.SERVER_TICK_INTERVAL
-    );
+    this.tickInterval = setInterval(this.handleTick.bind(this), xss.SERVER_TICK_INTERVAL);
 };
 
 xss.game.ServerGame.prototype = {
-
-    destruct: function() {
+    destruct: function () {
         clearInterval(this.tickInterval);
         this.unbindEvents();
 
@@ -40,12 +36,12 @@ xss.game.ServerGame.prototype = {
         this.items = null;
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
         this.roomEmitter.on(xss.NC_SNAKE_UPDATE, this.ncSnakeUpdate.bind(this));
         this.roomEmitter.on(xss.NC_PONG, this.ncPong.bind(this));
     },
 
-    unbindEvents: function() {
+    unbindEvents: function () {
         this.roomEmitter.removeAllListeners(xss.NC_SNAKE_UPDATE);
         this.roomEmitter.removeAllListeners(xss.NC_PONG);
     },
@@ -54,8 +50,8 @@ xss.game.ServerGame.prototype = {
      * @param {?} dirtySnake
      * @param {xss.room.ServerPlayer} player
      */
-    ncSnakeUpdate: function(dirtySnake, player) {
-        var move = new xss.game.ServerSnakeMove(dirtySnake, player);
+    ncSnakeUpdate: function (dirtySnake, player) {
+        const move = new xss.game.ServerSnakeMove(dirtySnake, player);
         if (move.isValid()) {
             this.applyMove(player.snake, move);
             this.players.emit(xss.NC_SNAKE_UPDATE, player.snake.serialize(), player);
@@ -68,16 +64,16 @@ xss.game.ServerGame.prototype = {
      * Update averge latency of all players in this room.
      * Affects tolerance of clients overriding server prediction.
      */
-    ncPong: function() {
+    ncPong: function () {
         this.averageLatencyInTicks = this.getAverageLatencyInTicks();
     },
 
     /**
      * @return {number}
      */
-    getCrashedCount: function() {
-        var count = 0;
-        for (var i = 0, m = this.players.players.length; i < m; i++) {
+    getCrashedCount: function () {
+        let count = 0;
+        for (let i = 0, m = this.players.players.length; i < m; i++) {
             if (this.players.players[i].snake.crashed) {
                 count++;
             }
@@ -88,41 +84,38 @@ xss.game.ServerGame.prototype = {
     /**
      * @return {number}
      */
-    getAverageLatencyInTicks: function() {
-        var latencies = [];
-        for (var i = 0, m = this.players.length; i < m; i++) {
+    getAverageLatencyInTicks: function () {
+        const latencies = [];
+        for (let i = 0, m = this.players.length; i < m; i++) {
             latencies.push(this.players[i].player.heartbeat.latency);
         }
         return Math.round(xss.util.average(latencies) / xss.SERVER_TICK_INTERVAL);
     },
 
-    handleTick: function() {
-        var now = +new Date();
+    handleTick: function () {
+        const now = +new Date();
         this.gameloop(++this.tick, now - this.lastTick);
         this.lastTick = now;
     },
 
-    gameloop: function(tick, elapsed) {
-        var shift = this.level.gravity.getShift(elapsed);
+    gameloop: function (tick, elapsed) {
+        const shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
         this.handleCrashingPlayers(tick - this.averageLatencyInTicks);
         this.players.moveSnakes(tick, elapsed, shift);
     },
 
-    handleCrashingPlayers: function(tick) {
-        var collisions = [], crashingPlayers;
+    handleCrashingPlayers: function (tick) {
+        let collisions = [],
+            crashingPlayers;
 
         crashingPlayers = this.players.getCollisionsOnTick(tick);
 
         if (crashingPlayers.length) {
-            for (var i = 0, m = crashingPlayers.length; i < m; i++) {
-                var snake = crashingPlayers[i].snake;
+            for (let i = 0, m = crashingPlayers.length; i < m; i++) {
+                const snake = crashingPlayers[i].snake;
                 snake.crashed = true;
-                collisions.push([
-                    snake.index,
-                    snake.parts,
-                    snake.collision.serialize()
-                ]);
+                collisions.push([snake.index, snake.parts, snake.collision.serialize()]);
             }
 
             // Emit crashed snakes.
@@ -137,10 +130,9 @@ xss.game.ServerGame.prototype = {
      * @param {xss.game.Snake} snake
      * @param {xss.game.ServerSnakeMove} move
      */
-    applyMove: function(snake, move) {
+    applyMove: function (snake, move) {
         snake.direction = move.direction;
         snake.parts = move.parts;
         snake.trimParts();
-    }
-
+    },
 };

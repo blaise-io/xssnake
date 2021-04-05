@@ -29,7 +29,7 @@ xss.CanvasTile.prototype = {
      * @return {number}
      */
     updateSize: function() {
-        var minWidth, minHeight;
+        let minWidth, minHeight;
         minWidth = window.innerWidth / xss.WIDTH;
         minHeight = window.innerHeight / xss.HEIGHT;
         this.size = Math.floor(Math.min(minWidth, minHeight)) || 1;
@@ -38,7 +38,7 @@ xss.CanvasTile.prototype = {
     },
 
     updatePatterns: function() {
-        var canvas, backgroundImage;
+        let canvas, backgroundImage;
 
         canvas = document.createElement('canvas');
         canvas.setAttribute('width', String(this.size));
@@ -52,7 +52,7 @@ xss.CanvasTile.prototype = {
     },
 
     _getTileForColor: function(canvas, color) {
-        var context, pixelSize;
+        let context, pixelSize;
 
         context = canvas.getContext('2d');
         // Prevent completely transparent borders for visibility.

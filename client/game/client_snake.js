@@ -36,9 +36,9 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
 
     destruct: function() {
         // Remove any related shape.
-        var keys = Object.keys(this.shapeKeys);
-        for (var i = 0, m = keys.length; i < m; i++) {
-            var shapeKey = this.shapeKeys[keys[i]];
+        let keys = Object.keys(this.shapeKeys);
+        for (let i = 0, m = keys.length; i < m; i++) {
+            let shapeKey = this.shapeKeys[keys[i]];
             xss.shapes[shapeKey] = null;
         }
 
@@ -72,7 +72,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
     },
 
     showDirection: function() {
-        var shift, head, shape;
+        let shift, head, shape;
         shift = xss.GAME_SHIFT_MAP[this.direction];
         head = this.getHead();
 
@@ -97,7 +97,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
      * @return {xss.Shape}
      */
     updateShape: function() {
-        var shape = new xss.Shape();
+        let shape = new xss.Shape();
         shape.pixels.addPairs(this.parts);
         shape.setGameTransform();
         xss.shapes[this.shapeKeys.snake] = shape;
@@ -114,7 +114,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
-            var move = new xss.game.SnakeMove(
+            let move = new xss.game.SnakeMove(
                 this, players, level, this.getNextPosition()
             );
 
@@ -155,7 +155,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
      * @param {xss.Coordinate=} part
      */
     explodeParticles: function(part)): void {
-        var direction, location;
+        let direction, location;
 
         if (part) {
             // Crashed part is specified.
@@ -189,7 +189,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
      */
     emit: function(direction)): void {
         if (xss.player) {
-            var sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
+            let sync = Math.round(xss.NETCODE_SYNC_MS / this.speed);
             xss.player.emit(xss.NC_SNAKE_UPDATE, [
                 direction, this.parts.slice(-sync)
             ]);
@@ -200,7 +200,7 @@ xss.extend(xss.game.ClientSnake.prototype, /** @lends {xss.game.ClientSnake.prot
      * @return {xss.Coordinate}
      */
     getNextPosition: function() {
-        var shift, head = this.getHead();
+        let shift, head = this.getHead();
         if (this.controls) {
             this.direction = this.controls.getNextDirection();
         }

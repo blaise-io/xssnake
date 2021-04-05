@@ -85,7 +85,7 @@ xss.ui.PreGame.prototype = {
     },
 
     showInvitePlayersDialog: function() {
-        var numplayers, remaining, body;
+        let numplayers, remaining, body;
 
         numplayers = this.players.getTotal();
         remaining = this.options.maxPlayers - numplayers;
@@ -103,7 +103,7 @@ xss.ui.PreGame.prototype = {
     },
 
     showConfirmExitDialog: function() {
-        var settings = {
+        let settings = {
             type  : xss.Dialog.TYPE.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
             ok    : function() {
@@ -122,7 +122,7 @@ xss.ui.PreGame.prototype = {
     },
 
     showConfirmStartDialog: function() {
-        var settings = {
+        let settings = {
             type  : xss.Dialog.TYPE.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
             ok    : function() {
@@ -151,7 +151,7 @@ xss.ui.PreGame.prototype = {
     },
 
     getCountdownRemaining: function() {
-        var remaining = xss.SECONDS_ROUND_COUNTDOWN;
+        let remaining = xss.SECONDS_ROUND_COUNTDOWN;
         remaining -= (+new Date() - this.countdownStarted) / 1000;
         return Math.max(0, Math.round(remaining));
     },
@@ -170,7 +170,7 @@ xss.ui.PreGame.prototype = {
     },
 
     showCountdown: function() {
-        var body = xss.util.format(
+        let body = xss.util.format(
             xss.COPY_COUNTDOWN_BODY,
             this.getCountdownRemaining()
         );

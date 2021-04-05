@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 /**
  * @param {xss.room.ClientPlayerRegistry} players
  * @constructor
  */
-xss.room.MessageBox = function(players) {
+xss.room.MessageBox = function (players) {
     /**
      * MessageBox has its own set of players to compare.
      * @type {xss.room.ClientPlayerRegistry}
@@ -24,36 +24,35 @@ xss.room.MessageBox = function(players) {
 };
 
 xss.room.MessageBox.prototype = {
-
-    destruct: function() {
+    destruct: function () {
         this.messages.length = 0;
         this.previousPlayers = null;
         this.ui.destruct();
         this.unbindEvents();
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
         xss.event.on(xss.NC_CHAT_MESSAGE, xss.NS_MSGBOX, this.addMessage.bind(this));
         xss.event.on(xss.EV_PLAYERS_UPDATED, xss.NS_MSGBOX, this.updatePlayers.bind(this));
     },
 
-    unbindEvents: function() {
+    unbindEvents: function () {
         xss.event.off(xss.NC_CHAT_MESSAGE, xss.NS_MSGBOX);
         xss.event.off(xss.EV_PLAYERS_UPDATED, xss.NS_MSGBOX);
     },
 
-    addMessage: function(serializedMessage) {
-        var name = String(this.players.players[serializedMessage[0]].name);
+    addMessage: function (serializedMessage) {
+        const name = String(this.players.players[serializedMessage[0]].name);
         this.messages.push(new xss.room.Message(name, serializedMessage[1]));
         this.ui.debounceUpdate();
     },
 
-    addNotification: function(notification) {
+    addNotification: function (notification) {
         this.messages.push(new xss.room.Message(null, notification));
     },
 
-    updatePlayers: function() {
-        var disconnectedPlayer = this.players.filter({connected: false})[0];
+    updatePlayers: function () {
+        const disconnectedPlayer = this.players.filter({ connected: false })[0];
         if (disconnectedPlayer) {
             this.notifyMidgameDisconnect(disconnectedPlayer);
             this.playerChangeNotified = true;
@@ -68,23 +67,20 @@ xss.room.MessageBox.prototype = {
         }
     },
 
-    notifyMidgameDisconnect: function(player) {
-        var message = xss.util.format(xss.COPY_PLAYER_QUIT, player.name);
+    notifyMidgameDisconnect: function (player) {
+        const message = xss.util.format(xss.COPY_PLAYER_QUIT, player.name);
         this.notifyPlayersChangeUI(message);
     },
 
-    notifyPlayersChangeUI: function(message) {
+    notifyPlayersChangeUI: function (message) {
         this.messages.push(new xss.room.Message(null, message));
         this.ui.debounceUpdate();
     },
 
-    notifyPlayersChange: function() {
-        var message;
+    notifyPlayersChange: function () {
+        let message;
         if (this.players.getTotal() > this.previousPlayers.getTotal()) {
-            message = xss.util.format(
-                xss.COPY_PLAYER_JOINED,
-                String(this.players.getJoinName())
-            );
+            message = xss.util.format(xss.COPY_PLAYER_JOINED, String(this.players.getJoinName()));
         } else if (this.players.getTotal() < this.previousPlayers.getTotal()) {
             message = xss.util.format(
                 xss.COPY_PLAYER_QUIT,
@@ -96,8 +92,7 @@ xss.room.MessageBox.prototype = {
         }
     },
 
-    sendMessage: function(body) {
+    sendMessage: function (body) {
         xss.player.emit(xss.NC_CHAT_MESSAGE, [body]);
-    }
-
+    },
 };

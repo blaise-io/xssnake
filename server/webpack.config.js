@@ -7,6 +7,8 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+console.log(__dirname);
+
 export default {
     entry: __dirname + "/index.ts",
     module: {
@@ -14,12 +16,12 @@ export default {
             {
                 test: /\.tsx?$/,
                 use: "ts-loader",
+                exclude: /node_modules/,
             },
         ],
     },
     resolve: {
-        extensions: [".tsx", ".ts"],
-        roots: [__dirname + "/client", __dirname + "/shared"],
+        extensions: [".tsx", ".ts", ".js"],
     },
     output: {
         filename: "client.js",

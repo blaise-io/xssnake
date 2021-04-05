@@ -79,7 +79,7 @@ xss.InputStage.prototype = {
     },
 
     _setupInputField: function() {
-        var input = new xss.InputField(
+        let input = new xss.InputField(
             xss.MENU_LEFT, this._inputTop, this.label, this.fontOptions
         );
 
@@ -106,7 +106,7 @@ xss.InputStage.prototype = {
      * @private
      */
     _handleKeys: function(ev)): void {
-        var value, top;
+        let value, top;
         switch (ev.keyCode) {
             case xss.KEY_ESCAPE:
                 xss.flow.previousStage();
@@ -143,7 +143,7 @@ xss.InputStage.prototype = {
      * @private
      */
     _getShape: function() {
-        var shape = this._getShapeExcludeValue();
+        let shape = this._getShapeExcludeValue();
         shape.add(this._getDataShape().pixels);
         return shape;
     },
@@ -153,7 +153,7 @@ xss.InputStage.prototype = {
      * @private
      */
     _getShapeExcludeValue: function() {
-        var pixels = xss.font.pixels(this.header);
+        let pixels = xss.font.pixels(this.header);
         pixels = xss.transform.zoom(2, pixels, xss.MENU_LEFT, xss.MENU_TOP);
         return new xss.Shape(pixels);
     },
@@ -163,7 +163,7 @@ xss.InputStage.prototype = {
      * @private
      */
     _getDataShape: function() {
-        var value = this.label + this.value;
+        let value = this.label + this.value;
         return new xss.Shape(xss.font.pixels(
             value, xss.MENU_LEFT, this._inputTop, this.fontOptions
         ));

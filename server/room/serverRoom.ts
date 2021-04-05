@@ -1,18 +1,18 @@
-const events = require("events");
+import { NC_CHAT_MESSAGE, NC_ROOM_SERIALIZE, SE_PLAYER_DISCONNECT } from "../../shared/const";
+import { Sanitizer } from "../../shared/util/sanitizer";
+import { Server } from "../netcode/server";
+import { ServerOptions } from "./serverOptions";
+import { EventEmitter } from "events";
+import { ServerPlayerRegistry } from "./serverPlayerRegistry";
+import { ServerRoundSet } from "./serverRoundSet";
 
-/**
- * @param {netcode.Server} server
- * @param {room.ServerOptions} options
- * @param {string} key
- * @constructor
- */
 export class ServerRoom {
-    constructor(ServerRoom) {
-        this.server = server;
-        this.options = options;
-        this.key = key;
+    private emitter: EventEmitter;
+    private players: ServerPlayerRegistry;
+    private rounds: ServerRoundSet;
 
-        this.emitter = new events.EventEmitter();
+    constructor(public server: Server, public options: ServerOptions, public key: string) {
+        this.emitter = new EventEmitter();
         this.players = new ServerPlayerRegistry();
         this.rounds = new ServerRoundSet(this.emitter, this.players, this.options);
         this.bindEvents();

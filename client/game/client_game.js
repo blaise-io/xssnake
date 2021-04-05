@@ -81,7 +81,7 @@ xss.game.ClientGame.prototype = {
      * @param {Array} serializedSnake
      */
     ncUpdateSnake: function(serializedSnake)): void {
-        var clientIndex = serializedSnake.shift();
+        let clientIndex = serializedSnake.shift();
         this.players.players[clientIndex].snake.deserialize(serializedSnake);
     },
 
@@ -89,8 +89,8 @@ xss.game.ClientGame.prototype = {
      * @param {Array} serializedCollisions
      */
     ncSetSnakesCrashed: function(serializedCollisions)): void {
-        for (var i = 0, m = serializedCollisions.length; i < m; i++) {
-            var snake, collision = serializedCollisions[i];
+        for (let i = 0, m = serializedCollisions.length; i < m; i++) {
+            let snake, collision = serializedCollisions[i];
             snake = this.players.players[collision[0]].snake;
             snake.parts = collision[1];
             snake.setCrashed(collision[2]);
@@ -102,7 +102,7 @@ xss.game.ClientGame.prototype = {
      * @param {number} elapsed
      */
     gameloop: function(elapsed)): void {
-        var shift = this.level.gravity.getShift(elapsed);
+        let shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
 
         if (this.started) {

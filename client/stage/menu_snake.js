@@ -13,7 +13,7 @@ xss.stage.MenuSnake = function() {
 xss.stage.MenuSnake.prototype = {
 
     construct: function() {
-        var snake;
+        let snake;
 
         snake = new xss.game.ClientSnake(0, false, '', this.level);
         snake.addControls();
@@ -27,7 +27,7 @@ xss.stage.MenuSnake.prototype = {
     },
 
     destruct: function() {
-        for (var i = 0, m = this.timeouts.length; i < m; i++) {
+        for (let i = 0, m = this.timeouts.length; i < m; i++) {
             clearTimeout(this.timeouts[i]);
         }
         this.snake.destruct();
@@ -35,7 +35,7 @@ xss.stage.MenuSnake.prototype = {
     },
 
     move: function() {
-        var nextpos, snake = this.snake;
+        let nextpos, snake = this.snake;
 
         snake.collision = null;
 
@@ -61,11 +61,11 @@ xss.stage.MenuSnake.prototype = {
      * @return {boolean}
      */
     isCrash: function(snake, nextpos)): void {
-        var snakeShape = snake.getShape(), crash = false;
+        let snakeShape = snake.getShape(), crash = false;
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
         } else if (snakeShape) {
-            var pixels = xss.transform.zoom(
+            let pixels = xss.transform.zoom(
                 4, snakeShape.pixels, xss.GAME_LEFT, xss.GAME_TOP, false
             );
             pixels.each(function(x, y) {
@@ -84,7 +84,7 @@ xss.stage.MenuSnake.prototype = {
      * @return {boolean}
      */
     overlaysShape: function(snakeShape, x, y)): void {
-        for (var k in xss.shapes) {
+        for (let k in xss.shapes) {
             if (xss.shapes.hasOwnProperty(k) && xss.shapes[k] !== snakeShape) {
                 if (xss.shapes[k] && xss.shapes[k].pixels.has(x, y)) {
                     return true;

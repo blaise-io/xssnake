@@ -15,6 +15,7 @@
     "type": "git",
     "url": "https://github.com/blaise-io/xssnake.git"
   },
+  "type": "module",
   "dependencies": {
     "pngparse": "1.x",
     "ts-loader": "^8.1.0",
@@ -52,6 +53,7 @@
   },
   "scripts": {
     "client": "webpack --mode development --watch --config client/webpack.config.js",
+    "server": "webpack --mode development --watch --config server/webpack.config.js",
     "lint": "eslint .  --fix --ext .ts,.tsx; prettier --write '**/*.ts'",
     "start": "node server/start.js",
     "restart": "supervisor --no-restart-on error --watch server,shared server/start.js",

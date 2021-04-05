@@ -100,7 +100,7 @@ export class SelectMenu {
 
         // Draw options
         for (let i = 0, m = this._options.length; i < m; i++) {
-            var title;
+            let title;
             const active = this._selected === i;
             title = this._options[i].title;
             shape.add(fontPixels(title, x, y, { invert: active }));

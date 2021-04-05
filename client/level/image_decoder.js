@@ -16,7 +16,7 @@ xss.level.ImageDecoder = function(data) {
 xss.level.ImageDecoder.prototype = {
 
     readFromCanvas: function() {
-        var canvas, ctx, imagedata;
+        let canvas, ctx, imagedata;
 
         canvas = document.createElement('canvas');
         canvas.width = this.image.width;

@@ -49,7 +49,7 @@ xss.FormStage.prototype = {
                 xss.flow.previousStage();
                 break;
             case xss.KEY_ENTER:
-                var next = this.getNextStage(this.form.getData());
+                let next = this.getNextStage(this.form.getData());
                 xss.flow.switchStage(next);
                 break;
             case xss.KEY_UP:

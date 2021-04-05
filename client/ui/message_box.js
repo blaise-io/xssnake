@@ -64,7 +64,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     showInput: function() {
-        var x, y, prefix;
+        let x, y, prefix;
 
         x = this.x0 + this.padding.x1 + new xss.room.Message('', '').getOffset();
         y = this.y1 - this.padding.y1 - this.lineHeight;
@@ -90,7 +90,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     sendMessage: function(body) {
-        var author = String(this.localAuthor.name);
+        let author = String(this.localAuthor.name);
         if (body.trim()) {
             this.messages.push(new xss.room.Message(author, body));
             this.sendMessageFn(body);
@@ -100,7 +100,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     showEnterKey: function() {
-        var x, y, shape;
+        let x, y, shape;
 
         x = this.x1 - this.padding.x1 - xss.font.width(xss.UC_ENTER_KEY);
         y = this.y1 - this.lineHeight - this.padding.y1 + 1;
@@ -114,7 +114,7 @@ xss.ui.MessageBox.prototype = {
      * @param {boolean=} flash
      */
     hideEnterKey: function(flash)): void {
-        var speed = xss.FRAME * 4;
+        let speed = xss.FRAME * 4;
         if (flash) {
             xss.shapes.MSG_ENTER.flash(speed, speed).lifetime(0, speed);
         } else {
@@ -130,7 +130,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     getNumMessagesFit: function() {
-        var fits = (this.y1 - this.padding.y1) - (this.y0 + this.padding.y0);
+        let fits = (this.y1 - this.padding.y1) - (this.y0 + this.padding.y0);
         fits = Math.floor(fits / this.lineHeight);
         fits -= this.inputField === null ? 0 : 1;
         return fits;
@@ -145,7 +145,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     updateMessages: function() {
-        var num, shape, messages;
+        let num, shape, messages;
 
         shape = new xss.Shape();
         shape.mask = [
@@ -162,7 +162,7 @@ xss.ui.MessageBox.prototype = {
             return false;
         }
 
-        for (var i = 0, m = messages.length; i < m; i++) {
+        for (let i = 0, m = messages.length; i < m; i++) {
             shape.add(this.getMessagePixels(i, messages[i]));
         }
 
@@ -178,7 +178,7 @@ xss.ui.MessageBox.prototype = {
     },
 
     getMessagePixels: function(lineIndex, message) {
-        var x, y;
+        let x, y;
         x = this.x0 + this.padding.x0;
         y = this.y0 + this.padding.y0 + (lineIndex * this.lineHeight);
         return xss.font.pixels(
@@ -188,7 +188,7 @@ xss.ui.MessageBox.prototype = {
 
     animate: function(shape) {
         this.animating = true;
-        var anim = {
+        let anim = {
             to: [0, -this.lineHeight],
             duration: this.animationDuration,
             callback: this.animateCallback.bind(this)

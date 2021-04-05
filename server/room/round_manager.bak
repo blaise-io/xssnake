@@ -45,7 +45,7 @@ xss.room.RoundManager.prototype = {
     },
 
     clientStart: function(client) {
-        var room = this.room;
+        let room = this.room;
         if (room.isHost(client) && !this.started && room.players.length > 1) {
             this.start();
         }
@@ -73,7 +73,7 @@ xss.room.RoundManager.prototype = {
     },
 
     endCurrentRound: function() {
-        var winner = this.score.getWinner();
+        let winner = this.score.getWinner();
         if (this.allRoundsPlayed() && winner) {
             this.endAllRounds(winner);
         } else {
@@ -82,7 +82,7 @@ xss.room.RoundManager.prototype = {
     },
 
     nextRoundStartDelay: function() {
-        var delay = this.round.allCrashed() ?
+        let delay = this.round.allCrashed() ?
             xss.TIME_ROUND_PAUSE : xss.TIME_ROUND_GLOAT;
 
         this.room.emit(
@@ -125,7 +125,7 @@ xss.room.RoundManager.prototype = {
      * @param {xss.netcode.Client} winner
      */
     _xssFetch: function(winner): void {
-        var pubsub = this.room.server.emitter;
+        let pubsub = this.room.server.emitter;
 
         this._xssListener = function(xss, client) {
             if (client === winner) {

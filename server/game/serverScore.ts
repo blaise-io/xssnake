@@ -57,7 +57,7 @@ export class ServerScore {
     // * @return {netcode.Client}
     // */
     //getWinner() {
-    //    var sorted, last, index;
+    //    let sorted, last, index;
     //
     //    sorted = this.points.slice().sort();
     //    last = sorted.length - 1;
@@ -71,7 +71,7 @@ export class ServerScore {
     // * @param {netcode.Client} client
     // */
     //bufferApplePoints(client) {
-    //    var points = ++this.points[client.model.index];
+    //    let points = ++this.points[client.model.index];
     //    this.room.buffer(
     //        NC_SCORE_UPDATE, [client.model.index, points]
     //    );
@@ -82,14 +82,14 @@ export class ServerScore {
     // * @return {number}
     // */
     //rank(client) {
-    //    var clientPoints, points = this.points, position = 0;
+    //    let clientPoints, points = this.points, position = 0;
     //
     //    if (points.length === 1) {
     //        return SCORE_NEUTRAL;
     //    }
     //
     //    clientPoints = points[client.model.index];
-    //    for (var i = 0, m = points.length; i < m; i++) {
+    //    for (let i = 0, m = points.length; i < m; i++) {
     //        if (clientPoints > points[i]) {
     //            position++;
     //        } else if (clientPoints < points[i]) {

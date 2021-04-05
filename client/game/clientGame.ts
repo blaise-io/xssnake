@@ -13,10 +13,12 @@
 import { NC_SNAKE_CRASH, NC_SNAKE_UPDATE } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { EV_GAME_TICK, NS_GAME } from "../const";
+import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state/state";
+import { SpawnableRegistry } from "./spawnableRegistry";
 
 export class ClientGame {
-    players: any;
+    players: ClientPlayerRegistry;
     started: boolean;
     spawnables: any;
 
@@ -62,9 +64,8 @@ export class ClientGame {
     /**
      * Update game before round has started.
      * Don't call this mid-game.
-     * @param {room.ClientPlayerRegistry} players
      */
-    updatePlayers(players): void {
+    updatePlayers(players: ClientPlayerRegistry): ClientPlayerRegistry {
         players.unsetSnakes();
         players.setSnakes(this.level);
         players.showMeta();
@@ -95,7 +96,7 @@ export class ClientGame {
      */
     ncSetSnakesCrashed(serializedCollisions): void {
         for (let i = 0, m = serializedCollisions.length; i < m; i++) {
-            var snake;
+            let snake;
             const collision = serializedCollisions[i];
             snake = this.players.players[collision[0]].snake;
             snake.parts = collision[1];

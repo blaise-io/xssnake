@@ -18,7 +18,7 @@ xss.ShapeCache = function(shape, tile) {
 xss.ShapeCache.prototype = {
 
     _getCanvas: function() {
-        var canvas = document.createElement('canvas');
+        let canvas = document.createElement('canvas');
         canvas.width = this.bbox.width + this._getSize();
         canvas.height = this.bbox.height + this._getSize();
         return canvas;
@@ -34,7 +34,7 @@ xss.ShapeCache.prototype = {
      * @private
      */
     _mergePixels: function(shapePixels)): void {
-        var lines = this._getLines(shapePixels);
+        let lines = this._getLines(shapePixels);
         return this._getRectangles(lines);
     },
 
@@ -45,7 +45,7 @@ xss.ShapeCache.prototype = {
      * @private
      */
     _getLines: function(shapePixels)): void {
-        var cache = null, lines = [];
+        let cache = null, lines = [];
 
         shapePixels.sort().each(function(x, y) {
             // cache: x,y,w
@@ -73,13 +73,13 @@ xss.ShapeCache.prototype = {
      * @private
      */
     _getRectangles: function(lines)): void {
-        var cache = null, rectangles = [];
+        let cache = null, rectangles = [];
 
         lines.sort(function(a, b) {
             return a[0] - b[0];
         });
 
-        for (var i = 0, m = lines.length; i < m; i++) {
+        for (let i = 0, m = lines.length; i < m; i++) {
             // cache: x,y,w,h
             if (cache &&
                 lines[i][0] === cache[0] &&
@@ -103,7 +103,7 @@ xss.ShapeCache.prototype = {
     },
 
     _fillBackground: function() {
-        var expand = this.shape.expand * this.tile.size * -1;
+        let expand = this.shape.expand * this.tile.size * -1;
         this.context.fillStyle = this.tile.off;
         this.context.fillRect(
             expand,
@@ -118,7 +118,7 @@ xss.ShapeCache.prototype = {
     },
 
     _paintShapePixels: function() {
-        var size = this._getSize(), rectangles;
+        let size = this._getSize(), rectangles;
 
         rectangles = this._mergePixels(this.shape.pixels);
 
@@ -127,7 +127,7 @@ xss.ShapeCache.prototype = {
         }
 
         this.context.fillStyle = this.tile.on;
-        for (var i = 0, m = rectangles.length; i < m; i++) {
+        for (let i = 0, m = rectangles.length; i < m; i++) {
             this.context.fillRect(
                 rectangles[i][0] * size - this.bbox.x0,
                 rectangles[i][1] * size - this.bbox.y0,
@@ -142,15 +142,15 @@ xss.ShapeCache.prototype = {
      * @private
      */
     _getBBox: function() {
-        var size, pixelBBox, tileBBox, tileBBoxKeys;
+        let size, pixelBBox, tileBBox, tileBBoxKeys;
 
         size = this._getSize();
         pixelBBox = this.shape.pixels.bbox();
         tileBBox = new xss.BoundingBox();
         tileBBoxKeys = Object.keys(pixelBBox);
 
-        for (var i = 0, m = tileBBoxKeys.length; i < m; i++) {
-            var k = tileBBoxKeys[i];
+        for (let i = 0, m = tileBBoxKeys.length; i < m; i++) {
+            let k = tileBBoxKeys[i];
             tileBBox[k] = pixelBBox[k] * size;
         }
 

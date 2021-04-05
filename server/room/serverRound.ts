@@ -82,7 +82,7 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
      * @param {room.ServerPlayer} winner
      */
     wrapUp(winner): void {
-        var data = [this.players.players.indexOf(winner)];
+        let data = [this.players.players.indexOf(winner)];
         this.players.emit(NC_ROUND_WRAPUP, data);
         this.wrappingUp = true;
     }

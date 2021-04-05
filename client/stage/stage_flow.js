@@ -42,8 +42,8 @@ xss.StageFlow.prototype = {
     },
 
     getData: function() {
-        var value = {};
-        for (var i = 0, m = this._history.length; i < m; i++) {
+        let value = {};
+        for (let i = 0, m = this._history.length; i < m; i++) {
             xss.extend(value, this._history[i].getData());
         }
         return value;
@@ -54,7 +54,7 @@ xss.StageFlow.prototype = {
      * @param {Object=} options
      */
     switchStage: function(Stage, options)): void {
-        var switchToStage;
+        let switchToStage;
 
         options = options || {};
 
@@ -123,7 +123,7 @@ xss.StageFlow.prototype = {
      * @private
      */
     _handleKeys: function(ev)): void {
-        var mute, instruct;
+        let mute, instruct;
 
         // Firefox disconnects websocket on Esc. Disable that.
         // Also prevent the tab key focusing things outside canvas.
@@ -153,7 +153,7 @@ xss.StageFlow.prototype = {
      * @private
      */
     _switchStageAnimate: function(oldShape, newShape, back, callback)): void {
-        var oldStageAnim, newStageAnim, width = xss.WIDTH - xss.MENU_LEFT;
+        let oldStageAnim, newStageAnim, width = xss.WIDTH - xss.MENU_LEFT;
 
         if (back) {
             oldStageAnim = {to: [width, 0]};

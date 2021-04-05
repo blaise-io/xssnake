@@ -5,7 +5,7 @@
  * @implements {xss.levelanim.Interface}
  * @constructor
  */
-xss.levelanims.ScrollingCave = function(seed) {
+xss.levelanims.ScrollingCave = function (seed) {
     this.seed = seed;
     this.seedIteration = 0;
 
@@ -17,30 +17,26 @@ xss.levelanims.ScrollingCave = function(seed) {
         // Mnemonic: They hang...
         stalactite: this._LEVEL_WIDTH,
         // Stalagmite _/\_
-        stalagmite: this._LEVEL_WIDTH + Math.round(
-            xss.util.average(this._BUMP_WIDTH)
-        )
+        stalagmite: this._LEVEL_WIDTH + Math.round(xss.util.average(this._BUMP_WIDTH)),
     };
 };
 
 xss.levelanims.ScrollingCave.prototype = {
+    _SPEED: 0.47,
 
-    _SPEED        : 0.47,
-
-    _BUMP_WIDTH   : [15, 25],
-    _BUMP_HEIGHT  : [20, 40],
+    _BUMP_WIDTH: [15, 25],
+    _BUMP_HEIGHT: [20, 40],
     _BUMP_DECREASE: [0, 2],
 
-    _LEVEL_WIDTH  : 63,
-    _LEVEL_HEIGHT : 33,
+    _LEVEL_WIDTH: 63,
+    _LEVEL_HEIGHT: 33,
 
     /**
      * @param {number} ms
      * @param {boolean} gameStarted
      * @return {xss.ShapeCollection|null}
      */
-    update: function(ms, gameStarted) {
-
+    update: function (ms, gameStarted) {
         if (!gameStarted) {
             return null;
         } else if (!this.gameStartedAtMs) {
@@ -48,7 +44,7 @@ xss.levelanims.ScrollingCave.prototype = {
         }
 
         ms -= this.gameStartedAtMs;
-        this._scroll = Math.round(ms / (1000 - (this._SPEED * 2000)));
+        this._scroll = Math.round(ms / (1000 - this._SPEED * 2000));
 
         if (this._scrollPref === this._scroll) {
             return null;
@@ -59,12 +55,14 @@ xss.levelanims.ScrollingCave.prototype = {
         }
     },
 
-    _updateShapePixelsArrs: function(offset) {
-        var max = this._max;
+    _updateShapePixelsArrs: function (offset) {
+        const max = this._max;
 
-        this._shapes.each(function(shape, index) {
-            this._updateShape(shape, index, offset);
-        }.bind(this));
+        this._shapes.each(
+            function (shape, index) {
+                this._updateShape(shape, index, offset);
+            }.bind(this)
+        );
 
         max.stalactite += offset;
         max.stalagmite += offset;
@@ -78,10 +76,10 @@ xss.levelanims.ScrollingCave.prototype = {
         }
     },
 
-    _updateShape: function(shape, index, offset) {
-        var translate = shape.transform.translate;
+    _updateShape: function (shape, index, offset) {
+        const translate = shape.transform.translate;
 
-        var gameTileNormalized = Math.abs(translate[0]) / xss.GAME_TILE;
+        const gameTileNormalized = Math.abs(translate[0]) / xss.GAME_TILE;
         if (gameTileNormalized - shape.bbox().width > this._LEVEL_WIDTH) {
             // No longer visible, despawn shape.
             this._shapes.set(index, null);
@@ -91,12 +89,15 @@ xss.levelanims.ScrollingCave.prototype = {
         }
     },
 
-    _scrambleDecimals: function(seed, cutat) {
-        var max = 16, dec0, dec1, pow;
+    _scrambleDecimals: function (seed, cutat) {
+        let max = 16,
+            dec0,
+            dec1,
+            pow;
         pow = Math.pow(10, max);
         cutat = cutat % max;
-        dec0 = seed * Math.pow(10, cutat) / pow;
-        dec1 = seed * pow / Math.pow(10, max - cutat) % 1;
+        dec0 = (seed * Math.pow(10, cutat)) / pow;
+        dec1 = ((seed * pow) / Math.pow(10, max - cutat)) % 1;
         return dec0 + dec1;
     },
 
@@ -105,40 +106,39 @@ xss.levelanims.ScrollingCave.prototype = {
      * @return {number}
      * @private
      */
-    _random: function(range) {
+    _random: function (range) {
         this.seed = this._scrambleDecimals(this.seed, ++this.seedIteration);
         return range[0] + Math.floor(this.seed * (range[1] - range[0] + 1));
     },
 
-    _spawnStalactite: function(x0) {
-        var x1 = x0 + this._random(this._BUMP_WIDTH);
+    _spawnStalactite: function (x0) {
+        const x1 = x0 + this._random(this._BUMP_WIDTH);
         this._spawnFormation(true, x0, x1);
         return x1;
     },
 
-    _spawnStalagmite: function(x0) {
-        var x1 = x0 + this._random(this._BUMP_WIDTH);
+    _spawnStalagmite: function (x0) {
+        const x1 = x0 + this._random(this._BUMP_WIDTH);
         this._spawnFormation(false, x0, x1);
         return x1;
     },
 
-    _spawnFormation: function(isStalactite, x0, x1) {
-        var y1, shape;
+    _spawnFormation: function (isStalactite, x0, x1) {
+        let y1, shape;
 
         y1 = this._random(this._BUMP_HEIGHT);
         shape = new xss.Shape();
 
-        for (var y0 = 0; y0 < y1; y0++) {
-            var y0Ite, xRow1Prev = x1;
+        for (let y0 = 0; y0 < y1; y0++) {
+            let y0Ite,
+                xRow1Prev = x1;
             if (y0) {
                 x0 += this._random(this._BUMP_DECREASE);
                 x1 -= this._random(this._BUMP_DECREASE);
             }
             y0Ite = isStalactite ? y0 : this._LEVEL_HEIGHT - y0 - 1;
             if (x0 < x1 && x1 <= xRow1Prev) {
-                shape.add(
-                    xss.shapegen.line(x0, y0Ite, x1, y0Ite)
-                );
+                shape.add(xss.shapegen.line(x0, y0Ite, x1, y0Ite));
                 xRow1Prev = x1;
             } else {
                 break;
@@ -146,6 +146,5 @@ xss.levelanims.ScrollingCave.prototype = {
         }
 
         this._shapes.add(shape);
-    }
-
+    },
 };

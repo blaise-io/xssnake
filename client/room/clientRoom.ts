@@ -127,7 +127,7 @@ export class ClientRoom {
     //     * @private
     //     */
     //    _sanitizeNames(names) {
-    //        for (var i = 0, m = names.length; i < m; i++) {
+    //        for (let i = 0, m = names.length; i < m; i++) {
     //            while (fontWidth(names[i]) > UI_WIDTH_NAME) {
     //                names[i] = names[i].slice(0, -1);
     //            }

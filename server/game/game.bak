@@ -30,7 +30,7 @@ xss.game.Game.prototype = {
     destruct: function() {
         this.stop();
         this.spawner.destruct();
-        for (var i = 0, m = this.timeouts.length; i < m; i++) {
+        for (let i = 0, m = this.timeouts.length; i < m; i++) {
             clearTimeout(this.timeouts[i]);
         }
 
@@ -43,7 +43,7 @@ xss.game.Game.prototype = {
     },
 
     start: function() {
-        var levelData = xss.levels.getLevelData(this.levelIndex);
+        let levelData = xss.levels.getLevelData(this.levelIndex);
         this.level = new xss.Level(
             levelData,
             this.room.seed,
@@ -61,7 +61,7 @@ xss.game.Game.prototype = {
     },
 
     stop: function() {
-        var pubsub = this.server.emitter;
+        let pubsub = this.server.emitter;
         if (pubsub.listeners(xss.SE_SERVER_TICK)) {
             pubsub.removeListener(xss.SE_SERVER_TICK, this._mainGameLoopBound);
         }
@@ -74,7 +74,7 @@ xss.game.Game.prototype = {
      * @return {number}
      */
     updateSnake: function(client, clientParts, direction): void {
-        var crash, sync, serverParts, common, mismatches, snake = client.snake;
+        let crash, sync, serverParts, common, mismatches, snake = client.snake;
 
         // Always allow a new direction
         client.snake.direction = direction;
@@ -152,8 +152,8 @@ xss.game.Game.prototype = {
      * @param client
      */
     bufferSnakesState: function(client): void {
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            var data = [i, this.snakes[i].parts, this.snakes[i].direction];
+        for (let i = 0, m = this.snakes.length; i < m; i++) {
+            let data = [i, this.snakes[i].parts, this.snakes[i].direction];
             client.buffer(xss.NC_SNAKE_UPDATE, data);
         }
     },
@@ -163,10 +163,10 @@ xss.game.Game.prototype = {
      * @param client
      */
     bufferSpawnsState: function(client): void {
-        var spawner = this.spawner,
+        let spawner = this.spawner,
             spawns = spawner.spawns;
-        for (var i = 0, m = spawns.length; i < m; i++) {
-            var spawn = spawns[i];
+        for (let i = 0, m = spawns.length; i < m; i++) {
+            let spawn = spawns[i];
             if (null !== spawn) {
                 client.buffer(xss.NC_GAME_SPAWN, [
                     spawn.type, i, spawn.location
@@ -180,7 +180,7 @@ xss.game.Game.prototype = {
      * @param {number} index
      */
     hitApple: function(client, index): void {
-        var size = client.snake.size += 3;
+        let size = client.snake.size += 3;
 
         this.room.buffer(xss.NC_GAME_DESPAWN, index);
         this.room.buffer(xss.NC_SNAKE_SIZE, [client.model.index, size]);
@@ -207,10 +207,10 @@ xss.game.Game.prototype = {
      * @return {Array.<xss.Coordinate>}
      */
     getNonEmptyLocations: function() {
-        var locations = this.spawner.locations.slice();
-        for (var i = 0, m = this.snakes.length; i < m; i++) {
-            var parts = this.snakes[i].parts;
-            for (var ii = 0, mm = parts.length; ii < mm; ii++) {
+        let locations = this.spawner.locations.slice();
+        for (let i = 0, m = this.snakes.length; i < m; i++) {
+            let parts = this.snakes[i].parts;
+            for (let ii = 0, mm = parts.length; ii < mm; ii++) {
                 locations.push(parts[ii]);
             }
         }
@@ -221,21 +221,21 @@ xss.game.Game.prototype = {
      * @return {xss.Coordinate}
      */
     getEmptyLocation: function() {
-        var locations = this.getNonEmptyLocations();
+        let locations = this.getNonEmptyLocations();
         return this.level.getEmptyLocation(locations);
     },
 
     spawnSnakes: function() {
-        var clients = this.room.players;
-        for (var i = 0, m = clients.length; i < m; i++) {
-            var snake = this._spawnSnake(i);
+        let clients = this.room.players;
+        for (let i = 0, m = clients.length; i < m; i++) {
+            let snake = this._spawnSnake(i);
             this.snakes[i] = snake;
             clients[i].snake = snake;
         }
     },
 
     showLotsOfApples: function() {
-        var locations, levelData, spawnRow, y = 1;
+        let locations, levelData, spawnRow, y = 1;
 
         this._spawnPause = true;
 
@@ -243,7 +243,7 @@ xss.game.Game.prototype = {
         levelData = this.level.levelData;
 
         spawnRow = function() {
-            for (var x = y % 4, mm = levelData.width; x < mm; x += 4) {
+            for (let x = y % 4, mm = levelData.width; x < mm; x += 4) {
                 if (this.level.isEmptyLocation(locations, [x, y])) {
                     this.spawner.spawn(xss.SPAWN_APPLE, [x, y], true);
                 }
@@ -264,7 +264,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _containsGaps: function(parts): void {
-        for (var i = 1, m = parts.length; i < m; i++) {
+        for (let i = 1, m = parts.length; i < m; i++) {
             // Sanity check
             if (parts[i].length !== 2 ||
                 typeof parts[i][0] !== 'number' ||
@@ -287,8 +287,8 @@ xss.game.Game.prototype = {
      * @private
      */
     _findCommon: function(clientParts, serverParts): void {
-        for (var i = clientParts.length - 1; i >= 0; i--) {
-            for (var ii = serverParts.length - 1; ii >= 0; ii--) {
+        for (let i = clientParts.length - 1; i >= 0; i--) {
+            for (let ii = serverParts.length - 1; ii >= 0; ii--) {
                 if (xss.util.eq(clientParts[i], serverParts[ii])) {
                     return [i, ii];
                 }
@@ -303,7 +303,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _maxMismatches: function(client): void {
-        var rtt = Math.min(xss.NETCODE_SYNC_MS, client.player.model.latency);
+        let rtt = Math.min(xss.NETCODE_SYNC_MS, client.player.model.latency);
         return Math.ceil((rtt + 20) / client.snake.speed);
     },
 
@@ -311,7 +311,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _spawnSomethingAfterDelay: function() {
-        var delay, range = xss.SPAWN_SOMETHING_EVERY;
+        let delay, range = xss.SPAWN_SOMETHING_EVERY;
         delay = xss.util.randomRange(range[0] * 1000, range[1] * 1000);
         this.timeouts.push(
             setTimeout(this._spawnSomething.bind(this), delay)
@@ -322,7 +322,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _spawnSomething: function() {
-        var powerupsEnabled, randomResultApple, type;
+        let powerupsEnabled, randomResultApple, type;
 
         if (this._spawnPause) {
             return;
@@ -343,7 +343,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _emitSnakeRoom: function(client): void {
-        var data = [client.model.index, client.snake.parts, client.snake.direction];
+        let data = [client.model.index, client.snake.parts, client.snake.direction];
         this.room.emit(xss.NC_SNAKE_UPDATE, data);
     },
 
@@ -352,7 +352,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _broadcastSnakeRoom: function(client): void {
-        var data = [
+        let data = [
             client.model.index,
             client.snake.parts,
             client.snake.direction
@@ -367,14 +367,14 @@ xss.game.Game.prototype = {
      * @private
      */
     _isCrash: function(client, parts): void {
-        var eq, clients, level, crash;
+        let eq, clients, level, crash;
 
         eq = xss.util.eq;
         clients = this.room.players;
         level = this.level;
 
-        for (var i = 0, m = parts.length; i < m; i++) {
-            var part = parts[i];
+        for (let i = 0, m = parts.length; i < m; i++) {
+            let part = parts[i];
 
             // Wall
             if (level.isWall(part[0], part[1])) {
@@ -396,7 +396,7 @@ xss.game.Game.prototype = {
             }
 
             // Opponent
-            for (var ii = 0, mm = clients.length; ii < mm; ii++) {
+            for (let ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
                     return new xss.game.Crash(xss.CRASH_OPPONENT, client, clients[ii]);
                 }
@@ -413,7 +413,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _crashSnake: function(client, parts, emit): void {
-        var snake = client.snake;
+        let snake = client.snake;
         if (snake.limbo) {
             if (emit !== false) {
                 snake.limbo.emitNotice();
@@ -432,10 +432,10 @@ xss.game.Game.prototype = {
      * @private
      */
     _serverGameLoop: function(delta): void {
-        var shift, clients = this.room.players;
+        let shift, clients = this.room.players;
         shift = this.level.gravity.getShift(delta);
         this.level.updateMovingWalls(delta, true);
-        for (var i = 0, m = clients.length; i < m; i++) {
+        for (let i = 0, m = clients.length; i < m; i++) {
             this._updateClient(clients[i], delta, shift);
         }
     },
@@ -447,7 +447,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _updateClient: function(client, delta, shift): void {
-        var snake = client.snake;
+        let snake = client.snake;
         if (!snake.crashed) {
             if (snake.elapsed >= snake.speed) {
                 snake.elapsed -= snake.speed;
@@ -465,7 +465,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _getPredictPosition: function(snake): void {
-        var head, shift;
+        let head, shift;
         head = snake.getHead();
         shift = [[-1, 0], [0, -1], [1, 0], [0, 1]][snake.direction];
         return [head[0] + shift[0], head[1] + shift[1]];
@@ -476,7 +476,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _applyNewPosition: function(client): void {
-        var predict, predictParts, snake, crash, opponent;
+        let predict, predictParts, snake, crash, opponent;
 
         snake = client.snake;
         predict = this._getPredictPosition(snake);
@@ -524,7 +524,7 @@ xss.game.Game.prototype = {
      * @private
      */
     _spawnSnake: function(index): void {
-        var spawn, direction, snake, size, speed;
+        let spawn, direction, snake, size, speed;
 
         spawn = this.level.getSpawn(index);
         direction = this.level.getSpawnDirection(index);

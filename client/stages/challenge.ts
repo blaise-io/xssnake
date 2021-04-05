@@ -73,10 +73,10 @@ export class ChallengeStage extends InputStage {
         "'012345'.lastIndexOf('%d')",
         "'%s'+'A'+Math.pow(%d,2)",
         "new Date('2013,0%d,0%d').getMonth()",
-        "var A=%d,B=3;do{A++}while(B--); A;",
-        "var A=3,B=%d;do{A++}while(B--); B;",
-        "var A=%d;A++;++A;A+=1; A;",
-        "var A=%d;A--;--A;A-=1; A;",
+        "let A=%d,B=3;do{A++}while(B--); A;",
+        "let A=3,B=%d;do{A++}while(B--); B;",
+        "let A=%d;A++;++A;A+=1; A;",
+        "let A=%d;A--;--A;A-=1; A;",
         '"%d"+%d',
     ];
 

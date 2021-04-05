@@ -1,35 +1,36 @@
-const events = require("events");
-const WebSocketServer = require("ws").Server;
+import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
+import { ServerRoomManager } from "../room/roomManager";
+import { Server as WebSocketServer } from "ws";
+import { EventEmitter } from "events";
+import { ServerPlayer } from "../room/serverPlayer";
 
-/**
- * @constructor
- */
 export class Server {
-    constructor(Server) {
-        this.emitter = new events.EventEmitter();
+    private emitter;
+    private roomManager: ServerRoomManager;
+    private ws: WebSocketServer;
+
+    constructor() {
+        this.emitter = new EventEmitter();
         this.roomManager = new ServerRoomManager(this);
         this.ws = this.start();
     }
 
-    destruct() {
+    destruct(): void {
         this.roomManager.destruct();
         this.roomManager = null;
         this.ws.close();
     }
 
-    start() {
+    start(): WebSocketServer {
         const ws = new WebSocketServer({
             host: SERVER_HOST,
             port: SERVER_PORT,
             path: SERVER_PATH,
         });
 
-        ws.on(
-            "connection",
-            function (connection) {
-                new ServerPlayer(this, connection);
-            }.bind(this)
-        );
+        ws.on("connection", (connection) => {
+            new ServerPlayer(this, connection);
+        });
 
         return ws;
     }

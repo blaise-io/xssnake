@@ -1,12 +1,12 @@
 'use strict';
 
-var assert = require('assert');
-var nodeEvents = require('events');
+let assert = require('assert');
+let nodeEvents = require('events');
 
 
 describe('Game', function() {
 
-    var server, roomManager, room, round, game, client, otherClient,
+    let server, roomManager, room, round, game, client, otherClient,
         roomPreferences, pubsubDummy, connectionDummy;
 
     pubsubDummy = new nodeEvents.EventEmitter();
@@ -100,7 +100,7 @@ describe('Game', function() {
         });
 
         it('Update snake parts', function() {
-            var update = game.updateSnake(client, [[2,0],[3,0],[4,0],[5,0]], 0);
+            let update = game.updateSnake(client, [[2,0],[3,0],[4,0],[5,0]], 0);
             assert(update === xss.UPDATE_SUCCES);
             assert(client.snake.parts.length === 4);
             assert(client.snake.parts[0][0] === 2);
@@ -108,39 +108,39 @@ describe('Game', function() {
         });
 
         it('Update snake direction', function() {
-            var update = game.updateSnake(client, [[1,0],[2,0],[3,0],[4,0]], 1);
+            let update = game.updateSnake(client, [[1,0],[2,0],[3,0],[4,0]], 1);
             assert(update === xss.UPDATE_SUCCES);
             assert(client.snake.direction === 1);
         });
 
         it('Detect illegal gap', function() {
-            var update = game.updateSnake(client, [[1,0],[2,0],[3,0],[5,0]], 0);
+            let update = game.updateSnake(client, [[1,0],[2,0],[3,0],[5,0]], 0);
             assert(update === xss.UPDATE_ERR_GAP);
         });
 
         it('Detect no common', function() {
-            var update = game.updateSnake(client, [[5,0],[6,0],[7,0],[8,0]], 0);
+            let update = game.updateSnake(client, [[5,0],[6,0],[7,0],[8,0]], 0);
             assert(update === xss.UPDATE_ERR_NO_COMMON);
         });
 
         it('Disallow too many mismatches', function() {
             client.socket.model.latency = 100;
             client.snake.speed = 150;
-            var update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
+            let update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
             assert(update === xss.UPDATE_ERR_MISMATCHES);
         });
 
         it('Allow more mismatches on high latency', function() {
             client.socket.model.latency = 150;
             client.snake.speed = 150;
-            var update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
+            let update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
             assert(update === xss.UPDATE_SUCCES);
         });
 
         it('Allow more mismatches on high speed', function() {
             client.socket.model.latency = 100;
             client.snake.speed = 100;
-            var update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
+            let update = game.updateSnake(client, [[3,0],[4,0],[5,0],[6,0]], 0);
             assert(update === xss.UPDATE_SUCCES);
         });
 

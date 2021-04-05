@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": "..",
     "outDir": "../build",
-    "allowJs": false,
+    "moduleResolution": "node",
+    "allowJs": true,
     "target": "es6"
   }
 }

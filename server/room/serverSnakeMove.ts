@@ -1,7 +1,19 @@
-class ServerSnakeMove {
-    constructor(ServerSnakeMove) {
-        this.dirtyMove = dirtyMove;
-        this.player = player;
+import {
+    DIRECTION_DOWN,
+    DIRECTION_LEFT,
+    NETCODE_SYNC_MS,
+    VALIDATE_ERR_GAP,
+    VALIDATE_ERR_MISMATCHES,
+    VALIDATE_ERR_NO_COMMON,
+    VALIDATE_SUCCES,
+} from "../../shared/const";
+import { delta, eq } from "../../shared/util";
+import { Sanitizer } from "../../shared/util/sanitizer";
+
+export class ServerSnakeMove {
+    private status: number;
+
+    constructor(public dirtyMove, public player) {
         this.parts = null;
         this.direction = null;
         this.status = -1;

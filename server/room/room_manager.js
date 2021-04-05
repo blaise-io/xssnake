@@ -4,7 +4,7 @@
  * @param {xss.netcode.Server} server
  * @constructor
  */
-xss.room.ServerRoomManager = function(server) {
+xss.room.ServerRoomManager = function (server) {
     this.server = server;
     /** @type {Array.<xss.room.ServerRoom>} */
     this.rooms = [];
@@ -13,19 +13,18 @@ xss.room.ServerRoomManager = function(server) {
 };
 
 xss.room.ServerRoomManager.prototype = {
-
-    destruct: function() {
+    destruct: function () {
         this.removeAllRooms();
         this.matcher.destruct();
         this.server.emitter.removeAllListeners([
             xss.NC_ROOM_STATUS,
             xss.NC_ROOM_JOIN_KEY,
-            xss.NC_ROOM_JOIN_MATCHING
+            xss.NC_ROOM_JOIN_MATCHING,
         ]);
     },
 
-    bindEvents: function() {
-        var emitter = this.server.emitter;
+    bindEvents: function () {
+        const emitter = this.server.emitter;
         emitter.on(xss.NC_ROOM_STATUS, this.emitRoomStatus.bind(this));
         emitter.on(xss.NC_ROOM_JOIN_KEY, this.autojoinRoom.bind(this));
         emitter.on(xss.NC_ROOM_JOIN_MATCHING, this.joinMatchingRoom.bind(this));
@@ -35,24 +34,24 @@ xss.room.ServerRoomManager.prototype = {
      * @param {string} key
      * @return {xss.room.ServerRoom}
      */
-    room: function(key) {
+    room: function (key) {
         return this.rooms[key];
     },
 
     /**
      * @param {xss.room.ServerRoom} room
      */
-    remove: function(room) {
+    remove: function (room) {
         room.destruct();
-        for (var i = 0, m = this.rooms.length; i < m; i++) {
+        for (let i = 0, m = this.rooms.length; i < m; i++) {
             if (room === this.rooms[i]) {
                 this.rooms.splice(i, 1);
             }
         }
     },
 
-    removeAllRooms: function() {
-        for (var i = 0, m = this.rooms.length; i < m; i++) {
+    removeAllRooms: function () {
+        for (let i = 0, m = this.rooms.length; i < m; i++) {
             this.rooms[i].destruct();
         }
         this.rooms.length = 0;
@@ -62,8 +61,9 @@ xss.room.ServerRoomManager.prototype = {
      * @param {xss.room.ServerOptions} preferences
      * @return {xss.room.ServerRoom}
      */
-    createRoom: function(preferences) {
-        var room, id = xss.util.randomStr(xss.ROOM_KEY_LENGTH);
+    createRoom: function (preferences) {
+        let room,
+            id = xss.util.randomStr(xss.ROOM_KEY_LENGTH);
         room = new xss.room.ServerRoom(this.server, preferences, id);
         this.rooms.push(room);
         return room;
@@ -73,8 +73,8 @@ xss.room.ServerRoomManager.prototype = {
      * @param {Array.<?>} dirtyKeyArr
      * @param {xss.room.ServerPlayer} player
      */
-    autojoinRoom: function(dirtyKeyArr, player) {
-        var room, key, status;
+    autojoinRoom: function (dirtyKeyArr, player) {
+        let room, key, status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);
 
@@ -93,11 +93,10 @@ xss.room.ServerRoomManager.prototype = {
      * @param {xss.room.ServerPlayer} player
      * @private
      */
-    joinMatchingRoom: function(dirtySerializeOptions, player) {
-        var options, room, emitDataArr;
+    joinMatchingRoom: function (dirtySerializeOptions, player) {
+        let options, room, emitDataArr;
 
-        emitDataArr = new xss.util.Sanitizer(dirtySerializeOptions)
-            .assertArray().getValueOr([]);
+        emitDataArr = new xss.util.Sanitizer(dirtySerializeOptions).assertArray().getValueOr([]);
         options = new xss.room.ServerOptions(emitDataArr);
 
         room = this.matcher.getRoomMatching(options);
@@ -107,8 +106,8 @@ xss.room.ServerRoomManager.prototype = {
         room.detectAutostart();
     },
 
-    getRoomByKey: function(key) {
-        for (var i = 0, m = this.rooms.length; i < m; i++) {
+    getRoomByKey: function (key) {
+        for (let i = 0, m = this.rooms.length; i < m; i++) {
             if (key === this.rooms[i].key) {
                 return this.rooms[i];
             }
@@ -116,8 +115,8 @@ xss.room.ServerRoomManager.prototype = {
         return null;
     },
 
-    getSanitizedRoomKey: function(dirtyKeyArr) {
-        var keySanitizer = new xss.util.Sanitizer(dirtyKeyArr[0]);
+    getSanitizedRoomKey: function (dirtyKeyArr) {
+        const keySanitizer = new xss.util.Sanitizer(dirtyKeyArr[0]);
         keySanitizer.assertStringOfLength(xss.ROOM_KEY_LENGTH);
         return keySanitizer.getValueOr();
     },
@@ -126,8 +125,8 @@ xss.room.ServerRoomManager.prototype = {
      * @param {string} key
      * @return {number}
      */
-    getRoomStatus: function(key) {
-        var room;
+    getRoomStatus: function (key) {
+        let room;
         if (!key) {
             return xss.ROOM_INVALID_KEY;
         }
@@ -146,8 +145,8 @@ xss.room.ServerRoomManager.prototype = {
      * @param {Array.<?>} dirtyKeyArr
      * @param {xss.room.ServerPlayer} player
      */
-    emitRoomStatus: function(dirtyKeyArr, player) {
-        var room, key, status;
+    emitRoomStatus: function (dirtyKeyArr, player) {
+        let room, key, status;
         key = this.getSanitizedRoomKey(dirtyKeyArr);
         status = this.getRoomStatus(key);
 
@@ -159,6 +158,5 @@ xss.room.ServerRoomManager.prototype = {
         } else {
             player.emit(xss.NC_ROOM_JOIN_ERROR, [status]);
         }
-    }
-
+    },
 };

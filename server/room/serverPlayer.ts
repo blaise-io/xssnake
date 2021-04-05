@@ -1,36 +1,44 @@
-var events = require('events');
+import {
+    NC_PLAYER_NAME,
+    NETCODE_SYNC_MS,
+    PLAYER_NAME_MINLENGTH,
+    SE_PLAYER_COLLISION,
+    SE_PLAYER_DISCONNECT,
+} from "../../shared/const";
+import { Player } from "../../shared/room/player";
+import { EventEmitter } from "events";
+import { getRandomName } from "../../shared/util";
+import { Sanitizer } from "../../shared/util/sanitizer";
+import { ServerSnake } from "../game/serverSnake";
+import { ServerHeartbeat } from "../netcode/heartbeat";
+import { Server } from "../netcode/server";
+import { ServerRoom } from "./serverRoom";
+import { WebSocketServer } from "ws/lib/WebSocketServer";
 
-/**
- * @param {netcode.Server} server
- * @param {ws.WebSocket} connection
- * @constructor
- * @extends {room.Player}
- */
-export class ServerPlayer {
-    constructor(ServerPlayer) {
-    room.Player.call(this);
+export class ServerPlayer extends Player {
+    private emitter: EventEmitter;
+    private room: ServerRoom;
+    private heartbeat: ServerHeartbeat;
+    private snake: ServerSnake;
 
-    this.emitter = new events.EventEmitter();
-    this.server = server;
+    constructor(public server: Server, public connection: WebSocketServer) {
+        super();
 
-    /** @type {room.ServerRoom} */
-    this.room = null;
+        this.emitter = new EventEmitter();
 
-    this.connection = connection;
-    this.connection.on('message', this.onmessage.bind(this));
-    this.connection.on('close', this.onclose.bind(this));
+        this.room = null;
 
-    this.connected = true;
+        this.connection.on("message", this.onmessage.bind(this));
+        this.connection.on("close", this.onclose.bind(this));
 
-    this.bindEvents();
+        this.connected = true;
 
-    this.heartbeat = new netcode.ServerHeartbeat(this);
-};
+        this.bindEvents();
 
-extend(room.ServerPlayer.prototype, room.Player.prototype);
-extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ {
+        this.heartbeat = new ServerHeartbeat(this);
+    }
 
-    destruct() {
+    destruct(): void {
         if (this.connected) {
             this.disconnect();
         }
@@ -61,15 +69,15 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @param {string} jsonStr
      */
     onmessage(jsonStr): void {
-        var message = new netcode.Message(jsonStr);
-        console.log('IN ', this.name, jsonStr);
+        const message = new netcode.Message(jsonStr);
+        console.log("IN ", this.name, jsonStr);
         if (message.isClean) {
             this.emitMessage(message.event, message.data);
         }
     }
 
     emitMessage(event, data) {
-        var playerEmits, roomEmits;
+        let playerEmits, roomEmits;
 
         playerEmits = this.emitter.emit(event, data);
         roomEmits = this.room && this.room.emitter.emit(event, data, this);
@@ -103,7 +111,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @param {?} dirtyNameArr
      * @return {string}
      */
-    setName(dirtyNameArr): void {
+    setName(dirtyNameArr): string {
         this.name = new Sanitizer(dirtyNameArr[0])
             .assertStringOfLength(PLAYER_NAME_MINLENGTH, 20)
             .getValueOr(getRandomName());
@@ -116,7 +124,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @param {Array.<string|number|Array>=} data
      */
     emit(event, data): void {
-        var emit;
+        let emit;
 
         if (!this.connected) {
             return false;
@@ -130,12 +138,15 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
             } else {
                 emit = [event];
             }
-            console.log('OUT', this.name, JSON.stringify(emit));
-            this.connection.send(JSON.stringify(emit), function(error) {
-                if (error) {
-                    console.error('Error sending message', error);
-                }
-            }.bind(this));
+            console.log("OUT", this.name, JSON.stringify(emit));
+            this.connection.send(
+                JSON.stringify(emit),
+                function (error) {
+                    if (error) {
+                        console.error("Error sending message", error);
+                    }
+                }.bind(this)
+            );
         }
     }
 
@@ -167,8 +178,7 @@ extend(room.ServerPlayer.prototype, /** @lends {room.ServerPlayer.prototype} */ 
      * @return {number}
      */
     getMaxMismatchesAllowed() {
-        var latency = Math.min(NETCODE_SYNC_MS, this.heartbeat.latency);
+        const latency = Math.min(NETCODE_SYNC_MS, this.heartbeat.latency);
         return Math.ceil(latency / this.snake.speed);
     }
-
-});
+}

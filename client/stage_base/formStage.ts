@@ -51,7 +51,7 @@ export class FormStage {
                 State.flow.previousStage();
                 break;
             case KEY_ENTER:
-                var next = this.getNextStage(this.form.getData());
+                const next = this.getNextStage(this.form.getData());
                 State.flow.switchStage(next);
                 break;
             case KEY_UP:

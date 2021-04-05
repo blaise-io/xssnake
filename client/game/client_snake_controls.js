@@ -32,7 +32,7 @@ xss.game.ClientSnakeControls.prototype = {
      * @param {Event} event
      */
     handleKeys: function(event)): void {
-        var direction = xss.KEY_TO_DIRECTION[event.keyCode];
+        let direction = xss.KEY_TO_DIRECTION[event.keyCode];
         if (!xss.keysBlocked && typeof direction !== 'undefined') {
             this.setDirection(direction);
         }
@@ -63,7 +63,7 @@ xss.game.ClientSnakeControls.prototype = {
      * @return {boolean}
      */
     isDirectionAllowed: function(direction, prevDirection)): void {
-        var turn = Math.abs(direction - prevDirection);
+        let turn = Math.abs(direction - prevDirection);
         return (
             this.upcomingDirections.length <= 2 &&
             this.snake.parts.length >= 2 && // Must go to blinkie at start.

@@ -3,12 +3,12 @@
  * @param {?=} value
  * @constructor
  */
-class Sanitizer {
+export class Sanitizer {
     private _value: any;
     private _json: any;
     private _valid: boolean;
 
-    constructor(value: any) {
+    constructor(value: unknown) {
         this._value = value;
         this._valid = true;
     }

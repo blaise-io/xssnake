@@ -1,8 +1,6 @@
-/**
- * @constructor
- */
 import { State } from "../../client/state/state";
 import { ROOM_CAPACITY } from "../const";
+import { Sanitizer } from "../util/sanitizer";
 
 export class Options {
     isQuickGame: boolean;
@@ -21,12 +19,9 @@ export class Options {
         this.isXSS = false;
     }
 
-    destruct() {}
+    destruct(): void {}
 
-    /**
-     * @return {Array.<number>}
-     */
-    serialize(): number[] {
+    serialize(): [number, number, number, number, number, number] {
         return [
             this.maxPlayers,
             this.levelset,
@@ -37,10 +32,7 @@ export class Options {
         ];
     }
 
-    /**
-     * @param {?} serialized
-     */
-    deserialize(serialized): void {
+    deserialize(serialized: [number, number, number, number, number, number]): void {
         this.maxPlayers = new Sanitizer(serialized[0])
             .assertBetween(1, ROOM_CAPACITY)
             .getValueOr(ROOM_CAPACITY);
