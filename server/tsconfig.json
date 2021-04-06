@@ -5,5 +5,9 @@
     "moduleResolution": "node",
     "allowJs": true,
     "target": "es6"
-  }
+  },
+  "include": [
+    "*/**.ts",
+    "../index.d.ts"
+  ]
 }

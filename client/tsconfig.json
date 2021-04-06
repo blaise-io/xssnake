@@ -4,5 +4,9 @@
     "outDir": "../build",
     "allowJs": false,
     "target": "es6"
-  }
+  },
+  "include": [
+    "*/**.ts",
+    "../index.d.ts"
+  ]
 }

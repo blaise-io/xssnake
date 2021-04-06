@@ -1,11 +1,59 @@
-<!doctype html>
-<head>
-    <title>XSSNAKE (debug)</title>
-
-    <meta charset="utf-8">
-    <meta name="robots" content="noindex,nocache">
-
-    <link rel="icon" href="../www/favicon.ico">
-    <link rel="stylesheet" href="../client/static/xssnake.css">
-    <style>input{ cursor: default }</style>
-<script defer src="client.js"></script></head>
+<head><script defer src="client.js"></script></head>Html Webpack Plugin:
+<pre>
+  Error: Child compilation failed:
+  Module not found: Error: Can't resolve '/Users/blaise/env/xssnake/server/client.ejs' in '/Users/blaise/env/xssnake'
+  ModuleNotFoundError: Module not found: Error: Can't resolve '/Users/blaise/env/xssnake/server/client.ejs' in '/Users/blaise/env/xssnake'
+  
+  - Compilation.js:1668 
+    [xssnake]/[webpack]/lib/Compilation.js:1668:28
+  
+  - NormalModuleFactory.js:712 
+    [xssnake]/[webpack]/lib/NormalModuleFactory.js:712:13
+  
+  
+  - NormalModuleFactory.js:273 
+    [xssnake]/[webpack]/lib/NormalModuleFactory.js:273:22
+  
+  
+  - NormalModuleFactory.js:402 
+    [xssnake]/[webpack]/lib/NormalModuleFactory.js:402:22
+  
+  - NormalModuleFactory.js:121 
+    [xssnake]/[webpack]/lib/NormalModuleFactory.js:121:11
+  
+  - NormalModuleFactory.js:628 
+    [xssnake]/[webpack]/lib/NormalModuleFactory.js:628:24
+  
+  - NormalModuleFactory.js:782 
+    [xssnake]/[webpack]/lib/NormalModuleFactory.js:782:8
+  
+  - NormalModuleFactory.js:902 
+    [xssnake]/[webpack]/lib/NormalModuleFactory.js:902:5
+  
+  - child-compiler.js:169 
+    [xssnake]/[html-webpack-plugin]/lib/child-compiler.js:169:18
+  
+  - Compiler.js:534 
+    [xssnake]/[webpack]/lib/Compiler.js:534:11
+  
+  - Compiler.js:1087 
+    [xssnake]/[webpack]/lib/Compiler.js:1087:17
+  
+  
+  - Hook.js:18 Hook.CALL_ASYNC_DELEGATE [as _callAsync]
+    [xssnake]/[tapable]/lib/Hook.js:18:14
+  
+  - Compiler.js:1083 
+    [xssnake]/[webpack]/lib/Compiler.js:1083:33
+  
+  - Compilation.js:2424 
+    [xssnake]/[webpack]/lib/Compilation.js:2424:11
+  
+  
+  - Hook.js:18 Hook.CALL_ASYNC_DELEGATE [as _callAsync]
+    [xssnake]/[tapable]/lib/Hook.js:18:14
+  
+  - Compilation.js:2417 
+    [xssnake]/[webpack]/lib/Compilation.js:2417:38
+  
+</pre>

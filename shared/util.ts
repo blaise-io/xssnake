@@ -101,13 +101,10 @@ export function ensureIndexWithinBounds(index, arr) {
     return index;
 }
 
-/**
- * @param {Array.<number>} numbers
- * @return {number}
- */
-export function average(numbers) {
+export function average(numbers: number[]): number {
     let total = 0;
-    for (let i = 0, m = numbers.length; i < m; i++) {
+    const m = numbers.length;
+    for (let i = 0; i < m; i++) {
         total += numbers[i];
     }
     return m ? total / m : 0;
