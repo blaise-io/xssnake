@@ -20,7 +20,8 @@ import {
 import { COPY_DIALOG_CANCEL, COPY_DIALOG_OK } from "../copy/copy";
 import { State } from "../state/state";
 import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";
-import { zoom } from "./transformClient";
+import { center } from "./shapeClient";
+import { outline, zoom } from "./transformClient";
 
 /**
  * @param {string} header
@@ -273,13 +274,9 @@ export class Dialog {
      * @private
      */
     _updateShape() {
-        let shape;
-        let header;
-        let body;
         let buttons = new PixelCollection();
-
-        header = this._getHeaderPixels();
-        body = this._getBodyPixels();
+        const header = this._getHeaderPixels();
+        const body = this._getBodyPixels();
 
         switch (this.settings.type) {
             case Dialog.TYPE.ALERT:
@@ -290,12 +287,12 @@ export class Dialog {
                 break;
         }
 
-        shape = new Shape(header, body, buttons);
+        const shape = new Shape(header, body, buttons);
         shape.flags.isOverlay = true;
-
-        shape.outline();
-        shape.center(0, 0);
         shape.transform.translate[1] = MENU_TOP - 2;
+
+        outline(shape);
+        center(shape, 0, 0);
 
         State.shapes.dialog = shape;
     }

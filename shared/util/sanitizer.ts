@@ -88,12 +88,7 @@ export class Sanitizer {
         return this.assertBetween(0, 1);
     }
 
-    /**
-     * @param {number} min
-     * @param {number=} max
-     * @return {Sanitizer}
-     */
-    assertStringOfLength(min, max) {
+    assertStringOfLength(min: number, max?: number): Sanitizer {
         max = typeof max === "undefined" ? min : max;
         if (typeof this._value !== "string") {
             this._log("assertStringOfLength type", this._value);
@@ -125,18 +120,11 @@ export class Sanitizer {
         return this._value.length >= min && this._value.length <= max;
     }
 
-    /**
-     * @return {boolean}
-     */
-    valid() {
+    valid(): boolean {
         return this._valid;
     }
 
-    /**
-     * @param {*=} def
-     * @return {?}
-     */
-    getValueOr(def) {
+    getValueOr<Type>(def?: Type): unknown | Type {
         return this._valid ? this._value : def;
     }
 

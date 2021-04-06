@@ -1,16 +1,11 @@
-/* eslint-env node */
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import webpack from "webpack";
+/* eslint-disable */
+const nodeExternals = require("webpack-node-externals");
+const webpack = require("webpack");
 
-import HtmlWebpackPlugin from "html-webpack-plugin";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-console.log(__dirname);
-
-export default {
+module.exports = {
     entry: __dirname + "/index.ts",
+    target: "node", // in order to ignore built-in modules like path, fs, etc.
+    externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
     module: {
         rules: [
             {
@@ -24,15 +19,12 @@ export default {
         extensions: [".tsx", ".ts", ".js"],
     },
     output: {
-        filename: "client.js",
+        filename: "server.js",
         path: __dirname + "/../build",
     },
     plugins: [
         new webpack.DefinePlugin({
-            __IS_CLIENT__: true,
-        }),
-        new HtmlWebpackPlugin({
-            template: __dirname + "/client.ejs",
+            __IS_CLIENT__: false,
         }),
     ],
 };

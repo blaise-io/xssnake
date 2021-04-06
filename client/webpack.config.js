@@ -1,13 +1,8 @@
-/* eslint-env node */
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import webpack from "webpack";
+/* eslint-disable */
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-import HtmlWebpackPlugin from "html-webpack-plugin";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-export default {
+module.exports = {
     entry: __dirname + "/index.ts",
     module: {
         rules: [

@@ -1,3 +1,4 @@
+import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
 import { NC_PING, NC_PONG } from "../../shared/const";
 import { NS_SOCKET } from "../const";
 import {
@@ -22,8 +23,7 @@ export class ClientSocketPlayer extends ClientPlayer {
 
         this.local = true;
         this.room = null;
-
-        this.connection = new WebSocket("ws://" + this.SERVER_ENDPOINT);
+        this.connection = new WebSocket(`ws://${SERVER_HOST}:${SERVER_PORT}${SERVER_PATH}`);
         this.connection.onopen = this.onopen.bind(this);
         this.connection.onclose = this.onclose.bind(this);
         this.connection.onerror = this.onclose.bind(this);

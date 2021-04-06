@@ -3,7 +3,7 @@
  * @constructor
  */
 export class Matcher {
-    constructor(Matcher) {
+    constructor(rooms) {
         this.rooms = rooms;
     }
 

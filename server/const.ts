@@ -1,5 +1,3 @@
-__IS_CLIENT__ = false;
-
 export const GAME_LEFT = 0;
 export const GAME_TOP = 0;
 

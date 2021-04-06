@@ -3,11 +3,15 @@
     "baseUrl": "..",
     "outDir": "../build",
     "moduleResolution": "node",
-    "allowJs": true,
+    "allowJs": false,
     "target": "es6"
   },
+  "typeRoots": [
+    "../node_modules/@types",
+    "node_modules/@types",
+  ],
   "include": [
     "*/**.ts",
-    "../index.d.ts"
+    "../index.d.ts",
   ]
 }

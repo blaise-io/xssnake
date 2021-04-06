@@ -7,6 +7,7 @@
  */
 import { PixelCollection } from "../../shared/pixelCollection";
 import { line } from "../../shared/shapeGenerator";
+import { shift } from "../../shared/transform";
 
 export function outline(shape, hPadding = 6, vPadding = 6, round = true) {
     let r;
@@ -23,7 +24,7 @@ export function outline(shape, hPadding = 6, vPadding = 6, round = true) {
 
     // Keep in viewport
     if (bbox.y0 - vPadding < 0) {
-        shape.set(shape.shift(shape.pixels, 0, vPadding - bbox.y0));
+        shape.set(shift(shape.pixels, 0, vPadding - bbox.y0));
         bbox = shape.bbox();
     }
 

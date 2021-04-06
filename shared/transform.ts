@@ -6,7 +6,7 @@
  */
 import { PixelCollection } from "./pixelCollection";
 
-export function shift(pixels, xshift, yshift) {
+export function shift(pixels: PixelCollection, xshift = 0, yshift = 0) {
     let ret;
 
     if (xshift === 0 && yshift === 0) {
@@ -14,8 +14,6 @@ export function shift(pixels, xshift, yshift) {
     }
 
     ret = new PixelCollection();
-    xshift = xshift || 0;
-    yshift = yshift || 0;
 
     pixels.each(function (x, y) {
         ret.add(x + xshift, y + yshift);

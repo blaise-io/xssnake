@@ -2,9 +2,34 @@
  * @param {netcode.Server} server
  * @constructor
  */
+import {
+    NC_OPTIONS_SERIALIZE,
+    NC_PLAYERS_SERIALIZE,
+    NC_ROOM_JOIN_ERROR,
+    NC_ROOM_JOIN_KEY,
+    NC_ROOM_JOIN_MATCHING,
+    NC_ROOM_SERIALIZE,
+    NC_ROOM_STATUS,
+    NC_ROUND_SERIALIZE,
+    ROOM_FULL,
+    ROOM_IN_PROGRESS,
+    ROOM_INVALID_KEY,
+    ROOM_JOINABLE,
+    ROOM_KEY_LENGTH,
+    ROOM_NOT_FOUND,
+} from "../../shared/const";
+import { randomStr } from "../../shared/util";
+import { Sanitizer } from "../../shared/util/sanitizer";
+import { Matcher } from "./matcher";
+import { ServerOptions } from "./serverOptions";
+import { ServerPlayer } from "./serverPlayer";
+import { ServerRoom } from "./serverRoom";
+
 export class ServerRoomManager {
-    constructor(ServerRoomManager) {
-        this.server = server;
+    private rooms: any[];
+    private matcher: Matcher;
+
+    constructor(public server) {
         /** @type {Array.<room.ServerRoom>} */
         this.rooms = [];
         this.matcher = new Matcher(this.rooms);
@@ -117,22 +142,17 @@ export class ServerRoomManager {
         return null;
     }
 
-    getSanitizedRoomKey(dirtyKeyArr) {
+    getSanitizedRoomKey(dirtyKeyArr: unknown[]): string {
         const keySanitizer = new Sanitizer(dirtyKeyArr[0]);
         keySanitizer.assertStringOfLength(ROOM_KEY_LENGTH);
-        return keySanitizer.getValueOr();
+        return keySanitizer.getValueOr() as string;
     }
 
-    /**
-     * @param {string} key
-     * @return {number}
-     */
-    getRoomStatus(key): void {
-        let room;
+    getRoomStatus(key: string): number {
         if (!key) {
             return ROOM_INVALID_KEY;
         }
-        room = this.getRoomByKey(key);
+        const room = this.getRoomByKey(key);
         if (!room) {
             return ROOM_NOT_FOUND;
         } else if (room.isFull()) {
@@ -143,19 +163,11 @@ export class ServerRoomManager {
         return ROOM_JOINABLE;
     }
 
-    /**
-     * @param {Array.<?>} dirtyKeyArr
-     * @param {room.ServerPlayer} player
-     */
-    emitRoomStatus(dirtyKeyArr, player): void {
-        let room;
-        let key;
-        let status;
-        key = this.getSanitizedRoomKey(dirtyKeyArr);
-        status = this.getRoomStatus(key);
-
+    emitRoomStatus(dirtyKeyArr: string[], player: ServerPlayer): void {
+        const key = this.getSanitizedRoomKey(dirtyKeyArr);
+        const status = this.getRoomStatus(key);
         if (status === ROOM_JOINABLE) {
-            room = this.getRoomByKey(key);
+            const room = this.getRoomByKey(key);
             player.emit(NC_ROOM_SERIALIZE, room.serialize());
             player.emit(NC_OPTIONS_SERIALIZE, room.options.serialize());
             player.emit(NC_PLAYERS_SERIALIZE, room.players.serialize());
