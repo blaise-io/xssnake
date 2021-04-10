@@ -2,7 +2,6 @@ import { HEIGHT } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
-import { extend } from "../../shared/util";
 import {
     DOM_EVENT_KEYDOWN,
     KEY_BACKSPACE,
@@ -38,7 +37,7 @@ export class Dialog {
         this.header = header.toUpperCase();
         this._body = body;
 
-        /** @type {DialogSettings} */
+        // TODO: Make class.
         this.settings = {
             keysBlocked: true,
             type: Dialog.TYPE.INFO,
@@ -47,7 +46,7 @@ export class Dialog {
             cancel: () => {},
         };
 
-        extend(this.settings, settings);
+        Object.assign(this.settings, settings);
 
         this._bindEvents();
         this._updateShape();

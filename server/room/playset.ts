@@ -1,15 +1,13 @@
-/**
- * @param {number} levelsetIndex
- * @constructor
- */
-LevelPlayset = function(levelsetIndex) {
-    this.levelsetIndex = levelsetIndex;
-    this.levelset = State.levelsetRegistry.getLevelset(this.levelsetIndex);
-    /** @type {Array.<number>} */
-    this.played = [];
-};
+import { Levelset } from "../../shared/levelset/levelset";
+import { State } from "../state/state";
 
-
+export class LevelPlayset {
+    private played: number[];
+    private levelset: Levelset;
+    constructor(public levelsetIndex: number) {
+        this.levelset = State.levelsetRegistry.getLevelset(levelsetIndex);
+        this.played = [];
+    }
 
     destruct() {
         this.levelset = null;
@@ -21,5 +19,4 @@ LevelPlayset = function(levelsetIndex) {
         this.played.push(nextLevelsetIndex);
         return nextLevelsetIndex;
     }
-
-};
+}

@@ -6,7 +6,7 @@ import {
 } from "../../shared/const";
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Config } from "../../shared/levelset/config";
-import { Options } from "../../shared/room/options";
+import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import { EV_PLAYERS_UPDATED, NS_ROUND } from "../const";
 import { ClientGame } from "../game/clientGame";
@@ -20,7 +20,7 @@ export class ClientRound extends Round {
     private preGameUI: any;
     private wrapupGameUI: WrapupGame;
 
-    constructor(public players: ClientPlayerRegistry, public options: Options) {
+    constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         super(players, options);
 
         this.level = new BlankLevel(new Config());

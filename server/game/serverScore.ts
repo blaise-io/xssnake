@@ -1,22 +1,19 @@
-/**
- * @param {room.ServerPlayerRegistry} players
- * @constructor
- */
+import { NC_SCORE_UPDATE } from "../../shared/const";
+import { Level } from "../../shared/level/level";
+import { ServerPlayer } from "../room/serverPlayer";
+import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
+
 export class ServerScore {
-    constructor(ServerScore) {
-        this.players = players;
-    }
+    constructor(public players: ServerPlayerRegistry) {}
 
     destruct() {
         this.players = null;
     }
 
     /**
-     * @param {Array.<room.ServerPlayer>} crashedPlayers
-     * @param {level.Level} level
-     * @return {boolean} Player score is affected.
+     * Returns whether player score is affected.
      */
-    update(crashedPlayers, level): void {
+    update(crashedPlayers: ServerPlayer[], level: Level): boolean {
         let points;
         let scoreUpdated = false;
         if (!level) {
@@ -38,10 +35,7 @@ export class ServerScore {
         }
     }
 
-    /**
-     * @return {Array.<number>}
-     */
-    serialize() {
+    serialize(): number[] {
         const score = [];
         for (let i = 0, m = this.players.players.length; i < m; i++) {
             score.push(this.players.players[i].score);

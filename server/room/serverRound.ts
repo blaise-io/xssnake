@@ -1,35 +1,47 @@
-/**
- * @param {EventEmitter} roomEmitter
- * @param {room.ServerPlayerRegistry} players
- * @param {room.Options} options
- * @param {LevelPlayset} levelPlayset
- * @constructor
- * @extends {room.Round}
- */
-export class ServerRound {
-    constructor(ServerRound) {
-    room.Round.call(this, players, options);
-    this.roomEmitter = roomEmitter;
-    this.levelsetIndex = options.levelset;
-    this.levelset = State.levelsetRegistry.getLevelset(this.levelsetIndex);
-    this.levelIndex = levelPlayset.getNext();
+import { EventEmitter } from "events";
+import {
+    NC_ROOM_START,
+    NC_ROUND_COUNTDOWN,
+    NC_ROUND_SERIALIZE,
+    NC_ROUND_START,
+    NC_ROUND_WRAPUP,
+    SE_PLAYER_DISCONNECT,
+    SECONDS_ROUND_COUNTDOWN,
+} from "../../shared/const";
+import { RoomOptions } from "../../shared/room/roomOptions";
+import { Round } from "../../shared/room/round";
+import { ServerGame } from "../game/serverGame";
+import { State } from "../state/state";
+import { LevelPlayset } from "./playset";
+import { ServerPlayer } from "./serverPlayer";
+import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 
-    /** @type {game.ServerGame} */
-    this.game = null;
-    /** @type {level.Level} */
-    this.level = null;
+export class ServerRound extends Round {
+    private game: ServerGame;
+    wrappingUp: boolean;
+    private countdownStarted: boolean;
+    private handleDisconnectBound: (...args: any[]) => void;
+    private countdownTimer: NodeJS.Timeout;
 
-    this.countdownStarted = false;
-    this.wrappingUp = false;
+    constructor(
+        public roomEmitter: EventEmitter,
+        public players: ServerPlayerRegistry,
+        public options: RoomOptions,
+        public levelPlayset: LevelPlayset
+    ) {
+        super(players, options);
 
-    this.handleDisconnectBound = this.handleDisconnect.bind(this);
+        this.levelsetIndex = options.levelset;
+        this.levelset = State.levelsetRegistry.getLevelset(this.levelsetIndex);
+        this.levelIndex = levelPlayset.getNext();
 
-    this.bindEvents();
-};
+        this.countdownStarted = false;
+        this.wrappingUp = false;
 
-extend(room.ServerRound.prototype, room.Round.prototype);
+        this.handleDisconnectBound = this.handleDisconnect.bind(this);
 
-extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
+        this.bindEvents();
+    }
 
     destruct() {
         clearTimeout(this.countdownTimer);
@@ -51,19 +63,16 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
     }
 
     bindEvents() {
-        this.roomEmitter.on(SE_PLAYER_DISCONNECT, this.handleDisconnectBound);
-        this.roomEmitter.on(NC_ROOM_START, this.handleManualRoomStart.bind(this));
+        this.roomEmitter.on(String(SE_PLAYER_DISCONNECT), this.handleDisconnectBound);
+        this.roomEmitter.on(String(NC_ROOM_START), this.handleManualRoomStart.bind(this));
     }
 
     unbindEvents() {
-        this.roomEmitter.removeListener(SE_PLAYER_DISCONNECT, this.handleDisconnectBound);
-        this.roomEmitter.removeAllListeners(NC_ROOM_START);
+        this.roomEmitter.removeListener(String(SE_PLAYER_DISCONNECT), this.handleDisconnectBound);
+        this.roomEmitter.removeAllListeners(String(NC_ROOM_START));
     }
 
-    /**
-     * @param {room.ServerPlayer} player
-     */
-    emit(player): void {
+    emit(player: ServerPlayer): void {
         player.emit(NC_ROUND_SERIALIZE, this.serialize());
     }
 
@@ -71,26 +80,17 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
         this.players.emit(NC_ROUND_SERIALIZE, this.serialize());
     }
 
-    /**
-     * @return {number}
-     */
-    getAlivePlayers() {
-        return this.players.filter({snake: {crashed: false}});
+    getAlivePlayers(): ServerPlayer[] {
+        return this.players.players.filter((player) => !player.snake.crashed);
     }
 
-    /**
-     * @param {room.ServerPlayer} winner
-     */
-    wrapUp(winner): void {
+    wrapUp(winner: ServerPlayer): void {
         let data = [this.players.players.indexOf(winner)];
         this.players.emit(NC_ROUND_WRAPUP, data);
         this.wrappingUp = true;
     }
 
-    /**
-     * @param {boolean} enabled
-     */
-    toggleCountdown(enabled): void {
+    toggleCountdown(enabled: boolean): void {
         clearTimeout(this.countdownTimer);
         this.countdownStarted = enabled;
         this.players.emit(NC_ROUND_COUNTDOWN, [+enabled]);
@@ -122,5 +122,4 @@ extend(room.ServerRound.prototype, /** @lends {room.ServerRound.prototype} */ {
             this.toggleCountdown(false);
         }
     }
-
-});
+}

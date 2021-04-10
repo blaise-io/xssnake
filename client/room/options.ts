@@ -1,4 +1,4 @@
-import { Options } from "../../shared/room/options";
+import { RoomOptions } from "../../shared/room/roomOptions";
 import {
     FIELD_LEVEL_SET,
     FIELD_MAX_PLAYERS,
@@ -8,7 +8,7 @@ import {
 } from "../const";
 import { State } from "../state/state";
 
-export class ClientOptions extends Options {
+export class ClientOptions extends RoomOptions {
     constructor() {
         super();
         this.levelset = State.levelsetRegistry.getRandomLevelsetIndex();

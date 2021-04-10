@@ -1,13 +1,9 @@
-/**
- * @param {Array=} dirtyOptions
- * @constructor
- * @extends {room.Options}
- */
 import { NC_OPTIONS_SERIALIZE } from "../../shared/const";
-import { Options } from "../../shared/room/options";
+import { RoomOptions } from "../../shared/room/roomOptions";
+import { ServerPlayer } from "./serverPlayer";
 
-export class ServerOptions extends Options {
-    constructor(dirtyOptions) {
+export class ServerOptions extends RoomOptions {
+    constructor(dirtyOptions: UntrustedData) {
         super();
 
         if (dirtyOptions) {
@@ -15,21 +11,12 @@ export class ServerOptions extends Options {
         }
     }
 
-    // extend(room.ServerOptions.prototype, room.Options.prototype);
-    // extend(room.ServerOptions.prototype, /** @lends {room.ServerOptions.prototype} */ {
-
-    /**
-     * @param {room.ServerPlayer} player
-     */
-    emit(player): void {
+    emit(player: ServerPlayer): void {
         player.emit(NC_OPTIONS_SERIALIZE, this.serialize());
     }
 
-    /**
-     * @param {room.ServerOptions} request
-     * @return {boolean}
-     */
-    matches(request): void {
+    matches(request: ServerOptions): boolean {
+        // TODO: Write as separate if () { return }
         return (
             !this.isPrivate &&
             !request.isPrivate &&

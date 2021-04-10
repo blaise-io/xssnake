@@ -3,7 +3,6 @@
  * @implements {StageInterface}
  * @constructor
  */
-import { extend } from "../../shared/util";
 import { MENU_WIDTH, STORAGE_XSS } from "../const";
 import { InputStage } from "../stage_base/inputStage";
 import { State } from "../state/state";

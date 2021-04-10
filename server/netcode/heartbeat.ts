@@ -1,7 +1,3 @@
-/**
- * @param {room.ServerPlayer} player
- * @constructor
- */
 import { HEARTBEAT_INTERVAL_MS, NC_PING, NC_PONG } from "../../shared/const";
 import { SERVER_MAX_TOLERATED_LATENCY } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -17,7 +13,8 @@ export class ServerHeartbeat {
     }
 
     destruct() {
-        this.player.emitter.removeAllListeners([NC_PING, NC_PONG]);
+        this.player.emitter.removeAllListeners(String(NC_PING));
+        this.player.emitter.removeAllListeners(String(NC_PONG));
         this.player = null;
     }
 
@@ -27,8 +24,8 @@ export class ServerHeartbeat {
     }
 
     bindEvents() {
-        this.player.emitter.on(NC_PING, this.ping.bind(this));
-        this.player.emitter.on(NC_PONG, this.pong.bind(this));
+        this.player.emitter.on(String(NC_PING), this.ping.bind(this));
+        this.player.emitter.on(String(NC_PONG), this.pong.bind(this));
     }
 
     ping() {

@@ -3,12 +3,12 @@
 /**
  * @constructor
  */
-xss.room.RoundManager = function(room) {
+room.RoundManager = function(room) {
     this.room = room;
     this.levelIndex = 0;
 
-    this.score = new xss.game.Score(room);
-    this.round = new xss.room.Round(room, this.levelIndex);
+    this.score = new game.Score(room);
+    this.round = new Round(room, this.levelIndex);
 
     this.started = false;
     this.roundsPlayed = 0;
@@ -17,7 +17,7 @@ xss.room.RoundManager = function(room) {
     this._nextRoundTimer = 0;
 };
 
-xss.room.RoundManager.prototype = {
+room.RoundManager.prototype = {
 
     destruct: function() {
         clearTimeout(this._restartTimer);
@@ -69,7 +69,7 @@ xss.room.RoundManager.prototype = {
      * @return {boolean}
      */
     allRoundsPlayed: function() {
-        return (this.roundsPlayed + 1 >= xss.ROUNDS_MAX);
+        return (this.roundsPlayed + 1 >= ROUNDS_MAX);
     },
 
     endCurrentRound: function() {
@@ -83,10 +83,10 @@ xss.room.RoundManager.prototype = {
 
     nextRoundStartDelay: function() {
         let delay = this.round.allCrashed() ?
-            xss.TIME_ROUND_PAUSE : xss.TIME_ROUND_GLOAT;
+            TIME_ROUND_PAUSE : TIME_ROUND_GLOAT;
 
         this.room.emit(
-            xss.NC_CHAT_NOTICE, [xss.NOTICE_NEW_ROUND, delay]
+            NC_CHAT_NOTICE, [NOTICE_NEW_ROUND, delay]
         );
 
         this._nextRoundTimer = setTimeout(
@@ -97,7 +97,7 @@ xss.room.RoundManager.prototype = {
     nextRoundStart: function() {
         this.roundsPlayed++;
         this.round.destruct();
-        this.round = new xss.room.Round(this.room, this.getNextLevel());
+        this.round = new Round(this.room, this.getNextLevel());
         this.round.countdown();
         this.room.emitState();
     },
@@ -107,22 +107,22 @@ xss.room.RoundManager.prototype = {
     },
 
     /**
-     * @param {xss.netcode.Client} winner
+     * @param {netcode.Client} winner
      */
     endAllRounds: function(winner): void {
-        if (this.room.options[xss.FIELD_XSS]) {
+        if (this.room.options[FIELD_XSS]) {
             this._xssFetch(winner);
         } else {
             this.round.game.showLotsOfApples();
         }
         this._restartTimer = setTimeout(
             this.room.restartRounds.bind(this.room),
-            xss.TIME_ALL_ROUNDS_GLOAT * 1000
+            TIME_ALL_ROUNDS_GLOAT * 1000
         );
     },
 
     /**
-     * @param {xss.netcode.Client} winner
+     * @param {netcode.Client} winner
      */
     _xssFetch: function(winner): void {
         let pubsub = this.room.server.emitter;
@@ -134,24 +134,24 @@ xss.room.RoundManager.prototype = {
             }
         }.bind(this);
 
-        pubsub.on(xss.NC_XSS_REQ, this._xssListener);
-        winner.emit(xss.NC_XSS_REQ);
+        pubsub.on(NC_XSS_REQ, this._xssListener);
+        winner.emit(NC_XSS_REQ);
     },
 
     _xssRemoveListener: function() {
         if (this._xssListener) {
             this.room.server.emitter.removeListener(
-                xss.NC_XSS_REQ, this._xssListener
+                NC_XSS_REQ, this._xssListener
             );
         }
     },
 
     /**
-     * @param {xss.netcode.Client} winner
+     * @param {netcode.Client} winner
      * @param {string} code
      */
     _xssFire: function(winner, code): void {
-        winner.broadcast(xss.NC_XSS_RES, code);
+        winner.broadcast(NC_XSS_RES, code);
     }
 
 };

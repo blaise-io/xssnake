@@ -1,14 +1,27 @@
 /**
  * A set of rounds.
  * After N rounds, the player with most points wins.
- *
- * @param {EventEmitter} roomEmitter
- * @param {room.ServerPlayerRegistry} players
- * @param {room.Options} options
- * @constructor
  */
+import { EventEmitter } from "events";
+import { SE_PLAYER_COLLISION, SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
+import { RoomOptions } from "../../shared/room/roomOptions";
+import { ServerScore } from "../game/serverScore";
+import { LevelPlayset } from "./playset";
+import { ServerPlayer } from "./serverPlayer";
+import { ServerPlayerRegistry } from "./serverPlayerRegistry";
+import { ServerRound } from "./serverRound";
+
 export class ServerRoundSet {
-    constructor(ServerRoundSet) {
+    private levelPlayset: LevelPlayset;
+    round: ServerRound;
+    private score: ServerScore;
+    private roundIndex: number;
+    private nextRoundTimeout: NodeJS.Timeout;
+    constructor(
+        public roomEmitter: EventEmitter,
+        public players: ServerPlayerRegistry,
+        public options: RoomOptions
+    ) {
         this.roomEmitter = roomEmitter;
         this.players = players;
         this.options = options;
@@ -22,7 +35,7 @@ export class ServerRoundSet {
     }
 
     destruct() {
-        this.roomEmitter.removeAllListeners(SE_PLAYER_COLLISION);
+        this.roomEmitter.removeAllListeners(String(SE_PLAYER_COLLISION));
         clearTimeout(this.nextRoundTimeout);
 
         this.levelPlayset.destruct();
@@ -39,13 +52,10 @@ export class ServerRoundSet {
     }
 
     bindEvents() {
-        this.roomEmitter.on(SE_PLAYER_COLLISION, this.handleCollisions.bind(this));
+        this.roomEmitter.on(String(SE_PLAYER_COLLISION), this.handleCollisions.bind(this));
     }
 
-    /**
-     * @param {room.ServerPlayer} winner
-     */
-    switchRounds(winner): void {
+    switchRounds(winner: ServerPlayer): void {
         const delay = winner ? SECONDS_ROUND_GLOAT : SECONDS_ROUND_PAUSE;
         if (this.hasSetWinner()) {
             // TODO

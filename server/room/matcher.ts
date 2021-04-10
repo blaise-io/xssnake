@@ -1,21 +1,14 @@
-/**
- * @param {Array.<room.ServerRoom>} rooms
- * @constructor
- */
+import { ServerOptions } from "./serverOptions";
+import { ServerRoom } from "./serverRoom";
+
 export class Matcher {
-    constructor(rooms) {
-        this.rooms = rooms;
-    }
+    constructor(public rooms: ServerRoom[]) {}
 
     destruct() {
         this.rooms = null;
     }
 
-    /**
-     * @param {room.ServerOptions} requestOptions
-     * @return {room.ServerRoom}
-     */
-    getRoomMatching(requestOptions): void {
+    getRoomMatching(requestOptions: ServerOptions): ServerRoom | null {
         const rooms = this.rooms;
         if (!requestOptions.isPrivate) {
             // Shortcut.

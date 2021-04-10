@@ -2,8 +2,14 @@
  * @param {string} jsonStr
  * @constructor
  */
+import { Sanitizer } from "../../shared/util/sanitizer";
+
 export class Message {
-    constructor(Message) {
+    isClean: boolean;
+    event: number;
+    data: any;
+
+    constructor(jsonStr: string) {
         this.isClean = null;
         this.event = null;
         this.data = null;
@@ -41,8 +47,7 @@ export class Message {
             return null;
         }
 
-        // Maybe we should validate whether the message only contains
-        // numbers, strings and arrays.
+        // TODO: validate whether the message only contains a certain subset of types (str, int, arr)
 
         return {
             event: eventNumberValidator.getValueOr(-1),

@@ -1,16 +1,27 @@
-/***
- * Game
- * @param {EventEmitter} roomEmitter
- * @param {level.Level} level
- * @param {room.ServerPlayerRegistry} players
- * @constructor
- */
-export class ServerGame {
-    constructor(ServerGame) {
-        this.roomEmitter = roomEmitter;
-        this.level = level;
-        this.players = players;
+import { EventEmitter } from "events";
+import { NC_PONG, NC_SNAKE_CRASH, NC_SNAKE_UPDATE, SE_PLAYER_COLLISION } from "../../shared/const";
+import { Level } from "../../shared/level/level";
+import { Snake } from "../../shared/snake";
+import { average } from "../../shared/util";
+import { SERVER_TICK_INTERVAL } from "../const";
+import { ServerPlayer } from "../room/serverPlayer";
+import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
+import { ServerSnakeMove } from "../room/serverSnakeMove";
+import { ServerItems } from "./serverItems";
 
+export class ServerGame {
+    private items: ServerItems;
+    private tick: number;
+    private lastTick: number;
+    private averageLatencyInTicks: number;
+    private tickInterval: NodeJS.Timeout;
+    private started: boolean;
+
+    constructor(
+        private roomEmitter: EventEmitter,
+        public level: Level,
+        public players: ServerPlayerRegistry
+    ) {
         this.items = new ServerItems(level, players);
         this.tick = 0;
         this.lastTick = +new Date();
@@ -35,20 +46,16 @@ export class ServerGame {
     }
 
     bindEvents() {
-        this.roomEmitter.on(NC_SNAKE_UPDATE, this.ncSnakeUpdate.bind(this));
-        this.roomEmitter.on(NC_PONG, this.ncPong.bind(this));
+        this.roomEmitter.on(String(NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));
+        this.roomEmitter.on(String(NC_PONG), this.ncPong.bind(this));
     }
 
     unbindEvents() {
-        this.roomEmitter.removeAllListeners(NC_SNAKE_UPDATE);
-        this.roomEmitter.removeAllListeners(NC_PONG);
+        this.roomEmitter.removeAllListeners(String(NC_SNAKE_UPDATE));
+        this.roomEmitter.removeAllListeners(String(NC_PONG));
     }
 
-    /**
-     * @param {?} dirtySnake
-     * @param {room.ServerPlayer} player
-     */
-    ncSnakeUpdate(dirtySnake, player): void {
+    ncSnakeUpdate(dirtySnake: WebsocketData, player: ServerPlayer): void {
         const move = new ServerSnakeMove(dirtySnake, player);
         if (move.isValid()) {
             this.applyMove(player.snake, move);
@@ -59,7 +66,7 @@ export class ServerGame {
     }
 
     /**
-     * Update averge latency of all players in this room.
+     * Update average latency of all players in this room.
      * Affects tolerance of clients overriding server prediction.
      */
     ncPong() {
@@ -84,7 +91,7 @@ export class ServerGame {
      */
     getAverageLatencyInTicks() {
         const latencies = [];
-        for (let i = 0, m = this.players.length; i < m; i++) {
+        for (let i = 0, m = this.players.players.length; i < m; i++) {
             latencies.push(this.players[i].player.heartbeat.latency);
         }
         return Math.round(average(latencies) / SERVER_TICK_INTERVAL);
@@ -120,15 +127,11 @@ export class ServerGame {
             this.players.emit(NC_SNAKE_CRASH, collisions);
 
             // Let round manager know.
-            this.roomEmitter.emit(SE_PLAYER_COLLISION, crashingPlayers);
+            this.roomEmitter.emit(String(SE_PLAYER_COLLISION), crashingPlayers);
         }
     }
 
-    /**
-     * @param {game.Snake} snake
-     * @param {game.ServerSnakeMove} move
-     */
-    applyMove(snake, move): void {
+    applyMove(snake: Snake, move: ServerSnakeMove): void {
         snake.direction = move.direction;
         snake.parts = move.parts;
         snake.trimParts();

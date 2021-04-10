@@ -3,13 +3,14 @@ import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
 import { ServerOptions } from "./serverOptions";
 import { EventEmitter } from "events";
+import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 import { ServerRoundSet } from "./serverRoundSet";
 
 export class ServerRoom {
-    private emitter: EventEmitter;
-    private players: ServerPlayerRegistry;
-    private rounds: ServerRoundSet;
+    emitter: EventEmitter;
+    players: ServerPlayerRegistry;
+    rounds: ServerRoundSet;
 
     constructor(public server: Server, public options: ServerOptions, public key: string) {
         this.emitter = new EventEmitter();
@@ -28,8 +29,8 @@ export class ServerRoom {
     }
 
     bindEvents() {
-        this.emitter.on(NC_CHAT_MESSAGE, this.ncChatMessage.bind(this));
-        this.emitter.on(SE_PLAYER_DISCONNECT, this.handlePlayerDisconnect.bind(this));
+        this.emitter.on(String(NC_CHAT_MESSAGE), this.ncChatMessage.bind(this));
+        this.emitter.on(String(SE_PLAYER_DISCONNECT), this.handlePlayerDisconnect.bind(this));
     }
 
     ncChatMessage(serializedMessage, player) {
@@ -96,7 +97,7 @@ export class ServerRoom {
     }
 
     detectEmptyRoom() {
-        if (!this.players.filter({ connected: true }).length) {
+        if (this.players.players.some((sp) => sp.connected)) {
             this.server.roomManager.remove(this);
         }
     }

@@ -54,7 +54,8 @@ export class MessageBox {
     }
 
     updatePlayers() {
-        const disconnectedPlayer = this.players.players.filter((p) => p.connected === false)[0];
+        // TODO: recursion?
+        const disconnectedPlayer = this.players.players.find((p) => !p.connected);
         if (disconnectedPlayer) {
             this.notifyMidgameDisconnect(disconnectedPlayer);
             this.playerChangeNotified = true;

@@ -1,5 +1,5 @@
 import { NC_ROOM_START, SECONDS_ROUND_COUNTDOWN } from "../../shared/const";
-import { Options } from "../../shared/room/options";
+import { RoomOptions } from "../../shared/room/roomOptions";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_ESCAPE, KEY_START, NS_PRE_GAME } from "../const";
 import {
@@ -26,7 +26,7 @@ export class PreGameUI {
     private confirmExit: boolean;
     private confirmStart: boolean;
 
-    constructor(public players: ClientPlayerRegistry, public options: Options) {
+    constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         this.dialog = null;
 
         this.countdownStarted = null;

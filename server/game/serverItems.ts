@@ -1,10 +1,8 @@
-/***
- * @param {level.Level} level
- * @param {room.ServerPlayerRegistry} players
- * @constructor
- */
+import { Level } from "../../shared/level/level";
+import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
+
 export class ServerItems {
-    constructor(ServerItems) {
+    constructor(public level: Level, public players: ServerPlayerRegistry) {
         this.level = level;
         this.players = players;
     }

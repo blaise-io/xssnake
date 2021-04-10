@@ -4,7 +4,6 @@
  * @constructor
  */
 import { ROOM_KEY_LENGTH, WIDTH } from "../../shared/const";
-import { extend } from "../../shared/util";
 import {
     DOM_EVENT_KEYDOWN,
     HASH_ROOM,
@@ -65,7 +64,7 @@ export class StageFlow {
     getData(): any {
         const value = {};
         for (let i = 0, m = this._history.length; i < m; i++) {
-            extend(value, this._history[i].getData());
+            Object.assign(value, this._history[i].getData());
         }
         return value;
     }

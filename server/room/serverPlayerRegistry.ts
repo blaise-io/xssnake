@@ -15,7 +15,7 @@ export class ServerPlayerRegistry extends PlayerRegistry {
     /**
      * Send data to everyone in the room.
      */
-    emit(type: number, data: any, exclude?: ServerPlayer): void {
+    emit(type: number, data?: any, exclude?: ServerPlayer): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             if (exclude !== this.players[i]) {
                 this.players[i].emit(type, data);

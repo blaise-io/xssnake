@@ -12,6 +12,8 @@ import { Sanitizer } from "../../shared/util/sanitizer";
 
 export class ServerSnakeMove {
     private status: number;
+    parts: Coordinate[];
+    direction: number;
 
     constructor(public dirtyMove, public player) {
         this.parts = null;
@@ -103,11 +105,7 @@ export class ServerSnakeMove {
         return VALIDATE_SUCCES;
     }
 
-    /**
-     * @param {Array.<Array>} parts
-     * @return {boolean}
-     */
-    hasGaps(parts): void {
+    hasGaps(parts: Coordinate[]): boolean {
         for (let i = 1, m = parts.length; i < m; i++) {
             // Sanity check
             if (
@@ -125,12 +123,7 @@ export class ServerSnakeMove {
         return false;
     }
 
-    /**
-     * @param {Array.<Array>} clientParts
-     * @param {Array.<Array>} serverParts
-     * @return {Array.<Array>} common
-     */
-    getCommonPartIndices(clientParts, serverParts): void {
+    getCommonPartIndices(clientParts: Coordinate[], serverParts: Coordinate[]): Coordinate | null {
         for (let i = clientParts.length - 1; i >= 0; i--) {
             for (let ii = serverParts.length - 1; ii >= 0; ii--) {
                 if (eq(clientParts[i], serverParts[ii])) {

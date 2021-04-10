@@ -1,11 +1,11 @@
 'use strict';
 
 /**
- * @param {xss.room.Round} round
+ * @param {room.Round} round
  * @param {number} levelIndex
  * @constructor
  */
-xss.game.Game = function(round, levelIndex) {
+game.Game = function(round, levelIndex) {
     this.round = round;
     this.room = round.room;
     this.server = this.room.server;
@@ -13,19 +13,19 @@ xss.game.Game = function(round, levelIndex) {
 
     this.options = this.room.options;
 
-    this.spawner = new xss.game.Spawner(this);
-    this.model = new xss.model.Game();
+    this.spawner = new game.Spawner(this);
+    this.model = new model.Game();
 
     /** @type {Array.<number>} */
     this.timeouts = [];
 
-    /** @type {Array.<xss.game.Snake>} */
+    /** @type {Array.<game.Snake>} */
     this.snakes = [];
 
     this._mainGameLoopBound = this._serverGameLoop.bind(this);
 };
 
-xss.game.Game.prototype = {
+game.Game.prototype = {
 
     destruct: function() {
         this.stop();
@@ -43,8 +43,8 @@ xss.game.Game.prototype = {
     },
 
     start: function() {
-        let levelData = xss.levels.getLevelData(this.levelIndex);
-        this.level = new xss.Level(
+        let levelData = levels.getLevelData(this.levelIndex);
+        this.level = new Level(
             levelData,
             this.room.seed,
             new Date() - this.model.created
@@ -52,23 +52,23 @@ xss.game.Game.prototype = {
 
         this.spawnSnakes();
 
-        this.server.emitter.on(xss.SE_SERVER_TICK, this._mainGameLoopBound);
+        this.server.emitter.on(SE_SERVER_TICK, this._mainGameLoopBound);
         this.model.started = true;
-        this.spawner.spawn(xss.SPAWN_APPLE);
-        if (this.options[xss.FIELD_POWERUPS]) {
+        this.spawner.spawn(SPAWN_APPLE);
+        if (this.options[FIELD_POWERUPS]) {
             this._spawnSomethingAfterDelay();
         }
     },
 
     stop: function() {
         let pubsub = this.server.emitter;
-        if (pubsub.listeners(xss.SE_SERVER_TICK)) {
-            pubsub.removeListener(xss.SE_SERVER_TICK, this._mainGameLoopBound);
+        if (pubsub.listeners(SE_SERVER_TICK)) {
+            pubsub.removeListener(SE_SERVER_TICK, this._mainGameLoopBound);
         }
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @param {Array.<Array>} clientParts
      * @param {number} direction
      * @return {number}
@@ -80,13 +80,13 @@ xss.game.Game.prototype = {
         client.snake.direction = direction;
 
         // Crop client snake because we don't trust the length the client sent
-        sync = xss.NETCODE_SYNC_MS / client.snake.speed;
+        sync = NETCODE_SYNC_MS / client.snake.speed;
         clientParts = clientParts.slice(-sync);
 
         // Don't allow gaps in the snake
         if (this._containsGaps(clientParts)) {
             this._emitSnakeRoom(client);
-            return xss.UPDATE_ERR_GAP;
+            return UPDATE_ERR_GAP;
         }
 
         // Find latest tile where client and server matched
@@ -96,14 +96,14 @@ xss.game.Game.prototype = {
         // Reject if there was no common
         if (!common) {
             this._emitSnakeRoom(client);
-            return xss.UPDATE_ERR_NO_COMMON;
+            return UPDATE_ERR_NO_COMMON;
         }
 
         // Check if client-server delta does not exceed limit
         mismatches = Math.abs(common[1] - common[0]);
         if (mismatches > this._maxMismatches(client)) {
             this._emitSnakeRoom(client);
-            return xss.UPDATE_ERR_MISMATCHES;
+            return UPDATE_ERR_MISMATCHES;
         }
 
         // Glue snake back together
@@ -126,7 +126,7 @@ xss.game.Game.prototype = {
             this._broadcastSnakeRoom(client);
         }
 
-        return xss.UPDATE_SUCCES;
+        return UPDATE_SUCCES;
     },
 
     /**
@@ -154,7 +154,7 @@ xss.game.Game.prototype = {
     bufferSnakesState: function(client): void {
         for (let i = 0, m = this.snakes.length; i < m; i++) {
             let data = [i, this.snakes[i].parts, this.snakes[i].direction];
-            client.buffer(xss.NC_SNAKE_UPDATE, data);
+            client.buffer(NC_SNAKE_UPDATE, data);
         }
     },
 
@@ -168,7 +168,7 @@ xss.game.Game.prototype = {
         for (let i = 0, m = spawns.length; i < m; i++) {
             let spawn = spawns[i];
             if (null !== spawn) {
-                client.buffer(xss.NC_GAME_SPAWN, [
+                client.buffer(NC_GAME_SPAWN, [
                     spawn.type, i, spawn.location
                 ]);
             }
@@ -176,35 +176,35 @@ xss.game.Game.prototype = {
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @param {number} index
      */
     hitApple: function(client, index): void {
         let size = client.snake.size += 3;
 
-        this.room.buffer(xss.NC_GAME_DESPAWN, index);
-        this.room.buffer(xss.NC_SNAKE_SIZE, [client.model.index, size]);
-        this.room.buffer(xss.NC_SNAKE_ACTION, [client.model.index, 'Nom']);
+        this.room.buffer(NC_GAME_DESPAWN, index);
+        this.room.buffer(NC_SNAKE_SIZE, [client.model.index, size]);
+        this.room.buffer(NC_SNAKE_ACTION, [client.model.index, 'Nom']);
         this.room.rounds.score.bufferApplePoints(client);
         this.room.flush();
 
         // There should always be at least one apple in the game.
-        if (0 === this.spawner.numOfType(xss.SPAWN_APPLE)) {
-            this.spawner.spawn(xss.SPAWN_APPLE);
+        if (0 === this.spawner.numOfType(SPAWN_APPLE)) {
+            this.spawner.spawn(SPAWN_APPLE);
         }
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @param {number} index
      */
     hitPowerup: function(client, index): void {
-        this.room.emit(xss.NC_GAME_DESPAWN, index);
-        return new xss.game.Powerup(this, client);
+        this.room.emit(NC_GAME_DESPAWN, index);
+        return new game.Powerup(this, client);
     },
 
     /**
-     * @return {Array.<xss.Coordinate>}
+     * @return {Array.<Coordinate>}
      */
     getNonEmptyLocations: function() {
         let locations = this.spawner.locations.slice();
@@ -218,7 +218,7 @@ xss.game.Game.prototype = {
     },
 
     /**
-     * @return {xss.Coordinate}
+     * @return {Coordinate}
      */
     getEmptyLocation: function() {
         let locations = this.getNonEmptyLocations();
@@ -245,7 +245,7 @@ xss.game.Game.prototype = {
         spawnRow = function() {
             for (let x = y % 4, mm = levelData.width; x < mm; x += 4) {
                 if (this.level.isEmptyLocation(locations, [x, y])) {
-                    this.spawner.spawn(xss.SPAWN_APPLE, [x, y], true);
+                    this.spawner.spawn(SPAWN_APPLE, [x, y], true);
                 }
             }
             this.room.flush();
@@ -273,7 +273,7 @@ xss.game.Game.prototype = {
                 return false;
             }
             // Delta must be 1
-            if (xss.util.delta(parts[i], parts[i - 1]) !== 1) {
+            if (util.delta(parts[i], parts[i - 1]) !== 1) {
                 return true;
             }
         }
@@ -283,13 +283,13 @@ xss.game.Game.prototype = {
     /**
      * @param {Array.<Array>} clientParts
      * @param {Array.<Array>} serverParts
-     * @return {xss.Coordinate} common
+     * @return {Coordinate} common
      * @private
      */
     _findCommon: function(clientParts, serverParts): void {
         for (let i = clientParts.length - 1; i >= 0; i--) {
             for (let ii = serverParts.length - 1; ii >= 0; ii--) {
-                if (xss.util.eq(clientParts[i], serverParts[ii])) {
+                if (util.eq(clientParts[i], serverParts[ii])) {
                     return [i, ii];
                 }
             }
@@ -298,12 +298,12 @@ xss.game.Game.prototype = {
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @return {number}
      * @private
      */
     _maxMismatches: function(client): void {
-        let rtt = Math.min(xss.NETCODE_SYNC_MS, client.player.model.latency);
+        let rtt = Math.min(NETCODE_SYNC_MS, client.player.model.latency);
         return Math.ceil((rtt + 20) / client.snake.speed);
     },
 
@@ -311,8 +311,8 @@ xss.game.Game.prototype = {
      * @private
      */
     _spawnSomethingAfterDelay: function() {
-        let delay, range = xss.SPAWN_SOMETHING_EVERY;
-        delay = xss.util.randomRange(range[0] * 1000, range[1] * 1000);
+        let delay, range = SPAWN_SOMETHING_EVERY;
+        delay = util.randomRange(range[0] * 1000, range[1] * 1000);
         this.timeouts.push(
             setTimeout(this._spawnSomething.bind(this), delay)
         );
@@ -328,27 +328,27 @@ xss.game.Game.prototype = {
             return;
         }
 
-        powerupsEnabled = this.options[xss.FIELD_POWERUPS];
-        randomResultApple = Math.random() <= xss.SPAWN_CHANCE_APPLE;
+        powerupsEnabled = this.options[FIELD_POWERUPS];
+        randomResultApple = Math.random() <= SPAWN_CHANCE_APPLE;
 
         type = (!powerupsEnabled || randomResultApple) ?
-            xss.SPAWN_APPLE : xss.SPAWN_POWERUP;
+            SPAWN_APPLE : SPAWN_POWERUP;
 
         this.spawner.spawn(type);
         this._spawnSomethingAfterDelay();
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @private
      */
     _emitSnakeRoom: function(client): void {
         let data = [client.model.index, client.snake.parts, client.snake.direction];
-        this.room.emit(xss.NC_SNAKE_UPDATE, data);
+        this.room.emit(NC_SNAKE_UPDATE, data);
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @private
      */
     _broadcastSnakeRoom: function(client): void {
@@ -357,19 +357,19 @@ xss.game.Game.prototype = {
             client.snake.parts,
             client.snake.direction
         ];
-        client.broadcast(xss.NC_SNAKE_UPDATE, data);
+        client.broadcast(NC_SNAKE_UPDATE, data);
     },
 
     /**
-     * @param {xss.netcode.Client} client
-     * @param {Array.<xss.Coordinate>} parts
-     * @return {xss.game.Crash}
+     * @param {netcode.Client} client
+     * @param {Array.<Coordinate>} parts
+     * @return {game.Crash}
      * @private
      */
     _isCrash: function(client, parts): void {
         let eq, clients, level, crash;
 
-        eq = xss.util.eq;
+        eq = util.eq;
         clients = this.room.players;
         level = this.level;
 
@@ -378,12 +378,12 @@ xss.game.Game.prototype = {
 
             // Wall
             if (level.isWall(part[0], part[1])) {
-                return new xss.game.Crash(xss.CRASH_WALL, client);
+                return new game.Crash(CRASH_WALL, client);
             }
 
             // Moving wall
             if (level.isMovingWall(part)) {
-                crash = new xss.game.Crash(xss.CRASH_MOVING_WALL, client);
+                crash = new game.Crash(CRASH_MOVING_WALL, client);
                 crash.location = part;
                 return crash;
             }
@@ -391,14 +391,14 @@ xss.game.Game.prototype = {
             // Self
             if (m > 4) {
                 if (m - 1 !== i && eq(part, parts[m - 1])) {
-                    return new xss.game.Crash(xss.CRASH_SELF, client);
+                    return new game.Crash(CRASH_SELF, client);
                 }
             }
 
             // Opponent
             for (let ii = 0, mm = clients.length; ii < mm; ii++) {
                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
-                    return new xss.game.Crash(xss.CRASH_OPPONENT, client, clients[ii]);
+                    return new game.Crash(CRASH_OPPONENT, client, clients[ii]);
                 }
             }
         }
@@ -407,8 +407,8 @@ xss.game.Game.prototype = {
     },
 
     /**
-     * @param {xss.netcode.Client} client
-     * @param {Array.<xss.Coordinate>=} parts
+     * @param {netcode.Client} client
+     * @param {Array.<Coordinate>=} parts
      * @param {boolean=} emit
      * @private
      */
@@ -422,7 +422,7 @@ xss.game.Game.prototype = {
         }
         parts = parts || snake.parts;
         snake.crashed = true;
-        this.room.emit(xss.NC_SNAKE_CRASH, [
+        this.room.emit(NC_SNAKE_CRASH, [
             client.model.index, parts, snake.limbo.location
         ]);
     },
@@ -441,9 +441,9 @@ xss.game.Game.prototype = {
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @param {number} delta
-     * @param {xss.Shift} shift
+     * @param {Shift} shift
      * @private
      */
     _updateClient: function(client, delta, shift): void {
@@ -460,8 +460,8 @@ xss.game.Game.prototype = {
     },
 
     /**
-     * @param {xss.game.Snake} snake
-     * @return {xss.Coordinate}
+     * @param {game.Snake} snake
+     * @return {Coordinate}
      * @private
      */
     _getPredictPosition: function(snake): void {
@@ -472,7 +472,7 @@ xss.game.Game.prototype = {
     },
 
     /**
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @private
      */
     _applyNewPosition: function(client): void {
@@ -511,7 +511,7 @@ xss.game.Game.prototype = {
 
     /**
      * Snake is considered dead (crashed) when in limbo for too long.
-     * @param {xss.netcode.Client} client
+     * @param {netcode.Client} client
      * @return {boolean}
      */
     _canReturnFromLimbo: function(client): void {
@@ -520,7 +520,7 @@ xss.game.Game.prototype = {
 
     /**
      * @param {number} index
-     * @return {xss.game.Snake}
+     * @return {game.Snake}
      * @private
      */
     _spawnSnake: function(index): void {
@@ -528,10 +528,10 @@ xss.game.Game.prototype = {
 
         spawn = this.level.getSpawn(index);
         direction = this.level.getSpawnDirection(index);
-        size = xss.SNAKE_SIZE;
-        speed = xss.SNAKE_SPEED;
+        size = SNAKE_SIZE;
+        speed = SNAKE_SPEED;
 
-        snake = new xss.game.Snake(spawn, direction, size, speed);
+        snake = new game.Snake(spawn, direction, size, speed);
         snake.elapsed = 0;
 
         return snake;

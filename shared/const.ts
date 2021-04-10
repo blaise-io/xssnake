@@ -3,7 +3,6 @@ export const HEIGHT = 161;
 
 export const GAME_TILE = 4;
 
-// Netcode events
 export const NC_CHAT_NOTICE = 10;
 export const NC_CHAT_MESSAGE = 11;
 

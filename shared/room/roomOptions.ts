@@ -2,7 +2,7 @@ import { State } from "../../client/state/state";
 import { ROOM_CAPACITY } from "../const";
 import { Sanitizer } from "../util/sanitizer";
 
-export class Options {
+export class RoomOptions {
     isQuickGame: boolean;
     maxPlayers: number;
     levelset: number;
@@ -32,14 +32,14 @@ export class Options {
         ];
     }
 
-    deserialize(serialized: [number, number, number, number, number, number]): void {
+    deserialize(serialized: UntrustedData): void {
         this.maxPlayers = new Sanitizer(serialized[0])
             .assertBetween(1, ROOM_CAPACITY)
-            .getValueOr(ROOM_CAPACITY);
+            .getValueOr(ROOM_CAPACITY) as number;
 
         this.levelset = new Sanitizer(serialized[1])
             .assertBetween(0, State.levelsetRegistry.levelsets.length - 1)
-            .getValueOr(0);
+            .getValueOr(0) as number;
 
         this.isQuickGame = Boolean(serialized[2]);
         this.hasPowerups = Boolean(serialized[3]);

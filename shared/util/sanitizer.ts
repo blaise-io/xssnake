@@ -64,12 +64,7 @@ export class Sanitizer {
         return this;
     }
 
-    /**
-     * @param {number} min
-     * @param {number} max
-     * @return {Sanitizer}
-     */
-    assertBetween(min, max) {
+    assertBetween(min: number, max: number): Sanitizer {
         if (typeof this._value !== "number") {
             this._log("assertRange type", this._value);
             this._valid = false;
@@ -136,13 +131,7 @@ export class Sanitizer {
         return this._valid ? this._json : def;
     }
 
-    /**
-     * @param {string} message
-     * @param {*} value
-     * @param {...*} varArgs
-     * @private
-     */
-    _log(message, value, ...varArgs) {
+    private _log(message: string, value: unknown, ...varArgs: unknown[]): void {
         console.warn("Validation Error", message, JSON.stringify(value), varArgs);
     }
 }
