@@ -85,7 +85,7 @@ export class ServerRound extends Round {
     }
 
     wrapUp(winner: ServerPlayer): void {
-        let data = [this.players.players.indexOf(winner)];
+        const data = [this.players.players.indexOf(winner)];
         this.players.emit(NC_ROUND_WRAPUP, data);
         this.wrappingUp = true;
     }

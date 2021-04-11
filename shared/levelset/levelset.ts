@@ -25,7 +25,7 @@ export class Levelset {
         this.levels.push(new Level(this.getConfig()));
     }
 
-    preload(continueFn: Function) {
+    preload(continueFn: CallableFunction) {
         let loaded = 0;
 
         const checkAllLoaded = function () {

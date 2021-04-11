@@ -1,4 +1,3 @@
-import { State } from "../../client/state/state";
 import { ROOM_CAPACITY } from "../const";
 import { Sanitizer } from "../util/sanitizer";
 
@@ -38,7 +37,7 @@ export class RoomOptions {
             .getValueOr(ROOM_CAPACITY) as number;
 
         this.levelset = new Sanitizer(serialized[1])
-            .assertBetween(0, State.levelsetRegistry.levelsets.length - 1)
+            // .assertBetween(0, State.levelsetRegistry.levelsets.length - 1)
             .getValueOr(0) as number;
 
         this.isQuickGame = Boolean(serialized[2]);

@@ -1,6 +1,6 @@
-import { COPY_LEVELSET_MOVING } from "../../client/copy/copy";
 import { Levelset } from "../levelset/levelset";
+import { _ } from "../util";
 
 export class Moving extends Levelset {
-    title = COPY_LEVELSET_MOVING;
+    title = _("Moving");
 }

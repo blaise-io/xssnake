@@ -67,10 +67,7 @@ export class ServerPlayer extends Player {
         this.emitter.removeAllListeners();
     }
 
-    /**
-     * @param {string} jsonStr
-     */
-    onmessage(jsonStr): void {
+    onmessage(jsonStr: string): void {
         const message = new Message(jsonStr);
         console.log("IN ", this.name, jsonStr);
         if (message.isClean) {

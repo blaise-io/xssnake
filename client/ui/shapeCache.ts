@@ -1,9 +1,3 @@
-/**
- * Create a paintable cached version for a shape.
- * @param {Shape} shape
- * @param {CanvasTile} tile
- * @constructor
- */
 import { BoundingBox } from "../../shared/boundingBox";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
@@ -21,7 +15,7 @@ export class ShapeCache {
         this._paintShapePixels();
     }
 
-    _getCanvas() {
+    _getCanvas(): HTMLCanvasElement {
         const canvas = document.createElement("canvas");
         canvas.width = this.bbox.width + this._getSize();
         canvas.height = this.bbox.height + this._getSize();
@@ -94,7 +88,7 @@ export class ShapeCache {
         return rectangles;
     }
 
-    _fillBackground() {
+    _fillBackground(): void {
         const expand = this.shape.expand * this.tile.size * -1;
         this.context.fillStyle = this.tile.off;
         this.context.fillRect(
@@ -105,11 +99,11 @@ export class ShapeCache {
         );
     }
 
-    _getSize() {
+    _getSize(): number {
         return this.tile.size * this.shape.transform.scale;
     }
 
-    _paintShapePixels() {
+    _paintShapePixels(): void {
         const size = this._getSize();
         const rectangles = this._mergePixels(this.shape.pixels);
 

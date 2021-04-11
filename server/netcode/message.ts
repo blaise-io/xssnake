@@ -25,13 +25,13 @@ export class Message {
         }
     }
 
-    sanitize(messageJsonStr) {
+    sanitize(jsonStr) {
         let sanitizer;
         let arrayValidator;
         let eventNumberValidator;
         let messageJson;
 
-        sanitizer = new Sanitizer(messageJsonStr).assertStringOfLength(3, 512).assertJSON();
+        sanitizer = new Sanitizer(jsonStr).assertStringOfLength(3, 512).assertJSON();
         if (!sanitizer.valid()) {
             return null;
         }

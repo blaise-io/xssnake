@@ -1,4 +1,4 @@
-import { State } from "../../client/state/state";
+// import { State } from "../../client/state/state";
 import { Level } from "../level/level";
 import { Levelset } from "../levelset/levelset";
 import { RoomOptions } from "./roomOptions";
@@ -30,8 +30,8 @@ export class Round {
         this.levelIndex = serialized[1];
     }
 
-    getLevel(levelsetIndex: number, levelIndex: number): Level {
-        const levelset = State.levelsetRegistry.getLevelset(levelsetIndex);
-        return levelset.getLevel(levelIndex);
-    }
+    // getLevel(levelsetIndex: number, levelIndex: number): Level {
+    //     const levelset = State.levelsetRegistry.getLevelset(levelsetIndex);
+    //     return levelset.getLevel(levelIndex);
+    // }
 }

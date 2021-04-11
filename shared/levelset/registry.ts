@@ -1,9 +1,6 @@
 import { randomArrIndex } from "../util";
 import { Levelset } from "./levelset";
 
-/**
- * @constructor
- */
 export class Registry {
     public levelsets: Levelset[];
     public loaded: boolean;

@@ -1,11 +1,5 @@
-import { ImageDecoder } from "../../client/level/imageDecoder";
-import { State } from "../../client/state/state";
-import { innerBorder, outerBorder } from "../../client/ui/clientShapeGenerator";
-import { setGameTransform } from "../../client/ui/shapeClient";
 import { LevelAnimationRegistry } from "../levelanim/registry";
 import { Config } from "../levelset/config";
-import { Shape } from "../shape";
-import { LevelData } from "./data";
 import { Gravity } from "./gravity";
 
 export class Level {
@@ -24,48 +18,54 @@ export class Level {
         // () => {}?
     }
 
-    /**
-     * Client-Only!
-     * TODO: Create and add to level.ClientLevel instead.
-     */
-    public destruct() {
-        if (__IS_CLIENT__) {
-            State.shapes.level = null;
-            State.shapes.innerborder = null;
-            State.shapes.outerBorderLeft = null;
-            State.shapes.outerBorderRight = null;
-            State.shapes.outerBorderTop = null;
-            State.shapes.outerBorderBottom = null;
-        }
-    }
+    preload(fn: CallableFunction) {}
 
-    /**
-     * Client-Only!
-     * TODO: Create and add to level.ClientLevel instead.
-     */
-    public paint() {
-        if (__IS_CLIENT__) {
-            State.shapes.level = new Shape(this.data.walls);
-            setGameTransform(State.shapes.level);
-            State.shapes.innerborder = innerBorder();
-            Object.assign(State.shapes, outerBorder());
-        }
-    }
+    destruct() {}
 
-    public preload(continueFn) {
-        const level = this.config.level;
-        if (level.cache) {
-            continueFn();
-        } else {
-            new ImageDecoder(level.imagedata).then(
-                function (data) {
-                    level.cache = new LevelData(data, this.animations);
-                    level.imagedata = null;
-                    this.data = level.cache;
-                    this.registerAnimations();
-                    continueFn();
-                }.bind(this)
-            );
-        }
-    }
+    paint() {}
+
+    // /**
+    //  * Client-Only!
+    //  * TODO: Create and add to level.ClientLevel instead.
+    //  */
+    // public destruct() {
+    //     if (__IS_CLIENT__) {
+    //         State.shapes.level = null;
+    //         State.shapes.innerborder = null;
+    //         State.shapes.outerBorderLeft = null;
+    //         State.shapes.outerBorderRight = null;
+    //         State.shapes.outerBorderTop = null;
+    //         State.shapes.outerBorderBottom = null;
+    //     }
+    // }
+
+    // /**
+    //  * Client-Only!
+    //  * TODO: Create and add to level.ClientLevel instead.
+    //  */
+    // public paint() {
+    //     if (__IS_CLIENT__) {
+    //         State.shapes.level = new Shape(this.data.walls);
+    //         setGameTransform(State.shapes.level);
+    //         State.shapes.innerborder = innerBorder();
+    //         Object.assign(State.shapes, outerBorder());
+    //     }
+    // }
+
+    // public preload(continueFn) {
+    //     const level = this.config.level;
+    //     if (level.cache) {
+    //         continueFn();
+    //     } else {
+    //         new ImageDecoder(level.imagedata).then(
+    //             function (data) {
+    //                 level.cache = new LevelData(data, this.animations);
+    //                 level.imagedata = null;
+    //                 this.data = level.cache;
+    //                 this.registerAnimations();
+    //                 continueFn();
+    //             }.bind(this)
+    //         );
+    //     }
+    // }
 }

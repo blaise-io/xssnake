@@ -16,10 +16,13 @@ export class Server {
             host: SERVER_HOST,
             port: SERVER_PORT,
             path: SERVER_PATH,
+            maxPayload: 256,
+            clientTracking: false,
         });
         this.ws.on("connection", (socket: ws) => {
             new ServerPlayer(this, socket);
         });
+        console.log(`Running WebSocket server at ${SERVER_HOST}:${SERVER_PATH}${SERVER_PORT}`);
     }
 
     destruct(): void {

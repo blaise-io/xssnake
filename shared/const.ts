@@ -2,6 +2,8 @@ export const WIDTH = 256;
 export const HEIGHT = 161;
 
 export const GAME_TILE = 4;
+export const GAME_LEFT = 2;
+export const GAME_TOP = 2;
 
 export const NC_CHAT_NOTICE = 10;
 export const NC_CHAT_MESSAGE = 11;

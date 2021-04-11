@@ -1,6 +1,6 @@
-import { COPY_LEVELSET_BASIC } from "../../client/copy/copy";
 import { Levelset } from "../levelset/levelset";
+import { _ } from "../util";
 
 export class Basic extends Levelset {
-    public title = COPY_LEVELSET_BASIC;
+    public title = _("Basic");
 }

@@ -1,7 +1,7 @@
-import { GAME_TILE, HEIGHT, WIDTH } from "../../shared/const";
+import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, WIDTH } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { getKey } from "../../shared/util";
-import { FRAME, GAME_LEFT, GAME_TOP } from "../const";
+import { FRAME } from "../const";
 import { State } from "../state/state";
 
 export function center(shape: Shape, width = WIDTH, height = HEIGHT): void {

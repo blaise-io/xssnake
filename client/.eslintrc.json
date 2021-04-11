@@ -3,14 +3,14 @@
     "../.eslintrc.json"
   ],
   "env": {
-    "node": true
+    "browser": true
   },
   "rules": {
     "no-restricted-imports": [
       "error",
       {
         "patterns": [
-          "**/client/*"
+          "**/server/*"
         ]
       }
     ]

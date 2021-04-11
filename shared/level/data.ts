@@ -1,5 +1,4 @@
-import { GAME_LEFT, GAME_TOP } from "../../client/const";
-import { GAME_TILE } from "../const";
+import { GAME_LEFT, GAME_TILE, GAME_TOP } from "../const";
 import { LevelAnimationRegistry } from "../levelanim/registry";
 import { PixelCollection } from "../pixelCollection";
 import { ShapeCollection } from "../shapeCollection";
@@ -63,13 +62,9 @@ export class LevelData {
         let tx;
         let ty;
         if (__IS_CLIENT__) {
-            // In Client, Game transforms left/top. Not ideal, but it is done
-            // so that we can move shapes without losing cache => performance.
             tx = (translate[0] - GAME_LEFT) / GAME_TILE;
             ty = (translate[1] - GAME_TOP) / GAME_TILE;
         } else {
-            // In Server, There is never left/top translation.
-            // TODO: class inheritance
             tx = translate[0] / GAME_TILE;
             ty = translate[1] / GAME_TILE;
         }

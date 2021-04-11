@@ -176,3 +176,10 @@ export function getRandomName() {
     ]);
     return name + "." + randomRange(10, 99);
 }
+
+/**
+ * Prep for possible i18n and marks copy.
+ */
+export function _(str: string): string {
+    return str;
+}

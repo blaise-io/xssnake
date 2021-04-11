@@ -1,6 +1,6 @@
-import { NS_ANIM } from "../../client/const";
-import { State } from "../../client/state/state";
-import { setGameTransform } from "../../client/ui/shapeClient";
+// import { NS_ANIM } from "../../client/const";
+// import { State } from "../../client/state/state";
+// import { setGameTransform } from "../../client/ui/shapeClient";
 
 export class LevelAnimationRegistry {
     public animations = [];
@@ -37,27 +37,27 @@ export class LevelAnimationRegistry {
     public updateShapes() {
         for (let i = 0, m = this.walls.length; i < m; i++) {
             if (this.walls[i]) {
-                this._updateShapes(i, this.walls[i]);
+                // this._updateShapes(i, this.walls[i]);
             }
         }
     }
 
-    private _updateShapes(animIndex, shapeCollection) {
-        const shapes = shapeCollection.shapes;
-        for (let i = 0, m = shapes.length; i < m; i++) {
-            this._updateShape([NS_ANIM, animIndex, i].join("_"), shapes[i]);
-        }
-    }
-
-    private _updateShape(key: string, shape) {
-        if (shape) {
-            if (!shape.headers.transformed) {
-                setGameTransform(shape);
-                shape.headers.transformed = true;
-            }
-            State.shapes[key] = shape;
-        } else {
-            State.shapes[key] = null;
-        }
-    }
+    // private _updateShapes(animIndex, shapeCollection) {
+    //     const shapes = shapeCollection.shapes;
+    //     for (let i = 0, m = shapes.length; i < m; i++) {
+    //         this._updateShape([NS_ANIM, animIndex, i].join("_"), shapes[i]);
+    //     }
+    // }
+    //
+    // private _updateShape(key: string, shape) {
+    //     if (shape) {
+    //         if (!shape.headers.transformed) {
+    //             setGameTransform(shape);
+    //             shape.headers.transformed = true;
+    //         }
+    //         State.shapes[key] = shape;
+    //     } else {
+    //         State.shapes[key] = null;
+    //     }
+    // }
 }

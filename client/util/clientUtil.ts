@@ -1,5 +1,5 @@
-import { GAME_TILE, HEIGHT, WIDTH } from "../../shared/const";
-import { GAME_LEFT, GAME_TOP, UC_ENTER_KEY } from "../const";
+import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, WIDTH } from "../../shared/const";
+import { UC_ENTER_KEY } from "../const";
 import { State } from "../state/state";
 import { Dialog } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";

@@ -1,7 +1,7 @@
+import { GAME_LEFT, GAME_TOP } from "../../shared/const";
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Config } from "../../shared/levelset/config";
 import { Shape } from "../../shared/shape";
-import { GAME_LEFT, GAME_TOP } from "../const";
 import { ClientSnake } from "../game/clientSnake";
 import { State } from "../state/state";
 import { zoom } from "../ui/transformClient";

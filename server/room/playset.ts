@@ -15,7 +15,7 @@ export class LevelPlayset {
     }
 
     getNext() {
-        let nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);
+        const nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);
         this.played.push(nextLevelsetIndex);
         return nextLevelsetIndex;
     }

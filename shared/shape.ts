@@ -1,12 +1,10 @@
-import { ShapeCache } from "../client/ui/shapeCache";
-import { outline } from "../client/ui/transformClient";
 import { BoundingBox } from "./boundingBox";
 import { PixelCollection } from "./pixelCollection";
 
 export class Shape {
     _bbox: BoundingBox;
     pixels: PixelCollection;
-    cache: ShapeCache = null;
+    cache: any = null; // ShapeCache but is client...
     enabled: boolean;
     effects: Record<string, (delta) => void> = {};
     expand = 0;
@@ -26,11 +24,6 @@ export class Shape {
 
     clone(): Shape {
         return new Shape(this.pixels);
-    }
-
-    outline(hPadding = 0, vPadding = 0): Shape {
-        outline(this, hPadding, vPadding);
-        return this;
     }
 
     invert(bbox?: BoundingBox): Shape {

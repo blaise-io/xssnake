@@ -1,9 +1,9 @@
-import { COPY_LEVELSET_GAME } from "../../client/copy/copy";
 import { Levelset } from "../levelset/levelset";
+import { _ } from "../util";
 
 export class Game extends Levelset {
     constructor() {
         super();
-        this.title = COPY_LEVELSET_GAME;
+        this.title = _("Pactris");
     }
 }
