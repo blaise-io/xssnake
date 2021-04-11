@@ -14,7 +14,7 @@ import { NC_SNAKE_CRASH, NC_SNAKE_UPDATE } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { EV_GAME_TICK, NS_GAME } from "../const";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { SpawnableRegistry } from "./spawnableRegistry";
 
 export class ClientGame {
@@ -43,9 +43,9 @@ export class ClientGame {
     }
 
     bindEvents() {
-        State.events.on(EV_GAME_TICK, NS_GAME, this.gameloop.bind(this));
-        State.events.on(NC_SNAKE_UPDATE, NS_GAME, this.ncUpdateSnake.bind(this));
-        State.events.on(NC_SNAKE_CRASH, NS_GAME, this.ncSetSnakesCrashed.bind(this));
+        ClientState.events.on(EV_GAME_TICK, NS_GAME, this.gameloop.bind(this));
+        ClientState.events.on(NC_SNAKE_UPDATE, NS_GAME, this.ncUpdateSnake.bind(this));
+        ClientState.events.on(NC_SNAKE_CRASH, NS_GAME, this.ncSetSnakesCrashed.bind(this));
 
         //State.events.on(NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
@@ -57,8 +57,8 @@ export class ClientGame {
     }
 
     unbindEvents() {
-        State.events.off(EV_GAME_TICK, NS_GAME);
-        State.events.off(NC_SNAKE_UPDATE, NS_GAME);
+        ClientState.events.off(EV_GAME_TICK, NS_GAME);
+        ClientState.events.off(NC_SNAKE_UPDATE, NS_GAME);
     }
 
     /**

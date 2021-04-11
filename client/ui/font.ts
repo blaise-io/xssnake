@@ -1,8 +1,7 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { shift } from "../../shared/transform";
-import { EV_FONT_LOAD, UC_HOURGLASS, UC_SQUARE } from "../const";
-import { State } from "../state/state";
+import { UC_SQUARE } from "../const";
 
 export const MAX_WIDTH = 9;
 export const MAX_HEIGHT = 7;

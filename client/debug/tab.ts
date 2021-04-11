@@ -1,12 +1,12 @@
 // Debug URL: client.html?debug=tab
 import { NeuteredMenuSnake } from "../stage/menuSnake";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
 
 if (location.search.match(/debug=tab/)) {
-    State.menuSnake = new NeuteredMenuSnake();
+    ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
-        State.shapes = {};
+        ClientState.shapes = {};
         const text = [
             "This line does not affect alignment.",
             "",
@@ -14,6 +14,6 @@ if (location.search.match(/debug=tab/)) {
             "Second Label\tAligned with A",
             "\tEmpty label",
         ].join("\n");
-        State.shapes.testtabs = font(text, 10, 10);
+        ClientState.shapes.testtabs = font(text, 10, 10);
     }, 200);
 }

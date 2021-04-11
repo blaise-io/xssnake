@@ -8,10 +8,10 @@ import {
     SE_PLAYER_DISCONNECT,
     SECONDS_ROUND_COUNTDOWN,
 } from "../../shared/const";
+import { levelsets } from "../../shared/data/levelsets";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import { ServerGame } from "../game/serverGame";
-import { State } from "../state/state";
 import { LevelPlayset } from "./playset";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
@@ -32,7 +32,7 @@ export class ServerRound extends Round {
         super(players, options);
 
         this.levelsetIndex = options.levelset;
-        this.levelset = State.levelsetRegistry.getLevelset(this.levelsetIndex);
+        this.levelset = levelsets[this.levelsetIndex];
         this.levelIndex = levelPlayset.getNext();
 
         this.countdownStarted = false;
@@ -62,12 +62,12 @@ export class ServerRound extends Round {
         this.levelset = null;
     }
 
-    bindEvents() {
+    bindEvents(): void {
         this.roomEmitter.on(String(SE_PLAYER_DISCONNECT), this.handleDisconnectBound);
         this.roomEmitter.on(String(NC_ROOM_START), this.handleManualRoomStart.bind(this));
     }
 
-    unbindEvents() {
+    unbindEvents(): void {
         this.roomEmitter.removeListener(String(SE_PLAYER_DISCONNECT), this.handleDisconnectBound);
         this.roomEmitter.removeAllListeners(String(NC_ROOM_START));
     }
@@ -76,7 +76,7 @@ export class ServerRound extends Round {
         player.emit(NC_ROUND_SERIALIZE, this.serialize());
     }
 
-    emitAll() {
+    emitAll(): void {
         this.players.emit(NC_ROUND_SERIALIZE, this.serialize());
     }
 
@@ -103,7 +103,7 @@ export class ServerRound extends Round {
         }
     }
 
-    startRound() {
+    startRound(): void {
         this.unbindEvents();
         this.level = this.getLevel(this.levelsetIndex, this.levelIndex);
         this.game = new ServerGame(this.roomEmitter, this.level, this.players);
@@ -111,13 +111,13 @@ export class ServerRound extends Round {
         this.players.emit(NC_ROUND_START);
     }
 
-    handleManualRoomStart(nodata, player) {
+    handleManualRoomStart(event: number, player: ServerPlayer): void {
         if (this.players.isHost(player) && !this.countdownTimer) {
             this.toggleCountdown(true);
         }
     }
 
-    handleDisconnect() {
+    handleDisconnect(): void {
         if (this.countdownStarted) {
             this.toggleCountdown(false);
         }

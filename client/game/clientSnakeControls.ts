@@ -1,5 +1,5 @@
 import { DOM_EVENT_KEYDOWN, KEY_TO_DIRECTION, NS_SNAKE_CONTROLS } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { ClientSnake } from "./clientSnake";
 
 export class ClientSnakeControls {
@@ -10,16 +10,16 @@ export class ClientSnakeControls {
     }
 
     destruct(): void {
-        State.events.off(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS);
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS);
     }
 
     bindEvents(): void {
-        State.events.on(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS, this.handleKeys.bind(this));
+        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS, this.handleKeys.bind(this));
     }
 
     handleKeys(event: KeyboardEvent): void {
         const direction = KEY_TO_DIRECTION[event.keyCode];
-        if (!State.keysBlocked && typeof direction !== "undefined") {
+        if (!ClientState.keysBlocked && typeof direction !== "undefined") {
             this.setDirection(direction);
         }
     }

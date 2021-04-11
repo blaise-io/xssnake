@@ -6,7 +6,8 @@
   },
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "unused-imports"
   ],
   "extends": [
     "eslint:recommended",
@@ -15,8 +16,8 @@
   "rules": {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "warn",
+    "unused-imports/no-unused-imports": "error",
     "prefer-const": "warn",
-    "no-extend-native": "error",
-    "init-declarations": ["warn", "always"] // temporary
+    "no-extend-native": "error"
   }
 }

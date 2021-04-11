@@ -5,11 +5,11 @@ import { ClientGame } from "../game/clientGame";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { NeuteredMenuSnake } from "../stage/menuSnake";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 
 const match = location.search.match(/debug=(.+Level)$/);
 if (match) {
-    State.menuSnake = new NeuteredMenuSnake();
+    ClientState.menuSnake = new NeuteredMenuSnake();
 
     document.addEventListener("DOMContentLoaded", function () {
         const player = new ClientPlayer();
@@ -24,7 +24,7 @@ if (match) {
         const level = new levels[levelObject](levelset.getConfig());
 
         level.preload(function () {
-            State.flow.destruct();
+            ClientState.flow.destruct();
             const game = new ClientGame(level, players);
             game.start();
         });

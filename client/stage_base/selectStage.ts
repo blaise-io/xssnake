@@ -13,7 +13,7 @@ import {
     KEY_UP,
     NS_STAGES,
 } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 
 export class SelectStage {
     menu = null;
@@ -27,40 +27,40 @@ export class SelectStage {
     }
 
     construct() {
-        State.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this.handleKeys.bind(this));
+        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this.handleKeys.bind(this));
     }
 
     destruct() {
-        State.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
-        State.shapes.stage = null;
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
+        ClientState.shapes.stage = null;
     }
 
     handleKeys(ev) {
-        if (State.keysBlocked) {
+        if (ClientState.keysBlocked) {
             return;
         }
         const next = this.menu.getNextStage();
         switch (ev.keyCode) {
             case KEY_BACKSPACE:
             case KEY_ESCAPE:
-                State.flow.previousStage();
+                ClientState.flow.previousStage();
                 break;
             case KEY_ENTER:
                 if (next) {
-                    State.flow.switchStage(next);
+                    ClientState.flow.switchStage(next);
                 } else {
-                    State.flow.previousStage();
+                    ClientState.flow.previousStage();
                 }
                 break;
             case KEY_UP:
                 this.menu.prev();
-                State.audio.play("menu");
-                State.flow.refreshShapes();
+                ClientState.audio.play("menu");
+                ClientState.flow.refreshShapes();
                 break;
             case KEY_DOWN:
                 this.menu.next();
-                State.audio.play("menu");
-                State.flow.refreshShapes();
+                ClientState.audio.play("menu");
+                ClientState.flow.refreshShapes();
         }
     }
 }

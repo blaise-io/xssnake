@@ -13,7 +13,7 @@ import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { Snake } from "../../shared/snake";
 import { FRAME, NS_SNAKE } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { explosion, showAction, tooltipName } from "../ui/clientShapeGenerator";
 import { flash, lifetime, setGameTransform } from "../ui/shapeClient";
 import { translateGame } from "../util/clientUtil";
@@ -48,7 +48,7 @@ export class ClientSnake extends Snake {
         const keys = Object.keys(this.shapeKeys);
         for (let i = 0, m = keys.length; i < m; i++) {
             const shapeKey = this.shapeKeys[keys[i]];
-            State.shapes[shapeKey] = null;
+            ClientState.shapes[shapeKey] = null;
         }
 
         if (this.controls) {
@@ -65,11 +65,15 @@ export class ClientSnake extends Snake {
     }
 
     getShape() {
-        return State.shapes[this.shapeKeys.snake];
+        return ClientState.shapes[this.shapeKeys.snake];
     }
 
     showName() {
-        State.shapes[this.shapeKeys.name] = tooltipName(this.name, this.parts[0], this.direction);
+        ClientState.shapes[this.shapeKeys.name] = tooltipName(
+            this.name,
+            this.parts[0],
+            this.direction
+        );
     }
 
     showAction(label) {
@@ -88,12 +92,12 @@ export class ClientSnake extends Snake {
         setGameTransform(shape);
         flash(shape);
 
-        State.shapes[this.shapeKeys.direction] = shape;
+        ClientState.shapes[this.shapeKeys.direction] = shape;
     }
 
     removeNameAndDirection() {
-        State.shapes[this.shapeKeys.name] = null;
-        State.shapes[this.shapeKeys.direction] = null;
+        ClientState.shapes[this.shapeKeys.name] = null;
+        ClientState.shapes[this.shapeKeys.direction] = null;
     }
 
     addControls() {
@@ -107,7 +111,7 @@ export class ClientSnake extends Snake {
         const shape = new Shape();
         shape.pixels.addPairs(this.parts);
         setGameTransform(shape);
-        State.shapes[this.shapeKeys.snake] = shape;
+        ClientState.shapes[this.shapeKeys.snake] = shape;
         return shape;
     }
 
@@ -181,9 +185,9 @@ export class ClientSnake extends Snake {
     }
 
     emit(direction: number): void {
-        if (State.player) {
+        if (ClientState.player) {
             const sync = Math.round(NETCODE_SYNC_MS / this.speed);
-            State.player.emit(NC_SNAKE_UPDATE, [direction, this.parts.slice(-sync)]);
+            ClientState.player.emit(NC_SNAKE_UPDATE, [direction, this.parts.slice(-sync)]);
         }
     }
 

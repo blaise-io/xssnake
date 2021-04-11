@@ -7,7 +7,7 @@ import {
     COPY_SOCKET_SERVER_AWAY,
 } from "../copy/copy";
 import { ClientHeartbeat } from "../netcode/heartbeat";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { error } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientRoom } from "./clientRoom";
@@ -43,8 +43,8 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.onerror = null;
         this.connection.onmessage = null;
 
-        State.events.off(NC_PING, NS_SOCKET);
-        State.events.off(NC_PONG, NS_SOCKET);
+        ClientState.events.off(NC_PING, NS_SOCKET);
+        ClientState.events.off(NC_PONG, NS_SOCKET);
 
         // Close explicitly when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {
@@ -90,6 +90,6 @@ export class ClientSocketPlayer extends ClientPlayer {
     onmessage(ev: MessageEvent): void {
         const data = JSON.parse(ev.data);
         console.log("IN ", data);
-        State.events.trigger(data[0], data.slice(1));
+        ClientState.events.trigger(data[0], data.slice(1));
     }
 }

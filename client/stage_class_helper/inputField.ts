@@ -9,7 +9,7 @@ import { WIDTH } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { lineShape } from "../../shared/shapeGenerator";
 import { DOM_EVENT_KEYDOWN, DOM_EVENT_KEYPRESS, DOM_EVENT_KEYUP, FRAME, NS_INPUT } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { fontEndPos, fontPixels, fontWidth } from "../ui/font";
 import { flash } from "../ui/shapeClient";
 
@@ -34,7 +34,7 @@ export class InputField {
         this.input = this.addInputToDom();
         this.input.focus();
 
-        State.keysBlocked = true;
+        ClientState.keysBlocked = true;
     }
 
     destruct() {
@@ -42,23 +42,23 @@ export class InputField {
             this.input.parentNode.removeChild(this.input);
         }
         this.unbindEvents();
-        State.shapes.INPUT_CARET = null;
-        State.shapes.INPUT_VALUE = null;
-        State.keysBlocked = false;
+        ClientState.shapes.INPUT_CARET = null;
+        ClientState.shapes.INPUT_VALUE = null;
+        ClientState.keysBlocked = false;
     }
 
     unbindEvents() {
-        State.events.off(DOM_EVENT_KEYPRESS, NS_INPUT);
-        State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
-        State.events.off(DOM_EVENT_KEYUP, NS_INPUT);
+        ClientState.events.off(DOM_EVENT_KEYPRESS, NS_INPUT);
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
+        ClientState.events.off(DOM_EVENT_KEYUP, NS_INPUT);
     }
 
     bindEvents() {
-        State.events.on(DOM_EVENT_KEYPRESS, NS_INPUT, function () {
-            State.audio.play("menu_alt");
+        ClientState.events.on(DOM_EVENT_KEYPRESS, NS_INPUT, function () {
+            ClientState.audio.play("menu_alt");
         });
-        State.events.on(DOM_EVENT_KEYDOWN, NS_INPUT, this.updateShapes.bind(this));
-        State.events.on(DOM_EVENT_KEYUP, NS_INPUT, this.updateShapes.bind(this));
+        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_INPUT, this.updateShapes.bind(this));
+        ClientState.events.on(DOM_EVENT_KEYUP, NS_INPUT, this.updateShapes.bind(this));
     }
 
     /**
@@ -82,8 +82,8 @@ export class InputField {
     updateShapes() {
         this.maxwidthCutOff();
         this.callback(this.input.value);
-        State.shapes.INPUT_CARET = this.getCaretShape();
-        State.shapes.INPUT_VALUE = this.getInputValueShape();
+        ClientState.shapes.INPUT_CARET = this.getCaretShape();
+        ClientState.shapes.INPUT_VALUE = this.getInputValueShape();
     }
 
     /**

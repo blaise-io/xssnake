@@ -1,6 +1,6 @@
 import { Levelset } from "../levelset/levelset";
 import { _ } from "../util";
 
-export class Basic extends Levelset {
+export class BasicLevelSet extends Levelset {
     public title = _("Basic");
 }

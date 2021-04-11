@@ -19,6 +19,7 @@
     "@types/node": "^14.14.37",
     "@types/webpack": "^5.28.0",
     "@types/ws": "^7.4.1",
+    "eslint-plugin-unused-imports": "^1.1.1",
     "pngparse": "1.x",
     "supervisor": "^0.12.0",
     "ts-loader": "^8.1.0",

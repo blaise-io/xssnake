@@ -11,7 +11,7 @@ import { COPY_CONNECTING } from "../copy/copy";
 import { ClientRoom } from "../room/clientRoom";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
 import { ClientOptions } from "../room/options";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
 import { center, flash, lifetime } from "../ui/shapeClient";
 import { storage } from "../util/clientUtil";
@@ -32,18 +32,18 @@ export class Game {
     }
 
     destruct() {
-        if (State.player) {
-            if (State.player.room) {
-                State.player.room.destruct();
+        if (ClientState.player) {
+            if (ClientState.player.room) {
+                ClientState.player.room.destruct();
             }
-            State.player.destruct();
+            ClientState.player.destruct();
         }
-        State.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
-        State.shapes.CONNECTING = null;
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
+        ClientState.shapes.CONNECTING = null;
     }
 
     getSerializedGameOptions() {
-        const data = State.flow.getData();
+        const data = ClientState.flow.getData();
         const options = new ClientOptions();
         options.setOptionsFromForm(data.multiplayer);
         return options.serialize();
@@ -63,15 +63,15 @@ export class Game {
     }
 
     connectServer() {
-        State.shapes.CONNECTING = this.getConnectingShape();
-        State.player = new ClientSocketPlayer(this.connectRoom.bind(this));
+        ClientState.shapes.CONNECTING = this.getConnectingShape();
+        ClientState.player = new ClientSocketPlayer(this.connectRoom.bind(this));
     }
 
     connectRoom() {
-        State.player.room = new ClientRoom();
-        State.player.room.setupComponents();
-        State.player.emit(NC_PLAYER_NAME, [this.getPlayerName()]);
-        State.player.emit(NC_ROOM_JOIN_MATCHING, this.getEmitData());
+        ClientState.player.room = new ClientRoom();
+        ClientState.player.room.setupComponents();
+        ClientState.player.emit(NC_PLAYER_NAME, [this.getPlayerName()]);
+        ClientState.player.emit(NC_ROOM_JOIN_MATCHING, this.getEmitData());
         this.destructStageLeftovers();
     }
 
@@ -84,10 +84,10 @@ export class Game {
     }
 
     destructStageLeftovers() {
-        if (State.menuSnake) {
-            State.menuSnake.destruct();
+        if (ClientState.menuSnake) {
+            ClientState.menuSnake.destruct();
         }
-        State.shapes.CONNECTING = null;
-        State.shapes.HEADER = null;
+        ClientState.shapes.CONNECTING = null;
+        ClientState.shapes.HEADER = null;
     }
 }

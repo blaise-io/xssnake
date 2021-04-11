@@ -21,27 +21,27 @@ export class Levelset {
         return this.levels[index];
     }
 
-    register(Level) {
-        this.levels.push(new Level(this.getConfig()));
+    register(level: typeof Level): void {
+        this.levels.push(new level(this.getConfig()));
     }
 
-    preload(continueFn: CallableFunction) {
-        let loaded = 0;
-
-        const checkAllLoaded = function () {
-            if (++loaded === this.levels.length) {
-                continueFn();
-            }
-        }.bind(this);
-
-        if (this.levels.length) {
-            for (let i = 0, m = this.levels.length; i < m; i++) {
-                this.levels[i].preload(checkAllLoaded);
-            }
-        } else {
-            continueFn();
-        }
-    }
+    // preload(continueFn: CallableFunction) {
+    //     let loaded = 0;
+    //
+    //     const checkAllLoaded = function () {
+    //         if (++loaded === this.levels.length) {
+    //             continueFn();
+    //         }
+    //     }.bind(this);
+    //
+    //     if (this.levels.length) {
+    //         for (let i = 0, m = this.levels.length; i < m; i++) {
+    //             this.levels[i].preload(checkAllLoaded);
+    //         }
+    //     } else {
+    //         continueFn();
+    //     }
+    // }
 
     getRandomLevelIndex(levelsPlayed: number[]): number {
         const notPlayed = this.levels.slice();

@@ -1,4 +1,6 @@
+import { levelsets } from "../../shared/data/levelsets";
 import { RoomOptions } from "../../shared/room/roomOptions";
+import { randomArrIndex } from "../../shared/util";
 import {
     FIELD_LEVEL_SET,
     FIELD_MAX_PLAYERS,
@@ -6,12 +8,11 @@ import {
     FIELD_PRIVATE,
     FIELD_XSS,
 } from "../const";
-import { State } from "../state/state";
 
 export class ClientOptions extends RoomOptions {
     constructor() {
         super();
-        this.levelset = State.levelsetRegistry.getRandomLevelsetIndex();
+        this.levelset = randomArrIndex(levelsets);
     }
 
     setOptionsFromForm(indexedOptions: (number | boolean)[]): void {

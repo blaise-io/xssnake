@@ -1,33 +1,16 @@
-/**
- * @param {number} min
- * @param {number} max
- * @return {number}
- */
-export function randomRange(min, max) {
+export function randomRange(min: number, max: number): number {
     return min + Math.floor(Math.random() * (max - min + 1));
 }
 
-/**
- * @param {Array} arr
- * @return {?}
- */
-export function randomArrItem(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+export function getRandomItemFrom<Type>(arr: Type[]): Type {
+    return arr[randomArrIndex(arr)];
 }
 
-/**
- * @param {Array} arr
- * @return {number}
- */
-export function randomArrIndex(arr) {
-    return Math.floor(Math.random() * arr.length);
+export function randomArrIndex(arr: unknown[]): number {
+    return randomRange(0, arr.length - 1);
 }
 
-/**
- * @param {number=} len
- * @return {string}
- */
-export function randomStr(len = 3) {
+export function randomStr(len = 3): string {
     return Math.random().toString(36).substr(2, len);
 }
 
@@ -132,7 +115,7 @@ export function benchmark(iterations, fn, label = "") {
  * @return {string}
  */
 export function getRandomName() {
-    const name = randomArrItem([
+    const name = getRandomItemFrom([
         "Ant",
         "Bat",
         "Bear",

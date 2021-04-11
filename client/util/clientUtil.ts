@@ -1,6 +1,6 @@
 import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, WIDTH } from "../../shared/const";
 import { UC_ENTER_KEY } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { Dialog } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
 import { flash, lifetime } from "../ui/shapeClient";
@@ -17,7 +17,7 @@ export function instruct(str: string, duration = 2000, flashInstruct = false): v
         flash(shape);
     }
 
-    State.shapes.INSTRUCTION = shape;
+    ClientState.shapes.INSTRUCTION = shape;
 }
 
 export function error(str: string, callback?: CallableFunction): void {
@@ -28,7 +28,7 @@ export function error(str: string, callback?: CallableFunction): void {
         if (callback) {
             callback();
         }
-        State.flow.restart();
+        ClientState.flow.restart();
     };
 
     const body = "Press " + UC_ENTER_KEY + " to continue";

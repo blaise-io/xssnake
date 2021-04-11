@@ -4,7 +4,7 @@ import { Shape } from "../../shared/shape";
 import { DOM_EVENT_KEYDOWN, FRAME, KEY_ENTER, KEY_ESCAPE, NS_CHAT, UC_ENTER_KEY } from "../const";
 import { Message } from "../room/message";
 import { InputField } from "../stage_class_helper/inputField";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { font, fontPixels, fontWidth } from "./font";
 import { animate, flash, lifetime } from "./shapeClient";
 
@@ -45,7 +45,7 @@ export class MessageBoxUI {
     }
 
     destruct() {
-        State.events.off(DOM_EVENT_KEYDOWN, NS_CHAT);
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_CHAT);
         if (this.inputField) {
             this.inputField.destruct();
             this.inputField = null;
@@ -53,7 +53,7 @@ export class MessageBoxUI {
     }
 
     bindEvents() {
-        State.events.on(DOM_EVENT_KEYDOWN, NS_CHAT, this.handleKeys.bind(this));
+        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_CHAT, this.handleKeys.bind(this));
     }
 
     handleKeys(ev) {
@@ -67,7 +67,7 @@ export class MessageBoxUI {
                 if (this.inputField) {
                     this.sendMessage(this.inputField.getValue());
                     this.hideInput();
-                } else if (!State.keysBlocked) {
+                } else if (!ClientState.keysBlocked) {
                     this.showInput();
                 }
                 ev.preventDefault();
@@ -117,7 +117,7 @@ export class MessageBoxUI {
         const x = this.x1 - this.padding.x1 - fontWidth(UC_ENTER_KEY);
         const y = this.y1 - this.lineHeight - this.padding.y1 + 1;
 
-        const shape = (State.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y));
+        const shape = (ClientState.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y));
         shape.invert(shape.bbox(2));
         shape.flags.isOverlay = true;
     }
@@ -128,10 +128,10 @@ export class MessageBoxUI {
     hideEnterKey(flashKey?: boolean): void {
         const speed = FRAME * 4;
         if (flashKey) {
-            flash(State.shapes.MSG_ENTER, speed, speed);
-            lifetime(State.shapes.MSG_ENTER, 0, speed);
+            flash(ClientState.shapes.MSG_ENTER, speed, speed);
+            lifetime(ClientState.shapes.MSG_ENTER, 0, speed);
         } else {
-            State.shapes.MSG_ENTER = null;
+            ClientState.shapes.MSG_ENTER = null;
         }
     }
 
@@ -171,7 +171,7 @@ export class MessageBoxUI {
         messages = this.getDisplayMessages(num);
 
         if (messages.length) {
-            State.shapes.MSG_BOX = shape;
+            ClientState.shapes.MSG_BOX = shape;
         } else {
             return false;
         }

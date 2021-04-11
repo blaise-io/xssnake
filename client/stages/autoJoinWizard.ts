@@ -18,7 +18,7 @@ import {
 } from "../copy/copy";
 import { ClientRoom } from "../room/clientRoom";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { Dialog } from "../ui/dialog";
 import { error } from "../util/clientUtil";
 import { AutoJoinStage } from "./autoJoin";
@@ -39,7 +39,7 @@ export class AutoJoinWizard {
     }
 
     autoJoinRoom() {
-        State.player = new ClientSocketPlayer(this.onconnect.bind(this));
+        ClientState.player = new ClientSocketPlayer(this.onconnect.bind(this));
     }
 
     onconnect() {
@@ -55,28 +55,40 @@ export class AutoJoinWizard {
     }
 
     getAutoJoinRoomStatus() {
-        State.player.emit(NC_ROOM_STATUS, [this.roomKey]);
+        ClientState.player.emit(NC_ROOM_STATUS, [this.roomKey]);
     }
 
     bindEvents() {
         // Use room to store data until player confirms join.
-        State.player.room = new ClientRoom();
+        ClientState.player.room = new ClientRoom();
         this.eventsReceived = 0;
 
-        State.events.on(NC_ROOM_SERIALIZE, NS_STAGES, this.checkAllRoomDataReceived.bind(this));
+        ClientState.events.on(
+            NC_ROOM_SERIALIZE,
+            NS_STAGES,
+            this.checkAllRoomDataReceived.bind(this)
+        );
 
-        State.events.on(NC_OPTIONS_SERIALIZE, NS_STAGES, this.checkAllRoomDataReceived.bind(this));
+        ClientState.events.on(
+            NC_OPTIONS_SERIALIZE,
+            NS_STAGES,
+            this.checkAllRoomDataReceived.bind(this)
+        );
 
-        State.events.on(NC_PLAYERS_SERIALIZE, NS_STAGES, this.checkAllRoomDataReceived.bind(this));
+        ClientState.events.on(
+            NC_PLAYERS_SERIALIZE,
+            NS_STAGES,
+            this.checkAllRoomDataReceived.bind(this)
+        );
 
-        State.events.on(NC_ROOM_JOIN_ERROR, NS_STAGES, this.handleError.bind(this));
+        ClientState.events.on(NC_ROOM_JOIN_ERROR, NS_STAGES, this.handleError.bind(this));
     }
 
     unbindEvents() {
-        State.events.off(NC_ROOM_SERIALIZE, NS_STAGES);
-        State.events.off(NC_OPTIONS_SERIALIZE, NS_STAGES);
-        State.events.off(NC_PLAYERS_SERIALIZE, NS_STAGES);
-        State.events.off(NC_ROOM_JOIN_ERROR, NS_STAGES);
+        ClientState.events.off(NC_ROOM_SERIALIZE, NS_STAGES);
+        ClientState.events.off(NC_OPTIONS_SERIALIZE, NS_STAGES);
+        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS_STAGES);
+        ClientState.events.off(NC_ROOM_JOIN_ERROR, NS_STAGES);
     }
 
     checkAllRoomDataReceived() {
@@ -84,7 +96,7 @@ export class AutoJoinWizard {
         if (++this.eventsReceived === 3) {
             this.dialog.destruct();
             this.unbindEvents();
-            State.flow.switchStage(AutoJoinStage);
+            ClientState.flow.switchStage(AutoJoinStage);
         }
     }
 
@@ -92,6 +104,6 @@ export class AutoJoinWizard {
         this.dialog.destruct();
         this.unbindEvents();
         error(COPY_ERROR[data[0]]);
-        State.player = null;
+        ClientState.player = null;
     }
 }

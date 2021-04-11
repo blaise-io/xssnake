@@ -1,8 +1,8 @@
 /* jshint evil: true */
-import { randomArrItem, randomRange } from "../../shared/util";
+import { getRandomItemFrom, randomRange } from "../../shared/util";
 import { DOM_EVENT_KEYDOWN, MENU_LEFT, NS_INPUT } from "../const";
 import { InputStage } from "../stage_base/inputStage";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
 import { InputXssStage } from "./inputXss";
@@ -42,10 +42,10 @@ export class ChallengeStage extends InputStage {
         // Tolerate answers where user is quoting strings.
         if (value.replace(/['"]/g, "").trim() === String(eval(this._challenge))) {
             text = "> bleep!";
-            State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
+            ClientState.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
             setTimeout(
                 function () {
-                    State.flow.switchStage(this.next);
+                    ClientState.flow.switchStage(this.next);
                 }.bind(this),
                 1000
             );
@@ -54,7 +54,7 @@ export class ChallengeStage extends InputStage {
         shape = font(text, MENU_LEFT, top);
         lifetime(shape, 0, 1000);
 
-        State.shapes.message = shape;
+        ClientState.shapes.message = shape;
     }
 
     _challenges = [
@@ -88,7 +88,7 @@ export class ChallengeStage extends InputStage {
         randomStr = randomStr().substr(0, 3).toUpperCase();
         randomDigit = String(randomRange(0, 5));
 
-        challenge = String(randomArrItem(this._challenges));
+        challenge = String(getRandomItemFrom(this._challenges));
         challenge = challenge.replace(/%s/g, randomStr);
         challenge = challenge.replace(/%d/g, randomDigit);
 

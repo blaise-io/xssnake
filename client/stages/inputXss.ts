@@ -5,7 +5,7 @@
  */
 import { MENU_WIDTH, STORAGE_XSS } from "../const";
 import { InputStage } from "../stage_base/inputStage";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { fontWidth } from "../ui/font";
 
 export class InputXssStage extends InputStage {
@@ -22,7 +22,7 @@ export class InputXssStage extends InputStage {
         this.minlength = 2;
         this.maxChars = 256;
         this.displayWidth = MENU_WIDTH - fontWidth("> ");
-        this.next = State.flow.GameStage;
+        this.next = ClientState.flow.GameStage;
 
         InputStage.call(this);
 

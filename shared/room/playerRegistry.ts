@@ -1,6 +1,3 @@
-/**
- * @constructor
- */
 import { Player } from "./player";
 
 export class PlayerRegistry {
@@ -14,7 +11,7 @@ export class PlayerRegistry {
         this.players.length = 0;
     }
 
-    serialize(localPlayer: Player): any[] {
+    serialize(localPlayer: Player): [string, number][] {
         const serialized = [];
         for (let i = 0, m = this.players.length; i < m; i++) {
             serialized.push(this.players[i].serialize(localPlayer === this.players[i]));

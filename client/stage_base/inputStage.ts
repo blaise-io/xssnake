@@ -11,7 +11,7 @@ import {
     STORAGE_NAME,
 } from "../const";
 import { InputField } from "../stage_class_helper/inputField";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { font, fontHeight, fontPixels } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
 import { zoom } from "../ui/transformClient";
@@ -59,8 +59,8 @@ export class InputStage {
     }
 
     destruct(): void {
-        State.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
-        State.shapes.message = null;
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
+        ClientState.shapes.message = null;
         this._shape = this._getShape();
         this.input.destruct();
         if (this.name) {
@@ -70,11 +70,11 @@ export class InputStage {
 
     inputSubmit(error: string, value: string, top: number): void {
         if (!error && value && top) {
-            State.flow.switchStage(this.next);
-            State.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
+            ClientState.flow.switchStage(this.next);
+            ClientState.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
         } else {
-            State.shapes.message = font(error, MENU_LEFT, top);
-            lifetime(State.shapes.message, 0, 500);
+            ClientState.shapes.message = font(error, MENU_LEFT, top);
+            lifetime(ClientState.shapes.message, 0, 500);
         }
     }
 
@@ -96,7 +96,7 @@ export class InputStage {
 
     private _bindEvents(): void {
         console.log(this);
-        State.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys.bind(this));
+        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys.bind(this));
     }
 
     /**
@@ -108,7 +108,7 @@ export class InputStage {
         let top;
         switch (ev.keyCode) {
             case KEY_ESCAPE:
-                State.flow.previousStage();
+                ClientState.flow.previousStage();
                 ev.preventDefault();
                 break;
             case KEY_ENTER:

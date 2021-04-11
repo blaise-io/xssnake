@@ -5,7 +5,7 @@
  * @constructor
  */
 import { DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_ENTER, KEY_ESCAPE, NS_STAGES } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 
 export class ScreenStage {
     /** @type {Shape} */
@@ -20,12 +20,12 @@ export class ScreenStage {
     }
 
     construct() {
-        State.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys);
+        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys);
     }
 
     destruct() {
-        State.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
-        State.shapes.stage = null;
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
+        ClientState.shapes.stage = null;
     }
 
     _handleKeys(ev) {
@@ -33,7 +33,7 @@ export class ScreenStage {
             case KEY_BACKSPACE:
             case KEY_ESCAPE:
             case KEY_ENTER:
-                State.flow.previousStage();
+                ClientState.flow.previousStage();
         }
     }
 }

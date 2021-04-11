@@ -1,7 +1,7 @@
 import { Level } from "../../shared/level/level";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { NS_SNAKE } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { ClientPlayer } from "./clientPlayer";
 
 export class ClientPlayerRegistry extends PlayerRegistry {
@@ -41,8 +41,8 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         player.deserialize(serialized);
 
         if (player.local) {
-            State.player.deserialize(serialized);
-            player = this.localPlayer = State.player;
+            ClientState.player.deserialize(serialized);
+            player = this.localPlayer = ClientState.player;
         }
 
         this.add(player);
@@ -77,10 +77,10 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     }
 
     clearSnakeShapes(): void {
-        const keys = Object.keys(State.shapes);
+        const keys = Object.keys(ClientState.shapes);
         for (let i = 0, m = keys.length; i < m; i++) {
             if (keys[i].substr(0, NS_SNAKE.length) === NS_SNAKE) {
-                State.shapes[keys[i]] = null;
+                ClientState.shapes[keys[i]] = null;
             }
         }
     }
@@ -138,9 +138,9 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     localPlayerIsHost(): boolean {
         return Boolean(
             this.localPlayer &&
-                State.player &&
-                this.localPlayer === State.player &&
-                0 === this.players.indexOf(State.player)
+                ClientState.player &&
+                this.localPlayer === ClientState.player &&
+                0 === this.players.indexOf(ClientState.player)
         );
     }
 }

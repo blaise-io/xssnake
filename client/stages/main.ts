@@ -3,7 +3,7 @@ import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { MenuSnake } from "../stage/menuSnake";
 import { SelectStage } from "../stage_base/selectStage";
 import { SelectMenu } from "../stage_class_helper/selectMenu";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { storage, urlHash } from "../util/clientUtil";
 import { AutoJoinWizard } from "./autoJoinWizard";
 import { ColorStage } from "./color";
@@ -23,8 +23,8 @@ export class MainStage extends SelectStage {
 
         if (roomKey) {
             new AutoJoinWizard(roomKey);
-        } else if (!State.menuSnake) {
-            State.menuSnake = new MenuSnake();
+        } else if (!ClientState.menuSnake) {
+            ClientState.menuSnake = new MenuSnake();
         }
     }
 

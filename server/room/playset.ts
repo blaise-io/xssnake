@@ -1,20 +1,21 @@
+import { levelsets } from "../../shared/data/levelsets";
 import { Levelset } from "../../shared/levelset/levelset";
-import { State } from "../state/state";
 
 export class LevelPlayset {
     private played: number[];
     private levelset: Levelset;
+
     constructor(public levelsetIndex: number) {
-        this.levelset = State.levelsetRegistry.getLevelset(levelsetIndex);
+        this.levelset = levelsets[levelsetIndex];
         this.played = [];
     }
 
-    destruct() {
+    destruct(): void {
         this.levelset = null;
         this.played = null;
     }
 
-    getNext() {
+    getNext(): number {
         const nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);
         this.played.push(nextLevelsetIndex);
         return nextLevelsetIndex;

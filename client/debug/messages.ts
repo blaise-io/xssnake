@@ -6,21 +6,21 @@ import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
 import { NeuteredMenuSnake } from "../stage/menuSnake";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
 if (location.search.match(/debug=messages/)) {
-    State.menuSnake = new NeuteredMenuSnake();
+    ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         const messages = [];
         const author = new Player("Dummy");
         const ui = new MessageBoxUI(messages, author);
 
-        State.flow.destruct();
+        ClientState.flow.destruct();
 
-        State.shapes.innerBorder = innerBorder();
-        Object.assign(State.shapes, outerBorder());
+        ClientState.shapes.innerBorder = innerBorder();
+        Object.assign(ClientState.shapes, outerBorder());
 
         const players = new ClientPlayerRegistry();
         new Scoreboard(players);

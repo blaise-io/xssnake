@@ -3,7 +3,7 @@ import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Config } from "../../shared/levelset/config";
 import { Shape } from "../../shared/shape";
 import { ClientSnake } from "../game/clientSnake";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { zoom } from "../ui/transformClient";
 import { instruct } from "../util/clientUtil";
 
@@ -74,9 +74,9 @@ export class MenuSnake {
     }
 
     overlaysShape(snakeShape: Shape, x: number, y: number): boolean {
-        for (const k in State.shapes) {
-            if (State.shapes[k] !== snakeShape) {
-                if (State.shapes[k] && State.shapes[k].pixels.has(x, y)) {
+        for (const k in ClientState.shapes) {
+            if (ClientState.shapes[k] !== snakeShape) {
+                if (ClientState.shapes[k] && ClientState.shapes[k].pixels.has(x, y)) {
                     return true;
                 }
             }

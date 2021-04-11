@@ -8,7 +8,7 @@ import {
     MIN_FRAME_DELTA,
     STORAGE_COLOR,
 } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { debounce, instruct, storage } from "../util/clientUtil";
 import { CanvasTile } from "./canvasTile";
 import { ShapeCache } from "./shapeCache";
@@ -58,7 +58,7 @@ export class Canvas {
      */
     paint(delta): void {
         // Abuse this loop to trigger game tick
-        State.events.trigger(EV_GAME_TICK, delta, this.focus);
+        ClientState.events.trigger(EV_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this._clear();
@@ -73,7 +73,7 @@ export class Canvas {
      * which may affect framerate negatively.
      */
     garbageCollect() {
-        const shapes = State.shapes;
+        const shapes = ClientState.shapes;
         for (const k in shapes) {
             if (null === shapes[k]) {
                 delete shapes[k];
@@ -82,7 +82,7 @@ export class Canvas {
     }
 
     _flushShapeCache() {
-        const shapes = State.shapes;
+        const shapes = ClientState.shapes;
         for (const k in shapes) {
             if (null !== shapes[k]) {
                 shapes[k].uncache();
@@ -104,7 +104,7 @@ export class Canvas {
      */
     _paintShapes(delta): void {
         const overlays = [];
-        const shapeKeys = Object.keys(State.shapes);
+        const shapeKeys = Object.keys(ClientState.shapes);
 
         // Avoid looping over an uncached keyval object.
         for (let i = 0, m = shapeKeys.length; i < m; i++) {
@@ -121,11 +121,11 @@ export class Canvas {
      * @private
      */
     _paintDispatch(delta, overlays, key): void {
-        if (State.shapes[key]) {
-            if (State.shapes[key].flags.isOverlay) {
-                overlays.push(State.shapes[key]);
+        if (ClientState.shapes[key]) {
+            if (ClientState.shapes[key].flags.isOverlay) {
+                overlays.push(ClientState.shapes[key]);
             } else {
-                this._paintShape(State.shapes[key], delta);
+                this._paintShape(ClientState.shapes[key], delta);
             }
         }
     }
@@ -264,7 +264,7 @@ export class Canvas {
 
     private _handleFocusChange(ev: Event): void {
         this.focus = ev.type !== "blur";
-        State.events.trigger(EV_WIN_FOCUS_CHANGE, this.focus);
+        ClientState.events.trigger(EV_WIN_FOCUS_CHANGE, this.focus);
     }
 
     _promoteKeyboard(ev: KeyboardEvent): void {

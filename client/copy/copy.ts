@@ -106,7 +106,6 @@ export const COPY_AUTOJOIN_HEADER = "Auto-Join room".toUpperCase();
 export const COPY_AUTOJOIN_CONNECTING = "Connecting to server…";
 export const COPY_AUTOJOIN_FETCHING = "Getting room properties…";
 export const COPY_AUTOJOIN_PLAYERS = "Players ({0})";
-export const COPY_AUTOJOIN_ENTER_NAME = "Enter your name to join: ";
 
 export const COPY_CHAT_INSTRUCT = "Press " + UC_ENTER_KEY + " to chat.";
 

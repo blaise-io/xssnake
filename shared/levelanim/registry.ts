@@ -34,7 +34,7 @@ export class LevelAnimationRegistry {
         return animation.update(this.progress, this.started);
     }
 
-    public updateShapes() {
+    public updateShapes(): void {
         for (let i = 0, m = this.walls.length; i < m; i++) {
             if (this.walls[i]) {
                 // this._updateShapes(i, this.walls[i]);

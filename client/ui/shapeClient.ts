@@ -2,7 +2,7 @@ import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, WIDTH } from "../../shared/cons
 import { Shape } from "../../shared/shape";
 import { getKey } from "../../shared/util";
 import { FRAME } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 
 export function center(shape: Shape, width = WIDTH, height = HEIGHT): void {
     const bbox = shape.bbox();
@@ -47,9 +47,9 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
 
         // Stop time reached.
         if (end && progress >= end) {
-            const key = getKey(State.shapes, shape);
+            const key = getKey(ClientState.shapes, shape);
             if (key) {
-                State.shapes[key] = null;
+                ClientState.shapes[key] = null;
             }
         }
 

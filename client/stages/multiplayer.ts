@@ -1,3 +1,4 @@
+import { levelsets } from "../../shared/data/levelsets";
 import {
     FIELD_BUGS,
     FIELD_LEVEL_SET,
@@ -29,7 +30,6 @@ import {
 } from "../copy/copy";
 import { FormStage } from "../stage_base/formStage";
 import { Form } from "../stage_class_helper/form";
-import { State } from "../state/state";
 import { ChallengeStage } from "./challenge";
 import { StartGameStage } from "./startGame";
 
@@ -54,17 +54,12 @@ export class MultiplayerStage extends FormStage {
     }
 
     private _getForm() {
-        let footer;
-        let form;
-
-        footer = COPY_FORM_INSTRUCT;
-
-        form = new Form(COPY_OPTIONS_STAGE_HEADER, footer);
+        const form = new Form(COPY_OPTIONS_STAGE_HEADER, COPY_FORM_INSTRUCT);
 
         form.addField(
             FIELD_LEVEL_SET,
             COPY_FIELD_LEVEL_SET,
-            State.levelsetRegistry.getAsFieldValues()
+            levelsets.map((l) => l.title.toUpperCase())
         );
 
         form.addField(FIELD_POWERUPS, COPY_FIELD_POWERUPS, [

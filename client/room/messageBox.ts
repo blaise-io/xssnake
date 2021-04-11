@@ -1,7 +1,7 @@
 import { NC_CHAT_MESSAGE } from "../../shared/const";
 import { EV_PLAYERS_UPDATED, NS_MSGBOX } from "../const";
 import { COPY_CHAT_INSTRUCT, COPY_PLAYER_JOINED, COPY_PLAYER_QUIT } from "../copy/copy";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { MessageBoxUI } from "../ui/messageBox";
 import { format } from "../util/clientUtil";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
@@ -18,7 +18,7 @@ export class MessageBox {
 
         this.messages = [new Message(null, COPY_CHAT_INSTRUCT)];
 
-        this.ui = new MessageBoxUI(this.messages, State.player);
+        this.ui = new MessageBoxUI(this.messages, ClientState.player);
         this.ui.sendMessageFn = this.sendMessage.bind(this);
 
         this.playerChangeNotified = false;
@@ -34,13 +34,13 @@ export class MessageBox {
     }
 
     bindEvents() {
-        State.events.on(NC_CHAT_MESSAGE, NS_MSGBOX, this.addMessage.bind(this));
-        State.events.on(EV_PLAYERS_UPDATED, NS_MSGBOX, this.updatePlayers.bind(this));
+        ClientState.events.on(NC_CHAT_MESSAGE, NS_MSGBOX, this.addMessage.bind(this));
+        ClientState.events.on(EV_PLAYERS_UPDATED, NS_MSGBOX, this.updatePlayers.bind(this));
     }
 
     unbindEvents() {
-        State.events.off(NC_CHAT_MESSAGE, NS_MSGBOX);
-        State.events.off(EV_PLAYERS_UPDATED, NS_MSGBOX);
+        ClientState.events.off(NC_CHAT_MESSAGE, NS_MSGBOX);
+        ClientState.events.off(EV_PLAYERS_UPDATED, NS_MSGBOX);
     }
 
     addMessage(serializedMessage) {
@@ -96,6 +96,6 @@ export class MessageBox {
     }
 
     sendMessage(body) {
-        State.player.emit(NC_CHAT_MESSAGE, [body]);
+        ClientState.player.emit(NC_CHAT_MESSAGE, [body]);
     }
 }

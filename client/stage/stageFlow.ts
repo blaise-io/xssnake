@@ -16,7 +16,7 @@ import {
 } from "../const";
 import { MainStage } from "../stages/main";
 import { StartGameStage } from "../stages/startGame";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { outerBorder, xssnakeHeader } from "../ui/clientShapeGenerator";
 import { animate } from "../ui/shapeClient";
 import { instruct, storage, urlHash } from "../util/clientUtil";
@@ -35,12 +35,12 @@ export class StageFlow {
 
     destruct() {
         this.stage.destruct();
-        if (State.player) {
-            State.player.destruct();
+        if (ClientState.player) {
+            ClientState.player.destruct();
         }
-        State.shapes = {};
-        State.events.off(DOM_EVENT_KEYDOWN, NS_FLOW);
-        State.canvas.garbageCollect();
+        ClientState.shapes = {};
+        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_FLOW);
+        ClientState.canvas.garbageCollect();
     }
 
     restart() {
@@ -52,11 +52,11 @@ export class StageFlow {
         this._history = [];
 
         window.onhashchange = this._hashChange.bind(this);
-        State.events.on(DOM_EVENT_KEYDOWN, NS_FLOW, this._handleKeys.bind(this));
+        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_FLOW, this._handleKeys.bind(this));
 
-        Object.assign(State.shapes, outerBorder());
+        Object.assign(ClientState.shapes, outerBorder());
 
-        State.shapes.HEADER = xssnakeHeader();
+        ClientState.shapes.HEADER = xssnakeHeader();
 
         this._setStage(new this._FirstStage(), false);
     }
@@ -86,7 +86,7 @@ export class StageFlow {
         this.stage.destruct();
 
         // Remove everything
-        State.shapes.stage = null;
+        ClientState.shapes.stage = null;
 
         // Replace by levelanim
         this._switchStageAnimate(
@@ -106,12 +106,12 @@ export class StageFlow {
     }
 
     refreshShapes() {
-        State.shapes.stage = this.stage.getShape();
+        ClientState.shapes.stage = this.stage.getShape();
     }
 
     private _hashChange(): void {
         if (urlHash(HASH_ROOM).length === ROOM_KEY_LENGTH && 1 === this._history.length) {
-            State.flow.restart();
+            ClientState.flow.restart();
         }
     }
 
@@ -124,13 +124,13 @@ export class StageFlow {
 
         // Ignore key when user is in input field. Start screen might
         // contain a dialog, so do not use State.keysBlocked here.
-        if (!State.shapes.INPUT_CARET) {
+        if (!ClientState.shapes.INPUT_CARET) {
             // Mute/Unmute
             if (ev.keyCode === KEY_MUTE) {
                 const mute = !storage(STORAGE_MUTE) as boolean;
                 storage(STORAGE_MUTE, mute);
                 instruct("Sounds " + (mute ? "muted" : "unmuted"), 1000);
-                State.audio.play("menu_alt");
+                ClientState.audio.play("menu_alt");
             }
         }
     }
@@ -158,20 +158,20 @@ export class StageFlow {
         newStageAnim.doneCallback = callback;
 
         if (back) {
-            State.audio.play("swoosh_rev");
+            ClientState.audio.play("swoosh_rev");
         } else {
-            State.audio.play("swoosh");
+            ClientState.audio.play("swoosh");
         }
 
-        State.shapes.oldstage = animate(oldShape, oldStageAnim);
-        State.shapes.newstage = animate(newShape, newStageAnim);
+        ClientState.shapes.oldstage = animate(oldShape, oldStageAnim);
+        ClientState.shapes.newstage = animate(newShape, newStageAnim);
     }
 
     // TODO: StageInterface
     private _setStage(stage: any, back: false) {
         // Remove animated stages
-        State.shapes.oldstage = null;
-        State.shapes.newstage = null;
+        ClientState.shapes.oldstage = null;
+        ClientState.shapes.newstage = null;
 
         this.stage = stage;
         this.stage.construct();

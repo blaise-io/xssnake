@@ -12,7 +12,7 @@ import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { randomRange, randomStr } from "../../shared/util";
 import { MENU_LEFT, MENU_TOP, MENU_WIDTH, NS_ACTION, NS_EXPLOSION } from "../const";
-import { State } from "../state/state";
+import { ClientState } from "../state/clientState";
 import { font, fontWidth } from "./font";
 import { animate, lifetime } from "./shapeClient";
 import { zoom } from "./transformClient";
@@ -160,7 +160,7 @@ export function showAction(label, coordinate, duration, amount = 3) {
             coordinate[1] * GAME_TILE + randomRange(-12, 12)
         );
         name = NS_ACTION + randomStr();
-        State.shapes[name] = lifetime(shape, s, s + duration);
+        ClientState.shapes[name] = lifetime(shape, s, s + duration);
     }
 }
 
@@ -229,6 +229,6 @@ export function explosion(location: Coordinate, direction = -1, intensity = 16):
         const shape = new Shape(pixel);
         animate(shape, { to: to, duration: duration });
         lifetime(shape, 0, duration);
-        State.shapes[NS_EXPLOSION + randomStr(3)] = shape;
+        ClientState.shapes[NS_EXPLOSION + randomStr(3)] = shape;
     }
 }
