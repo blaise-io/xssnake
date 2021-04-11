@@ -1,508 +1,62 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
-/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
-
-/***/ "./server/const.ts":
-/*!*************************!*\
-  !*** ./server/const.ts ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"GAME_LEFT\": () => (/* binding */ GAME_LEFT),\n/* harmony export */   \"GAME_TOP\": () => (/* binding */ GAME_TOP),\n/* harmony export */   \"SERVER_TICK_INTERVAL\": () => (/* binding */ SERVER_TICK_INTERVAL),\n/* harmony export */   \"SERVER_MAX_TOLERATED_LATENCY\": () => (/* binding */ SERVER_MAX_TOLERATED_LATENCY)\n/* harmony export */ });\nconst GAME_LEFT = 0;\nconst GAME_TOP = 0;\nconst SERVER_TICK_INTERVAL = 1000 / 20;\nconst SERVER_MAX_TOLERATED_LATENCY = 150;\n\n\n//# sourceURL=webpack://xssnake/./server/const.ts?");
-
-/***/ }),
-
-/***/ "./server/game/serverGame.ts":
-/*!***********************************!*\
-  !*** ./server/game/serverGame.ts ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerGame\": () => (/* binding */ ServerGame)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/util */ \"./shared/util.ts\");\n/* harmony import */ var _const__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../const */ \"./server/const.ts\");\n/* harmony import */ var _room_serverSnakeMove__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../room/serverSnakeMove */ \"./server/room/serverSnakeMove.ts\");\n/* harmony import */ var _serverItems__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./serverItems */ \"./server/game/serverItems.ts\");\n\n\n\n\n\nclass ServerGame {\n    constructor(roomEmitter, level, players) {\n        this.roomEmitter = roomEmitter;\n        this.level = level;\n        this.players = players;\n        this.items = new _serverItems__WEBPACK_IMPORTED_MODULE_4__.ServerItems(level, players);\n        this.tick = 0;\n        this.lastTick = +new Date();\n        this.averageLatencyInTicks = 1;\n        this.players.setSnakes(this.level);\n        this.bindEvents();\n        this.tickInterval = setInterval(this.handleTick.bind(this), _const__WEBPACK_IMPORTED_MODULE_2__.SERVER_TICK_INTERVAL);\n    }\n    destruct() {\n        clearInterval(this.tickInterval);\n        this.unbindEvents();\n        this.items.destruct();\n        this.level = null;\n        this.players = null;\n        this.items = null;\n    }\n    bindEvents() {\n        this.roomEmitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));\n        this.roomEmitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PONG), this.ncPong.bind(this));\n    }\n    unbindEvents() {\n        this.roomEmitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_SNAKE_UPDATE));\n        this.roomEmitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PONG));\n    }\n    ncSnakeUpdate(dirtySnake, player) {\n        const move = new _room_serverSnakeMove__WEBPACK_IMPORTED_MODULE_3__.ServerSnakeMove(dirtySnake, player);\n        if (move.isValid()) {\n            this.applyMove(player.snake, move);\n            this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_SNAKE_UPDATE, player.snake.serialize(), player);\n        }\n        else {\n            this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_SNAKE_UPDATE, player.snake.serialize());\n        }\n    }\n    /**\n     * Update average latency of all players in this room.\n     * Affects tolerance of clients overriding server prediction.\n     */\n    ncPong() {\n        this.averageLatencyInTicks = this.getAverageLatencyInTicks();\n    }\n    /**\n     * @return {number}\n     */\n    getCrashedCount() {\n        let count = 0;\n        for (let i = 0, m = this.players.players.length; i < m; i++) {\n            if (this.players.players[i].snake.crashed) {\n                count++;\n            }\n        }\n        return count;\n    }\n    /**\n     * @return {number}\n     */\n    getAverageLatencyInTicks() {\n        const latencies = [];\n        for (let i = 0, m = this.players.players.length; i < m; i++) {\n            latencies.push(this.players[i].player.heartbeat.latency);\n        }\n        return Math.round((0,_shared_util__WEBPACK_IMPORTED_MODULE_1__.average)(latencies) / _const__WEBPACK_IMPORTED_MODULE_2__.SERVER_TICK_INTERVAL);\n    }\n    handleTick() {\n        const now = +new Date();\n        this.gameloop(++this.tick, now - this.lastTick);\n        this.lastTick = now;\n    }\n    gameloop(tick, elapsed) {\n        const shift = this.level.gravity.getShift(elapsed);\n        this.level.animations.update(elapsed, this.started);\n        this.handleCrashingPlayers(tick - this.averageLatencyInTicks);\n        this.players.moveSnakes(tick, elapsed, shift);\n    }\n    handleCrashingPlayers(tick) {\n        const collisions = [];\n        let crashingPlayers;\n        crashingPlayers = this.players.getCollisionsOnTick(tick);\n        if (crashingPlayers.length) {\n            for (let i = 0, m = crashingPlayers.length; i < m; i++) {\n                const snake = crashingPlayers[i].snake;\n                snake.crashed = true;\n                collisions.push([snake.index, snake.parts, snake.collision.serialize()]);\n            }\n            // Emit crashed snakes.\n            this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_SNAKE_CRASH, collisions);\n            // Let round manager know.\n            this.roomEmitter.emit(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_COLLISION), crashingPlayers);\n        }\n    }\n    applyMove(snake, move) {\n        snake.direction = move.direction;\n        snake.parts = move.parts;\n        snake.trimParts();\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/game/serverGame.ts?");
-
-/***/ }),
-
-/***/ "./server/game/serverItems.ts":
-/*!************************************!*\
-  !*** ./server/game/serverItems.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerItems\": () => (/* binding */ ServerItems)\n/* harmony export */ });\nclass ServerItems {\n    constructor(level, players) {\n        this.level = level;\n        this.players = players;\n        this.level = level;\n        this.players = players;\n    }\n    destruct() {\n        this.level = null;\n        this.players = null;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/game/serverItems.ts?");
-
-/***/ }),
-
-/***/ "./server/game/serverScore.ts":
-/*!************************************!*\
-  !*** ./server/game/serverScore.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerScore\": () => (/* binding */ ServerScore)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n\nclass ServerScore {\n    constructor(players) {\n        this.players = players;\n    }\n    destruct() {\n        this.players = null;\n    }\n    /**\n     * Returns whether player score is affected.\n     */\n    update(crashedPlayers, level) {\n        let points;\n        let scoreUpdated = false;\n        if (!level) {\n            console.error(\"FIXME\");\n            return false;\n        }\n        points = crashedPlayers.length * level.config.pointsKnockout;\n        if (points) {\n            for (let i = 0, m = this.players.players.length; i < m; i++) {\n                const player = this.players.players[i];\n                if (-1 === crashedPlayers.indexOf(player) && !player.snake.crashed) {\n                    player.score += points;\n                    scoreUpdated = true;\n                }\n            }\n        }\n        if (scoreUpdated) {\n            this.emitScore();\n        }\n    }\n    serialize() {\n        const score = [];\n        for (let i = 0, m = this.players.players.length; i < m; i++) {\n            score.push(this.players.players[i].score);\n        }\n        return score;\n    }\n    emitScore() {\n        this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_SCORE_UPDATE, this.serialize());\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/game/serverScore.ts?");
-
-/***/ }),
-
-/***/ "./server/game/serverSnake.ts":
-/*!************************************!*\
-  !*** ./server/game/serverSnake.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerSnake\": () => (/* binding */ ServerSnake)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_game_snakeMove__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/game/snakeMove */ \"./shared/game/snakeMove.ts\");\n/* harmony import */ var _shared_snake__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/snake */ \"./shared/snake.ts\");\n\n\n\nclass ServerSnake extends _shared_snake__WEBPACK_IMPORTED_MODULE_2__.Snake {\n    constructor(index, level) {\n        super(index, level);\n        this.index = index;\n        this.level = level;\n        this.elapsed = 0;\n    }\n    destruct() {\n        this.level = null;\n    }\n    serialize() {\n        return [this.index, this.direction, this.parts];\n    }\n    handleNextMove(tick, elapsed, shift, players) {\n        this.elapsed += elapsed;\n        if (!this.crashed && this.elapsed >= this.speed) {\n            const move = new _shared_game_snakeMove__WEBPACK_IMPORTED_MODULE_1__.SnakeMove(this, players, this.level, this.getNextPosition());\n            this.elapsed -= this.speed;\n            if (!move.collision) {\n                this.collision = null;\n                this.move(move.location);\n            }\n            else if (!this.collision) {\n                this.collision = move.collision;\n                this.collision.tick = tick;\n            }\n        }\n    }\n    getNextPosition() {\n        const head = this.getHead();\n        const shift = _shared_const__WEBPACK_IMPORTED_MODULE_0__.GAME_SHIFT_MAP[this.direction];\n        return [head[0] + shift[0], head[1] + shift[1]];\n    }\n    hasCollisionLteTick(tick) {\n        return !this.crashed && this.collision && this.collision.tick <= tick;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/game/serverSnake.ts?");
-
-/***/ }),
-
-/***/ "./server/index.ts":
-/*!*************************!*\
-  !*** ./server/index.ts ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _netcode_server__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./netcode/server */ \"./server/netcode/server.ts\");\n\nconsole.log(\"Running XSSnake server version XX.\");\nnew _netcode_server__WEBPACK_IMPORTED_MODULE_0__.Server();\n\n\n//# sourceURL=webpack://xssnake/./server/index.ts?");
-
-/***/ }),
-
-/***/ "./server/netcode/heartbeat.ts":
-/*!*************************************!*\
-  !*** ./server/netcode/heartbeat.ts ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerHeartbeat\": () => (/* binding */ ServerHeartbeat)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _const__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../const */ \"./server/const.ts\");\n\n\nclass ServerHeartbeat {\n    constructor(player) {\n        this.player = player;\n        this.latency = 0;\n        this.pingSent = 0;\n        this.bindEvents();\n    }\n    destruct() {\n        this.player.emitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PING));\n        this.player.emitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PONG));\n        this.player = null;\n    }\n    isAlive() {\n        const pingSent = this.pingSent || +new Date();\n        return +new Date() - pingSent < _shared_const__WEBPACK_IMPORTED_MODULE_0__.HEARTBEAT_INTERVAL_MS * 2;\n    }\n    bindEvents() {\n        this.player.emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PING), this.ping.bind(this));\n        this.player.emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PONG), this.pong.bind(this));\n    }\n    ping() {\n        this.pingSent = +new Date();\n        this.player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PONG);\n    }\n    pong() {\n        this.latency = Math.min(_const__WEBPACK_IMPORTED_MODULE_1__.SERVER_MAX_TOLERATED_LATENCY, (+new Date() - this.pingSent) / 2);\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/netcode/heartbeat.ts?");
-
-/***/ }),
-
-/***/ "./server/netcode/message.ts":
-/*!***********************************!*\
-  !*** ./server/netcode/message.ts ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Message\": () => (/* binding */ Message)\n/* harmony export */ });\n/* harmony import */ var _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/util/sanitizer */ \"./shared/util/sanitizer.ts\");\n/**\n * @param {string} jsonStr\n * @constructor\n */\n\nclass Message {\n    constructor(jsonStr) {\n        this.isClean = null;\n        this.event = null;\n        this.data = null;\n        this.process(jsonStr);\n    }\n    process(jsonStr) {\n        const message = this.sanitize(jsonStr);\n        if (message) {\n            this.isClean = true;\n            this.event = message.event;\n            this.data = message.data;\n        }\n    }\n    sanitize(jsonStr) {\n        let sanitizer;\n        let arrayValidator;\n        let eventNumberValidator;\n        let messageJson;\n        sanitizer = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_0__.Sanitizer(jsonStr).assertStringOfLength(3, 512).assertJSON();\n        if (!sanitizer.valid()) {\n            return null;\n        }\n        messageJson = sanitizer.json();\n        arrayValidator = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_0__.Sanitizer(messageJson).assertArrayLengthBetween(1, 20);\n        if (!arrayValidator.valid()) {\n            return null;\n        }\n        eventNumberValidator = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_0__.Sanitizer(messageJson[0]).assertType(\"number\");\n        if (!eventNumberValidator.valid()) {\n            return null;\n        }\n        // TODO: validate whether the message only contains a certain subset of types (str, int, arr)\n        return {\n            event: eventNumberValidator.getValueOr(-1),\n            data: messageJson.slice(1), // Validate in event listener.\n        };\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/netcode/message.ts?");
-
-/***/ }),
-
-/***/ "./server/netcode/server.ts":
-/*!**********************************!*\
-  !*** ./server/netcode/server.ts ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Server\": () => (/* binding */ Server)\n/* harmony export */ });\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! events */ \"events\");\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ws */ \"ws\");\n/* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(ws__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _shared_config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/config */ \"./shared/config.ts\");\n/* harmony import */ var _room_roomManager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../room/roomManager */ \"./server/room/roomManager.ts\");\n/* harmony import */ var _room_serverPlayer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../room/serverPlayer */ \"./server/room/serverPlayer.ts\");\n\n\n\n\n\nclass Server {\n    constructor() {\n        this.emitter = new events__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();\n        this.roomManager = new _room_roomManager__WEBPACK_IMPORTED_MODULE_3__.ServerRoomManager(this);\n        this.ws = new ws__WEBPACK_IMPORTED_MODULE_1__.Server({\n            host: _shared_config__WEBPACK_IMPORTED_MODULE_2__.SERVER_HOST,\n            port: _shared_config__WEBPACK_IMPORTED_MODULE_2__.SERVER_PORT,\n            path: _shared_config__WEBPACK_IMPORTED_MODULE_2__.SERVER_PATH,\n            maxPayload: 256,\n            clientTracking: false,\n        });\n        this.ws.on(\"connection\", (socket) => {\n            new _room_serverPlayer__WEBPACK_IMPORTED_MODULE_4__.ServerPlayer(this, socket);\n        });\n        console.log(`Running WebSocket server at ${_shared_config__WEBPACK_IMPORTED_MODULE_2__.SERVER_HOST}:${_shared_config__WEBPACK_IMPORTED_MODULE_2__.SERVER_PATH}${_shared_config__WEBPACK_IMPORTED_MODULE_2__.SERVER_PORT}`);\n    }\n    destruct() {\n        this.roomManager.destruct();\n        this.ws.close();\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/netcode/server.ts?");
-
-/***/ }),
-
-/***/ "./server/room/matcher.ts":
-/*!********************************!*\
-  !*** ./server/room/matcher.ts ***!
-  \********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Matcher\": () => (/* binding */ Matcher)\n/* harmony export */ });\nclass Matcher {\n    constructor(rooms) {\n        this.rooms = rooms;\n    }\n    destruct() {\n        this.rooms = null;\n    }\n    getRoomMatching(requestOptions) {\n        const rooms = this.rooms;\n        if (!requestOptions.isPrivate) {\n            // Shortcut.\n            for (let i = 0, m = rooms.length; i < m; i++) {\n                const room = rooms[i];\n                if (room.isAwaitingPlayers()) {\n                    if (room.options.matches(requestOptions)) {\n                        return room;\n                    }\n                }\n            }\n        }\n        return null;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/matcher.ts?");
-
-/***/ }),
-
-/***/ "./server/room/playset.ts":
-/*!********************************!*\
-  !*** ./server/room/playset.ts ***!
-  \********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"LevelPlayset\": () => (/* binding */ LevelPlayset)\n/* harmony export */ });\n/* harmony import */ var _shared_data_levelsets__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/data/levelsets */ \"./shared/data/levelsets.ts\");\n\nclass LevelPlayset {\n    constructor(levelsetIndex) {\n        this.levelsetIndex = levelsetIndex;\n        this.levelset = _shared_data_levelsets__WEBPACK_IMPORTED_MODULE_0__.levelsets[levelsetIndex];\n        this.played = [];\n    }\n    destruct() {\n        this.levelset = null;\n        this.played = null;\n    }\n    getNext() {\n        const nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);\n        this.played.push(nextLevelsetIndex);\n        return nextLevelsetIndex;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/playset.ts?");
-
-/***/ }),
-
-/***/ "./server/room/roomManager.ts":
-/*!************************************!*\
-  !*** ./server/room/roomManager.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerRoomManager\": () => (/* binding */ ServerRoomManager)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/util */ \"./shared/util.ts\");\n/* harmony import */ var _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/util/sanitizer */ \"./shared/util/sanitizer.ts\");\n/* harmony import */ var _matcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./matcher */ \"./server/room/matcher.ts\");\n/* harmony import */ var _serverOptions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./serverOptions */ \"./server/room/serverOptions.ts\");\n/* harmony import */ var _serverRoom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./serverRoom */ \"./server/room/serverRoom.ts\");\n\n\n\n\n\n\nclass ServerRoomManager {\n    constructor(server) {\n        this.server = server;\n        this.rooms = [];\n        this.matcher = new _matcher__WEBPACK_IMPORTED_MODULE_3__.Matcher(this.rooms);\n        this.bindEvents();\n    }\n    destruct() {\n        this.removeAllRooms();\n        this.matcher.destruct();\n        this.server.emitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_STATUS));\n        this.server.emitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_JOIN_KEY));\n        this.server.emitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_JOIN_MATCHING));\n    }\n    bindEvents() {\n        const emitter = this.server.emitter;\n        emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_STATUS), this.emitRoomStatus.bind(this));\n        emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_JOIN_KEY), this.autojoinRoom.bind(this));\n        emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_JOIN_MATCHING), this.joinMatchingRoom.bind(this));\n    }\n    room(key) {\n        return this.rooms[key];\n    }\n    remove(room) {\n        room.destruct();\n        for (let i = 0, m = this.rooms.length; i < m; i++) {\n            if (room === this.rooms[i]) {\n                this.rooms.splice(i, 1);\n            }\n        }\n    }\n    removeAllRooms() {\n        for (let i = 0, m = this.rooms.length; i < m; i++) {\n            this.rooms[i].destruct();\n        }\n        this.rooms.length = 0;\n    }\n    createRoom(options) {\n        const id = (0,_shared_util__WEBPACK_IMPORTED_MODULE_1__.randomStr)(_shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_KEY_LENGTH);\n        const room = new _serverRoom__WEBPACK_IMPORTED_MODULE_5__.ServerRoom(this.server, options, id);\n        this.rooms.push(room);\n        return room;\n    }\n    autojoinRoom(dirtyKeyArr, player) {\n        let room;\n        let key;\n        let status;\n        key = this.getSanitizedRoomKey(dirtyKeyArr);\n        status = this.getRoomStatus(key);\n        if (status === _shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_JOINABLE) {\n            room = this.getRoomByKey(key);\n            room.addPlayer(player);\n            player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROUND_SERIALIZE, room.rounds.round.serialize());\n            room.detectAutostart();\n        }\n        else {\n            player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_JOIN_ERROR, [status]);\n        }\n    }\n    /**\n     * @param {Array.<?>} dirtySerializeOptions\n     * @param {room.ServerPlayer} player\n     * @private\n     */\n    joinMatchingRoom(dirtySerializeOptions, player) {\n        let options;\n        let room;\n        let emitDataArr;\n        emitDataArr = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_2__.Sanitizer(dirtySerializeOptions).assertArray().getValueOr([]);\n        options = new _serverOptions__WEBPACK_IMPORTED_MODULE_4__.ServerOptions(emitDataArr);\n        room = this.matcher.getRoomMatching(options);\n        room = room || this.createRoom(options);\n        room.addPlayer(player);\n        room.emitAll(player);\n        room.detectAutostart();\n    }\n    getRoomByKey(key) {\n        for (let i = 0, m = this.rooms.length; i < m; i++) {\n            if (key === this.rooms[i].key) {\n                return this.rooms[i];\n            }\n        }\n        return null;\n    }\n    getSanitizedRoomKey(dirtyKeyArr) {\n        const keySanitizer = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_2__.Sanitizer(dirtyKeyArr[0]);\n        keySanitizer.assertStringOfLength(_shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_KEY_LENGTH);\n        return keySanitizer.getValueOr();\n    }\n    getRoomStatus(key) {\n        if (!key) {\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_INVALID_KEY;\n        }\n        const room = this.getRoomByKey(key);\n        if (!room) {\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_NOT_FOUND;\n        }\n        else if (room.isFull()) {\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_FULL;\n        }\n        else if (room.rounds.hasStarted()) {\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_IN_PROGRESS;\n        }\n        return _shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_JOINABLE;\n    }\n    emitRoomStatus(dirtyKeyArr, player) {\n        const key = this.getSanitizedRoomKey(dirtyKeyArr);\n        const status = this.getRoomStatus(key);\n        if (status === _shared_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_JOINABLE) {\n            const room = this.getRoomByKey(key);\n            player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_SERIALIZE, room.serialize());\n            player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_OPTIONS_SERIALIZE, room.options.serialize());\n            player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PLAYERS_SERIALIZE, room.players.serialize(player));\n        }\n        else {\n            player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_JOIN_ERROR, [status]);\n        }\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/roomManager.ts?");
-
-/***/ }),
-
-/***/ "./server/room/serverOptions.ts":
-/*!**************************************!*\
-  !*** ./server/room/serverOptions.ts ***!
-  \**************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerOptions\": () => (/* binding */ ServerOptions)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_room_roomOptions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/room/roomOptions */ \"./shared/room/roomOptions.ts\");\n\n\nclass ServerOptions extends _shared_room_roomOptions__WEBPACK_IMPORTED_MODULE_1__.RoomOptions {\n    constructor(dirtyOptions) {\n        super();\n        if (dirtyOptions) {\n            this.deserialize(dirtyOptions);\n        }\n    }\n    emit(player) {\n        player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_OPTIONS_SERIALIZE, this.serialize());\n    }\n    matches(request) {\n        // TODO: Write as separate if () { return }\n        return (!this.isPrivate &&\n            !request.isPrivate &&\n            request.isXSS === this.isXSS &&\n            (request.isQuickGame ||\n                (request.levelset === this.levelset &&\n                    request.hasPowerups === this.hasPowerups &&\n                    request.maxPlayers <= this.maxPlayers)));\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/serverOptions.ts?");
-
-/***/ }),
-
-/***/ "./server/room/serverPlayer.ts":
-/*!*************************************!*\
-  !*** ./server/room/serverPlayer.ts ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerPlayer\": () => (/* binding */ ServerPlayer)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_room_player__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/room/player */ \"./shared/room/player.ts\");\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! events */ \"events\");\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _shared_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/util */ \"./shared/util.ts\");\n/* harmony import */ var _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../shared/util/sanitizer */ \"./shared/util/sanitizer.ts\");\n/* harmony import */ var _game_serverSnake__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../game/serverSnake */ \"./server/game/serverSnake.ts\");\n/* harmony import */ var _netcode_heartbeat__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../netcode/heartbeat */ \"./server/netcode/heartbeat.ts\");\n/* harmony import */ var _netcode_message__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../netcode/message */ \"./server/netcode/message.ts\");\n\n\n\n\n\n\n\n\nclass ServerPlayer extends _shared_room_player__WEBPACK_IMPORTED_MODULE_1__.Player {\n    constructor(server, connection) {\n        super();\n        this.server = server;\n        this.connection = connection;\n        this.emitter = new events__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();\n        this.room = null;\n        this.connection.on(\"message\", this.onmessage.bind(this));\n        this.connection.on(\"close\", this.onclose.bind(this));\n        this.connected = true;\n        this.bindEvents();\n        this.heartbeat = new _netcode_heartbeat__WEBPACK_IMPORTED_MODULE_6__.ServerHeartbeat(this);\n    }\n    destruct() {\n        if (this.connected) {\n            this.disconnect();\n        }\n        this.unbindEvents();\n        this.heartbeat.destruct(); // Awww.\n        this.server = null;\n        this.snake = null;\n        this.room = null;\n        this.heartbeat = null;\n    }\n    disconnect() {\n        this.connected = false;\n        if (this.snake) {\n            this.snake.crashed = true;\n            this.room.emitter.emit(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_COLLISION), [this]);\n        }\n        this.emitMessage(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_DISCONNECT, this);\n        if (this.connection) {\n            this.connection.close();\n            this.connection = null;\n        }\n        this.emitter.removeAllListeners();\n    }\n    onmessage(jsonStr) {\n        const message = new _netcode_message__WEBPACK_IMPORTED_MODULE_7__.Message(jsonStr);\n        console.log(\"IN \", this.name, jsonStr);\n        if (message.isClean) {\n            this.emitMessage(message.event, message.data);\n        }\n    }\n    emitMessage(event, data) {\n        let playerEmits, roomEmits;\n        playerEmits = this.emitter.emit(String(event), data);\n        roomEmits = this.room && this.room.emitter.emit(String(event), data, this);\n        // Global events (connecting, finding room).\n        if (!playerEmits && !roomEmits) {\n            this.server.emitter.emit(String(event), data, this);\n        }\n    }\n    onclose() {\n        if (this.room && this.room.rounds && this.room.rounds.hasStarted()) {\n            // Cannot destruct immediately, game expects player.\n            // Room should destruct player at end of round, or\n            // when all players in room have disconnected.\n            // TODO: Always disconnect, later destruct\n            this.disconnect();\n        }\n        else {\n            this.destruct();\n        }\n    }\n    bindEvents() {\n        this.emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PLAYER_NAME), this.setName.bind(this));\n    }\n    unbindEvents() {\n        this.emitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PLAYER_NAME));\n    }\n    /**\n     * @param {?} dirtyNameArr\n     * @return {string}\n     */\n    setName(dirtyNameArr) {\n        this.name = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_4__.Sanitizer(dirtyNameArr[0])\n            .assertStringOfLength(_shared_const__WEBPACK_IMPORTED_MODULE_0__.PLAYER_NAME_MINLENGTH, 20)\n            .getValueOr((0,_shared_util__WEBPACK_IMPORTED_MODULE_3__.getRandomName)());\n        return this.name;\n    }\n    /**\n     * Send data to client\n     * TODO: method accepts array.\n     */\n    emit(event, data) {\n        let emit;\n        if (!this.connected) {\n            return false;\n        }\n        if (!this.heartbeat.isAlive()) {\n            this.disconnect();\n            return false;\n        }\n        if (this.connection) {\n            if (data) {\n                emit = data.slice();\n                emit.unshift(event);\n            }\n            else {\n                emit = [event];\n            }\n            console.log(\"OUT\", this.name, JSON.stringify(emit));\n            this.connection.send(JSON.stringify(emit), (error) => {\n                if (error) {\n                    console.error(\"Error sending message\", error);\n                }\n            });\n            return true;\n        }\n        return false;\n    }\n    broadcast(type, data) {\n        if (this.room) {\n            this.room.players.emit(type, data, this);\n        }\n    }\n    setSnake(index, level) {\n        this.snake = new _game_serverSnake__WEBPACK_IMPORTED_MODULE_5__.ServerSnake(index, level);\n    }\n    unsetSnake() {\n        if (this.snake) {\n            this.snake.destruct();\n        }\n    }\n    getMaxMismatchesAllowed() {\n        const latency = Math.min(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NETCODE_SYNC_MS, this.heartbeat.latency);\n        return Math.ceil(latency / this.snake.speed);\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/serverPlayer.ts?");
-
-/***/ }),
-
-/***/ "./server/room/serverPlayerRegistry.ts":
-/*!*********************************************!*\
-  !*** ./server/room/serverPlayerRegistry.ts ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerPlayerRegistry\": () => (/* binding */ ServerPlayerRegistry)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_room_playerRegistry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/room/playerRegistry */ \"./shared/room/playerRegistry.ts\");\n\n\nclass ServerPlayerRegistry extends _shared_room_playerRegistry__WEBPACK_IMPORTED_MODULE_1__.PlayerRegistry {\n    constructor() {\n        super();\n        this.averageLatencyInTicks = 0;\n    }\n    /**\n     * Send data to everyone in the room.\n     */\n    emit(type, data, exclude) {\n        for (let i = 0, m = this.players.length; i < m; i++) {\n            if (exclude !== this.players[i]) {\n                this.players[i].emit(type, data);\n            }\n        }\n    }\n    /**\n     * Players get their own message because serialize contains local flag.\n     */\n    emitPlayers() {\n        for (let i = 0, m = this.players.length; i < m; i++) {\n            this.players[i].emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_PLAYERS_SERIALIZE, this.serialize(this.players[i]));\n        }\n    }\n    removeDisconnectedPlayers() {\n        for (let i = 0; i < this.players.length; i++) {\n            if (!this.players[i].connected) {\n                this.players[i].destruct();\n                this.remove(this.players[i]);\n                this.emitPlayers();\n            }\n        }\n    }\n    setSnakes(level) {\n        for (let i = 0, m = this.players.length; i < m; i++) {\n            this.players[i].setSnake(i, level);\n        }\n    }\n    getCollisionsOnTick(tick) {\n        const crashingPlayers = [];\n        for (let i = 0, m = this.players.length; i < m; i++) {\n            if (this.players[i].snake.hasCollisionLteTick(tick)) {\n                crashingPlayers.push(this.players[i]);\n            }\n        }\n        return crashingPlayers;\n    }\n    /**\n     * @param {number} tick\n     * @param {number} elapsed\n     * @param {Shift} shift\n     */\n    moveSnakes(tick, elapsed, shift) {\n        for (let i = 0, m = this.players.length; i < m; i++) {\n            this.players[i].snake.handleNextMove(tick, elapsed, shift, this.players);\n            this.players[i].snake.shiftParts(shift);\n        }\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/serverPlayerRegistry.ts?");
-
-/***/ }),
-
-/***/ "./server/room/serverRoom.ts":
-/*!***********************************!*\
-  !*** ./server/room/serverRoom.ts ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerRoom\": () => (/* binding */ ServerRoom)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/util/sanitizer */ \"./shared/util/sanitizer.ts\");\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! events */ \"events\");\n/* harmony import */ var events__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _serverPlayerRegistry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./serverPlayerRegistry */ \"./server/room/serverPlayerRegistry.ts\");\n/* harmony import */ var _serverRoundSet__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./serverRoundSet */ \"./server/room/serverRoundSet.ts\");\n\n\n\n\n\nclass ServerRoom {\n    constructor(server, options, key) {\n        this.server = server;\n        this.options = options;\n        this.key = key;\n        this.emitter = new events__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();\n        this.players = new _serverPlayerRegistry__WEBPACK_IMPORTED_MODULE_3__.ServerPlayerRegistry();\n        this.rounds = new _serverRoundSet__WEBPACK_IMPORTED_MODULE_4__.ServerRoundSet(this.emitter, this.players, this.options);\n        this.bindEvents();\n    }\n    destruct() {\n        this.emitter.removeAllListeners();\n        this.players.destruct();\n        this.rounds.destruct();\n        this.server = null;\n        this.players = null;\n        this.rounds = null;\n    }\n    bindEvents() {\n        this.emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_CHAT_MESSAGE), this.ncChatMessage.bind(this));\n        this.emitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_DISCONNECT), this.handlePlayerDisconnect.bind(this));\n    }\n    ncChatMessage(serializedMessage, player) {\n        const sanitizer = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_1__.Sanitizer(serializedMessage[0]);\n        sanitizer.assertStringOfLength(1, 64);\n        if (sanitizer.valid()) {\n            // TODO Prevent spam.\n            player.broadcast(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_CHAT_MESSAGE, [\n                this.players.players.indexOf(player),\n                sanitizer.getValueOr(),\n            ]);\n        }\n    }\n    restartRounds() {\n        //        this.rounds.destruct();\n        //        this.rounds = new RoundManager(this);\n        //        this.rounds.detectAutoStart();\n        //        this.emitState();\n    }\n    isAwaitingPlayers() {\n        return !this.isFull() && !this.rounds.hasStarted();\n    }\n    /**\n     * @return {Array.<string>}\n     */\n    serialize() {\n        return [this.key];\n    }\n    /**\n     * @param {room.ServerPlayer} player\n     */\n    addPlayer(player) {\n        this.players.add(player);\n        player.room = this;\n        this.players.emitPlayers();\n    }\n    detectAutostart() {\n        this.rounds.detectAutostart(this.isFull());\n    }\n    emit(player) {\n        player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_SERIALIZE, this.serialize());\n    }\n    emitAll(player) {\n        this.emit(player);\n        this.options.emit(player);\n        this.rounds.round.emit(player);\n    }\n    handlePlayerDisconnect(player) {\n        // Remove immediately if rounds have not started.\n        // [else: set player.connected to false]\n        if (!this.rounds.hasStarted()) {\n            this.players.remove(player);\n        }\n        this.players.emitPlayers();\n        this.detectEmptyRoom();\n    }\n    detectEmptyRoom() {\n        if (this.players.players.some((sp) => sp.connected)) {\n            this.server.roomManager.remove(this);\n        }\n    }\n    /**\n     * @return {boolean}\n     */\n    isFull() {\n        return this.players.getTotal() === this.options.maxPlayers;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/serverRoom.ts?");
-
-/***/ }),
-
-/***/ "./server/room/serverRound.ts":
-/*!************************************!*\
-  !*** ./server/room/serverRound.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerRound\": () => (/* binding */ ServerRound)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_data_levelsets__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/data/levelsets */ \"./shared/data/levelsets.ts\");\n/* harmony import */ var _shared_room_round__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/room/round */ \"./shared/room/round.ts\");\n/* harmony import */ var _game_serverGame__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../game/serverGame */ \"./server/game/serverGame.ts\");\n\n\n\n\nclass ServerRound extends _shared_room_round__WEBPACK_IMPORTED_MODULE_2__.Round {\n    constructor(roomEmitter, players, options, levelPlayset) {\n        super(players, options);\n        this.roomEmitter = roomEmitter;\n        this.players = players;\n        this.options = options;\n        this.levelPlayset = levelPlayset;\n        this.levelsetIndex = options.levelset;\n        this.levelset = _shared_data_levelsets__WEBPACK_IMPORTED_MODULE_1__.levelsets[this.levelsetIndex];\n        this.levelIndex = levelPlayset.getNext();\n        this.countdownStarted = false;\n        this.wrappingUp = false;\n        this.handleDisconnectBound = this.handleDisconnect.bind(this);\n        this.bindEvents();\n    }\n    destruct() {\n        clearTimeout(this.countdownTimer);\n        this.unbindEvents();\n        if (this.game) {\n            this.game.destruct();\n            this.game = null;\n        }\n        if (this.level) {\n            this.level.destruct();\n            this.level = null;\n        }\n        this.handleDisconnectBound = null;\n        this.roomEmitter = null;\n        this.levelset = null;\n    }\n    bindEvents() {\n        this.roomEmitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_DISCONNECT), this.handleDisconnectBound);\n        this.roomEmitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_START), this.handleManualRoomStart.bind(this));\n    }\n    unbindEvents() {\n        this.roomEmitter.removeListener(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_DISCONNECT), this.handleDisconnectBound);\n        this.roomEmitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROOM_START));\n    }\n    emit(player) {\n        player.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROUND_SERIALIZE, this.serialize());\n    }\n    emitAll() {\n        this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROUND_SERIALIZE, this.serialize());\n    }\n    getAlivePlayers() {\n        return this.players.players.filter((player) => !player.snake.crashed);\n    }\n    wrapUp(winner) {\n        const data = [this.players.players.indexOf(winner)];\n        this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROUND_WRAPUP, data);\n        this.wrappingUp = true;\n    }\n    toggleCountdown(enabled) {\n        clearTimeout(this.countdownTimer);\n        this.countdownStarted = enabled;\n        this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROUND_COUNTDOWN, [+enabled]);\n        if (enabled) {\n            this.countdownTimer = setTimeout(this.startRound.bind(this), _shared_const__WEBPACK_IMPORTED_MODULE_0__.SECONDS_ROUND_COUNTDOWN * 1000);\n        }\n    }\n    startRound() {\n        this.unbindEvents();\n        this.level = this.getLevel(this.levelsetIndex, this.levelIndex);\n        this.game = new _game_serverGame__WEBPACK_IMPORTED_MODULE_3__.ServerGame(this.roomEmitter, this.level, this.players);\n        this.started = true;\n        this.players.emit(_shared_const__WEBPACK_IMPORTED_MODULE_0__.NC_ROUND_START);\n    }\n    handleManualRoomStart(event, player) {\n        if (this.players.isHost(player) && !this.countdownTimer) {\n            this.toggleCountdown(true);\n        }\n    }\n    handleDisconnect() {\n        if (this.countdownStarted) {\n            this.toggleCountdown(false);\n        }\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/serverRound.ts?");
-
-/***/ }),
-
-/***/ "./server/room/serverRoundSet.ts":
-/*!***************************************!*\
-  !*** ./server/room/serverRoundSet.ts ***!
-  \***************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerRoundSet\": () => (/* binding */ ServerRoundSet)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _game_serverScore__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../game/serverScore */ \"./server/game/serverScore.ts\");\n/* harmony import */ var _playset__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./playset */ \"./server/room/playset.ts\");\n/* harmony import */ var _serverRound__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./serverRound */ \"./server/room/serverRound.ts\");\n\n\n\n\nclass ServerRoundSet {\n    constructor(roomEmitter, players, options) {\n        this.roomEmitter = roomEmitter;\n        this.players = players;\n        this.options = options;\n        this.roomEmitter = roomEmitter;\n        this.players = players;\n        this.options = options;\n        this.levelPlayset = new _playset__WEBPACK_IMPORTED_MODULE_2__.LevelPlayset(options.levelset);\n        this.round = new _serverRound__WEBPACK_IMPORTED_MODULE_3__.ServerRound(roomEmitter, players, options, this.levelPlayset);\n        this.score = new _game_serverScore__WEBPACK_IMPORTED_MODULE_1__.ServerScore(players);\n        this.roundIndex = 0;\n        this.bindEvents();\n    }\n    destruct() {\n        this.roomEmitter.removeAllListeners(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_COLLISION));\n        clearTimeout(this.nextRoundTimeout);\n        this.levelPlayset.destruct();\n        this.levelPlayset = null;\n        this.round.destruct();\n        this.round = null;\n        this.score.destruct();\n        this.score = null;\n        this.players = null;\n        this.options = null;\n    }\n    bindEvents() {\n        this.roomEmitter.on(String(_shared_const__WEBPACK_IMPORTED_MODULE_0__.SE_PLAYER_COLLISION), this.handleCollisions.bind(this));\n    }\n    switchRounds(winner) {\n        const delay = winner ? _shared_const__WEBPACK_IMPORTED_MODULE_0__.SECONDS_ROUND_GLOAT : _shared_const__WEBPACK_IMPORTED_MODULE_0__.SECONDS_ROUND_PAUSE;\n        if (this.hasSetWinner()) {\n            // TODO\n        }\n        else if (!this.round.wrappingUp) {\n            this.round.wrapUp(winner);\n            this.nextRoundTimeout = setTimeout(this.startNewRound.bind(this), delay * 1000);\n        }\n    }\n    startNewRound() {\n        this.round.destruct();\n        this.round = new _serverRound__WEBPACK_IMPORTED_MODULE_3__.ServerRound(this.roomEmitter, this.players, this.options, this.levelPlayset);\n        this.round.emitAll();\n        this.players.removeDisconnectedPlayers();\n        this.round.toggleCountdown(true);\n    }\n    hasSetWinner() {\n        return false;\n    }\n    handleCollisions(crashingPlayers) {\n        const alive = this.round.getAlivePlayers();\n        this.score.update(crashingPlayers, this.round.level);\n        if (alive.length <= 1) {\n            this.switchRounds(alive[0] || null);\n        }\n    }\n    hasStarted() {\n        return this.roundIndex >= 1 || this.round.started;\n    }\n    detectAutostart(full) {\n        if (full && 0 === this.roundIndex) {\n            this.round.toggleCountdown(true);\n        }\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/serverRoundSet.ts?");
-
-/***/ }),
-
-/***/ "./server/room/serverSnakeMove.ts":
-/*!****************************************!*\
-  !*** ./server/room/serverSnakeMove.ts ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ServerSnakeMove\": () => (/* binding */ ServerSnakeMove)\n/* harmony export */ });\n/* harmony import */ var _shared_const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/const */ \"./shared/const.ts\");\n/* harmony import */ var _shared_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../shared/util */ \"./shared/util.ts\");\n/* harmony import */ var _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/util/sanitizer */ \"./shared/util/sanitizer.ts\");\n\n\n\nclass ServerSnakeMove {\n    constructor(dirtyMove, player) {\n        this.dirtyMove = dirtyMove;\n        this.player = player;\n        this.parts = null;\n        this.direction = null;\n        this.status = -1;\n    }\n    isValid() {\n        if (this.isValidJson()) {\n            this.status = this.getStatus();\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.VALIDATE_SUCCES === this.status;\n        }\n    }\n    isValidJson() {\n        let snake;\n        let parts;\n        let direction;\n        snake = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_2__.Sanitizer(this.dirtyMove);\n        snake.assertArrayLengthBetween(2, 2);\n        if (!snake.valid()) {\n            return false;\n        }\n        direction = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_2__.Sanitizer(snake.getValueOr()[0]);\n        direction.assertBetween(_shared_const__WEBPACK_IMPORTED_MODULE_0__.DIRECTION_LEFT, _shared_const__WEBPACK_IMPORTED_MODULE_0__.DIRECTION_DOWN);\n        if (!direction.valid()) {\n            return false;\n        }\n        parts = new _shared_util_sanitizer__WEBPACK_IMPORTED_MODULE_2__.Sanitizer(snake.getValueOr()[1]);\n        parts.assertArray();\n        if (!parts.valid()) {\n            return false;\n        }\n        this.parts = parts.getValueOr();\n        this.direction = direction.getValueOr();\n        return true;\n    }\n    getStatus() {\n        let numSyncParts;\n        let serverParts;\n        let commonPartIndices;\n        let mismatches;\n        let snake;\n        let clientParts;\n        snake = this.player.snake;\n        clientParts = this.parts;\n        // Crop client snake because we don't trust the length the client sent.\n        numSyncParts = _shared_const__WEBPACK_IMPORTED_MODULE_0__.NETCODE_SYNC_MS / this.player.snake.speed;\n        clientParts = clientParts.slice(-numSyncParts);\n        // Don't allow gaps in the snake.\n        if (this.hasGaps(clientParts)) {\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.VALIDATE_ERR_GAP;\n        }\n        // Find tile cloest to head where client and server matched.\n        serverParts = snake.parts.slice(-numSyncParts);\n        commonPartIndices = this.getCommonPartIndices(clientParts, serverParts);\n        // Reject if there was no common.\n        if (!commonPartIndices) {\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.VALIDATE_ERR_NO_COMMON;\n        }\n        // Check if client-server delta does not exceed limit.\n        mismatches = Math.abs(commonPartIndices[1] - commonPartIndices[0]);\n        if (mismatches > this.player.getMaxMismatchesAllowed()) {\n            return _shared_const__WEBPACK_IMPORTED_MODULE_0__.VALIDATE_ERR_MISMATCHES;\n        }\n        // Glue snake back together.\n        this.parts = serverParts;\n        this.parts = snake.parts.concat(serverParts.slice(0, commonPartIndices[1] + 1), clientParts.slice(commonPartIndices[0] + 1));\n        return _shared_const__WEBPACK_IMPORTED_MODULE_0__.VALIDATE_SUCCES;\n    }\n    hasGaps(parts) {\n        for (let i = 1, m = parts.length; i < m; i++) {\n            // Sanity check\n            if (parts[i].length !== 2 ||\n                typeof parts[i][0] !== \"number\" ||\n                typeof parts[i][1] !== \"number\") {\n                return false;\n            }\n            // Delta must be 1\n            if ((0,_shared_util__WEBPACK_IMPORTED_MODULE_1__.delta)(parts[i], parts[i - 1]) !== 1) {\n                return true;\n            }\n        }\n        return false;\n    }\n    getCommonPartIndices(clientParts, serverParts) {\n        for (let i = clientParts.length - 1; i >= 0; i--) {\n            for (let ii = serverParts.length - 1; ii >= 0; ii--) {\n                if ((0,_shared_util__WEBPACK_IMPORTED_MODULE_1__.eq)(clientParts[i], serverParts[ii])) {\n                    return [i, ii];\n                }\n            }\n        }\n        return null;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./server/room/serverSnakeMove.ts?");
-
-/***/ }),
-
-/***/ "./shared/config.ts":
-/*!**************************!*\
-  !*** ./shared/config.ts ***!
-  \**************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"SERVER_HOST\": () => (/* binding */ SERVER_HOST),\n/* harmony export */   \"SERVER_PORT\": () => (/* binding */ SERVER_PORT),\n/* harmony export */   \"SERVER_PATH\": () => (/* binding */ SERVER_PATH),\n/* harmony export */   \"SERVER_ENDPOINT\": () => (/* binding */ SERVER_ENDPOINT)\n/* harmony export */ });\nconst SERVER_HOST = \"127.0.0.1\";\nconst SERVER_PORT = 8001;\nconst SERVER_PATH = \"\";\nconst SERVER_ENDPOINT = SERVER_HOST + \":\" + SERVER_PORT + SERVER_PATH;\n\n\n//# sourceURL=webpack://xssnake/./shared/config.ts?");
-
-/***/ }),
-
-/***/ "./shared/const.ts":
-/*!*************************!*\
-  !*** ./shared/const.ts ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"WIDTH\": () => (/* binding */ WIDTH),\n/* harmony export */   \"HEIGHT\": () => (/* binding */ HEIGHT),\n/* harmony export */   \"GAME_TILE\": () => (/* binding */ GAME_TILE),\n/* harmony export */   \"GAME_LEFT\": () => (/* binding */ GAME_LEFT),\n/* harmony export */   \"GAME_TOP\": () => (/* binding */ GAME_TOP),\n/* harmony export */   \"NC_CHAT_NOTICE\": () => (/* binding */ NC_CHAT_NOTICE),\n/* harmony export */   \"NC_CHAT_MESSAGE\": () => (/* binding */ NC_CHAT_MESSAGE),\n/* harmony export */   \"NC_GAME_DESPAWN\": () => (/* binding */ NC_GAME_DESPAWN),\n/* harmony export */   \"NC_GAME_STATE\": () => (/* binding */ NC_GAME_STATE),\n/* harmony export */   \"NC_GAME_SPAWN\": () => (/* binding */ NC_GAME_SPAWN),\n/* harmony export */   \"NC_PING\": () => (/* binding */ NC_PING),\n/* harmony export */   \"NC_PONG\": () => (/* binding */ NC_PONG),\n/* harmony export */   \"NC_PLAYER_NAME\": () => (/* binding */ NC_PLAYER_NAME),\n/* harmony export */   \"NC_PLAYERS_SERIALIZE\": () => (/* binding */ NC_PLAYERS_SERIALIZE),\n/* harmony export */   \"NC_ROOM_JOIN_KEY\": () => (/* binding */ NC_ROOM_JOIN_KEY),\n/* harmony export */   \"NC_ROOM_JOIN_MATCHING\": () => (/* binding */ NC_ROOM_JOIN_MATCHING),\n/* harmony export */   \"NC_ROOM_SERIALIZE\": () => (/* binding */ NC_ROOM_SERIALIZE),\n/* harmony export */   \"NC_ROOM_START\": () => (/* binding */ NC_ROOM_START),\n/* harmony export */   \"NC_ROOM_STATUS\": () => (/* binding */ NC_ROOM_STATUS),\n/* harmony export */   \"NC_ROOM_JOIN_ERROR\": () => (/* binding */ NC_ROOM_JOIN_ERROR),\n/* harmony export */   \"NC_OPTIONS_SERIALIZE\": () => (/* binding */ NC_OPTIONS_SERIALIZE),\n/* harmony export */   \"NC_ROUND_SERIALIZE\": () => (/* binding */ NC_ROUND_SERIALIZE),\n/* harmony export */   \"NC_ROUND_COUNTDOWN\": () => (/* binding */ NC_ROUND_COUNTDOWN),\n/* harmony export */   \"NC_ROUND_START\": () => (/* binding */ NC_ROUND_START),\n/* harmony export */   \"NC_ROUND_WRAPUP\": () => (/* binding */ NC_ROUND_WRAPUP),\n/* harmony export */   \"NC_SCORE_UPDATE\": () => (/* binding */ NC_SCORE_UPDATE),\n/* harmony export */   \"NC_SNAKE_ACTION\": () => (/* binding */ NC_SNAKE_ACTION),\n/* harmony export */   \"NC_SNAKE_CRASH\": () => (/* binding */ NC_SNAKE_CRASH),\n/* harmony export */   \"NC_SNAKE_SIZE\": () => (/* binding */ NC_SNAKE_SIZE),\n/* harmony export */   \"NC_SNAKE_SPEED\": () => (/* binding */ NC_SNAKE_SPEED),\n/* harmony export */   \"NC_SNAKE_UPDATE\": () => (/* binding */ NC_SNAKE_UPDATE),\n/* harmony export */   \"NC_XSS\": () => (/* binding */ NC_XSS),\n/* harmony export */   \"SE_PLAYER_DISCONNECT\": () => (/* binding */ SE_PLAYER_DISCONNECT),\n/* harmony export */   \"SE_PLAYER_COLLISION\": () => (/* binding */ SE_PLAYER_COLLISION),\n/* harmony export */   \"HEARTBEAT_INTERVAL_MS\": () => (/* binding */ HEARTBEAT_INTERVAL_MS),\n/* harmony export */   \"GAME_SHIFT_MAP\": () => (/* binding */ GAME_SHIFT_MAP),\n/* harmony export */   \"DIRECTION_LEFT\": () => (/* binding */ DIRECTION_LEFT),\n/* harmony export */   \"DIRECTION_UP\": () => (/* binding */ DIRECTION_UP),\n/* harmony export */   \"DIRECTION_RIGHT\": () => (/* binding */ DIRECTION_RIGHT),\n/* harmony export */   \"DIRECTION_DOWN\": () => (/* binding */ DIRECTION_DOWN),\n/* harmony export */   \"ROOM_KEY_LENGTH\": () => (/* binding */ ROOM_KEY_LENGTH),\n/* harmony export */   \"ROOM_CAPACITY\": () => (/* binding */ ROOM_CAPACITY),\n/* harmony export */   \"ROUNDS_MAX\": () => (/* binding */ ROUNDS_MAX),\n/* harmony export */   \"ROOM_WIN_BY_MIN\": () => (/* binding */ ROOM_WIN_BY_MIN),\n/* harmony export */   \"PLAYER_NAME_MINLENGTH\": () => (/* binding */ PLAYER_NAME_MINLENGTH),\n/* harmony export */   \"PLAYER_NAME_MAXWIDTH\": () => (/* binding */ PLAYER_NAME_MAXWIDTH),\n/* harmony export */   \"SECONDS_ROUND_PAUSE\": () => (/* binding */ SECONDS_ROUND_PAUSE),\n/* harmony export */   \"SECONDS_ROUND_GLOAT\": () => (/* binding */ SECONDS_ROUND_GLOAT),\n/* harmony export */   \"SECONDS_ROUNDSET_GLOAT\": () => (/* binding */ SECONDS_ROUNDSET_GLOAT),\n/* harmony export */   \"SECONDS_ROUND_COUNTDOWN\": () => (/* binding */ SECONDS_ROUND_COUNTDOWN),\n/* harmony export */   \"SPAWN_SOMETHING_EVERY\": () => (/* binding */ SPAWN_SOMETHING_EVERY),\n/* harmony export */   \"SPAWN_CHANCE_APPLE\": () => (/* binding */ SPAWN_CHANCE_APPLE),\n/* harmony export */   \"SNAKE_SPEED\": () => (/* binding */ SNAKE_SPEED),\n/* harmony export */   \"SNAKE_SIZE\": () => (/* binding */ SNAKE_SIZE),\n/* harmony export */   \"FIELD_VALUE_EASY\": () => (/* binding */ FIELD_VALUE_EASY),\n/* harmony export */   \"FIELD_VALUE_MEDIUM\": () => (/* binding */ FIELD_VALUE_MEDIUM),\n/* harmony export */   \"FIELD_VALUE_HARD\": () => (/* binding */ FIELD_VALUE_HARD),\n/* harmony export */   \"ROOM_JOINABLE\": () => (/* binding */ ROOM_JOINABLE),\n/* harmony export */   \"ROOM_INVALID_KEY\": () => (/* binding */ ROOM_INVALID_KEY),\n/* harmony export */   \"ROOM_FULL\": () => (/* binding */ ROOM_FULL),\n/* harmony export */   \"ROOM_NOT_FOUND\": () => (/* binding */ ROOM_NOT_FOUND),\n/* harmony export */   \"ROOM_IN_PROGRESS\": () => (/* binding */ ROOM_IN_PROGRESS),\n/* harmony export */   \"ROOM_UNKNOWN_ERROR\": () => (/* binding */ ROOM_UNKNOWN_ERROR),\n/* harmony export */   \"CRASH_UNKNOWN\": () => (/* binding */ CRASH_UNKNOWN),\n/* harmony export */   \"CRASH_WALL\": () => (/* binding */ CRASH_WALL),\n/* harmony export */   \"CRASH_MOVING_WALL\": () => (/* binding */ CRASH_MOVING_WALL),\n/* harmony export */   \"CRASH_SELF\": () => (/* binding */ CRASH_SELF),\n/* harmony export */   \"CRASH_OPPONENT\": () => (/* binding */ CRASH_OPPONENT),\n/* harmony export */   \"CRASH_OPPONENT_DRAW\": () => (/* binding */ CRASH_OPPONENT_DRAW),\n/* harmony export */   \"NETCODE_PING_INTERVAL\": () => (/* binding */ NETCODE_PING_INTERVAL),\n/* harmony export */   \"NETCODE_SYNC_MS\": () => (/* binding */ NETCODE_SYNC_MS),\n/* harmony export */   \"VALIDATE_SUCCES\": () => (/* binding */ VALIDATE_SUCCES),\n/* harmony export */   \"VALIDATE_ERR_GAP\": () => (/* binding */ VALIDATE_ERR_GAP),\n/* harmony export */   \"VALIDATE_ERR_NO_COMMON\": () => (/* binding */ VALIDATE_ERR_NO_COMMON),\n/* harmony export */   \"VALIDATE_ERR_MISMATCHES\": () => (/* binding */ VALIDATE_ERR_MISMATCHES),\n/* harmony export */   \"SCORE_LEADING\": () => (/* binding */ SCORE_LEADING),\n/* harmony export */   \"SCORE_NEUTRAL\": () => (/* binding */ SCORE_NEUTRAL),\n/* harmony export */   \"SCORE_BEHIND\": () => (/* binding */ SCORE_BEHIND),\n/* harmony export */   \"SPAWN_APPLE\": () => (/* binding */ SPAWN_APPLE),\n/* harmony export */   \"SPAWN_POWERUP\": () => (/* binding */ SPAWN_POWERUP),\n/* harmony export */   \"NOTICE_CRASH\": () => (/* binding */ NOTICE_CRASH),\n/* harmony export */   \"NOTICE_JOIN\": () => (/* binding */ NOTICE_JOIN),\n/* harmony export */   \"NOTICE_DISCONNECT\": () => (/* binding */ NOTICE_DISCONNECT),\n/* harmony export */   \"NOTICE_NEW_ROUND\": () => (/* binding */ NOTICE_NEW_ROUND)\n/* harmony export */ });\nconst WIDTH = 256;\nconst HEIGHT = 161;\nconst GAME_TILE = 4;\nconst GAME_LEFT = 2;\nconst GAME_TOP = 2;\nconst NC_CHAT_NOTICE = 10;\nconst NC_CHAT_MESSAGE = 11;\nconst NC_GAME_DESPAWN = 20;\nconst NC_GAME_STATE = 21;\nconst NC_GAME_SPAWN = 22;\nconst NC_PING = 0;\nconst NC_PONG = 1;\nconst NC_PLAYER_NAME = 30;\nconst NC_PLAYERS_SERIALIZE = 31;\nconst NC_ROOM_JOIN_KEY = 40;\nconst NC_ROOM_JOIN_MATCHING = 41;\nconst NC_ROOM_SERIALIZE = 42;\nconst NC_ROOM_START = 43;\nconst NC_ROOM_STATUS = 44;\nconst NC_ROOM_JOIN_ERROR = 45;\nconst NC_OPTIONS_SERIALIZE = 47;\nconst NC_ROUND_SERIALIZE = 50;\nconst NC_ROUND_COUNTDOWN = 51;\nconst NC_ROUND_START = 52;\nconst NC_ROUND_WRAPUP = 53;\nconst NC_SCORE_UPDATE = 60;\nconst NC_SNAKE_ACTION = 70;\nconst NC_SNAKE_CRASH = 71;\nconst NC_SNAKE_SIZE = 72;\nconst NC_SNAKE_SPEED = 73;\nconst NC_SNAKE_UPDATE = 74;\nconst NC_XSS = 666;\n// Server EventEmitters\nconst SE_PLAYER_DISCONNECT = 101;\nconst SE_PLAYER_COLLISION = 102;\nconst HEARTBEAT_INTERVAL_MS = 5000;\nconst GAME_SHIFT_MAP = [\n    [-1, 0],\n    [0, -1],\n    [1, 0],\n    [0, 1],\n];\nconst DIRECTION_LEFT = 0;\nconst DIRECTION_UP = 1;\nconst DIRECTION_RIGHT = 2;\nconst DIRECTION_DOWN = 3;\nconst ROOM_KEY_LENGTH = 5;\nconst ROOM_CAPACITY = 6;\nconst ROUNDS_MAX = 3;\nconst ROOM_WIN_BY_MIN = 2;\nconst PLAYER_NAME_MINLENGTH = 1;\nconst PLAYER_NAME_MAXWIDTH = 36;\nconst SECONDS_ROUND_PAUSE = 3;\nconst SECONDS_ROUND_GLOAT = 5;\nconst SECONDS_ROUNDSET_GLOAT = 10;\nconst SECONDS_ROUND_COUNTDOWN = 3;\nconst SPAWN_SOMETHING_EVERY = [20, 60];\nconst SPAWN_CHANCE_APPLE = 0.9;\nconst SNAKE_SPEED = 120;\nconst SNAKE_SIZE = 4;\nconst FIELD_VALUE_EASY = 1;\nconst FIELD_VALUE_MEDIUM = 2;\nconst FIELD_VALUE_HARD = 3;\nconst ROOM_JOINABLE = 1;\nconst ROOM_INVALID_KEY = 2;\nconst ROOM_FULL = 3;\nconst ROOM_NOT_FOUND = 4;\nconst ROOM_IN_PROGRESS = 5;\nconst ROOM_UNKNOWN_ERROR = 6;\nconst CRASH_UNKNOWN = 0;\nconst CRASH_WALL = 1;\nconst CRASH_MOVING_WALL = 2;\nconst CRASH_SELF = 3;\nconst CRASH_OPPONENT = 4;\nconst CRASH_OPPONENT_DRAW = 5;\nconst NETCODE_PING_INTERVAL = 3000;\nconst NETCODE_SYNC_MS = 500;\nconst VALIDATE_SUCCES = 0;\nconst VALIDATE_ERR_GAP = 1;\nconst VALIDATE_ERR_NO_COMMON = 2;\nconst VALIDATE_ERR_MISMATCHES = 3;\nconst SCORE_LEADING = 1;\nconst SCORE_NEUTRAL = 2;\nconst SCORE_BEHIND = 3;\nconst SPAWN_APPLE = 1;\nconst SPAWN_POWERUP = 2;\nconst NOTICE_CRASH = 1;\nconst NOTICE_JOIN = 2;\nconst NOTICE_DISCONNECT = 3;\nconst NOTICE_NEW_ROUND = 4;\n\n\n//# sourceURL=webpack://xssnake/./shared/const.ts?");
-
-/***/ }),
-
-/***/ "./shared/data/levels.ts":
-/*!*******************************!*\
-  !*** ./shared/data/levels.ts ***!
-  \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"levels\": () => (/* binding */ levels)\n/* harmony export */ });\n// TODO: Import images using from \"import file.png\"\nconst levels = {\n    blank: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhCAYAAABug3M0AAAATklEQVR4Xu3XsQ0AMAgDQe/K/jMQKWOY+47y5Irs4eDh/5WdmS3suxLLw8PD9wcPDw8PDw+f7X5sLA8PD38heHh4eHh4+JQ/Nrm+PDz8A9XeSXZnpGoTAAAAAElFTkSuQmCC\",\n    },\n    borobudur: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEX///8AAABjY2P/AP///wD/AAAA//8A/wAAAP/e3t6UsGDPAAAAt0lEQVR4XoVUwQpDIQxredvdHL152va7Hvu3o1b6VoZEqoQQQl6tT0RVdHqt1Zufm1FdGGcBgjwKYj3HWfChDiUDAEhvCqBlhhBHdbPpAjNrSW4BlsAd4A69JSmSZ+TbQTZZT6QAVXC7KeC7khnSoU3flUy8jN0h0L9gR0sUdTcqeiSSqF5Wdhlto7vV1/gV9CJ4UQeagXwF6wPtJL8Lfpt8HvhE8ZnkU83fxWOcBW/uwF83/T98AR09bCcOuGr0AAAAAElFTkSuQmCC\",\n    },\n    break_out: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAG1BMVEX///8AAABjY2P/AP///wD/AAAA//8A/wAAAP/yjXqqAAAAT0lEQVR4XmMgCBgFBQUFBIEAO4OwgsFjBW67CCsgFQgCAYrthBUMEcCqwIATaDBgA4wCDPgBowADvQEzHl+oMQwVwILHF+pYcgDhLEIqAABRVwy8UdO8QwAAAABJRU5ErkJggg==\",\n    },\n    crosshair: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAG1BMVEUAAAAAAP8A/wAA//9jY2P/AAD/AP///wD////y32ryAAAAQElEQVQ4y2PowA8aGNAFyFDQ6oFbgSN1rKC7go4hqqDNA7+CBgYE4IAIIokwELDCeYgGVMMQVdCOJ2c50SXZAwC+PiE3lNCmnQAAAABJRU5ErkJggg==\",\n    },\n    destination: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEUAAAAAAP8A/wAA//9jY2Pe3t7/AAD/AP///wD///9GJQNIAAAAvUlEQVR4XtWSOw7CMBBEp3ExxwIqOjcuuNVUwN6W0eJYIPIrEBLJevUsvYwtbRDrj74hXM/LwmEz4W8EF1yEi1QgkmRkCmosF7XwVoHqbVKpKmQXwMBTKBCGUF8Son9HKYZgGndQJoCT0O/AXcO6rQzrtCvBiyGaaQS9sk8YYUzRHuYEoRl7ZWyPM5Rmwb2muyhkWAEqwzQJRjcMIV8zZgQDRyo6qEdtCnoThNcjwDmBH8L2sO4rwzr+5Ld/APOp8o3zmfzSAAAAAElFTkSuQmCC\",\n    },\n    lines: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAG1BMVEX///8AAABjY2P/AP///wD/AAAA//8A/wAAAP/yjXqqAAAANElEQVR4XmOgB2BVYMAJNBiGCmAURAABBgYGBkEkwDBsADOeyFJjGFRgNDZZ8ESWOgM9AACt5gQS0D0R6gAAAABJRU5ErkJggg==\",\n    },\n    noise: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAG1BMVEX///8AAABjY2P/AP///wD/AAAA//8A/wAAAP/yjXqqAAAA1klEQVR4Xm2SUWoAMRBCfbT9d26wX23vf8JCkckKGViiq5k4JJJGliT0Lv9T59uyJDyqDWvCEiYUOdLXU8ba+auqPpCGq7T7zlwdWB3JNSSL8bp92hReD4KALRweZQ9lsjrS1IRGbH+RYeFE7sDkwkp1ZSU4vMtNKfZRl9Xwu9wnZd5Eqe4fHskrEXhL5uK2RUads2+C0u42DBah1mw/uQezJOZkozv1w3eez0Q2BFBenOaiXl/k6bhd67yXTQwWn09pvDf/ECBMVonRJP31QN4axX1L+weknwhwgGDMTAAAAABJRU5ErkJggg==\",\n    },\n    onion_jack: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEUAAAAAAP8A/wAA//9jY2Pe3t7/AAD/AP///wD///9GJQNIAAAAxUlEQVR4Xq3TMQ7CQAwFUTcUORZQpUuz99oK8G2J+RbzC5Q0uIo0T4qy3kQez4zHmjO+s2SGz97E4jI+s4N+UhdoAaBfBSQA3RXmghCgCwRCwHsUMCFgvcDmooD3AsNEUe+xFTAhQB8CJgpYF0Ao0AVYg6Z7zzzd5jl4rkf9/o9XTP+IXq1dKz8onSRiVOGo2QWiAV0AIUBv4KIAnfuQvm46NwqxA+8CiALpvQGiAB2AmPFa6YASDZIOQMxQ//13Z97Ot/kG5IqEQIQLV+oAAAAASUVORK5CYII=\",\n    },\n    pacman: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEX///8AAADe3t5jY2P/AP///wAA////AAAA/wAAAP9PyCv5AAAA8ElEQVR4XoWUQa7CMBBDvQCxpZzguSdghfj3v9hXgjWkDdARijqW7UkmE7T8jqvWMdywDYK43FXRCajiT4gw2498tiQwwr0WXnC0bklghDsVG6eusckXIjo3XQIHNCiVSzQmrCAkj6LRDr1O4aHsuCFvThHRLiF9+OyQPtTRUUU1RSiSNK8WYohSlNwEfYnn+zZxlh5dXA6c7iVG63JDLpuHtHFAtlE5THugOSFPezBm50A6gcLOPHQoSTdCYU/zEFcU9nQXcUVJprsItiGoYk9YmSYqWAjfZjIEf51q+/hdcPyyOP94m09x+LoP/x/+Ad2aaMxTh/MAAAAAAElFTkSuQmCC\",\n    },\n    poles: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAG1BMVEX///8AAABjY2P/AP///wD/AAAA//8A/wAAAP/yjXqqAAAAM0lEQVR4XmOgB2BVYGBgEMAiwcjAoMEAATgVMNBVwagCZjyRpTa4fDGqgAVPZKkz0AMAAMU7Aq0z0hzLAAAAAElFTkSuQmCC\",\n    },\n    pong: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEX/AP8AAP8A//8A/wD//wD/AAD////e3t5jY2MAAADDo6s2AAAAa0lEQVR4XmNIww8S0BVk4lUwcxqCRCiYiVAwvQxElmNRgDAhE8WEDDGEAoRefCbgdwPCF/gUpJGmgHIrMtQSSImLzGnYrYhAKMBjArWim3QrMsyoYgUHHgWZ0/BYgVBAggkDZoUHZVbQI7oB0wCqOZbN5p0AAAAASUVORK5CYII=\",\n    },\n    space_invaders: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEX///8AAADe3t5jY2P/AAD/AP///wAA/wAA//8AAP8mgNz0AAAAw0lEQVR4Xt2QUWoDMRBDl2kJ/bVOMJoT5Cg5So6SI3ekXSiMKfQjX31rr/Rsg8HHW4g8sza9IByxctOrnZULu57NNZZ2proRqkSXTa+jXunAVFNgdQQLOdWQ8KVYzF1dqUoWdjUZ0dG/nPouQqNJjaGGqXEUjkBOFYGWNhYLUwX9dIEOYFM//iI6oG9qwyUyHJjaUEvMcyenNmQVqVurMFVELCJ6JzWnmgqV0LTWj/4fPhz33+un60N+c33Kv1xff7jgGwmLICypShLuAAAAAElFTkSuQmCC\",\n    },\n    tetris: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAHlBMVEX///8AAABjY2MAAP///wD/AP/e3t4A//8A/wD/AABsPeryAAAA00lEQVR4Xn2SwY7DQAhDbaldaW/mDyLtof3/L9yDpzIqtBySQTw7QAaJAn6EL0GAn4DSAZyUbOj4vQAGLRCCefx1k+pfYIGYEVuov/s5ugDsQKwD1HnIFM3BLSloagIIyFicLPEEB8AAtomYtVmvRWiYeg1hTfkUzs1xWUbIrYT7lcI79UAPVvpnwdkUUlA2uvkqfLx1cjZg7YzaZmOjDdRoXinGaF6LdeaIU1LW3f9jM6meqoEEPem8+ARtvGz4dll/rpo68MS+36pWmKGZjMUl0T8jrgix90FavwAAAABJRU5ErkJggg==\",\n    },\n    traps: {\n        imagedata: \"iVBORw0KGgoAAAANSUhEUgAAAD8AAAAhBAMAAACcrW4HAAAAG1BMVEUAAAAAAP8A/wAA//9jY2P/AAD/AP///wD////y32ryAAAAYklEQVR4Xr2TQQqAMAwE/Zp66bP2os6zpV4ClSWXkD2UNpnC0mY3QITWvSqAa2AA2FGHhykHRDMK/xpGhcAUcfiWtSl3G1AFcA+MBzhRg4f0HRr+IpuHfKJakvX4ZHG0JOsFYY0Jj60hQlQAAAAASUVORK5CYII=\",\n    },\n};\n\n\n//# sourceURL=webpack://xssnake/./shared/data/levels.ts?");
-
-/***/ }),
-
-/***/ "./shared/data/levelsets.ts":
-/*!**********************************!*\
-  !*** ./shared/data/levelsets.ts ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"levelsets\": () => (/* binding */ levelsets)\n/* harmony export */ });\n/* harmony import */ var _levels_debug_crosshair__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../levels/debug/crosshair */ \"./shared/levels/debug/crosshair.ts\");\n/* harmony import */ var _levels_debug_lines__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../levels/debug/lines */ \"./shared/levels/debug/lines.ts\");\n/* harmony import */ var _levelsets_basicLevelSet__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../levelsets/basicLevelSet */ \"./shared/levelsets/basicLevelSet.ts\");\n\n\n\nconst basic = new _levelsets_basicLevelSet__WEBPACK_IMPORTED_MODULE_2__.BasicLevelSet();\nbasic.register(_levels_debug_lines__WEBPACK_IMPORTED_MODULE_1__.LinesLevel);\nbasic.register(_levels_debug_crosshair__WEBPACK_IMPORTED_MODULE_0__.CrosshairLevel);\nconst levelsets = [basic];\n\n\n//# sourceURL=webpack://xssnake/./shared/data/levelsets.ts?");
-
-/***/ }),
-
-/***/ "./shared/game/collision.ts":
-/*!**********************************!*\
-  !*** ./shared/game/collision.ts ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Collision\": () => (/* binding */ Collision)\n/* harmony export */ });\n/**\n * @param {Coordinate} part\n * @param {number} into\n * @constructor\n */\nclass Collision {\n    constructor(location, into) {\n        this.location = location;\n        this.into = into;\n        this.tick = 0;\n    }\n    serialize() {\n        return this.location;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/game/collision.ts?");
-
-/***/ }),
-
-/***/ "./shared/game/snakeMove.ts":
-/*!**********************************!*\
-  !*** ./shared/game/snakeMove.ts ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"SnakeMove\": () => (/* binding */ SnakeMove)\n/* harmony export */ });\n/* harmony import */ var _const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../const */ \"./shared/const.ts\");\n/* harmony import */ var _collision__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./collision */ \"./shared/game/collision.ts\");\n\n\nclass SnakeMove {\n    constructor(snake, players, level, location) {\n        this.snake = snake;\n        this.players = players;\n        this.level = level;\n        this.location = location;\n        this.collision = this.getCollission();\n    }\n    getParts(part) {\n        const parts = this.snake.parts.slice();\n        parts.unshift();\n        parts.push(part);\n        return parts;\n    }\n    getCollission() {\n        const parts = this.getParts(this.location);\n        for (let i = 0, m = parts.length; i < m; i++) {\n            const collision = this.getCollisionPart(i, parts[i]);\n            if (collision) {\n                return collision;\n            }\n        }\n        return null;\n    }\n    getCollisionPart(index, part) {\n        let players;\n        let levelData;\n        let partIndex;\n        players = this.players;\n        levelData = this.level.data;\n        if (index > 4) {\n            partIndex = this.snake.getPartIndex(part);\n            if (-1 !== partIndex && index !== partIndex) {\n                return new _collision__WEBPACK_IMPORTED_MODULE_1__.Collision(part, _const__WEBPACK_IMPORTED_MODULE_0__.CRASH_SELF);\n            }\n        }\n        if (levelData.isWall(part[0], part[1])) {\n            return new _collision__WEBPACK_IMPORTED_MODULE_1__.Collision(part, _const__WEBPACK_IMPORTED_MODULE_0__.CRASH_WALL);\n        }\n        if (levelData.isMovingWall(part)) {\n            return new _collision__WEBPACK_IMPORTED_MODULE_1__.Collision(part, _const__WEBPACK_IMPORTED_MODULE_0__.CRASH_MOVING_WALL);\n        }\n        for (let i = 0, m = players.length; i < m; i++) {\n            const opponentSnake = players[i].snake;\n            if (opponentSnake.crashed === false &&\n                opponentSnake !== this.snake &&\n                opponentSnake.hasPart(part)) {\n                return new _collision__WEBPACK_IMPORTED_MODULE_1__.Collision(part, _const__WEBPACK_IMPORTED_MODULE_0__.CRASH_OPPONENT);\n            }\n        }\n        return null;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/game/snakeMove.ts?");
-
-/***/ }),
-
-/***/ "./shared/level/gravity.ts":
-/*!*********************************!*\
-  !*** ./shared/level/gravity.ts ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Gravity\": () => (/* binding */ Gravity)\n/* harmony export */ });\n/**\n * Gravity pulls snakes and power-ups a certain direction.\n *\n * gravity is an array with two numbers. The first number is tiles per second to\n * the left or right, second number is tiles per second up or down.\n *\n * Example 1: [-5, -5] pulls objects to top-left.\n * Example 2: [5, 5] pulls objects to bottom-right.\n * Example 2: [-5, 0] pulls objects to the left only.\n */\nclass Gravity {\n    constructor(gravity = [0, 0]) {\n        this.gravity = gravity;\n        this.progress = [0, 0];\n    }\n    getShift(elapsed) {\n        return [this.updateInDirection(elapsed, 0), this.updateInDirection(elapsed, 1)];\n    }\n    updateInDirection(delta, direction) {\n        if (this.gravity[direction]) {\n            const treshold = 1000 / Math.abs(this.gravity[direction]);\n            this.progress[direction] += delta;\n            if (this.progress[direction] > treshold) {\n                this.progress[direction] -= treshold;\n                return this.gravity[direction] > 0 ? 1 : -1;\n            }\n        }\n        return 0;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/level/gravity.ts?");
-
-/***/ }),
-
-/***/ "./shared/level/level.ts":
-/*!*******************************!*\
-  !*** ./shared/level/level.ts ***!
-  \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Level\": () => (/* binding */ Level)\n/* harmony export */ });\n/* harmony import */ var _levelanim_registry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../levelanim/registry */ \"./shared/levelanim/registry.ts\");\n/* harmony import */ var _gravity__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gravity */ \"./shared/level/gravity.ts\");\n\n\nclass Level {\n    constructor(config) {\n        this.config = config;\n        this.config = config;\n        this.animations = new _levelanim_registry__WEBPACK_IMPORTED_MODULE_0__.LevelAnimationRegistry();\n        this.gravity = new _gravity__WEBPACK_IMPORTED_MODULE_1__.Gravity(this.config.gravity);\n        this.data = config.level.cache || null;\n    }\n    registerAnimations() {\n        // () => {}?\n    }\n    preload(fn) { }\n    destruct() { }\n    paint() { }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/level/level.ts?");
-
-/***/ }),
-
-/***/ "./shared/levelanim/registry.ts":
-/*!**************************************!*\
-  !*** ./shared/levelanim/registry.ts ***!
-  \**************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"LevelAnimationRegistry\": () => (/* binding */ LevelAnimationRegistry)\n/* harmony export */ });\n// import { NS_ANIM } from \"../../client/const\";\n// import { State } from \"../../client/state/state\";\n// import { setGameTransform } from \"../../client/ui/shapeClient\";\nclass LevelAnimationRegistry {\n    constructor() {\n        this.animations = [];\n        this.walls = [];\n        this.started = false;\n        this.progress = 0;\n        // private _updateShapes(animIndex, shapeCollection) {\n        //     const shapes = shapeCollection.shapes;\n        //     for (let i = 0, m = shapes.length; i < m; i++) {\n        //         this._updateShape([NS_ANIM, animIndex, i].join(\"_\"), shapes[i]);\n        //     }\n        // }\n        //\n        // private _updateShape(key: string, shape) {\n        //     if (shape) {\n        //         if (!shape.headers.transformed) {\n        //             setGameTransform(shape);\n        //             shape.headers.transformed = true;\n        //         }\n        //         State.shapes[key] = shape;\n        //     } else {\n        //         State.shapes[key] = null;\n        //     }\n        // }\n    }\n    register(animation) {\n        this.animations.push(animation);\n    }\n    update(delta, started) {\n        this.progress += delta;\n        this.started = started;\n        this.walls = this.updateAnimations();\n        this.updateShapes();\n    }\n    updateAnimations() {\n        const walls = [];\n        for (let i = 0, m = this.animations.length; i < m; i++) {\n            const shapeCollection = this.updateAnimation(this.animations[i]);\n            if (shapeCollection) {\n                walls.push(shapeCollection);\n            }\n        }\n        return walls;\n    }\n    updateAnimation(animation) {\n        return animation.update(this.progress, this.started);\n    }\n    updateShapes() {\n        for (let i = 0, m = this.walls.length; i < m; i++) {\n            if (this.walls[i]) {\n                // this._updateShapes(i, this.walls[i]);\n            }\n        }\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/levelanim/registry.ts?");
-
-/***/ }),
-
-/***/ "./shared/levels/debug/crosshair.ts":
-/*!******************************************!*\
-  !*** ./shared/levels/debug/crosshair.ts ***!
-  \******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"CrosshairLevel\": () => (/* binding */ CrosshairLevel)\n/* harmony export */ });\n/* harmony import */ var _data_levels__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../data/levels */ \"./shared/data/levels.ts\");\n/* harmony import */ var _level_level__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../level/level */ \"./shared/level/level.ts\");\n\n\nclass CrosshairLevel extends _level_level__WEBPACK_IMPORTED_MODULE_1__.Level {\n    constructor() {\n        super(...arguments);\n        this.level = _data_levels__WEBPACK_IMPORTED_MODULE_0__.levels.crosshair;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/levels/debug/crosshair.ts?");
-
-/***/ }),
-
-/***/ "./shared/levels/debug/lines.ts":
-/*!**************************************!*\
-  !*** ./shared/levels/debug/lines.ts ***!
-  \**************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"LinesLevel\": () => (/* binding */ LinesLevel)\n/* harmony export */ });\n/* harmony import */ var _data_levels__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../data/levels */ \"./shared/data/levels.ts\");\n/* harmony import */ var _level_level__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../level/level */ \"./shared/level/level.ts\");\n\n\nclass LinesLevel extends _level_level__WEBPACK_IMPORTED_MODULE_1__.Level {\n    constructor() {\n        super(...arguments);\n        this.level = _data_levels__WEBPACK_IMPORTED_MODULE_0__.levels.lines;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/levels/debug/lines.ts?");
-
-/***/ }),
-
-/***/ "./shared/levelset/config.ts":
-/*!***********************************!*\
-  !*** ./shared/levelset/config.ts ***!
-  \***********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Config\": () => (/* binding */ Config)\n/* harmony export */ });\n/* harmony import */ var _data_levels__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../data/levels */ \"./shared/data/levels.ts\");\n\nclass Config {\n    constructor() {\n        this.level = _data_levels__WEBPACK_IMPORTED_MODULE_0__.levels.blank;\n        this.gravity = [0, 0];\n        this.enableApples = true;\n        this.enablePowerups = [];\n        this.snakeSize = 4;\n        this.snakeSpeed = 120; // Change tile every ms.\n        this.snakeIncrease = 1;\n        this.pointsApple = 1;\n        this.pointsKnockout = 3;\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/levelset/config.ts?");
-
-/***/ }),
-
-/***/ "./shared/levelset/levelset.ts":
-/*!*************************************!*\
-  !*** ./shared/levelset/levelset.ts ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Levelset\": () => (/* binding */ Levelset)\n/* harmony export */ });\n/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util */ \"./shared/util.ts\");\n/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./config */ \"./shared/levelset/config.ts\");\n\n\nclass Levelset {\n    constructor() {\n        this.title = \"\";\n        this.levels = [];\n        this.loaded = false;\n    }\n    getConfig() {\n        return new _config__WEBPACK_IMPORTED_MODULE_1__.Config();\n    }\n    getLevel(index) {\n        return this.levels[index];\n    }\n    register(level) {\n        this.levels.push(new level(this.getConfig()));\n    }\n    // preload(continueFn: CallableFunction) {\n    //     let loaded = 0;\n    //\n    //     const checkAllLoaded = function () {\n    //         if (++loaded === this.levels.length) {\n    //             continueFn();\n    //         }\n    //     }.bind(this);\n    //\n    //     if (this.levels.length) {\n    //         for (let i = 0, m = this.levels.length; i < m; i++) {\n    //             this.levels[i].preload(checkAllLoaded);\n    //         }\n    //     } else {\n    //         continueFn();\n    //     }\n    // }\n    getRandomLevelIndex(levelsPlayed) {\n        const notPlayed = this.levels.slice();\n        if (notPlayed.length <= 1) {\n            return 0;\n        }\n        // All levels were played.\n        // Play any level except the one just played.\n        if (this.levels.length === levelsPlayed.length) {\n            levelsPlayed.splice(0, levelsPlayed.length - 1);\n        }\n        for (let i = 0, m = levelsPlayed.length; i < m; i++) {\n            notPlayed.splice(levelsPlayed[i], 1);\n        }\n        return (0,_util__WEBPACK_IMPORTED_MODULE_0__.randomArrIndex)(notPlayed);\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/levelset/levelset.ts?");
-
-/***/ }),
-
-/***/ "./shared/levelsets/basicLevelSet.ts":
-/*!*******************************************!*\
-  !*** ./shared/levelsets/basicLevelSet.ts ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"BasicLevelSet\": () => (/* binding */ BasicLevelSet)\n/* harmony export */ });\n/* harmony import */ var _levelset_levelset__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../levelset/levelset */ \"./shared/levelset/levelset.ts\");\n/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util */ \"./shared/util.ts\");\n\n\nclass BasicLevelSet extends _levelset_levelset__WEBPACK_IMPORTED_MODULE_0__.Levelset {\n    constructor() {\n        super(...arguments);\n        this.title = (0,_util__WEBPACK_IMPORTED_MODULE_1__._)(\"Basic\");\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/levelsets/basicLevelSet.ts?");
-
-/***/ }),
-
-/***/ "./shared/room/player.ts":
-/*!*******************************!*\
-  !*** ./shared/room/player.ts ***!
-  \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Player\": () => (/* binding */ Player)\n/* harmony export */ });\nclass Player {\n    constructor(name = \"\") {\n        this.name = name;\n        this.connected = false;\n        this.score = 0;\n        this.snake = null;\n    }\n    deserialize(serialized) {\n        let byte;\n        [this.name, byte] = serialized;\n        this.connected = Boolean((byte & 1) >> 0);\n        this.local = Boolean((byte & 2) >> 1);\n        this.score = byte >> 2;\n    }\n    serialize(local) {\n        return [\n            this.name,\n            (Number(this.connected) << 0) | (Number(local) << 1) | (this.score << 2),\n        ];\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/room/player.ts?");
-
-/***/ }),
-
-/***/ "./shared/room/playerRegistry.ts":
-/*!***************************************!*\
-  !*** ./shared/room/playerRegistry.ts ***!
-  \***************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"PlayerRegistry\": () => (/* binding */ PlayerRegistry)\n/* harmony export */ });\nclass PlayerRegistry {\n    constructor() {\n        this.players = [];\n    }\n    destruct() {\n        this.players.length = 0;\n    }\n    serialize(localPlayer) {\n        const serialized = [];\n        for (let i = 0, m = this.players.length; i < m; i++) {\n            serialized.push(this.players[i].serialize(localPlayer === this.players[i]));\n        }\n        return serialized;\n    }\n    add(player) {\n        this.players.push(player);\n    }\n    remove(player) {\n        const index = this.players.indexOf(player);\n        if (-1 !== index) {\n            this.players.splice(index, 1);\n        }\n    }\n    getTotal() {\n        return this.players.length;\n    }\n    isHost(player) {\n        return 0 === this.players.indexOf(player);\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/room/playerRegistry.ts?");
-
-/***/ }),
-
-/***/ "./shared/room/roomOptions.ts":
-/*!************************************!*\
-  !*** ./shared/room/roomOptions.ts ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"RoomOptions\": () => (/* binding */ RoomOptions)\n/* harmony export */ });\n/* harmony import */ var _const__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../const */ \"./shared/const.ts\");\n/* harmony import */ var _data_levelsets__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../data/levelsets */ \"./shared/data/levelsets.ts\");\n/* harmony import */ var _util_sanitizer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/sanitizer */ \"./shared/util/sanitizer.ts\");\n\n\n\nclass RoomOptions {\n    constructor() {\n        this.isQuickGame = false;\n        this.maxPlayers = 6;\n        this.levelset = 0;\n        this.hasPowerups = true;\n        this.isPrivate = false;\n        this.isXSS = false;\n    }\n    destruct() { }\n    serialize() {\n        return [\n            this.maxPlayers,\n            this.levelset,\n            Number(this.isQuickGame),\n            Number(this.hasPowerups),\n            Number(this.isPrivate),\n            Number(this.isXSS),\n        ];\n    }\n    deserialize(serialized) {\n        this.maxPlayers = new _util_sanitizer__WEBPACK_IMPORTED_MODULE_2__.Sanitizer(serialized[0])\n            .assertBetween(1, _const__WEBPACK_IMPORTED_MODULE_0__.ROOM_CAPACITY)\n            .getValueOr(_const__WEBPACK_IMPORTED_MODULE_0__.ROOM_CAPACITY);\n        this.levelset = new _util_sanitizer__WEBPACK_IMPORTED_MODULE_2__.Sanitizer(serialized[1])\n            .assertBetween(0, _data_levelsets__WEBPACK_IMPORTED_MODULE_1__.levelsets.length - 1)\n            .getValueOr(0);\n        this.isQuickGame = Boolean(serialized[2]);\n        this.hasPowerups = Boolean(serialized[3]);\n        this.isPrivate = Boolean(serialized[4]);\n        this.isXSS = Boolean(serialized[5]);\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/room/roomOptions.ts?");
-
-/***/ }),
-
-/***/ "./shared/room/round.ts":
-/*!******************************!*\
-  !*** ./shared/room/round.ts ***!
-  \******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Round\": () => (/* binding */ Round)\n/* harmony export */ });\n/* harmony import */ var _data_levelsets__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../data/levelsets */ \"./shared/data/levelsets.ts\");\n\nclass Round {\n    constructor(players, options) {\n        this.players = players;\n        this.options = options;\n        this.levelsetIndex = null;\n        this.levelIndex = null;\n        this.levelset = null;\n        this.level = null;\n        this.index = 0;\n        this.started = false;\n    }\n    serialize() {\n        return [this.levelsetIndex, this.levelIndex];\n    }\n    deserialize(serialized) {\n        this.levelsetIndex = serialized[0];\n        this.levelIndex = serialized[1];\n    }\n    getLevel(levelsetIndex, levelIndex) {\n        return _data_levelsets__WEBPACK_IMPORTED_MODULE_0__.levelsets[levelsetIndex].getLevel(levelIndex);\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/room/round.ts?");
-
-/***/ }),
-
-/***/ "./shared/snake.ts":
-/*!*************************!*\
-  !*** ./shared/snake.ts ***!
-  \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Snake\": () => (/* binding */ Snake)\n/* harmony export */ });\nclass Snake {\n    constructor(index, level) {\n        this.index = index;\n        const spawn = level.data.spawns[index];\n        /** Head is last in array */\n        this.parts = [spawn.location];\n        this.direction = spawn.direction;\n        this.size = level.config.snakeSize;\n        this.speed = level.config.snakeSpeed;\n        this.crashed = false;\n        this.collision = null;\n        this.gravity = null;\n    }\n    /**\n     * @param {Coordinate} position\n     */\n    move(position) {\n        this.parts.push(position);\n        this.trimParts();\n    }\n    /**\n     * @return {Coordinate}\n     */\n    getHead() {\n        return this.parts[this.parts.length - 1];\n    }\n    hasPartPredict(part) {\n        const treshold = this.crashed ? -1 : 0;\n        return this.getPartIndex(part) > treshold;\n    }\n    trimParts() {\n        while (this.parts.length > this.size) {\n            this.parts.shift();\n        }\n    }\n    hasPart(part) {\n        return -1 !== this.getPartIndex(part);\n    }\n    getPartIndex(part) {\n        const parts = this.parts;\n        for (let i = 0, m = parts.length; i < m; i++) {\n            if (parts[i][0] === part[0] && parts[i][1] === part[1]) {\n                return i;\n            }\n        }\n        return -1;\n    }\n    shiftParts(shift) {\n        const x = shift[0] || 0;\n        const y = shift[1] || 0;\n        if (x || y) {\n            for (let i = 0, m = this.parts.length; i < m; i++) {\n                this.parts[i][0] += x;\n                this.parts[i][1] += y;\n            }\n        }\n    }\n    /**\n     * Head-tail switch.\n     */\n    reverse() {\n        let dx;\n        let dy;\n        dx = this.parts[0][0] - this.parts[1][0];\n        dy = this.parts[0][1] - this.parts[1][1];\n        if (dx === 0) {\n            this.direction = dy === -1 ? 1 : 3;\n        }\n        else {\n            this.direction = dx === -1 ? 0 : 2;\n        }\n        this.parts.reverse();\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/snake.ts?");
-
-/***/ }),
-
-/***/ "./shared/util.ts":
-/*!************************!*\
-  !*** ./shared/util.ts ***!
-  \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"randomRange\": () => (/* binding */ randomRange),\n/* harmony export */   \"getRandomItemFrom\": () => (/* binding */ getRandomItemFrom),\n/* harmony export */   \"randomArrIndex\": () => (/* binding */ randomArrIndex),\n/* harmony export */   \"randomStr\": () => (/* binding */ randomStr),\n/* harmony export */   \"ensureIndexWithinBounds\": () => (/* binding */ ensureIndexWithinBounds),\n/* harmony export */   \"average\": () => (/* binding */ average),\n/* harmony export */   \"delta\": () => (/* binding */ delta),\n/* harmony export */   \"eq\": () => (/* binding */ eq),\n/* harmony export */   \"getKey\": () => (/* binding */ getKey),\n/* harmony export */   \"sort\": () => (/* binding */ sort),\n/* harmony export */   \"benchmark\": () => (/* binding */ benchmark),\n/* harmony export */   \"getRandomName\": () => (/* binding */ getRandomName),\n/* harmony export */   \"_\": () => (/* binding */ _)\n/* harmony export */ });\nfunction randomRange(min, max) {\n    return min + Math.floor(Math.random() * (max - min + 1));\n}\nfunction getRandomItemFrom(arr) {\n    return arr[randomArrIndex(arr)];\n}\nfunction randomArrIndex(arr) {\n    return randomRange(0, arr.length - 1);\n}\nfunction randomStr(len = 3) {\n    return Math.random().toString(36).substr(2, len);\n}\n/**\n * Ensure an array index is within bounds.\n * @param {number} index\n * @param {Array} arr\n * @return {number}\n */\nfunction ensureIndexWithinBounds(index, arr) {\n    const len = arr.length;\n    if (index >= len) {\n        return 0;\n    }\n    else if (index < 0) {\n        return len - 1;\n    }\n    return index;\n}\nfunction average(numbers) {\n    let total = 0;\n    const m = numbers.length;\n    for (let i = 0; i < m; i++) {\n        total += numbers[i];\n    }\n    return m ? total / m : 0;\n}\n/**\n * @param {Coordinate} a\n * @param {Coordinate} b\n * @return {number}\n */\nfunction delta(a, b) {\n    return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);\n}\n/**\n * @param {Coordinate} a\n * @param {Coordinate} b\n * @return {boolean}\n */\nfunction eq(a, b) {\n    return a[0] === b[0] && a[1] === b[1];\n}\n/**\n * @param {*} obj\n * @param {*} val\n * @return {?string}\n */\nfunction getKey(obj, val) {\n    for (const k in obj) {\n        if (obj.hasOwnProperty(k) && val === obj[k]) {\n            return k;\n        }\n    }\n    return null;\n}\n/**\n * Faster sorting function.\n * http://jsperf.com/javascript-sort/\n *\n * @param {Array.<number>} arr\n * @return {Array.<number>}\n */\nfunction sort(arr) {\n    for (let i = 1; i < arr.length; i++) {\n        const tmp = arr[i];\n        let index = i;\n        while (arr[index - 1] > tmp) {\n            arr[index] = arr[index - 1];\n            --index;\n        }\n        arr[index] = tmp;\n    }\n    return arr;\n}\n/**\n * @param {number} iterations\n * @param {Function} fn\n * @param {string|number=} label\n */\nfunction benchmark(iterations, fn, label = \"\") {\n    let duration;\n    let i = iterations;\n    const start = +new Date();\n    while (i--) {\n        fn();\n    }\n    duration = +new Date() - start;\n    console.log(label || \"Benchmark\", {\n        x: iterations,\n        avg: duration / iterations,\n        total: duration,\n    });\n}\n/**\n * @return {string}\n */\nfunction getRandomName() {\n    const name = getRandomItemFrom([\n        \"Ant\",\n        \"Bat\",\n        \"Bear\",\n        \"Bird\",\n        \"Cat\",\n        \"Cow\",\n        \"Crab\",\n        \"Croc\",\n        \"Deer\",\n        \"Dodo\",\n        \"Dog\",\n        \"Duck\",\n        \"Emu\",\n        \"Fish\",\n        \"Fly\",\n        \"Fox\",\n        \"Frog\",\n        \"Goat\",\n        \"Hare\",\n        \"Ibis\",\n        \"Kiwi\",\n        \"Lion\",\n        \"Lynx\",\n        \"Miao\",\n        \"Mole\",\n        \"Moth\",\n        \"Mule\",\n        \"Oger\",\n        \"Pig\",\n        \"Pika\",\n        \"Poke\",\n        \"Puma\",\n        \"Puss\",\n        \"Rat\",\n        \"Seal\",\n        \"Swan\",\n        \"Wasp\",\n        \"Wolf\",\n        \"Yak\",\n        \"Zeb\",\n    ]);\n    return name + \".\" + randomRange(10, 99);\n}\n/**\n * Prep for possible i18n and marks copy.\n */\nfunction _(str) {\n    return str;\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/util.ts?");
-
-/***/ }),
-
-/***/ "./shared/util/sanitizer.ts":
-/*!**********************************!*\
-  !*** ./shared/util/sanitizer.ts ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Sanitizer\": () => (/* binding */ Sanitizer)\n/* harmony export */ });\n/**\n * Sanitizer / Sanitize user input.\n * @param {?=} value\n * @constructor\n */\nclass Sanitizer {\n    constructor(value) {\n        this._value = value;\n        this._valid = true;\n    }\n    /**\n     * @param {string} type\n     * @return {Sanitizer}\n     */\n    assertType(type) {\n        if (typeof this._value !== type) {\n            this._log(\"assertType\", this._value, type);\n            this._valid = false;\n        }\n        return this;\n    }\n    /**\n     * @return {Sanitizer}\n     */\n    assertArray() {\n        if (!(this._value instanceof Array)) {\n            this._log(\"assertArray\", this._value);\n            this._valid = false;\n        }\n        return this;\n    }\n    /**\n     * @return {Sanitizer}\n     */\n    assertJSON() {\n        if (this._valid) {\n            // Don't parse if already invalid\n            try {\n                this._json = JSON.parse(this._value);\n            }\n            catch (err) {\n                this._log(\"assertJSON\", this._value);\n                this._valid = false;\n            }\n        }\n        return this;\n    }\n    /**\n     * @param {Array} arr\n     * @return {Sanitizer}\n     */\n    assertInArray(arr) {\n        if (-1 === arr.indexOf(this._value)) {\n            this._log(\"assertInArray\", this._value, arr);\n            this._valid = false;\n        }\n        return this;\n    }\n    assertBetween(min, max) {\n        if (typeof this._value !== \"number\") {\n            this._log(\"assertRange type\", this._value);\n            this._valid = false;\n        }\n        else if (this._value < min || this._value > max) {\n            this._log(\"assertRange range\", this._value, min, max);\n            this._valid = false;\n        }\n        return this;\n    }\n    /**\n     *\n     * @return {Sanitizer}\n     */\n    assertIntAsBoolean() {\n        return this.assertBetween(0, 1);\n    }\n    assertStringOfLength(min, max) {\n        max = typeof max === \"undefined\" ? min : max;\n        if (typeof this._value !== \"string\") {\n            this._log(\"assertStringOfLength type\", this._value);\n            this._valid = false;\n        }\n        else if (!this._assertLength(min, max)) {\n            this._log(\"assertStringOfLength length\", this._value, min, max);\n            this._valid = false;\n        }\n        return this;\n    }\n    /**\n     * @param {number} min\n     * @param {number} max\n     * @return {Sanitizer}\n     */\n    assertArrayLengthBetween(min, max) {\n        if (!(this._value instanceof Array)) {\n            this._log(\"assertArrayOfLength type\", this._value);\n            this._valid = false;\n        }\n        else if (!this._assertLength(min, max)) {\n            this._log(\"assertArrayOfLength length\", this._value, min, max);\n            this._valid = false;\n        }\n        return this;\n    }\n    _assertLength(min, max) {\n        return this._value.length >= min && this._value.length <= max;\n    }\n    valid() {\n        return this._valid;\n    }\n    getValueOr(def) {\n        return this._valid ? this._value : def;\n    }\n    /**\n     * @param {*=} def\n     * @return {?}\n     */\n    json(def) {\n        return this._valid ? this._json : def;\n    }\n    _log(message, value, ...varArgs) {\n        console.warn(\"Validation Error\", message, JSON.stringify(value), varArgs);\n    }\n}\n\n\n//# sourceURL=webpack://xssnake/./shared/util/sanitizer.ts?");
-
-/***/ }),
-
-/***/ "events":
-/*!*************************!*\
-  !*** external "events" ***!
-  \*************************/
-/***/ ((module) => {
-
-module.exports = require("events");;
-
-/***/ }),
-
-/***/ "ws":
-/*!*********************!*\
-  !*** external "ws" ***!
-  \*********************/
-/***/ ((module) => {
-
-module.exports = require("ws");;
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./server/index.ts");
-/******/ 	
-/******/ })()
-;
+var helper = require('./helper.js');
+
+exports.concat = {
+    options: {
+        banner: "'use strict';\n",
+        process: helper.replaceStrict
+    },
+    src: [
+        'shared/namespace.js',
+        'shared/util.js',
+        'shared/**/*.js',
+        'server/**/*.js'
+    ],
+    dest: 'dist/server.js'
+};
+
+exports.gcc_rest = {
+    options: {
+        params: {
+            js_externs       : helper.getFilesInDirAsStr(__dirname + '/externs/'),
+            output_info      : ['compiled_code', 'errors', 'warnings'],
+            language         : 'ECMASCRIPT5_STRICT',
+            compilation_level: 'ADVANCED_OPTIMIZATIONS',
+            warning_level    : 'VERBOSE',
+            use_types_for_optimization : 'true'
+        }
+    },
+    src: 'dist/server.js',
+    dest: 'dist/server.min.js'
+};
+
+exports.instrument = {
+    files: [
+        'build/**/*.js',
+        'shared/**/*.js',
+        'server/**/*.js'
+    ],
+    options: {
+        basePath: 'dist/instrument'
+    }
+};
+
+exports.jasmine_node = {
+    options: {
+        forceExit  : true,
+        specFolders: ['test/server']
+    }
+};
+
+exports.storeCoverage = {
+    options: {
+        dir: 'dist/instrument'
+    }
+};
+
+exports.makeReport = {
+    src: 'dist/instrument/coverage.json',
+    options: {
+        type   : 'html',
+        dir    : 'test/coverage/server'
+    }
+};
