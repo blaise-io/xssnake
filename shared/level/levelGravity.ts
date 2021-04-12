@@ -8,7 +8,7 @@
  * Example 2: [5, 5] pulls objects to bottom-right.
  * Example 2: [-5, 0] pulls objects to the left only.
  */
-export class Gravity {
+export class LevelGravity {
     progress: Shift;
 
     constructor(public gravity = [0, 0]) {

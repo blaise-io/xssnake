@@ -1,5 +1,4 @@
 import { GAME_LEFT, GAME_TILE, GAME_TOP } from "../const";
-import { LevelAnimationRegistry } from "../levelanim/registry";
 import { PixelCollection } from "../pixelCollection";
 import { ShapeCollection } from "../shapeCollection";
 import { Parser } from "./parser";
@@ -8,19 +7,19 @@ import { Spawn } from "./spawn";
 export class LevelData {
     private width: number;
     private height: number;
-    private walls: PixelCollection;
-    private spawns: Spawn[];
+    walls: PixelCollection;
+    spawns: Spawn[];
     private unreachables: PixelCollection;
     private animations: any;
 
-    constructor(imagedata: ImageData, animations: LevelAnimationRegistry) {
+    constructor(imagedata: ImageData) {
         const parser = new Parser(imagedata);
         this.width = imagedata.width;
         this.height = imagedata.height;
         this.walls = parser.walls;
         this.spawns = parser.spawns;
         this.unreachables = parser.unreachables;
-        this.animations = animations;
+        this.animations = { walls: [] }; // TODO: how to register and sync animations?
     }
 
     isWall(x: number, y: number): boolean {

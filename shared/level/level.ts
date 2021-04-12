@@ -1,71 +1,33 @@
 import { LevelAnimationRegistry } from "../levelanim/registry";
-import { Config } from "../levelset/config";
-import { Gravity } from "./gravity";
+import { LevelData } from "./data";
+import { LevelGravity } from "./levelGravity";
+
+export class LevelConfig {
+    constructor(
+        public gravity = [0, 0],
+        public enableApples = true,
+        public enablePowerups = [],
+        public snakeSize = 4,
+        public snakeSpeed = 120, // Change tile every ms.
+        public snakeIncrease = 1,
+        public pointsApple = 1,
+        public pointsKnockout = 3
+    ) {}
+}
 
 export class Level {
-    animations: any;
-    gravity: any;
-    data: any;
+    public image: string;
+    public data: LevelData;
 
-    constructor(public config: Config) {
-        this.config = config;
-        this.animations = new LevelAnimationRegistry();
-        this.gravity = new Gravity(this.config.gravity);
-        this.data = config.level.cache || null;
+    constructor(
+        public config = new LevelConfig(),
+        public animations = new LevelAnimationRegistry(),
+        public gravity = new LevelGravity()
+    ) {}
+
+    destruct(): void {
+        this.config = null;
+        this.animations = null;
+        this.config = null;
     }
-
-    public registerAnimations() {
-        // () => {}?
-    }
-
-    preload(fn: CallableFunction) {}
-
-    destruct() {}
-
-    paint() {}
-
-    // /**
-    //  * Client-Only!
-    //  * TODO: Create and add to level.ClientLevel instead.
-    //  */
-    // public destruct() {
-    //     if (__IS_CLIENT__) {
-    //         State.shapes.level = null;
-    //         State.shapes.innerborder = null;
-    //         State.shapes.outerBorderLeft = null;
-    //         State.shapes.outerBorderRight = null;
-    //         State.shapes.outerBorderTop = null;
-    //         State.shapes.outerBorderBottom = null;
-    //     }
-    // }
-
-    // /**
-    //  * Client-Only!
-    //  * TODO: Create and add to level.ClientLevel instead.
-    //  */
-    // public paint() {
-    //     if (__IS_CLIENT__) {
-    //         State.shapes.level = new Shape(this.data.walls);
-    //         setGameTransform(State.shapes.level);
-    //         State.shapes.innerborder = innerBorder();
-    //         Object.assign(State.shapes, outerBorder());
-    //     }
-    // }
-
-    // public preload(continueFn) {
-    //     const level = this.config.level;
-    //     if (level.cache) {
-    //         continueFn();
-    //     } else {
-    //         new ImageDecoder(level.imagedata).then(
-    //             function (data) {
-    //                 level.cache = new LevelData(data, this.animations);
-    //                 level.imagedata = null;
-    //                 this.data = level.cache;
-    //                 this.registerAnimations();
-    //                 continueFn();
-    //             }.bind(this)
-    //         );
-    //     }
-    // }
 }

@@ -1,16 +1,11 @@
-/**
- * @param {Coordinate} part
- * @param {number} into
- * @constructor
- */
 export class Collision {
     private tick: number;
 
-    constructor(public location, public into) {
+    constructor(public location: Coordinate, public into: number) {
         this.tick = 0;
     }
 
-    serialize() {
+    serialize(): Coordinate {
         return this.location;
     }
 }

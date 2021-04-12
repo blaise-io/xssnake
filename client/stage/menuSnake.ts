@@ -1,32 +1,34 @@
 import { GAME_LEFT, GAME_TOP } from "../../shared/const";
+import { LevelData } from "../../shared/level/data";
+import { Level } from "../../shared/level/level";
 import { BlankLevel } from "../../shared/levels/debug/blank";
-import { Config } from "../../shared/levelset/config";
 import { Shape } from "../../shared/shape";
+import { _ } from "../../shared/util";
 import { ClientSnake } from "../game/clientSnake";
+import { getLevelShapes } from "../level/levelUtil";
 import { ClientState } from "../state/clientState";
 import { zoom } from "../ui/transformClient";
-import { instruct } from "../util/clientUtil";
+import { getImageData, instruct } from "../util/clientUtil";
 
 export class MenuSnake {
     snake: ClientSnake;
     timeouts: number[];
-    level: BlankLevel;
+    level: Level;
 
     constructor() {
-        this.snake = null;
         this.timeouts = [];
-        this.level = new BlankLevel(new Config());
-        this.level.preload(this.construct.bind(this));
-    }
 
-    construct(): void {
-        const snake = new ClientSnake(0, false, "", this.level);
-        snake.addControls();
-        snake.showDirection();
-        snake.removeNameAndDirection();
+        (async () => {
+            this.level = new BlankLevel();
+            this.level.data = new LevelData(await getImageData(this.level.image));
+            Object.assign(ClientState.shapes, getLevelShapes(this.level));
+            this.timeouts.push(window.setTimeout(this.move.bind(this), 1500));
 
-        this.snake = snake;
-        this.timeouts.push(window.setTimeout(this.move.bind(this), 1500));
+            this.snake = new ClientSnake(0, false, "", this.level);
+            this.snake.addControls();
+            this.snake.showDirection();
+            this.snake.removeNameAndDirection();
+        })();
     }
 
     destruct(): void {
@@ -34,7 +36,7 @@ export class MenuSnake {
             clearTimeout(this.timeouts[i]);
         }
         this.snake.destruct();
-        this.level.destruct();
+        // this.level.destruct();
     }
 
     move(): void {
@@ -45,7 +47,7 @@ export class MenuSnake {
         const nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {
             snake.setCrashed();
-            instruct("Have you seen my snake?");
+            instruct(_("Have you seen my snake?"));
             this.timeouts.push(window.setTimeout(snake.destruct.bind(snake), 2200));
         } else {
             snake.elapsed = 1000; // Trigger move.

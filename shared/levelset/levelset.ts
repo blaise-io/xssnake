@@ -21,8 +21,8 @@ export class Levelset {
         return this.levels[index];
     }
 
-    register(level: typeof Level): void {
-        this.levels.push(new level(this.getConfig()));
+    register(LevelClass: typeof Level): void {
+        this.levels.push(new LevelClass());
     }
 
     // preload(continueFn: CallableFunction) {

@@ -1,6 +1,6 @@
-import { levels } from "../../data/levels";
+import crosshair from "../../../build/levels/crosshair.png";
 import { Level } from "../../level/level";
 
 export class CrosshairLevel extends Level {
-    public level = levels.crosshair;
+    image = crosshair;
 }

@@ -1,4 +1,4 @@
-import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, WIDTH } from "../../shared/const";
+import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, LEVEL, WIDTH } from "../../shared/const";
 import { UC_ENTER_KEY } from "../const";
 import { ClientState } from "../state/clientState";
 import { Dialog } from "../ui/dialog";
@@ -122,4 +122,21 @@ export function debounce(fn: CallableFunction, delay = 100): CallableFunction {
             fn(...args);
         }, delay);
     };
+}
+
+export async function getImageData(base64Image: string): Promise<ImageData> {
+    return new Promise((resolve) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = LEVEL.WIDTH;
+        canvas.height = LEVEL.HEIGHT;
+
+        const context = canvas.getContext("2d");
+
+        const image = new Image();
+        image.onload = function () {
+            context.drawImage(image, 0, 0);
+            resolve(context.getImageData(0, 0, LEVEL.WIDTH, LEVEL.HEIGHT));
+        };
+        image.src = base64Image;
+    });
 }

@@ -1,18 +1,18 @@
+import { Collision } from "./game/collision";
 import { Level } from "./level/level";
 
 export class Snake {
+    /** Head is last in array */
     parts: Coordinate[];
-    direction: any;
+    direction: number;
     size: number;
     speed: number;
     crashed: boolean;
-    collision: any;
-    gravity: any;
+    collision: Collision;
 
     constructor(public index: number, level: Level) {
         const spawn = level.data.spawns[index];
 
-        /** Head is last in array */
         this.parts = [spawn.location];
         this.direction = spawn.direction;
         this.size = level.config.snakeSize;
@@ -20,21 +20,14 @@ export class Snake {
 
         this.crashed = false;
         this.collision = null;
-        this.gravity = null;
     }
 
-    /**
-     * @param {Coordinate} position
-     */
-    move(position): void {
+    move(position: Coordinate): void {
         this.parts.push(position);
         this.trimParts();
     }
 
-    /**
-     * @return {Coordinate}
-     */
-    getHead() {
+    getHead(): Coordinate {
         return this.parts[this.parts.length - 1];
     }
 
@@ -43,7 +36,7 @@ export class Snake {
         return this.getPartIndex(part) > treshold;
     }
 
-    trimParts() {
+    trimParts(): void {
         while (this.parts.length > this.size) {
             this.parts.shift();
         }
@@ -74,15 +67,9 @@ export class Snake {
         }
     }
 
-    /**
-     * Head-tail switch.
-     */
-    reverse() {
-        let dx;
-        let dy;
-
-        dx = this.parts[0][0] - this.parts[1][0];
-        dy = this.parts[0][1] - this.parts[1][1];
+    reverse(): void {
+        const dx = this.parts[0][0] - this.parts[1][0];
+        const dy = this.parts[0][1] - this.parts[1][1];
 
         if (dx === 0) {
             this.direction = dy === -1 ? 1 : 3;

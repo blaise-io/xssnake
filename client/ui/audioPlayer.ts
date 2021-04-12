@@ -1,34 +1,27 @@
-/**
- * @constructor
- */
 import { STORAGE_MUTE } from "../const";
-import { MP3_FILES } from "../data/mp3";
-import { OGG_FILES } from "../data/ogg";
+import { MP3_FILES, OGG_FILES } from "../data/audio";
 import { ClientState } from "../state/clientState";
 import { storage } from "../util/clientUtil";
 
 export class AudioPlayer {
-    private files: any;
+    private files: Record<string, string>;
     private mimetype: string;
 
     constructor() {
-        /** @type {Object.<string,string>} */
-        this.files;
-        /** @type {string} */
-        this.mimetype;
-        this.setupFiles();
-    }
-
-    /**
-     * @param {string} file
-     */
-    play(file): void {
-        if (this.files && this.files[file] && !storage(STORAGE_MUTE) && ClientState.canvas.focus) {
-            new Audio("data:" + this.mimetype + ";base64," + this.files[file]).play();
+        const audioFiles = this.getSupportedAudioFiles();
+        if (audioFiles) {
+            this.mimetype = audioFiles.mimetype;
+            this.files = audioFiles.files;
         }
     }
 
-    getSupportedAudioFiles() {
+    play(file: string): void {
+        if (this.files && this.files[file] && !storage(STORAGE_MUTE) && ClientState.canvas.focus) {
+            new Audio(this.files[file]).play();
+        }
+    }
+
+    getSupportedAudioFiles(): { mimetype: string; files: Record<string, string> } | null {
         const audioElement = document.createElement("audio");
         const mimetypes = {
             mp3: "audio/mpeg",
@@ -46,13 +39,5 @@ export class AudioPlayer {
         }
 
         return null;
-    }
-
-    setupFiles(): void {
-        const audioFiles = this.getSupportedAudioFiles();
-        if (audioFiles) {
-            this.mimetype = audioFiles.mimetype;
-            this.files = audioFiles.files;
-        }
     }
 }

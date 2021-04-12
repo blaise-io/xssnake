@@ -1,5 +1,4 @@
-/* jshint evil: true */
-import { getRandomItemFrom, randomRange } from "../../shared/util";
+import { getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
 import { DOM_EVENT_KEYDOWN, MENU_LEFT, NS_INPUT } from "../const";
 import { InputStage } from "../stage_base/inputStage";
 import { ClientState } from "../state/clientState";
@@ -7,13 +6,8 @@ import { font } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
 import { InputXssStage } from "./inputXss";
 
-/**
- * @extends {InputStage}
- * @implements {StageInterface}
- * @constructor
- */
 export class ChallengeStage extends InputStage {
-    private _challenge: any;
+    private _challenge: string;
 
     constructor() {
         super();
@@ -34,8 +28,7 @@ export class ChallengeStage extends InputStage {
         this.next = InputXssStage;
     }
 
-    inputSubmit(error, value, top) {
-        let shape;
+    inputSubmit(error: string, value: string, top: number): void {
         let text = "ACCESS DENIED!!";
 
         // Evalevaleval!!!
@@ -51,7 +44,7 @@ export class ChallengeStage extends InputStage {
             );
         }
 
-        shape = font(text, MENU_LEFT, top);
+        const shape = font(text, MENU_LEFT, top);
         lifetime(shape, 0, 1000);
 
         ClientState.shapes.message = shape;
@@ -80,17 +73,13 @@ export class ChallengeStage extends InputStage {
         '"%d"+%d',
     ];
 
-    _getRandomChallenge() {
-        let randomStr;
-        let randomDigit;
-        let challenge;
+    _getRandomChallenge(): string {
+        const upperCaseStr = randomStr(3).toUpperCase();
+        const digit = String(randomRange(0, 5));
 
-        randomStr = randomStr().substr(0, 3).toUpperCase();
-        randomDigit = String(randomRange(0, 5));
-
-        challenge = String(getRandomItemFrom(this._challenges));
-        challenge = challenge.replace(/%s/g, randomStr);
-        challenge = challenge.replace(/%d/g, randomDigit);
+        let challenge = String(getRandomItemFrom(this._challenges));
+        challenge = challenge.replace(/%s/g, upperCaseStr);
+        challenge = challenge.replace(/%d/g, digit);
 
         return challenge;
     }

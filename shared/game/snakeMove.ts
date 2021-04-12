@@ -35,14 +35,10 @@ export class SnakeMove {
     }
 
     getCollisionPart(index: number, part: Coordinate): Collision {
-        let players;
-        let levelData;
-        let partIndex;
-        players = this.players;
-        levelData = this.level.data;
-
+        const players = this.players;
+        const levelData = this.level.data;
         if (index > 4) {
-            partIndex = this.snake.getPartIndex(part);
+            const partIndex = this.snake.getPartIndex(part);
             if (-1 !== partIndex && index !== partIndex) {
                 return new Collision(part, CRASH_SELF);
             }

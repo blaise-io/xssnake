@@ -20,7 +20,7 @@ module.exports = {
     },
     output: {
         filename: "server.js",
-        path: __dirname + "/../build",
+        path: __dirname + "/../dist",
     },
     plugins: [
         new webpack.DefinePlugin({

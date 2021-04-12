@@ -8,10 +8,6 @@ import {
 import { PixelCollection } from "../pixelCollection";
 import { Spawn } from "./spawn";
 
-/**
- * @param {ImageData} imagedata
- * @constructor
- */
 export class Parser {
     width: number;
     height: number;
@@ -21,7 +17,7 @@ export class Parser {
     spawnCoordinates: Coordinate[];
     spawnDirections: Coordinate[];
 
-    constructor(imagedata) {
+    constructor(imagedata: ImageData) {
         this.width = imagedata.width;
         this.height = imagedata.height;
         this.walls = new PixelCollection();

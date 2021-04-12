@@ -10,6 +10,10 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: "ts-loader",
             },
+            {
+                test: /\.(png|mp3|ogg)$/,
+                type: "asset/inline",
+            },
         ],
     },
     resolve: {
@@ -18,14 +22,14 @@ module.exports = {
     },
     output: {
         filename: "client.js",
-        path: __dirname + "/../build",
+        path: __dirname + "/../dist",
     },
     plugins: [
         new webpack.DefinePlugin({
             __IS_CLIENT__: true,
         }),
         new HtmlWebpackPlugin({
-            template: __dirname + "/client.ejs",
+            template: __dirname + "/index.ejs",
         }),
     ],
 };

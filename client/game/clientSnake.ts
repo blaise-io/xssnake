@@ -1,11 +1,3 @@
-/**
- * @param {number} index
- * @param {boolean} local
- * @param {string} name
- * @param {level.Level} level
- * @extends {game.Snake}
- * @constructor
- */
 import { GAME_SHIFT_MAP, NC_SNAKE_UPDATE, NETCODE_SYNC_MS } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
@@ -25,7 +17,7 @@ export class ClientSnake extends Snake {
     private controls: ClientSnakeControls;
     private shapeKeys: { snake: string; name: string; direction: string };
 
-    constructor(public index, public local, public name, level) {
+    constructor(public index: number, public local: boolean, public name: string, level: Level) {
         super(index, level);
 
         this.elapsed = 0;
@@ -33,7 +25,6 @@ export class ClientSnake extends Snake {
 
         this.controls = null;
 
-        /** @type {Object.<string,string>} */
         this.shapeKeys = {
             snake: NS_SNAKE + index,
             name: NS_SNAKE + "TAG" + index,

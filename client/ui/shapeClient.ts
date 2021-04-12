@@ -13,10 +13,11 @@ export function center(shape: Shape, width = WIDTH, height = HEIGHT): void {
     shape.transform.translate = [x - bbox.x0, y - bbox.y0];
 }
 
-export function setGameTransform(shape: Shape): void {
+export function setGameTransform(shape: Shape): Shape {
     shape.transform.scale = GAME_TILE;
     shape.transform.translate[0] = shape.transform.translate[0] * GAME_TILE + GAME_TILE / GAME_LEFT;
     shape.transform.translate[1] = shape.transform.translate[1] * GAME_TILE + GAME_TILE / GAME_TOP;
+    return shape;
 }
 
 export function flash(shape: Shape, on: number = FRAME * 24, off: number = FRAME * 6): Shape {
