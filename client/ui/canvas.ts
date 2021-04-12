@@ -1,4 +1,5 @@
 import { HEIGHT, WIDTH } from "../../shared/const";
+import { Shape } from "../../shared/shape";
 import { average } from "../../shared/util";
 import { colorSchemes } from "../bootstrap/registerColorSchemes";
 import {
@@ -11,6 +12,7 @@ import {
 import { ClientState } from "../state/clientState";
 import { debounce, instruct, storage } from "../util/clientUtil";
 import { CanvasTile } from "./canvasTile";
+import { ColorScheme } from "./colorScheme";
 import { ShapeCache } from "./shapeCache";
 import { applyEffects } from "./shapeClient";
 
@@ -21,7 +23,6 @@ export class Canvas {
     tile: CanvasTile;
     focus: boolean;
     _prevFrame: any;
-    _frameBound: any;
     canvasWidth: number;
     canvasHeight: number;
     error: boolean;
@@ -40,23 +41,18 @@ export class Canvas {
 
         this.focus = true;
         this._prevFrame = new Date();
-        this._frameBound = this._frame.bind(this);
 
-        window.requestAnimationFrame(this._frameBound);
+        window.requestAnimationFrame((now) => {
+            this._frame(now);
+        });
     }
 
-    /**
-     * @param {ColorScheme} colorScheme
-     */
-    setColorScheme(colorScheme): void {
+    setColorScheme(colorScheme: ColorScheme): void {
         this.tile.setColorScheme(colorScheme);
         this._flushShapeCache();
     }
 
-    /**
-     * @param {number} delta
-     */
-    paint(delta): void {
+    paint(delta: number): void {
         // Abuse this loop to trigger game tick
         ClientState.events.trigger(EV_GAME_TICK, delta, this.focus);
 
@@ -72,7 +68,7 @@ export class Canvas {
      * because this triggers a slow garbage collection during gameplay,
      * which may affect framerate negatively.
      */
-    garbageCollect() {
+    garbageCollect(): void {
         const shapes = ClientState.shapes;
         for (const k in shapes) {
             if (null === shapes[k]) {
@@ -81,7 +77,7 @@ export class Canvas {
         }
     }
 
-    _flushShapeCache() {
+    _flushShapeCache(): void {
         const shapes = ClientState.shapes;
         for (const k in shapes) {
             if (null !== shapes[k]) {
@@ -141,11 +137,12 @@ export class Canvas {
         }
     }
 
-    /** @private */
-    _frame(now): void {
+    private _frame(now: number): void {
         // Make appointment for next paint.
         if (!this.error) {
-            window.requestAnimationFrame(this._frameBound);
+            window.requestAnimationFrame((now) => {
+                this._frame(now);
+            });
         }
 
         // Time since last paint
@@ -153,7 +150,7 @@ export class Canvas {
         this._prevFrame = now;
 
         // Show FPS in title bar
-        //this.reportFps(1000 / delta);
+        this.reportFps(1000 / delta);
 
         this.paint(delta);
     }
@@ -204,11 +201,7 @@ export class Canvas {
         }
     }
 
-    /**
-     * @param {Shape} shape
-     * @private
-     */
-    _drawMaskedShape(shape): void {
+    private _drawMaskedShape(shape: Shape): void {
         const translate = shape.transform.translate;
 
         const mx0 = shape.mask[0] * this.tile.size;
@@ -257,7 +250,7 @@ export class Canvas {
             this._setCanvasDimensions();
             this._flushShapeCache();
             this._positionCanvas();
-        }) as any;
+        }, 20);
         window.onfocus = this._handleFocusChange.bind(this);
         window.onblur = this._handleFocusChange.bind(this);
     }

@@ -112,13 +112,12 @@ export function translateGameY(y: number): number {
     return y * GAME_TILE + GAME_TOP;
 }
 
-export function debounce(fn: CallableFunction, delay = 100): CallableFunction {
+export function debounce(fn: CallableFunction, delay = 100): (...args) => void {
     let timeout;
     return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(function () {
+        window.clearTimeout(timeout);
+        timeout = window.setTimeout(() => {
             timeout = null;
-            // TODO: Promise, await, async.
             fn(...args);
         }, delay);
     };

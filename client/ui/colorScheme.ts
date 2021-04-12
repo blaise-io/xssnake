@@ -1,3 +1,8 @@
+export enum PixelShape {
+    rectangular,
+    circular,
+}
+
 export class ColorScheme {
     constructor(
         public title: string,
@@ -5,6 +10,8 @@ export class ColorScheme {
         public bg: string,
         public off: string,
         public on: string,
-        public ghosting: number = 0.6
+        public gap = 1,
+        public ghosting = 0.6, // 0 is no ghosting, 1 never clear
+        public shape = PixelShape.rectangular
     ) {}
 }

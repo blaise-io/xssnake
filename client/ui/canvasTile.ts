@@ -1,5 +1,5 @@
 import { HEIGHT, WIDTH } from "../../shared/const";
-import { ColorScheme } from "./colorScheme";
+import { ColorScheme, PixelShape } from "./colorScheme";
 
 export class CanvasTile {
     size: number;
@@ -42,13 +42,18 @@ export class CanvasTile {
     private _getTileForColor(canvas: HTMLCanvasElement, color: string): CanvasPattern {
         const context = canvas.getContext("2d");
 
-        // Prevent completely transparent borders for visibility:
-        const pixelSize = this.size === 1 ? 1 : this.size - 0.35;
+        const pixelSize = this.size === 1 ? 1 : this.size - this.colorScheme.gap;
 
         context.fillStyle = this.colorScheme.bg;
         context.fillRect(0, 0, this.size, this.size);
         context.fillStyle = color;
-        context.fillRect(0, 0, pixelSize, pixelSize);
+
+        if (this.colorScheme.shape == PixelShape.rectangular) {
+            context.fillRect(0, 0, pixelSize, pixelSize);
+        } else {
+            context.arc(pixelSize / 2, pixelSize / 2, pixelSize / 2, 0, 2 * Math.PI, false);
+            context.fill();
+        }
 
         return context.createPattern(canvas, "repeat");
     }

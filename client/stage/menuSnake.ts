@@ -5,8 +5,8 @@ import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Shape } from "../../shared/shape";
 import { _ } from "../../shared/util";
 import { ClientSnake } from "../game/clientSnake";
-import { getLevelShapes } from "../level/levelUtil";
 import { ClientState } from "../state/clientState";
+import { setGameTransform } from "../ui/shapeClient";
 import { zoom } from "../ui/transformClient";
 import { getImageData, instruct } from "../util/clientUtil";
 
@@ -21,7 +21,7 @@ export class MenuSnake {
         (async () => {
             this.level = new BlankLevel();
             this.level.data = new LevelData(await getImageData(this.level.image));
-            Object.assign(ClientState.shapes, getLevelShapes(this.level));
+            ClientState.shapes.level = setGameTransform(new Shape(this.level.data.walls));
             this.timeouts.push(window.setTimeout(this.move.bind(this), 1500));
 
             this.snake = new ClientSnake(0, false, "", this.level);
