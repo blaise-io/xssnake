@@ -3,6 +3,7 @@
     "baseUrl": "..",
     "outDir": "../build",
     "allowJs": false,
+    "module": "es6",
     "target": "es6"
   },
   "include": [

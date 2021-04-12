@@ -1,4 +1,4 @@
-import { ColorScheme, PixelShape } from "../ui/colorScheme";
+import { ColorScheme, PixelStyle } from "../ui/colorScheme";
 
 export const colorSchemes: ColorScheme[] = [
     new ColorScheme(
@@ -20,7 +20,7 @@ export const colorSchemes: ColorScheme[] = [
         "#dc0",
         undefined,
         undefined,
-        PixelShape.circular
+        PixelStyle.circular
     ),
     new ColorScheme("Vampire Campfire", "Bloody pixels", "#000", "#100", "#f00", 0.85),
     new ColorScheme("Panda", "(O)____(o)", "#000", "#111", "#fff"),

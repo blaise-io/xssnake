@@ -1,4 +1,4 @@
-export enum PixelShape {
+export enum PixelStyle {
     rectangular,
     circular,
 }
@@ -12,6 +12,6 @@ export class ColorScheme {
         public on: string,
         public gap = 1,
         public ghosting = 0.6, // 0 is no ghosting, 1 never clear
-        public shape = PixelShape.rectangular
+        public style = PixelStyle.rectangular
     ) {}
 }

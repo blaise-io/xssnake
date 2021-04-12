@@ -1,9 +1,26 @@
 /* eslint-disable */
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
     entry: __dirname + "/index.ts",
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    mangle: {
+                        toplevel: true,
+                    },
+                    module: true,
+                    rename: true,
+                    keep_classnames: false,
+                    keep_fnames: false,
+                },
+            }),
+        ],
+    },
     module: {
         rules: [
             {

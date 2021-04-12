@@ -1,5 +1,5 @@
 import { HEIGHT, WIDTH } from "../../shared/const";
-import { ColorScheme, PixelShape } from "./colorScheme";
+import { ColorScheme, PixelStyle } from "./colorScheme";
 
 export class CanvasTile {
     size: number;
@@ -48,7 +48,7 @@ export class CanvasTile {
         context.fillRect(0, 0, this.size, this.size);
         context.fillStyle = color;
 
-        if (this.colorScheme.shape == PixelShape.rectangular) {
+        if (this.colorScheme.style == PixelStyle.rectangular) {
             context.fillRect(0, 0, pixelSize, pixelSize);
         } else {
             context.arc(pixelSize / 2, pixelSize / 2, pixelSize / 2, 0, 2 * Math.PI, false);
