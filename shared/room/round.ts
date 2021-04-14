@@ -30,7 +30,7 @@ export class Round {
         this.levelIndex = serialized[1];
     }
 
-    getLevel(levelsetIndex: number, levelIndex: number): Level {
+    getLevel(levelsetIndex: number, levelIndex: number): typeof Level {
         return levelsets[levelsetIndex].getLevel(levelIndex);
     }
 }

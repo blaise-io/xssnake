@@ -13,24 +13,25 @@ import { ClientGame } from "../game/clientGame";
 import { ClientState } from "../state/clientState";
 import { PreGameUI } from "../ui/preGame";
 import { WrapupGame } from "../ui/switchRound";
+import { clientImageLoader } from "../util/clientUtil";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 
 export class ClientRound extends Round {
     private game: ClientGame;
     private preGameUI: PreGameUI;
-    private wrapupGameUI: WrapupGame;
+    private wrapupGameUI: WrapupGame = null;
     level: Level;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         super(players, options);
 
-        this.level = new BlankLevel();
-        this.game = new ClientGame(this.level, this.players);
-
         this.preGameUI = new PreGameUI(players, options);
-        this.wrapupGameUI = null;
 
-        this.bindEvents();
+        this.level = new BlankLevel();
+        this.level.load(clientImageLoader).then(() => {
+            this.game = new ClientGame(this.level, this.players);
+            this.bindEvents();
+        });
     }
 
     destruct(): void {
@@ -69,8 +70,11 @@ export class ClientRound extends Round {
 
     updateRound(serializedRound: [number, number]): void {
         this.deserialize(serializedRound);
-        this.level = this.getLevel(this.levelsetIndex, this.levelIndex);
-        this.game.updateLevel(this.level);
+        const Level = this.getLevel(this.levelsetIndex, this.levelIndex);
+        this.level = new Level();
+        this.level.load(clientImageLoader).then(() => {
+            this.game.updateLevel(this.level);
+        });
     }
 
     updateCountdown(serializedStarted: [boolean]): void {

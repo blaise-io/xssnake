@@ -5,7 +5,7 @@ import { Snake } from "../snake";
 import { Collision } from "./collision";
 
 export class SnakeMove {
-    public collision: Collision;
+    collision: Collision;
 
     constructor(
         public snake: Snake,

@@ -1,15 +1,15 @@
 import { levels } from "../data/levels";
 
 export class Config {
-    public level: { imagedata: string; cache?: any };
-    public gravity: Shift;
-    public enableApples: boolean;
-    public enablePowerups: any[];
-    public snakeSize: number;
-    public snakeSpeed: number;
-    public snakeIncrease: number;
-    public pointsApple: number;
-    public pointsKnockout: number;
+    level: { imagedata: string; cache?: any };
+    gravity: Shift;
+    enableApples: boolean;
+    enablePowerups: any[];
+    snakeSize: number;
+    snakeSpeed: number;
+    snakeIncrease: number;
+    pointsApple: number;
+    pointsKnockout: number;
 
     constructor() {
         this.level = levels.blank;

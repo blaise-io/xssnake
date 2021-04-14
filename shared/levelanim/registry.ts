@@ -3,23 +3,23 @@
 // import { setGameTransform } from "../../client/ui/shapeClient";
 
 export class LevelAnimationRegistry {
-    public animations = [];
-    public walls = [];
-    public started = false;
-    public progress = 0;
+    animations = [];
+    walls = [];
+    started = false;
+    progress = 0;
 
-    public register(animation) {
+    register(animation) {
         this.animations.push(animation);
     }
 
-    public update(delta, started) {
+    update(delta, started) {
         this.progress += delta;
         this.started = started;
         this.walls = this.updateAnimations();
         this.updateShapes();
     }
 
-    public updateAnimations() {
+    updateAnimations() {
         const walls = [];
         for (let i = 0, m = this.animations.length; i < m; i++) {
             const shapeCollection = this.updateAnimation(this.animations[i]);
@@ -30,11 +30,11 @@ export class LevelAnimationRegistry {
         return walls;
     }
 
-    public updateAnimation(animation) {
+    updateAnimation(animation) {
         return animation.update(this.progress, this.started);
     }
 
-    public updateShapes(): void {
+    updateShapes(): void {
         for (let i = 0, m = this.walls.length; i < m; i++) {
             if (this.walls[i]) {
                 // this._updateShapes(i, this.walls[i]);

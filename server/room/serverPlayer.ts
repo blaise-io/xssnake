@@ -21,7 +21,7 @@ export class ServerPlayer extends Player {
     emitter: EventEmitter;
     private room: ServerRoom;
     private heartbeat: ServerHeartbeat;
-    public snake: ServerSnake;
+    snake: ServerSnake;
 
     constructor(public server: Server, public connection: ws) {
         super();

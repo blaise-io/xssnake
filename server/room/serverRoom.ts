@@ -3,7 +3,6 @@ import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
 import { ServerOptions } from "./serverOptions";
 import { EventEmitter } from "events";
-import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 import { ServerRoundSet } from "./serverRoundSet";
 

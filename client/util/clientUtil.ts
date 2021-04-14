@@ -123,7 +123,7 @@ export function debounce(fn: CallableFunction, delay = 100): (...args) => void {
     };
 }
 
-export async function getImageData(base64Image: string): Promise<ImageData> {
+export async function clientImageLoader(base64Image: string): Promise<ImageData> {
     return new Promise((resolve) => {
         const canvas = document.createElement("canvas");
         canvas.width = LEVEL.WIDTH;

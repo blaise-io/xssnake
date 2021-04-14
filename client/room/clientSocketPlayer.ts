@@ -15,7 +15,7 @@ import { ClientRoom } from "./clientRoom";
 export class ClientSocketPlayer extends ClientPlayer {
     private SERVER_ENDPOINT: string;
     private connection: WebSocket;
-    public room: ClientRoom;
+    room: ClientRoom;
     private heartbeat: ClientHeartbeat;
 
     constructor(public onopenCallback: CallableFunction) {

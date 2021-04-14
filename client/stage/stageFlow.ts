@@ -18,6 +18,7 @@ import { MainStage } from "../stages/main";
 import { StartGameStage } from "../stages/startGame";
 import { ClientState } from "../state/clientState";
 import { outerBorder, xssnakeHeader } from "../ui/clientShapeGenerator";
+import { fontLoad } from "../ui/font";
 import { animate } from "../ui/shapeClient";
 import { instruct, storage, urlHash } from "../util/clientUtil";
 
@@ -30,10 +31,14 @@ export class StageFlow {
     constructor(stage = MainStage) {
         this._FirstStage = stage;
         this.GameStage = StartGameStage;
-        this.start();
+
+        (async () => {
+            await fontLoad();
+            this.start();
+        })();
     }
 
-    destruct() {
+    destruct(): void {
         this.stage.destruct();
         if (ClientState.player) {
             ClientState.player.destruct();
@@ -43,12 +48,12 @@ export class StageFlow {
         ClientState.canvas.garbageCollect();
     }
 
-    restart() {
+    restart(): void {
         this.destruct();
         this.start();
     }
 
-    start() {
+    start(): void {
         this._history = [];
 
         window.onhashchange = this._hashChange.bind(this);

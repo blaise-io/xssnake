@@ -6,17 +6,16 @@ const TerserPlugin = require("terser-webpack-plugin");
 module.exports = {
     entry: __dirname + "/index.ts",
     optimization: {
-        minimize: true,
+        minimize: !!process.env.production,
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
                     mangle: {
                         toplevel: true,
+                        properties: true,
                     },
                     module: true,
                     rename: true,
-                    keep_classnames: false,
-                    keep_fnames: false,
                 },
             }),
         ],

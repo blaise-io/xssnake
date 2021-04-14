@@ -1,5 +1,4 @@
 import { GAME_LEFT, GAME_TOP } from "../../shared/const";
-import { LevelData } from "../../shared/level/data";
 import { Level } from "../../shared/level/level";
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Shape } from "../../shared/shape";
@@ -8,7 +7,7 @@ import { ClientSnake } from "../game/clientSnake";
 import { ClientState } from "../state/clientState";
 import { setGameTransform } from "../ui/shapeClient";
 import { zoom } from "../ui/transformClient";
-import { getImageData, instruct } from "../util/clientUtil";
+import { clientImageLoader, instruct } from "../util/clientUtil";
 
 export class MenuSnake {
     snake: ClientSnake;
@@ -18,17 +17,17 @@ export class MenuSnake {
     constructor() {
         this.timeouts = [];
 
-        (async () => {
-            this.level = new BlankLevel();
-            this.level.data = new LevelData(await getImageData(this.level.image));
+        this.level = new BlankLevel();
+        this.level.load(clientImageLoader).then(() => {
             ClientState.shapes.level = setGameTransform(new Shape(this.level.data.walls));
-            this.timeouts.push(window.setTimeout(this.move.bind(this), 1500));
 
             this.snake = new ClientSnake(0, false, "", this.level);
             this.snake.addControls();
             this.snake.showDirection();
             this.snake.removeNameAndDirection();
-        })();
+
+            this.timeouts.push(window.setTimeout(() => this.move(), 1500));
+        });
     }
 
     destruct(): void {

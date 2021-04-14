@@ -6,7 +6,7 @@ import { sort } from "./util";
  * I tried using Uint8Array, but performance was bad.
  */
 export class PixelCollection {
-    public pixels: number[][];
+    pixels: number[][];
 
     constructor(pixels = []) {
         this.pixels = pixels;

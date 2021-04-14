@@ -3,26 +3,22 @@ import { randomArrIndex } from "../util";
 import { Config } from "./config";
 
 export class Levelset {
-    public title: string;
-    public levels: Level[];
-    public loaded: boolean;
+    title: string;
+    levels: typeof Level[] = [];
+    loaded = false;
 
-    constructor() {
-        this.title = "";
-        this.levels = [];
-        this.loaded = false;
-    }
+    constructor() {}
 
     getConfig(): Config {
         return new Config();
     }
 
-    getLevel(index: number): Level {
+    getLevel(index: number): typeof Level {
         return this.levels[index];
     }
 
     register(LevelClass: typeof Level): void {
-        this.levels.push(new LevelClass());
+        this.levels.push(LevelClass);
     }
 
     // preload(continueFn: CallableFunction) {

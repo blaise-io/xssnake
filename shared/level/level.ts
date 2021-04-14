@@ -16,14 +16,21 @@ export class LevelConfig {
 }
 
 export class Level {
-    public image: string;
-    public data: LevelData;
+    image: string;
+    data: LevelData;
+    config: LevelConfig;
+    animations: LevelAnimationRegistry;
+    gravity: LevelGravity;
 
-    constructor(
-        public config = new LevelConfig(),
-        public animations = new LevelAnimationRegistry(),
-        public gravity = new LevelGravity()
-    ) {}
+    constructor() {
+        this.config = new LevelConfig();
+        this.animations = new LevelAnimationRegistry();
+        this.gravity = new LevelGravity();
+    }
+
+    async load(loader: (string) => Promise<ImageData>): Promise<void> {
+        this.data = new LevelData(await loader(this.image));
+    }
 
     destruct(): void {
         this.config = null;

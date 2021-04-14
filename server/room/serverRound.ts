@@ -12,6 +12,7 @@ import { levelsets } from "../../shared/data/levelsets";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import { ServerGame } from "../game/serverGame";
+import { serverImageLoader } from "../level/serverImageLoader";
 import { LevelPlayset } from "./playset";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
@@ -105,10 +106,13 @@ export class ServerRound extends Round {
 
     startRound(): void {
         this.unbindEvents();
-        this.level = this.getLevel(this.levelsetIndex, this.levelIndex);
-        this.game = new ServerGame(this.roomEmitter, this.level, this.players);
-        this.started = true;
-        this.players.emit(NC_ROUND_START);
+        const Level = this.getLevel(this.levelsetIndex, this.levelIndex);
+        this.level = new Level();
+        this.level.load(serverImageLoader).then(() => {
+            this.game = new ServerGame(this.roomEmitter, this.level, this.players);
+            this.started = true;
+            this.players.emit(NC_ROUND_START);
+        });
     }
 
     handleManualRoomStart(event: number, player: ServerPlayer): void {

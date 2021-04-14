@@ -1,7 +1,7 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { shift } from "../../shared/transform";
-import { UC_SQUARE } from "../const";
+import { UC_HOURGLASS, UC_SQUARE } from "../const";
 
 export const MAX_WIDTH = 9;
 export const MAX_HEIGHT = 7;
@@ -310,4 +310,16 @@ function _getChrProperties(chr) {
 
     valid = len && blurry / len <= BLURRY_TRESHOLD;
     return valid ? { width: width, pixels: pixels } : null;
+}
+
+export function fontLoad(): Promise<void> {
+    return new Promise((resolve) => {
+        const interval = window.setInterval(() => {
+            const props = _getChrProperties(UC_HOURGLASS);
+            if (props && props.width === 8) {
+                window.clearInterval(interval);
+                resolve();
+            }
+        });
+    });
 }

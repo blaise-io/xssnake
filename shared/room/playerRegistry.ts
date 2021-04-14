@@ -1,7 +1,7 @@
 import { Player } from "./player";
 
 export class PlayerRegistry {
-    public players: Player[];
+    players: Player[];
 
     constructor() {
         this.players = [];

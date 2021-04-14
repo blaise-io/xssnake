@@ -5,7 +5,7 @@ import { ServerPlayer } from "./serverPlayer";
 
 export class ServerPlayerRegistry extends PlayerRegistry {
     private averageLatencyInTicks: number;
-    public players: ServerPlayer[];
+    players: ServerPlayer[];
 
     constructor() {
         super();

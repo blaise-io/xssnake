@@ -21,7 +21,7 @@ export class InputStage {
     private _shape: Shape;
     private fontOptions = { wrap: MENU_LEFT + MENU_WIDTH - 25 };
     private _inputTop = MENU_TOP + 17;
-    public value: string;
+    value: string;
     private input: InputField;
 
     constructor() {

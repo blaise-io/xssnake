@@ -150,7 +150,7 @@ export class Canvas {
         this._prevFrame = now;
 
         // Show FPS in title bar
-        this.reportFps(1000 / delta);
+        // this.reportFps(1000 / delta);
 
         this.paint(delta);
     }

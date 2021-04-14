@@ -1,4 +1,3 @@
-import { levelUtil } from "./level/levelUtil";
 import { EventHandler } from "./netcode/eventHandler";
 import { StageFlow } from "./stage/stageFlow";
 import { ClientState } from "./state/clientState";
@@ -6,8 +5,6 @@ import { AudioPlayer } from "./ui/audioPlayer";
 import { Canvas } from "./ui/canvas";
 
 (async () => {
-    await levelUtil();
-
     ClientState.shapes = {};
     ClientState.events = new EventHandler();
     ClientState.canvas = new Canvas();
