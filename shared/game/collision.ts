@@ -1,5 +1,5 @@
 export class Collision {
-    private tick: number;
+    tick: number;
 
     constructor(public location: Coordinate, public into: number) {
         this.tick = 0;

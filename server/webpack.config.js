@@ -1,17 +1,20 @@
 /* eslint-disable */
-const nodeExternals = require("webpack-node-externals");
 const webpack = require("webpack");
 
 module.exports = {
     entry: __dirname + "/index.ts",
-    target: "node", // in order to ignore built-in modules like path, fs, etc.
-    externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+    target: "node",
+    externals: ["ws"],
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /\.ts$/,
                 use: "ts-loader",
                 exclude: /node_modules/,
+            },
+            {
+                test: /\.png$/,
+                type: "asset/inline",
             },
         ],
     },

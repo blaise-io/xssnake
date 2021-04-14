@@ -56,18 +56,18 @@ export class LevelData {
 
     /**
      * Translate coordinate to game coordinate system.
+     * TODO: Why is not everything in game system on server?
      */
     convertToGameSystem(coordinate: Coordinate, translate: Shift): Coordinate {
-        let tx;
-        let ty;
         if (__IS_CLIENT__) {
-            tx = (translate[0] - GAME_LEFT) / GAME_TILE;
-            ty = (translate[1] - GAME_TOP) / GAME_TILE;
+            const tx = (translate[0] - GAME_LEFT) / GAME_TILE;
+            const ty = (translate[1] - GAME_TOP) / GAME_TILE;
+            return [coordinate[0] - tx, coordinate[1] - ty];
         } else {
-            tx = translate[0] / GAME_TILE;
-            ty = translate[1] / GAME_TILE;
+            const tx = translate[0] / GAME_TILE;
+            const ty = translate[1] / GAME_TILE;
+            return [coordinate[0] - tx, coordinate[1] - ty];
         }
-        return [coordinate[0] - tx, coordinate[1] - ty];
     }
 
     getSpawn(playerID: number): Coordinate {
