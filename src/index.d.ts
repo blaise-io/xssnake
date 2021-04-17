@@ -4,6 +4,11 @@ type Shift = [number, number];
 type WebsocketData = (string | number | (string | number)[])[];
 type UntrustedData = unknown;
 
+declare module "*.css" {
+    const content: string;
+    export default content;
+}
+
 declare module "*.mp3" {
     const content: string;
     export default content;

@@ -1,3 +1,4 @@
+import "./assets/xssnake.css";
 import { EventHandler } from "./netcode/eventHandler";
 import { StageFlow } from "./stage/stageFlow";
 import { ClientState } from "./state/clientState";

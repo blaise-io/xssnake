@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'xssnake';
-    src: url('xssnake.woff') format('woff');
+    src: url('./xssnake.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
