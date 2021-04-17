@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "outDir": "../../build",
+    "module": "es6",
+    "moduleResolution": "node",
+    "allowJs": false,
+    "target": "es6"
+  },
+  "typeRoots": [
+    "../../node_modules/@types",
+    "node_modules/@types"
+  ],
+  "include": [
+    "*/**.ts",
+    "../index.d.ts"
+  ]
+}

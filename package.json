@@ -39,11 +39,11 @@
     "node": ">= 0.6"
   },
   "scripts": {
-    "client": "webpack --mode development --watch --config client/webpack.config.js",
-    "client.production": "webpack --mode production --config client/webpack.config.js",
-    "server": "webpack --mode development --watch --config server/webpack.config.js",
+    "client": "webpack --mode development --watch --config src/client/webpack.config.js",
+    "client.production": "webpack --mode production --config src/client/webpack.config.js",
+    "server": "webpack --mode development --watch --config src/server/webpack.config.js",
     "lint": "eslint . --fix --ext .ts; prettier --write '**/*.ts'",
-    "start": "node server/start.js",
+    "start": "node src/server/start.js",
     "restart": "supervisor --watch server,shared build/server.js"
   }
 }
