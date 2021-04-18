@@ -1,4 +1,3 @@
-// Debug URL: debug.html?debug=LinesLevel
 import { levels } from "../../shared/data/levels";
 import { Levelset } from "../../shared/levelset/levelset";
 import { ClientGame } from "../game/clientGame";
@@ -7,8 +6,8 @@ import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { ClientState } from "../state/clientState";
 
-const match = location.search.match(/debug=(.+Level)$/);
-if (match) {
+export function debugLevel(): void {
+    const match = location.search.match(/debug=(.+Level)$/);
     ClientState.menuSnake = new NeuteredMenuSnake();
 
     document.addEventListener("DOMContentLoaded", function () {

@@ -5,7 +5,7 @@ import { ClientState } from "../state/clientState";
 import { font, fontPixels } from "../ui/font";
 import { zoom } from "../ui/transformClient";
 
-if (location.search.match(/debug=font/)) {
+export function debugFont(): void {
     ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         ClientState.flow.destruct();

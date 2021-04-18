@@ -1,10 +1,13 @@
-// Debug URL: client.html?debug=dialog
-import { Dialog } from "../ui/dialog";
+import { Dialog, DialogType } from "../ui/dialog";
 
-if (location.search.match(/debug=dialog/)) {
-    window.setTimeout(function () {
-        new Dialog("HEADER TITLE", "Body text lol", {
-            type: Dialog.TYPE.ALERT,
-        });
-    }, 500);
+export function debugDialog(): void {
+    new Dialog("HEADER TITLE", "Body text lol", {
+        type: DialogType.CONFIRM,
+        cancel: () => {
+            console.log("Cancel");
+        },
+        ok: () => {
+            console.log("OK");
+        },
+    });
 }

@@ -1,9 +1,8 @@
-// Debug URL: client.html?debug=tab
 import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
 
-if (location.search.match(/debug=tab/)) {
+export function debugTab(): void {
     ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         ClientState.shapes = {};

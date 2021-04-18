@@ -39,7 +39,7 @@ export class AutoJoinWizard {
     onconnect() {
         window.setTimeout(
             function () {
-                this.dialog.setBody(COPY_AUTOJOIN_FETCHING);
+                this.dialog.body = COPY_AUTOJOIN_FETCHING;
                 window.setTimeout(this.getAutoJoinRoomStatus.bind(this), 500);
             }.bind(this),
             500

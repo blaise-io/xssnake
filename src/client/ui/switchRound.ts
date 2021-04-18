@@ -53,7 +53,7 @@ export class WrapupGame {
         this.countdownInterval = window.setInterval(
             function () {
                 ClientState.audio.play("menu_alt");
-                this.dialog.setBody(this.getBody());
+                this.dialog.body = this.getBody();
             }.bind(this),
             1000
         );

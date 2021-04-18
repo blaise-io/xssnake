@@ -1,4 +1,3 @@
-// Debug URL: client.html?debug=tab
 import { Player } from "../../shared/room/player";
 import { getRandomName, randomRange, randomStr } from "../../shared/util";
 import { COPY_CHAT_INSTRUCT } from "../copy/copy";
@@ -10,7 +9,7 @@ import { ClientState } from "../state/clientState";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
-if (location.search.match(/debug=messages/)) {
+export function debugMessages(): void {
     ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         const messages = [];

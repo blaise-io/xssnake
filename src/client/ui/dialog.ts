@@ -1,4 +1,3 @@
-import { HEIGHT } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
@@ -22,6 +21,20 @@ import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";
 import { center } from "./shapeClient";
 import { outline, zoom } from "./transformClient";
 
+export enum DialogType {
+    INFO, // No buttons, not closable
+    ALERT, // OK button, closable
+    CONFIRM, // OK and CANCEL button
+}
+
+export interface DialogSettings {
+    keysBlocked?: boolean;
+    type?: DialogType;
+    width?: number;
+    ok?: () => void;
+    cancel?: () => void;
+}
+
 /**
  * @param {string} header
  * @param {string} body
@@ -29,18 +42,18 @@ import { outline, zoom } from "./transformClient";
  * @constructor
  */
 export class Dialog {
-    private settings: any;
-    private _body: any;
+    private settings: DialogSettings;
+    private _body: string;
     private _okSelected: boolean;
 
-    constructor(public header: string, public body: string, settings = {}) {
+    constructor(public header: string, body: string, settings: DialogSettings = {}) {
         this.header = header.toUpperCase();
         this._body = body;
 
         // TODO: Make class.
         this.settings = {
             keysBlocked: true,
-            type: Dialog.TYPE.INFO,
+            type: DialogType.INFO,
             width: 80,
             ok: () => {},
             cancel: () => {},
@@ -53,30 +66,23 @@ export class Dialog {
         // TODO: Play a bubble sound
     }
 
-    /** @enum {number} */
-    static TYPE = {
-        INFO: 0, // No buttons, not closable
-        ALERT: 1, // OK button, closable
-        CONFIRM: 2, // OK and CANCEL button
-    };
-
-    destruct() {
+    destruct(): void {
         ClientState.shapes.dialog = null;
         ClientState.keysBlocked = false;
         ClientState.events.off(DOM_EVENT_KEYDOWN, NS_DIALOG);
     }
 
-    restore() {
+    restore(): void {
         this._bindEvents();
         this._updateShape();
     }
 
-    ok() {
+    ok(): void {
         this.destruct();
         this.settings.ok();
     }
 
-    cancel() {
+    cancel(): void {
         this.destruct();
         this.settings.cancel();
     }
@@ -90,42 +96,33 @@ export class Dialog {
     //        this._updateShape();
     //    }
     //
-    /**
-     * @param {string} body
-     */
-    setBody(body): void {
+
+    set body(body: string) {
         ClientState.audio.play("menu_alt");
         this._body = body;
         this._updateShape();
     }
 
-    /**
-     * @private
-     */
-    _bindEvents() {
+    private _bindEvents(): void {
         ClientState.keysBlocked = this.settings.keysBlocked;
-        if (this.settings.type !== Dialog.TYPE.INFO) {
+        if (this.settings.type !== DialogType.INFO) {
             ClientState.events.on(DOM_EVENT_KEYDOWN, NS_DIALOG, this._handleKeys.bind(this));
         }
-        if (this.settings.type === Dialog.TYPE.ALERT) {
+        if (this.settings.type === DialogType.ALERT) {
             this._okSelected = true;
-        } else if (this.settings.type === Dialog.TYPE.CONFIRM) {
+        } else if (this.settings.type === DialogType.CONFIRM) {
             this._okSelected = false;
         }
     }
 
-    /**
-     * @param {Event} ev
-     * @private
-     */
-    _handleKeys(ev): void {
+    private _handleKeys(ev: KeyboardEvent): void {
         switch (ev.keyCode) {
             case KEY_LEFT:
             case KEY_UP:
             case KEY_DOWN:
             case KEY_RIGHT:
             case KEY_TAB:
-                if (this.settings.type === Dialog.TYPE.CONFIRM) {
+                if (this.settings.type === DialogType.CONFIRM) {
                     ClientState.audio.play("menu_alt");
                     this._okSelected = !this._okSelected;
                     this._updateShape();
@@ -133,7 +130,7 @@ export class Dialog {
                 break;
             case KEY_BACKSPACE:
             case KEY_ESCAPE:
-                if (this.settings.type === Dialog.TYPE.CONFIRM) {
+                if (this.settings.type === DialogType.CONFIRM) {
                     this.cancel();
                 } else {
                     this.ok();
@@ -150,138 +147,71 @@ export class Dialog {
         }
     }
 
-    /**
-     * @return {number}
-     * @private
-     */
-    _getAreaHeight() {
-        //        if (remoteRoom && remoteRoom.rounds.round.game && remoteRoom.rounds.round.game.level) {
-        //            return remoteRoom.rounds.round.game.level.data.height * GAME_TILE;
-        //        } else {
-        //            return HEIGHT;
-        //        }
-        return Math.round((HEIGHT / 3) * 2);
-    }
-
-    /**
-     * @return {number}
-     * @private
-     */
-    _getContentWidth() {
+    private _getContentWidth(): number {
         return Math.max(this.settings.width, -2 + fontWidth(this.header) * 2);
     }
 
-    /**
-     * @return {number}
-     * @private
-     */
-    _getButtonPosition() {
+    private _getButtonPosition(): number {
         const bodyBBox = this._getBodyPixels().bbox();
         return MAX_HEIGHT * 3 + bodyBBox.height + 4;
     }
 
-    /**
-     * @return {PixelCollection}
-     * @private
-     */
-    _getHeaderPixels() {
+    private _getHeaderPixels(): PixelCollection {
         let header;
         header = fontPixels(this.header, 0, 0);
         header = zoom(2, header, 0, 0);
         return header;
     }
 
-    /**
-     * @return {PixelCollection}
-     * @private
-     */
-    _getBodyPixels() {
+    private _getBodyPixels(): PixelCollection {
         let y;
         const settings = { wrap: this._getContentWidth() };
         y = 1 + MAX_HEIGHT * 2;
         return fontPixels(this._body, 0, y, settings);
     }
 
-    /**
-     * @param {number} y
-     * @return {PixelCollection}
-     * @private
-     */
-    _getLine(y): void {
+    private _getLine(y: number): PixelCollection {
         return line(0, y - 5, this._getContentWidth(), y - 5);
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {PixelCollection}
-     * @private
-     */
-    _getCancelButton(x, y): PixelCollection {
+    private _getCancelButton(x: number, y: number): PixelCollection {
         const settings = { invert: !this._okSelected };
         return fontPixels(COPY_DIALOG_CANCEL, x, y, settings);
     }
 
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @return {PixelCollection}
-     * @private
-     */
-    _getOkButton(x, y): PixelCollection {
+    private _getOkButton(x: number, y: number): PixelCollection {
         const settings = { invert: this._okSelected };
         return fontPixels(COPY_DIALOG_OK, x, y, settings);
     }
 
-    /**
-     * @return {PixelCollection}
-     * @private
-     */
-    _getAlertPixels() {
-        let y;
-        let ok;
-        let line;
-
-        y = this._getButtonPosition();
-        ok = this._getOkButton(1, y);
-        line = this._getLine(y);
+    private _getAlertPixels(): PixelCollection {
+        const y = this._getButtonPosition();
+        const ok = this._getOkButton(1, y);
+        const line = this._getLine(y);
 
         return new Shape(ok, line).pixels;
     }
 
-    /**
-     * @return {PixelCollection}
-     * @private
-     */
-    _getConfirmPixels() {
-        let x;
-        let y;
-        let cancel;
-        let ok;
-        let line;
-
-        x = fontWidth(COPY_DIALOG_CANCEL) + 5;
-        y = this._getButtonPosition();
-        cancel = this._getCancelButton(1, y);
-        ok = this._getOkButton(x, y);
-        line = this._getLine(y);
+    private _getConfirmPixels(): PixelCollection {
+        const x = fontWidth(COPY_DIALOG_CANCEL) + 5;
+        const y = this._getButtonPosition();
+        const cancel = this._getCancelButton(1, y);
+        const ok = this._getOkButton(x, y);
+        const line = this._getLine(y);
 
         return new Shape(ok, cancel, line).pixels;
     }
 
-    /**
-     * @private
-     */
-    _updateShape() {
+    private _updateShape(): void {
         let buttons = new PixelCollection();
         const header = this._getHeaderPixels();
         const body = this._getBodyPixels();
 
         switch (this.settings.type) {
-            case Dialog.TYPE.ALERT:
+            case DialogType.ALERT:
                 buttons = this._getAlertPixels();
                 break;
-            case Dialog.TYPE.CONFIRM:
+            case DialogType.CONFIRM:
                 buttons = this._getConfirmPixels();
                 break;
         }
@@ -291,7 +221,7 @@ export class Dialog {
         shape.transform.translate[1] = MENU_TOP - 2;
 
         outline(shape);
-        center(shape, 0, 0);
+        center(shape);
 
         ClientState.shapes.dialog = shape;
     }

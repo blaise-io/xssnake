@@ -1,4 +1,5 @@
 import "./assets/xssnake.css";
+import { runDebug } from "./debug/_index";
 import { EventHandler } from "./netcode/eventHandler";
 import { StageFlow } from "./stage/stageFlow";
 import { ClientState } from "./state/clientState";
@@ -16,6 +17,9 @@ import { Canvas } from "./ui/canvas";
         console.error(error);
         ClientState.canvas.error = true; // Stop the paint!
     };
+
+    // TODO: Exclude in production build.
+    runDebug();
 })();
 
 console.log(`Running XSSnake client version ${ENV_VERSION}.`);

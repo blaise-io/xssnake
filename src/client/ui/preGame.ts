@@ -16,7 +16,7 @@ import {
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ClientState } from "../state/clientState";
 import { format } from "../util/clientUtil";
-import { Dialog } from "./dialog";
+import { Dialog, DialogType } from "./dialog";
 
 export class PreGameUI {
     private dialog: Dialog;
@@ -115,7 +115,7 @@ export class PreGameUI {
 
     showConfirmExitDialog(): void {
         const settings = {
-            type: Dialog.TYPE.CONFIRM,
+            type: DialogType.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
             ok: function () {
                 this.destruct();
@@ -134,7 +134,7 @@ export class PreGameUI {
 
     showConfirmStartDialog(): void {
         const settings = {
-            type: Dialog.TYPE.CONFIRM,
+            type: DialogType.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
             ok: function () {
                 ClientState.player.emit(NC_ROOM_START);
