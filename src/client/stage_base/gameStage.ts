@@ -16,22 +16,22 @@ import { font } from "../ui/font";
 import { center, flash, lifetime } from "../ui/shapeClient";
 import { storage } from "../util/clientUtil";
 
-export class Game {
+export class GameStage {
     constructor() {}
 
-    getShape() {
+    getShape(): Shape {
         return new Shape();
     }
 
-    getData() {
+    getData(): Record<string, unknown> {
         return {};
     }
 
-    construct() {
+    construct(): void {
         this.connectServer();
     }
 
-    destruct() {
+    destruct(): void {
         if (ClientState.player) {
             if (ClientState.player.room) {
                 ClientState.player.room.destruct();

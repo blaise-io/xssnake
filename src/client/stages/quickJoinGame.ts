@@ -1,11 +1,11 @@
 import { NC_PLAYERS_SERIALIZE, NC_ROOM_JOIN_ERROR, NC_ROOM_JOIN_KEY } from "../../shared/const";
 import { NS_STAGES } from "../const";
 import { COPY_ERROR } from "../copy/copy";
-import { Game } from "../stage_base/gameStage";
+import { GameStage } from "../stage_base/gameStage";
 import { ClientState } from "../state/clientState";
 import { error } from "../util/clientUtil";
 
-export class QuickJoinGame extends Game {
+export class QuickJoinGame extends GameStage {
     connectServer() {
         ClientState.player.room.setupComponents();
         // ClientState.player.emit(NC_PLAYER_NAME, [this.getPlayerName()]);

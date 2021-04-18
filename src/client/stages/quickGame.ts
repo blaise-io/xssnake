@@ -1,7 +1,7 @@
 import { ClientOptions } from "../room/options";
-import { Game } from "../stage_base/gameStage";
+import { GameStage } from "../stage_base/gameStage";
 
-export class QuickGame extends Game {
+export class QuickGame extends GameStage {
     getSerializedGameOptions() {
         const options = new ClientOptions();
         options.isQuickGame = true;

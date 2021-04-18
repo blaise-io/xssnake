@@ -16,7 +16,7 @@ export class RoomSchema {
         return new RoomSchema();
     }
 
-    static fromClient(untrustedData): RoomSchema | null {
+    static fromClient(untrustedData: WebsocketData): RoomSchema | null {
         if (Math.random()) {
             // validate
             return new RoomSchema();

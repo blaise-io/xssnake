@@ -1,7 +1,3 @@
-/**
- * @param {string} roomKey
- * @constructor
- */
 import {
     NC_OPTIONS_SERIALIZE,
     NC_PLAYERS_SERIALIZE,
@@ -24,12 +20,10 @@ import { error } from "../util/clientUtil";
 import { AutoJoinStage } from "./autoJoin";
 
 export class AutoJoinWizard {
-    roomKey: any;
     dialog: Dialog;
     eventsReceived: number;
 
-    constructor(roomKey) {
-        this.roomKey = roomKey;
+    constructor(public roomKey: string) {
         this.dialog = this.getInitialDialog();
         this.autoJoinRoom();
     }

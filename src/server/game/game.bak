@@ -14,7 +14,7 @@ game.Game = function(round, levelIndex) {
     this.options = this.room.options;
 
     this.spawner = new game.Spawner(this);
-    this.model = new model.Game();
+    this.model = new model.GameStage();
 
     /** @type {Array.<number>} */
     this.timeouts = [];
@@ -25,7 +25,7 @@ game.Game = function(round, levelIndex) {
     this._mainGameLoopBound = this._serverGameLoop.bind(this);
 };
 
-game.Game.prototype = {
+game.GameStage.prototype = {
 
     destruct: function() {
         this.stop();

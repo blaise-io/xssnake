@@ -1,6 +1,6 @@
-import { Game } from "../stage_base/gameStage";
+import { GameStage } from "../stage_base/gameStage";
 
-export class StartGameStage extends Game {
+export class StartGameStage extends GameStage {
     constructor() {
         super();
     }
