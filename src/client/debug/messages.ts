@@ -4,13 +4,11 @@ import { COPY_CHAT_INSTRUCT } from "../copy/copy";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
-import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { ClientState } from "../state/clientState";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
 export function debugMessages(): void {
-    ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         const messages = [];
         const author = new Player("Dummy");

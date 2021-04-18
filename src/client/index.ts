@@ -11,7 +11,6 @@ import { Canvas } from "./ui/canvas";
     ClientState.events = new EventHandler();
     ClientState.canvas = new Canvas();
     ClientState.audio = new AudioPlayer();
-    ClientState.flow = new StageFlow();
 
     window.onerror = (error) => {
         console.error(error);
@@ -20,6 +19,8 @@ import { Canvas } from "./ui/canvas";
 
     // TODO: Exclude in production build.
     runDebug();
+
+    ClientState.flow = new StageFlow();
 })();
 
 console.log(`Running XSSnake client version ${ENV_VERSION}.`);

@@ -4,6 +4,7 @@
  * @constructor
  * @extends {room.Player}
  */
+import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
 import { ClientSnake } from "../game/clientSnake";
 
@@ -27,13 +28,10 @@ export class ClientPlayer extends Player {
         }
     }
 
-    /**
-     * @param {number} index
-     * @param {level.Level} level
-     */
-    setSnake(index, level): void {
+    setSnake(index: number, level: Level): void {
         this.snake = new ClientSnake(index, this.local, this.name, level);
     }
+
     unsetSnake() {
         if (this.snake) {
             this.snake.destruct();

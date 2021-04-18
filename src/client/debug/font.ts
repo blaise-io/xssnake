@@ -1,12 +1,10 @@
 import { Shape } from "../../shared/shape";
 import { benchmark } from "../../shared/util";
-import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { ClientState } from "../state/clientState";
 import { font, fontPixels } from "../ui/font";
 import { zoom } from "../ui/transformClient";
 
 export function debugFont(): void {
-    ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         ClientState.flow.destruct();
         const text = [

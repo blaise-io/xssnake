@@ -1,9 +1,7 @@
-import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
 
 export function debugTab(): void {
-    ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         ClientState.shapes = {};
         const text = [

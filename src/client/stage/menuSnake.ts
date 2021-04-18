@@ -14,20 +14,22 @@ export class MenuSnake {
     timeouts: number[];
     level: Level;
 
-    constructor() {
+    constructor(level?: typeof Level) {
         this.timeouts = [];
 
-        this.level = new BlankLevel();
+        this.level = level ? new level() : new BlankLevel();
         this.level.load(clientImageLoader).then(() => {
             ClientState.shapes.level = setGameTransform(new Shape(this.level.data.walls));
-
-            this.snake = new ClientSnake(0, false, "", this.level);
-            this.snake.addControls();
-            this.snake.showDirection();
-            this.snake.removeNameAndDirection();
-
-            this.timeouts.push(window.setTimeout(() => this.move(), 1500));
+            this.spawnSnake();
         });
+    }
+
+    spawnSnake(): void {
+        this.snake = new ClientSnake(0, false, "", this.level);
+        this.snake.addControls();
+        this.snake.showDirection();
+        this.snake.removeNameAndDirection();
+        this.timeouts.push(window.setTimeout(() => this.move(), 1500));
     }
 
     destruct(): void {
@@ -87,7 +89,5 @@ export class MenuSnake {
 }
 
 export class NeuteredMenuSnake extends MenuSnake {
-    construct(): void {
-        this.snake = null;
-    }
+    spawnSnake(): void {}
 }

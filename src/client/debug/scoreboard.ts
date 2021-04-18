@@ -2,13 +2,11 @@ import { Player } from "../../shared/room/player";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
-import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { ClientState } from "../state/clientState";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
 export function debugScoreboard(): void {
-    ClientState.menuSnake = new NeuteredMenuSnake();
     setTimeout(function () {
         ClientState.flow.destruct();
 

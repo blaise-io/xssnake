@@ -1,31 +1,36 @@
-import { levels } from "../../shared/data/levels";
-import { Levelset } from "../../shared/levelset/levelset";
+import { CrosshairLevel } from "../../shared/levels/debug/crosshair";
+import { LinesLevel } from "../../shared/levels/debug/lines";
 import { ClientGame } from "../game/clientGame";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { NeuteredMenuSnake } from "../stage/menuSnake";
 import { ClientState } from "../state/clientState";
+import { clientImageLoader } from "../util/clientUtil";
 
 export function debugLevel(): void {
-    const match = location.search.match(/debug=(.+Level)$/);
-    ClientState.menuSnake = new NeuteredMenuSnake();
+    const levels = Object.fromEntries([
+        ["lines", LinesLevel],
+        ["crosshair", CrosshairLevel],
+    ]);
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const player = new ClientPlayer();
-        player.local = true;
+    const levelName: string =
+        new URL(window.location.href).searchParams.get("level") ||
+        prompt(`&level=${Object.keys(levels).join("|")}`);
 
-        const players = new ClientPlayerRegistry();
-        players.add(player);
-        players.localPlayer = player;
+    window.setTimeout(() => {
+        ClientState.flow.destruct();
 
-        const levelObject = match[1];
-        const levelset = new Levelset();
-        const level = new levels[levelObject](levelset.getConfig());
-
-        level.preload(function () {
-            ClientState.flow.destruct();
+        const level = new levels[levelName]();
+        level.load(clientImageLoader).then(() => {
+            const players = new ClientPlayerRegistry();
             const game = new ClientGame(level, players);
+
+            players.localPlayer = new ClientPlayer();
+            players.localPlayer.local = true;
+            players.localPlayer.setSnake(0, level);
+
+            players.players = [players.localPlayer];
+
             game.start();
         });
-    });
+    }, 100);
 }

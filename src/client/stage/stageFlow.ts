@@ -24,7 +24,7 @@ import { instruct, storage, urlHash } from "../util/clientUtil";
 
 export class StageFlow {
     GameStage: any;
-    private stage: any;
+    stage: any;
     private _history: any[];
     private _FirstStage: any;
 
