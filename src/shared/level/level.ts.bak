@@ -29,7 +29,7 @@ export class Level {
     //  * TODO: Create and add to level.ClientLevel instead.
     //  */
     // public destruct() {
-    //     if (__IS_CLIENT__) {
+    //     if (ENV_IS_CLIENT) {
     //         State.shapes.level = null;
     //         State.shapes.innerborder = null;
     //         State.shapes.outerBorderLeft = null;
@@ -44,7 +44,7 @@ export class Level {
     //  * TODO: Create and add to level.ClientLevel instead.
     //  */
     // public paint() {
-    //     if (__IS_CLIENT__) {
+    //     if (ENV_IS_CLIENT) {
     //         State.shapes.level = new Shape(this.data.walls);
     //         setGameTransform(State.shapes.level);
     //         State.shapes.innerborder = innerBorder();

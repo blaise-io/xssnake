@@ -6,17 +6,14 @@ import {
     COPY_SOCKET_CONNECTION_LOST,
     COPY_SOCKET_SERVER_AWAY,
 } from "../copy/copy";
-import { ClientHeartbeat } from "../netcode/heartbeat";
 import { ClientState } from "../state/clientState";
 import { error } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientRoom } from "./clientRoom";
 
 export class ClientSocketPlayer extends ClientPlayer {
-    private SERVER_ENDPOINT: string;
     private connection: WebSocket;
     room: ClientRoom;
-    private heartbeat: ClientHeartbeat;
 
     constructor(public onopenCallback: CallableFunction) {
         super("");
@@ -32,12 +29,6 @@ export class ClientSocketPlayer extends ClientPlayer {
 
     destruct(): void {
         this.connected = false;
-
-        if (this.heartbeat) {
-            this.heartbeat.destruct();
-            this.heartbeat = null;
-        }
-
         this.connection.onopen = null;
         this.connection.onclose = null;
         this.connection.onerror = null;
@@ -55,7 +46,7 @@ export class ClientSocketPlayer extends ClientPlayer {
     onopen(): void {
         this.connected = true;
         this.onopenCallback();
-        this.heartbeat = new ClientHeartbeat(this);
+        // TODO: spam server to see if still connected?
     }
 
     onclose(): void {

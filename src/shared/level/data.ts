@@ -59,7 +59,7 @@ export class LevelData {
      * TODO: Why is not everything in game system on server?
      */
     convertToGameSystem(coordinate: Coordinate, translate: Shift): Coordinate {
-        if (__IS_CLIENT__) {
+        if (ENV_IS_CLIENT) {
             const tx = (translate[0] - GAME_LEFT) / GAME_TILE;
             const ty = (translate[1] - GAME_TOP) / GAME_TILE;
             return [coordinate[0] - tx, coordinate[1] - ty];

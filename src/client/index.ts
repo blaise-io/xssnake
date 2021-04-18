@@ -17,3 +17,5 @@ import { Canvas } from "./ui/canvas";
         ClientState.canvas.error = true; // Stop the paint!
     };
 })();
+
+console.log(`Running XSSnake client version ${ENV_VERSION}.`);

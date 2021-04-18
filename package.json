@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "html-webpack-plugin": "5.3.1",
-    "pngparse": "2.0.1",
+    "pngjs": "6.0.0",
     "ts-loader": "8.1.0",
     "typescript": "4.2.3",
     "webpack": "5.33.2",
@@ -46,7 +46,7 @@
     "client.production": "webpack --mode production --config src/client/webpack.config.js",
     "server": "webpack --mode development --watch --config src/server/webpack.config.js",
     "lint": "eslint . --fix --ext .ts; prettier --write '**/*.ts'",
-    "start": "node src/server/start.js",
-    "restart": "supervisor --watch server,shared build/server.js"
+    "start": "node dist/server.js --throw-deprecation",
+    "restart": "supervisor --watch dist/server.js dist/server.js"
   }
 }

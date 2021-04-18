@@ -92,7 +92,7 @@ export class ServerGame {
     getAverageLatencyInTicks() {
         const latencies = [];
         for (let i = 0, m = this.players.players.length; i < m; i++) {
-            latencies.push(this.players[i].player.heartbeat.latency);
+            latencies.push(this.players[i].client.latency);
         }
         return Math.round(average(latencies) / SERVER_TICK_INTERVAL);
     }

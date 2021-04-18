@@ -48,7 +48,8 @@ module.exports = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            __IS_CLIENT__: true,
+            ENV_IS_CLIENT: true,
+            ENV_VERSION: JSON.stringify(process.env.npm_package_version),
         }),
         new MiniCssExtractPlugin(),
         new HtmlWebpackPlugin({

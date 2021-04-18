@@ -1,4 +1,6 @@
-declare let __IS_CLIENT__: boolean;
+declare let ENV_IS_CLIENT: boolean;
+declare let ENV_VERSION: string;
+
 type Coordinate = [number, number];
 type Shift = [number, number];
 type WebsocketData = (string | number | (string | number)[])[];

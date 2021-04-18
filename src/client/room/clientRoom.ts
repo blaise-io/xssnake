@@ -1,6 +1,3 @@
-/**
- * @constructor
- */
 import {
     NC_OPTIONS_SERIALIZE,
     NC_PLAYERS_SERIALIZE,
