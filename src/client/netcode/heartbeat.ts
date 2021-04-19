@@ -1,5 +1,5 @@
 // import { HEARTBEAT_INTERVAL_MS, NC_PING, NC_PONG } from "../../shared/const";
-// import { NS_HEARTBEAT } from "../const";
+// import { NS } from "../const";
 // import { ClientSocketPlayer } from "../room/clientSocketPlayer";
 // import { ClientState } from "../state/clientState";
 //
@@ -21,11 +21,11 @@
 //     destruct() {
 //         this.player = null;
 //         clearInterval(this.interval);
-//         ClientState.events.off(NC_PONG, NS_HEARTBEAT);
+//         ClientState.events.off(NC_PONG, NS.HEARTBEAT);
 //     }
 //
 //     bindEvents() {
-//         ClientState.events.on(NC_PONG, NS_HEARTBEAT, this.pong.bind(this));
+//         ClientState.events.on(NC_PONG, NS.HEARTBEAT, this.pong.bind(this));
 //     }
 //
 //     ping() {

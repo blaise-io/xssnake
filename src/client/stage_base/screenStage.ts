@@ -1,38 +1,33 @@
-/**
- * BaseScreenStage
- * Stage with static content
- * @implements {StageInterface}
- * @constructor
- */
-import { DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_ENTER, KEY_ESCAPE, NS_STAGES } from "../const";
+import { Shape } from "../../shared/shape";
+import { KEY, NS } from "../const";
 import { ClientState } from "../state/clientState";
+import { StageInterface } from "./stage";
 
-export class ScreenStage {
-    /** @type {Shape} */
+export class ScreenStage implements StageInterface {
     screen = null;
 
-    getShape() {
+    getShape(): Shape {
         return this.screen;
     }
 
-    getData() {
+    getData(): Record<string, any> {
         return {};
     }
 
-    construct() {
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys);
+    construct(): void {
+        ClientState.events.on("keydown", NS.STAGES, this.handleKeys);
     }
 
-    destruct() {
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
+    destruct(): void {
+        ClientState.events.off("keydown", NS.STAGES);
         ClientState.shapes.stage = null;
     }
 
-    _handleKeys(ev) {
-        switch (ev.keyCode) {
-            case KEY_BACKSPACE:
-            case KEY_ESCAPE:
-            case KEY_ENTER:
+    private handleKeys(event: KeyboardEvent): void {
+        switch (event.keyCode) {
+            case KEY.BACKSPACE:
+            case KEY.ESCAPE:
+            case KEY.ENTER:
                 ClientState.flow.previousStage();
         }
     }

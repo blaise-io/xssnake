@@ -29,6 +29,7 @@ import {
     COPY_OPTIONS_STAGE_HEADER,
 } from "../copy/copy";
 import { FormStage } from "../stage_base/formStage";
+import { StageInterface } from "../stage_base/stage";
 import { Form } from "../stage_class_helper/form";
 import { ChallengeStage } from "./challenge";
 import { StartGameStage } from "./startGame";
@@ -45,7 +46,7 @@ export class MultiplayerStage extends FormStage {
         };
     }
 
-    getNextStage(values: Record<string, any>): typeof ChallengeStage | typeof StartGameStage {
+    getNextStage(values: Record<string, any>): new () => StageInterface {
         if (values[FIELD_XSS]) {
             return ChallengeStage;
         } else {
@@ -59,7 +60,7 @@ export class MultiplayerStage extends FormStage {
         form.addField(
             FIELD_LEVEL_SET,
             COPY_FIELD_LEVEL_SET,
-            levelsets.map((l) => l.title.toUpperCase())
+            levelsets.map((l) => [l, l.title.toUpperCase()]) // TODO: value=index?
         );
 
         form.addField(FIELD_POWERUPS, COPY_FIELD_POWERUPS, [

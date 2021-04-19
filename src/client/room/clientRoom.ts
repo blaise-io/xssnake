@@ -4,7 +4,7 @@ import {
     NC_ROOM_SERIALIZE,
     NC_SNAKE_CRASH,
 } from "../../shared/const";
-import { EV_PLAYERS_UPDATED, HASH_ROOM, NS_ROOM } from "../const";
+import { EV_PLAYERS_UPDATED, HASH_ROOM, NS } from "../const";
 import {
     COPY_COMMA_SPACE,
     COPY_ELLIPSIS,
@@ -50,21 +50,21 @@ export class ClientRoom {
     }
 
     bindEvents() {
-        ClientState.events.on(NC_ROOM_SERIALIZE, NS_ROOM, this.setRoom.bind(this));
-        ClientState.events.on(NC_OPTIONS_SERIALIZE, NS_ROOM, this.updateOptions.bind(this));
-        ClientState.events.on(NC_PLAYERS_SERIALIZE, NS_ROOM, this.updatePlayers.bind(this));
+        ClientState.events.on(NC_ROOM_SERIALIZE, NS.ROOM, this.setRoom.bind(this));
+        ClientState.events.on(NC_OPTIONS_SERIALIZE, NS.ROOM, this.updateOptions.bind(this));
+        ClientState.events.on(NC_PLAYERS_SERIALIZE, NS.ROOM, this.updatePlayers.bind(this));
 
         // TODO: Move to a new notifier class
-        ClientState.events.on(NC_SNAKE_CRASH, NS_ROOM, this.ncNotifySnakesCrashed.bind(this));
+        ClientState.events.on(NC_SNAKE_CRASH, NS.ROOM, this.ncNotifySnakesCrashed.bind(this));
 
-        //State.events.on(NC_XSS, NS_ROOM, this._requestXss.bind(this));
-        //State.events.on(NC_XSS, NS_ROOM, this._evalXss.bind(this));
+        //State.events.on(NC_XSS, NS.ROOM, this._requestXss.bind(this));
+        //State.events.on(NC_XSS, NS.ROOM, this._evalXss.bind(this));
     }
 
     unbindEvents() {
-        ClientState.events.off(NC_ROOM_SERIALIZE, NS_ROOM);
-        ClientState.events.off(NC_OPTIONS_SERIALIZE, NS_ROOM);
-        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS_ROOM);
+        ClientState.events.off(NC_ROOM_SERIALIZE, NS.ROOM);
+        ClientState.events.off(NC_OPTIONS_SERIALIZE, NS.ROOM);
+        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS.ROOM);
     }
 
     setupComponents() {

@@ -1,21 +1,8 @@
-/**
- * SelectStage
- * Stage with a vertical select menu
- * @implements {StageInterface}
- * @constructor
- */
-import {
-    DOM_EVENT_KEYDOWN,
-    KEY_BACKSPACE,
-    KEY_DOWN,
-    KEY_ENTER,
-    KEY_ESCAPE,
-    KEY_UP,
-    NS_STAGES,
-} from "../const";
+import { KEY, NS } from "../const";
 import { ClientState } from "../state/clientState";
+import { StageInterface } from "./stage";
 
-export class SelectStage {
+export class SelectStage implements StageInterface {
     menu = null;
 
     getShape() {
@@ -27,11 +14,11 @@ export class SelectStage {
     }
 
     construct() {
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this.handleKeys.bind(this));
+        ClientState.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
     }
 
     destruct() {
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
+        ClientState.events.off("keydown", NS.STAGES);
         ClientState.shapes.stage = null;
     }
 
@@ -41,23 +28,23 @@ export class SelectStage {
         }
         const next = this.menu.getNextStage();
         switch (ev.keyCode) {
-            case KEY_BACKSPACE:
-            case KEY_ESCAPE:
+            case KEY.BACKSPACE:
+            case KEY.ESCAPE:
                 ClientState.flow.previousStage();
                 break;
-            case KEY_ENTER:
+            case KEY.ENTER:
                 if (next) {
                     ClientState.flow.switchStage(next);
                 } else {
                     ClientState.flow.previousStage();
                 }
                 break;
-            case KEY_UP:
+            case KEY.UP:
                 this.menu.prev();
                 ClientState.audio.play("menu");
                 ClientState.flow.refreshShapes();
                 break;
-            case KEY_DOWN:
+            case KEY.DOWN:
                 this.menu.next();
                 ClientState.audio.play("menu");
                 ClientState.flow.refreshShapes();

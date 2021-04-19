@@ -1,7 +1,7 @@
 import { HEIGHT, WIDTH } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
-import { DOM_EVENT_KEYDOWN, FRAME, KEY_ENTER, KEY_ESCAPE, NS_CHAT, UC_ENTER_KEY } from "../const";
+import { FRAME, KEY, NS, UC_ENTER_KEY } from "../const";
 import { Message } from "../room/message";
 import { InputField } from "../stage_class_helper/inputField";
 import { ClientState } from "../state/clientState";
@@ -45,7 +45,7 @@ export class MessageBoxUI {
     }
 
     destruct() {
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_CHAT);
+        ClientState.events.off("keydown", NS.CHAT);
         if (this.inputField) {
             this.inputField.destruct();
             this.inputField = null;
@@ -53,17 +53,17 @@ export class MessageBoxUI {
     }
 
     bindEvents() {
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_CHAT, this.handleKeys.bind(this));
+        ClientState.events.on("keydown", NS.CHAT, this.handleKeys.bind(this));
     }
 
-    handleKeys(ev) {
+    handleKeys(ev: KeyboardEvent) {
         switch (ev.keyCode) {
-            case KEY_ESCAPE:
+            case KEY.ESCAPE:
                 this.hideInput();
                 this.hideEnterKey();
                 ev.preventDefault();
                 break;
-            case KEY_ENTER:
+            case KEY.ENTER:
                 if (this.inputField) {
                     this.sendMessage(this.inputField.getValue());
                     this.hideInput();

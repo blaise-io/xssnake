@@ -1,27 +1,14 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
-import {
-    DOM_EVENT_KEYDOWN,
-    KEY_BACKSPACE,
-    KEY_DOWN,
-    KEY_ENTER,
-    KEY_ESCAPE,
-    KEY_LEFT,
-    KEY_RIGHT,
-    KEY_SPACE,
-    KEY_TAB,
-    KEY_UP,
-    MENU_TOP,
-    NS_DIALOG,
-} from "../const";
+import { KEY, MENU_TOP, NS } from "../const";
 import { COPY_DIALOG_CANCEL, COPY_DIALOG_OK } from "../copy/copy";
 import { ClientState } from "../state/clientState";
 import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";
 import { center } from "./shapeClient";
 import { outline, zoom } from "./transformClient";
 
-export enum DialogType {
+export const enum DialogType {
     INFO, // No buttons, not closable
     ALERT, // OK button, closable
     CONFIRM, // OK and CANCEL button
@@ -69,7 +56,7 @@ export class Dialog {
     destruct(): void {
         ClientState.shapes.dialog = null;
         ClientState.keysBlocked = false;
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_DIALOG);
+        ClientState.events.off("keydown", NS.DIALOG);
     }
 
     restore(): void {
@@ -106,7 +93,7 @@ export class Dialog {
     private _bindEvents(): void {
         ClientState.keysBlocked = this.settings.keysBlocked;
         if (this.settings.type !== DialogType.INFO) {
-            ClientState.events.on(DOM_EVENT_KEYDOWN, NS_DIALOG, this._handleKeys.bind(this));
+            ClientState.events.on("keydown", NS.DIALOG, this._handleKeys.bind(this));
         }
         if (this.settings.type === DialogType.ALERT) {
             this._okSelected = true;
@@ -117,27 +104,27 @@ export class Dialog {
 
     private _handleKeys(ev: KeyboardEvent): void {
         switch (ev.keyCode) {
-            case KEY_LEFT:
-            case KEY_UP:
-            case KEY_DOWN:
-            case KEY_RIGHT:
-            case KEY_TAB:
+            case KEY.LEFT:
+            case KEY.UP:
+            case KEY.DOWN:
+            case KEY.RIGHT:
+            case KEY.TAB:
                 if (this.settings.type === DialogType.CONFIRM) {
                     ClientState.audio.play("menu_alt");
                     this._okSelected = !this._okSelected;
                     this._updateShape();
                 }
                 break;
-            case KEY_BACKSPACE:
-            case KEY_ESCAPE:
+            case KEY.BACKSPACE:
+            case KEY.ESCAPE:
                 if (this.settings.type === DialogType.CONFIRM) {
                     this.cancel();
                 } else {
                     this.ok();
                 }
                 break;
-            case KEY_ENTER:
-            case KEY_SPACE:
+            case KEY.ENTER:
+            case KEY.SPACE:
                 if (this._okSelected) {
                     this.ok();
                 } else {

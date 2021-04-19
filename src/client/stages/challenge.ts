@@ -1,5 +1,5 @@
 import { getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
-import { DOM_EVENT_KEYDOWN, MENU_LEFT, NS_INPUT } from "../const";
+import { MENU_LEFT, NS } from "../const";
 import { InputStage } from "../stage_base/inputStage";
 import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
@@ -35,7 +35,7 @@ export class ChallengeStage extends InputStage {
         // Tolerate answers where user is quoting strings.
         if (value.replace(/['"]/g, "").trim() === String(eval(this._challenge))) {
             text = "> bleep!";
-            ClientState.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
+            ClientState.events.off("keydown", NS.INPUT);
             setTimeout(
                 function () {
                     ClientState.flow.switchStage(this.next);

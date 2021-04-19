@@ -1,23 +1,14 @@
 import { Shape } from "../../shared/shape";
-import {
-    DOM_EVENT_KEYDOWN,
-    KEY_ENTER,
-    KEY_ESCAPE,
-    MENU_LEFT,
-    MENU_TOP,
-    MENU_WIDTH,
-    NS_INPUT,
-    NS_STAGES,
-    STORAGE_NAME,
-} from "../const";
+import { KEY, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS, STORAGE_NAME } from "../const";
 import { InputField } from "../stage_class_helper/inputField";
 import { ClientState } from "../state/clientState";
 import { font, fontHeight, fontPixels } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
 import { zoom } from "../ui/transformClient";
 import { storage } from "../util/clientUtil";
+import { StageInterface } from "./stage";
 
-export class InputStage {
+export class InputStage implements StageInterface {
     private _shape: Shape;
     private fontOptions = { wrap: MENU_LEFT + MENU_WIDTH - 25 };
     private _inputTop = MENU_TOP + 17;
@@ -59,7 +50,7 @@ export class InputStage {
     }
 
     destruct(): void {
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_STAGES);
+        ClientState.events.off("keydown", NS.STAGES);
         ClientState.shapes.message = null;
         this._shape = this._getShape();
         this.input.destruct();
@@ -71,7 +62,7 @@ export class InputStage {
     inputSubmit(error: string, value: string, top: number): void {
         if (!error && value && top) {
             ClientState.flow.switchStage(this.next);
-            ClientState.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
+            ClientState.events.off("keydown", NS.INPUT);
         } else {
             ClientState.shapes.message = font(error, MENU_LEFT, top);
             lifetime(ClientState.shapes.message, 0, 500);
@@ -96,22 +87,22 @@ export class InputStage {
 
     private _bindEvents(): void {
         console.log(this);
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_STAGES, this._handleKeys.bind(this));
+        ClientState.events.on("keydown", NS.STAGES, this._handleKeys.bind(this));
     }
 
     /**
      * @private
      */
-    _handleKeys(ev): void {
+    _handleKeys(ev: KeyboardEvent): void {
         console.log(this);
         let value;
         let top;
         switch (ev.keyCode) {
-            case KEY_ESCAPE:
+            case KEY.ESCAPE:
                 ClientState.flow.previousStage();
                 ev.preventDefault();
                 break;
-            case KEY_ENTER:
+            case KEY.ENTER:
                 value = this.value.trim();
                 top = fontHeight(this.label, MENU_LEFT, this._inputTop, this.fontOptions);
                 this.inputSubmit(this._getInputError(value), value, top);

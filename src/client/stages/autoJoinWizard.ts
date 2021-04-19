@@ -5,7 +5,7 @@ import {
     NC_ROOM_SERIALIZE,
     NC_ROOM_STATUS,
 } from "../../shared/const";
-import { NS_STAGES } from "../const";
+import { NS } from "../const";
 import {
     COPY_AUTOJOIN_CONNECTING,
     COPY_AUTOJOIN_FETCHING,
@@ -59,30 +59,30 @@ export class AutoJoinWizard {
 
         ClientState.events.on(
             NC_ROOM_SERIALIZE,
-            NS_STAGES,
+            NS.STAGES,
             this.checkAllRoomDataReceived.bind(this)
         );
 
         ClientState.events.on(
             NC_OPTIONS_SERIALIZE,
-            NS_STAGES,
+            NS.STAGES,
             this.checkAllRoomDataReceived.bind(this)
         );
 
         ClientState.events.on(
             NC_PLAYERS_SERIALIZE,
-            NS_STAGES,
+            NS.STAGES,
             this.checkAllRoomDataReceived.bind(this)
         );
 
-        ClientState.events.on(NC_ROOM_JOIN_ERROR, NS_STAGES, this.handleError.bind(this));
+        ClientState.events.on(NC_ROOM_JOIN_ERROR, NS.STAGES, this.handleError.bind(this));
     }
 
     unbindEvents() {
-        ClientState.events.off(NC_ROOM_SERIALIZE, NS_STAGES);
-        ClientState.events.off(NC_OPTIONS_SERIALIZE, NS_STAGES);
-        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS_STAGES);
-        ClientState.events.off(NC_ROOM_JOIN_ERROR, NS_STAGES);
+        ClientState.events.off(NC_ROOM_SERIALIZE, NS.STAGES);
+        ClientState.events.off(NC_OPTIONS_SERIALIZE, NS.STAGES);
+        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS.STAGES);
+        ClientState.events.off(NC_ROOM_JOIN_ERROR, NS.STAGES);
     }
 
     checkAllRoomDataReceived() {

@@ -5,18 +5,20 @@ export const FRAME = 1000 / 60;
 export const MIN_FRAME_DELTA = 5;
 export const MAX_FRAME_DELTA = 250;
 
-export const KEY_BACKSPACE = 8;
-export const KEY_TAB = 9;
-export const KEY_ENTER = 13;
-export const KEY_ESCAPE = 27;
-export const KEY_SPACE = 32;
-export const KEY_LEFT = 37;
-export const KEY_UP = 38;
-export const KEY_RIGHT = 39;
-export const KEY_DOWN = 40;
-export const KEY_FULLSCREEN = 70; // F key
-export const KEY_MUTE = 77; // M key
-export const KEY_START = 83; // S key
+export const enum KEY {
+    BACKSPACE = 8,
+    TAB = 9,
+    ENTER = 13,
+    ESCAPE = 27,
+    SPACE = 32,
+    LEFT = 37,
+    UP = 38,
+    RIGHT = 39,
+    DOWN = 40,
+    FULLSCREEN = 70, // F key
+    MUTE = 77, // M key
+    START = 83, // S key
+}
 
 export const FIELD_BUGS = -1;
 export const FIELD_NAME = 0;
@@ -27,11 +29,11 @@ export const FIELD_POWERUPS = 4;
 export const FIELD_PRIVATE = 5;
 export const FIELD_XSS = 6;
 
-export const KEY_TO_DIRECTION = [];
-KEY_TO_DIRECTION[KEY_LEFT] = DIRECTION_LEFT;
-KEY_TO_DIRECTION[KEY_UP] = DIRECTION_UP;
-KEY_TO_DIRECTION[KEY_RIGHT] = DIRECTION_RIGHT;
-KEY_TO_DIRECTION[KEY_DOWN] = DIRECTION_DOWN;
+export const KEY_TO_DIRECTION = {};
+KEY_TO_DIRECTION[KEY.LEFT] = DIRECTION_LEFT;
+KEY_TO_DIRECTION[KEY.UP] = DIRECTION_UP;
+KEY_TO_DIRECTION[KEY.RIGHT] = DIRECTION_RIGHT;
+KEY_TO_DIRECTION[KEY.DOWN] = DIRECTION_DOWN;
 
 export const MENU_LEFT = 44;
 export const MENU_TOP = 48;
@@ -39,35 +41,32 @@ export const MENU_WIDTH = 167;
 export const MENU_WRAP = 176;
 export const MENU_TITLE_HEIGHT = 20;
 
-export const DOM_EVENT_KEYPRESS = "keypress";
-export const DOM_EVENT_KEYDOWN = "keydown";
-export const DOM_EVENT_KEYUP = "keyup";
-
 export const HASH_ROOM = "room";
 
-export const NS_DEBUG = "DEBUG";
-export const NS_ANIM = "ANM";
-export const NS_ACTION = "ACT";
-export const NS_BETWEEN_GAME = "BGM";
-export const NS_EXPLOSION = "EXPL";
-export const NS_FLOW = "FLW";
-export const NS_CHAT = "CHT";
-export const NS_DIALOG = "DLG";
-export const NS_INPUT = "INP";
-export const NS_GAME = "GAM";
-export const NS_MSGBOX = "MSG";
-export const NS_ROOM = "ROM";
-export const NS_ROUND = "RND";
-export const NS_ROUND_SET = "RST";
-export const NS_PRE_GAME = "PGM";
-export const NS_SCORE = "SCR";
-export const NS_SNAKE = "SNK";
-export const NS_SNAKE_CONTROLS = "SNKC";
-// export const NS_HEARTBEAT = "HBT";
-export const NS_SOCKET = "SOK";
-export const NS_SPAWN = "SPN";
-export const NS_STAGES = "STG";
-
+export const enum NS {
+    DEBUG = "DEBUG",
+    ANIM = "ANM",
+    ACTION = "ACT",
+    BETWEEN_GAME = "BGM",
+    EXPLOSION = "EXPL",
+    FLOW = "FLW",
+    CHAT = "CHT",
+    DIALOG = "DLG",
+    INPUT = "INP",
+    GAME = "GAM",
+    MSGBOX = "MSG",
+    ROOM = "ROM",
+    ROUND = "RND",
+    ROUND_SET = "RST",
+    PRE_GAME = "PGM",
+    SCORE = "SCR",
+    SNAKE = "SNK",
+    SNAKE_CONTROLS = "SNKC",
+    HEARTBEAT = "HBT",
+    SOCKET = "SOK",
+    SPAWN = "SPN",
+    STAGES = "STG",
+}
 export const EV_GAME_TICK = "TIK";
 export const EV_WIN_FOCUS_CHANGE = "WFC";
 export const EV_FONT_LOAD = "FLD";

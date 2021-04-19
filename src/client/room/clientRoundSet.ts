@@ -1,5 +1,5 @@
 import { NC_ROUND_SERIALIZE } from "../../shared/const";
-import { NS_ROUND_SET } from "../const";
+import { NS } from "../const";
 import { ClientState } from "../state/clientState";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRound } from "./clientRound";
@@ -23,11 +23,11 @@ export class ClientRoundSet {
     }
 
     bindEvents() {
-        ClientState.events.on(NC_ROUND_SERIALIZE, NS_ROUND_SET, this.updateRound.bind(this));
+        ClientState.events.on(NC_ROUND_SERIALIZE, NS.ROUND_SET, this.updateRound.bind(this));
     }
 
     unbindEvents() {
-        ClientState.events.off(NC_ROUND_SERIALIZE, NS_ROUND_SET);
+        ClientState.events.off(NC_ROUND_SERIALIZE, NS.ROUND_SET);
     }
 
     setupRound() {

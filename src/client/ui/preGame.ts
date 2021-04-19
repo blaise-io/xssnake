@@ -1,6 +1,6 @@
 import { NC_ROOM_START, SECONDS_ROUND_COUNTDOWN } from "../../shared/const";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { DOM_EVENT_KEYDOWN, KEY_BACKSPACE, KEY_ESCAPE, KEY_START, NS_PRE_GAME } from "../const";
+import { KEY, NS } from "../const";
 import {
     COPY_AWAITING_PLAYERS_BODY,
     COPY_AWAITING_PLAYERS_HEADER,
@@ -48,11 +48,11 @@ export class PreGameUI {
     }
 
     bindKeys(): void {
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_PRE_GAME, this.handleKeys.bind(this));
+        ClientState.events.on("keydown", NS.PRE_GAME, this.handleKeys.bind(this));
     }
 
     unbindKeys(): void {
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_PRE_GAME);
+        ClientState.events.off("keydown", NS.PRE_GAME);
     }
 
     handleKeys(ev: KeyboardEvent): void {
@@ -60,12 +60,12 @@ export class PreGameUI {
             return;
         }
         switch (ev.keyCode) {
-            case KEY_BACKSPACE:
-            case KEY_ESCAPE:
+            case KEY.BACKSPACE:
+            case KEY.ESCAPE:
                 this.confirmExit = true;
                 this.updateUI();
                 break;
-            case KEY_START:
+            case KEY.START:
                 if (this.playerCanStartRound()) {
                     this.confirmStart = true;
                     this.updateUI();

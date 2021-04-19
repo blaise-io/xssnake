@@ -1,6 +1,6 @@
 import { HEIGHT } from "../../shared/const";
 import { Shape } from "../../shared/shape";
-import { NS_SCORE } from "../const";
+import { NS } from "../const";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ClientState } from "../state/clientState";
@@ -38,7 +38,7 @@ export class ScoreboardUI {
 
     destructShapes(): void {
         for (let i = 0; i < this.podiumSize; i++) {
-            ClientState.shapes[NS_SCORE + i] = null;
+            ClientState.shapes[NS.SCORE + i] = null;
         }
     }
 
@@ -77,7 +77,7 @@ export class ScoreboardUI {
     paint(player: ClientPlayer, oldIndex: number, newIndex: number): void {
         const oldCoordinate = this.getCoordinatesForIndex(oldIndex);
         const shape = this.getPlayerScoreShape(player, oldCoordinate);
-        ClientState.shapes[NS_SCORE + oldIndex] = shape;
+        ClientState.shapes[NS.SCORE + oldIndex] = shape;
 
         if (oldIndex !== newIndex) {
             const newCoordinate = this.getCoordinatesForIndex(newIndex);

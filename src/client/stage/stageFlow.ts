@@ -1,19 +1,6 @@
-/**
- * StageFlow instantiation, stage switching
- * @param {Function=} Stage
- * @constructor
- */
 import { ROOM_KEY_LENGTH, WIDTH } from "../../shared/const";
-import {
-    DOM_EVENT_KEYDOWN,
-    HASH_ROOM,
-    KEY_ESCAPE,
-    KEY_MUTE,
-    KEY_TAB,
-    MENU_LEFT,
-    NS_FLOW,
-    STORAGE_MUTE,
-} from "../const";
+import { HASH_ROOM, KEY, MENU_LEFT, NS, STORAGE_MUTE } from "../const";
+import { StageInterface } from "../stage_base/stage";
 import { MainStage } from "../stages/main";
 import { StartGameStage } from "../stages/startGame";
 import { ClientState } from "../state/clientState";
@@ -23,12 +10,12 @@ import { animate } from "../ui/shapeClient";
 import { instruct, storage, urlHash } from "../util/clientUtil";
 
 export class StageFlow {
-    GameStage: any;
-    stage: any;
-    private _history: any[];
-    private _FirstStage: any;
+    GameStage: new () => StageInterface;
+    stage: StageInterface;
+    private _history: StageInterface[];
+    private _FirstStage: new () => StageInterface;
 
-    constructor(stage = MainStage) {
+    constructor(stage = MainStage as new () => StageInterface) {
         this._FirstStage = stage;
         this.GameStage = StartGameStage;
 
@@ -44,7 +31,7 @@ export class StageFlow {
             ClientState.player.destruct();
         }
         ClientState.shapes = {};
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_FLOW);
+        ClientState.events.off("keydown", NS.FLOW);
         ClientState.canvas.garbageCollect();
     }
 
@@ -57,7 +44,7 @@ export class StageFlow {
         this._history = [];
 
         window.onhashchange = this._hashChange.bind(this);
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_FLOW, this._handleKeys.bind(this));
+        ClientState.events.on("keydown", NS.FLOW, this._handleKeys.bind(this));
 
         Object.assign(ClientState.shapes, outerBorder());
 
@@ -66,7 +53,7 @@ export class StageFlow {
         this._setStage(new this._FirstStage(), false);
     }
 
-    getData(): any {
+    getData(): Record<string, any> {
         const value = {};
         for (let i = 0, m = this._history.length; i < m; i++) {
             Object.assign(value, this._history[i].getData());
@@ -74,11 +61,7 @@ export class StageFlow {
         return value;
     }
 
-    /**
-     * @param {Function} Stage
-     * @param {Object=} options
-     */
-    switchStage(Stage, options: any = {}): void {
+    switchStage(Stage: new () => StageInterface, options = { back: false }): void {
         let switchToStage;
 
         if (Stage && !options.back) {
@@ -123,7 +106,7 @@ export class StageFlow {
     private _handleKeys(ev: KeyboardEvent): void {
         // Firefox disconnects websocket on Esc. Disable that.
         // Also prevent the tab key focusing things outside canvas.
-        if (ev.keyCode === KEY_ESCAPE || ev.keyCode === KEY_TAB) {
+        if (ev.keyCode === KEY.ESCAPE || ev.keyCode === KEY.TAB) {
             ev.preventDefault();
         }
 
@@ -131,7 +114,7 @@ export class StageFlow {
         // contain a dialog, so do not use State.keysBlocked here.
         if (!ClientState.shapes.INPUT_CARET) {
             // Mute/Unmute
-            if (ev.keyCode === KEY_MUTE) {
+            if (ev.keyCode === KEY.MUTE) {
                 const mute = !storage(STORAGE_MUTE) as boolean;
                 storage(STORAGE_MUTE, mute);
                 instruct("Sounds " + (mute ? "muted" : "unmuted"), 1000);
@@ -172,8 +155,7 @@ export class StageFlow {
         ClientState.shapes.newstage = animate(newShape, newStageAnim);
     }
 
-    // TODO: StageInterface
-    private _setStage(stage: any, back: false) {
+    private _setStage(stage: StageInterface, back = false) {
         // Remove animated stages
         ClientState.shapes.oldstage = null;
         ClientState.shapes.newstage = null;

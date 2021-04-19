@@ -8,7 +8,7 @@ import { Level } from "../../shared/level/level";
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
-import { EV_PLAYERS_UPDATED, NS_ROUND } from "../const";
+import { EV_PLAYERS_UPDATED, NS } from "../const";
 import { ClientGame } from "../game/clientGame";
 import { ClientState } from "../state/clientState";
 import { PreGameUI } from "../ui/preGame";
@@ -49,18 +49,18 @@ export class ClientRound extends Round {
     }
 
     bindEvents(): void {
-        ClientState.events.on(EV_PLAYERS_UPDATED, NS_ROUND, this.updatePlayers.bind(this));
-        ClientState.events.on(NC_ROUND_SERIALIZE, NS_ROUND, this.updateRound.bind(this));
-        ClientState.events.on(NC_ROUND_COUNTDOWN, NS_ROUND, this.updateCountdown.bind(this));
-        ClientState.events.on(NC_ROUND_START, NS_ROUND, this.startGame.bind(this));
-        ClientState.events.on(NC_ROUND_WRAPUP, NS_ROUND, this.wrapupGame.bind(this));
+        ClientState.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
+        ClientState.events.on(NC_ROUND_SERIALIZE, NS.ROUND, this.updateRound.bind(this));
+        ClientState.events.on(NC_ROUND_COUNTDOWN, NS.ROUND, this.updateCountdown.bind(this));
+        ClientState.events.on(NC_ROUND_START, NS.ROUND, this.startGame.bind(this));
+        ClientState.events.on(NC_ROUND_WRAPUP, NS.ROUND, this.wrapupGame.bind(this));
     }
 
     unbindEvents(): void {
-        ClientState.events.off(EV_PLAYERS_UPDATED, NS_ROUND);
-        ClientState.events.off(NC_ROUND_SERIALIZE, NS_ROUND);
-        ClientState.events.off(NC_ROUND_COUNTDOWN, NS_ROUND);
-        ClientState.events.off(NC_ROUND_START, NS_ROUND);
+        ClientState.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
+        ClientState.events.off(NC_ROUND_SERIALIZE, NS.ROUND);
+        ClientState.events.off(NC_ROUND_COUNTDOWN, NS.ROUND);
+        ClientState.events.off(NC_ROUND_START, NS.ROUND);
     }
 
     updatePlayers(): void {

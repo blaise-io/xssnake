@@ -5,7 +5,7 @@
  */
 import { NC_SNAKE_CRASH, NC_SNAKE_UPDATE } from "../../shared/const";
 import { Level } from "../../shared/level/level";
-import { EV_GAME_TICK, NS_GAME } from "../const";
+import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ClientState } from "../state/clientState";
@@ -32,9 +32,9 @@ export class ClientGame {
     }
 
     bindEvents(): void {
-        ClientState.events.on(EV_GAME_TICK, NS_GAME, this.gameloop.bind(this));
-        ClientState.events.on(NC_SNAKE_UPDATE, NS_GAME, this.ncUpdateSnake.bind(this));
-        ClientState.events.on(NC_SNAKE_CRASH, NS_GAME, this.ncSetSnakesCrashed.bind(this));
+        ClientState.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));
+        ClientState.events.on(NC_SNAKE_UPDATE, NS.GAME, this.ncUpdateSnake.bind(this));
+        ClientState.events.on(NC_SNAKE_CRASH, NS.GAME, this.ncSetSnakesCrashed.bind(this));
 
         //State.events.on(NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
@@ -46,8 +46,8 @@ export class ClientGame {
     }
 
     unbindEvents(): void {
-        ClientState.events.off(EV_GAME_TICK, NS_GAME);
-        ClientState.events.off(NC_SNAKE_UPDATE, NS_GAME);
+        ClientState.events.off(EV_GAME_TICK, NS.GAME);
+        ClientState.events.off(NC_SNAKE_UPDATE, NS.GAME);
     }
 
     /**

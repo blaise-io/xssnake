@@ -1,8 +1,3 @@
-/**
- * @extends {ScreenStage}
- * @implements {StageInterface}
- * @constructor
- */
 import { Shape } from "../../shared/shape";
 import {
     MENU_LEFT,

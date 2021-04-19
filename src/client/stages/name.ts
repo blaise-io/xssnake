@@ -1,18 +1,6 @@
-/**
- * @extends {InputStage}
- * @implements {StageInterface}
- * @constructor
- */
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { getRandomItemFrom } from "../../shared/util";
-import {
-    DOM_EVENT_KEYDOWN,
-    MENU_LEFT,
-    NS_INPUT,
-    STORAGE_NAME,
-    UC_SKULL,
-    UC_WHITE_HEART,
-} from "../const";
+import { MENU_LEFT, NS, STORAGE_NAME, UC_SKULL, UC_WHITE_HEART } from "../const";
 import { InputStage } from "../stage_base/inputStage";
 import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
@@ -49,7 +37,7 @@ export class NameStage extends InputStage {
         if (error) {
             text = error;
         } else {
-            ClientState.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
+            ClientState.events.off("keydown", NS.INPUT);
             text = getRandomItemFrom(this._wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(

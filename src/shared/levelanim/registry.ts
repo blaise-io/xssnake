@@ -1,4 +1,4 @@
-// import { NS_ANIM } from "../../client/const";
+// import { NS } from "../../client/const";
 // import { State } from "../../client/state/state";
 // import { setGameTransform } from "../../client/ui/shapeClient";
 
@@ -45,7 +45,7 @@ export class LevelAnimationRegistry {
     // private _updateShapes(animIndex, shapeCollection) {
     //     const shapes = shapeCollection.shapes;
     //     for (let i = 0, m = shapes.length; i < m; i++) {
-    //         this._updateShape([NS_ANIM, animIndex, i].join("_"), shapes[i]);
+    //         this._updateShape([NS.ANIM, animIndex, i].join("_"), shapes[i]);
     //     }
     // }
     //

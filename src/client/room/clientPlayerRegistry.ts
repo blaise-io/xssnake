@@ -1,6 +1,6 @@
 import { Level } from "../../shared/level/level";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
-import { NS_SNAKE } from "../const";
+import { NS } from "../const";
 import { ClientState } from "../state/clientState";
 import { ClientPlayer } from "./clientPlayer";
 
@@ -79,7 +79,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     clearSnakeShapes(): void {
         const keys = Object.keys(ClientState.shapes);
         for (let i = 0, m = keys.length; i < m; i++) {
-            if (keys[i].substr(0, NS_SNAKE.length) === NS_SNAKE) {
+            if (keys[i].substr(0, NS.SNAKE.length) === NS.SNAKE) {
                 ClientState.shapes[keys[i]] = null;
             }
         }

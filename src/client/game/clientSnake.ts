@@ -4,7 +4,7 @@ import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { Snake } from "../../shared/snake";
-import { FRAME, NS_SNAKE } from "../const";
+import { FRAME, NS } from "../const";
 import { ClientState } from "../state/clientState";
 import { explosion, showAction, tooltipName } from "../ui/clientShapeGenerator";
 import { flash, lifetime, setGameTransform } from "../ui/shapeClient";
@@ -26,9 +26,9 @@ export class ClientSnake extends Snake {
         this.controls = null;
 
         this.shapeKeys = {
-            snake: NS_SNAKE + index,
-            name: NS_SNAKE + "TAG" + index,
-            direction: NS_SNAKE + "DIR" + index,
+            snake: NS.SNAKE + index,
+            name: NS.SNAKE + "TAG" + index,
+            direction: NS.SNAKE + "DIR" + index,
         };
 
         this.updateShape();

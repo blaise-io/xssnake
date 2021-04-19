@@ -1,6 +1,6 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
 import { NC_PING, NC_PONG } from "../../shared/const";
-import { NS_SOCKET } from "../const";
+import { NS } from "../const";
 import {
     COPY_SOCKET_CANNOT_CONNECT,
     COPY_SOCKET_CONNECTION_LOST,
@@ -34,8 +34,8 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.onerror = null;
         this.connection.onmessage = null;
 
-        ClientState.events.off(NC_PING, NS_SOCKET);
-        ClientState.events.off(NC_PONG, NS_SOCKET);
+        ClientState.events.off(NC_PING, NS.SOCKET);
+        ClientState.events.off(NC_PONG, NS.SOCKET);
 
         // Close explicitly when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {

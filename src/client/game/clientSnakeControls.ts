@@ -1,4 +1,4 @@
-import { DOM_EVENT_KEYDOWN, KEY_TO_DIRECTION, NS_SNAKE_CONTROLS } from "../const";
+import { KEY_TO_DIRECTION, NS } from "../const";
 import { ClientState } from "../state/clientState";
 import { ClientSnake } from "./clientSnake";
 
@@ -10,11 +10,11 @@ export class ClientSnakeControls {
     }
 
     destruct(): void {
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS);
+        ClientState.events.off("keydown", NS.SNAKE_CONTROLS);
     }
 
     bindEvents(): void {
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_SNAKE_CONTROLS, this.handleKeys.bind(this));
+        ClientState.events.on("keydown", NS.SNAKE_CONTROLS, this.handleKeys.bind(this));
     }
 
     handleKeys(event: KeyboardEvent): void {
@@ -41,7 +41,7 @@ export class ClientSnakeControls {
         const turn = Math.abs(direction - prevDirection);
         return (
             this.upcomingDirections.length <= 2 &&
-            this.snake.parts.length >= 2 && // Must go to blinkie at start.
+            this.snake.parts.length >= 2 && // Must go to direction pixel at start.
             turn !== 0 &&
             turn !== 2 // No turn and 180 turn not allowed.
         );

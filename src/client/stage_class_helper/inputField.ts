@@ -8,7 +8,7 @@
 import { WIDTH } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { lineShape } from "../../shared/shapeGenerator";
-import { DOM_EVENT_KEYDOWN, DOM_EVENT_KEYPRESS, DOM_EVENT_KEYUP, FRAME, NS_INPUT } from "../const";
+import { FRAME, NS } from "../const";
 import { ClientState } from "../state/clientState";
 import { fontEndPos, fontPixels, fontWidth } from "../ui/font";
 import { flash } from "../ui/shapeClient";
@@ -48,17 +48,17 @@ export class InputField {
     }
 
     unbindEvents() {
-        ClientState.events.off(DOM_EVENT_KEYPRESS, NS_INPUT);
-        ClientState.events.off(DOM_EVENT_KEYDOWN, NS_INPUT);
-        ClientState.events.off(DOM_EVENT_KEYUP, NS_INPUT);
+        ClientState.events.off("keypress", NS.INPUT);
+        ClientState.events.off("keydown", NS.INPUT);
+        ClientState.events.off("keyup", NS.INPUT);
     }
 
     bindEvents() {
-        ClientState.events.on(DOM_EVENT_KEYPRESS, NS_INPUT, function () {
+        ClientState.events.on("keypress", NS.INPUT, function () {
             ClientState.audio.play("menu_alt");
         });
-        ClientState.events.on(DOM_EVENT_KEYDOWN, NS_INPUT, this.updateShapes.bind(this));
-        ClientState.events.on(DOM_EVENT_KEYUP, NS_INPUT, this.updateShapes.bind(this));
+        ClientState.events.on("keydown", NS.INPUT, this.updateShapes.bind(this));
+        ClientState.events.on("keyup", NS.INPUT, this.updateShapes.bind(this));
     }
 
     /**
