@@ -76,14 +76,11 @@ export class ServerRoomManager {
     }
 
     autojoinRoom(dirtyKeyArr: UntrustedData, player: ServerPlayer): void {
-        let room;
-        let key;
-        let status;
-        key = this.getSanitizedRoomKey(dirtyKeyArr);
-        status = this.getRoomStatus(key);
+        const key = this.getSanitizedRoomKey(dirtyKeyArr);
+        const status = this.getRoomStatus(key);
 
         if (status === ROOM_JOINABLE) {
-            room = this.getRoomByKey(key);
+            const room = this.getRoomByKey(key);
             room.addPlayer(player);
             player.emit(NC_ROUND_SERIALIZE, room.rounds.round.serialize());
             room.detectAutostart();
@@ -92,27 +89,17 @@ export class ServerRoomManager {
         }
     }
 
-    /**
-     * @param {Array.<?>} dirtySerializeOptions
-     * @param {room.ServerPlayer} player
-     * @private
-     */
-    joinMatchingRoom(dirtySerializeOptions, player): void {
-        let options;
-        let room;
-        let emitDataArr;
+    private joinMatchingRoom(dirtySerializeOptions: UntrustedData, player: ServerPlayer): void {
+        const emitDataArr = new Sanitizer(dirtySerializeOptions).assertArray().getValueOr([]);
+        const options = new ServerOptions(emitDataArr);
 
-        emitDataArr = new Sanitizer(dirtySerializeOptions).assertArray().getValueOr([]);
-        options = new ServerOptions(emitDataArr);
-
-        room = this.matcher.getRoomMatching(options);
-        room = room || this.createRoom(options);
+        const room = this.matcher.getRoomMatching(options) || this.createRoom(options);
         room.addPlayer(player);
         room.emitAll(player);
         room.detectAutostart();
     }
 
-    getRoomByKey(key) {
+    getRoomByKey(key: string): ServerRoom | null {
         for (let i = 0, m = this.rooms.length; i < m; i++) {
             if (key === this.rooms[i].key) {
                 return this.rooms[i];
