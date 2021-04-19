@@ -1,4 +1,5 @@
 import {
+    NC_OPTIONS_SERIALIZE,
     NC_PLAYERS_SERIALIZE,
     NC_ROOM_JOIN_ERROR,
     NC_ROOM_JOIN_KEY,
@@ -147,7 +148,7 @@ export class ServerRoomManager {
         if (status === ROOM_JOINABLE) {
             const room = this.getRoomByKey(key);
             player.emit(NC_ROOM_SERIALIZE, room.serialize());
-            player.emit(NC_OPTIONS.SERIALIZE, room.options.serialize());
+            player.emit(NC_OPTIONS_SERIALIZE, room.options.serialize());
             player.emit(NC_PLAYERS_SERIALIZE, room.players.serialize(player as Player));
         } else {
             player.emit(NC_ROOM_JOIN_ERROR, [status]);
