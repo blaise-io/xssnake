@@ -5,7 +5,7 @@ import { debugFont } from "./font";
 import { debugLevel } from "./level";
 import { debugMessages } from "./messages";
 import { debugScoreboard } from "./scoreboard";
-import { debugTab } from "./tab";
+import { debugTabUI } from "./tabui";
 
 export function runDebug(): void {
     const registry = Object.fromEntries([
@@ -14,7 +14,7 @@ export function runDebug(): void {
         ["level", debugLevel],
         ["messages", debugMessages],
         ["scoreboard", debugScoreboard],
-        ["tab", debugTab],
+        ["tabui", debugTabUI],
     ]);
 
     const debug = new URL(window.location.href).searchParams.get("debug");

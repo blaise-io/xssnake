@@ -25,7 +25,7 @@ export class Canvas {
     _prevFrame: any;
     canvasWidth: number;
     canvasHeight: number;
-    error: boolean;
+    private error: boolean;
 
     constructor() {
         const color = storage(STORAGE_COLOR) as number;
@@ -45,6 +45,11 @@ export class Canvas {
         window.requestAnimationFrame((now) => {
             this._frame(now);
         });
+
+        window.onerror = (error) => {
+            this.error = true;
+            console.error(error);
+        };
     }
 
     setColorScheme(colorScheme: ColorScheme): void {

@@ -1,3 +1,4 @@
+declare let ENV_DEBUG: boolean;
 declare let ENV_IS_CLIENT: boolean;
 declare let ENV_VERSION: string;
 

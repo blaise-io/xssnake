@@ -1,7 +1,7 @@
 import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
 
-export function debugTab(): void {
+export function debugTabUI(): void {
     setTimeout(function () {
         ClientState.shapes = {};
         const text = [

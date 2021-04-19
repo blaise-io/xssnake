@@ -6,21 +6,14 @@ import { ClientState } from "./state/clientState";
 import { AudioPlayer } from "./ui/audioPlayer";
 import { Canvas } from "./ui/canvas";
 
-(async () => {
-    ClientState.shapes = {};
-    ClientState.events = new EventHandler();
-    ClientState.canvas = new Canvas();
-    ClientState.audio = new AudioPlayer();
+console.log(`XSSnake client version ${ENV_VERSION}`);
 
-    window.onerror = (error) => {
-        console.error(error);
-        ClientState.canvas.error = true; // Stop the paint!
-    };
+ClientState.shapes = {};
+ClientState.events = new EventHandler();
+ClientState.canvas = new Canvas();
+ClientState.audio = new AudioPlayer();
+ClientState.flow = new StageFlow();
 
-    // TODO: Exclude in production build.
+if (ENV_DEBUG) {
     runDebug();
-
-    ClientState.flow = new StageFlow();
-})();
-
-console.log(`Running XSSnake client version ${ENV_VERSION}.`);
+}
