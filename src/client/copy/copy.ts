@@ -5,16 +5,8 @@ import {
     ROOM_NOT_FOUND,
     ROOM_UNKNOWN_ERROR,
 } from "../../shared/const";
+import { UC } from "../const";
 import { isMac } from "../util/clientUtil";
-import {
-    UC_ARR_DOWN,
-    UC_ARR_LEFT,
-    UC_ARR_RIGHT,
-    UC_ARR_UP,
-    UC_BUG,
-    UC_ENTER_KEY,
-    UC_YES,
-} from "../const";
 
 export const COPY_AWAITING_PLAYERS_HEADER = "Msg your friends";
 export const COPY_AWAITING_PLAYERS_BODY =
@@ -59,14 +51,14 @@ export const COPY_DEF = ":  ";
 export const COPY_MAIN_INSTRUCT = [
     "M to mute/unmute sounds",
     (isMac() ? "Cmd+Ctrl+F11" : "F11") + " to enter/exit fullscreen",
-    "Arrow keys, Esc and " + UC_ENTER_KEY + " to navigate",
+    "Arrow keys, Esc and " + UC.ENTER_KEY + " to navigate",
 ].join(COPY_JOINER);
 
 // Form stage.
 export const COPY_FORM_INSTRUCT = [
-    UC_ARR_UP + " & " + UC_ARR_DOWN + " to select an option",
-    UC_ARR_LEFT + " & " + UC_ARR_RIGHT + " to change the value",
-    UC_ENTER_KEY + " to continue",
+    UC.ARR_UP + " & " + UC.ARR_DOWN + " to select an option",
+    UC.ARR_LEFT + " & " + UC.ARR_RIGHT + " to change the value",
+    UC.ENTER_KEY + " to continue",
 ].join(COPY_JOINER);
 
 // Pre-game dialog.
@@ -88,7 +80,7 @@ export const COPY_FIELD_PRIVATE = "Private Room";
 export const COPY_FIELD_XSS = "Winner fires XSS";
 export const COPY_FIELD_MAX_PLAYERS = "Max Players";
 
-export const COPY_FIELD_BUGS = "WEIRD BUGS " + UC_BUG;
+export const COPY_FIELD_BUGS = "WEIRD BUGS " + UC.BUG;
 export const COPY_FIELD_TRUE_OPT1 = COPY_FIELD_TRUE;
 export const COPY_FIELD_TRUE_OPT2 = "Enable";
 export const COPY_FIELD_TRUE_OPT3 = "OK";
@@ -97,7 +89,7 @@ export const COPY_FIELD_TRUE_OPT5 = "Accept";
 export const COPY_FIELD_TRUE_OPT6 = "Hao";
 export const COPY_FIELD_TRUE_OPT7 = "Oui!";
 export const COPY_FIELD_TRUE_OPT8 = "Si Senor";
-export const COPY_FIELD_TRUE_OPT9 = UC_YES;
+export const COPY_FIELD_TRUE_OPT9 = UC.YES;
 
 export const COPY_BOOL = [COPY_FIELD_FALSE, COPY_FIELD_TRUE];
 
@@ -107,7 +99,7 @@ export const COPY_AUTOJOIN_CONNECTING = "Connecting to server…";
 export const COPY_AUTOJOIN_FETCHING = "Getting room properties…";
 export const COPY_AUTOJOIN_PLAYERS = "Players ({0})";
 
-export const COPY_CHAT_INSTRUCT = "Press " + UC_ENTER_KEY + " to chat.";
+export const COPY_CHAT_INSTRUCT = "Press " + UC.ENTER_KEY + " to chat.";
 
 // Game stage connecting
 export const COPY_CONNECTING = "Connecting...";

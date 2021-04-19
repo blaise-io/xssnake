@@ -1,28 +1,17 @@
 import { Shape } from "../../shared/shape";
-import {
-    MENU_LEFT,
-    MENU_TITLE_HEIGHT,
-    MENU_TOP,
-    UC_BUG,
-    UC_BULB,
-    UC_FONT,
-    UC_MUSIC,
-    UC_SKULL,
-} from "../const";
+import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, UC } from "../const";
 import { ScreenStage } from "../stage_base/screenStage";
 import { fontPixels } from "../ui/font";
 import { zoom } from "../ui/transformClient";
 
 export class CreditsStage extends ScreenStage {
-    getShape() {
-        let body;
-        let icons;
+    getShape(): Shape {
         const left = MENU_LEFT;
         const top = MENU_TOP;
 
-        icons = [UC_BULB, "{}", UC_FONT, UC_BUG, UC_MUSIC, UC_SKULL];
+        const icons = [UC.BULB, "{}", UC.FONT, UC.BUG, UC.MUSIC, UC.SKULL];
 
-        body =
+        const body =
             icons.join(" + ") +
             "\n" +
             "BLAISE KAL  2012 - 2020\n\n" +

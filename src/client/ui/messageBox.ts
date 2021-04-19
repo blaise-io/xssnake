@@ -1,7 +1,7 @@
 import { HEIGHT, WIDTH } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
-import { FRAME, KEY, NS, UC_ENTER_KEY } from "../const";
+import { FRAME, KEY, NS, UC } from "../const";
 import { Message } from "../room/message";
 import { InputField } from "../stage_class_helper/inputField";
 import { ClientState } from "../state/clientState";
@@ -88,7 +88,7 @@ export class MessageBoxUI {
         this.inputField.maxValWidth = this.x1 - x - fontWidth(prefix);
         this.inputField.maxValWidth -= this.padding.x0 + this.padding.x1;
         this.inputField.displayWidth = this.inputField.maxValWidth;
-        this.inputField.displayWidth -= fontWidth(UC_ENTER_KEY) + 1;
+        this.inputField.displayWidth -= fontWidth(UC.ENTER_KEY) + 1;
         this.inputField.setValue("");
 
         this.updateMessages();
@@ -114,10 +114,10 @@ export class MessageBoxUI {
     }
 
     showEnterKey() {
-        const x = this.x1 - this.padding.x1 - fontWidth(UC_ENTER_KEY);
+        const x = this.x1 - this.padding.x1 - fontWidth(UC.ENTER_KEY);
         const y = this.y1 - this.lineHeight - this.padding.y1 + 1;
 
-        const shape = (ClientState.shapes.MSG_ENTER = font(UC_ENTER_KEY, x, y));
+        const shape = (ClientState.shapes.MSG_ENTER = font(UC.ENTER_KEY, x, y));
         shape.invert(shape.bbox(2));
         shape.flags.isOverlay = true;
     }

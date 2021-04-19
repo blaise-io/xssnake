@@ -2,7 +2,7 @@ import { HEIGHT } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { ensureIndexWithinBounds } from "../../shared/util";
-import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC_TR_LEFT } from "../const";
+import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC } from "../const";
 import { font, fontHeight, fontPixels, fontWidth, LINE_HEIGHT, LINE_HEIGHT_MENU } from "../ui/font";
 import { zoom } from "../ui/transformClient";
 
@@ -53,7 +53,7 @@ export class Form {
         const x = MENU_LEFT;
         let y = MENU_TOP;
 
-        const optionX = MENU_LEFT + 2 + MENU_WIDTH - this.maxwidth - fontWidth(" " + UC_TR_LEFT);
+        const optionX = MENU_LEFT + 2 + MENU_WIDTH - this.maxwidth - fontWidth(" " + UC.TR_LEFT);
 
         const shape = new Shape();
         shape.add(this._getHeaderPixels(x, y));
@@ -116,7 +116,7 @@ export class Form {
         const pixels = fontPixels(value, props.option, y);
         shape.add(pixels);
 
-        props.left = col2X - fontWidth(UC_TR_LEFT + " ");
+        props.left = col2X - fontWidth(UC.TR_LEFT + " ");
         props.right = col2X + this.maxwidth + fontWidth(" ");
 
         shape.add(fontPixels("<", props.left, y), fontPixels(">", props.right, y));

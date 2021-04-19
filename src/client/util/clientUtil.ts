@@ -1,6 +1,6 @@
 import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, LEVEL, WIDTH } from "../../shared/const";
 import { _ } from "../../shared/util";
-import { UC_ENTER_KEY } from "../const";
+import { UC } from "../const";
 import { ClientState } from "../state/clientState";
 import { Dialog, DialogType } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
@@ -32,7 +32,7 @@ export function error(str: string, callback?: CallableFunction): void {
         ClientState.flow.restart();
     };
 
-    const body = _(`Press ${UC_ENTER_KEY} to continue`);
+    const body = _(`Press ${UC.ENTER_KEY} to continue`);
     const dialog = new Dialog(str, body, {
         type: DialogType.ALERT,
         ok: exit,

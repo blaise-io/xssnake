@@ -1,7 +1,7 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { shift } from "../../shared/transform";
-import { UC_HOURGLASS, UC_SQUARE } from "../const";
+import { UC } from "../const";
 
 export const MAX_WIDTH = 9;
 export const MAX_HEIGHT = 7;
@@ -133,7 +133,7 @@ export function fontEndPos(str, x, y, options) {
 function _chrProperties(chr) {
     if (!_cache[chr]) {
         const chrProperties = _getChrProperties(chr);
-        _cache[chr] = chrProperties || _chrProperties(UC_SQUARE);
+        _cache[chr] = chrProperties || _chrProperties(UC.SQUARE);
     }
     return _cache[chr];
 }
@@ -205,7 +205,7 @@ export function getKerning(x, y, shape, pointer, chrProperties) {
  * @private
  */
 function _nextWordFit(str, i, pointer, wrap) {
-    const nextWord = str.substr(i + 1).split(/[\s\-]/)[0];
+    const nextWord = str.substr(i + 1).split(/[\s-]/)[0];
     return pointer.x + fastWidth(nextWord) <= wrap;
 }
 
@@ -315,7 +315,7 @@ function _getChrProperties(chr) {
 export function fontLoad(): Promise<void> {
     return new Promise((resolve) => {
         const interval = window.setInterval(() => {
-            const props = _getChrProperties(UC_HOURGLASS);
+            const props = _getChrProperties(UC.HOURGLASS);
             if (props && props.width === 8) {
                 window.clearInterval(interval);
                 resolve();

@@ -1,6 +1,6 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { getRandomItemFrom } from "../../shared/util";
-import { MENU_LEFT, NS, STORAGE_NAME, UC_SKULL, UC_WHITE_HEART } from "../const";
+import { MENU_LEFT, NS, STORAGE_NAME, UC } from "../const";
 import { InputStage } from "../stage_base/inputStage";
 import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
@@ -57,8 +57,8 @@ export class NameStage extends InputStage {
     _wits = [
         "%s%s%s!!!",
         "You have the same name as my mom",
-        "LOVELY " + new Array(4).join(UC_WHITE_HEART),
-        UC_SKULL,
+        "LOVELY " + new Array(4).join(UC.WHITE_HEART),
+        UC.SKULL,
         "Lamest name EVER",
         "Clever name!",
         "Mmm I love the way you handled that keyboard",

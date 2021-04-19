@@ -1,6 +1,6 @@
 import { SPAWN_APPLE, SPAWN_POWERUP } from "../../shared/const";
 import { Shape } from "../../shared/shape";
-import { NS, UC_APPLE, UC_ELECTRIC } from "../const";
+import { NS, UC } from "../const";
 import { ClientState } from "../state/clientState";
 import { font } from "../ui/font";
 import { flash } from "../ui/shapeClient";
@@ -19,7 +19,7 @@ export class Spawnable {
         ClientState.shapes[this._shapeName] = this._getShape();
     }
 
-    destruct() {
+    destruct(): void {
         ClientState.shapes[this._shapeName] = null;
     }
 
@@ -30,10 +30,10 @@ export class Spawnable {
 
         switch (this.type) {
             case SPAWN_APPLE:
-                shape = font(UC_APPLE, x - 1, y - 2);
+                shape = font(UC.APPLE, x - 1, y - 2);
                 break;
             case SPAWN_POWERUP:
-                shape = font(UC_ELECTRIC, x - 1, y - 1);
+                shape = font(UC.ELECTRIC, x - 1, y - 1);
                 break;
         }
 
