@@ -12,13 +12,13 @@ import {
 export class ClientOptions extends RoomOptions {
     constructor() {
         super();
-        this.levelset = randomArrIndex(levelsets);
+        this.levelsetIndex = randomArrIndex(levelsets);
     }
 
     setOptionsFromForm(indexedOptions: (number | boolean)[]): void {
         this.isQuickGame = false;
         this.maxPlayers = indexedOptions[FIELD_MAX_PLAYERS] as number;
-        this.levelset = indexedOptions[FIELD_LEVEL_SET] as number;
+        this.levelsetIndex = indexedOptions[FIELD_LEVEL_SET] as number;
         this.hasPowerups = indexedOptions[FIELD_POWERUPS] as boolean;
         this.isPrivate = indexedOptions[FIELD_PRIVATE] as boolean;
         this.isXSS = indexedOptions[FIELD_XSS] as boolean;

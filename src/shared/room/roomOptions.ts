@@ -70,7 +70,7 @@ console.assert(
 export class RoomOptions {
     isQuickGame: boolean;
     maxPlayers: number;
-    levelset: number;
+    levelsetIndex: number;
     hasPowerups: boolean;
     isPrivate: boolean;
     isXSS: boolean;
@@ -78,7 +78,7 @@ export class RoomOptions {
     constructor() {
         this.isQuickGame = false;
         this.maxPlayers = 6;
-        this.levelset = 0;
+        this.levelsetIndex = 0;
         this.hasPowerups = true;
         this.isPrivate = false;
         this.isXSS = false;
@@ -89,7 +89,7 @@ export class RoomOptions {
     serialize(): [number, number, number, number, number, number] {
         return [
             this.maxPlayers,
-            this.levelset,
+            this.levelsetIndex,
             Number(this.isQuickGame),
             Number(this.hasPowerups),
             Number(this.isPrivate),
@@ -102,7 +102,7 @@ export class RoomOptions {
             .assertBetween(1, ROOM_CAPACITY)
             .getValueOr(ROOM_CAPACITY) as number;
 
-        this.levelset = new Sanitizer(serialized[1])
+        this.levelsetIndex = new Sanitizer(serialized[1])
             .assertBetween(0, levelsets.length - 1)
             .getValueOr(0) as number;
 

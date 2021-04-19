@@ -22,7 +22,7 @@ export class ServerOptions extends RoomOptions {
             !request.isPrivate &&
             request.isXSS === this.isXSS &&
             (request.isQuickGame ||
-                (request.levelset === this.levelset &&
+                (request.levelsetIndex === this.levelsetIndex &&
                     request.hasPowerups === this.hasPowerups &&
                     request.maxPlayers <= this.maxPlayers))
         );

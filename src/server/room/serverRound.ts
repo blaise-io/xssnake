@@ -32,7 +32,7 @@ export class ServerRound extends Round {
     ) {
         super(players, options);
 
-        this.levelsetIndex = options.levelset;
+        this.levelsetIndex = options.levelsetIndex;
         this.levelset = levelsets[this.levelsetIndex];
         this.levelIndex = levelPlayset.getNext();
 

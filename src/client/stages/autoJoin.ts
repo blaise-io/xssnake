@@ -47,7 +47,9 @@ export class AutoJoinStage extends InputStage {
                 this.room.players.getNames().join(COPY_COMMA_SPACE)
         );
         summary.push(COPY_FIELD_MAX_PLAYERS + "\t" + this.room.options.maxPlayers);
-        summary.push(COPY_FIELD_LEVEL_SET + "\t" + levelsets[this.room.options.levelset].title);
+        summary.push(
+            COPY_FIELD_LEVEL_SET + "\t" + levelsets[this.room.options.levelsetIndex].title
+        );
         summary.push(COPY_FIELD_POWERUPS + "\t" + COPY_BOOL[Number(this.room.options.hasPowerups)]);
         summary.push(COPY_FIELD_XSS + "\t" + COPY_BOOL[Number(this.room.options.isXSS)]);
         return summary.join("\n") + "\n\n" + _("Enter your name to join: ");
