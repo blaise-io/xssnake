@@ -5,12 +5,11 @@ import { ClientState } from "../state/clientState";
 import { ClientPlayer } from "./clientPlayer";
 
 export class ClientPlayerRegistry extends PlayerRegistry {
-    localPlayer: ClientPlayer;
     players: ClientPlayer[];
 
-    constructor() {
+    constructor(public localPlayer: ClientPlayer) {
         super();
-        this.localPlayer = null;
+        this.add(localPlayer);
     }
 
     destruct(): void {
@@ -18,34 +17,35 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         super.destruct();
     }
 
-    clone(playerRegistry: ClientPlayerRegistry): void {
-        this.players = playerRegistry.players.slice();
-        this.localPlayer = playerRegistry.localPlayer;
+    clone(): ClientPlayerRegistry {
+        const clone = new ClientPlayerRegistry(this.localPlayer);
+        clone.players = this.players.slice();
+        return clone;
     }
 
-    deserialize(serializedPlayers: Coordinate[][][]): void {
+    deserialize(serializedPlayers: [string, number][]): void {
         for (let i = 0, m = serializedPlayers.length; i < m; i++) {
             this.players[i].deserialize(serializedPlayers[i]);
         }
     }
 
-    reconstruct(serializedPlayers: Coordinate[][][]): void {
-        this.destruct();
+    reconstruct(serializedPlayers: [string, number][]): void {
+        super.destruct(); // Keep localPlayer; is not in super.
         for (let i = 0, m = serializedPlayers.length; i < m; i++) {
             this.reconstructPlayer(serializedPlayers[i]);
         }
     }
 
-    reconstructPlayer(serialized: Coordinate[][]): void {
-        let player = new ClientPlayer();
+    reconstructPlayer(serialized: [string, number]): void {
+        const player = new ClientPlayer();
         player.deserialize(serialized);
 
         if (player.local) {
-            ClientState.player.deserialize(serialized);
-            player = this.localPlayer = ClientState.player;
+            this.localPlayer.deserialize(serialized);
+            this.add(this.localPlayer);
+        } else {
+            this.add(player);
         }
-
-        this.add(player);
     }
 
     getNames(): string[] {
@@ -136,11 +136,6 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     }
 
     localPlayerIsHost(): boolean {
-        return Boolean(
-            this.localPlayer &&
-                ClientState.player &&
-                this.localPlayer === ClientState.player &&
-                0 === this.players.indexOf(ClientState.player)
-        );
+        return this.localPlayer && this.players[0] === this.localPlayer;
     }
 }

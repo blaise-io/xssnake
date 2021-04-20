@@ -6,22 +6,17 @@ export class ClientSnakeControls {
     private upcomingDirections: number[] = [];
 
     constructor(public snake: ClientSnake) {
-        this.bindEvents();
+        ClientState.events.on("keydown", NS.SNAKE_CONTROLS, (event) => {
+            const direction = KEY_TO_DIRECTION[event.keyCode];
+            if (!ClientState.keysBlocked && typeof direction !== "undefined") {
+                this.setDirection(direction);
+            }
+        });
     }
 
     destruct(): void {
         ClientState.events.off("keydown", NS.SNAKE_CONTROLS);
-    }
-
-    bindEvents(): void {
-        ClientState.events.on("keydown", NS.SNAKE_CONTROLS, this.handleKeys.bind(this));
-    }
-
-    handleKeys(event: KeyboardEvent): void {
-        const direction = KEY_TO_DIRECTION[event.keyCode];
-        if (!ClientState.keysBlocked && typeof direction !== "undefined") {
-            this.setDirection(direction);
-        }
+        this.snake = null;
     }
 
     setDirection(direction: number): void {
@@ -54,15 +49,9 @@ export class ClientSnakeControls {
         return this.snake.direction;
     }
 
-    emitNewDirection(direction: number): void {
-        //        if (State.player && State.player.room && State.player.room.gameHasStarted()) {
-        this.snake.emit(direction);
-        //        }
-    }
-
     move(): void {
         if (this.upcomingDirections.length) {
-            this.emitNewDirection(this.upcomingDirections.shift());
+            this.snake.emitFunction(this.upcomingDirections.shift());
         }
     }
 }

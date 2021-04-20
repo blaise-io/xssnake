@@ -1,4 +1,5 @@
 import { Player } from "../../shared/room/player";
+import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
@@ -18,14 +19,13 @@ export function debugScoreboard(): void {
             new Message("Player 1", "Hello world"),
         ];
         const author = new Player("Dummy");
-        new MessageBoxUI(messages, author);
+        new MessageBoxUI(messages, author, (body) => {
+            console.log(body);
+        });
 
-        const players = new ClientPlayerRegistry();
-        for (let i = 0, m = 5; i < m; i++) {
+        const players = new ClientPlayerRegistry(new ClientPlayer("Blaise", true));
+        for (let i = 0, m = 5; i <= m; i++) {
             const player = new Player("Player " + (i + 1));
-            if (i === 0) {
-                player.local = true;
-            }
             players.add(player);
         }
         const scoreboard = new Scoreboard(players);

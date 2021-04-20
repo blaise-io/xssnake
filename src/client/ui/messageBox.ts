@@ -13,7 +13,6 @@ export class MessageBoxUI {
     private skipQueue: boolean;
     private queued: number;
     private inputField: InputField;
-    sendMessageFn: any;
     private lineHeight: number;
     private animationDuration: number;
     private x0: number;
@@ -22,13 +21,16 @@ export class MessageBoxUI {
     private y1: number;
     private padding: { y0: number; x0: number; y1: number; x1: number };
 
-    constructor(public messages: Message[], public localAuthor: Player) {
+    constructor(
+        public messages: Message[],
+        public localPlayer: Player,
+        private sendMessageFn: (string) => void
+    ) {
         this.animating = false;
         this.skipQueue = false;
         this.queued = 0;
 
         this.inputField = null;
-        this.sendMessageFn = () => {};
 
         this.lineHeight = 7;
         this.animationDuration = 200;
@@ -76,13 +78,9 @@ export class MessageBoxUI {
     }
 
     showInput() {
-        let x;
-        let y;
-        let prefix;
-
-        x = this.x0 + this.padding.x1 + new Message("", "").getOffset();
-        y = this.y1 - this.padding.y1 - this.lineHeight;
-        prefix = this.localAuthor.name + ": ";
+        const x = this.x0 + this.padding.x1 + new Message("", "").getOffset();
+        const y = this.y1 - this.padding.y1 - this.lineHeight;
+        const prefix = this.localPlayer.name + ": ";
 
         this.inputField = new InputField(x, y, prefix);
         this.inputField.maxValWidth = this.x1 - x - fontWidth(prefix);
@@ -104,7 +102,7 @@ export class MessageBoxUI {
     }
 
     sendMessage(body) {
-        const author = String(this.localAuthor.name);
+        const author = String(this.localPlayer.name);
         if (body.trim()) {
             this.messages.push(new Message(author, body));
             this.sendMessageFn(body);

@@ -2,7 +2,7 @@ import { GAME_LEFT, GAME_TOP } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { BlankLevel } from "../../shared/levels/debug/blank";
 import { Shape } from "../../shared/shape";
-import { _ } from "../../shared/util";
+import { _, noop } from "../../shared/util";
 import { ClientSnake } from "../game/clientSnake";
 import { ClientState } from "../state/clientState";
 import { setGameTransform } from "../ui/shapeClient";
@@ -25,7 +25,7 @@ export class MenuSnake {
     }
 
     spawnSnake(): void {
-        this.snake = new ClientSnake(0, false, "", this.level);
+        this.snake = new ClientSnake(0, false, "", noop, this.level);
         this.snake.addControls();
         this.snake.showDirection();
         this.snake.removeNameAndDirection();

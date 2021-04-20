@@ -1,5 +1,5 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
-import { NC_PING, NC_PONG } from "../../shared/const";
+import { NC_PING, NC_PONG, NC_SNAKE_UPDATE, NETCODE_SYNC_MS } from "../../shared/const";
 import { NS } from "../const";
 import {
     COPY_SOCKET_CANNOT_CONNECT,
@@ -40,6 +40,10 @@ export class ClientSocketPlayer extends ClientPlayer {
         // Close explicitly when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {
             this.connection.close();
+        }
+
+        if (this.room) {
+            this.room.destruct();
         }
     }
 
@@ -82,5 +86,10 @@ export class ClientSocketPlayer extends ClientPlayer {
         const data = JSON.parse(ev.data);
         console.log("IN ", data);
         ClientState.events.trigger(data[0], data.slice(1));
+    }
+
+    emitFn(direction: number): void {
+        const sync = Math.round(NETCODE_SYNC_MS / this.snake.speed);
+        this.emit(NC_SNAKE_UPDATE, [direction, this.snake.parts.slice(-sync)]);
     }
 }

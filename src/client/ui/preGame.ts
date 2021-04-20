@@ -137,7 +137,7 @@ export class PreGameUI {
             type: DialogType.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
             ok: function () {
-                ClientState.player.emit(NC_ROOM_START);
+                this.XXX.emit(NC_ROOM_START);
                 this.hideConfirmDialog();
             }.bind(this),
         };

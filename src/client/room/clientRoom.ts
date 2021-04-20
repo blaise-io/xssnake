@@ -5,14 +5,9 @@ import {
     NC_SNAKE_CRASH,
 } from "../../shared/const";
 import { EV_PLAYERS_UPDATED, HASH_ROOM, NS } from "../const";
-import {
-    COPY_COMMA_SPACE,
-    COPY_ELLIPSIS,
-    COPY_SNAKE_CRASHED,
-    COPY_SPACE_AND_SPACE,
-} from "../copy/copy";
 import { ClientState } from "../state/clientState";
 import { urlHash } from "../util/clientUtil";
+import { ClientPlayer } from "./clientPlayer";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRoundSet } from "./clientRoundSet";
 import { MessageBox } from "./messageBox";
@@ -24,12 +19,13 @@ export class ClientRoom {
     players: ClientPlayerRegistry;
     options: ClientOptions;
     private roundSet: ClientRoundSet;
-    private messageBox: any;
-    private scoreboard: any;
-    constructor() {
+    private messageBox: MessageBox;
+    private scoreboard: Scoreboard;
+
+    constructor(clientPlayer: ClientPlayer) {
         this.key = "";
 
-        this.players = new ClientPlayerRegistry();
+        this.players = new ClientPlayerRegistry(clientPlayer);
         this.options = new ClientOptions();
         this.roundSet = new ClientRoundSet(this.players, this.options);
 
@@ -98,18 +94,18 @@ export class ClientRoom {
             notification += names[serializedCollisions[i][0]];
 
             if (i + 1 === m) {
-                notification += COPY_SNAKE_CRASHED;
+                notification += " crashed.";
             } else if (i + 2 === m) {
-                notification += COPY_SPACE_AND_SPACE;
+                notification += " & ";
             } else {
-                notification += COPY_COMMA_SPACE;
+                notification += ", ";
             }
 
             if (1 === i % 2 || m === i + 1) {
                 // Line end.
                 if (i + 1 < m) {
                     // Continuing.
-                    notification += COPY_ELLIPSIS;
+                    notification += "…";
                 }
                 this.messageBox.addNotification(notification);
                 notification = "";

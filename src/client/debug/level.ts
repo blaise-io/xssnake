@@ -21,14 +21,11 @@ export function debugLevel(): void {
 
         const level = new levels[levelName]();
         level.load(clientImageLoader).then(() => {
-            const players = new ClientPlayerRegistry();
+            const localPlayer = new ClientPlayer("Blaise", true);
+            localPlayer.setSnake(0, level);
+
+            const players = new ClientPlayerRegistry(localPlayer);
             const game = new ClientGame(level, players);
-
-            players.localPlayer = new ClientPlayer();
-            players.localPlayer.local = true;
-            players.localPlayer.setSnake(0, level);
-
-            players.players = [players.localPlayer];
 
             game.start();
         });

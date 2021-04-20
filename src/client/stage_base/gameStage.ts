@@ -22,16 +22,11 @@ export class GameStage implements StageInterface {
     }
 
     construct(): void {
+        ClientState.shapes.CONNECTING = this.connectingShape;
         this.connectServer();
     }
 
     destruct(): void {
-        if (ClientState.player) {
-            if (ClientState.player.room) {
-                ClientState.player.room.destruct();
-            }
-            ClientState.player.destruct();
-        }
         ClientState.events.off("keydown", NS.STAGES);
         ClientState.shapes.CONNECTING = null;
     }
@@ -52,24 +47,17 @@ export class GameStage implements StageInterface {
         return name;
     }
 
-    getEmitData(): [number, number, number, number, number, number] {
-        return this.getSerializedGameOptions();
-    }
-
     connectServer(): void {
-        ClientState.shapes.CONNECTING = this.getConnectingShape();
-        ClientState.player = new ClientSocketPlayer(this.connectRoom.bind(this));
+        const clientPlayer = new ClientSocketPlayer(() => {
+            clientPlayer.room = new ClientRoom(clientPlayer);
+            clientPlayer.room.setupComponents();
+            clientPlayer.emit(NC_PLAYER_NAME, [this.getPlayerName()]);
+            clientPlayer.emit(NC_ROOM_JOIN_MATCHING, this.getSerializedGameOptions());
+            this.destructStageLeftovers();
+        });
     }
 
-    connectRoom(): void {
-        ClientState.player.room = new ClientRoom();
-        ClientState.player.room.setupComponents();
-        ClientState.player.emit(NC_PLAYER_NAME, [this.getPlayerName()]);
-        ClientState.player.emit(NC_ROOM_JOIN_MATCHING, this.getEmitData());
-        this.destructStageLeftovers();
-    }
-
-    getConnectingShape(): Shape {
+    get connectingShape(): Shape {
         const shape = font(COPY_CONNECTING);
         center(shape, WIDTH, HEIGHT - 20);
         lifetime(shape, 2000);

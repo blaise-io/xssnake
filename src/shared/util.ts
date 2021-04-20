@@ -161,8 +161,13 @@ export function getRandomName() {
 }
 
 /**
- * Prep for possible i18n and marks copy.
+ * Placeholder for i18n.
  */
 export function _(str: string): string {
     return str;
 }
+
+/**
+ * No operation fn.
+ */
+export const noop = (): void => {};

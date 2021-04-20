@@ -27,9 +27,6 @@ export class StageFlow {
 
     destruct(): void {
         this.stage.destruct();
-        if (ClientState.player) {
-            ClientState.player.destruct();
-        }
         ClientState.shapes = {};
         ClientState.events.off("keydown", NS.FLOW);
         ClientState.canvas.garbageCollect();
@@ -145,12 +142,7 @@ export class StageFlow {
 
         newStageAnim.doneCallback = callback;
 
-        if (back) {
-            ClientState.audio.play("swoosh_rev");
-        } else {
-            ClientState.audio.play("swoosh");
-        }
-
+        ClientState.audio.play(back ? "swoosh_rev" : "swoosh");
         ClientState.shapes.oldstage = animate(oldShape, oldStageAnim);
         ClientState.shapes.newstage = animate(newShape, newStageAnim);
     }

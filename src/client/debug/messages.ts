@@ -1,6 +1,7 @@
 import { Player } from "../../shared/room/player";
-import { getRandomName, randomRange, randomStr } from "../../shared/util";
+import { getRandomName, noop, randomRange, randomStr } from "../../shared/util";
 import { COPY_CHAT_INSTRUCT } from "../copy/copy";
+import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
@@ -12,14 +13,14 @@ export function debugMessages(): void {
     setTimeout(function () {
         const messages = [];
         const author = new Player("Dummy");
-        const ui = new MessageBoxUI(messages, author);
+        const ui = new MessageBoxUI(messages, author, noop);
 
         ClientState.flow.destruct();
 
         ClientState.shapes.innerBorder = innerBorder();
         Object.assign(ClientState.shapes, outerBorder());
 
-        const players = new ClientPlayerRegistry();
+        const players = new ClientPlayerRegistry(new ClientPlayer("Blaise", true));
         new Scoreboard(players);
 
         function randomBody() {

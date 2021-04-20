@@ -4,41 +4,30 @@ import { COPY_CHAT_INSTRUCT, COPY_PLAYER_JOINED, COPY_PLAYER_QUIT } from "../cop
 import { ClientState } from "../state/clientState";
 import { MessageBoxUI } from "../ui/messageBox";
 import { format } from "../util/clientUtil";
+import { ClientPlayer } from "./clientPlayer";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
+import { ClientSocketPlayer } from "./clientSocketPlayer";
 import { Message } from "./message";
 
 export class MessageBox {
-    private previousPlayers: ClientPlayerRegistry; // Keep old registry until player leaving is propagated.
+    private previousPlayers: ClientPlayerRegistry = null; // Keep old registry until player leaving is propagated.
     private messages: Message[];
-    private ui: MessageBoxUI;
-    private playerChangeNotified: boolean;
+    ui: MessageBoxUI;
+    private playerChangeNotified = false;
 
     constructor(public players: ClientPlayerRegistry) {
-        this.previousPlayers = null;
-
+        this.ui = new MessageBoxUI(this.messages, players.localPlayer, (body) => {
+            (this.players.localPlayer as ClientSocketPlayer).emit(NC_CHAT_MESSAGE, [body]);
+        });
         this.messages = [new Message(null, COPY_CHAT_INSTRUCT)];
-
-        this.ui = new MessageBoxUI(this.messages, ClientState.player);
-        this.ui.sendMessageFn = this.sendMessage.bind(this);
-
-        this.playerChangeNotified = false;
-
-        this.bindEvents();
+        ClientState.events.on(NC_CHAT_MESSAGE, NS.MSGBOX, this.addMessage.bind(this));
+        ClientState.events.on(EV_PLAYERS_UPDATED, NS.MSGBOX, this.updatePlayers.bind(this));
     }
 
     destruct() {
         this.messages.length = 0;
         this.previousPlayers = null;
         this.ui.destruct();
-        this.unbindEvents();
-    }
-
-    bindEvents() {
-        ClientState.events.on(NC_CHAT_MESSAGE, NS.MSGBOX, this.addMessage.bind(this));
-        ClientState.events.on(EV_PLAYERS_UPDATED, NS.MSGBOX, this.updatePlayers.bind(this));
-    }
-
-    unbindEvents() {
         ClientState.events.off(NC_CHAT_MESSAGE, NS.MSGBOX);
         ClientState.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);
     }
@@ -64,23 +53,22 @@ export class MessageBox {
             if (this.previousPlayers && !this.playerChangeNotified) {
                 this.notifyPlayersChange();
             }
-            this.previousPlayers = new ClientPlayerRegistry();
-            this.previousPlayers.clone(this.players);
+            this.previousPlayers = this.players.clone();
             this.playerChangeNotified = false;
         }
     }
 
-    notifyMidgameDisconnect(player) {
+    notifyMidgameDisconnect(player: ClientPlayer): void {
         const message = format(COPY_PLAYER_QUIT, player.name);
         this.notifyPlayersChangeUI(message);
     }
 
-    notifyPlayersChangeUI(message) {
+    notifyPlayersChangeUI(message: string): void {
         this.messages.push(new Message(null, message));
         this.ui.debounceUpdate();
     }
 
-    notifyPlayersChange() {
+    notifyPlayersChange(): void {
         let message;
         if (this.players.getTotal() > this.previousPlayers.getTotal()) {
             message = format(COPY_PLAYER_JOINED, String(this.players.getJoinName()));
@@ -93,9 +81,5 @@ export class MessageBox {
         if (message) {
             this.notifyPlayersChangeUI(message);
         }
-    }
-
-    sendMessage(body) {
-        ClientState.player.emit(NC_CHAT_MESSAGE, [body]);
     }
 }

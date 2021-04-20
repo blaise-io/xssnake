@@ -34,32 +34,19 @@ COPY_ERROR[ROOM_UNKNOWN_ERROR] = "Unknown errooshiii#^%^".toUpperCase();
 export const COPY_DIALOG_OK = "Ok".toUpperCase();
 export const COPY_DIALOG_CANCEL = "Cancel".toUpperCase();
 
-// Level sets.
-export const COPY_LEVELSET_BASIC = "Basic";
-export const COPY_LEVELSET_MOVING = "Moving";
-export const COPY_LEVELSET_MAZE = "Mazes";
-export const COPY_LEVELSET_GAME = "Pactris";
-
-// Stages misc.
-export const COPY_COMMA_SPACE = ", ";
-export const COPY_SPACE_AND_SPACE = " & ";
-export const COPY_ELLIPSIS = " …";
-export const COPY_JOINER = " …\n";
-export const COPY_DEF = ":  ";
-
 // Main stage.
 export const COPY_MAIN_INSTRUCT = [
     "M to mute/unmute sounds",
     (isMac() ? "Cmd+Ctrl+F11" : "F11") + " to enter/exit fullscreen",
     "Arrow keys, Esc and " + UC.ENTER_KEY + " to navigate",
-].join(COPY_JOINER);
+].join(" …\n");
 
 // Form stage.
 export const COPY_FORM_INSTRUCT = [
     UC.ARR_UP + " & " + UC.ARR_DOWN + " to select an option",
     UC.ARR_LEFT + " & " + UC.ARR_RIGHT + " to change the value",
     UC.ENTER_KEY + " to continue",
-].join(COPY_JOINER);
+].join(" …\n");
 
 // Pre-game dialog.
 export const COPY_COUNTDOWN_TITLE = "Get ready!";
@@ -91,14 +78,6 @@ export const COPY_FIELD_TRUE_OPT7 = "Oui!";
 export const COPY_FIELD_TRUE_OPT8 = "Si Senor";
 export const COPY_FIELD_TRUE_OPT9 = UC.YES;
 
-export const COPY_BOOL = [COPY_FIELD_FALSE, COPY_FIELD_TRUE];
-
-// Join room by key.
-export const COPY_AUTOJOIN_HEADER = "Auto-Join room".toUpperCase();
-export const COPY_AUTOJOIN_CONNECTING = "Connecting to server…";
-export const COPY_AUTOJOIN_FETCHING = "Getting room properties…";
-export const COPY_AUTOJOIN_PLAYERS = "Players ({0})";
-
 export const COPY_CHAT_INSTRUCT = "Press " + UC.ENTER_KEY + " to chat.";
 
 // Game stage connecting
@@ -107,9 +86,6 @@ export const COPY_CONNECTING = "Connecting...";
 // Chat.
 export const COPY_PLAYER_JOINED = "{0} joined.";
 export const COPY_PLAYER_QUIT = "{0} quit.";
-
-// Notify snake crashes.
-export const COPY_SNAKE_CRASHED = " crashed.";
 
 // Round winner.
 export const COPY_ROUND_DRAW_TITLE = "Round ended in a draw".toUpperCase();

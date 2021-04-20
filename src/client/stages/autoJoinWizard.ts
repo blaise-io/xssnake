@@ -5,14 +5,9 @@ import {
     NC_ROOM_SERIALIZE,
     NC_ROOM_STATUS,
 } from "../../shared/const";
+import { _ } from "../../shared/util";
 import { NS } from "../const";
-import {
-    COPY_AUTOJOIN_CONNECTING,
-    COPY_AUTOJOIN_FETCHING,
-    COPY_AUTOJOIN_HEADER,
-    COPY_ERROR,
-} from "../copy/copy";
-import { ClientRoom } from "../room/clientRoom";
+import { COPY_ERROR } from "../copy/copy";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
 import { ClientState } from "../state/clientState";
 import { Dialog } from "../ui/dialog";
@@ -20,84 +15,82 @@ import { error } from "../util/clientUtil";
 import { AutoJoinStage } from "./autoJoin";
 
 export class AutoJoinWizard {
-    dialog: Dialog;
-    eventsReceived: number;
+    clientPlayer: ClientSocketPlayer;
+    private dialog: Dialog;
+    private messageTimeout: number;
+    private dataReceived = {
+        room: false,
+        options: false,
+        players: false,
+    };
 
     constructor(public roomKey: string) {
-        this.dialog = this.getInitialDialog();
-        this.autoJoinRoom();
+        this.dialog = new Dialog(_("Auto-Join room").toUpperCase(), _("Connecting to server…"));
+        this.clientPlayer = new ClientSocketPlayer(this.onconnect.bind(this));
     }
 
-    getInitialDialog() {
-        return new Dialog(COPY_AUTOJOIN_HEADER, COPY_AUTOJOIN_CONNECTING);
+    destruct(): void {
+        window.clearTimeout(this.messageTimeout);
+        this.dialog.destruct();
+        this.unbindEvents();
     }
 
-    autoJoinRoom() {
-        ClientState.player = new ClientSocketPlayer(this.onconnect.bind(this));
-    }
-
-    onconnect() {
-        window.setTimeout(
-            function () {
-                this.dialog.body = COPY_AUTOJOIN_FETCHING;
-                window.setTimeout(this.getAutoJoinRoomStatus.bind(this), 500);
-            }.bind(this),
-            500
-        );
+    onconnect(): void {
+        this.messageTimeout = window.setTimeout(() => {
+            this.dialog.body = _("Getting room properties…");
+            this.messageTimeout = window.setTimeout(() => {
+                this.clientPlayer.emit(NC_ROOM_STATUS, [this.roomKey]);
+            }, 500);
+        }, 500);
 
         this.bindEvents();
     }
 
-    getAutoJoinRoomStatus() {
-        ClientState.player.emit(NC_ROOM_STATUS, [this.roomKey]);
-    }
-
-    bindEvents() {
+    bindEvents(): void {
         // Use room to store data until player confirms join.
-        ClientState.player.room = new ClientRoom();
-        this.eventsReceived = 0;
+        // TODO: NO!
+        // this.clientPlayer.room = new ClientRoom();
 
-        ClientState.events.on(
-            NC_ROOM_SERIALIZE,
-            NS.STAGES,
-            this.checkAllRoomDataReceived.bind(this)
-        );
+        ClientState.events.on(NC_ROOM_SERIALIZE, NS.STAGES, () => {
+            this.dataReceived.room = true;
+            this.checkAllRoomDataReceived();
+        });
 
-        ClientState.events.on(
-            NC_OPTIONS_SERIALIZE,
-            NS.STAGES,
-            this.checkAllRoomDataReceived.bind(this)
-        );
+        ClientState.events.on(NC_OPTIONS_SERIALIZE, NS.STAGES, () => {
+            this.dataReceived.options = true;
+            this.checkAllRoomDataReceived();
+        });
 
-        ClientState.events.on(
-            NC_PLAYERS_SERIALIZE,
-            NS.STAGES,
-            this.checkAllRoomDataReceived.bind(this)
-        );
+        ClientState.events.on(NC_PLAYERS_SERIALIZE, NS.STAGES, () => {
+            this.dataReceived.players = true;
+            this.checkAllRoomDataReceived();
+        });
 
-        ClientState.events.on(NC_ROOM_JOIN_ERROR, NS.STAGES, this.handleError.bind(this));
+        ClientState.events.on(NC_ROOM_JOIN_ERROR, NS.STAGES, (data) => {
+            this.handleError(data);
+        });
     }
 
-    unbindEvents() {
+    unbindEvents(): void {
         ClientState.events.off(NC_ROOM_SERIALIZE, NS.STAGES);
         ClientState.events.off(NC_OPTIONS_SERIALIZE, NS.STAGES);
         ClientState.events.off(NC_PLAYERS_SERIALIZE, NS.STAGES);
         ClientState.events.off(NC_ROOM_JOIN_ERROR, NS.STAGES);
     }
 
-    checkAllRoomDataReceived() {
-        // Need room, room options and room players.
-        if (++this.eventsReceived === 3) {
-            this.dialog.destruct();
-            this.unbindEvents();
-            ClientState.flow.switchStage(AutoJoinStage);
+    get allDataReceived(): boolean {
+        return this.dataReceived.room && this.dataReceived.options && this.dataReceived.players;
+    }
+
+    checkAllRoomDataReceived(): void {
+        if (this.allDataReceived) {
+            this.destruct();
+            ClientState.flow.switchStage(AutoJoinStage.bind(this.clientPlayer));
         }
     }
 
-    handleError(data) {
-        this.dialog.destruct();
-        this.unbindEvents();
+    handleError(data: number[]): void {
         error(COPY_ERROR[data[0]]);
-        ClientState.player = null;
+        this.destruct();
     }
 }

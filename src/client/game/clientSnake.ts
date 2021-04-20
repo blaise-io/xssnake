@@ -1,4 +1,4 @@
-import { GAME_SHIFT_MAP, NC_SNAKE_UPDATE, NETCODE_SYNC_MS } from "../../shared/const";
+import { GAME_SHIFT_MAP } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
@@ -17,7 +17,13 @@ export class ClientSnake extends Snake {
     private controls: ClientSnakeControls;
     private shapeKeys: { snake: string; name: string; direction: string };
 
-    constructor(public index: number, public local: boolean, public name: string, level: Level) {
+    constructor(
+        public index: number,
+        public local: boolean,
+        public name: string,
+        public emitFunction: (number) => void,
+        level: Level
+    ) {
         super(index, level);
 
         this.elapsed = 0;
@@ -34,7 +40,7 @@ export class ClientSnake extends Snake {
         this.updateShape();
     }
 
-    destruct() {
+    destruct(): void {
         // Remove any related shape.
         const keys = Object.keys(this.shapeKeys);
         for (let i = 0, m = keys.length; i < m; i++) {
@@ -48,18 +54,18 @@ export class ClientSnake extends Snake {
         }
     }
 
-    move(coordinate) {
+    move(coordinate: Coordinate): void {
         if (this.controls) {
             this.controls.move();
         }
         super.move(coordinate);
     }
 
-    getShape() {
+    getShape(): Shape {
         return ClientState.shapes[this.shapeKeys.snake];
     }
 
-    showName() {
+    showName(): void {
         ClientState.shapes[this.shapeKeys.name] = tooltipName(
             this.name,
             this.parts[0],
@@ -67,18 +73,15 @@ export class ClientSnake extends Snake {
         );
     }
 
-    showAction(label) {
+    showAction(label: string): void {
         showAction(label, this.getHead(), this.speed);
     }
 
-    showDirection() {
-        let shift;
-        let head;
-        let shape;
-        shift = GAME_SHIFT_MAP[this.direction];
-        head = this.getHead();
+    showDirection(): void {
+        const shift = GAME_SHIFT_MAP[this.direction];
+        const head = this.getHead();
+        const shape = new Shape();
 
-        shape = new Shape();
         shape.pixels.add(head[0] + shift[0], head[1] + shift[1]);
         setGameTransform(shape);
         flash(shape);
@@ -86,19 +89,17 @@ export class ClientSnake extends Snake {
         ClientState.shapes[this.shapeKeys.direction] = shape;
     }
 
-    removeNameAndDirection() {
+    removeNameAndDirection(): void {
         ClientState.shapes[this.shapeKeys.name] = null;
         ClientState.shapes[this.shapeKeys.direction] = null;
     }
 
-    addControls() {
+    addControls(): void {
+        // TODO: Remove bidirectional dependency.
         this.controls = new ClientSnakeControls(this);
     }
 
-    /**
-     * @return {Shape}
-     */
-    updateShape() {
+    updateShape(): Shape {
         const shape = new Shape();
         shape.pixels.addPairs(this.parts);
         setGameTransform(shape);
@@ -130,9 +131,6 @@ export class ClientSnake extends Snake {
         }
     }
 
-    /**
-     * @param {Coordinate=} crashingPart
-     */
     setCrashed(crashingPart?: Coordinate): void {
         this.crashed = true;
         if (this.controls) {
@@ -173,13 +171,6 @@ export class ClientSnake extends Snake {
         // If server updated snake, client prediction
         // of snake crashing was incorrect.
         this.collision = null;
-    }
-
-    emit(direction: number): void {
-        if (ClientState.player) {
-            const sync = Math.round(NETCODE_SYNC_MS / this.speed);
-            ClientState.player.emit(NC_SNAKE_UPDATE, [direction, this.parts.slice(-sync)]);
-        }
     }
 
     getNextPosition(): Coordinate {
