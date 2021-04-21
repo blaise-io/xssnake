@@ -9,6 +9,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
 
     constructor(public localPlayer: ClientPlayer) {
         super();
+        // TODO: Wrong, would always be host.
         this.add(localPlayer);
     }
 
