@@ -23,7 +23,7 @@ export class InputStage implements StageInterface {
     name = "";
     header = "";
     label = "";
-    next: any = InputStage; // TODO: StageInterface
+    next: new () => StageInterface = InputStage;
 
     minlength = 0;
     maxChars = 0;

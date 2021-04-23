@@ -24,16 +24,10 @@ export class NameStage extends InputStage {
         };
     }
 
-    /**
-     * @param {string} error
-     * @param {string} value
-     * @param {number} top
-     * @private
-     */
-    inputSubmit(error, value, top): void {
-        let shape;
+    inputSubmit(error: string, value: string, top: number): void {
         let text;
         let duration = 500;
+
         if (error) {
             text = error;
         } else {
@@ -48,7 +42,7 @@ export class NameStage extends InputStage {
             );
         }
 
-        shape = font(text, MENU_LEFT, top);
+        const shape = font(text, MENU_LEFT, top);
         lifetime(shape, 0, duration);
 
         State.shapes.message = shape;
