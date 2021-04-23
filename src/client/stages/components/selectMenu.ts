@@ -1,8 +1,8 @@
-import { HEIGHT } from "../../shared/const";
-import { Shape } from "../../shared/shape";
-import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WRAP } from "../const";
-import { fontHeight, fontPixels, LINE_HEIGHT, LINE_HEIGHT_MENU } from "../ui/font";
-import { zoom } from "../ui/transformClient";
+import { HEIGHT } from "../../../shared/const";
+import { Shape } from "../../../shared/shape";
+import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WRAP } from "../../const";
+import { fontHeight, fontPixels, LINE_HEIGHT, LINE_HEIGHT_MENU } from "../../ui/font";
+import { zoom } from "../../ui/transformClient";
 
 export class SelectMenu {
     private _selected: number;

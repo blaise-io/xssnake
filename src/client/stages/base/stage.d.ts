@@ -1,4 +1,4 @@
-import { Shape } from "../../shared/shape";
+import { Shape } from "../../../shared/shape";
 
 export interface StageInterface {
     construct(): void;

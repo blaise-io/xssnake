@@ -10,7 +10,7 @@ import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import { EV_PLAYERS_UPDATED, NS } from "../const";
 import { ClientGame } from "../game/clientGame";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { PreGameUI } from "../ui/preGame";
 import { WrapupGame } from "../ui/switchRound";
 import { clientImageLoader } from "../util/clientUtil";
@@ -49,18 +49,18 @@ export class ClientRound extends Round {
     }
 
     bindEvents(): void {
-        ClientState.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
-        ClientState.events.on(NC_ROUND_SERIALIZE, NS.ROUND, this.updateRound.bind(this));
-        ClientState.events.on(NC_ROUND_COUNTDOWN, NS.ROUND, this.updateCountdown.bind(this));
-        ClientState.events.on(NC_ROUND_START, NS.ROUND, this.startGame.bind(this));
-        ClientState.events.on(NC_ROUND_WRAPUP, NS.ROUND, this.wrapupGame.bind(this));
+        State.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
+        State.events.on(NC_ROUND_SERIALIZE, NS.ROUND, this.updateRound.bind(this));
+        State.events.on(NC_ROUND_COUNTDOWN, NS.ROUND, this.updateCountdown.bind(this));
+        State.events.on(NC_ROUND_START, NS.ROUND, this.startGame.bind(this));
+        State.events.on(NC_ROUND_WRAPUP, NS.ROUND, this.wrapupGame.bind(this));
     }
 
     unbindEvents(): void {
-        ClientState.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
-        ClientState.events.off(NC_ROUND_SERIALIZE, NS.ROUND);
-        ClientState.events.off(NC_ROUND_COUNTDOWN, NS.ROUND);
-        ClientState.events.off(NC_ROUND_START, NS.ROUND);
+        State.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
+        State.events.off(NC_ROUND_SERIALIZE, NS.ROUND);
+        State.events.off(NC_ROUND_COUNTDOWN, NS.ROUND);
+        State.events.off(NC_ROUND_START, NS.ROUND);
     }
 
     updatePlayers(): void {

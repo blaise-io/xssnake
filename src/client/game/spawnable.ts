@@ -1,7 +1,7 @@
 import { SPAWN_APPLE, SPAWN_POWERUP } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { NS, UC } from "../const";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { font } from "../ui/font";
 import { flash } from "../ui/shapeClient";
 import { translateGameX, translateGameY } from "../util/clientUtil";
@@ -16,11 +16,11 @@ export class Spawnable {
         this.y = translateGameY(location[1]);
 
         this._shapeName = NS.SPAWN + index;
-        ClientState.shapes[this._shapeName] = this._getShape();
+        State.shapes[this._shapeName] = this._getShape();
     }
 
     destruct(): void {
-        ClientState.shapes[this._shapeName] = null;
+        State.shapes[this._shapeName] = null;
     }
 
     _getShape(): Shape {

@@ -8,7 +8,7 @@ import { Level } from "../../shared/level/level";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { SpawnableRegistry } from "./spawnableRegistry";
 
 export class ClientGame {
@@ -18,7 +18,7 @@ export class ClientGame {
     constructor(public level: Level, public players: ClientPlayerRegistry) {
         this.players = this.updatePlayers(players);
 
-        Object.assign(ClientState.shapes, getLevelShapes(this.level));
+        Object.assign(State.shapes, getLevelShapes(this.level));
         this.started = false;
 
         this.spawnables = new SpawnableRegistry();
@@ -32,9 +32,9 @@ export class ClientGame {
     }
 
     bindEvents(): void {
-        ClientState.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));
-        ClientState.events.on(NC_SNAKE_UPDATE, NS.GAME, this.ncUpdateSnake.bind(this));
-        ClientState.events.on(NC_SNAKE_CRASH, NS.GAME, this.ncSetSnakesCrashed.bind(this));
+        State.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));
+        State.events.on(NC_SNAKE_UPDATE, NS.GAME, this.ncUpdateSnake.bind(this));
+        State.events.on(NC_SNAKE_CRASH, NS.GAME, this.ncSetSnakesCrashed.bind(this));
 
         //State.events.on(NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
@@ -46,8 +46,8 @@ export class ClientGame {
     }
 
     unbindEvents(): void {
-        ClientState.events.off(EV_GAME_TICK, NS.GAME);
-        ClientState.events.off(NC_SNAKE_UPDATE, NS.GAME);
+        State.events.off(EV_GAME_TICK, NS.GAME);
+        State.events.off(NC_SNAKE_UPDATE, NS.GAME);
     }
 
     /**
@@ -64,7 +64,7 @@ export class ClientGame {
     updateLevel(level: Level): void {
         this.level.destruct();
         this.level = level;
-        Object.assign(ClientState.shapes, getLevelShapes(this.level));
+        Object.assign(State.shapes, getLevelShapes(this.level));
         // Apply changes in spawns.
         this.updatePlayers(this.players);
     }
@@ -107,7 +107,7 @@ export class ClientGame {
         this.spawnables.destruct();
 
         for (const k in Object.keys(getLevelShapes(this.level))) {
-            ClientState.shapes[k] = null;
+            State.shapes[k] = null;
         }
 
         this.level = null;

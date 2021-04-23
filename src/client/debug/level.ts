@@ -3,7 +3,7 @@ import { LinesLevel } from "../../shared/levels/debug/lines";
 import { ClientGame } from "../game/clientGame";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { clientImageLoader } from "../util/clientUtil";
 
 export function debugLevel(): void {
@@ -17,7 +17,7 @@ export function debugLevel(): void {
         prompt(`&level=${Object.keys(levels).join("|")}`);
 
     window.setTimeout(() => {
-        ClientState.flow.destruct();
+        State.flow.destruct();
 
         const level = new levels[levelName]();
         level.load(clientImageLoader).then(() => {

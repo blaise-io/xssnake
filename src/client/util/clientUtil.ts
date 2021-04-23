@@ -1,7 +1,7 @@
 import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, LEVEL, WIDTH } from "../../shared/const";
 import { _ } from "../../shared/util";
 import { UC } from "../const";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { Dialog, DialogType } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
 import { flash, lifetime } from "../ui/shapeClient";
@@ -18,7 +18,7 @@ export function instruct(str: string, duration = 2000, flashInstruct = false): v
         flash(shape);
     }
 
-    ClientState.shapes.INSTRUCTION = shape;
+    State.shapes.INSTRUCTION = shape;
 }
 
 export function error(str: string, callback?: CallableFunction): void {
@@ -29,7 +29,7 @@ export function error(str: string, callback?: CallableFunction): void {
         if (callback) {
             callback();
         }
-        ClientState.flow.restart();
+        State.flow.restart();
     };
 
     const body = _(`Press ${UC.ENTER_KEY} to continue`);

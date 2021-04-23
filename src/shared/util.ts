@@ -15,12 +15,10 @@ export function randomStr(len = 3): string {
 }
 
 /**
- * Ensure an array index is within bounds.
- * @param {number} index
- * @param {Array} arr
- * @return {number}
+ * Ensure an index is within bounds of given array.
+ * Return first or last valid index if out of bounds.
  */
-export function ensureIndexWithinBounds(index, arr) {
+export function ensureIndexWithinBounds<Type>(index: number, arr: Type[]): number {
     const len = arr.length;
     if (index >= len) {
         return 0;
@@ -40,45 +38,24 @@ export function average(numbers: number[]): number {
 }
 
 /**
- * @param {Coordinate} a
- * @param {Coordinate} b
- * @return {number}
+ * Delta between two coordinates.
  */
-export function delta(a, b) {
+export function delta(a: Coordinate, b: Coordinate): number {
     return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
 }
 
 /**
- * @param {Coordinate} a
- * @param {Coordinate} b
- * @return {boolean}
+ * Check whether two coordinates are the same.
  */
-export function eq(a, b) {
+export function eq(a: Coordinate, b: Coordinate): boolean {
     return a[0] === b[0] && a[1] === b[1];
-}
-
-/**
- * @param {*} obj
- * @param {*} val
- * @return {?string}
- */
-export function getKey(obj, val) {
-    for (const k in obj) {
-        if (obj.hasOwnProperty(k) && val === obj[k]) {
-            return k;
-        }
-    }
-    return null;
 }
 
 /**
  * Faster sorting function.
  * http://jsperf.com/javascript-sort/
- *
- * @param {Array.<number>} arr
- * @return {Array.<number>}
  */
-export function sort(arr) {
+export function sort(arr: number[]): number[] {
     for (let i = 1; i < arr.length; i++) {
         const tmp = arr[i];
         let index = i;
@@ -91,19 +68,13 @@ export function sort(arr) {
     return arr;
 }
 
-/**
- * @param {number} iterations
- * @param {Function} fn
- * @param {string|number=} label
- */
-export function benchmark(iterations, fn, label = "") {
-    let duration;
+export function benchmark(iterations: number, fn: () => void, label = ""): void {
     let i = iterations;
     const start = +new Date();
     while (i--) {
         fn();
     }
-    duration = +new Date() - start;
+    const duration = +new Date() - start;
     console.log(label || "Benchmark", {
         x: iterations,
         avg: duration / iterations,
@@ -111,53 +82,52 @@ export function benchmark(iterations, fn, label = "") {
     });
 }
 
-/**
- * @return {string}
- */
-export function getRandomName() {
-    const name = getRandomItemFrom([
-        "Ant",
-        "Bat",
-        "Bear",
-        "Bird",
-        "Cat",
-        "Cow",
-        "Crab",
-        "Croc",
-        "Deer",
-        "Dodo",
-        "Dog",
-        "Duck",
-        "Emu",
-        "Fish",
-        "Fly",
-        "Fox",
-        "Frog",
-        "Goat",
-        "Hare",
-        "Ibis",
-        "Kiwi",
-        "Lion",
-        "Lynx",
-        "Miao",
-        "Mole",
-        "Moth",
-        "Mule",
-        "Oger",
-        "Pig",
-        "Pika",
-        "Poke",
-        "Puma",
-        "Puss",
-        "Rat",
-        "Seal",
-        "Swan",
-        "Wasp",
-        "Wolf",
-        "Yak",
-        "Zeb",
-    ]);
-    return name + "." + randomRange(10, 99);
+export function getRandomName(): string {
+    return (
+        getRandomItemFrom([
+            "Ant",
+            "Bat",
+            "Bear",
+            "Bird",
+            "Cat",
+            "Cow",
+            "Crab",
+            "Croc",
+            "Deer",
+            "Dodo",
+            "Dog",
+            "Duck",
+            "Emu",
+            "Fish",
+            "Fly",
+            "Fox",
+            "Frog",
+            "Goat",
+            "Hare",
+            "Ibis",
+            "Kiwi",
+            "Lion",
+            "Lynx",
+            "Miao",
+            "Mole",
+            "Moth",
+            "Mule",
+            "Oger",
+            "Pig",
+            "Pika",
+            "Poke",
+            "Puma",
+            "Puss",
+            "Rat",
+            "Seal",
+            "Snek",
+            "Swan",
+            "Wasp",
+            "Wolf",
+            "Yak",
+            "Zeb",
+        ]) + `.${randomRange(10, 99)}`
+    );
 }
 
 /**

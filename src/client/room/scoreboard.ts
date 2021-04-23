@@ -1,6 +1,6 @@
 import { NC_PLAYERS_SERIALIZE, NC_SCORE_UPDATE } from "../../shared/const";
 import { NS } from "../const";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { ScoreboardUI } from "../ui/scoreboard";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 
@@ -22,13 +22,13 @@ export class Scoreboard {
     }
 
     bindEvents() {
-        ClientState.events.on(NC_PLAYERS_SERIALIZE, NS.SCORE, this.ui.debounceUpdate.bind(this.ui));
-        ClientState.events.on(NC_SCORE_UPDATE, NS.SCORE, this.updatePlayerScores.bind(this));
+        State.events.on(NC_PLAYERS_SERIALIZE, NS.SCORE, this.ui.debounceUpdate.bind(this.ui));
+        State.events.on(NC_SCORE_UPDATE, NS.SCORE, this.updatePlayerScores.bind(this));
     }
 
     unbindEvents() {
-        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS.SCORE);
-        ClientState.events.off(NC_SCORE_UPDATE, NS.SCORE);
+        State.events.off(NC_PLAYERS_SERIALIZE, NS.SCORE);
+        State.events.off(NC_SCORE_UPDATE, NS.SCORE);
     }
 
     updatePlayerScores(scoreArray) {

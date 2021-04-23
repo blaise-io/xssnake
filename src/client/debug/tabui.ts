@@ -1,9 +1,9 @@
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { font } from "../ui/font";
 
 export function debugTabUI(): void {
     setTimeout(function () {
-        ClientState.shapes = {};
+        State.shapes = {};
         const text = [
             "This line does not affect alignment.",
             "",
@@ -11,6 +11,6 @@ export function debugTabUI(): void {
             "Second Label\tAligned with A",
             "\tEmpty label",
         ].join("\n");
-        ClientState.shapes.testtabs = font(text, 10, 10);
+        State.shapes.testtabs = font(text, 10, 10);
     }, 200);
 }

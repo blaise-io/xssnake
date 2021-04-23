@@ -1,13 +1,13 @@
-import { GAME_LEFT, GAME_TOP } from "../../shared/const";
-import { Level } from "../../shared/level/level";
-import { BlankLevel } from "../../shared/levels/debug/blank";
-import { Shape } from "../../shared/shape";
-import { _, noop } from "../../shared/util";
-import { ClientSnake } from "../game/clientSnake";
-import { ClientState } from "../state/clientState";
-import { setGameTransform } from "../ui/shapeClient";
-import { zoom } from "../ui/transformClient";
-import { clientImageLoader, instruct } from "../util/clientUtil";
+import { GAME_LEFT, GAME_TOP } from "../../../shared/const";
+import { Level } from "../../../shared/level/level";
+import { BlankLevel } from "../../../shared/levels/debug/blank";
+import { Shape } from "../../../shared/shape";
+import { _, noop } from "../../../shared/util";
+import { ClientSnake } from "../../game/clientSnake";
+import { State } from "../../state";
+import { setGameTransform } from "../../ui/shapeClient";
+import { zoom } from "../../ui/transformClient";
+import { clientImageLoader, instruct } from "../../util/clientUtil";
 
 export class MenuSnake {
     snake: ClientSnake;
@@ -19,7 +19,7 @@ export class MenuSnake {
 
         this.level = level ? new level() : new BlankLevel();
         this.level.load(clientImageLoader).then(() => {
-            ClientState.shapes.level = setGameTransform(new Shape(this.level.data.walls));
+            State.shapes.level = setGameTransform(new Shape(this.level.data.walls));
             this.spawnSnake();
         });
     }
@@ -77,9 +77,9 @@ export class MenuSnake {
     }
 
     overlaysShape(snakeShape: Shape, x: number, y: number): boolean {
-        for (const k in ClientState.shapes) {
-            if (ClientState.shapes[k] !== snakeShape) {
-                if (ClientState.shapes[k] && ClientState.shapes[k].pixels.has(x, y)) {
+        for (const k in State.shapes) {
+            if (State.shapes[k] !== snakeShape) {
+                if (State.shapes[k] && State.shapes[k].pixels.has(x, y)) {
                     return true;
                 }
             }

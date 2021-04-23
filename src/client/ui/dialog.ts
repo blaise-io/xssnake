@@ -3,7 +3,7 @@ import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { KEY, MENU_TOP, NS } from "../const";
 import { COPY_DIALOG_CANCEL, COPY_DIALOG_OK } from "../copy/copy";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";
 import { center } from "./shapeClient";
 import { outline, zoom } from "./transformClient";
@@ -54,9 +54,9 @@ export class Dialog {
     }
 
     destruct(): void {
-        ClientState.shapes.dialog = null;
-        ClientState.keysBlocked = false;
-        ClientState.events.off("keydown", NS.DIALOG);
+        State.shapes.dialog = null;
+        State.keysBlocked = false;
+        State.events.off("keydown", NS.DIALOG);
     }
 
     restore(): void {
@@ -85,15 +85,15 @@ export class Dialog {
     //
 
     set body(body: string) {
-        ClientState.audio.play("menu_alt");
+        State.audio.play("menu_alt");
         this._body = body;
         this._updateShape();
     }
 
     private _bindEvents(): void {
-        ClientState.keysBlocked = this.settings.keysBlocked;
+        State.keysBlocked = this.settings.keysBlocked;
         if (this.settings.type !== DialogType.INFO) {
-            ClientState.events.on("keydown", NS.DIALOG, this._handleKeys.bind(this));
+            State.events.on("keydown", NS.DIALOG, this._handleKeys.bind(this));
         }
         if (this.settings.type === DialogType.ALERT) {
             this._okSelected = true;
@@ -110,7 +110,7 @@ export class Dialog {
             case KEY.RIGHT:
             case KEY.TAB:
                 if (this.settings.type === DialogType.CONFIRM) {
-                    ClientState.audio.play("menu_alt");
+                    State.audio.play("menu_alt");
                     this._okSelected = !this._okSelected;
                     this._updateShape();
                 }
@@ -210,6 +210,6 @@ export class Dialog {
         outline(shape);
         center(shape);
 
-        ClientState.shapes.dialog = shape;
+        State.shapes.dialog = shape;
     }
 }

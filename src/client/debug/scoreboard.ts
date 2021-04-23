@@ -3,16 +3,16 @@ import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { Message } from "../room/message";
 import { Scoreboard } from "../room/scoreboard";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
 import { MessageBoxUI } from "../ui/messageBox";
 
 export function debugScoreboard(): void {
     setTimeout(function () {
-        ClientState.flow.destruct();
+        State.flow.destruct();
 
-        ClientState.shapes.innerBorder = innerBorder();
-        Object.assign(ClientState.shapes, outerBorder());
+        State.shapes.innerBorder = innerBorder();
+        Object.assign(State.shapes, outerBorder());
 
         const messages = [
             new Message(null, "This is a notification"),

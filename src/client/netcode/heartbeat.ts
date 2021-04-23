@@ -1,7 +1,7 @@
 // import { HEARTBEAT_INTERVAL_MS, NC_PING, NC_PONG } from "../../shared/const";
 // import { NS } from "../const";
 // import { ClientSocketPlayer } from "../room/clientSocketPlayer";
-// import { ClientState } from "../state/clientState";
+// import { State } from "../state/clientState";
 //
 // export class ClientHeartbeat {
 //     private latency: number;
@@ -21,11 +21,11 @@
 //     destruct() {
 //         this.player = null;
 //         clearInterval(this.interval);
-//         ClientState.events.off(NC_PONG, NS.HEARTBEAT);
+//         State.events.off(NC_PONG, NS.HEARTBEAT);
 //     }
 //
 //     bindEvents() {
-//         ClientState.events.on(NC_PONG, NS.HEARTBEAT, this.pong.bind(this));
+//         State.events.on(NC_PONG, NS.HEARTBEAT, this.pong.bind(this));
 //     }
 //
 //     ping() {

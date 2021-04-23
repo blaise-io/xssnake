@@ -1,6 +1,6 @@
-import { Shape } from "../../shared/shape";
-import { KEY, NS } from "../const";
-import { ClientState } from "../state/clientState";
+import { Shape } from "../../../shared/shape";
+import { KEY, NS } from "../../const";
+import { State } from "../../state";
 import { StageInterface } from "./stage";
 
 export class FormStage implements StageInterface {
@@ -25,45 +25,45 @@ export class FormStage implements StageInterface {
     }
 
     construct(): void {
-        ClientState.events.on("keydown", NS.STAGES, this._handleKeys.bind(this));
+        State.events.on("keydown", NS.STAGES, this._handleKeys.bind(this));
     }
 
     destruct(): void {
-        ClientState.events.off("keydown", NS.STAGES);
-        ClientState.shapes.stage = null;
+        State.events.off("keydown", NS.STAGES);
+        State.shapes.stage = null;
     }
 
     _handleKeys(ev: KeyboardEvent): void {
-        if (ClientState.keysBlocked) {
+        if (State.keysBlocked) {
             return;
         }
         switch (ev.keyCode) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
-                ClientState.flow.previousStage();
+                State.flow.previousStage();
                 break;
             case KEY.ENTER:
-                ClientState.flow.switchStage(this.getNextStage(this.form.getData()));
+                State.flow.switchStage(this.getNextStage(this.form.getData()));
                 break;
             case KEY.UP:
                 this.form.selectField(-1);
-                ClientState.audio.play("menu");
-                ClientState.flow.refreshShapes();
+                State.audio.play("menu");
+                State.flow.refreshShapes();
                 break;
             case KEY.DOWN:
                 this.form.selectField(1);
-                ClientState.audio.play("menu");
-                ClientState.flow.refreshShapes();
+                State.audio.play("menu");
+                State.flow.refreshShapes();
                 break;
             case KEY.LEFT:
                 this.form.selectOption(-1);
-                ClientState.audio.play("menu_alt");
-                ClientState.flow.refreshShapes();
+                State.audio.play("menu_alt");
+                State.flow.refreshShapes();
                 break;
             case KEY.RIGHT:
                 this.form.selectOption(1);
-                ClientState.audio.play("menu_alt");
-                ClientState.flow.refreshShapes();
+                State.audio.play("menu_alt");
+                State.flow.refreshShapes();
                 break;
         }
     }

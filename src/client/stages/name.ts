@@ -1,8 +1,8 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { getRandomItemFrom } from "../../shared/util";
 import { MENU_LEFT, NS, STORAGE_NAME, UC } from "../const";
-import { InputStage } from "../stage_base/inputStage";
-import { ClientState } from "../state/clientState";
+import { InputStage } from "./base/inputStage";
+import { State } from "../state";
 import { font } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
 import { MultiplayerStage } from "./multiplayer";
@@ -37,12 +37,12 @@ export class NameStage extends InputStage {
         if (error) {
             text = error;
         } else {
-            ClientState.events.off("keydown", NS.INPUT);
+            State.events.off("keydown", NS.INPUT);
             text = getRandomItemFrom(this._wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(
                 function () {
-                    ClientState.flow.switchStage(this.next);
+                    State.flow.switchStage(this.next);
                 }.bind(this),
                 duration
             );
@@ -51,7 +51,7 @@ export class NameStage extends InputStage {
         shape = font(text, MENU_LEFT, top);
         lifetime(shape, 0, duration);
 
-        ClientState.shapes.message = shape;
+        State.shapes.message = shape;
     }
 
     _wits = [

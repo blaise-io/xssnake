@@ -1,15 +1,15 @@
-import { HEIGHT, NC_PLAYER_NAME, NC_ROOM_JOIN_MATCHING, WIDTH } from "../../shared/const";
-import { Shape } from "../../shared/shape";
-import { getRandomName } from "../../shared/util";
-import { NS, STORAGE_NAME } from "../const";
-import { COPY_CONNECTING } from "../copy/copy";
-import { ClientRoom } from "../room/clientRoom";
-import { ClientSocketPlayer } from "../room/clientSocketPlayer";
-import { ClientOptions } from "../room/options";
-import { ClientState } from "../state/clientState";
-import { font } from "../ui/font";
-import { center, flash, lifetime } from "../ui/shapeClient";
-import { storage } from "../util/clientUtil";
+import { HEIGHT, NC_PLAYER_NAME, NC_ROOM_JOIN_MATCHING, WIDTH } from "../../../shared/const";
+import { Shape } from "../../../shared/shape";
+import { getRandomName } from "../../../shared/util";
+import { NS, STORAGE_NAME } from "../../const";
+import { COPY_CONNECTING } from "../../copy/copy";
+import { ClientRoom } from "../../room/clientRoom";
+import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
+import { ClientOptions } from "../../room/options";
+import { State } from "../../state";
+import { font } from "../../ui/font";
+import { center, flash, lifetime } from "../../ui/shapeClient";
+import { storage } from "../../util/clientUtil";
 import { StageInterface } from "./stage";
 
 export class GameStage implements StageInterface {
@@ -22,17 +22,17 @@ export class GameStage implements StageInterface {
     }
 
     construct(): void {
-        ClientState.shapes.CONNECTING = this.connectingShape;
+        State.shapes.CONNECTING = this.connectingShape;
         this.connectServer();
     }
 
     destruct(): void {
-        ClientState.events.off("keydown", NS.STAGES);
-        ClientState.shapes.CONNECTING = null;
+        State.events.off("keydown", NS.STAGES);
+        State.shapes.CONNECTING = null;
     }
 
     getSerializedGameOptions(): [number, number, number, number, number, number] {
-        const data = ClientState.flow.getData();
+        const data = State.flow.getData();
         const options = new ClientOptions();
         options.setOptionsFromForm(data.multiplayer);
         return options.serialize();
@@ -66,10 +66,10 @@ export class GameStage implements StageInterface {
     }
 
     destructStageLeftovers(): void {
-        if (ClientState.menuSnake) {
-            ClientState.menuSnake.destruct();
+        if (State.menuSnake) {
+            State.menuSnake.destruct();
         }
-        ClientState.shapes.CONNECTING = null;
-        ClientState.shapes.HEADER = null;
+        State.shapes.CONNECTING = null;
+        State.shapes.HEADER = null;
     }
 }

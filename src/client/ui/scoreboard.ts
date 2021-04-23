@@ -3,7 +3,7 @@ import { Shape } from "../../shared/shape";
 import { NS } from "../const";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { font, fontPixels, fontWidth } from "./font";
 import { animate } from "./shapeClient";
 
@@ -38,7 +38,7 @@ export class ScoreboardUI {
 
     destructShapes(): void {
         for (let i = 0; i < this.podiumSize; i++) {
-            ClientState.shapes[NS.SCORE + i] = null;
+            State.shapes[NS.SCORE + i] = null;
         }
     }
 
@@ -77,7 +77,7 @@ export class ScoreboardUI {
     paint(player: ClientPlayer, oldIndex: number, newIndex: number): void {
         const oldCoordinate = this.getCoordinatesForIndex(oldIndex);
         const shape = this.getPlayerScoreShape(player, oldCoordinate);
-        ClientState.shapes[NS.SCORE + oldIndex] = shape;
+        State.shapes[NS.SCORE + oldIndex] = shape;
 
         if (oldIndex !== newIndex) {
             const newCoordinate = this.getCoordinatesForIndex(newIndex);

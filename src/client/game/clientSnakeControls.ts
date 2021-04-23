@@ -1,21 +1,21 @@
 import { KEY_TO_DIRECTION, NS } from "../const";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { ClientSnake } from "./clientSnake";
 
 export class ClientSnakeControls {
     private upcomingDirections: number[] = [];
 
     constructor(public snake: ClientSnake) {
-        ClientState.events.on("keydown", NS.SNAKE_CONTROLS, (event) => {
+        State.events.on("keydown", NS.SNAKE_CONTROLS, (event) => {
             const direction = KEY_TO_DIRECTION[event.keyCode];
-            if (!ClientState.keysBlocked && typeof direction !== "undefined") {
+            if (!State.keysBlocked && typeof direction !== "undefined") {
                 this.setDirection(direction);
             }
         });
     }
 
     destruct(): void {
-        ClientState.events.off("keydown", NS.SNAKE_CONTROLS);
+        State.events.off("keydown", NS.SNAKE_CONTROLS);
         this.snake = null;
     }
 

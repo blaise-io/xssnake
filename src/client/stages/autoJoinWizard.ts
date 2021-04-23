@@ -9,7 +9,7 @@ import { _ } from "../../shared/util";
 import { NS } from "../const";
 import { COPY_ERROR } from "../copy/copy";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { Dialog } from "../ui/dialog";
 import { error } from "../util/clientUtil";
 import { AutoJoinStage } from "./autoJoin";
@@ -51,31 +51,31 @@ export class AutoJoinWizard {
         // TODO: NO!
         // this.clientPlayer.room = new ClientRoom();
 
-        ClientState.events.on(NC_ROOM_SERIALIZE, NS.STAGES, () => {
+        State.events.on(NC_ROOM_SERIALIZE, NS.STAGES, () => {
             this.dataReceived.room = true;
             this.checkAllRoomDataReceived();
         });
 
-        ClientState.events.on(NC_OPTIONS_SERIALIZE, NS.STAGES, () => {
+        State.events.on(NC_OPTIONS_SERIALIZE, NS.STAGES, () => {
             this.dataReceived.options = true;
             this.checkAllRoomDataReceived();
         });
 
-        ClientState.events.on(NC_PLAYERS_SERIALIZE, NS.STAGES, () => {
+        State.events.on(NC_PLAYERS_SERIALIZE, NS.STAGES, () => {
             this.dataReceived.players = true;
             this.checkAllRoomDataReceived();
         });
 
-        ClientState.events.on(NC_ROOM_JOIN_ERROR, NS.STAGES, (data) => {
+        State.events.on(NC_ROOM_JOIN_ERROR, NS.STAGES, (data) => {
             this.handleError(data);
         });
     }
 
     unbindEvents(): void {
-        ClientState.events.off(NC_ROOM_SERIALIZE, NS.STAGES);
-        ClientState.events.off(NC_OPTIONS_SERIALIZE, NS.STAGES);
-        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS.STAGES);
-        ClientState.events.off(NC_ROOM_JOIN_ERROR, NS.STAGES);
+        State.events.off(NC_ROOM_SERIALIZE, NS.STAGES);
+        State.events.off(NC_OPTIONS_SERIALIZE, NS.STAGES);
+        State.events.off(NC_PLAYERS_SERIALIZE, NS.STAGES);
+        State.events.off(NC_ROOM_JOIN_ERROR, NS.STAGES);
     }
 
     get allDataReceived(): boolean {
@@ -85,7 +85,7 @@ export class AutoJoinWizard {
     checkAllRoomDataReceived(): void {
         if (this.allDataReceived) {
             this.destruct();
-            ClientState.flow.switchStage(AutoJoinStage.bind(this.clientPlayer));
+            State.flow.switchStage(AutoJoinStage.bind(this.clientPlayer));
         }
     }
 

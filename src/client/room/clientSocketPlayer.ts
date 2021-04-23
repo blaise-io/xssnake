@@ -6,7 +6,7 @@ import {
     COPY_SOCKET_CONNECTION_LOST,
     COPY_SOCKET_SERVER_AWAY,
 } from "../copy/copy";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { error } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientRoom } from "./clientRoom";
@@ -34,8 +34,8 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.onerror = null;
         this.connection.onmessage = null;
 
-        ClientState.events.off(NC_PING, NS.SOCKET);
-        ClientState.events.off(NC_PONG, NS.SOCKET);
+        State.events.off(NC_PING, NS.SOCKET);
+        State.events.off(NC_PONG, NS.SOCKET);
 
         // Close explicitly when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {
@@ -85,7 +85,7 @@ export class ClientSocketPlayer extends ClientPlayer {
     onmessage(ev: MessageEvent): void {
         const data = JSON.parse(ev.data);
         console.log("IN ", data);
-        ClientState.events.trigger(data[0], data.slice(1));
+        State.events.trigger(data[0], data.slice(1));
     }
 
     emitFn(direction: number): void {

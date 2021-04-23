@@ -1,10 +1,17 @@
-import { HEIGHT } from "../../shared/const";
-import { PixelCollection } from "../../shared/pixelCollection";
-import { Shape } from "../../shared/shape";
-import { ensureIndexWithinBounds } from "../../shared/util";
-import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC } from "../const";
-import { font, fontHeight, fontPixels, fontWidth, LINE_HEIGHT, LINE_HEIGHT_MENU } from "../ui/font";
-import { zoom } from "../ui/transformClient";
+import { HEIGHT } from "../../../shared/const";
+import { PixelCollection } from "../../../shared/pixelCollection";
+import { Shape } from "../../../shared/shape";
+import { ensureIndexWithinBounds } from "../../../shared/util";
+import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC } from "../../const";
+import {
+    font,
+    fontHeight,
+    fontPixels,
+    fontWidth,
+    LINE_HEIGHT,
+    LINE_HEIGHT_MENU,
+} from "../../ui/font";
+import { zoom } from "../../ui/transformClient";
 
 export class Form {
     private selectedField: number;

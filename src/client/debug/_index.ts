@@ -1,5 +1,5 @@
-import { NeuteredMenuSnake } from "../stage/menuSnake";
-import { ClientState } from "../state/clientState";
+import { NeuteredMenuSnake } from "../stages/components/menuSnake";
+import { State } from "../state";
 import { debugDialog } from "./dialog";
 import { debugFont } from "./font";
 import { debugLevel } from "./level";
@@ -19,7 +19,7 @@ export function runDebug(): void {
 
     const debug = new URL(window.location.href).searchParams.get("debug");
     if (debug) {
-        ClientState.menuSnake = new NeuteredMenuSnake();
+        State.menuSnake = new NeuteredMenuSnake();
         registry[debug]();
     }
 }

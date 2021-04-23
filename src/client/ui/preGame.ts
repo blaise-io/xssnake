@@ -14,7 +14,7 @@ import {
     COPY_COUNTDOWN_TITLE,
 } from "../copy/copy";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { format } from "../util/clientUtil";
 import { Dialog, DialogType } from "./dialog";
 
@@ -48,15 +48,15 @@ export class PreGameUI {
     }
 
     bindKeys(): void {
-        ClientState.events.on("keydown", NS.PRE_GAME, this.handleKeys.bind(this));
+        State.events.on("keydown", NS.PRE_GAME, this.handleKeys.bind(this));
     }
 
     unbindKeys(): void {
-        ClientState.events.off("keydown", NS.PRE_GAME);
+        State.events.off("keydown", NS.PRE_GAME);
     }
 
     handleKeys(ev: KeyboardEvent): void {
-        if (ClientState.keysBlocked) {
+        if (State.keysBlocked) {
             return;
         }
         switch (ev.keyCode) {
@@ -119,7 +119,7 @@ export class PreGameUI {
             cancel: this.hideConfirmDialog.bind(this),
             ok: function () {
                 this.destruct();
-                ClientState.flow.restart();
+                State.flow.restart();
             }.bind(this),
         };
 
@@ -166,7 +166,7 @@ export class PreGameUI {
         }
         this.countdownInterval = window.setInterval(
             function () {
-                ClientState.audio.play("menu_alt");
+                State.audio.play("menu_alt");
                 // Prevent re-creating dialog which destroys button selection.
                 if (!this.confirmExit) {
                     this.updateUI();

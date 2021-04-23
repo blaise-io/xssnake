@@ -5,7 +5,7 @@ import {
     NC_SNAKE_CRASH,
 } from "../../shared/const";
 import { EV_PLAYERS_UPDATED, HASH_ROOM, NS } from "../const";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { urlHash } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
@@ -46,21 +46,21 @@ export class ClientRoom {
     }
 
     bindEvents() {
-        ClientState.events.on(NC_ROOM_SERIALIZE, NS.ROOM, this.setRoom.bind(this));
-        ClientState.events.on(NC_OPTIONS_SERIALIZE, NS.ROOM, this.updateOptions.bind(this));
-        ClientState.events.on(NC_PLAYERS_SERIALIZE, NS.ROOM, this.updatePlayers.bind(this));
+        State.events.on(NC_ROOM_SERIALIZE, NS.ROOM, this.setRoom.bind(this));
+        State.events.on(NC_OPTIONS_SERIALIZE, NS.ROOM, this.updateOptions.bind(this));
+        State.events.on(NC_PLAYERS_SERIALIZE, NS.ROOM, this.updatePlayers.bind(this));
 
         // TODO: Move to a new notifier class
-        ClientState.events.on(NC_SNAKE_CRASH, NS.ROOM, this.ncNotifySnakesCrashed.bind(this));
+        State.events.on(NC_SNAKE_CRASH, NS.ROOM, this.ncNotifySnakesCrashed.bind(this));
 
         //State.events.on(NC_XSS, NS.ROOM, this._requestXss.bind(this));
         //State.events.on(NC_XSS, NS.ROOM, this._evalXss.bind(this));
     }
 
     unbindEvents() {
-        ClientState.events.off(NC_ROOM_SERIALIZE, NS.ROOM);
-        ClientState.events.off(NC_OPTIONS_SERIALIZE, NS.ROOM);
-        ClientState.events.off(NC_PLAYERS_SERIALIZE, NS.ROOM);
+        State.events.off(NC_ROOM_SERIALIZE, NS.ROOM);
+        State.events.off(NC_OPTIONS_SERIALIZE, NS.ROOM);
+        State.events.off(NC_PLAYERS_SERIALIZE, NS.ROOM);
     }
 
     setupComponents() {
@@ -84,7 +84,7 @@ export class ClientRoom {
         } else {
             this.players.reconstruct(serializedPlayers);
         }
-        ClientState.events.trigger(EV_PLAYERS_UPDATED, this.players);
+        State.events.trigger(EV_PLAYERS_UPDATED, this.players);
     }
 
     ncNotifySnakesCrashed(serializedCollisions) {

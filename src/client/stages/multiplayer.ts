@@ -28,9 +28,9 @@ import {
     COPY_FORM_INSTRUCT,
     COPY_OPTIONS_STAGE_HEADER,
 } from "../copy/copy";
-import { FormStage } from "../stage_base/formStage";
-import { StageInterface } from "../stage_base/stage";
-import { Form } from "../stage_class_helper/form";
+import { FormStage } from "./base/formStage";
+import { StageInterface } from "./base/stage";
+import { Form } from "./components/form";
 import { ChallengeStage } from "./challenge";
 import { StartGameStage } from "./startGame";
 

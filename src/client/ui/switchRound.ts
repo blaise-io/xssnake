@@ -2,7 +2,7 @@ import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { COPY_ROUND_DRAW_TITLE, COPY_ROUND_NEW_BODY, COPY_ROUND_WINNER_TITLE } from "../copy/copy";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { format } from "../util/clientUtil";
 import { Dialog } from "./dialog";
 
@@ -52,7 +52,7 @@ export class WrapupGame {
 
         this.countdownInterval = window.setInterval(
             function () {
-                ClientState.audio.play("menu_alt");
+                State.audio.play("menu_alt");
                 this.dialog.body = this.getBody();
             }.bind(this),
             1000

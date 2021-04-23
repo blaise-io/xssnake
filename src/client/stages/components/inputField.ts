@@ -5,13 +5,13 @@
  * @param {Object=} fontOptions
  * @constructor
  */
-import { WIDTH } from "../../shared/const";
-import { Shape } from "../../shared/shape";
-import { lineShape } from "../../shared/shapeGenerator";
-import { FRAME, NS } from "../const";
-import { ClientState } from "../state/clientState";
-import { fontEndPos, fontPixels, fontWidth } from "../ui/font";
-import { flash } from "../ui/shapeClient";
+import { WIDTH } from "../../../shared/const";
+import { Shape } from "../../../shared/shape";
+import { lineShape } from "../../../shared/shapeGenerator";
+import { FRAME, NS } from "../../const";
+import { State } from "../../state";
+import { fontEndPos, fontPixels, fontWidth } from "../../ui/font";
+import { flash } from "../../ui/shapeClient";
 
 export class InputField {
     maxValWidth: number;
@@ -34,7 +34,7 @@ export class InputField {
         this.input = this.addInputToDom();
         this.input.focus();
 
-        ClientState.keysBlocked = true;
+        State.keysBlocked = true;
     }
 
     destruct() {
@@ -42,23 +42,23 @@ export class InputField {
             this.input.parentNode.removeChild(this.input);
         }
         this.unbindEvents();
-        ClientState.shapes.INPUT_CARET = null;
-        ClientState.shapes.INPUT_VALUE = null;
-        ClientState.keysBlocked = false;
+        State.shapes.INPUT_CARET = null;
+        State.shapes.INPUT_VALUE = null;
+        State.keysBlocked = false;
     }
 
     unbindEvents() {
-        ClientState.events.off("keypress", NS.INPUT);
-        ClientState.events.off("keydown", NS.INPUT);
-        ClientState.events.off("keyup", NS.INPUT);
+        State.events.off("keypress", NS.INPUT);
+        State.events.off("keydown", NS.INPUT);
+        State.events.off("keyup", NS.INPUT);
     }
 
     bindEvents() {
-        ClientState.events.on("keypress", NS.INPUT, function () {
-            ClientState.audio.play("menu_alt");
+        State.events.on("keypress", NS.INPUT, function () {
+            State.audio.play("menu_alt");
         });
-        ClientState.events.on("keydown", NS.INPUT, this.updateShapes.bind(this));
-        ClientState.events.on("keyup", NS.INPUT, this.updateShapes.bind(this));
+        State.events.on("keydown", NS.INPUT, this.updateShapes.bind(this));
+        State.events.on("keyup", NS.INPUT, this.updateShapes.bind(this));
     }
 
     /**
@@ -82,8 +82,8 @@ export class InputField {
     updateShapes() {
         this.maxwidthCutOff();
         this.callback(this.input.value);
-        ClientState.shapes.INPUT_CARET = this.getCaretShape();
-        ClientState.shapes.INPUT_VALUE = this.getInputValueShape();
+        State.shapes.INPUT_CARET = this.getCaretShape();
+        State.shapes.INPUT_VALUE = this.getInputValueShape();
     }
 
     /**

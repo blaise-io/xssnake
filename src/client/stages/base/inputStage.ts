@@ -1,11 +1,11 @@
-import { Shape } from "../../shared/shape";
-import { KEY, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS, STORAGE_NAME } from "../const";
-import { InputField } from "../stage_class_helper/inputField";
-import { ClientState } from "../state/clientState";
-import { font, fontHeight, fontPixels } from "../ui/font";
-import { lifetime } from "../ui/shapeClient";
-import { zoom } from "../ui/transformClient";
-import { storage } from "../util/clientUtil";
+import { Shape } from "../../../shared/shape";
+import { KEY, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS, STORAGE_NAME } from "../../const";
+import { InputField } from "../components/inputField";
+import { State } from "../../state";
+import { font, fontHeight, fontPixels } from "../../ui/font";
+import { lifetime } from "../../ui/shapeClient";
+import { zoom } from "../../ui/transformClient";
+import { storage } from "../../util/clientUtil";
 import { StageInterface } from "./stage";
 
 export class InputStage implements StageInterface {
@@ -50,8 +50,8 @@ export class InputStage implements StageInterface {
     }
 
     destruct(): void {
-        ClientState.events.off("keydown", NS.STAGES);
-        ClientState.shapes.message = null;
+        State.events.off("keydown", NS.STAGES);
+        State.shapes.message = null;
         this._shape = this._getShape();
         this.input.destruct();
         if (this.name) {
@@ -61,11 +61,11 @@ export class InputStage implements StageInterface {
 
     inputSubmit(error: string, value: string, top: number): void {
         if (!error && value && top) {
-            ClientState.flow.switchStage(this.next);
-            ClientState.events.off("keydown", NS.INPUT);
+            State.flow.switchStage(this.next);
+            State.events.off("keydown", NS.INPUT);
         } else {
-            ClientState.shapes.message = font(error, MENU_LEFT, top);
-            lifetime(ClientState.shapes.message, 0, 500);
+            State.shapes.message = font(error, MENU_LEFT, top);
+            lifetime(State.shapes.message, 0, 500);
         }
     }
 
@@ -87,7 +87,7 @@ export class InputStage implements StageInterface {
 
     private _bindEvents(): void {
         console.log(this);
-        ClientState.events.on("keydown", NS.STAGES, this._handleKeys.bind(this));
+        State.events.on("keydown", NS.STAGES, this._handleKeys.bind(this));
     }
 
     /**
@@ -99,7 +99,7 @@ export class InputStage implements StageInterface {
         let top;
         switch (ev.keyCode) {
             case KEY.ESCAPE:
-                ClientState.flow.previousStage();
+                State.flow.previousStage();
                 ev.preventDefault();
                 break;
             case KEY.ENTER:

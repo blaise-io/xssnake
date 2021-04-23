@@ -1,5 +1,5 @@
 import { ClientOptions } from "../room/options";
-import { GameStage } from "../stage_base/gameStage";
+import { GameStage } from "./base/gameStage";
 
 export class QuickGame extends GameStage {
     getSerializedGameOptions() {

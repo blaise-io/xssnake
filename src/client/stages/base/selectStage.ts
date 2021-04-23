@@ -1,5 +1,5 @@
-import { KEY, NS } from "../const";
-import { ClientState } from "../state/clientState";
+import { KEY, NS } from "../../const";
+import { State } from "../../state";
 import { StageInterface } from "./stage";
 
 export class SelectStage implements StageInterface {
@@ -14,40 +14,40 @@ export class SelectStage implements StageInterface {
     }
 
     construct() {
-        ClientState.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
+        State.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
     }
 
     destruct() {
-        ClientState.events.off("keydown", NS.STAGES);
-        ClientState.shapes.stage = null;
+        State.events.off("keydown", NS.STAGES);
+        State.shapes.stage = null;
     }
 
     handleKeys(ev) {
-        if (ClientState.keysBlocked) {
+        if (State.keysBlocked) {
             return;
         }
         const next = this.menu.getNextStage();
         switch (ev.keyCode) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
-                ClientState.flow.previousStage();
+                State.flow.previousStage();
                 break;
             case KEY.ENTER:
                 if (next) {
-                    ClientState.flow.switchStage(next);
+                    State.flow.switchStage(next);
                 } else {
-                    ClientState.flow.previousStage();
+                    State.flow.previousStage();
                 }
                 break;
             case KEY.UP:
                 this.menu.prev();
-                ClientState.audio.play("menu");
-                ClientState.flow.refreshShapes();
+                State.audio.play("menu");
+                State.flow.refreshShapes();
                 break;
             case KEY.DOWN:
                 this.menu.next();
-                ClientState.audio.play("menu");
-                ClientState.flow.refreshShapes();
+                State.audio.play("menu");
+                State.flow.refreshShapes();
         }
     }
 }

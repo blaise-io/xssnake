@@ -5,7 +5,7 @@ import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { Snake } from "../../shared/snake";
 import { FRAME, NS } from "../const";
-import { ClientState } from "../state/clientState";
+import { State } from "../state";
 import { explosion, showAction, tooltipName } from "../ui/clientShapeGenerator";
 import { flash, lifetime, setGameTransform } from "../ui/shapeClient";
 import { translateGame } from "../util/clientUtil";
@@ -45,7 +45,7 @@ export class ClientSnake extends Snake {
         const keys = Object.keys(this.shapeKeys);
         for (let i = 0, m = keys.length; i < m; i++) {
             const shapeKey = this.shapeKeys[keys[i]];
-            ClientState.shapes[shapeKey] = null;
+            State.shapes[shapeKey] = null;
         }
 
         if (this.controls) {
@@ -62,15 +62,11 @@ export class ClientSnake extends Snake {
     }
 
     getShape(): Shape {
-        return ClientState.shapes[this.shapeKeys.snake];
+        return State.shapes[this.shapeKeys.snake];
     }
 
     showName(): void {
-        ClientState.shapes[this.shapeKeys.name] = tooltipName(
-            this.name,
-            this.parts[0],
-            this.direction
-        );
+        State.shapes[this.shapeKeys.name] = tooltipName(this.name, this.parts[0], this.direction);
     }
 
     showAction(label: string): void {
@@ -86,12 +82,12 @@ export class ClientSnake extends Snake {
         setGameTransform(shape);
         flash(shape);
 
-        ClientState.shapes[this.shapeKeys.direction] = shape;
+        State.shapes[this.shapeKeys.direction] = shape;
     }
 
     removeNameAndDirection(): void {
-        ClientState.shapes[this.shapeKeys.name] = null;
-        ClientState.shapes[this.shapeKeys.direction] = null;
+        State.shapes[this.shapeKeys.name] = null;
+        State.shapes[this.shapeKeys.direction] = null;
     }
 
     addControls(): void {
@@ -103,7 +99,7 @@ export class ClientSnake extends Snake {
         const shape = new Shape();
         shape.pixels.addPairs(this.parts);
         setGameTransform(shape);
-        ClientState.shapes[this.shapeKeys.snake] = shape;
+        State.shapes[this.shapeKeys.snake] = shape;
         return shape;
     }
 

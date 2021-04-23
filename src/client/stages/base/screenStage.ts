@@ -1,6 +1,6 @@
-import { Shape } from "../../shared/shape";
-import { KEY, NS } from "../const";
-import { ClientState } from "../state/clientState";
+import { Shape } from "../../../shared/shape";
+import { KEY, NS } from "../../const";
+import { State } from "../../state";
 import { StageInterface } from "./stage";
 
 export class ScreenStage implements StageInterface {
@@ -15,12 +15,12 @@ export class ScreenStage implements StageInterface {
     }
 
     construct(): void {
-        ClientState.events.on("keydown", NS.STAGES, this.handleKeys);
+        State.events.on("keydown", NS.STAGES, this.handleKeys);
     }
 
     destruct(): void {
-        ClientState.events.off("keydown", NS.STAGES);
-        ClientState.shapes.stage = null;
+        State.events.off("keydown", NS.STAGES);
+        State.shapes.stage = null;
     }
 
     private handleKeys(event: KeyboardEvent): void {
@@ -28,7 +28,7 @@ export class ScreenStage implements StageInterface {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
             case KEY.ENTER:
-                ClientState.flow.previousStage();
+                State.flow.previousStage();
         }
     }
 }

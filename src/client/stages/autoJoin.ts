@@ -3,30 +3,25 @@ import { levelsets } from "../../shared/data/levelsets";
 import { _ } from "../../shared/util";
 import { STORAGE_NAME, UC } from "../const";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
-import { InputStage } from "../stage_base/inputStage";
-import { ClientState } from "../state/clientState";
+import { GameStage } from "./base/gameStage";
+import { InputStage } from "./base/inputStage";
 import { format } from "../util/clientUtil";
 import { ChallengeStage } from "./challenge";
-import { QuickJoinGame } from "./quickJoinGame";
 
 export class AutoJoinStage extends InputStage {
+    header = _("JOiN GAME");
+    name = STORAGE_NAME;
+    minlength = PLAYER_NAME_MINLENGTH;
+    maxwidth = PLAYER_NAME_MAXWIDTH;
+
     constructor(public clientPlayer: ClientSocketPlayer) {
         super();
-
-        this.header = _("JOiN GAME");
-        this.label = this.getRoomSummary();
-        this.name = STORAGE_NAME;
-
-        ClientState.flow.GameStage = QuickJoinGame;
-        this.next = this.clientPlayer.room.options.isXSS
-            ? ChallengeStage
-            : ClientState.flow.GameStage;
-
-        this.minlength = PLAYER_NAME_MINLENGTH;
-        this.maxwidth = PLAYER_NAME_MAXWIDTH;
+        // TODO: Need to remember flow.
+        this.next = this.clientPlayer.room.options.isXSS ? ChallengeStage : GameStage;
+        this.label = this.getLabel();
     }
 
-    getRoomSummary(): string {
+    private getLabel() {
         const summary = [];
         const room = this.clientPlayer.room;
         const names = room.players.getNames().join(", ");

@@ -1,8 +1,8 @@
 import { colorSchemes } from "../bootstrap/registerColorSchemes";
 import { STORAGE_COLOR } from "../const";
-import { SelectStage } from "../stage_base/selectStage";
-import { SelectMenu } from "../stage_class_helper/selectMenu";
-import { ClientState } from "../state/clientState";
+import { SelectStage } from "./base/selectStage";
+import { SelectMenu } from "./components/selectMenu";
+import { State } from "../state";
 import { storage } from "../util/clientUtil";
 
 export class ColorStage extends SelectStage {
@@ -23,7 +23,7 @@ export class ColorStage extends SelectStage {
     }
 
     private setColor(index: number): void {
-        ClientState.canvas.setColorScheme(colorSchemes[index]);
+        State.canvas.setColorScheme(colorSchemes[index]);
         storage(STORAGE_COLOR, index);
     }
 }

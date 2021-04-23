@@ -1,6 +1,6 @@
 import { Shape } from "../../shared/shape";
 import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, UC } from "../const";
-import { ScreenStage } from "../stage_base/screenStage";
+import { ScreenStage } from "./base/screenStage";
 import { fontPixels } from "../ui/font";
 import { zoom } from "../ui/transformClient";
 

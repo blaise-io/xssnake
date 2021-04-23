@@ -1,7 +1,7 @@
 import { getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
 import { MENU_LEFT, NS } from "../const";
-import { InputStage } from "../stage_base/inputStage";
-import { ClientState } from "../state/clientState";
+import { InputStage } from "./base/inputStage";
+import { State } from "../state";
 import { font } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
 import { InputXssStage } from "./inputXss";
@@ -35,10 +35,10 @@ export class ChallengeStage extends InputStage {
         // Tolerate answers where user is quoting strings.
         if (value.replace(/['"]/g, "").trim() === String(eval(this._challenge))) {
             text = "> bleep!";
-            ClientState.events.off("keydown", NS.INPUT);
+            State.events.off("keydown", NS.INPUT);
             setTimeout(
                 function () {
-                    ClientState.flow.switchStage(this.next);
+                    State.flow.switchStage(this.next);
                 }.bind(this),
                 1000
             );
@@ -47,7 +47,7 @@ export class ChallengeStage extends InputStage {
         const shape = font(text, MENU_LEFT, top);
         lifetime(shape, 0, 1000);
 
-        ClientState.shapes.message = shape;
+        State.shapes.message = shape;
     }
 
     _challenges = [
