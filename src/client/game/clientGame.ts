@@ -107,11 +107,11 @@ export class ClientGame {
         this.spawnables.destruct();
 
         for (const k in Object.keys(getLevelShapes(this.level))) {
-            State.shapes[k] = null;
+            State.shapes[k] = undefined;
         }
 
-        this.level = null;
-        this.players = null;
-        this.spawnables = null;
+        this.level = undefined;
+        this.players = undefined;
+        this.spawnables = undefined;
     }
 }

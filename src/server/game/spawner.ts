@@ -103,7 +103,7 @@
 //      * @private
 //      */
 //     _destructSpawn(index): void {
-//         this.spawns[index] = null;
-//         this.locations[index] = null;
+//         this.spawns[index]  = undefined;
+//         this.locations[index]  = undefined;
 //     }
 // }

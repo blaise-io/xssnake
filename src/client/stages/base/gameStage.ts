@@ -24,7 +24,7 @@ export class GameStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.CONNECTING = null;
+        State.shapes.CONNECTING = undefined;
     }
 
     getPlayerName(): string {
@@ -58,7 +58,7 @@ export class GameStage implements StageInterface {
         if (State.menuSnake) {
             State.menuSnake.destruct();
         }
-        State.shapes.CONNECTING = null;
-        State.shapes.HEADER = null;
+        State.shapes.CONNECTING = undefined;
+        State.shapes.HEADER = undefined;
     }
 }

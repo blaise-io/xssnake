@@ -9,7 +9,7 @@ import { ServerRoom } from "./serverRoom";
 
 export class ServerPlayer extends Player {
     emitterDeprecated: EventEmitter;
-    room: ServerRoom = null;
+    room: ServerRoom = undefined;
     snake: ServerSnake;
 
     constructor(public server: Server, public client: SocketClient) {
@@ -43,9 +43,9 @@ export class ServerPlayer extends Player {
         if (this.connected) {
             this.disconnect();
         }
-        this.server = null;
-        this.snake = null;
-        this.room = null;
+        this.server = undefined;
+        this.snake = undefined;
+        this.room = undefined;
     }
 
     disconnect(): void {
@@ -57,7 +57,7 @@ export class ServerPlayer extends Player {
         this.emitMessage(SE_PLAYER_DISCONNECT, this);
         if (this.client) {
             this.client.close(); // TODO: terminate()?
-            this.client = null; // TODO: not my job?
+            this.client = undefined; // TODO: not my job?
         }
         this.emitterDeprecated.removeAllListeners();
     }

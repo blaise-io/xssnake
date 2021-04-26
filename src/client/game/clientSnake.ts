@@ -29,7 +29,7 @@ export class ClientSnake extends Snake {
         this.elapsed = 0;
         this.exploded = false;
 
-        this.controls = null;
+        this.controls = undefined;
 
         this.shapeKeys = {
             snake: NS.SNAKE + index,
@@ -45,12 +45,12 @@ export class ClientSnake extends Snake {
         const keys = Object.keys(this.shapeKeys);
         for (let i = 0, m = keys.length; i < m; i++) {
             const shapeKey = this.shapeKeys[keys[i]];
-            State.shapes[shapeKey] = null;
+            State.shapes[shapeKey] = undefined;
         }
 
         if (this.controls) {
             this.controls.destruct();
-            this.controls = null;
+            this.controls = undefined;
         }
     }
 
@@ -86,8 +86,8 @@ export class ClientSnake extends Snake {
     }
 
     removeNameAndDirection(): void {
-        State.shapes[this.shapeKeys.name] = null;
-        State.shapes[this.shapeKeys.direction] = null;
+        State.shapes[this.shapeKeys.name] = undefined;
+        State.shapes[this.shapeKeys.direction] = undefined;
     }
 
     addControls(): void {
@@ -166,7 +166,7 @@ export class ClientSnake extends Snake {
         this.parts = serializedSnake[1];
         // If server updated snake, client prediction
         // of snake crashing was incorrect.
-        this.collision = null;
+        this.collision = undefined;
     }
 
     getNextPosition(): Coordinate {

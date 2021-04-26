@@ -15,9 +15,9 @@ export class Scoreboard {
     }
 
     destruct() {
-        this.players = null;
+        this.players = undefined;
         this.ui.destruct();
-        this.ui = null;
+        this.ui = undefined;
         this.unbindEvents();
     }
 

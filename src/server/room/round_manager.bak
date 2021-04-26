@@ -25,9 +25,9 @@ room.RoundManager.prototype = {
         this._xssRemoveListener();
         this.score.destruct();
         this.round.destruct();
-        this.score = null;
-        this.round = null;
-        this.room = null;
+        this.score  = undefined;
+        this.round  = undefined;
+        this.room  = undefined;
     },
 
     start: function() {

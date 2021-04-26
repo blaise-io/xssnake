@@ -8,7 +8,7 @@ export class ServerItems {
     }
 
     destruct() {
-        this.level = null;
-        this.players = null;
+        this.level = undefined;
+        this.players = undefined;
     }
 }

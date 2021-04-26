@@ -57,7 +57,7 @@ export class LevelAnimationRegistry {
     //         }
     //         State.shapes[key] = shape;
     //     } else {
-    //         State.shapes[key] = null;
+    //         State.shapes[key]  = undefined;
     //     }
     // }
 }

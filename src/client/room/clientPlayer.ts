@@ -7,7 +7,7 @@ export class ClientPlayer extends Player {
 
     constructor(name = "", public local = false) {
         super(name);
-        this.snake = null;
+        this.snake = undefined;
     }
 
     deserialize(serialized: [string, number]): void {

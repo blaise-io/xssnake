@@ -7,7 +7,7 @@ export class ServerScore {
     constructor(public players: ServerPlayerRegistry) {}
 
     destruct() {
-        this.players = null;
+        this.players = undefined;
     }
 
     /**

@@ -76,7 +76,7 @@ export class StageFlow {
         this.stage.destruct();
 
         // Remove everything
-        State.shapes.stage = null;
+        State.shapes.stage = undefined;
 
         // Replace by levelanim
         this.switchStageAnimate(
@@ -147,8 +147,8 @@ export class StageFlow {
 
     private setStage(stage: StageInterface, back = false) {
         // Remove animated stages
-        State.shapes.oldstage = null;
-        State.shapes.newstage = null;
+        State.shapes.oldstage = undefined;
+        State.shapes.newstage = undefined;
 
         this.stage = stage;
         this.stage.construct();

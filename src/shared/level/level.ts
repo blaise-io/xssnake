@@ -33,8 +33,8 @@ export class Level {
     }
 
     destruct(): void {
-        this.config = null;
-        this.animations = null;
-        this.config = null;
+        this.config = undefined;
+        this.animations = undefined;
+        this.config = undefined;
     }
 }

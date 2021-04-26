@@ -22,9 +22,9 @@ export class ServerRoom {
         this.emitter.removeAllListeners();
         this.players.destruct();
         this.rounds.destruct();
-        this.server = null;
-        this.players = null;
-        this.rounds = null;
+        this.server = undefined;
+        this.players = undefined;
+        this.rounds = undefined;
     }
 
     bindEvents() {

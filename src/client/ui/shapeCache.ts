@@ -33,7 +33,7 @@ export class ShapeCache {
     }
 
     private _getLines(pixels: PixelCollection): Coordinate[] {
-        let cache = null;
+        let cache = undefined;
         const lines = [];
 
         pixels.sort().each(function (x, y) {
@@ -56,7 +56,7 @@ export class ShapeCache {
     }
 
     private _getRectangles(lines: number[][]): number[][] {
-        let cache = null;
+        let cache = undefined;
         const rectangles = [];
 
         lines.sort(function (a, b) {

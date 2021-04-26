@@ -9,8 +9,6 @@ export class Crash {
     draw: boolean;
 
     constructor(public type: number, public client: Player, public opponent: Player) {
-        this.location = null;
-
         this.parts = client.snake.parts.slice();
         this.time = new Date();
         this.draw = this.detectDraw();

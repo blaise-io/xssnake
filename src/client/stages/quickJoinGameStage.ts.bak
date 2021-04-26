@@ -8,7 +8,7 @@ import { error } from "../util/clientUtil";
 
 export class QuickJoinGameStage extends GameStage {
     connectServer(): void {
-        const room_key = null; // TODO: See AutoJoinDialog.bindEvents
+        const room_key  = undefined; // TODO: See AutoJoinDialog.bindEvents
         const clientPlayer = new ClientSocketPlayer(() => {
             clientPlayer.room.setupComponents();
             clientPlayer.emit(NC_ROOM_JOIN_KEY, [room_key]);

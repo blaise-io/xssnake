@@ -19,7 +19,7 @@ import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 export class ClientRound extends Round {
     private game: ClientGame;
     private preGameUI: PreGameUI;
-    private wrapupGameUI: WrapupGame = null;
+    private wrapupGameUI: WrapupGame = undefined;
     level: Level;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
@@ -37,14 +37,14 @@ export class ClientRound extends Round {
     destruct(): void {
         this.unbindEvents();
         this.game.destruct();
-        this.game = null;
+        this.game = undefined;
         if (this.preGameUI) {
             this.preGameUI.destruct();
-            this.preGameUI = null;
+            this.preGameUI = undefined;
         }
         if (this.wrapupGameUI) {
             this.wrapupGameUI.destruct();
-            this.wrapupGameUI = null;
+            this.wrapupGameUI = undefined;
         }
     }
 

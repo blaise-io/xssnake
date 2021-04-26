@@ -118,7 +118,7 @@ export function debounce(fn: CallableFunction, delay = 100): (...args) => void {
     return (...args) => {
         window.clearTimeout(timeout);
         timeout = window.setTimeout(() => {
-            timeout = null;
+            timeout = undefined;
             fn(...args);
         }, delay);
     };

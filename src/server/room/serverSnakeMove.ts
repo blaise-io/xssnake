@@ -16,8 +16,8 @@ export class ServerSnakeMove {
     direction: number;
 
     constructor(public dirtyMove, public player) {
-        this.parts = null;
-        this.direction = null;
+        this.parts = undefined;
+        this.direction = undefined;
         this.status = -1;
     }
 

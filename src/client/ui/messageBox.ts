@@ -30,7 +30,7 @@ export class MessageBoxUI {
         this.skipQueue = false;
         this.queued = 0;
 
-        this.inputField = null;
+        this.inputField = undefined;
 
         this.lineHeight = 7;
         this.animationDuration = 200;
@@ -50,7 +50,7 @@ export class MessageBoxUI {
         State.events.off("keydown", NS.CHAT);
         if (this.inputField) {
             this.inputField.destruct();
-            this.inputField = null;
+            this.inputField = undefined;
         }
     }
 
@@ -96,7 +96,7 @@ export class MessageBoxUI {
     hideInput() {
         if (this.inputField) {
             this.inputField.destruct();
-            this.inputField = null;
+            this.inputField = undefined;
         }
         this.updateMessages();
     }
@@ -129,7 +129,7 @@ export class MessageBoxUI {
             flash(State.shapes.MSG_ENTER, speed, speed);
             lifetime(State.shapes.MSG_ENTER, 0, speed);
         } else {
-            State.shapes.MSG_ENTER = null;
+            State.shapes.MSG_ENTER = undefined;
         }
     }
 

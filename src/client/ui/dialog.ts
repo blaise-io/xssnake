@@ -54,7 +54,7 @@ export class Dialog {
     }
 
     destruct(): void {
-        State.shapes.dialog = null;
+        State.shapes.dialog = undefined;
         State.keysBlocked = false;
         State.events.off("keydown", NS.DIALOG);
     }

@@ -180,7 +180,7 @@ export function getKerning(x, y, shape, pointer, chrProperties) {
     const maxes = getMaxes(x, y, shape, pointer);
 
     for (let i = 0; i < LINE_HEIGHT; i++) {
-        let min = null;
+        let min = undefined;
         let max;
         if (chrProperties.pixels.pixels[i]) {
             min = Math.min.apply(this, chrProperties.pixels.pixels[i]);

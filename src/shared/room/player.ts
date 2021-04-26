@@ -9,7 +9,7 @@ export class Player {
     constructor(public name = "") {
         this.connected = false;
         this.score = 0;
-        this.snake = null;
+        this.snake = undefined;
     }
 
     deserialize(serialized: [string, number]): void {

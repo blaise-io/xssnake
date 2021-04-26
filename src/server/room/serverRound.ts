@@ -50,17 +50,17 @@ export class ServerRound extends Round {
 
         if (this.game) {
             this.game.destruct();
-            this.game = null;
+            this.game = undefined;
         }
 
         if (this.level) {
             this.level.destruct();
-            this.level = null;
+            this.level = undefined;
         }
 
-        this.handleDisconnectBound = null;
-        this.roomEmitter = null;
-        this.levelset = null;
+        this.handleDisconnectBound = undefined;
+        this.roomEmitter = undefined;
+        this.levelset = undefined;
     }
 
     bindEvents(): void {

@@ -40,9 +40,9 @@ export class ServerGame {
 
         this.items.destruct();
 
-        this.level = null;
-        this.players = null;
-        this.items = null;
+        this.level = undefined;
+        this.players = undefined;
+        this.items = undefined;
     }
 
     bindEvents() {

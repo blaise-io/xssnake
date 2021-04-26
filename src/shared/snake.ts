@@ -19,7 +19,7 @@ export class Snake {
         this.speed = level.config.snakeSpeed;
 
         this.crashed = false;
-        this.collision = null;
+        this.collision = undefined;
     }
 
     move(position: Coordinate): void {

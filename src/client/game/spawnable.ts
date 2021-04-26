@@ -20,7 +20,7 @@ export class Spawnable {
     }
 
     destruct(): void {
-        State.shapes[this._shapeName] = null;
+        State.shapes[this._shapeName] = undefined;
     }
 
     _getShape(): Shape {

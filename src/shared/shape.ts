@@ -4,7 +4,7 @@ import { PixelCollection } from "./pixelCollection";
 export class Shape {
     _bbox: BoundingBox;
     pixels: PixelCollection;
-    cache: any = null; // ShapeCache but is client...
+    cache: any = undefined; // ShapeCache but is client...
     enabled: boolean;
     effects: Record<string, (delta) => void> = {};
     expand = 0;
@@ -14,7 +14,7 @@ export class Shape {
     };
     transform: { translate: [number, number]; scale: number };
     isOverlay: boolean;
-    mask: number[] = null;
+    mask: number[] = undefined;
 
     constructor(...pixelCollections: PixelCollection[]) {
         this.pixels = new PixelCollection();
@@ -44,8 +44,8 @@ export class Shape {
     }
 
     uncache(): Shape {
-        this.cache = null;
-        this._bbox = null;
+        this.cache = undefined;
+        this._bbox = undefined;
         return this;
     }
 

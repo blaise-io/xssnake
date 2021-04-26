@@ -49,7 +49,7 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
         if (end && progress >= end) {
             Object.entries(State.shapes).forEach(([key, _shape]) => {
                 if (_shape === shape) {
-                    State.shapes[key] = null;
+                    State.shapes[key] = undefined;
                 }
             });
         }

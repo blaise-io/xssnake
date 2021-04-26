@@ -14,7 +14,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     }
 
     destruct(): void {
-        this.localPlayer = null;
+        this.localPlayer = undefined;
         super.destruct();
     }
 
@@ -81,7 +81,7 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         const keys = Object.keys(State.shapes);
         for (let i = 0, m = keys.length; i < m; i++) {
             if (keys[i].substr(0, NS.SNAKE.length) === NS.SNAKE) {
-                State.shapes[keys[i]] = null;
+                State.shapes[keys[i]] = undefined;
             }
         }
     }

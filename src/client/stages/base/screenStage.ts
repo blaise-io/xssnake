@@ -4,7 +4,7 @@ import { State } from "../../state";
 import { StageInterface } from "./stage";
 
 export class ScreenStage implements StageInterface {
-    screen = null;
+    screen = undefined;
 
     getShape(): Shape {
         return this.screen;
@@ -16,7 +16,7 @@ export class ScreenStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.stage = null;
+        State.shapes.stage = undefined;
     }
 
     private handleKeys(event: KeyboardEvent): void {

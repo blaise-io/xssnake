@@ -27,7 +27,7 @@ export class InputField {
         public fontOptions?: any
     ) {
         this.callback = () => {};
-        this.maxValWidth = null;
+        this.maxValWidth = undefined;
         this.displayWidth = WIDTH - x - 8;
         this.maxlength = 156;
 
@@ -42,8 +42,8 @@ export class InputField {
             this.input.parentNode.removeChild(this.input);
         }
         this.unbindEvents();
-        State.shapes.INPUT_CARET = null;
-        State.shapes.INPUT_VALUE = null;
+        State.shapes.INPUT_CARET = undefined;
+        State.shapes.INPUT_VALUE = undefined;
         State.keysBlocked = false;
     }
 

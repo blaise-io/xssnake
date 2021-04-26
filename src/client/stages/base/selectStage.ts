@@ -3,7 +3,7 @@ import { State } from "../../state";
 import { StageInterface } from "./stage";
 
 export class SelectStage implements StageInterface {
-    menu = null;
+    menu = undefined;
 
     getShape() {
         return this.menu.getShape();
@@ -19,7 +19,7 @@ export class SelectStage implements StageInterface {
 
     destruct() {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.stage = null;
+        State.shapes.stage = undefined;
     }
 
     handleKeys(ev) {

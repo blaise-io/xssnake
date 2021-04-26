@@ -11,8 +11,8 @@ export class LevelPlayset {
     }
 
     destruct(): void {
-        this.levelset = null;
-        this.played = null;
+        this.levelset = undefined;
+        this.played = undefined;
     }
 
     getNext(): number {

@@ -19,7 +19,7 @@
 //     }
 //
 //     destruct() {
-//         this.player = null;
+//         this.player  = undefined;
 //         clearInterval(this.interval);
 //         State.events.off(NC_PONG, NS.HEARTBEAT);
 //     }
@@ -41,6 +41,6 @@
 //     pong() {
 //         this.latency = (this.pingSent - +new Date()) / 2;
 //         this.player.emit(NC_PONG);
-//         this.pingSent = null;
+//         this.pingSent  = undefined;
 //     }
 // }

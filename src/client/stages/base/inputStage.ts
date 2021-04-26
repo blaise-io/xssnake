@@ -49,7 +49,7 @@ export abstract class InputStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.message = null;
+        State.shapes.message = undefined;
         this.input.destruct();
         if (this.name) {
             storage(this.name, this.value);

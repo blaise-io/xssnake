@@ -43,7 +43,7 @@ export class MenuSnake {
     move(): void {
         const snake = this.snake;
 
-        snake.collision = null;
+        snake.collision = undefined;
 
         const nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {

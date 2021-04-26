@@ -38,7 +38,7 @@ export class ScoreboardUI {
 
     destructShapes(): void {
         for (let i = 0; i < this.podiumSize; i++) {
-            State.shapes[NS.SCORE + i] = null;
+            State.shapes[NS.SCORE + i] = undefined;
         }
     }
 

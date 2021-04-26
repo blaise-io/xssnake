@@ -10,7 +10,7 @@ import { ClientSocketPlayer } from "./clientSocketPlayer";
 import { Message } from "./message";
 
 export class MessageBox {
-    private previousPlayers: ClientPlayerRegistry = null; // Keep old registry until player leaving is propagated.
+    private previousPlayers: ClientPlayerRegistry = undefined; // Keep old registry until player leaving is propagated.
     private messages: Message[];
     ui: MessageBoxUI;
     private playerChangeNotified = false;
@@ -26,7 +26,7 @@ export class MessageBox {
 
     destruct() {
         this.messages.length = 0;
-        this.previousPlayers = null;
+        this.previousPlayers = undefined;
         this.ui.destruct();
         State.events.off(NC_CHAT_MESSAGE, NS.MSGBOX);
         State.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);

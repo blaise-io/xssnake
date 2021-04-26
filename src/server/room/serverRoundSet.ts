@@ -39,16 +39,16 @@ export class ServerRoundSet {
         clearTimeout(this.nextRoundTimeout);
 
         this.levelPlayset.destruct();
-        this.levelPlayset = null;
+        this.levelPlayset = undefined;
 
         this.round.destruct();
-        this.round = null;
+        this.round = undefined;
 
         this.score.destruct();
-        this.score = null;
+        this.score = undefined;
 
-        this.players = null;
-        this.options = null;
+        this.players = undefined;
+        this.options = undefined;
     }
 
     bindEvents() {

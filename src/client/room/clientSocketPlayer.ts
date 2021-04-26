@@ -19,7 +19,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         super("");
 
         this.local = true;
-        this.room = null;
+        this.room = undefined;
         this.connection = new WebSocket(`ws://${SERVER_HOST}:${SERVER_PORT}${SERVER_PATH}`);
         this.connection.onopen = this.onopen.bind(this);
         this.connection.onclose = this.onclose.bind(this);
@@ -29,10 +29,10 @@ export class ClientSocketPlayer extends ClientPlayer {
 
     destruct(): void {
         this.connected = false;
-        this.connection.onopen = null;
-        this.connection.onclose = null;
-        this.connection.onerror = null;
-        this.connection.onmessage = null;
+        this.connection.onopen = undefined;
+        this.connection.onclose = undefined;
+        this.connection.onerror = undefined;
+        this.connection.onmessage = undefined;
 
         State.events.off(NC_PING, NS.SOCKET);
         State.events.off(NC_PONG, NS.SOCKET);

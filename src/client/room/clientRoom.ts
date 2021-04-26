@@ -40,9 +40,6 @@ export class ClientRoom {
         this.options = new ClientOptions();
         this.roundSet = new ClientRoundSet(this.players, this.options);
 
-        this.messageBox = null;
-        this.scoreboard = null;
-
         this.bindEvents();
     }
 

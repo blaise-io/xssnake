@@ -11,15 +11,15 @@ export class ClientRoundSet {
     constructor(public players: ClientPlayerRegistry, public options: ClientOptions) {
         this.players = players;
         this.options = options;
-        this.round = null;
+        this.round = undefined;
         this.bindEvents();
     }
 
     destruct() {
-        this.players = null;
-        this.options = null;
+        this.players = undefined;
+        this.options = undefined;
         this.round.destruct();
-        this.round = null;
+        this.round = undefined;
     }
 
     bindEvents() {

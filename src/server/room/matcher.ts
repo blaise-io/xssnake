@@ -5,7 +5,7 @@ export class Matcher {
     constructor(public rooms: ServerRoom[]) {}
 
     destruct() {
-        this.rooms = null;
+        this.rooms = undefined;
     }
 
     getRoomMatching(requestOptions: ServerOptions): ServerRoom | null {

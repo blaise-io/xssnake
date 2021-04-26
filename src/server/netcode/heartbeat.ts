@@ -15,7 +15,7 @@
 //     destruct() {
 //         this.player.emitterDeprecated.removeAllListeners(String(NC_PING));
 //         this.player.emitterDeprecated.removeAllListeners(String(NC_PONG));
-//         this.player = null;
+//         this.player  = undefined;
 //     }
 //
 //     isAlive() {
