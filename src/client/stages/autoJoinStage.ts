@@ -20,6 +20,7 @@ export class AutoJoinStage extends InputStage {
         super(flowData);
         this.next = this.flowData.room.options.isXSS ? ChallengeStage : GameStage;
         this.label = this.getLabel();
+        this.shape = this.getLabelAndValueShape();
     }
 
     private getLabel() {

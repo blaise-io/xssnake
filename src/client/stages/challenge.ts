@@ -29,6 +29,7 @@ export class ChallengeStage extends InputStage {
                 "result of the following statement:"
         );
         this.label += `\n\n${this._challenge}\n\n> `;
+        this.shape = this.getLabelAndValueShape();
     }
 
     inputSubmit(error: string, value: string, top: number): void {

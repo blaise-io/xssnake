@@ -10,7 +10,7 @@ import { storage } from "../../util/clientUtil";
 import { StageConstructor, StageInterface } from "./stage";
 
 export abstract class InputStage implements StageInterface {
-    private shape: Shape;
+    shape: Shape;
     private fontOptions = { wrap: MENU_LEFT + MENU_WIDTH - 25 };
     private value: string;
     private input: InputField;
@@ -27,12 +27,17 @@ export abstract class InputStage implements StageInterface {
     maxwidth = 0;
     displayWidth = 0;
 
-    constructor(public flowData: FlowData) {
-        this.shape = this.getLabelAndValueShape();
-    }
+    constructor(public flowData: FlowData) {}
 
     getShape(): Shape {
         return this.shape;
+    }
+
+    getLabelAndValueShape(): Shape {
+        console.log(this.label, this.header);
+        const shape = this.getLabelShape();
+        shape.add(this.getValueShape().pixels);
+        return shape;
     }
 
     construct(): void {
@@ -45,7 +50,6 @@ export abstract class InputStage implements StageInterface {
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
         State.shapes.message = null;
-        this.shape = this.getLabelAndValueShape();
         this.input.destruct();
         if (this.name) {
             storage(this.name, this.value);
@@ -103,12 +107,6 @@ export abstract class InputStage implements StageInterface {
             return "Too long!!";
         }
         return "";
-    }
-
-    private getLabelAndValueShape(): Shape {
-        const shape = this.getLabelShape();
-        shape.add(this.getValueShape().pixels);
-        return shape;
     }
 
     private getLabelShape(): Shape {
