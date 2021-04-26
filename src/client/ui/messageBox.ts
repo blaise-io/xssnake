@@ -140,7 +140,7 @@ export class MessageBoxUI {
     getNumMessagesFit() {
         let fits = this.y1 - this.padding.y1 - (this.y0 + this.padding.y0);
         fits = Math.floor(fits / this.lineHeight);
-        fits -= this.inputField === null ? 0 : 1;
+        fits -= this.inputField ? 0 : 1;
         return fits;
     }
 

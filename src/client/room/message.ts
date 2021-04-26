@@ -1,28 +1,21 @@
-/**
- * @param {string|null|undefined=} author
- * @param {string=} body
- * @constructor
- */
 import { fontWidth } from "../ui/font";
 
 export class Message {
     private notificationPrefix: string;
 
-    constructor(public author, public body) {
-        this.author = author;
-        this.body = body;
+    constructor(public author: string | undefined, public body: string) {
         this.notificationPrefix = "#";
     }
 
-    getFormatted() {
-        if (this.author === null) {
+    getFormatted(): string {
+        if (!this.author) {
             return this.notificationPrefix + this.body;
         } else {
             return this.author + ": " + this.body;
         }
     }
 
-    getOffset() {
-        return this.author === null ? 0 : fontWidth(this.notificationPrefix);
+    getOffset(): number {
+        return !this.author ? 0 : fontWidth(this.notificationPrefix);
     }
 }
