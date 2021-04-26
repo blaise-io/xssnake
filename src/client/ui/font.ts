@@ -175,23 +175,21 @@ export function getMaxes(x, y, shape, pointer) {
 }
 
 export function getKerning(x, y, shape, pointer, chrProperties) {
-    let gap;
     const gaps = [];
     const maxes = getMaxes(x, y, shape, pointer);
 
     for (let i = 0; i < LINE_HEIGHT; i++) {
-        let min = undefined;
-        let max;
+        let min;
         if (chrProperties.pixels.pixels[i]) {
             min = Math.min.apply(this, chrProperties.pixels.pixels[i]);
         }
-        max = Math.max(maxes[i - 1] || 0, maxes[i] || 0, maxes[i + 1] || 0);
-        if (min !== null) {
+        const max = Math.max(maxes[i - 1] || 0, maxes[i] || 0, maxes[i + 1] || 0);
+        if (min !== undefined) {
             gaps.push(pointer.x - max + min);
         }
     }
 
-    gap = Math.min.apply(this, gaps);
+    const gap = Math.min.apply(this, gaps);
     return Math.max(-1, 2 - gap);
 }
 
