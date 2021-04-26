@@ -1,45 +1,35 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
-import { getRandomItemFrom } from "../../shared/util";
+import { _, getRandomItemFrom } from "../../shared/util";
 import { MENU_LEFT, NS, STORAGE_NAME, UC } from "../const";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
-import { MultiplayerStage } from "./multiplayer";
+import { MultiplayerStage } from "./multiplayerStage";
 
 export class NameStage extends InputStage {
-    constructor() {
-        super();
-        this.next = MultiplayerStage;
-        this.name = STORAGE_NAME;
-        this.header = "HELLO";
-        this.label = "My name is ";
-        this.minlength = PLAYER_NAME_MINLENGTH;
-        this.maxwidth = PLAYER_NAME_MAXWIDTH;
-    }
-
-    getData(): Record<string, string> {
-        return {
-            name: this.getValue(),
-        };
-    }
+    next = MultiplayerStage;
+    name = STORAGE_NAME;
+    header = _("Hello");
+    label = _("My name is ");
+    minlength = PLAYER_NAME_MINLENGTH;
+    maxwidth = PLAYER_NAME_MAXWIDTH;
 
     inputSubmit(error: string, value: string, top: number): void {
         let text;
         let duration = 500;
 
+        this.flowData.name = value;
+
         if (error) {
             text = error;
         } else {
             State.events.off("keydown", NS.INPUT);
-            text = getRandomItemFrom(this._wits).replace(/%s/g, value);
+            text = getRandomItemFrom(this.wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
-            setTimeout(
-                function () {
-                    State.flow.switchStage(this.next);
-                }.bind(this),
-                duration
-            );
+            setTimeout(() => {
+                State.flow.switchStage(this.next);
+            }, duration);
         }
 
         const shape = font(text, MENU_LEFT, top);
@@ -48,7 +38,7 @@ export class NameStage extends InputStage {
         State.shapes.message = shape;
     }
 
-    _wits = [
+    private wits = [
         "%s%s%s!!!",
         "You have the same name as my mom",
         "LOVELY " + new Array(4).join(UC.WHITE_HEART),

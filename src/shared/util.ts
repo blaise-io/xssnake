@@ -16,10 +16,9 @@ export function randomStr(len = 3): string {
 
 /**
  * Ensure an index is within bounds of given array.
- * Return first or last valid index if out of bounds.
+ * Indexes cycle, after last comes first, before first comes last.
  */
-export function ensureIndexWithinBounds<Type>(index: number, arr: Type[]): number {
-    const len = arr.length;
+export function indexCarousel(index: number, len: number): number {
     if (index >= len) {
         return 0;
     } else if (index < 0) {

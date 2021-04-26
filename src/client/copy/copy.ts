@@ -41,13 +41,6 @@ export const COPY_MAIN_INSTRUCT = [
     "Arrow keys, Esc and " + UC.ENTER_KEY + " to navigate",
 ].join(" …\n");
 
-// Form stage.
-export const COPY_FORM_INSTRUCT = [
-    UC.ARR_UP + " & " + UC.ARR_DOWN + " to select an option",
-    UC.ARR_LEFT + " & " + UC.ARR_RIGHT + " to change the value",
-    UC.ENTER_KEY + " to continue",
-].join(" …\n");
-
 // Pre-game dialog.
 export const COPY_COUNTDOWN_TITLE = "Get ready!";
 export const COPY_COUNTDOWN_BODY = "Game starting in: {0}";
@@ -58,25 +51,6 @@ export const COPY_SOCKET_CANNOT_CONNECT = "Cannot connect";
 export const COPY_SOCKET_SERVER_AWAY = "Server went away";
 
 // Game options stage.
-export const COPY_FIELD_TRUE = "Yes";
-export const COPY_FIELD_FALSE = "No";
-export const COPY_FIELD_LEVEL_SET = "Level Set";
-export const COPY_OPTIONS_STAGE_HEADER = "Game Options";
-export const COPY_FIELD_POWERUPS = "Power-Ups";
-export const COPY_FIELD_PRIVATE = "Private Room";
-export const COPY_FIELD_XSS = "Winner fires XSS";
-export const COPY_FIELD_MAX_PLAYERS = "Max Players";
-
-export const COPY_FIELD_BUGS = "WEIRD BUGS " + UC.BUG;
-export const COPY_FIELD_TRUE_OPT1 = COPY_FIELD_TRUE;
-export const COPY_FIELD_TRUE_OPT2 = "Enable";
-export const COPY_FIELD_TRUE_OPT3 = "OK";
-export const COPY_FIELD_TRUE_OPT4 = "True";
-export const COPY_FIELD_TRUE_OPT5 = "Accept";
-export const COPY_FIELD_TRUE_OPT6 = "Hao";
-export const COPY_FIELD_TRUE_OPT7 = "Oui!";
-export const COPY_FIELD_TRUE_OPT8 = "Si Senor";
-export const COPY_FIELD_TRUE_OPT9 = UC.YES;
 
 export const COPY_CHAT_INSTRUCT = "Press " + UC.ENTER_KEY + " to chat.";
 

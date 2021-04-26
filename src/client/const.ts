@@ -5,6 +5,7 @@ export const FRAME = 1000 / 60;
 export const MIN_FRAME_DELTA = 5;
 export const MAX_FRAME_DELTA = 250;
 
+// TODO: Switch to event.code?
 export const enum KEY {
     BACKSPACE = 8,
     TAB = 9,

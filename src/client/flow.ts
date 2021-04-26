@@ -1,24 +1,43 @@
 import { ROOM_KEY_LENGTH, WIDTH } from "../shared/const";
+import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
 import { HASH_ROOM, KEY, MENU_LEFT, NS, STORAGE_MUTE } from "./const";
-import { StageInterface } from "./stages/base/stage";
-import { MainStage } from "./stages/main";
+import { ClientRoom } from "./room/clientRoom";
+import { ClientSocketPlayer } from "./room/clientSocketPlayer";
+import { StageConstructor, StageInterface } from "./stages/base/stage";
+import { MainStage } from "./stages/mainStage";
 import { State } from "./state";
 import { outerBorder, xssnakeHeader } from "./ui/clientShapeGenerator";
 import { fontLoad } from "./ui/font";
 import { animate } from "./ui/shapeClient";
 import { instruct, storage, urlHash } from "./util/clientUtil";
 
-export class StageFlow {
-    GameStage: new () => StageInterface;
-    stage: StageInterface;
-    private history: StageInterface[] = [];
+export interface FlowData {
+    xss: string;
+    name: string;
+    clientPlayer: ClientSocketPlayer;
+    room: ClientRoom;
+    roomOptions: RoomOptions;
+}
 
-    constructor(private FirstStage = MainStage as new () => StageInterface) {
-        (async () => {
-            await fontLoad();
+export class StageFlow {
+    GameStage: StageConstructor;
+    stage: StageInterface;
+
+    private history: StageInterface[] = [];
+    private data: FlowData = {
+        xss: "",
+        name: "",
+        clientPlayer: undefined,
+        roomOptions: undefined,
+        room: undefined,
+    };
+
+    constructor(private FirstStage = MainStage as StageConstructor) {
+        this.data.roomOptions = new RoomOptions();
+        fontLoad().then(() => {
             this.start();
-        })();
+        });
     }
 
     destruct(): void {
@@ -41,22 +60,14 @@ export class StageFlow {
         Object.assign(State.shapes, outerBorder());
         State.shapes.HEADER = xssnakeHeader();
 
-        this.setStage(new this.FirstStage(), false);
+        this.setStage(new this.FirstStage(this.data), false);
     }
 
-    getData(): Record<string, any> {
-        const value = {};
-        for (let i = 0, m = this.history.length; i < m; i++) {
-            Object.assign(value, this.history[i].getData());
-        }
-        return value;
-    }
-
-    switchStage(Stage: new () => StageInterface, options = { back: false }): void {
+    switchStage(Stage: StageConstructor, options = { back: false }): void {
         let switchToStage;
 
         if (Stage && !options.back) {
-            switchToStage = new Stage();
+            switchToStage = new Stage(this.data);
         } else {
             switchToStage = this.history[this.history.length - 2];
         }

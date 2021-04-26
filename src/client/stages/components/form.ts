@@ -1,8 +1,9 @@
 import { HEIGHT } from "../../../shared/const";
 import { PixelCollection } from "../../../shared/pixelCollection";
 import { Shape } from "../../../shared/shape";
-import { ensureIndexWithinBounds } from "../../../shared/util";
-import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC } from "../../const";
+import { _, indexCarousel } from "../../../shared/util";
+import { KEY, MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC } from "../../const";
+import { State } from "../../state";
 import {
     font,
     fontHeight,
@@ -13,73 +14,118 @@ import {
 } from "../../ui/font";
 import { zoom } from "../../ui/transformClient";
 
-export class Form {
-    private selectedField: number;
-    private selectedOption: number[];
-    private fields: { id: number; label: string; options: [any, any][] }[];
-    private maxwidth: number;
+const FORM_FOOTER_COPY = [
+    _(`${UC.ARR_UP} & ${UC.ARR_DOWN} to select an option`),
+    _(`${UC.ARR_LEFT} & ${UC.ARR_RIGHT} to change the value`),
+    _(`${UC.ENTER_KEY} to continue`),
+].join(" …\n");
 
-    constructor(public header: string, public footer: string = "") {
-        this.header = header.toUpperCase();
+export class Field<Type> {
+    constructor(
+        public label: string,
+        public options: [Type, string][],
+        public value: Type,
+        public onupdate: (value: Type) => void
+    ) {}
 
-        this.selectedField = 0;
-        this.selectedOption = [];
-        this.fields = [];
-        this.maxwidth = 0;
+    get selectedOption(): [Type, string] {
+        return this.options.find((option) => option[0] === this.value) || this.options[0];
     }
 
-    addField(id: number, label: string, options: [any, any][]): void {
-        this.fields.push({
-            id: id,
-            label: label.toUpperCase(),
-            options: options,
-        });
+    getShape(x: number, col2X: number, y: number, maxwidth: number): Shape {
+        const props: { left?: number; right?: number; option?: number } = {};
+        const shape = font(this.label, x, y);
+        const value = this.selectedOption[1].toUpperCase();
 
-        this.selectedOption.push(0);
+        props.option = col2X + (maxwidth - fontWidth(value)) / 2;
+        props.option = Math.floor(props.option);
 
-        for (let i = 0, m = options.length; i < m; i++) {
-            this.maxwidth = Math.max(this.maxwidth, fontWidth(options[i][1].toUpperCase()));
+        shape.add(fontPixels(value, props.option, y));
+
+        props.left = col2X - fontWidth(UC.TR_LEFT + " ");
+        props.right = col2X + maxwidth + fontWidth(" ");
+
+        shape.add(fontPixels("<", props.left, y), fontPixels(">", props.right, y));
+
+        return shape;
+    }
+}
+
+export class Form {
+    private focusFieldIndex = 0;
+    private fields: Field<number | boolean>[] = [];
+    private maxwidth = 0;
+
+    constructor(public header: string, public footer = FORM_FOOTER_COPY) {
+        this.header = header.toUpperCase();
+    }
+
+    handleKeys(event: KeyboardEvent): boolean {
+        switch (event.keyCode) {
+            case KEY.UP:
+                this.switchField(-1);
+                State.audio.play("menu");
+                return true;
+            case KEY.DOWN:
+                this.switchField(1);
+                State.audio.play("menu");
+                return true;
+            case KEY.LEFT:
+                this.selectOption(-1);
+                State.audio.play("menu_alt");
+                return true;
+            case KEY.RIGHT:
+                this.selectOption(1);
+                State.audio.play("menu_alt");
+                return true;
+        }
+        return false;
+    }
+
+    addField(field: Field<number | boolean>): void {
+        this.fields.push(field);
+
+        // TODO: getter / es6 arr fn
+        for (let i = 0, m = field.options.length; i < m; i++) {
+            this.maxwidth = Math.max(this.maxwidth, fontWidth(field.options[i][1].toUpperCase()));
         }
     }
 
-    selectField(delta: number): void {
-        this.selectedField = ensureIndexWithinBounds(this.selectedField + delta, this.fields);
+    switchField(delta: number): void {
+        this.focusFieldIndex = indexCarousel(this.focusFieldIndex + delta, this.fields.length);
     }
 
     selectOption(delta: number): void {
-        const focusField = this.fields[this.selectedField];
-        if (focusField) {
-            this.selectedOption[this.selectedField] = ensureIndexWithinBounds(
-                this.selectedOption[this.selectedField] + delta,
-                focusField.options
-            );
-        }
+        const field = this.fields[this.focusFieldIndex];
+        const index = field.options.indexOf(field.selectedOption);
+        const newOptionIndex = indexCarousel(index + delta, field.options.length);
+        field.value = field.options[newOptionIndex][0];
+        field.onupdate(field.value);
     }
 
     getShape(): Shape {
-        const x = MENU_LEFT;
         let y = MENU_TOP;
 
         const optionX = MENU_LEFT + 2 + MENU_WIDTH - this.maxwidth - fontWidth(" " + UC.TR_LEFT);
 
         const shape = new Shape();
-        shape.add(this._getHeaderPixels(x, y));
-        shape.add(this._getFooterPixels(x));
+        shape.add(this.getHeaderPixels(MENU_LEFT, y));
+        shape.add(this.getFooterPixels(MENU_LEFT));
 
         y += MENU_TITLE_HEIGHT;
 
         // Draw options
         for (let i = 0, m = this.fields.length; i < m; i++) {
-            const active = this.selectedField === i;
-            const option = this._getOptionsShape(i, x, optionX, y);
+            const active = this.focusFieldIndex === i;
+            const option = this.fields[i].getShape(MENU_LEFT, optionX, y, this.maxwidth);
 
             if (active) {
                 const bbox = option.bbox();
-                bbox.x0 -= 1;
-                bbox.x1 += 1;
+                bbox.x0 = MENU_LEFT - 2;
+                bbox.x1 = MENU_LEFT + MENU_WIDTH + 3;
                 bbox.y0 = y - 1;
                 bbox.y1 = y + LINE_HEIGHT;
-                option.invert();
+                option.invert(bbox);
             }
 
             shape.add(option.pixels);
@@ -89,45 +135,13 @@ export class Form {
         return shape;
     }
 
-    getData(): unknown[] {
-        const values = [];
-        for (let i = 0, m = this.fields.length; i < m; i++) {
-            const field = this.fields[i];
-            const optionIndex = this.selectedOption[i];
-            values[field.id] = field.options[optionIndex][0];
-        }
-        return values;
-    }
-
-    _getHeaderPixels(x: number, y: number): PixelCollection {
+    private getHeaderPixels(x: number, y: number): PixelCollection {
         const header = fontPixels(this.header);
         return zoom(2, header, x, y);
     }
 
-    _getFooterPixels(x: number): PixelCollection {
+    private getFooterPixels(x: number): PixelCollection {
         const height = fontHeight(this.footer);
         return fontPixels(this.footer, x, HEIGHT - 3 - height);
-    }
-    _getOptionsShape(i: number, x: number, col2X: number, y: number): Shape {
-        const props: { left?: number; right?: number; option?: number } = {};
-
-        const label = this.fields[i].label;
-        const shape = font(label, x, y);
-
-        const option = this.fields[i].options[this.selectedOption[i] || 0];
-        const value = option[1].toUpperCase();
-
-        props.option = col2X + (this.maxwidth - fontWidth(value)) / 2;
-        props.option = Math.floor(props.option);
-
-        const pixels = fontPixels(value, props.option, y);
-        shape.add(pixels);
-
-        props.left = col2X - fontWidth(UC.TR_LEFT + " ");
-        props.right = col2X + this.maxwidth + fontWidth(" ");
-
-        shape.add(fontPixels("<", props.left, y), fontPixels(">", props.right, y));
-
-        return shape;
     }
 }

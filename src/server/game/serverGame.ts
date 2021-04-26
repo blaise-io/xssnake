@@ -112,9 +112,7 @@ export class ServerGame {
 
     handleCrashingPlayers(tick) {
         const collisions = [];
-        let crashingPlayers;
-
-        crashingPlayers = this.players.getCollisionsOnTick(tick);
+        const crashingPlayers = this.players.getCollisionsOnTick(tick);
 
         if (crashingPlayers.length) {
             for (let i = 0, m = crashingPlayers.length; i < m; i++) {

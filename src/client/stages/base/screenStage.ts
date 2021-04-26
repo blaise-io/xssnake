@@ -10,10 +10,6 @@ export class ScreenStage implements StageInterface {
         return this.screen;
     }
 
-    getData(): Record<string, any> {
-        return {};
-    }
-
     construct(): void {
         State.events.on("keydown", NS.STAGES, this.handleKeys);
     }

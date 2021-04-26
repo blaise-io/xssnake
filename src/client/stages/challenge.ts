@@ -1,31 +1,34 @@
-import { getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
+import { _, getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
 import { MENU_LEFT, NS } from "../const";
+import { FlowData } from "../flow";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
 import { lifetime } from "../ui/shapeClient";
-import { InputXssStage } from "./inputXss";
+import { InputXssStage } from "./inputXssStage";
 
 export class ChallengeStage extends InputStage {
     private _challenge: string;
 
-    constructor() {
-        super();
+    name = undefined;
+    maxwidth = 80;
+    header = _("Danger Danger");
+    next = InputXssStage;
+    label = undefined;
+
+    constructor(flowData: FlowData) {
+        super(flowData);
+
         this._challenge = this._getRandomChallenge();
 
-        this.maxwidth = 80;
-        this.header = "DANGER DANGER";
-        this.label =
-            "" +
+        this.label = _(
             "XSS mode allows the winner of a game to execute " +
-            "JavaScript in the browser of every loser. This may " +
-            "damage you and/or your computer. To confirm that " +
-            "you know JavaScript and accept the risk, enter the " +
-            "result of the following statement:\n\n> " +
-            this._challenge +
-            "\n> ";
-
-        this.next = InputXssStage;
+                "JavaScript in the browser of every loser. This may " +
+                "damage you and/or your computer. To confirm that " +
+                "you know JavaScript and accept the risk, enter the " +
+                "result of the following statement:"
+        );
+        this.label += `\n\n${this._challenge}\n\n> `;
     }
 
     inputSubmit(error: string, value: string, top: number): void {

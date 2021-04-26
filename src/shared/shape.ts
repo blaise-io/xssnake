@@ -70,10 +70,6 @@ export class Shape {
         return this.uncache();
     }
 
-    /**
-     * @param {number=} expand
-     * @return {BoundingBox}
-     */
     bbox(expand = 0): BoundingBox {
         if (!this._bbox || this.expand !== expand) {
             this._bbox = this.pixels.bbox();

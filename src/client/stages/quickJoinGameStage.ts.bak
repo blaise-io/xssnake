@@ -6,9 +6,9 @@ import { GameStage } from "./base/gameStage";
 import { State } from "../state";
 import { error } from "../util/clientUtil";
 
-export class QuickJoinGame extends GameStage {
+export class QuickJoinGameStage extends GameStage {
     connectServer(): void {
-        const room_key = null; // TODO: See AutoJoinWizard.bindEvents
+        const room_key = null; // TODO: See AutoJoinDialog.bindEvents
         const clientPlayer = new ClientSocketPlayer(() => {
             clientPlayer.room.setupComponents();
             clientPlayer.emit(NC_ROOM_JOIN_KEY, [room_key]);
