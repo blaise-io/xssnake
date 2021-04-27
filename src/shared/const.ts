@@ -8,9 +8,11 @@ export const enum LEVEL {
     HEIGHT = 33,
 }
 
-export const GAME_TILE = 4;
-export const GAME_LEFT = 2;
-export const GAME_TOP = 2;
+export const enum GAME {
+    TILE = 4,
+    LEFT = 2,
+    TOP = 2,
+}
 
 export const NC_CHAT_NOTICE = 10;
 export const NC_CHAT_MESSAGE = 11;

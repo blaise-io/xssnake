@@ -3,7 +3,7 @@ import {
     DIRECTION_LEFT,
     DIRECTION_RIGHT,
     DIRECTION_UP,
-    GAME_TILE,
+    GAME,
     CANVAS,
 } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
@@ -115,8 +115,8 @@ export function tooltip(text, x, y, direction) {
 export function tooltipName(text, part, direction) {
     let x;
     let y;
-    const t = GAME_TILE;
-    const d = GAME_TILE * 2.5;
+    const t = GAME.TILE;
+    const d = GAME.TILE * 2.5;
 
     x = part[0] * t;
     y = part[1] * t;
@@ -155,8 +155,8 @@ export function showAction(label, coordinate, duration, amount = 3) {
         let name;
         shape = font(
             label,
-            coordinate[0] * GAME_TILE + randomRange(-12, 12),
-            coordinate[1] * GAME_TILE + randomRange(-12, 12),
+            coordinate[0] * GAME.TILE + randomRange(-12, 12),
+            coordinate[1] * GAME.TILE + randomRange(-12, 12),
         );
         name = NS.ACTION + randomStr();
         State.shapes[name] = lifetime(shape, s, s + duration);

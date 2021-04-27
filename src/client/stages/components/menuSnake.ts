@@ -1,4 +1,4 @@
-import { GAME_LEFT, GAME_TOP } from "../../../shared/const";
+import { GAME } from "../../../shared/const";
 import { Level } from "../../../shared/level/level";
 import { BlankLevel } from "../../../shared/levels/debug/blank";
 import { Shape } from "../../../shared/shape";
@@ -64,7 +64,7 @@ export class MenuSnake {
         if (nextpos[0] < 0 || nextpos[1] < 0) {
             return true;
         } else if (snakeShape) {
-            const pixels = zoom(4, snakeShape.pixels, GAME_LEFT, GAME_TOP, false);
+            const pixels = zoom(4, snakeShape.pixels, GAME.LEFT, GAME.TOP, false);
             pixels.each(
                 function (x, y) {
                     if (this.overlaysShape(snakeShape, x, y)) {

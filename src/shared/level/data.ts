@@ -1,4 +1,4 @@
-import { GAME_LEFT, GAME_TILE, GAME_TOP } from "../const";
+import { GAME } from "../const";
 import { PixelCollection } from "../pixelCollection";
 import { ShapeCollection } from "../shapeCollection";
 import { Parser } from "./parser";
@@ -60,12 +60,12 @@ export class LevelData {
      */
     convertToGameSystem(coordinate: Coordinate, translate: Shift): Coordinate {
         if (ENV_IS_CLIENT) {
-            const tx = (translate[0] - GAME_LEFT) / GAME_TILE;
-            const ty = (translate[1] - GAME_TOP) / GAME_TILE;
+            const tx = (translate[0] - GAME.LEFT) / GAME.TILE;
+            const ty = (translate[1] - GAME.TOP) / GAME.TILE;
             return [coordinate[0] - tx, coordinate[1] - ty];
         } else {
-            const tx = translate[0] / GAME_TILE;
-            const ty = translate[1] / GAME_TILE;
+            const tx = translate[0] / GAME.TILE;
+            const ty = translate[1] / GAME.TILE;
             return [coordinate[0] - tx, coordinate[1] - ty];
         }
     }

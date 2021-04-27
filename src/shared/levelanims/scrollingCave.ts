@@ -1,4 +1,4 @@
-import { GAME_TILE } from "../const";
+import { GAME } from "../const";
 import { Shape } from "../shape";
 import { ShapeCollection } from "../shapeCollection";
 import { line } from "../shapeGenerator";
@@ -78,13 +78,13 @@ export class ScrollingCave {
     _updateShape(shape: Shape, index: number, offset: number): void {
         const translate = shape.transform.translate;
 
-        const gameTileNormalized = Math.abs(translate[0]) / GAME_TILE;
+        const gameTileNormalized = Math.abs(translate[0]) / GAME.TILE;
         if (gameTileNormalized - shape.bbox().width > this._LEVEL_WIDTH) {
             // No longer visible, despawn shape.
             this._shapes.set(index, null);
         } else {
             // Visible, move shape.
-            translate[0] += offset * GAME_TILE;
+            translate[0] += offset * GAME.TILE;
         }
     }
 

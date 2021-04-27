@@ -1,4 +1,4 @@
-import { GAME_LEFT, GAME_TILE, GAME_TOP, CANVAS } from "../../shared/const";
+import { GAME, CANVAS } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { FRAME } from "../const";
 import { State } from "../state";
@@ -13,9 +13,9 @@ export function center(shape: Shape, width = CANVAS.WIDTH, height = CANVAS.HEIGH
 }
 
 export function setGameTransform(shape: Shape): Shape {
-    shape.transform.scale = GAME_TILE;
-    shape.transform.translate[0] = shape.transform.translate[0] * GAME_TILE + GAME_TILE / GAME_LEFT;
-    shape.transform.translate[1] = shape.transform.translate[1] * GAME_TILE + GAME_TILE / GAME_TOP;
+    shape.transform.scale = GAME.TILE;
+    shape.transform.translate[0] = shape.transform.translate[0] * GAME.TILE + GAME.TILE / GAME.LEFT;
+    shape.transform.translate[1] = shape.transform.translate[1] * GAME.TILE + GAME.TILE / GAME.TOP;
     return shape;
 }
 

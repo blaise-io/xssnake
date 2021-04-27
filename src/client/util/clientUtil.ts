@@ -1,4 +1,4 @@
-import { GAME_LEFT, GAME_TILE, GAME_TOP, CANVAS, LEVEL } from "../../shared/const";
+import { GAME, CANVAS, LEVEL } from "../../shared/const";
 import { _ } from "../../shared/util";
 import { UC } from "../const";
 import { State } from "../state";
@@ -106,11 +106,11 @@ export function translateGame(coordinate: Coordinate): Coordinate {
 }
 
 export function translateGameX(x: number): number {
-    return x * GAME_TILE + GAME_LEFT;
+    return x * GAME.TILE + GAME.LEFT;
 }
 
 export function translateGameY(y: number): number {
-    return y * GAME_TILE + GAME_TOP;
+    return y * GAME.TILE + GAME.TOP;
 }
 
 export function debounce(fn: CallableFunction, delay = 100): (...args) => void {
