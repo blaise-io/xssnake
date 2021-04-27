@@ -1,7 +1,9 @@
-export const WIDTH = 256;
-export const HEIGHT = 161;
+export const enum CANVAS {
+    WIDTH = 256, // index-based, so 0-255 is in viewport.
+    HEIGHT = 161, // index-based, so 0-160 is in viewport.
+}
 
-export enum LEVEL {
+export const enum LEVEL {
     WIDTH = 63,
     HEIGHT = 33,
 }

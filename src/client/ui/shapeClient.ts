@@ -1,9 +1,9 @@
-import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, WIDTH } from "../../shared/const";
+import { GAME_LEFT, GAME_TILE, GAME_TOP, CANVAS } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { FRAME } from "../const";
 import { State } from "../state";
 
-export function center(shape: Shape, width = WIDTH, height = HEIGHT): void {
+export function center(shape: Shape, width = CANVAS.WIDTH, height = CANVAS.HEIGHT): void {
     const bbox = shape.bbox();
 
     const x = Math.round((width - bbox.width) / 2);

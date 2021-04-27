@@ -1,4 +1,4 @@
-import { ROOM_KEY_LENGTH, WIDTH } from "../shared/const";
+import { ROOM_KEY_LENGTH, CANVAS } from "../shared/const";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
 import { HASH_ROOM, KEY, MENU_LEFT, NS, STORAGE_MUTE } from "./const";
@@ -128,7 +128,7 @@ export class StageFlow {
     private switchStageAnimate(oldShape: Shape, newShape: Shape, back: boolean, callback): void {
         let oldStageAnim;
         let newStageAnim;
-        const width = WIDTH - MENU_LEFT;
+        const width = CANVAS.WIDTH - MENU_LEFT;
 
         if (back) {
             oldStageAnim = { to: [width, 0] };

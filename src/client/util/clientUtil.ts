@@ -1,4 +1,4 @@
-import { GAME_LEFT, GAME_TILE, GAME_TOP, HEIGHT, LEVEL, WIDTH } from "../../shared/const";
+import { GAME_LEFT, GAME_TILE, GAME_TOP, CANVAS, LEVEL } from "../../shared/const";
 import { _ } from "../../shared/util";
 import { UC } from "../const";
 import { State } from "../state";
@@ -7,8 +7,8 @@ import { font, fontHeight, fontWidth } from "../ui/font";
 import { flash, lifetime } from "../ui/shapeClient";
 
 export function instruct(str: string, duration = 2000, flashInstruct = false): void {
-    const x = WIDTH - fontWidth(str) - 2;
-    const y = HEIGHT - fontHeight(str) - 2;
+    const x = CANVAS.WIDTH - fontWidth(str) - 2;
+    const y = CANVAS.HEIGHT - fontHeight(str) - 2;
 
     const shape = font(str, x, y, { invert: true });
     shape.flags.isOverlay = true;

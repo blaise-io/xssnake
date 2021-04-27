@@ -1,4 +1,4 @@
-import { HEIGHT, WIDTH } from "../../shared/const";
+import { CANVAS } from "../../shared/const";
 import { ColorScheme, PixelStyle } from "./colorScheme";
 
 export class CanvasTile {
@@ -19,8 +19,10 @@ export class CanvasTile {
 
     updateSize(): number {
         const minWhitespace = 10;
-        const minWidth = ((window.innerWidth - minWhitespace) * window.devicePixelRatio) / WIDTH;
-        const minHeight = ((window.innerHeight - minWhitespace) * window.devicePixelRatio) / HEIGHT;
+        const minWidth =
+            ((window.innerWidth - minWhitespace) * window.devicePixelRatio) / CANVAS.WIDTH;
+        const minHeight =
+            ((window.innerHeight - minWhitespace) * window.devicePixelRatio) / CANVAS.HEIGHT;
         this.size = Math.floor(Math.min(minWidth, minHeight)) || 1;
         this.updatePatterns();
         return this.size;

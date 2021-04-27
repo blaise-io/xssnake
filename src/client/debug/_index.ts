@@ -3,6 +3,7 @@ import { State } from "../state";
 import { debugDialog } from "./dialog";
 import { debugFont } from "./font";
 import { debugLevel } from "./level";
+import { debugLine } from "./line";
 import { debugMessages } from "./messages";
 import { debugScoreboard } from "./scoreboard";
 import { debugTabUI } from "./tabui";
@@ -11,6 +12,7 @@ export function runDebug(): void {
     const registry = Object.fromEntries([
         ["dialog", debugDialog],
         ["font", debugFont],
+        ["line", debugLine],
         ["level", debugLevel],
         ["messages", debugMessages],
         ["scoreboard", debugScoreboard],

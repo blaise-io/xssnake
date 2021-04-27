@@ -1,4 +1,4 @@
-import { HEIGHT } from "../../../shared/const";
+import { CANVAS } from "../../../shared/const";
 import { PixelCollection } from "../../../shared/pixelCollection";
 import { Shape } from "../../../shared/shape";
 import { _, indexCarousel } from "../../../shared/util";
@@ -142,6 +142,6 @@ export class Form {
 
     private getFooterPixels(x: number): PixelCollection {
         const height = fontHeight(this.footer);
-        return fontPixels(this.footer, x, HEIGHT - 3 - height);
+        return fontPixels(this.footer, x, CANVAS.HEIGHT - 3 - height);
     }
 }

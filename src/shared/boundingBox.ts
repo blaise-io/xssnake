@@ -1,4 +1,4 @@
-import { HEIGHT, WIDTH } from "./const";
+import { CANVAS } from "./const";
 import { PixelCollection } from "./pixelCollection";
 
 export class BoundingBox {
@@ -32,9 +32,9 @@ export class BoundingBox {
     }
 
     private calculate(pixels: PixelCollection): BoundingBox {
-        let x0 = WIDTH;
+        let x0 = CANVAS.WIDTH;
         let x1 = 0;
-        let y0 = HEIGHT;
+        let y0 = CANVAS.HEIGHT;
         let y1 = 0;
 
         pixels.each(function (x, y) {

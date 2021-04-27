@@ -1,4 +1,4 @@
-import { HEIGHT, WIDTH } from "../../shared/const";
+import { CANVAS } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { average } from "../../shared/util";
 import { colorSchemes } from "../bootstrap/registerColorSchemes";
@@ -275,8 +275,8 @@ export class Canvas {
 
     private _setCanvasDimensions(): void {
         const size = this.tile.updateSize();
-        this.canvasWidth = size * WIDTH;
-        this.canvasHeight = size * HEIGHT;
+        this.canvasWidth = size * CANVAS.WIDTH;
+        this.canvasHeight = size * CANVAS.HEIGHT;
         this.canvas.width = this.canvasWidth;
         this.canvas.height = this.canvasHeight;
         this.canvas.style.width = `${this.canvasWidth / window.devicePixelRatio}px`;

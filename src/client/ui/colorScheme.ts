@@ -1,4 +1,4 @@
-export enum PixelStyle {
+export const enum PixelStyle {
     rectangular,
     circular,
 }

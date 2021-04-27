@@ -4,8 +4,7 @@ import {
     DIRECTION_RIGHT,
     DIRECTION_UP,
     GAME_TILE,
-    HEIGHT,
-    WIDTH,
+    CANVAS,
 } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
@@ -168,14 +167,14 @@ export function showAction(label, coordinate, duration, amount = 3) {
  * @return {Shape}
  */
 export function innerBorder() {
-    const w = WIDTH - 1;
-    const h = HEIGHT - 1;
+    const w = CANVAS.WIDTH - 1;
+    const h = CANVAS.HEIGHT - 1;
     return new Shape(line(2, h - 25, w - 2, h - 25), line(2, h - 26, w - 2, h - 26));
 }
 
 export function outerBorder(): Record<string, Shape> {
-    const w = WIDTH - 1;
-    const h = HEIGHT - 1;
+    const w = CANVAS.WIDTH - 1;
+    const h = CANVAS.HEIGHT - 1;
 
     return {
         outerBorderTop: new Shape(line(1, 0, w - 1, 0), line(0, 1, w, 1)),

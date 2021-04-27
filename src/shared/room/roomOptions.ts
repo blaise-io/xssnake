@@ -36,7 +36,7 @@ export class RoomSchema {
     }
 }
 
-export enum Audience {
+export const enum Audience {
     NOONE,
     ROOM,
     SERVER,

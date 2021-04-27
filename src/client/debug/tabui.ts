@@ -2,7 +2,7 @@ import { State } from "../state";
 import { font } from "../ui/font";
 
 export function debugTabUI(): void {
-    setTimeout(function () {
+    window.setTimeout(() => {
         State.shapes = {};
         const text = [
             "This line does not affect alignment.",

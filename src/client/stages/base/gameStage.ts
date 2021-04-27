@@ -1,4 +1,4 @@
-import { HEIGHT, WIDTH } from "../../../shared/const";
+import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { getRandomName } from "../../../shared/util";
 import { NS, STORAGE_NAME } from "../../const";
@@ -47,7 +47,7 @@ export class GameStage implements StageInterface {
 
     get connectingShape(): Shape {
         const shape = font(COPY_CONNECTING);
-        center(shape, WIDTH, HEIGHT - 20);
+        center(shape, CANVAS.WIDTH, CANVAS.HEIGHT - 20);
         lifetime(shape, 2000);
         flash(shape);
         return shape;

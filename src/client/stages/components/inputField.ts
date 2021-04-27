@@ -1,11 +1,4 @@
-/**
- * @param {number} x
- * @param {number} y
- * @param {string=} prefix
- * @param {Object=} fontOptions
- * @constructor
- */
-import { WIDTH } from "../../../shared/const";
+import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { lineShape } from "../../../shared/shapeGenerator";
 import { FRAME, NS } from "../../const";
@@ -28,7 +21,7 @@ export class InputField {
     ) {
         this.callback = () => {};
         this.maxValWidth = undefined;
-        this.displayWidth = WIDTH - x - 8;
+        this.displayWidth = CANVAS.WIDTH - x - 8;
         this.maxlength = 156;
 
         this.input = this.addInputToDom();

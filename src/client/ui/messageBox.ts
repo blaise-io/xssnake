@@ -1,4 +1,4 @@
-import { HEIGHT, WIDTH } from "../../shared/const";
+import { CANVAS } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { FRAME, KEY, NS, UC } from "../const";
@@ -36,9 +36,9 @@ export class MessageBoxUI {
         this.animationDuration = 200;
 
         this.x0 = 109;
-        this.x1 = WIDTH - 2;
-        this.y0 = HEIGHT - 25;
-        this.y1 = HEIGHT - 2;
+        this.x1 = CANVAS.WIDTH - 2;
+        this.y0 = CANVAS.HEIGHT - 25;
+        this.y1 = CANVAS.HEIGHT - 2;
 
         this.padding = { x0: 0, x1: 0, y0: 1, y1: 1 };
 

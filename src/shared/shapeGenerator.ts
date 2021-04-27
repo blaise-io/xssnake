@@ -20,44 +20,29 @@ export function radianLine(
 }
 
 /**
- * Bresenham's line algorithm
- * @param {number} x0
- * @param {number} y0
- * @param {number} x1
- * @param {number} y1
- * @return {PixelCollection}
+ * Bresenham's line algorithm.
  */
-export function line(x0, y0, x1, y1) {
-    let pixels;
-    let dx;
-    let sx;
-    let dy;
-    let sy;
-    let err;
-    let err2;
+export function line(x0: number, y0: number, x1: number, y1: number): PixelCollection {
+    const pixels = new PixelCollection();
+    const dx = Math.abs(x1 - x0);
+    const sx = x0 < x1 ? 1 : -1;
+    const dy = Math.abs(y1 - y0);
+    const sy = y0 < y1 ? 1 : -1;
+    let err = (dx > dy ? dx : -dy) / 2;
 
-    pixels = new PixelCollection();
+    pixels.add(x0, y0);
 
-    dx = Math.abs(x1 - x0);
-    sx = x0 < x1 ? 1 : -1;
-    dy = Math.abs(y1 - y0);
-    sy = y0 < y1 ? 1 : -1;
-    err = (dx > dy ? dx : -dy) / 2;
-
-    while (true) {
-        pixels.add(x0, y0);
-        if (x0 === x1 && y0 === y1) {
-            break;
-        }
-        err2 = err;
-        if (err2 > -dx) {
+    while (x0 !== x1 || y0 !== y1) {
+        const e2 = err;
+        if (e2 > -dx) {
             err -= dy;
             x0 += sx;
         }
-        if (err2 < dy) {
+        if (e2 < dy) {
             err += dx;
             y0 += sy;
         }
+        pixels.add(x0, y0);
     }
 
     return pixels;

@@ -1,4 +1,4 @@
-import { HEIGHT } from "../../../shared/const";
+import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { indexCarousel, noop } from "../../../shared/util";
 import { KEY, MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WRAP } from "../../const";
@@ -53,7 +53,7 @@ export class Menu {
         y += MENU_TITLE_HEIGHT;
 
         // Footer
-        shape.add(fontPixels(this.footer, x, HEIGHT - 3 - fontHeight(this.footer)));
+        shape.add(fontPixels(this.footer, x, CANVAS.HEIGHT - 3 - fontHeight(this.footer)));
 
         // Draw options
         for (let i = 0, m = this.options.length; i < m; i++) {

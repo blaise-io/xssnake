@@ -1,4 +1,4 @@
-import { HEIGHT } from "../../shared/const";
+import { CANVAS } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { NS } from "../const";
 import { ClientPlayer } from "../room/clientPlayer";
@@ -10,8 +10,8 @@ import { animate } from "./shapeClient";
 export class ScoreboardUI {
     private x0 = 3;
     private x1 = 56;
-    private y0 = HEIGHT - 24;
-    private y1 = HEIGHT - 2;
+    private y0 = CANVAS.HEIGHT - 24;
+    private y1 = CANVAS.HEIGHT - 2;
     private animating: boolean;
     private queue: boolean;
     private queueTimer: number;
