@@ -89,7 +89,7 @@ export class ClientSocketPlayer extends ClientPlayer {
     }
 
     emitFn(direction: number): void {
-        const sync = Math.round(NETCODE_SYNC_MS / this.snake.speed);
+        const sync = Math.ceil(NETCODE_SYNC_MS / this.snake.speed);
         this.emit(NC_SNAKE_UPDATE, [direction, this.snake.parts.slice(-sync)]);
     }
 }
