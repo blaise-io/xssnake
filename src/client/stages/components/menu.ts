@@ -1,69 +1,47 @@
 import { HEIGHT } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
-import { noop } from "../../../shared/util";
+import { indexCarousel, noop } from "../../../shared/util";
 import { KEY, MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WRAP } from "../../const";
 import { State } from "../../state";
 import { fontHeight, fontPixels, LINE_HEIGHT, LINE_HEIGHT_MENU } from "../../ui/font";
 import { zoom } from "../../ui/transformClient";
-import { StageConstructor } from "../base/stage";
 
 export class MenuOption {
     constructor(
-        public next: StageConstructor,
         public title: string,
         public description = "",
-        public onselect: (index: number) => void = () => noop
+        public onsubmit: (index: number) => void,
+        public onselect: (index: number) => void = noop,
     ) {
         this.title = this.title.toUpperCase();
     }
 }
 
 export class Menu {
-    private selected: number;
-    private options: MenuOption[];
+    options: MenuOption[] = [];
 
-    constructor(public header: string, public footer: string = "") {
-        this.header = header || "";
-        this.footer = footer || "";
-        this.selected = 0;
-        this.options = [];
-    }
+    constructor(public header: string, public footer: string = "", public selected = 0) {}
 
-    addOption(option: MenuOption): void {
+    add(option: MenuOption): void {
         this.options.push(option);
     }
 
-    prev(): number {
-        return this.select(this.selected - 1);
-    }
-
-    next(): number {
-        return this.select(this.selected + 1);
-    }
-
-    select(select: number): number {
-        const max = this.options.length - 1;
-
-        if (typeof select !== "number") {
-            select = 0;
-        }
-        if (select < 0) {
-            select = max;
-        } else if (select > max) {
-            select = 0;
-        }
-
-        this.selected = select;
-        this.getSelectedOption().onselect(this.selected);
-        return select;
-    }
-
-    getSelectedOption(): MenuOption {
+    get selectedOption(): MenuOption {
         return this.options[this.selected];
     }
 
-    getNextStage(): StageConstructor {
-        return this.getSelectedOption().next;
+    private previous(): number {
+        return this.select(indexCarousel(this.selected - 1, this.options.length));
+    }
+
+    private next(): number {
+        return this.select(indexCarousel(this.selected + 1, this.options.length));
+    }
+
+    private select(select: number): number {
+        this.selected = select;
+        this.selectedOption.onselect(this.selected);
+        return select;
     }
 
     getShape(): Shape {
@@ -86,7 +64,7 @@ export class Menu {
 
         // Help text line(s)
         if (this.options.length) {
-            const desc = this.getSelectedOption().description;
+            const desc = this.selectedOption.description;
             y += LINE_HEIGHT;
             shape.add(fontPixels(desc, x, y, { wrap: MENU_WRAP }));
         }
@@ -97,7 +75,7 @@ export class Menu {
     handleKeys(event: KeyboardEvent): boolean {
         switch (event.keyCode) {
             case KEY.UP:
-                this.prev();
+                this.previous();
                 State.audio.play("menu");
                 return true;
             case KEY.DOWN:

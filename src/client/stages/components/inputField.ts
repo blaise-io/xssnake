@@ -24,7 +24,7 @@ export class InputField {
         public x: number,
         public y: number,
         public prefix: string,
-        public fontOptions?: any
+        public fontOptions?: any,
     ) {
         this.callback = () => {};
         this.maxValWidth = undefined;
@@ -158,8 +158,8 @@ export class InputField {
         return [value.substring(0, start), value.substring(start, end), value.substring(end)];
     }
 
-    maxwidthCutOff() {
-        if (null !== this.maxValWidth) {
+    maxwidthCutOff(): void {
+        if (this.maxValWidth) {
             while (fontWidth(this.input.value) > (this.maxValWidth as number)) {
                 this.input.value = this.input.value.slice(0, -1);
             }

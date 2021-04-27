@@ -167,7 +167,7 @@ game.GameStage.prototype = {
             spawns = spawner.spawns;
         for (let i = 0, m = spawns.length; i < m; i++) {
             let spawn = spawns[i];
-            if (null !== spawn) {
+            if (spawn) {
                 client.buffer(NC_GAME_SPAWN, [
                     spawn.type, i, spawn.location
                 ]);

@@ -79,6 +79,8 @@ export const STORAGE_XSS = "XSS";
 export const STORAGE_COLOR = "CLR";
 export const STORAGE_PREFS = "PRF";
 
+// https://fontstruct.com/fontstructor/edit/740547
+// enable Expert Mode, then Menu / View / Advanced / Unicode Letter Sets
 export const enum UC {
     ARR_LEFT = "\u2190",
     ARR_UP = "\u2191",

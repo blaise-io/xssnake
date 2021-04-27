@@ -1,6 +1,5 @@
 import { Shape } from "../../../shared/shape";
 import { KEY, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS } from "../../const";
-import { FlowData } from "../../flow";
 import { InputField } from "../components/inputField";
 import { State } from "../../state";
 import { font, fontHeight, fontPixels } from "../../ui/font";
@@ -27,14 +26,11 @@ export abstract class InputStage implements StageInterface {
     maxwidth = 0;
     displayWidth = 0;
 
-    constructor(public flowData: FlowData) {}
-
     getShape(): Shape {
         return this.shape;
     }
 
     getLabelAndValueShape(): Shape {
-        console.log(this.label, this.header);
         const shape = this.getLabelShape();
         shape.add(this.getValueShape().pixels);
         return shape;

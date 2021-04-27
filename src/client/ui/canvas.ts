@@ -85,13 +85,13 @@ export class Canvas {
     _flushShapeCache(): void {
         const shapes = State.shapes;
         for (const k in shapes) {
-            if (null !== shapes[k]) {
+            if (shapes[k]) {
                 shapes[k].uncache();
             }
         }
     }
 
-    _clear() {
+    _clear(): void {
         this.context.save();
         this.context.fillStyle = this.tile.off;
         this.context.globalAlpha = 1 - this.tile.colorScheme.ghosting;
@@ -201,7 +201,7 @@ export class Canvas {
             this.context.drawImage(
                 shape.cache.canvas,
                 shape.cache.bbox.x0 + translate[0] * this.tile.size,
-                shape.cache.bbox.y0 + translate[1] * this.tile.size
+                shape.cache.bbox.y0 + translate[1] * this.tile.size,
             );
         }
     }

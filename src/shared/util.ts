@@ -19,7 +19,9 @@ export function randomStr(len = 3): string {
  * Indexes cycle, after last comes first, before first comes last.
  */
 export function indexCarousel(index: number, len: number): number {
-    if (index >= len) {
+    if (typeof index !== "number") {
+        return 0;
+    } else if (index >= len) {
         return 0;
     } else if (index < 0) {
         return len - 1;

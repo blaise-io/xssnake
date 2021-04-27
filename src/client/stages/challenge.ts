@@ -1,6 +1,5 @@
 import { _, getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
 import { MENU_LEFT, NS } from "../const";
-import { FlowData } from "../flow";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -16,17 +15,15 @@ export class ChallengeStage extends InputStage {
     next = InputXssStage;
     label = undefined;
 
-    constructor(flowData: FlowData) {
-        super(flowData);
-
+    constructor() {
+        super();
         this._challenge = this._getRandomChallenge();
-
         this.label = _(
             "XSS mode allows the winner of a game to execute " +
                 "JavaScript in the browser of every loser. This may " +
                 "damage you and/or your computer. To confirm that " +
                 "you know JavaScript and accept the risk, enter the " +
-                "result of the following statement:"
+                "result of the following statement:",
         );
         this.label += `\n\n${this._challenge}\n\n> `;
         this.shape = this.getLabelAndValueShape();
@@ -44,7 +41,7 @@ export class ChallengeStage extends InputStage {
                 function () {
                     State.flow.switchStage(this.next);
                 }.bind(this),
-                1000
+                1000,
             );
         }
 

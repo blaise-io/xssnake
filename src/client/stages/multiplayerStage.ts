@@ -1,24 +1,24 @@
 import { levelsets } from "../../shared/data/levelsets";
 import { _, noop } from "../../shared/util";
 import { UC } from "../const";
-import { FlowData } from "../flow";
+import { State } from "../state";
 import { FormStage } from "./base/formStage";
+import { GameStage } from "./base/gameStage";
 import { StageConstructor } from "./base/stage";
 import { Field, Form } from "./components/form";
 import { ChallengeStage } from "./challenge";
-import { StartGameStage } from "./startGameStage";
 
 export class MultiplayerStage extends FormStage {
-    constructor(public flowData: FlowData) {
+    constructor() {
         super();
         this.form = this._getForm();
     }
 
     get nextStage(): StageConstructor {
-        if (this.flowData.roomOptions.isXSS) {
+        if (State.flow.data.roomOptions.isXSS) {
             return ChallengeStage;
         } else {
-            return StartGameStage;
+            return GameStage;
         }
     }
 
@@ -29,11 +29,11 @@ export class MultiplayerStage extends FormStage {
             new Field(
                 _("Level Set"),
                 levelsets.map((l, index) => [index, l.title.toUpperCase()]),
-                this.flowData.roomOptions.levelsetIndex,
+                State.flow.data.roomOptions.levelsetIndex,
                 (value) => {
-                    this.flowData.roomOptions.levelsetIndex = value;
-                }
-            )
+                    State.flow.data.roomOptions.levelsetIndex = value;
+                },
+            ),
         );
 
         form.addField(
@@ -43,11 +43,11 @@ export class MultiplayerStage extends FormStage {
                     [true, _("Yes")],
                     [false, _("No")],
                 ],
-                this.flowData.roomOptions.hasPowerups,
+                State.flow.data.roomOptions.hasPowerups,
                 (value) => {
-                    this.flowData.roomOptions.hasPowerups = value;
-                }
-            )
+                    State.flow.data.roomOptions.hasPowerups = value;
+                },
+            ),
         );
 
         form.addField(
@@ -65,8 +65,8 @@ export class MultiplayerStage extends FormStage {
                     [8, UC.YES],
                 ],
                 0,
-                noop
-            )
+                noop,
+            ),
         );
 
         form.addField(
@@ -76,11 +76,11 @@ export class MultiplayerStage extends FormStage {
                     [true, _("Yes")],
                     [false, _("No")],
                 ],
-                this.flowData.roomOptions.isPrivate,
+                State.flow.data.roomOptions.isPrivate,
                 (value) => {
-                    this.flowData.roomOptions.isPrivate = value;
-                }
-            )
+                    State.flow.data.roomOptions.isPrivate = value;
+                },
+            ),
         );
 
         form.addField(
@@ -90,11 +90,11 @@ export class MultiplayerStage extends FormStage {
                     [true, _("Yes")],
                     [false, _("No")],
                 ],
-                this.flowData.roomOptions.isXSS,
+                State.flow.data.roomOptions.isXSS,
                 (value) => {
-                    this.flowData.roomOptions.isXSS = value;
-                }
-            )
+                    State.flow.data.roomOptions.isXSS = value;
+                },
+            ),
         );
 
         form.addField(
@@ -108,11 +108,11 @@ export class MultiplayerStage extends FormStage {
                     [5, "5"],
                     [6, "6"],
                 ],
-                this.flowData.roomOptions.maxPlayers,
+                State.flow.data.roomOptions.maxPlayers,
                 (value) => {
-                    this.flowData.roomOptions.maxPlayers = value;
-                }
-            )
+                    State.flow.data.roomOptions.maxPlayers = value;
+                },
+            ),
         );
 
         return form;

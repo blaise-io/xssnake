@@ -23,15 +23,15 @@ export interface FlowData {
 export class StageFlow {
     GameStage: StageConstructor;
     stage: StageInterface;
-
-    private history: StageInterface[] = [];
-    private data: FlowData = {
+    data: FlowData = {
         xss: "",
         name: "",
         clientPlayer: undefined,
         roomOptions: undefined,
         room: undefined,
     };
+
+    private history: StageInterface[] = [];
 
     constructor(private FirstStage = MainStage as StageConstructor) {
         this.data.roomOptions = new RoomOptions();
@@ -85,7 +85,7 @@ export class StageFlow {
             options.back,
             () => {
                 this.setStage(switchToStage, options.back);
-            }
+            },
         );
     }
 

@@ -1,7 +1,6 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { _, getRandomItemFrom } from "../../shared/util";
 import { MENU_LEFT, NS, STORAGE_NAME, UC } from "../const";
-import { FlowData } from "../flow";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -16,8 +15,8 @@ export class NameStage extends InputStage {
     minlength = PLAYER_NAME_MINLENGTH;
     maxwidth = PLAYER_NAME_MAXWIDTH;
 
-    constructor(flowData: FlowData) {
-        super(flowData);
+    constructor() {
+        super();
         this.shape = this.getLabelAndValueShape();
     }
 
@@ -25,7 +24,7 @@ export class NameStage extends InputStage {
         let text;
         let duration = 500;
 
-        this.flowData.name = value;
+        State.flow.data.name = value;
 
         if (error) {
             text = error;

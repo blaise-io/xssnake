@@ -3,7 +3,6 @@ import { Shape } from "../../../shared/shape";
 import { getRandomName } from "../../../shared/util";
 import { NS, STORAGE_NAME } from "../../const";
 import { COPY_CONNECTING } from "../../copy/copy";
-import { FlowData } from "../../flow";
 import { State } from "../../state";
 import { font } from "../../ui/font";
 import { center, flash, lifetime } from "../../ui/shapeClient";
@@ -11,7 +10,7 @@ import { storage } from "../../util/clientUtil";
 import { StageInterface } from "./stage";
 
 export class GameStage implements StageInterface {
-    constructor(public flowData: FlowData) {}
+    constructor() {}
 
     getShape(): Shape {
         return new Shape();
@@ -41,7 +40,7 @@ export class GameStage implements StageInterface {
     //         clientPlayer.room = new ClientRoom(clientPlayer);
     //         clientPlayer.room.setupComponents();
     //         clientPlayer.emit(NC_PLAYER_NAME, [this.getPlayerName()]);
-    //         clientPlayer.emit(NC_ROOM_JOIN_MATCHING, this.flowData.roomOptions.serialize());
+    //         clientPlayer.emit(NC_ROOM_JOIN_MATCHING, State.flow.data.roomOptions.serialize());
     //         this.destructStageLeftovers();
     //     });
     // }

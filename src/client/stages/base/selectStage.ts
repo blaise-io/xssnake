@@ -25,19 +25,13 @@ export class SelectStage implements StageInterface {
             return;
         }
 
-        const next = this.menu.getNextStage();
-
         switch (event.keyCode) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
                 State.flow.previousStage();
                 break;
             case KEY.ENTER:
-                if (next) {
-                    State.flow.switchStage(next);
-                } else {
-                    State.flow.previousStage();
-                }
+                this.menu.selectedOption.onsubmit(this.menu.selected);
                 break;
             default:
                 if (this.menu.handleKeys(event)) {

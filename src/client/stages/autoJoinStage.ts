@@ -2,7 +2,7 @@ import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const"
 import { levelsets } from "../../shared/data/levelsets";
 import { _ } from "../../shared/util";
 import { STORAGE_NAME, UC } from "../const";
-import { FlowData } from "../flow";
+import { State } from "../state";
 import { GameStage } from "./base/gameStage";
 import { InputStage } from "./base/inputStage";
 import { format } from "../util/clientUtil";
@@ -16,16 +16,16 @@ export class AutoJoinStage extends InputStage {
     next = undefined;
     label = undefined;
 
-    constructor(public flowData: FlowData) {
-        super(flowData);
-        this.next = this.flowData.room.options.isXSS ? ChallengeStage : GameStage;
+    constructor() {
+        super();
+        this.next = State.flow.data.room.options.isXSS ? ChallengeStage : GameStage;
         this.label = this.getLabel();
         this.shape = this.getLabelAndValueShape();
     }
 
     private getLabel() {
         const summary = [];
-        const room = this.flowData.room;
+        const room = State.flow.data.room;
         const names = room.players.getNames().join(", ");
 
         summary.push(format(_("Players ({0})"), room.players.getTotal()) + "\t" + names);
@@ -38,7 +38,7 @@ export class AutoJoinStage extends InputStage {
     }
 
     inputSubmit(error: string, value: string, top: number): void {
-        this.flowData.name = value;
+        State.flow.data.name = value;
         super.inputSubmit(error, value, top);
     }
 }
