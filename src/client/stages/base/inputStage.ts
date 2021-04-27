@@ -1,5 +1,5 @@
 import { Shape } from "../../../shared/shape";
-import { KEY, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS } from "../../const";
+import { KEY, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS, STORAGE } from "../../const";
 import { InputField } from "../components/inputField";
 import { State } from "../../state";
 import { font, fontHeight, fontPixels } from "../../ui/font";
@@ -15,7 +15,7 @@ export abstract class InputStage implements StageInterface {
     private input: InputField;
     private inputTop = MENU_TOP + 17;
 
-    abstract name: string;
+    abstract name: STORAGE;
     abstract header: string;
     abstract label: string;
     abstract next: StageConstructor;
@@ -37,7 +37,7 @@ export abstract class InputStage implements StageInterface {
     }
 
     construct(): void {
-        this.value = this.name ? (storage(this.name) as string) || this.initial : this.initial;
+        this.value = this.name ? (storage.get(this.name) as string) || this.initial : this.initial;
         this.input = this.setupInputField();
         this.shape = this.getLabelShape();
         this.bindEvents();
@@ -48,7 +48,7 @@ export abstract class InputStage implements StageInterface {
         State.shapes.message = undefined;
         this.input.destruct();
         if (this.name) {
-            storage(this.name, this.value);
+            storage.set(this.name, this.value);
         }
     }
 

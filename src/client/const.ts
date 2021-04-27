@@ -73,11 +73,12 @@ export const EV_WIN_FOCUS_CHANGE = "WFC";
 export const EV_FONT_LOAD = "FLD";
 export const EV_PLAYERS_UPDATED = "PU";
 
-export const STORAGE_MUTE = "MUT";
-export const STORAGE_NAME = "NME";
-export const STORAGE_XSS = "XSS";
-export const STORAGE_COLOR = "CLR";
-export const STORAGE_PREFS = "PRF";
+export const enum STORAGE {
+    MUTE = "mute",
+    NAME = "name",
+    XSS = "xss",
+    COLOR = "color",
+}
 
 // https://fontstruct.com/fontstructor/edit/740547
 // enable Expert Mode, then Menu / View / Advanced / Unicode Letter Sets

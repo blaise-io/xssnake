@@ -1,4 +1,4 @@
-import { STORAGE_MUTE } from "../const";
+import { STORAGE } from "../const";
 import { MP3_FILES, OGG_FILES } from "../data/audio";
 import { State } from "../state";
 import { storage } from "../util/clientUtil";
@@ -16,7 +16,7 @@ export class AudioPlayer {
     }
 
     play(file: string): void {
-        if (this.files && this.files[file] && !storage(STORAGE_MUTE) && State.canvas.focus) {
+        if (this.files && this.files[file] && !storage.get(STORAGE.MUTE) && State.canvas.focus) {
             new Audio(this.files[file]).play();
         }
     }

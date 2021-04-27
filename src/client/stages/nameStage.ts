@@ -1,6 +1,6 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { _, getRandomItemFrom } from "../../shared/util";
-import { MENU_LEFT, NS, STORAGE_NAME, UC } from "../const";
+import { MENU_LEFT, NS, STORAGE, UC } from "../const";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -9,7 +9,7 @@ import { MultiplayerStage } from "./multiplayerStage";
 
 export class NameStage extends InputStage {
     next = MultiplayerStage;
-    name = STORAGE_NAME;
+    name = STORAGE.NAME;
     header = _("Hello");
     label = _("My name is ");
     minlength = PLAYER_NAME_MINLENGTH;

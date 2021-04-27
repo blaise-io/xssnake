@@ -1,5 +1,5 @@
 import { _ } from "../../shared/util";
-import { HASH_ROOM, STORAGE_NAME } from "../const";
+import { HASH_ROOM, STORAGE } from "../const";
 import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { AutoJoinStage } from "./autoJoinStage";
 import { GameStage } from "./base/gameStage";
@@ -45,7 +45,7 @@ export class MainStage extends SelectStage {
     }
 
     private _getMenu(): Menu {
-        const name = storage(STORAGE_NAME) as string;
+        const name = storage.get(STORAGE.NAME) as string;
 
         const header = (name
             ? `Yay ${name.toUpperCase()} is back!`

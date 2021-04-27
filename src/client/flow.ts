@@ -1,7 +1,7 @@
 import { ROOM_KEY_LENGTH, CANVAS } from "../shared/const";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
-import { HASH_ROOM, KEY, MENU_LEFT, NS, STORAGE_MUTE } from "./const";
+import { HASH_ROOM, KEY, MENU_LEFT, NS, STORAGE } from "./const";
 import { ClientRoom } from "./room/clientRoom";
 import { ClientSocketPlayer } from "./room/clientSocketPlayer";
 import { StageConstructor, StageInterface } from "./stages/base/stage";
@@ -24,8 +24,8 @@ export class StageFlow {
     GameStage: StageConstructor;
     stage: StageInterface;
     data: FlowData = {
-        xss: "",
-        name: "",
+        xss: storage.get(STORAGE.XSS) as string,
+        name: storage.get(STORAGE.NAME) as string,
         clientPlayer: undefined,
         roomOptions: undefined,
         room: undefined,
@@ -117,8 +117,8 @@ export class StageFlow {
         if (!State.shapes.INPUT_CARET) {
             // Mute/Unmute
             if (ev.keyCode === KEY.MUTE) {
-                const mute = !storage(STORAGE_MUTE) as boolean;
-                storage(STORAGE_MUTE, mute);
+                const mute = !storage.get(STORAGE.MUTE) as boolean;
+                storage.set(STORAGE.MUTE, mute);
                 instruct("Sounds " + (mute ? "muted" : "unmuted"), 1000);
                 State.audio.play("menu_alt");
             }

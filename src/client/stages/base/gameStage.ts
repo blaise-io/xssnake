@@ -1,12 +1,10 @@
 import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
-import { getRandomName } from "../../../shared/util";
-import { NS, STORAGE_NAME } from "../../const";
+import { NS } from "../../const";
 import { COPY_CONNECTING } from "../../copy/copy";
 import { State } from "../../state";
 import { font } from "../../ui/font";
 import { center, flash, lifetime } from "../../ui/shapeClient";
-import { storage } from "../../util/clientUtil";
 import { StageInterface } from "./stage";
 
 export class GameStage implements StageInterface {
@@ -23,16 +21,7 @@ export class GameStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.CONNECTING = undefined;
-    }
-
-    getPlayerName(): string {
-        let name = storage(STORAGE_NAME) as string;
-        if (!name) {
-            name = getRandomName();
-            storage(name, STORAGE_NAME);
-        }
-        return name;
+        delete State.shapes.CONNECTING;
     }
 
     // connectServer(): void {

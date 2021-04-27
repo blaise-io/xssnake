@@ -7,7 +7,7 @@ import {
     EV_WIN_FOCUS_CHANGE,
     MAX_FRAME_DELTA,
     MIN_FRAME_DELTA,
-    STORAGE_COLOR,
+    STORAGE,
 } from "../const";
 import { State } from "../state";
 import { debounce, instruct, storage } from "../util/clientUtil";
@@ -28,7 +28,7 @@ export class Canvas {
     private error: boolean;
 
     constructor() {
-        const color = storage(STORAGE_COLOR) as number;
+        const color = storage.get(STORAGE.COLOR) as number;
 
         this.fps = [];
         this.canvas = this._setupCanvas();

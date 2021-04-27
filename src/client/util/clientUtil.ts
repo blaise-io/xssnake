@@ -1,6 +1,6 @@
 import { GAME, CANVAS, LEVEL } from "../../shared/const";
 import { _ } from "../../shared/util";
-import { UC } from "../const";
+import { STORAGE, UC } from "../const";
 import { State } from "../state";
 import { Dialog, DialogType } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
@@ -39,23 +39,24 @@ export function error(str: string, callback?: CallableFunction): void {
     });
 }
 
-export function storage(key?: string, value?: unknown): unknown {
-    if (arguments.length === 1) {
+export const storage = {
+    get: (key: STORAGE): unknown => {
         try {
             return JSON.parse(localStorage.getItem(key));
         } catch (err) {
             localStorage.removeItem(key);
         }
         return "";
-    } else if (arguments.length === 2) {
+    },
+    set: (key: STORAGE, value: unknown): unknown => {
         if (value === null) {
             localStorage.removeItem(key);
             return "";
         } else {
             return localStorage.setItem(key, JSON.stringify(value));
         }
-    }
-}
+    },
+};
 
 export function isMac(): boolean {
     return /Macintosh/.test(navigator.appVersion);

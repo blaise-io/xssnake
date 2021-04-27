@@ -1,7 +1,7 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { levelsets } from "../../shared/data/levelsets";
 import { _ } from "../../shared/util";
-import { STORAGE_NAME, UC } from "../const";
+import { STORAGE, UC } from "../const";
 import { State } from "../state";
 import { GameStage } from "./base/gameStage";
 import { InputStage } from "./base/inputStage";
@@ -10,7 +10,7 @@ import { ChallengeStage } from "./challenge";
 
 export class AutoJoinStage extends InputStage {
     header = _("JOiN GAME");
-    name = STORAGE_NAME;
+    name = STORAGE.NAME;
     minlength = PLAYER_NAME_MINLENGTH;
     maxwidth = PLAYER_NAME_MAXWIDTH;
     next = undefined;
