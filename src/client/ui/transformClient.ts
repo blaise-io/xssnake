@@ -38,7 +38,7 @@ export function outline(shape, hPadding = 6, vPadding = 6, round = true) {
         line(x0 + r, y0, x1 - r, y0), // Top
         line(x1, y0 + 1, x1, y1), // Right
         line(x0, y1, x1, y1), // Bottom
-        line(x0 + r, y1 + 1, x1 - r, y1 + 1) // Bottom 2
+        line(x0 + r, y1 + 1, x1 - r, y1 + 1), // Bottom 2
     );
 
     // Don't clear the missing pixel in the corners

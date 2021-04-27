@@ -32,7 +32,7 @@ export class ClientRoom {
     constructor(
         clientPlayer: ClientPlayer,
         private resolve: (clientRoom: ClientRoom) => void,
-        private reject: (error: string) => void
+        private reject: (error: string) => void,
     ) {
         this.key = "";
 

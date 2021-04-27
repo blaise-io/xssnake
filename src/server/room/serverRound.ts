@@ -28,7 +28,7 @@ export class ServerRound extends Round {
         public roomEmitter: EventEmitter,
         public players: ServerPlayerRegistry,
         public options: RoomOptions,
-        public levelPlayset: LevelPlayset
+        public levelPlayset: LevelPlayset,
     ) {
         super(players, options);
 
@@ -99,7 +99,7 @@ export class ServerRound extends Round {
         if (enabled) {
             this.countdownTimer = setTimeout(
                 this.startRound.bind(this),
-                SECONDS_ROUND_COUNTDOWN * 1000
+                SECONDS_ROUND_COUNTDOWN * 1000,
             );
         }
     }

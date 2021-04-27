@@ -36,7 +36,7 @@ export class Parser {
         for (let i = 0, m = data.length / 4; i < m; i++) {
             this.parsePixel(
                 [data[i * 4], data[i * 4 + 1], data[i * 4 + 2]],
-                [i % this.width, Math.floor(i / this.width)]
+                [i % this.width, Math.floor(i / this.width)],
             );
         }
     }
@@ -76,7 +76,7 @@ export class Parser {
             if (spawnCoordinate) {
                 this.spawns[i] = new Spawn(
                     spawnCoordinate,
-                    this.getDirectionForSpawn(spawnCoordinate)
+                    this.getDirectionForSpawn(spawnCoordinate),
                 );
             } else {
                 throw new Error("Missing spawn with index: " + i);

@@ -9,7 +9,7 @@ export function radianLine(
     xc: number,
     yc: number,
     radian: number,
-    length: number
+    length: number,
 ): PixelCollection {
     const x0 = xc + (length / 2) * Math.cos(radian);
     const y0 = yc + (length / 2) * Math.sin(radian);

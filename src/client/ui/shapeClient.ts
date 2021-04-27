@@ -68,7 +68,7 @@ export function animate(
         duration?: number;
         doneCallback?: (shape: Shape) => void;
         progressCallback?: (shape: Shape, x: number, y: number) => void;
-    }
+    },
 ): Shape {
     let progress = 0;
     options = {

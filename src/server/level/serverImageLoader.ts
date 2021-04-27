@@ -7,7 +7,7 @@ export async function serverImageLoader(base64Image: string): Promise<ImageData>
             Buffer.from(base64ImageWithoutHeader, "base64"),
             (error, data) => {
                 resolve(data);
-            }
+            },
         );
     });
 }

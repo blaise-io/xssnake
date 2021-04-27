@@ -8,7 +8,7 @@ export const colorSchemes: ColorScheme[] = [
         "#797",
         "#111",
         undefined,
-        0.4
+        0.4,
     ),
     new ColorScheme("VFD", "Party like it’s 1959", "#000", "#111", "#68F"),
     new ColorScheme("Terminal", "<MARQUEE>oh. :(</MARQUEE>", "#010", "#000", "#0f0"),
@@ -20,7 +20,7 @@ export const colorSchemes: ColorScheme[] = [
         "#dc0",
         undefined,
         undefined,
-        PixelStyle.circular
+        PixelStyle.circular,
     ),
     new ColorScheme("Vampire Campfire", "Bloody pixels", "#000", "#100", "#f00", 0.85),
     new ColorScheme("Panda", "(O)____(o)", "#000", "#111", "#fff"),

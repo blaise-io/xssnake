@@ -20,7 +20,7 @@ export class ServerGame {
     constructor(
         private roomEmitter: EventEmitter,
         public level: Level,
-        public players: ServerPlayerRegistry
+        public players: ServerPlayerRegistry,
     ) {
         this.items = new ServerItems(level, players);
         this.tick = 0;

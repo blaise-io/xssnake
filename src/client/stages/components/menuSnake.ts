@@ -70,7 +70,7 @@ export class MenuSnake {
                     if (this.overlaysShape(snakeShape, x, y)) {
                         crash = true;
                     }
-                }.bind(this)
+                }.bind(this),
             );
         }
         return crash;

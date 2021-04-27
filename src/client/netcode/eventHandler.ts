@@ -26,7 +26,7 @@ export class EventHandler {
             document.addEventListener(
                 topic as keyof DocumentEventMap,
                 callback as (Event) => void,
-                false
+                false,
             );
         }
     }

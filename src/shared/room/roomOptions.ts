@@ -9,7 +9,7 @@ export class RoomSchema {
         public levelsetIndex = 0,
         public hasPowerups = true,
         public isPrivate = false,
-        public isXSS = false
+        public isXSS = false,
     ) {}
 
     static fromServer(): RoomSchema {
@@ -64,7 +64,7 @@ export const messageRegistry = [roomMessage];
 
 console.assert(
     messageRegistry.length === Array.from(new Set(messageRegistry.map((m) => m.message))).length,
-    "ERR in msg registry"
+    "ERR in msg registry",
 );
 
 export class RoomOptions {

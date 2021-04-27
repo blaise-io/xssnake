@@ -55,7 +55,7 @@ export class WrapupGame {
                 State.audio.play("menu_alt");
                 this.dialog.body = this.getBody();
             }.bind(this),
-            1000
+            1000,
         );
     }
 }

@@ -95,7 +95,7 @@ export class ShapeCache {
             expand,
             expand,
             this.bbox.width + this.tile.size - expand,
-            this.bbox.height + this.tile.size - expand
+            this.bbox.height + this.tile.size - expand,
         );
     }
 
@@ -117,7 +117,7 @@ export class ShapeCache {
                 rectangles[i][0] * size - this.bbox.x0,
                 rectangles[i][1] * size - this.bbox.y0,
                 rectangles[i][2] * size,
-                rectangles[i][3] * size
+                rectangles[i][3] * size,
             );
         }
     }

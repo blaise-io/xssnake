@@ -20,7 +20,7 @@ export class ServerRoundSet {
     constructor(
         public roomEmitter: EventEmitter,
         public players: ServerPlayerRegistry,
-        public options: RoomOptions
+        public options: RoomOptions,
     ) {
         this.roomEmitter = roomEmitter;
         this.players = players;
@@ -71,7 +71,7 @@ export class ServerRoundSet {
             this.roomEmitter,
             this.players,
             this.options,
-            this.levelPlayset
+            this.levelPlayset,
         );
         this.round.emitAll();
         this.players.removeDisconnectedPlayers();

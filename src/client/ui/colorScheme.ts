@@ -12,6 +12,6 @@ export class ColorScheme {
         public on: string,
         public gap = 1,
         public ghosting = 0.6, // 0 is no ghosting, 1 never clear
-        public style = PixelStyle.rectangular
+        public style = PixelStyle.rectangular,
     ) {}
 }

@@ -24,7 +24,7 @@ export class MessageBoxUI {
     constructor(
         public messages: Message[],
         public localPlayer: Player,
-        private sendMessageFn: (string) => void
+        private sendMessageFn: (string) => void,
     ) {
         this.animating = false;
         this.skipQueue = false;

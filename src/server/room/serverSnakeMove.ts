@@ -99,7 +99,7 @@ export class ServerSnakeMove {
         this.parts = serverParts;
         this.parts = snake.parts.concat(
             serverParts.slice(0, commonPartIndices[1] + 1),
-            clientParts.slice(commonPartIndices[0] + 1)
+            clientParts.slice(commonPartIndices[0] + 1),
         );
 
         return VALIDATE_SUCCES;

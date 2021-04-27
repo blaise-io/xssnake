@@ -157,7 +157,7 @@ export function showAction(label, coordinate, duration, amount = 3) {
         shape = font(
             label,
             coordinate[0] * GAME_TILE + randomRange(-12, 12),
-            coordinate[1] * GAME_TILE + randomRange(-12, 12)
+            coordinate[1] * GAME_TILE + randomRange(-12, 12),
         );
         name = NS.ACTION + randomStr();
         State.shapes[name] = lifetime(shape, s, s + duration);

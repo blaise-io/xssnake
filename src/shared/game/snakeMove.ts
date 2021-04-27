@@ -11,7 +11,7 @@ export class SnakeMove {
         public snake: Snake,
         public players: Player[],
         public level: Level,
-        public location: Coordinate
+        public location: Coordinate,
     ) {
         this.collision = this.getCollission();
     }

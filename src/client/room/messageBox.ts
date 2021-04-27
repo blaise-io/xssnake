@@ -75,7 +75,7 @@ export class MessageBox {
         } else if (this.players.getTotal() < this.previousPlayers.getTotal()) {
             message = format(
                 COPY_PLAYER_QUIT,
-                String(this.players.getQuitName(this.previousPlayers))
+                String(this.players.getQuitName(this.previousPlayers)),
             );
         }
         if (message) {

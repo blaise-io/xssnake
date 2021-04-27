@@ -60,7 +60,7 @@ export class ScrollingCave {
         this._shapes.each(
             function (shape, index) {
                 this._updateShape(shape, index, offset);
-            }.bind(this)
+            }.bind(this),
         );
 
         max.stalactite += offset;

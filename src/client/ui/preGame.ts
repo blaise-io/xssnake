@@ -128,7 +128,7 @@ export class PreGameUI {
             this.players.getTotal() === 2
                 ? COPY_CONFIRM_EXIT_BODY_DRAMATIC
                 : COPY_CONFIRM_EXIT_BODY,
-            settings
+            settings,
         );
     }
 
@@ -172,7 +172,7 @@ export class PreGameUI {
                     this.updateUI();
                 }
             }.bind(this),
-            1000
+            1000,
         );
     }
 

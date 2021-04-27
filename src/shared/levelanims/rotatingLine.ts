@@ -9,7 +9,7 @@ export class RotatingLine {
         public x: number,
         public y: number,
         public len: number,
-        public speed: number = 0.5
+        public speed: number = 0.5,
     ) {}
 
     update(ms: number): ShapeCollection | null {

@@ -11,7 +11,7 @@ export class LevelConfig {
         public snakeSpeed = 120, // Change tile every ms.
         public snakeIncrease = 1,
         public pointsApple = 1,
-        public pointsKnockout = 3
+        public pointsKnockout = 3,
     ) {}
 }
 

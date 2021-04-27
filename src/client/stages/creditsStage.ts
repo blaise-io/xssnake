@@ -22,7 +22,7 @@ export class CreditsStage extends ScreenStage {
 
         return new Shape(
             zoom(2, fontPixels("CREDITS"), left, top),
-            fontPixels(body, left, top + MENU_TITLE_HEIGHT)
+            fontPixels(body, left, top + MENU_TITLE_HEIGHT),
         );
     }
 }

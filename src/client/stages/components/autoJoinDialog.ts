@@ -12,7 +12,7 @@ export class AutoJoinDialog {
     constructor(
         public roomKey: string,
         private resolve: (clientRoom: ClientRoom) => void,
-        private reject: (error: string) => void
+        private reject: (error: string) => void,
     ) {
         this.dialog = new Dialog(_("Auto-Join room").toUpperCase(), _("Connecting to server…"));
         this.clientPlayer = new ClientSocketPlayer(this.onconnect.bind(this));

@@ -25,7 +25,7 @@ export class Field<Type> {
         public label: string,
         public options: [Type, string][],
         public value: Type,
-        public onupdate: (value: Type) => void
+        public onupdate: (value: Type) => void,
     ) {}
 
     get selectedOption(): [Type, string] {
