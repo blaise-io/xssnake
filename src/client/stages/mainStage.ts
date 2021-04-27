@@ -5,7 +5,7 @@ import { FlowData } from "../flow";
 import { AutoJoinStage } from "./autoJoinStage";
 import { MenuSnake } from "./components/menuSnake";
 import { SelectStage } from "./base/selectStage";
-import { SelectMenu } from "./components/selectMenu";
+import { Menu, MenuOption } from "./components/menu";
 import { State } from "../state";
 import { error, storage, urlHash } from "../util/clientUtil";
 import { AutoJoinDialog } from "./components/autoJoinDialog";
@@ -49,17 +49,21 @@ export class MainStage extends SelectStage {
         super.construct();
     }
 
-    private _getMenu(): SelectMenu {
+    private _getMenu(): Menu {
         const name = storage(STORAGE_NAME) as string;
 
-        const header = name ? "YAY " + name.toUpperCase() + " IS BACK!" : "MULTIPLAYER SNAKE!";
+        const header = (name
+            ? `Yay ${name.toUpperCase()} is back!`
+            : "Multiplayer Snake!"
+        ).toUpperCase();
 
-        const menu = new SelectMenu(header, COPY_MAIN_INSTRUCT);
-        menu.addOption(null, QuickGameStage, _("QUICK GAME"));
-        menu.addOption(null, NameStage, _("MULTIPLAYER"));
-        menu.addOption(null, SinglePlayerGameStage, _("SINGLE PLAYER"));
-        menu.addOption(null, ColorStage, _("COLOR SCHEME"));
-        menu.addOption(null, CreditsStage, _("CREDITS"));
+        const menu = new Menu(header, COPY_MAIN_INSTRUCT);
+
+        menu.addOption(new MenuOption(QuickGameStage, _("QUICK GAME")));
+        menu.addOption(new MenuOption(NameStage, _("MULTIPLAYER")));
+        menu.addOption(new MenuOption(SinglePlayerGameStage, _("SINGLE PLAYER")));
+        menu.addOption(new MenuOption(ColorStage, _("COLOR SCHEME")));
+        menu.addOption(new MenuOption(CreditsStage, _("CREDITS")));
 
         return menu;
     }

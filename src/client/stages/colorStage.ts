@@ -2,7 +2,7 @@ import { _ } from "../../shared/util";
 import { colorSchemes } from "../bootstrap/registerColorSchemes";
 import { STORAGE_COLOR } from "../const";
 import { SelectStage } from "./base/selectStage";
-import { SelectMenu } from "./components/selectMenu";
+import { Menu, MenuOption } from "./components/menu";
 import { State } from "../state";
 import { storage } from "../util/clientUtil";
 
@@ -10,17 +10,15 @@ export class ColorStage extends SelectStage {
     constructor() {
         super();
 
-        this.menu = new SelectMenu(_("Color Scheme").toUpperCase());
+        this.menu = new Menu(_("Color Scheme").toUpperCase());
         for (let i = 0, m = colorSchemes.length; i < m; i++) {
             this.menu.addOption(
-                null,
-                null,
-                colorSchemes[i].title,
-                colorSchemes[i].desc,
-                this.setColor.bind(this)
+                new MenuOption(undefined, colorSchemes[i].title, colorSchemes[i].desc, (index) => {
+                    this.setColor(index);
+                })
             );
         }
-        this.menu.select(storage(STORAGE_COLOR));
+        this.menu.select(storage(STORAGE_COLOR) as number);
     }
 
     private setColor(index: number): void {

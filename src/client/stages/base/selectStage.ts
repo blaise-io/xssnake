@@ -1,33 +1,33 @@
+import { Shape } from "../../../shared/shape";
 import { KEY, NS } from "../../const";
 import { State } from "../../state";
+import { Menu } from "../components/menu";
 import { StageInterface } from "./stage";
 
 export class SelectStage implements StageInterface {
-    menu = undefined;
+    menu: Menu;
 
-    getShape() {
+    getShape(): Shape {
         return this.menu.getShape();
     }
 
-    getData() {
-        return {};
-    }
-
-    construct() {
+    construct(): void {
         State.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
     }
 
-    destruct() {
+    destruct(): void {
         State.events.off("keydown", NS.STAGES);
         State.shapes.stage = undefined;
     }
 
-    handleKeys(ev) {
+    handleKeys(event: KeyboardEvent): void {
         if (State.keysBlocked) {
             return;
         }
+
         const next = this.menu.getNextStage();
-        switch (ev.keyCode) {
+
+        switch (event.keyCode) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
                 State.flow.previousStage();
@@ -39,15 +39,10 @@ export class SelectStage implements StageInterface {
                     State.flow.previousStage();
                 }
                 break;
-            case KEY.UP:
-                this.menu.prev();
-                State.audio.play("menu");
-                State.flow.refreshShapes();
-                break;
-            case KEY.DOWN:
-                this.menu.next();
-                State.audio.play("menu");
-                State.flow.refreshShapes();
+            default:
+                if (this.menu.handleKeys(event)) {
+                    State.flow.refreshShapes();
+                }
         }
     }
 }

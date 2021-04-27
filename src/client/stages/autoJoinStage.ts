@@ -36,4 +36,9 @@ export class AutoJoinStage extends InputStage {
 
         return summary.join("\n") + "\n\n" + _("Enter your name to join: ");
     }
+
+    inputSubmit(error: string, value: string, top: number): void {
+        this.flowData.name = value;
+        super.inputSubmit(error, value, top);
+    }
 }
