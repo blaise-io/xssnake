@@ -1,5 +1,7 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
-import { NC_PING, NC_PONG, NC_SNAKE_UPDATE, NETCODE_SYNC_MS } from "../../shared/const";
+import { NC_PING, NC_PONG } from "../../shared/const";
+import { Message, MessageConstructor } from "../../shared/room/netcode";
+import { SnakeMessage } from "../../shared/snake";
 import { NS } from "../const";
 import {
     COPY_SOCKET_CANNOT_CONNECT,
@@ -15,16 +17,24 @@ export class ClientSocketPlayer extends ClientPlayer {
     private connection: WebSocket;
     room: ClientRoom;
 
-    constructor(public onopenCallback: CallableFunction) {
+    constructor(name: string, private onopenCallback: CallableFunction) {
         super("");
 
         this.local = true;
         this.room = undefined;
         this.connection = new WebSocket(`ws://${SERVER_HOST}:${SERVER_PORT}${SERVER_PATH}`);
-        this.connection.onopen = this.onopen.bind(this);
-        this.connection.onclose = this.onclose.bind(this);
-        this.connection.onerror = this.onclose.bind(this);
-        this.connection.onmessage = this.onmessage.bind(this);
+        this.connection.onopen = () => {
+            this.onopen();
+        };
+        this.connection.onclose = () => {
+            this.onclose();
+        };
+        this.connection.onerror = () => {
+            this.onclose();
+        };
+        this.connection.onmessage = (event: MessageEvent) => {
+            this.onmessage(event);
+        };
     }
 
     destruct(): void {
@@ -69,8 +79,9 @@ export class ClientSocketPlayer extends ClientPlayer {
 
     /**
      * Send messages as [event, eventdata1, eventdata2]
+     * @deprecated
      */
-    emit(event: number, data?: any): void {
+    emitDeprecated(event: number, data?: any): void {
         let emit;
         if (data) {
             emit = data;
@@ -82,14 +93,18 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.send(JSON.stringify(emit));
     }
 
-    onmessage(ev: MessageEvent): void {
-        const data = JSON.parse(ev.data);
+    emit(message: Message): void {
+        console.info("OUT", (message.constructor as MessageConstructor).id + message.netcode);
+        this.connection.send((message.constructor as MessageConstructor).id + message.netcode);
+    }
+
+    onmessage(event: MessageEvent): void {
+        const data = JSON.parse(event.data);
         console.log("IN ", data);
         State.events.trigger(data[0], data.slice(1));
     }
 
-    emitFn(direction: number): void {
-        const sync = Math.ceil(NETCODE_SYNC_MS / this.snake.speed);
-        this.emit(NC_SNAKE_UPDATE, [direction, this.snake.parts.slice(-sync)]);
+    emitSnake(direction: number): void {
+        this.emit(SnakeMessage.fromSnake(this.snake, direction));
     }
 }

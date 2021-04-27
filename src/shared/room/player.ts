@@ -1,4 +1,32 @@
 import { Snake } from "../snake";
+import { Message, NETCODE_ID } from "./netcode";
+import { Audience } from "./roomOptions";
+
+export class NameMessage implements Message {
+    static id = NETCODE_ID.NAME;
+
+    audience = Audience.SERVER;
+
+    constructor(public name: string) {}
+
+    static from(name: string): NameMessage {
+        return new NameMessage(name);
+    }
+
+    static fromTrustedNetcode(netcode: string): NameMessage {
+        return new NameMessage(netcode);
+    }
+
+    static fromUntrustedNetcode(netcode: string): NameMessage | undefined {
+        if (typeof netcode === "string") {
+            return new NameMessage(netcode);
+        }
+    }
+
+    get netcode(): string {
+        return this.name;
+    }
+}
 
 export class Player {
     connected: boolean;

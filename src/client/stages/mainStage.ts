@@ -1,15 +1,15 @@
-import { _ } from "../../shared/util";
+import { _, getRandomName } from "../../shared/util";
 import { HASH_ROOM, STORAGE } from "../const";
 import { COPY_MAIN_INSTRUCT } from "../copy/copy";
-import { AutoJoinStage } from "./autoJoinStage";
-import { GameStage } from "./base/gameStage";
-import { MenuSnake } from "./components/menuSnake";
-import { SelectStage } from "./base/selectStage";
-import { Menu, MenuOption } from "./components/menu";
 import { State } from "../state";
 import { error, storage, urlHash } from "../util/clientUtil";
-import { AutoJoinDialog } from "./components/autoJoinDialog";
+import { AutoJoinStage } from "./autoJoinStage";
+import { GameStage } from "./base/gameStage";
+import { SelectStage } from "./base/selectStage";
 import { ColorStage } from "./colorStage";
+import { AutoJoinDialog } from "./components/autoJoinDialog";
+import { Menu, MenuOption } from "./components/menu";
+import { MenuSnake } from "./components/menuSnake";
 import { CreditsStage } from "./creditsStage";
 import { NameStage } from "./nameStage";
 
@@ -57,6 +57,7 @@ export class MainStage extends SelectStage {
         menu.add(
             new MenuOption(_("Quick Game"), "", () => {
                 State.flow.data.roomOptions.isQuickGame = true;
+                State.flow.data.name = name || getRandomName();
                 State.flow.switchStage(GameStage);
             }),
         );
@@ -68,6 +69,7 @@ export class MainStage extends SelectStage {
         menu.add(
             new MenuOption(_("Single Player"), "", () => {
                 State.flow.data.roomOptions.maxPlayers = 1;
+                State.flow.data.roomOptions.isOnline = false;
                 State.flow.data.roomOptions.isPrivate = true;
                 State.flow.switchStage(GameStage);
             }),

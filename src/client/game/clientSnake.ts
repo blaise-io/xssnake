@@ -21,7 +21,7 @@ export class ClientSnake extends Snake {
         public index: number,
         public local: boolean,
         public name: string,
-        public emitFunction: (number) => void,
+        public emitSnake: (number) => void,
         level: Level,
     ) {
         super(index, level);

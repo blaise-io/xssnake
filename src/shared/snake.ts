@@ -1,5 +1,27 @@
+import { NETCODE_SYNC_MS } from "./const";
 import { Collision } from "./game/collision";
 import { Level } from "./level/level";
+import { Message, NETCODE_ID } from "./room/netcode";
+
+export class SnakeMessage implements Message {
+    static id = NETCODE_ID.SNAKE;
+
+    constructor(public direction: number, public parts: Coordinate[]) {}
+
+    static fromSnake(snake: Snake, direction = -1): SnakeMessage {
+        // Direction can be upcoming, may not be part of snake.
+        // This syncs a partial snake. That makes it only useful from client to server?
+        const sync = Math.ceil(NETCODE_SYNC_MS / snake.speed);
+        return new SnakeMessage(
+            direction !== -1 ? direction : snake.direction,
+            snake.parts.slice(-sync),
+        );
+    }
+
+    get netcode(): string {
+        return JSON.stringify([this.direction, ...this.parts]);
+    }
+}
 
 export class Snake {
     /** Head is last in array */

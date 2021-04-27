@@ -1,5 +1,5 @@
 import "./assets/xssnake.css";
-import { runDebug } from "./debug/_index";
+import { runDebug } from "./debug";
 import { EventHandler } from "./netcode/eventHandler";
 import { StageFlow } from "./flow";
 import { State } from "./state";

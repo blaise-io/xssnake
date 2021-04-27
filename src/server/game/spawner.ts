@@ -44,7 +44,7 @@
 //         // if (buffer) {
 //         //     game.room.buffer(NC_GAME_SPAWN, data);
 //         // } else {
-//         //     game.room.emit(NC_GAME_SPAWN, data);
+//         //     game.room.emitDeprecated(NC_GAME_SPAWN, data);
 //         // }
 //
 //         return spawn;

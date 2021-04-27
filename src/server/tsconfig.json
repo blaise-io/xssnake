@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "../..",
+    "experimentalDecorators": true,
     "module": "es6",
     "moduleResolution": "node",
     "allowJs": false,

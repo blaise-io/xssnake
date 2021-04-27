@@ -18,10 +18,10 @@ export class ClientPlayer extends Player {
     }
 
     setSnake(index: number, level: Level): void {
-        this.snake = new ClientSnake(index, this.local, this.name, this.emitFn, level);
+        this.snake = new ClientSnake(index, this.local, this.name, this.emitSnake, level);
     }
 
-    emitFn(direction: number): void {
+    emitSnake(direction: number): void {
         console.log(direction);
     }
 

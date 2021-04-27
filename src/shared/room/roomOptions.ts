@@ -68,21 +68,15 @@ console.assert(
 );
 
 export class RoomOptions {
-    isQuickGame: boolean;
-    maxPlayers: number;
-    levelsetIndex: number;
-    hasPowerups: boolean;
-    isPrivate: boolean;
-    isXSS: boolean;
-
-    constructor() {
-        this.isQuickGame = false;
-        this.maxPlayers = 6;
-        this.levelsetIndex = 0;
-        this.hasPowerups = true;
-        this.isPrivate = false;
-        this.isXSS = false;
-    }
+    constructor(
+        public isQuickGame = false,
+        public maxPlayers = 6,
+        public levelsetIndex = 0,
+        public hasPowerups = true,
+        public isPrivate = false,
+        public isOnline = true,
+        public isXSS = false,
+    ) {}
 
     destruct(): void {}
 

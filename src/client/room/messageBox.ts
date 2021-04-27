@@ -17,7 +17,9 @@ export class MessageBox {
 
     constructor(public players: ClientPlayerRegistry) {
         this.ui = new MessageBoxUI(this.messages, players.localPlayer, (body) => {
-            (this.players.localPlayer as ClientSocketPlayer).emit(NC_CHAT_MESSAGE, [body]);
+            (this.players.localPlayer as ClientSocketPlayer).emitDeprecated(NC_CHAT_MESSAGE, [
+                body,
+            ]);
         });
         this.messages = [new Message(null, COPY_CHAT_INSTRUCT)];
         State.events.on(NC_CHAT_MESSAGE, NS.MSGBOX, this.addMessage.bind(this));

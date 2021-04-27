@@ -62,7 +62,7 @@ export class ChallengeStage extends InputStage {
         "String([1,2,3][3]).charAt(%d)",
         "String(typeof []).charAt(%d)",
         "String(typeof (5%2)).charAt(%d)",
-        "(/%s/).test('%s')",
+        "(/%s/).tests('%s')",
         "'%s%s'.replace(/%s/, 'mew')",
         "'012345'.lastIndexOf('%d')",
         "'%s'+'A'+Math.pow(%d,2)",

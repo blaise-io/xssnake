@@ -12,6 +12,7 @@ module.exports = (env, argv) => {
                 {
                     test: /\.tsx?$/,
                     use: "ts-loader",
+                    sideEffects: true,
                 },
                 {
                     test: /\.(png|mp3|ogg|woff)$/,

@@ -1,12 +1,12 @@
-import { NeuteredMenuSnake } from "../stages/components/menuSnake";
-import { State } from "../state";
-import { debugDialog } from "./dialog";
-import { debugFont } from "./font";
-import { debugLevel } from "./level";
-import { debugLine } from "./line";
-import { debugMessages } from "./messages";
-import { debugScoreboard } from "./scoreboard";
-import { debugTabUI } from "./tabui";
+import { NeuteredMenuSnake } from "./stages/components/menuSnake";
+import { State } from "./state";
+import { debugDialog } from "./debug/dialog";
+import { debugFont } from "./debug/font";
+import { debugLevel } from "./debug/level";
+import { debugLine } from "./debug/line";
+import { debugMessages } from "./debug/messages";
+import { debugScoreboard } from "./debug/scoreboard";
+import { debugTabUI } from "./debug/tabui";
 
 export function runDebug(): void {
     const registry = Object.fromEntries([
