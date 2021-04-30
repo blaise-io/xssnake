@@ -2,45 +2,39 @@ import { ROOM_CAPACITY } from "../const";
 import { levelsets } from "../data/levelsets";
 import { Sanitizer } from "../util/sanitizer";
 
-export class RoomSchema {
-    constructor(
-        public isQuickGame = false,
-        public maxPlayers = 6,
-        public levelsetIndex = 0,
-        public hasPowerups = true,
-        public isPrivate = false,
-        public isXSS = false,
-    ) {}
-
-    static fromServer(): RoomSchema {
-        return new RoomSchema();
-    }
-
-    static fromClient(untrustedData: WebsocketData): RoomSchema | null {
-        if (Math.random()) {
-            // validate
-            return new RoomSchema();
-        }
-        return null;
-    }
-
-    toServer(): [number, number, number, number, number, number] {
-        return [
-            this.maxPlayers,
-            this.levelsetIndex,
-            Number(this.isQuickGame),
-            Number(this.hasPowerups),
-            Number(this.isPrivate),
-            Number(this.isXSS),
-        ];
-    }
-}
-
-export const enum AUDIENCE {
-    NOONE,
-    ROOM,
-    SERVER,
-}
+// export class RoomSchema {
+//     constructor(
+//         public isQuickGame = false,
+//         public maxPlayers = 6,
+//         public levelsetIndex = 0,
+//         public hasPowerups = true,
+//         public isPrivate = false,
+//         public isXSS = false,
+//     ) {}
+//
+//     static fromServer(): RoomSchema {
+//         return new RoomSchema();
+//     }
+//
+//     static fromClient(untrustedData: WebsocketData): RoomSchema | null {
+//         if (Math.random()) {
+//             // validate
+//             return new RoomSchema();
+//         }
+//         return null;
+//     }
+//
+//     toServer(): [number, number, number, number, number, number] {
+//         return [
+//             this.maxPlayers,
+//             this.levelsetIndex,
+//             Number(this.isQuickGame),
+//             Number(this.hasPowerups),
+//             Number(this.isPrivate),
+//             Number(this.isXSS),
+//         ];
+//     }
+// }
 
 // interface SchemaInterface {
 //     fromServer: SchemaInterface;
@@ -49,23 +43,10 @@ export const enum AUDIENCE {
 // }
 //
 // interface MessageInterface {
-//     audience: AUDIENCE[];
+//     audiences: AUDIENCE[];
 //     message: string;
 //     // schema: SchemaInterface;
 // }
-
-export const roomMessage = {
-    message: "R",
-    audience: [AUDIENCE.ROOM],
-    schema: RoomSchema,
-};
-
-export const messageRegistry = [roomMessage];
-
-console.assert(
-    messageRegistry.length === Array.from(new Set(messageRegistry.map((m) => m.message))).length,
-    "ERR in msg registry",
-);
 
 export class RoomOptions {
     constructor(

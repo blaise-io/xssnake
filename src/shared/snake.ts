@@ -1,12 +1,11 @@
 import { NETCODE_SYNC_MS } from "./const";
 import { Collision } from "./game/collision";
 import { Level } from "./level/level";
-import { NETCODE_ID } from "./room/netcode";
-import { AUDIENCE } from "./room/roomOptions";
+import { AUDIENCE, Message, NETCODE } from "./room/netcode";
 
-export class SnakeMessage {
-    static id = NETCODE_ID.SNAKE;
-    static audience = AUDIENCE.ROOM;
+export class SnakeMessage implements Message {
+    static id = NETCODE.SNAKE_UPDATE;
+    static audience = AUDIENCE.SERVER_ROOM;
 
     constructor(public direction: number, public parts: Coordinate[]) {}
 

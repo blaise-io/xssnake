@@ -1,22 +1,21 @@
-import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION, SE_PLAYER_DISCONNECT } from "../../shared/const";
+import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
-import { NETCODE_MAP } from "../../shared/room/netcode";
+import { AUDIENCE, Message, NETCODE, NETCODE_MAP } from "../../shared/room/netcode";
 import { Player } from "../../shared/room/player";
 import { EventEmitter } from "events";
-import { AUDIENCE } from "../../shared/room/roomOptions";
 import { ServerSnake } from "../game/serverSnake";
 import { Server, SocketClient } from "../netcode/server";
 import { ServerRoom } from "./serverRoom";
 
 export class ServerPlayer extends Player {
-    emitterDeprecated: EventEmitter;
-    room: ServerRoom = undefined;
+    emitter: EventEmitter;
+    room: ServerRoom;
     snake: ServerSnake;
 
     constructor(public server: Server, public client: SocketClient) {
         super();
 
-        this.emitterDeprecated = new EventEmitter();
+        this.emitter = new EventEmitter();
 
         this.client.on("message", this.onmessage.bind(this));
         this.client.on("close", () => {
@@ -49,39 +48,48 @@ export class ServerPlayer extends Player {
             this.snake.crashed = true;
             this.room.emitter.emit(String(SE_PLAYER_COLLISION), [this]);
         }
-        this.emitMessage(SE_PLAYER_DISCONNECT, this);
+        // this.emitMessage(String(SE_PLAYER_DISCONNECT), this);
         if (this.client) {
             this.client.close(); // TODO: terminate()?
             this.client = undefined; // TODO: not my job?
         }
-        this.emitterDeprecated.removeAllListeners();
+        this.emitter.removeAllListeners();
     }
 
+    /**
+     * Player sends a message to the server.
+     */
     onmessage(message: string): void {
         console.log("IN", message);
 
-        if (message.length) {
-            const Message = NETCODE_MAP[message[0]];
-            if (
-                Message &&
-                (Message.audience === AUDIENCE.SERVER || Message.audience === AUDIENCE.ROOM)
-            ) {
-                const messageObj = Message.fromUntrustedNetcode(message.substr(1));
-                console.log("IN", messageObj);
+        // TODO!!!!
+        // Keep using event emitter for global event handling?
+        // Or detailed dispatching?
 
-                // TODO: Emit message instance to the right place
+        if (message.length) {
+            const netcodeId = message.substr(0, 2);
+            const Message = NETCODE_MAP[netcodeId];
+            if (Message) {
+                const messageObj = Message.fromUntrustedNetcode(message.substring(2));
+                console.log("IN", messageObj);
+                if (messageObj) {
+                    this.emitMessage(Message.id, messageObj);
+                    if (Message.audience & AUDIENCE.SERVER_ROOM) {
+                        console.log("YES");
+                    }
+                }
             }
         }
     }
 
-    emitMessage(event: number, data: unknown): void {
-        const playerEmits = this.emitterDeprecated.emit(String(event), data);
-        const roomEmits = this.room && this.room.emitter.emit(String(event), data, this);
+    emitMessage(event: NETCODE, message: Message): void {
+        this.emitter.emit(event, message);
 
-        // Global events (connecting, finding room).
-        if (!playerEmits && !roomEmits) {
-            this.server.emitter.emit(String(event), data, this);
+        if (this.room) {
+            this.room.emitter.emit(event, message);
         }
+
+        this.server.emitter.emit(event, message);
     }
 
     /**
@@ -135,8 +143,6 @@ export class ServerPlayer extends Player {
         }
     }
 
-    // TODO: This allows cheating by deliberately slowing down pongs?
-    // would require hacking websocket internals though...
     getMaxMismatchesAllowed(): number {
         const latency = Math.min(NETCODE_SYNC_MS, this.client.latency);
         return Math.ceil(latency / this.snake.speed);

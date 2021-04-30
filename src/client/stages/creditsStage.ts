@@ -18,7 +18,7 @@ export class CreditsStage extends ScreenStage {
             "www.blaise.io\n" +
             "blaise.kal@gmail.com\n\n" +
             "Thank you for playing!\n" +
-            "KEEP THE SNAKE ALIVE";
+            "KEEP THE SNAKE_UPDATE ALIVE";
 
         return new Shape(
             zoom(2, fontPixels("CREDITS"), left, top),

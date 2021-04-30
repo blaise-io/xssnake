@@ -13,8 +13,8 @@
 //     }
 //
 //     destruct() {
-//         this.player.emitterDeprecated.removeAllListeners(String(NC_PING));
-//         this.player.emitterDeprecated.removeAllListeners(String(NC_PONG));
+//         this.player.emitter.removeAllListeners(String(NC_PING));
+//         this.player.emitter.removeAllListeners(String(NC_PONG));
 //         this.player  = undefined;
 //     }
 //
@@ -24,8 +24,8 @@
 //     }
 //
 //     bindEvents() {
-//         this.player.emitterDeprecated.on(String(NC_PING), this.ping.bind(this));
-//         this.player.emitterDeprecated.on(String(NC_PONG), this.pong.bind(this));
+//         this.player.emitter.on(String(NC_PING), this.ping.bind(this));
+//         this.player.emitter.on(String(NC_PONG), this.pong.bind(this));
 //     }
 //
 //     ping() {
