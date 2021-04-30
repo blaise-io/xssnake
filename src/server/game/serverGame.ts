@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { NC_PONG, NC_SNAKE_CRASH, NC_SNAKE_UPDATE, SE_PLAYER_COLLISION } from "../../shared/const";
+import { NC_SNAKE_CRASH, NC_SNAKE_UPDATE, SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { Snake } from "../../shared/snake";
 import { average } from "../../shared/util";
@@ -13,7 +13,6 @@ export class ServerGame {
     private items: ServerItems;
     private tick: number;
     private lastTick: number;
-    private averageLatencyInTicks: number;
     private tickInterval: NodeJS.Timeout;
     private started: boolean;
 
@@ -25,7 +24,6 @@ export class ServerGame {
         this.items = new ServerItems(level, players);
         this.tick = 0;
         this.lastTick = +new Date();
-        this.averageLatencyInTicks = 1;
 
         this.players.setSnakes(this.level);
 
@@ -47,12 +45,12 @@ export class ServerGame {
 
     bindEvents() {
         this.roomEmitter.on(String(NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));
-        this.roomEmitter.on(String(NC_PONG), this.ncPong.bind(this));
+        // this.roomEmitter.on(String(NC_PONG), this.ncPong.bind(this));
     }
 
     unbindEvents() {
         this.roomEmitter.removeAllListeners(String(NC_SNAKE_UPDATE));
-        this.roomEmitter.removeAllListeners(String(NC_PONG));
+        // this.roomEmitter.removeAllListeners(String(NC_PONG));
     }
 
     ncSnakeUpdate(dirtySnake: WebsocketData, player: ServerPlayer): void {
@@ -63,14 +61,6 @@ export class ServerGame {
         } else {
             this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize());
         }
-    }
-
-    /**
-     * Update average latency of all players in this room.
-     * Affects tolerance of clients overriding server prediction.
-     */
-    ncPong() {
-        this.averageLatencyInTicks = this.getAverageLatencyInTicks();
     }
 
     /**
@@ -86,11 +76,8 @@ export class ServerGame {
         return count;
     }
 
-    /**
-     * @return {number}
-     */
-    getAverageLatencyInTicks() {
-        const latencies = [];
+    get averageLatencyInTicks(): number {
+        const latencies = [30];
         for (let i = 0, m = this.players.players.length; i < m; i++) {
             latencies.push(this.players[i].client.latency);
         }

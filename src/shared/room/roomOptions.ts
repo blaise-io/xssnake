@@ -36,7 +36,7 @@ export class RoomSchema {
     }
 }
 
-export const enum Audience {
+export const enum AUDIENCE {
     NOONE,
     ROOM,
     SERVER,
@@ -49,14 +49,14 @@ export const enum Audience {
 // }
 //
 // interface MessageInterface {
-//     audience: Audience[];
+//     audience: AUDIENCE[];
 //     message: string;
 //     // schema: SchemaInterface;
 // }
 
 export const roomMessage = {
     message: "R",
-    audience: [Audience.ROOM],
+    audience: [AUDIENCE.ROOM],
     schema: RoomSchema,
 };
 

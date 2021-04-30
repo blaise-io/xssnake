@@ -1,9 +1,10 @@
 import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION, SE_PLAYER_DISCONNECT } from "../../shared/const";
 import { Level } from "../../shared/level/level";
+import { NETCODE_MAP } from "../../shared/room/netcode";
 import { Player } from "../../shared/room/player";
 import { EventEmitter } from "events";
+import { AUDIENCE } from "../../shared/room/roomOptions";
 import { ServerSnake } from "../game/serverSnake";
-import { Message } from "../netcode/message";
 import { Server, SocketClient } from "../netcode/server";
 import { ServerRoom } from "./serverRoom";
 
@@ -29,12 +30,6 @@ export class ServerPlayer extends Player {
                 this.destruct();
             }
         });
-
-        // ping pong globally after starting the server
-        // this.connection.ping();
-        // this.connection.on("pong", () => {
-        //     this.isAlive = true;
-        // })
 
         this.connected = true;
     }
@@ -62,19 +57,20 @@ export class ServerPlayer extends Player {
         this.emitterDeprecated.removeAllListeners();
     }
 
-    onmessage(jsonStr: string): void {
-        /**
-         * We have incoming json. All (ALL???) messages that can be handled
-         * have to be registered here. Let's start with a simple ping/pong.
-         *
-         * Is the event registry dynamic?
-         * Or static list and delegated?
-         */
+    onmessage(message: string): void {
+        console.log("IN", message);
 
-        const message = new Message(jsonStr);
-        console.log("IN ", this.name, jsonStr);
-        if (message.isClean) {
-            this.emitMessage(message.event, message.data);
+        if (message.length) {
+            const Message = NETCODE_MAP[message[0]];
+            if (
+                Message &&
+                (Message.audience === AUDIENCE.SERVER || Message.audience === AUDIENCE.ROOM)
+            ) {
+                const messageObj = Message.fromUntrustedNetcode(message.substr(1));
+                console.log("IN", messageObj);
+
+                // TODO: Emit message instance to the right place
+            }
         }
     }
 

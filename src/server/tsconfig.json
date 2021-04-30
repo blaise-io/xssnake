@@ -5,7 +5,7 @@
     "module": "es6",
     "moduleResolution": "node",
     "allowJs": false,
-    "target": "es6"
+    "target": "es2019"
   },
   "typeRoots": [
     "../../node_modules/@types",

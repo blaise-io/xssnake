@@ -1,10 +1,12 @@
 import { NETCODE_SYNC_MS } from "./const";
 import { Collision } from "./game/collision";
 import { Level } from "./level/level";
-import { Message, NETCODE_ID } from "./room/netcode";
+import { NETCODE_ID } from "./room/netcode";
+import { AUDIENCE } from "./room/roomOptions";
 
-export class SnakeMessage implements Message {
+export class SnakeMessage {
     static id = NETCODE_ID.SNAKE;
+    static audience = AUDIENCE.ROOM;
 
     constructor(public direction: number, public parts: Coordinate[]) {}
 
@@ -18,8 +20,22 @@ export class SnakeMessage implements Message {
         );
     }
 
+    static fromUntrustedNetcode(untrustedNetcode: string): SnakeMessage | undefined {
+        console.log(untrustedNetcode);
+        try {
+            const data = JSON.parse(untrustedNetcode);
+            // TODO: Validate direction
+            const direction = data.shift();
+            const parts = data;
+            return new SnakeMessage(direction, parts);
+        } catch (error) {
+            console.error(error);
+            return;
+        }
+    }
+
     get netcode(): string {
-        return JSON.stringify([this.direction, ...this.parts]);
+        return JSON.stringify([this.direction, ...this.parts], null, 0);
     }
 }
 

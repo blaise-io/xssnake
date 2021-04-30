@@ -1,8 +1,8 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
-import { NC_PING, NC_PONG } from "../../shared/const";
 import { Message, MessageConstructor } from "../../shared/room/netcode";
+import { NameMessage } from "../../shared/room/player";
 import { SnakeMessage } from "../../shared/snake";
-import { NS } from "../const";
+import { noop } from "../../shared/util";
 import {
     COPY_SOCKET_CANNOT_CONNECT,
     COPY_SOCKET_CONNECTION_LOST,
@@ -17,13 +17,14 @@ export class ClientSocketPlayer extends ClientPlayer {
     private connection: WebSocket;
     room: ClientRoom;
 
-    constructor(name: string, private onopenCallback: CallableFunction) {
-        super("");
+    constructor(name: string, private onopenCallback: CallableFunction = noop) {
+        super(name);
 
         this.local = true;
         this.room = undefined;
         this.connection = new WebSocket(`ws://${SERVER_HOST}:${SERVER_PORT}${SERVER_PATH}`);
         this.connection.onopen = () => {
+            console.log(this);
             this.onopen();
         };
         this.connection.onclose = () => {
@@ -44,9 +45,6 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.onerror = undefined;
         this.connection.onmessage = undefined;
 
-        State.events.off(NC_PING, NS.SOCKET);
-        State.events.off(NC_PONG, NS.SOCKET);
-
         // Close explicitly when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {
             this.connection.close();
@@ -60,7 +58,8 @@ export class ClientSocketPlayer extends ClientPlayer {
     onopen(): void {
         this.connected = true;
         this.onopenCallback();
-        // TODO: spam server to see if still connected?
+        this.send(NameMessage.from(this.name));
+        // TODO: reimplement heartbeat to see if server went away? can be done wih
     }
 
     onclose(): void {
@@ -93,7 +92,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.send(JSON.stringify(emit));
     }
 
-    emit(message: Message): void {
+    send(message: Message): void {
         console.info("OUT", (message.constructor as MessageConstructor).id + message.netcode);
         this.connection.send((message.constructor as MessageConstructor).id + message.netcode);
     }
@@ -105,6 +104,6 @@ export class ClientSocketPlayer extends ClientPlayer {
     }
 
     emitSnake(direction: number): void {
-        this.emit(SnakeMessage.fromSnake(this.snake, direction));
+        this.send(SnakeMessage.fromSnake(this.snake, direction));
     }
 }

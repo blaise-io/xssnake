@@ -21,9 +21,6 @@ export const NC_GAME_DESPAWN = 20;
 export const NC_GAME_STATE = 21;
 export const NC_GAME_SPAWN = 22;
 
-export const NC_PING = 0;
-export const NC_PONG = 1;
-
 export const NC_PLAYER_NAME = 30;
 export const NC_PLAYERS_SERIALIZE = 31;
 

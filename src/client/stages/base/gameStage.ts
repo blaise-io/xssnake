@@ -1,5 +1,4 @@
 import { CANVAS } from "../../../shared/const";
-import { NameMessage } from "../../../shared/room/player";
 import { Shape } from "../../../shared/shape";
 import { NS } from "../../const";
 import { COPY_CONNECTING } from "../../copy/copy";
@@ -29,10 +28,8 @@ export class GameStage implements StageInterface {
     connectServer(): void {
         if (!State.flow.data.clientPlayer) {
             console.log("Create player with connection");
-
             State.flow.data.clientPlayer = new ClientSocketPlayer(State.flow.data.name, () => {
                 console.log("Looks like I'm connected");
-                State.flow.data.clientPlayer.emit(NameMessage.from(State.flow.data.name));
             });
         }
 

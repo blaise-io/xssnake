@@ -44,7 +44,6 @@ export class Server {
         this.pingInterval = setInterval(() => {
             this.ws.clients.forEach((client: SocketClient) => {
                 if (client.isAlive === false) {
-                    console.debug("terminated");
                     return client.terminate();
                 }
                 client.isAlive = false;
@@ -52,8 +51,6 @@ export class Server {
                 client.ping();
             });
         }, HEARTBEAT_INTERVAL_MS);
-
-        // TODO: Gracefully handle on client side.
 
         console.log(`Running WebSocket server at ${SERVER_HOST}:${SERVER_PATH}${SERVER_PORT}`);
     }
