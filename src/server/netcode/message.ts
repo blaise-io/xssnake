@@ -1,9 +1,8 @@
-/**
- * @param {string} jsonStr
- * @constructor
- */
 import { Sanitizer } from "../../shared/util/sanitizer";
 
+/**
+ * @deprecated
+ */
 export class Message {
     isClean: boolean;
     event: number;

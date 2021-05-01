@@ -3,7 +3,7 @@ import { AUDIENCE, Message, NETCODE } from "./netcode";
 
 export class NameMessage implements Message {
     static id = NETCODE.PLAYER_NAME;
-    static audience = AUDIENCE.SERVER_ROOM | AUDIENCE.SERVER_ROOM_MANAGER;
+    static audience = AUDIENCE.SERVER_ROOM | AUDIENCE.SERVER;
 
     constructor(public name: string) {}
 
@@ -11,12 +11,8 @@ export class NameMessage implements Message {
         return new NameMessage(name);
     }
 
-    static fromTrustedNetcode(netcode: string): NameMessage {
-        return new NameMessage(netcode);
-    }
-
-    static fromUntrustedNetcode(netcode: string): NameMessage | undefined {
-        // TODO: Verify length?
+    static fromNetcode(netcode: string): NameMessage | undefined {
+        // TODO: Verify length
         return new NameMessage(netcode);
     }
 

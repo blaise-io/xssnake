@@ -1,7 +1,7 @@
 import { Player } from "../../shared/room/player";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { Message } from "../room/message";
+import { ChatMessage } from "../room/chatMessage";
 import { Scoreboard } from "../room/scoreboard";
 import { State } from "../state";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
@@ -15,8 +15,8 @@ export function debugScoreboard(): void {
         Object.assign(State.shapes, outerBorder());
 
         const messages = [
-            new Message(null, "This is a notification"),
-            new Message("Player 1", "Hello world"),
+            new ChatMessage(null, "This is a notification"),
+            new ChatMessage("Player 1", "Hello world"),
         ];
         const author = new Player("Dummy");
         new MessageBoxUI(messages, author, (body) => {

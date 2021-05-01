@@ -1,11 +1,11 @@
 import { CANVAS } from "../../../shared/const";
+import { RoomOptionsMessage } from "../../../shared/room/roomOptions";
 import { Shape } from "../../../shared/shape";
-import { NS } from "../../const";
 import { COPY_CONNECTING } from "../../copy/copy";
 import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
 import { State } from "../../state";
 import { font } from "../../ui/font";
-import { center, flash, lifetime } from "../../ui/shapeClient";
+import { center, flash } from "../../ui/shapeClient";
 import { StageInterface } from "./stage";
 
 export class GameStage implements StageInterface {
@@ -17,21 +17,30 @@ export class GameStage implements StageInterface {
 
     construct(): void {
         State.shapes.CONNECTING = this.connectingShape;
-        this.connectServer();
+        this.connectServer().then(() => {
+            State.flow.data.clientPlayer.send(new RoomOptionsMessage(State.flow.data.roomOptions));
+        });
+
+        if (State.flow.data.clientPlayer) {
+            State.flow.data.clientPlayer.destruct();
+        }
     }
 
     destruct(): void {
-        State.events.off("keydown", NS.STAGES);
         delete State.shapes.CONNECTING;
     }
 
-    connectServer(): void {
-        if (!State.flow.data.clientPlayer) {
-            console.log("Create player with connection");
-            State.flow.data.clientPlayer = new ClientSocketPlayer(State.flow.data.name, () => {
-                console.log("Looks like I'm connected");
-            });
-        }
+    async connectServer(): Promise<void> {
+        return new Promise((resolve) => {
+            if (State.flow.data.clientPlayer) {
+                resolve();
+            } else {
+                State.flow.data.clientPlayer = new ClientSocketPlayer(
+                    State.flow.data.name,
+                    resolve,
+                );
+            }
+        });
 
         // const clientPlayer = new ClientSocketPlayer(() => {
         //     clientPlayer.room = new ClientRoom(clientPlayer);
@@ -45,7 +54,6 @@ export class GameStage implements StageInterface {
     get connectingShape(): Shape {
         const shape = font(COPY_CONNECTING);
         center(shape, CANVAS.WIDTH, CANVAS.HEIGHT - 20);
-        lifetime(shape, 2000);
         flash(shape);
         return shape;
     }

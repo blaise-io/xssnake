@@ -15,6 +15,10 @@ export class ClientOptions extends RoomOptions {
         this.levelsetIndex = randomArrIndex(levelsets);
     }
 
+    destruct(): void {}
+
+    deserialize(...args: any[]): void {}
+
     setOptionsFromForm(indexedOptions: (number | boolean)[]): void {
         this.isQuickGame = false;
         this.maxPlayers = indexedOptions[FIELD_MAX_PLAYERS] as number;

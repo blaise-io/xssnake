@@ -1,10 +1,7 @@
 import {
-    NC_OPTIONS_SERIALIZE,
     NC_PLAYERS_SERIALIZE,
     NC_ROOM_JOIN_ERROR,
     NC_ROOM_JOIN_KEY,
-    NC_ROOM_JOIN_MATCHING,
-    NC_ROOM_SERIALIZE,
     NC_ROOM_STATUS,
     NC_ROUND_SERIALIZE,
     ROOM_FULL,
@@ -14,38 +11,46 @@ import {
     ROOM_KEY_LENGTH,
     ROOM_NOT_FOUND,
 } from "../../shared/const";
+import { NETCODE } from "../../shared/room/netcode";
 import { Player } from "../../shared/room/player";
+import { RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
 import { randomStr } from "../../shared/util";
 import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
-import { Matcher } from "./matcher";
-import { ServerOptions } from "./serverOptions";
+import { getMatchingRoom } from "./matcher";
 import { ServerPlayer } from "./serverPlayer";
-import { ServerRoom } from "./serverRoom";
+import { ServerRoom, ServerRoomMessage } from "./serverRoom";
 
 export class ServerRoomManager {
     private rooms: ServerRoom[];
-    private matcher: Matcher;
 
     constructor(public server: Server) {
         this.rooms = [];
-        this.matcher = new Matcher(this.rooms);
         this.bindEvents();
     }
 
     destruct(): void {
         this.removeAllRooms();
-        this.matcher.destruct();
         this.server.emitter.removeAllListeners(String(NC_ROOM_STATUS));
         this.server.emitter.removeAllListeners(String(NC_ROOM_JOIN_KEY));
-        this.server.emitter.removeAllListeners(String(NC_ROOM_JOIN_MATCHING));
+        this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_MATCHING);
     }
 
     bindEvents(): void {
-        const emitter = this.server.emitter;
-        emitter.on(String(NC_ROOM_STATUS), this.emitRoomStatus.bind(this));
-        emitter.on(String(NC_ROOM_JOIN_KEY), this.autojoinRoom.bind(this));
-        emitter.on(String(NC_ROOM_JOIN_MATCHING), this.joinMatchingRoom.bind(this));
+        this.server.emitter.on(String(NC_ROOM_STATUS), this.emitRoomStatus.bind(this));
+        this.server.emitter.on(String(NC_ROOM_JOIN_KEY), this.autojoinRoom.bind(this));
+
+        this.server.emitter.on(
+            NETCODE.ROOM_JOIN_MATCHING,
+            (message: RoomOptionsMessage, player: ServerPlayer) => {
+                const matchingRoom = getMatchingRoom(this.rooms, message.options);
+                const room = matchingRoom || this.createRoom(message.options);
+
+                room.addPlayer(player);
+                room.emitAll(player);
+                room.detectAutostart();
+            },
+        );
     }
 
     room(key: string): ServerRoom {
@@ -68,7 +73,7 @@ export class ServerRoomManager {
         this.rooms.length = 0;
     }
 
-    createRoom(options: ServerOptions): ServerRoom {
+    createRoom(options: RoomOptions): ServerRoom {
         const id = randomStr(ROOM_KEY_LENGTH);
         const room = new ServerRoom(this.server, options, id);
         this.rooms.push(room);
@@ -87,16 +92,6 @@ export class ServerRoomManager {
         } else {
             player.emit(NC_ROOM_JOIN_ERROR, [status]);
         }
-    }
-
-    private joinMatchingRoom(dirtySerializeOptions: UntrustedData, player: ServerPlayer): void {
-        const emitDataArr = new Sanitizer(dirtySerializeOptions).assertArray().getValueOr([]);
-        const options = new ServerOptions(emitDataArr);
-
-        const room = this.matcher.getRoomMatching(options) || this.createRoom(options);
-        room.addPlayer(player);
-        room.emitAll(player);
-        room.detectAutostart();
     }
 
     getRoomByKey(key: string): ServerRoom | null {
@@ -134,8 +129,8 @@ export class ServerRoomManager {
         const status = this.getRoomStatus(key);
         if (status === ROOM_JOINABLE) {
             const room = this.getRoomByKey(key);
-            player.emit(NC_ROOM_SERIALIZE, room.serialize());
-            player.emit(NC_OPTIONS_SERIALIZE, room.options.serialize());
+            player.send(new ServerRoomMessage(room.key));
+            player.send(new RoomOptionsMessage(room.options));
             player.emit(NC_PLAYERS_SERIALIZE, room.players.serialize(player as Player));
         } else {
             player.emit(NC_ROOM_JOIN_ERROR, [status]);

@@ -2,7 +2,7 @@ import { CANVAS } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { FRAME, KEY, NS, UC } from "../const";
-import { Message } from "../room/message";
+import { ChatMessage } from "../room/chatMessage";
 import { InputField } from "../stages/components/inputField";
 import { State } from "../state";
 import { font, fontPixels, fontWidth } from "./font";
@@ -22,7 +22,7 @@ export class MessageBoxUI {
     private padding: { y0: number; x0: number; y1: number; x1: number };
 
     constructor(
-        public messages: Message[],
+        public messages: ChatMessage[],
         public localPlayer: Player,
         private sendMessageFn: (string) => void,
     ) {
@@ -78,7 +78,7 @@ export class MessageBoxUI {
     }
 
     showInput() {
-        const x = this.x0 + this.padding.x1 + new Message("", "").getOffset();
+        const x = this.x0 + this.padding.x1 + new ChatMessage("", "").getOffset();
         const y = this.y1 - this.padding.y1 - this.lineHeight;
         const prefix = this.localPlayer.name + ": ";
 
@@ -104,7 +104,7 @@ export class MessageBoxUI {
     sendMessage(body) {
         const author = String(this.localPlayer.name);
         if (body.trim()) {
-            this.messages.push(new Message(author, body));
+            this.messages.push(new ChatMessage(author, body));
             this.sendMessageFn(body);
             this.skipQueue = true;
         }

@@ -3,7 +3,7 @@ import { getRandomName, noop, randomRange, randomStr } from "../../shared/util";
 import { COPY_CHAT_INSTRUCT } from "../copy/copy";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
-import { Message } from "../room/message";
+import { ChatMessage } from "../room/chatMessage";
 import { Scoreboard } from "../room/scoreboard";
 import { State } from "../state";
 import { innerBorder, outerBorder } from "../ui/clientShapeGenerator";
@@ -32,12 +32,12 @@ export function debugMessages(): void {
         }
 
         function addMessage() {
-            messages.push(new Message(getRandomName(), randomBody()));
+            messages.push(new ChatMessage(getRandomName(), randomBody()));
             ui.debounceUpdate();
             window.setTimeout(addMessage, randomRange(0, 5000));
         }
 
-        messages.push(new Message(null, COPY_CHAT_INSTRUCT));
+        messages.push(new ChatMessage(null, COPY_CHAT_INSTRUCT));
         ui.debounceUpdate();
         addMessage();
     }, 200);

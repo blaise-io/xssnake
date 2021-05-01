@@ -1,6 +1,6 @@
 import { fontWidth } from "../ui/font";
 
-export class Message {
+export class ChatMessage {
     private notificationPrefix: string;
 
     constructor(public author: string | undefined, public body: string) {

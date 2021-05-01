@@ -1,26 +1,36 @@
-import { ServerOptions } from "./serverOptions";
+import { RoomOptions } from "../../shared/room/roomOptions";
 import { ServerRoom } from "./serverRoom";
 
-export class Matcher {
-    constructor(public rooms: ServerRoom[]) {}
-
-    destruct() {
-        this.rooms = undefined;
-    }
-
-    getRoomMatching(requestOptions: ServerOptions): ServerRoom | null {
-        const rooms = this.rooms;
-        if (!requestOptions.isPrivate) {
-            // Shortcut.
-            for (let i = 0, m = rooms.length; i < m; i++) {
-                const room = rooms[i];
-                if (room.isAwaitingPlayers()) {
-                    if (room.options.matches(requestOptions)) {
-                        return room;
-                    }
-                }
+export function getMatchingRoom(
+    rooms: ServerRoom[],
+    requestOptions: RoomOptions,
+): ServerRoom | undefined {
+    for (let i = 0, m = rooms.length; i < m; i++) {
+        const room = rooms[i];
+        if (room.isAwaitingPlayers()) {
+            if (matches(room.options, requestOptions)) {
+                return room;
             }
         }
-        return null;
     }
+}
+
+function matches(considered: RoomOptions, requested: RoomOptions): boolean {
+    if (considered.isPrivate || requested.isPrivate) {
+        return false;
+    }
+
+    if (requested.isXSS !== considered.isXSS) {
+        return false;
+    }
+
+    if (requested.isQuickGame) {
+        return true;
+    }
+
+    return (
+        requested.levelsetIndex === considered.levelsetIndex &&
+        requested.hasPowerups === considered.hasPowerups &&
+        requested.maxPlayers <= considered.maxPlayers
+    );
 }

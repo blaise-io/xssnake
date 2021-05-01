@@ -19,7 +19,7 @@ export class SnakeMessage implements Message {
         );
     }
 
-    static fromUntrustedNetcode(untrustedNetcode: string): SnakeMessage | undefined {
+    static fromNetcode(untrustedNetcode: string): SnakeMessage | undefined {
         console.log(untrustedNetcode);
         try {
             const data = JSON.parse(untrustedNetcode);

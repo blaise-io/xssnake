@@ -7,11 +7,11 @@ import { format } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
-import { Message } from "./message";
+import { ChatMessage } from "./chatMessage";
 
 export class MessageBox {
     private previousPlayers: ClientPlayerRegistry = undefined; // Keep old registry until player leaving is propagated.
-    private messages: Message[];
+    private messages: ChatMessage[];
     ui: MessageBoxUI;
     private playerChangeNotified = false;
 
@@ -21,7 +21,7 @@ export class MessageBox {
                 body,
             ]);
         });
-        this.messages = [new Message(null, COPY_CHAT_INSTRUCT)];
+        this.messages = [new ChatMessage(null, COPY_CHAT_INSTRUCT)];
         State.events.on(NC_CHAT_MESSAGE, NS.MSGBOX, this.addMessage.bind(this));
         State.events.on(EV_PLAYERS_UPDATED, NS.MSGBOX, this.updatePlayers.bind(this));
     }
@@ -36,12 +36,12 @@ export class MessageBox {
 
     addMessage(serializedMessage) {
         const name = String(this.players.players[serializedMessage[0]].name);
-        this.messages.push(new Message(name, serializedMessage[1]));
+        this.messages.push(new ChatMessage(name, serializedMessage[1]));
         this.ui.debounceUpdate();
     }
 
     addNotification(notification) {
-        this.messages.push(new Message(null, notification));
+        this.messages.push(new ChatMessage(null, notification));
     }
 
     updatePlayers() {
@@ -66,7 +66,7 @@ export class MessageBox {
     }
 
     notifyPlayersChangeUI(message: string): void {
-        this.messages.push(new Message(null, message));
+        this.messages.push(new ChatMessage(null, message));
         this.ui.debounceUpdate();
     }
 

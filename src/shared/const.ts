@@ -88,12 +88,12 @@ export const FIELD_VALUE_EASY = 1;
 export const FIELD_VALUE_MEDIUM = 2;
 export const FIELD_VALUE_HARD = 3;
 
-export const ROOM_JOINABLE = 1;
-export const ROOM_INVALID_KEY = 2;
-export const ROOM_FULL = 3;
-export const ROOM_NOT_FOUND = 4;
-export const ROOM_IN_PROGRESS = 5;
-export const ROOM_UNKNOWN_ERROR = 6;
+/** @deprecated make const enum */ export const ROOM_JOINABLE = 1;
+/** @deprecated make const enum */ export const ROOM_INVALID_KEY = 2;
+/** @deprecated make const enum */ export const ROOM_FULL = 3;
+/** @deprecated make const enum */ export const ROOM_NOT_FOUND = 4;
+/** @deprecated make const enum */ export const ROOM_IN_PROGRESS = 5;
+/** @deprecated make const enum */ export const ROOM_UNKNOWN_ERROR = 6;
 
 export const CRASH_UNKNOWN = 0;
 export const CRASH_WALL = 1;
