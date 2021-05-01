@@ -1,5 +1,7 @@
 import { CrosshairLevel } from "../../shared/levels/debug/crosshair";
 import { LinesLevel } from "../../shared/levels/debug/lines";
+import { PacmanLevel } from "../../shared/levels/debug/pacman";
+import { getRandomItemFrom } from "../../shared/util";
 import { ClientGame } from "../game/clientGame";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
@@ -10,11 +12,13 @@ export function debugLevel(): void {
     const levels = Object.fromEntries([
         ["lines", LinesLevel],
         ["crosshair", CrosshairLevel],
+        ["pacman", PacmanLevel],
     ]);
 
     const levelName: string =
         new URL(window.location.href).searchParams.get("level") ||
-        prompt(`&level=${Object.keys(levels).join("|")}`);
+        prompt(`&level=${Object.keys(levels).join(" | ")}`) ||
+        getRandomItemFrom(Object.keys(levels));
 
     window.setTimeout(() => {
         State.flow.destruct();
