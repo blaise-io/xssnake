@@ -4,9 +4,10 @@ import {
     NC_ROOM_JOIN_ERROR,
     NC_ROOM_SERIALIZE,
     NC_SNAKE_CRASH,
+    ROOM_STATUS,
 } from "../../shared/const";
+import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, NS } from "../const";
-import { COPY_ERROR } from "../copy/copy";
 import { State } from "../state";
 import { urlHash } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
@@ -15,6 +16,14 @@ import { ClientRoundSet } from "./clientRoundSet";
 import { MessageBox } from "./messageBox";
 import { ClientOptions } from "./options";
 import { Scoreboard } from "./scoreboard";
+
+const COPY_ERROR = {
+    [ROOM_STATUS.INVALID_KEY]: _("Invalid room key"),
+    [ROOM_STATUS.NOT_FOUND]: _("Room not found"),
+    [ROOM_STATUS.FULL]: _("The room is full"),
+    [ROOM_STATUS.IN_PROGRESS]: _("Game in progress"),
+    [ROOM_STATUS.UNKNOWN_ERROR]: _("Unknown errooshiii#^%^"),
+};
 
 export class ClientRoom {
     key: string;
@@ -143,7 +152,7 @@ export class ClientRoom {
     }
 
     handleError(data: number[]): void {
-        this.reject(COPY_ERROR[data[0]]);
+        this.reject(COPY_ERROR[data[0]].toUpperCase());
     }
 
     //    /**

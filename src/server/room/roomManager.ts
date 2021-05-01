@@ -4,12 +4,8 @@ import {
     NC_ROOM_JOIN_KEY,
     NC_ROOM_STATUS,
     NC_ROUND_SERIALIZE,
-    ROOM_FULL,
-    ROOM_IN_PROGRESS,
-    ROOM_INVALID_KEY,
-    ROOM_JOINABLE,
+    ROOM_STATUS,
     ROOM_KEY_LENGTH,
-    ROOM_NOT_FOUND,
 } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
 import { Player } from "../../shared/room/player";
@@ -84,7 +80,7 @@ export class ServerRoomManager {
         const key = this.getSanitizedRoomKey(dirtyKeyArr);
         const status = this.getRoomStatus(key);
 
-        if (status === ROOM_JOINABLE) {
+        if (status === ROOM_STATUS.JOINABLE) {
             const room = this.getRoomByKey(key);
             room.addPlayer(player);
             player.emit(NC_ROUND_SERIALIZE, room.rounds.round.serialize());
@@ -111,23 +107,23 @@ export class ServerRoomManager {
 
     getRoomStatus(key: string): number {
         if (!key) {
-            return ROOM_INVALID_KEY;
+            return ROOM_STATUS.INVALID_KEY;
         }
         const room = this.getRoomByKey(key);
         if (!room) {
-            return ROOM_NOT_FOUND;
+            return ROOM_STATUS.NOT_FOUND;
         } else if (room.isFull()) {
-            return ROOM_FULL;
+            return ROOM_STATUS.FULL;
         } else if (room.rounds.hasStarted()) {
-            return ROOM_IN_PROGRESS;
+            return ROOM_STATUS.IN_PROGRESS;
         }
-        return ROOM_JOINABLE;
+        return ROOM_STATUS.JOINABLE;
     }
 
     emitRoomStatus(dirtyKeyArr: string[], player: ServerPlayer): void {
         const key = this.getSanitizedRoomKey(dirtyKeyArr);
         const status = this.getRoomStatus(key);
-        if (status === ROOM_JOINABLE) {
+        if (status === ROOM_STATUS.JOINABLE) {
             const room = this.getRoomByKey(key);
             player.send(new ServerRoomMessage(room.key));
             player.send(new RoomOptionsMessage(room.options));

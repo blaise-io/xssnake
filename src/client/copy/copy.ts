@@ -1,10 +1,3 @@
-import {
-    ROOM_FULL,
-    ROOM_IN_PROGRESS,
-    ROOM_INVALID_KEY,
-    ROOM_NOT_FOUND,
-    ROOM_UNKNOWN_ERROR,
-} from "../../shared/const";
 import { UC } from "../const";
 import { isMac } from "../util/clientUtil";
 
@@ -21,14 +14,6 @@ export const COPY_CONFIRM_EXIT_HEADER = "Confirm exit";
 export const COPY_CONFIRM_EXIT_BODY = "Do you really want to leave this room?";
 export const COPY_CONFIRM_EXIT_BODY_DRAMATIC =
     "Do you REALLY want to leave that other player ALL ALONE in this room?";
-
-// Invalid room.
-export const COPY_ERROR = [];
-COPY_ERROR[ROOM_INVALID_KEY] = "Invalid room key".toUpperCase();
-COPY_ERROR[ROOM_NOT_FOUND] = "Room not found".toUpperCase();
-COPY_ERROR[ROOM_FULL] = "The room is full!".toUpperCase();
-COPY_ERROR[ROOM_IN_PROGRESS] = "Game in progress".toUpperCase();
-COPY_ERROR[ROOM_UNKNOWN_ERROR] = "Unknown errooshiii#^%^".toUpperCase();
 
 // Dialog common.
 export const COPY_DIALOG_OK = "Ok".toUpperCase();
