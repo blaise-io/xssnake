@@ -6,7 +6,6 @@ export const enum AUDIENCE {
     CLIENT = 1 << 0,
     SERVER_MATCHMAKING = 1 << 1,
     SERVER_ROOM = 1 << 2,
-    SERVER = AUDIENCE.SERVER_MATCHMAKING | AUDIENCE.SERVER_ROOM,
 }
 
 export const enum NETCODE {

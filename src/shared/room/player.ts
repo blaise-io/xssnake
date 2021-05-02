@@ -3,7 +3,7 @@ import { AUDIENCE, Message, NETCODE } from "./netcode";
 
 export class NameMessage implements Message {
     static id = NETCODE.PLAYER_NAME;
-    static audience = AUDIENCE.SERVER;
+    static audience = AUDIENCE.SERVER_ROOM;
 
     constructor(public name: string) {}
 

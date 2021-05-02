@@ -58,12 +58,7 @@ export class ServerPlayerRegistry extends PlayerRegistry {
         return crashingPlayers;
     }
 
-    /**
-     * @param {number} tick
-     * @param {number} elapsed
-     * @param {Shift} shift
-     */
-    moveSnakes(tick, elapsed, shift): void {
+    moveSnakes(tick: number, elapsed: number, shift: Shift): void {
         for (let i = 0, m = this.players.length; i < m; i++) {
             this.players[i].snake.handleNextMove(tick, elapsed, shift, this.players);
             this.players[i].snake.shiftParts(shift);

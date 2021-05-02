@@ -8,7 +8,6 @@
  * Example 2: [5, 5] pulls objects to bottom-right.
  * Example 2: [-5, 0] pulls objects to the left only.
  */
-import { Shift } from "../../index";
 import { ORIENTATION } from "../const";
 
 export class LevelGravity {
