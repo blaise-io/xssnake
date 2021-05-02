@@ -8,6 +8,7 @@
  * Example 2: [5, 5] pulls objects to bottom-right.
  * Example 2: [-5, 0] pulls objects to the left only.
  */
+import { Shift } from "../../index";
 import { ORIENTATION } from "../const";
 
 export class LevelGravity {
@@ -19,12 +20,12 @@ export class LevelGravity {
 
     getShift(elapsed: number): Shift {
         return [
-            this.updateInDirection(elapsed, ORIENTATION.HORIZONTAL),
-            this.updateInDirection(elapsed, ORIENTATION.VERTICAL),
+            this.updateInDirection(ORIENTATION.HORIZONTAL, elapsed),
+            this.updateInDirection(ORIENTATION.VERTICAL, elapsed),
         ];
     }
 
-    updateInDirection(delta: number, orientation: ORIENTATION): number {
+    updateInDirection(orientation: ORIENTATION, delta = 0): number {
         if (this.gravity[orientation]) {
             const treshold = 1000 / Math.abs(this.gravity[orientation]);
             this.progress[orientation] += delta;

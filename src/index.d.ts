@@ -1,9 +1,11 @@
+import { ORIENTATION } from "./shared/const";
+
 declare let ENV_DEBUG: boolean;
 declare let ENV_IS_CLIENT: boolean;
 declare let ENV_VERSION: string;
 
 type Coordinate = [number, number];
-type Shift = [number, number];
+type Shift = [ORIENTATION, number];
 type WebsocketData = (string | number | (string | number)[])[];
 type UntrustedData = unknown;
 
