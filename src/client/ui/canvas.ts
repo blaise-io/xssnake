@@ -250,7 +250,7 @@ export class Canvas {
     }
 
     private _bindEvents(): void {
-        this.canvas.onclick = this._promoteKeyboard.bind(this);
+        this.canvas.onclick = this.promoteKeyboard.bind(this);
         window.onresize = debounce(() => {
             this._setCanvasDimensions();
             this._flushShapeCache();
@@ -265,12 +265,10 @@ export class Canvas {
         State.events.trigger(EV_WIN_FOCUS_CHANGE, this.focus);
     }
 
-    _promoteKeyboard(ev: KeyboardEvent): void {
-        if (Number(ev.which) !== 1) {
-            // Only LMB
-            return;
+    private promoteKeyboard(event: MouseEvent): void {
+        if (event.button === 0) {
+            instruct("No mousing please", 2000);
         }
-        instruct("No mousing please", 2000);
     }
 
     private _setCanvasDimensions(): void {

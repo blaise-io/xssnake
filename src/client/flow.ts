@@ -105,18 +105,19 @@ export class StageFlow {
         }
     }
 
-    private handleKeys(ev: KeyboardEvent): void {
+    private handleKeys(event: KeyboardEvent): void {
         // Firefox disconnects websocket on Esc. Disable that.
-        // Also prevent the tab key focusing things outside canvas.
-        if (ev.keyCode === KEY.ESCAPE || ev.keyCode === KEY.TAB) {
-            ev.preventDefault();
+        // Also prevent the tab key focusing objects outside the canvas.
+        if (event.key === KEY.ESCAPE || event.key === KEY.TAB) {
+            event.preventDefault();
         }
 
         // Ignore key when user is in input field. Start screen might
         // contain a dialog, so do not use State.keysBlocked here.
+        // TODO: State.keysBlocked should be an enum for this reason.
         if (!State.shapes.INPUT_CARET) {
             // Mute/Unmute
-            if (ev.keyCode === KEY.MUTE) {
+            if (event.key === KEY.MUTE) {
                 const mute = !storage.get(STORAGE.MUTE) as boolean;
                 storage.set(STORAGE.MUTE, mute);
                 instruct("Sounds " + (mute ? "muted" : "unmuted"), 1000);

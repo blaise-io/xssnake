@@ -73,7 +73,7 @@ export class Menu {
     }
 
     handleKeys(event: KeyboardEvent): boolean {
-        switch (event.keyCode) {
+        switch (event.key) {
             case KEY.UP:
                 this.previous();
                 State.audio.play("menu");

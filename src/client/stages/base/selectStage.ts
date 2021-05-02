@@ -25,7 +25,7 @@ export class SelectStage implements StageInterface {
             return;
         }
 
-        switch (event.keyCode) {
+        switch (event.key) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
                 State.flow.previousStage();

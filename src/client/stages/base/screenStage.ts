@@ -20,7 +20,7 @@ export class ScreenStage implements StageInterface {
     }
 
     private handleKeys(event: KeyboardEvent): void {
-        switch (event.keyCode) {
+        switch (event.key) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
             case KEY.ENTER:

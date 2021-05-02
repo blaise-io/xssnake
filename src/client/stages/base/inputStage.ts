@@ -81,13 +81,13 @@ export abstract class InputStage implements StageInterface {
         State.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
     }
 
-    private handleKeys(ev: KeyboardEvent): void {
+    private handleKeys(event: KeyboardEvent): void {
         let value;
         let top;
-        switch (ev.keyCode) {
+        switch (event.key) {
             case KEY.ESCAPE:
                 State.flow.previousStage();
-                ev.preventDefault();
+                event.preventDefault();
                 break;
             case KEY.ENTER:
                 value = this.value.trim();

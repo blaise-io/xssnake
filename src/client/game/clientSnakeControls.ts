@@ -7,7 +7,7 @@ export class ClientSnakeControls {
 
     constructor(public snake: ClientSnake) {
         State.events.on("keydown", NS.SNAKE_CONTROLS, (event) => {
-            const direction = KEY_TO_DIRECTION[event.keyCode];
+            const direction = KEY_TO_DIRECTION[event.key];
             if (!State.keysBlocked && typeof direction !== "undefined") {
                 this.setDirection(direction);
             }

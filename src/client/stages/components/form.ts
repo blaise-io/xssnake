@@ -61,7 +61,7 @@ export class Form {
     }
 
     handleKeys(event: KeyboardEvent): boolean {
-        switch (event.keyCode) {
+        switch (event.key) {
             case KEY.UP:
                 this.switchField(-1);
                 State.audio.play("menu");

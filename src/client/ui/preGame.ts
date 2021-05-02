@@ -21,7 +21,7 @@ import { Dialog, DialogType } from "./dialog";
 export class PreGameUI {
     private dialog: Dialog;
     private countdownStarted: Date;
-    private countdownInterval: any;
+    private countdownInterval: number;
     private confirmExit: boolean;
     private confirmStart: boolean;
 
@@ -55,11 +55,11 @@ export class PreGameUI {
         State.events.off("keydown", NS.PRE_GAME);
     }
 
-    handleKeys(ev: KeyboardEvent): void {
+    handleKeys(event: KeyboardEvent): void {
         if (State.keysBlocked) {
             return;
         }
-        switch (ev.keyCode) {
+        switch (event.key) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
                 this.confirmExit = true;

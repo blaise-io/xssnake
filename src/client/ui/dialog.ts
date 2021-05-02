@@ -102,8 +102,8 @@ export class Dialog {
         }
     }
 
-    private _handleKeys(ev: KeyboardEvent): void {
-        switch (ev.keyCode) {
+    private _handleKeys(event: KeyboardEvent): void {
+        switch (event.key) {
             case KEY.LEFT:
             case KEY.UP:
             case KEY.DOWN:

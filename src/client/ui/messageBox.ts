@@ -1,4 +1,5 @@
 import { CANVAS } from "../../shared/const";
+import { PixelCollection } from "../../shared/pixelCollection";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { FRAME, KEY, NS, UC } from "../const";
@@ -46,7 +47,7 @@ export class MessageBoxUI {
         this.updateMessages();
     }
 
-    destruct() {
+    destruct(): void {
         State.events.off("keydown", NS.CHAT);
         if (this.inputField) {
             this.inputField.destruct();
@@ -54,16 +55,16 @@ export class MessageBoxUI {
         }
     }
 
-    bindEvents() {
+    bindEvents(): void {
         State.events.on("keydown", NS.CHAT, this.handleKeys.bind(this));
     }
 
-    handleKeys(ev: KeyboardEvent) {
-        switch (ev.keyCode) {
+    handleKeys(event: KeyboardEvent): void {
+        switch (event.key) {
             case KEY.ESCAPE:
                 this.hideInput();
                 this.hideEnterKey();
-                ev.preventDefault();
+                event.preventDefault();
                 break;
             case KEY.ENTER:
                 if (this.inputField) {
@@ -72,12 +73,12 @@ export class MessageBoxUI {
                 } else if (!State.keysBlocked) {
                     this.showInput();
                 }
-                ev.preventDefault();
+                event.preventDefault();
                 break;
         }
     }
 
-    showInput() {
+    showInput(): void {
         const x = this.x0 + this.padding.x1 + new ChatMessage("", "").getOffset();
         const y = this.y1 - this.padding.y1 - this.lineHeight;
         const prefix = this.localPlayer.name + ": ";
@@ -93,7 +94,7 @@ export class MessageBoxUI {
         this.showEnterKey();
     }
 
-    hideInput() {
+    hideInput(): void {
         if (this.inputField) {
             this.inputField.destruct();
             this.inputField = undefined;
@@ -101,17 +102,17 @@ export class MessageBoxUI {
         this.updateMessages();
     }
 
-    sendMessage(body) {
+    sendMessage(body: string): void {
         const author = String(this.localPlayer.name);
         if (body.trim()) {
             this.messages.push(new ChatMessage(author, body));
             this.sendMessageFn(body);
             this.skipQueue = true;
         }
-        this.hideEnterKey(!!body.trim());
+        this.hideEnterKey(Boolean(body.trim()));
     }
 
-    showEnterKey() {
+    showEnterKey(): void {
         const x = this.x1 - this.padding.x1 - fontWidth(UC.ENTER_KEY);
         const y = this.y1 - this.lineHeight - this.padding.y1 + 1;
 
@@ -120,9 +121,6 @@ export class MessageBoxUI {
         shape.flags.isOverlay = true;
     }
 
-    /**
-     * @param {boolean=} flashKey
-     */
     hideEnterKey(flashKey?: boolean): void {
         const speed = FRAME * 4;
         if (flashKey) {
@@ -133,18 +131,18 @@ export class MessageBoxUI {
         }
     }
 
-    getDisplayMessages(num) {
+    getDisplayMessages(num: number): ChatMessage[] {
         return this.messages.slice(-num - 1 - this.queued, this.messages.length - this.queued);
     }
 
-    getNumMessagesFit() {
+    getNumMessagesFit(): number {
         let fits = this.y1 - this.padding.y1 - (this.y0 + this.padding.y0);
         fits = Math.floor(fits / this.lineHeight);
         fits -= this.inputField ? 0 : 1;
         return fits;
     }
 
-    debounceUpdate() {
+    debounceUpdate(): void {
         if (this.animating && !this.skipQueue) {
             this.queued++;
         } else {
@@ -152,27 +150,17 @@ export class MessageBoxUI {
         }
     }
 
-    updateMessages() {
-        let num;
-        let shape;
-        let messages;
-
-        shape = new Shape();
-        shape.mask = [
-            this.x0,
-            this.y0,
-            this.x1,
-            this.y1 - (this.inputField ? this.lineHeight - this.padding.y1 : 0),
-        ];
-
-        num = this.getNumMessagesFit();
-        messages = this.getDisplayMessages(num);
-
-        if (messages.length) {
-            State.shapes.MSG_BOX = shape;
-        } else {
-            return false;
+    updateMessages(): void {
+        const num = this.getNumMessagesFit();
+        const messages = this.getDisplayMessages(num);
+        if (!messages.length) {
+            return;
         }
+
+        const shape = new Shape();
+        const top = this.inputField ? this.lineHeight - this.padding.y1 : 0;
+        shape.mask = [this.x0, this.y0, this.x1, this.y1 - top];
+        State.shapes.MSG_BOX = shape;
 
         for (let i = 0, m = messages.length; i < m; i++) {
             shape.add(this.getMessagePixels(i, messages[i]));
@@ -189,15 +177,13 @@ export class MessageBoxUI {
         }
     }
 
-    getMessagePixels(lineIndex, message) {
-        let x;
-        let y;
-        x = this.x0 + this.padding.x0;
-        y = this.y0 + this.padding.y0 + lineIndex * this.lineHeight;
+    getMessagePixels(lineIndex: number, message: ChatMessage): PixelCollection {
+        const x = this.x0 + this.padding.x0;
+        const y = this.y0 + this.padding.y0 + lineIndex * this.lineHeight;
         return fontPixels(message.getFormatted(), x + message.getOffset(), y);
     }
 
-    animate(shape): void {
+    animate(shape: Shape): void {
         this.animating = true;
         const anim = {
             to: [0, -this.lineHeight] as Coordinate,
@@ -207,14 +193,14 @@ export class MessageBoxUI {
         animate(shape, anim);
     }
 
-    animateCallback(shape) {
+    animateCallback(shape: Shape): void {
         shape.transform.translate = [0, -this.lineHeight];
         shape.pixels.removeLine(this.y0 + this.lineHeight);
         shape.uncache();
         setTimeout(this.processQueue.bind(this), 200);
     }
 
-    processQueue() {
+    processQueue(): void {
         this.animating = false;
         if (this.queued >= 1) {
             this.debounceUpdate();

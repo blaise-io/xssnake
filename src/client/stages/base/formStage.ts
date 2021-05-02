@@ -22,11 +22,11 @@ export abstract class FormStage implements StageInterface {
         State.shapes.stage = undefined;
     }
 
-    private handleKeys(ev: KeyboardEvent): void {
+    private handleKeys(event: KeyboardEvent): void {
         if (State.keysBlocked) {
             return;
         }
-        switch (ev.keyCode) {
+        switch (event.key) {
             case KEY.BACKSPACE:
             case KEY.ESCAPE:
                 State.flow.previousStage();
@@ -35,7 +35,7 @@ export abstract class FormStage implements StageInterface {
                 State.flow.switchStage(this.nextStage);
                 break;
             default:
-                if (this.form.handleKeys(ev)) {
+                if (this.form.handleKeys(event)) {
                     State.shapes.stage = this.getShape();
                 }
         }

@@ -5,20 +5,21 @@ export const FRAME = 1000 / 60;
 export const MIN_FRAME_DELTA = 5;
 export const MAX_FRAME_DELTA = 250;
 
-// TODO: Switch to event.code?
+// Corresponds with Event.key.
+// TODO: Use Event.code?
 export const enum KEY {
-    BACKSPACE = 8,
-    TAB = 9,
-    ENTER = 13,
-    ESCAPE = 27,
-    SPACE = 32,
-    LEFT = 37,
-    UP = 38,
-    RIGHT = 39,
-    DOWN = 40,
-    FULLSCREEN = 70, // F key
-    MUTE = 77, // M key
-    START = 83, // S key
+    BACKSPACE = "Backspace",
+    TAB = "Tab",
+    ENTER = "Enter",
+    ESCAPE = "Escape",
+    SPACE = " ",
+    LEFT = "ArrowLeft",
+    UP = "ArrowUp",
+    RIGHT = "ArrowRight",
+    DOWN = "ArrowDown",
+    FULLSCREEN = "f",
+    MUTE = "m",
+    START = "s",
 }
 
 export const FIELD_BUGS = -1;
