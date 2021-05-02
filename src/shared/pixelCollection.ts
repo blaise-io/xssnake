@@ -2,8 +2,11 @@ import { BoundingBox } from "./boundingBox";
 import { sort } from "./util";
 
 /**
+ * Store and manipulate pixels.
+ * This class contains code optimized for speed.
+ *
  * Shape pixels stored in a multi-dimensional array.
- * I tried using Uint8Array, but performance was bad.
+ * [[4, 5, 3, 9], undefined, [3, 5, 2]].
  */
 export class PixelCollection {
     pixels: number[][];
@@ -37,7 +40,7 @@ export class PixelCollection {
         const pixels = this.pixels;
         for (let i = 0, m = pixels.length; i < m; i++) {
             if (pixels[i]) {
-                pixels[i] = sort(pixels[i]);
+                sort(pixels[i]);
             }
         }
         return this;
@@ -71,18 +74,16 @@ export class PixelCollection {
         return -1 !== this.index(x, y);
     }
 
-    remove(x: number, y: number): PixelCollection {
+    remove(x: number, y: number): void {
         const index = this.index(x, y);
         if (-1 !== index) {
             this.pixels[y].splice(index, 1);
         }
-        return this;
     }
 
-    removeLine(y: number): PixelCollection {
+    removeLine(y: number): void {
         if (this.pixels[y]) {
             this.pixels[y].length = 0;
         }
-        return this;
     }
 }

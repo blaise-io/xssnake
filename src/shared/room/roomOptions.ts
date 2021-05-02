@@ -2,7 +2,7 @@ import { AUDIENCE, Message, NETCODE } from "./netcode";
 
 export class RoomOptionsMessage implements Message {
     static id = NETCODE.ROOM_JOIN_MATCHING;
-    static audience = AUDIENCE.SERVER;
+    static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public options: RoomOptions) {}
 

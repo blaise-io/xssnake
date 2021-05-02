@@ -53,10 +53,9 @@ export function eq(a: Coordinate, b: Coordinate): boolean {
 }
 
 /**
- * Faster sorting function.
- * http://jsperf.com/javascript-sort/
+ * Faster-than-native sorting function.
  */
-export function sort(arr: number[]): number[] {
+export function sort(arr: number[]): void {
     for (let i = 1; i < arr.length; i++) {
         const tmp = arr[i];
         let index = i;
@@ -66,7 +65,6 @@ export function sort(arr: number[]): number[] {
         }
         arr[index] = tmp;
     }
-    return arr;
 }
 
 export function benchmark(iterations: number, fn: () => void, label = ""): void {

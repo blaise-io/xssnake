@@ -65,7 +65,7 @@ export class ServerPlayer extends Player {
             const Message = NETCODE_MAP[netcodeId];
             if (Message) {
                 const audience = Message.audience;
-                if (audience & AUDIENCE.SERVER_ROOM || audience & AUDIENCE.SERVER) {
+                if (audience & AUDIENCE.SERVER_ROOM || audience & AUDIENCE.SERVER_MATCHMAKING) {
                     const messageObj = Message.fromNetcode(message.substring(2));
                     console.log("IN", messageObj);
                     if (messageObj) {
@@ -79,7 +79,7 @@ export class ServerPlayer extends Player {
     emitMessage(event: NETCODE, audience: AUDIENCE, message: Message): void {
         if (this.room && audience & AUDIENCE.SERVER_ROOM) {
             this.room.emitter.emit(event, this.client, message);
-        } else if (audience & AUDIENCE.SERVER) {
+        } else if (audience & AUDIENCE.SERVER_MATCHMAKING) {
             this.server.emitter.emit(event, this.client, message);
         }
     }
