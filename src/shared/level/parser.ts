@@ -1,10 +1,4 @@
-import {
-    DIRECTION_DOWN,
-    DIRECTION_LEFT,
-    DIRECTION_RIGHT,
-    DIRECTION_UP,
-    ROOM_CAPACITY,
-} from "../const";
+import { DIRECTION, ROOM_CAPACITY } from "../const";
 import { PixelCollection } from "../pixelCollection";
 import { Spawn } from "./spawn";
 
@@ -84,7 +78,7 @@ export class Parser {
         }
     }
 
-    getDirectionForSpawn(spawn: Coordinate): number {
+    getDirectionForSpawn(spawn: Coordinate): DIRECTION {
         for (let i = 0, m = this.spawnDirections.length; i < m; i++) {
             if (!this.spawnDirections[i]) {
                 continue;
@@ -94,13 +88,11 @@ export class Parser {
             const dy = spawn[1] - this.spawnDirections[i][1];
             if (1 === Math.abs(dx) + Math.abs(dy)) {
                 if (dx === 0) {
-                    return dy === 1 ? DIRECTION_UP : DIRECTION_DOWN;
+                    return dy === 1 ? DIRECTION.UP : DIRECTION.DOWN;
                 } else {
-                    return dx === 1 ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                    return dx === 1 ? DIRECTION.LEFT : DIRECTION.RIGHT;
                 }
             }
         }
-
-        throw new Error("Spawn at " + spawn + " is missing a direction");
     }
 }

@@ -1,3 +1,4 @@
+import { DIRECTION } from "../../shared/const";
 import { KEY_TO_DIRECTION, NS } from "../const";
 import { State } from "../state";
 import { ClientSnake } from "./clientSnake";
@@ -19,7 +20,7 @@ export class ClientSnakeControls {
         this.snake = undefined;
     }
 
-    setDirection(direction: number): void {
+    setDirection(direction: DIRECTION): void {
         if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
             this.upcomingDirections.push(direction);
         }
@@ -32,7 +33,7 @@ export class ClientSnakeControls {
         return this.snake.direction;
     }
 
-    isDirectionAllowed(direction: number, prevDirection: number): boolean {
+    isDirectionAllowed(direction: DIRECTION, prevDirection: number): boolean {
         const turn = Math.abs(direction - prevDirection);
         return (
             this.upcomingDirections.length <= 2 &&

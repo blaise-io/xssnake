@@ -1,11 +1,4 @@
-import {
-    DIRECTION_DOWN,
-    DIRECTION_LEFT,
-    DIRECTION_RIGHT,
-    DIRECTION_UP,
-    GAME,
-    CANVAS,
-} from "../../shared/const";
+import { CANVAS, DIRECTION, GAME } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
@@ -16,22 +9,12 @@ import { font, fontWidth } from "./font";
 import { animate, lifetime } from "./shapeClient";
 import { zoom } from "./transformClient";
 
-/**
- * @param {string} text
- * @param {number} x
- * @param {number} y
- * @param {number} direction
- * @return {Shape}
- */
-export function tooltip(text, x, y, direction) {
-    let width;
+export function tooltip(text: string, x: number, y: number, direction: DIRECTION): Shape {
     let shape;
     let hw;
-
-    width = fontWidth(text);
-
+    const width = fontWidth(text);
     switch (direction) {
-        case 0:
+        case DIRECTION.LEFT:
             shape = font(text, x - width - 6, y - 4);
             // Left
             shape.add(line(x - width - 9, y - 5, x - width - 9, y + 3));
@@ -47,7 +30,7 @@ export function tooltip(text, x, y, direction) {
             shape.add(line(x - 5, y + 2, x - 2, y - 1));
             shape.add(line(x - 5, y + 3, x - 2, y));
             break;
-        case 1:
+        case DIRECTION.UP:
             hw = Math.ceil(width / 2);
             shape = font(text, x - hw, y - 13);
             // Top
@@ -67,7 +50,7 @@ export function tooltip(text, x, y, direction) {
             shape.remove(line(x - 3, y - 4, x + 3, y - 4));
             shape.remove(line(x - 3, y - 5, x + 3, y - 5));
             break;
-        case 2:
+        case DIRECTION.RIGHT:
             shape = font(text, x + 8, y - 4);
             // Right
             shape.add(line(x + width + 9, y - 5, x + width + 9, y + 3));
@@ -83,7 +66,7 @@ export function tooltip(text, x, y, direction) {
             shape.add(line(x + 5, y + 2, x + 2, y - 1));
             shape.add(line(x + 5, y + 3, x + 2, y));
             break;
-        case 3:
+        case DIRECTION.DOWN:
             hw = Math.ceil(width / 2);
             shape = font(text, x - hw, y + 6);
             // Top
@@ -106,37 +89,28 @@ export function tooltip(text, x, y, direction) {
     return shape;
 }
 
-/**
- * @param {string} text
- * @param {Coordinate} part
- * @param {number} direction
- * @return {Shape}
- */
-export function tooltipName(text, part, direction) {
-    let x;
-    let y;
-    const t = GAME.TILE;
-    const d = GAME.TILE * 2.5;
+export function tooltipName(text: string, part: Coordinate, direction: DIRECTION): Shape {
+    const distance = GAME.TILE * 2.5;
 
-    x = part[0] * t;
-    y = part[1] * t;
+    let x = part[0] * GAME.TILE;
+    let y = part[1] * GAME.TILE;
 
     switch (direction) {
-        case DIRECTION_LEFT:
-            y += t;
-            x -= t;
+        case DIRECTION.LEFT:
+            y += GAME.TILE;
+            x -= GAME.TILE;
             break;
-        case DIRECTION_UP:
-            y -= t;
-            x += t;
+        case DIRECTION.UP:
+            y -= GAME.TILE;
+            x += GAME.TILE;
             break;
-        case DIRECTION_RIGHT:
-            y += t;
-            x += d;
+        case DIRECTION.RIGHT:
+            y += GAME.TILE;
+            x += distance;
             break;
-        case DIRECTION_DOWN:
-            y += d;
-            x += t;
+        case DIRECTION.DOWN:
+            y += distance;
+            x += GAME.TILE;
             break;
     }
 
@@ -207,16 +181,16 @@ export function explosion(location: Coordinate, direction = -1, intensity = 16):
     const d = 20;
     while (intensity--) {
         switch (direction) {
-            case DIRECTION_LEFT:
+            case DIRECTION.LEFT:
                 to = [randomRange(-w, d), randomRange(-w, w)];
                 break;
-            case DIRECTION_UP:
+            case DIRECTION.UP:
                 to = [randomRange(-w, w), randomRange(-d, w)];
                 break;
-            case DIRECTION_RIGHT:
+            case DIRECTION.RIGHT:
                 to = [randomRange(-d, w), randomRange(-w, w)];
                 break;
-            case DIRECTION_DOWN:
+            case DIRECTION.DOWN:
                 to = [randomRange(-w, w), randomRange(-w, d)];
                 break;
             default:

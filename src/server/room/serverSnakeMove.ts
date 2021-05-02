@@ -1,6 +1,5 @@
 import {
-    DIRECTION_DOWN,
-    DIRECTION_LEFT,
+    DIRECTION,
     NETCODE_SYNC_MS,
     VALIDATE_ERR_GAP,
     VALIDATE_ERR_MISMATCHES,
@@ -13,7 +12,7 @@ import { Sanitizer } from "../../shared/util/sanitizer";
 export class ServerSnakeMove {
     private status: number;
     parts: Coordinate[];
-    direction: number;
+    direction: DIRECTION;
 
     constructor(public dirtyMove, public player) {
         this.parts = undefined;
@@ -41,7 +40,7 @@ export class ServerSnakeMove {
         }
 
         direction = new Sanitizer(snake.getValueOr()[0]);
-        direction.assertBetween(DIRECTION_LEFT, DIRECTION_DOWN);
+        direction.assertBetween(DIRECTION.LEFT, DIRECTION.DOWN);
 
         if (!direction.valid()) {
             return false;

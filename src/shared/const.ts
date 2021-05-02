@@ -55,10 +55,17 @@ export const GAME_SHIFT_MAP = [
     [0, 1],
 ];
 
-export const DIRECTION_LEFT = 0;
-export const DIRECTION_UP = 1;
-export const DIRECTION_RIGHT = 2;
-export const DIRECTION_DOWN = 3;
+export const enum DIRECTION {
+    LEFT,
+    UP,
+    RIGHT,
+    DOWN,
+}
+
+export const enum ORIENTATION {
+    HORIZONTAL,
+    VERTICAL,
+}
 
 export const ROOM_KEY_LENGTH = 5;
 export const ROOM_CAPACITY = 6;

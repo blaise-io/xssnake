@@ -1,3 +1,4 @@
+import { DIRECTION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
 import { ClientSnake } from "../game/clientSnake";
@@ -21,7 +22,7 @@ export class ClientPlayer extends Player {
         this.snake = new ClientSnake(index, this.local, this.name, this.emitSnake, level);
     }
 
-    emitSnake(direction: number): void {
+    emitSnake(direction: DIRECTION): void {
         console.log(direction);
     }
 

@@ -1,4 +1,4 @@
-import { NETCODE_SYNC_MS } from "./const";
+import { DIRECTION, NETCODE_SYNC_MS } from "./const";
 import { Collision } from "./game/collision";
 import { Level } from "./level/level";
 import { AUDIENCE, Message, NETCODE } from "./room/netcode";
@@ -7,7 +7,7 @@ export class SnakeMessage implements Message {
     static id = NETCODE.SNAKE_UPDATE;
     static audience = AUDIENCE.SERVER_ROOM;
 
-    constructor(public direction: number, public parts: Coordinate[]) {}
+    constructor(public direction: DIRECTION, public parts: Coordinate[]) {}
 
     static fromSnake(snake: Snake, direction = -1): SnakeMessage {
         // Direction can be upcoming, may not be part of snake.
@@ -41,7 +41,7 @@ export class SnakeMessage implements Message {
 export class Snake {
     /** Head is last in array */
     parts: Coordinate[];
-    direction: number;
+    direction: DIRECTION;
     size: number;
     speed: number;
     crashed: boolean;

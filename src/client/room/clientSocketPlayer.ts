@@ -1,4 +1,5 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
+import { DIRECTION } from "../../shared/const";
 import { Message, MessageConstructor } from "../../shared/room/netcode";
 import { NameMessage } from "../../shared/room/player";
 import { SnakeMessage } from "../../shared/snake";
@@ -103,7 +104,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         State.events.trigger(data[0], data.slice(1));
     }
 
-    emitSnake(direction: number): void {
+    emitSnake(direction: DIRECTION): void {
         this.send(SnakeMessage.fromSnake(this.snake, direction));
     }
 }
