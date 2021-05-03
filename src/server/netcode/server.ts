@@ -6,8 +6,8 @@ import { ServerRoomManager } from "../room/roomManager";
 import { ServerPlayer } from "../room/serverPlayer";
 
 export interface SocketClient extends ws {
-    isAlive: boolean;
     pingSent: number;
+    pongReceived: number;
     latency: number;
 }
 
@@ -29,12 +29,11 @@ export class Server {
         });
 
         this.ws.on("connection", (client: SocketClient) => {
-            client.isAlive = true;
-            client.pingSent = new Date().getTime();
+            client.pingSent = client.pongReceived = new Date().getTime();
             client.latency = 0;
 
             client.on("pong", () => {
-                client.isAlive = true;
+                client.pongReceived = new Date().getTime();
                 client.latency = new Date().getTime() - client.pingSent;
             });
 
@@ -43,10 +42,9 @@ export class Server {
 
         this.pingInterval = setInterval(() => {
             this.ws.clients.forEach((client: SocketClient) => {
-                if (client.isAlive === false) {
+                if (client.pongReceived - client.pingSent > HEARTBEAT_INTERVAL_MS * 2) {
                     return client.terminate();
                 }
-                client.isAlive = false;
                 client.pingSent = new Date().getTime();
                 client.ping();
             });

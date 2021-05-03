@@ -99,11 +99,6 @@ export class ServerPlayer extends Player {
             return false;
         }
 
-        // if (!this.heartbeat.isAlive()) {
-        //     this.disconnect();
-        //     return false;
-        // }
-
         if (this.client) {
             if (data) {
                 emit = data.slice();

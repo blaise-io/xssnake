@@ -45,12 +45,10 @@ export class ServerGame {
 
     bindEvents(): void {
         this.roomEmitter.on(String(NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));
-        // this.roomEmitter.on(String(NC_PONG), this.ncPong.bind(this));
     }
 
     unbindEvents(): void {
         this.roomEmitter.removeAllListeners(String(NC_SNAKE_UPDATE));
-        // this.roomEmitter.removeAllListeners(String(NC_PONG));
     }
 
     ncSnakeUpdate(dirtySnake: WebsocketData, player: ServerPlayer): void {
@@ -61,16 +59,6 @@ export class ServerGame {
         } else {
             this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize());
         }
-    }
-
-    getCrashedCount(): number {
-        let count = 0;
-        for (let i = 0, m = this.players.players.length; i < m; i++) {
-            if (this.players.players[i].snake.crashed) {
-                count++;
-            }
-        }
-        return count;
     }
 
     get averageLatencyInTicks(): number {
