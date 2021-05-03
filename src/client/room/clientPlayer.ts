@@ -11,6 +11,7 @@ export class ClientPlayer extends Player {
         this.snake = undefined;
     }
 
+    /** @deprecated */
     deserialize(serialized: [string, number]): void {
         super.deserialize(serialized);
         if (!this.connected && this.snake) {

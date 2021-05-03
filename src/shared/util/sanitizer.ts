@@ -1,4 +1,13 @@
+export function isStrOfLen(data: unknown, len: number): boolean {
+    return typeof data === "string" && data.length === len;
+}
+
+export function isArrayOfLen(data: unknown, len: number): boolean {
+    return data instanceof Array && data.length === len;
+}
+
 /**
+ * @deprecated
  * Sanitizer / Sanitize user input.
  * @param {?=} value
  * @constructor

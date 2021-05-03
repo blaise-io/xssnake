@@ -46,7 +46,8 @@ export const enum GAME {
 
 /** @deprecated: Use Message */ export const SE_PLAYER_DISCONNECT = 101;
 /** @deprecated: Use Message */ export const SE_PLAYER_COLLISION = 102;
-/** @deprecated: Use Message */ export const HEARTBEAT_INTERVAL_MS = 5000;
+
+export const HEARTBEAT_INTERVAL_MS = 5000;
 
 export const GAME_SHIFT_MAP = [
     [-1, 0],

@@ -1,14 +1,14 @@
 import { NC_ROUND_SERIALIZE } from "../../shared/const";
+import { RoomOptions } from "../../shared/room/roomOptions";
 import { NS } from "../const";
 import { State } from "../state";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRound } from "./clientRound";
-import { ClientOptions } from "./options";
 
 export class ClientRoundSet {
     round: ClientRound;
 
-    constructor(public players: ClientPlayerRegistry, public options: ClientOptions) {
+    constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         this.players = players;
         this.options = options;
         this.round = undefined;

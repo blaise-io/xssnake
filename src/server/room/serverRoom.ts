@@ -1,5 +1,6 @@
-import { NC_CHAT_MESSAGE, NC_ROOM_SERIALIZE, SE_PLAYER_DISCONNECT } from "../../shared/const";
+import { NC_CHAT_MESSAGE, SE_PLAYER_DISCONNECT } from "../../shared/const";
 import { AUDIENCE, Message, NETCODE } from "../../shared/room/netcode";
+import { RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
 import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
@@ -10,8 +11,8 @@ import { ServerRoundSet } from "./serverRoundSet";
 
 // TODO: When do we need to send a room key? --> as part of serialize so others can share
 // TODO: Reuse autojoin flow a bit more?
-export class ServerRoomMessage implements Message {
-    static id = NETCODE.ROOM_SERIALIZE;
+export class RoomKeyMessage implements Message {
+    static id = NETCODE.ROOM_KEY;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public key: string) {}
@@ -74,28 +75,18 @@ export class ServerRoom {
         return !this.isFull() && !this.rounds.hasStarted();
     }
 
-    /** @deprecated */
-    serialize() {
-        return [this.key];
-    }
-
     addPlayer(player: ServerPlayer): void {
         this.players.add(player);
         player.room = this;
-        this.players.emitPlayers();
+        this.players.send(new RoomPlayersMessage(this.players));
     }
 
     detectAutostart(): void {
         this.rounds.detectAutostart(this.isFull());
     }
 
-    /** @deprecated */
-    emit(player: ServerPlayer): void {
-        player.emit(NC_ROOM_SERIALIZE, this.serialize());
-    }
-
     emitAll(player: ServerPlayer): void {
-        player.send(new ServerRoomMessage(this.key));
+        player.send(new RoomKeyMessage(this.key));
         player.send(new RoomOptionsMessage(this.options));
         this.rounds.round.emit(player);
     }
@@ -106,11 +97,11 @@ export class ServerRoom {
         if (!this.rounds.hasStarted()) {
             this.players.remove(player);
         }
-        this.players.emitPlayers();
+        this.players.send(new RoomPlayersMessage(this.players));
         this.detectEmptyRoom();
     }
 
-    /** @deprecated move to manager */
+    /** @deprecated move to RoomManager */
     detectEmptyRoom(): void {
         if (this.players.players.some((sp) => sp.connected)) {
             this.server.roomManager.remove(this);

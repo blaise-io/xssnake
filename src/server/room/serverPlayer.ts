@@ -78,15 +78,15 @@ export class ServerPlayer extends Player {
 
     emitMessage(event: NETCODE, audience: AUDIENCE, message: Message): void {
         if (this.room && audience & AUDIENCE.SERVER_ROOM) {
-            this.room.emitter.emit(event, this.client, message);
+            this.room.emitter.emit(event, this, message);
         } else if (audience & AUDIENCE.SERVER_MATCHMAKING) {
-            this.server.emitter.emit(event, this.client, message);
+            this.server.emitter.emit(event, this, message);
         }
     }
 
     send(message: Message): void {
         if (this.connected && this.client) {
-            console.log("OUT", message, message.netcode);
+            console.log("OUT", message.netcode, message);
             this.client.send((message.constructor as MessageConstructor).id + message.netcode);
         }
     }

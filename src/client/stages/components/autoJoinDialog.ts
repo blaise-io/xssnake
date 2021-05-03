@@ -1,4 +1,4 @@
-import { NC_ROOM_STATUS } from "../../../shared/const";
+import { GetRoomStatusMessage } from "../../../shared/room/roomOptions";
 import { _ } from "../../../shared/util";
 import { ClientRoom } from "../../room/clientRoom";
 import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
@@ -26,11 +26,6 @@ export class AutoJoinDialog {
     }
 
     onconnect(): void {
-        this.messageTimeout = window.setTimeout(() => {
-            this.dialog.body = _("Getting room properties…");
-            this.messageTimeout = window.setTimeout(() => {
-                this.clientPlayer.emitDeprecated(NC_ROOM_STATUS, [this.roomKey]);
-            }, 500);
-        }, 500);
+        this.clientPlayer.send(new GetRoomStatusMessage(this.roomKey));
     }
 }

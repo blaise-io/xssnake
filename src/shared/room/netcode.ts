@@ -6,6 +6,8 @@ export const enum AUDIENCE {
     CLIENT = 1 << 0,
     SERVER_MATCHMAKING = 1 << 1,
     SERVER_ROOM = 1 << 2,
+    SERVER = SERVER_MATCHMAKING | SERVER_ROOM,
+    ALL = CLIENT | SERVER,
 }
 
 export const enum NETCODE {
@@ -23,10 +25,11 @@ export const enum NETCODE {
 
     ROOM_JOIN_KEY = "O1",
     ROOM_JOIN_MATCHING = "O2",
-    ROOM_SERIALIZE = "O3",
+    ROOM_KEY = "O3",
     ROOM_START = "O4",
-    ROOM_STATUS = "O5",
+    ROOM_GET_STATUS = "O5",
     ROOM_JOIN_ERROR = "O6",
+    ROOM_PLAYERS = "O7",
 
     ROUND_SERIALIZE = "R1",
     ROUND_COUNTDOWN = "R2",
@@ -43,7 +46,7 @@ export const enum NETCODE {
 export const NETCODE_MESSAGES = [SnakeMessage, NameMessage, RoomOptionsMessage];
 
 export const NETCODE_MAP = Object.fromEntries(
-    NETCODE_MESSAGES.map((Message: MessageConstructor) => [Message.id, Message]),
+    NETCODE_MESSAGES.map((Message) => [Message.id, Message]),
 );
 
 export interface MessageConstructor {

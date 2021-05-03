@@ -32,7 +32,7 @@ export class ServerGame {
         this.tickInterval = setInterval(this.handleTick.bind(this), SERVER_TICK_INTERVAL);
     }
 
-    destruct() {
+    destruct(): void {
         clearInterval(this.tickInterval);
         this.unbindEvents();
 
@@ -43,12 +43,12 @@ export class ServerGame {
         this.items = undefined;
     }
 
-    bindEvents() {
+    bindEvents(): void {
         this.roomEmitter.on(String(NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));
         // this.roomEmitter.on(String(NC_PONG), this.ncPong.bind(this));
     }
 
-    unbindEvents() {
+    unbindEvents(): void {
         this.roomEmitter.removeAllListeners(String(NC_SNAKE_UPDATE));
         // this.roomEmitter.removeAllListeners(String(NC_PONG));
     }
@@ -63,10 +63,7 @@ export class ServerGame {
         }
     }
 
-    /**
-     * @return {number}
-     */
-    getCrashedCount() {
+    getCrashedCount(): number {
         let count = 0;
         for (let i = 0, m = this.players.players.length; i < m; i++) {
             if (this.players.players[i].snake.crashed) {
@@ -84,20 +81,20 @@ export class ServerGame {
         return Math.round(average(latencies) / SERVER_TICK_INTERVAL);
     }
 
-    handleTick() {
+    handleTick(): void {
         const now = +new Date();
         this.gameloop(++this.tick, now - this.lastTick);
         this.lastTick = now;
     }
 
-    gameloop(tick, elapsed) {
+    gameloop(tick: number, elapsed: number): void {
         const shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
         this.handleCrashingPlayers(tick - this.averageLatencyInTicks);
         this.players.moveSnakes(tick, elapsed, shift);
     }
 
-    handleCrashingPlayers(tick) {
+    handleCrashingPlayers(tick: number): void {
         const collisions = [];
         const crashingPlayers = this.players.getCollisionsOnTick(tick);
 

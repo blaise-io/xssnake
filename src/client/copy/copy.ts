@@ -30,11 +30,6 @@ export const COPY_MAIN_INSTRUCT = [
 export const COPY_COUNTDOWN_TITLE = "Get ready!";
 export const COPY_COUNTDOWN_BODY = "Game starting in: {0}";
 
-// Lost connection.
-export const COPY_SOCKET_CONNECTION_LOST = "Connection lost";
-export const COPY_SOCKET_CANNOT_CONNECT = "Cannot connect";
-export const COPY_SOCKET_SERVER_AWAY = "Server went away";
-
 // Game options stage.
 
 export const COPY_CHAT_INSTRUCT = "Press " + UC.ENTER_KEY + " to chat.";

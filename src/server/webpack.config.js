@@ -24,7 +24,7 @@ module.exports = (env, argv) => {
         resolve: {
             extensions: [".tsx", ".ts", ".js"],
         },
-        devtool: env.mode === "production" ? "source-map" : "cheap-source-map",
+        devtool: "source-map",
         output: {
             filename: "server.js",
             path: __dirname + "/../../dist",

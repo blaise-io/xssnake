@@ -22,17 +22,15 @@ export class NameMessage implements Message {
 }
 
 export class Player {
-    connected: boolean;
-    score: number;
-    snake: Snake;
-    local: boolean;
+    constructor(
+        public name = "",
+        public connected = false,
+        public local = false,
+        public score = 0,
+        public snake?: Snake,
+    ) {}
 
-    constructor(public name = "") {
-        this.connected = false;
-        this.score = 0;
-        this.snake = undefined;
-    }
-
+    /** @deprecated */
     deserialize(serialized: [string, number]): void {
         let byte;
         [this.name, byte] = serialized;
@@ -41,6 +39,7 @@ export class Player {
         this.score = byte >> 2;
     }
 
+    /** @deprecated */
     serialize(local: boolean): [string, number] {
         return [
             this.name,

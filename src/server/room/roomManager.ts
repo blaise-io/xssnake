@@ -1,5 +1,4 @@
 import {
-    NC_PLAYERS_SERIALIZE,
     NC_ROOM_JOIN_ERROR,
     NC_ROOM_JOIN_KEY,
     NC_ROOM_STATUS,
@@ -8,14 +7,18 @@ import {
     ROOM_KEY_LENGTH,
 } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
-import { Player } from "../../shared/room/player";
-import { RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
+import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
+import {
+    GetRoomStatusMessage,
+    RoomOptions,
+    RoomOptionsMessage,
+} from "../../shared/room/roomOptions";
 import { randomStr } from "../../shared/util";
 import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
 import { getMatchingRoom } from "./matcher";
 import { ServerPlayer } from "./serverPlayer";
-import { ServerRoom, ServerRoomMessage } from "./serverRoom";
+import { ServerRoom, RoomKeyMessage } from "./serverRoom";
 
 export class ServerRoomManager {
     private rooms: ServerRoom[];
@@ -33,12 +36,26 @@ export class ServerRoomManager {
     }
 
     bindEvents(): void {
-        this.server.emitter.on(String(NC_ROOM_STATUS), this.emitRoomStatus.bind(this));
+        this.server.emitter.on(
+            NETCODE.ROOM_GET_STATUS,
+            (player: ServerPlayer, message: GetRoomStatusMessage) => {
+                const status = this.getRoomStatus(message.roomKey);
+                if (status === ROOM_STATUS.JOINABLE) {
+                    const room = this.getRoomByKey(message.roomKey);
+                    player.send(new RoomKeyMessage(room.key));
+                    player.send(new RoomOptionsMessage(room.options));
+                    player.send(new RoomPlayersMessage(room.players));
+                    return;
+                }
+                player.send(new JoinRoomErrorMessage(status));
+            },
+        );
+
         this.server.emitter.on(String(NC_ROOM_JOIN_KEY), this.autojoinRoom.bind(this));
 
         this.server.emitter.on(
             NETCODE.ROOM_JOIN_MATCHING,
-            (message: RoomOptionsMessage, player: ServerPlayer) => {
+            (player: ServerPlayer, message: RoomOptionsMessage) => {
                 const matchingRoom = getMatchingRoom(this.rooms, message.options);
                 const room = matchingRoom || this.createRoom(message.options);
 
@@ -70,8 +87,7 @@ export class ServerRoomManager {
     }
 
     createRoom(options: RoomOptions): ServerRoom {
-        const id = randomStr(ROOM_KEY_LENGTH);
-        const room = new ServerRoom(this.server, options, id);
+        const room = new ServerRoom(this.server, options, randomStr(ROOM_KEY_LENGTH));
         this.rooms.push(room);
         return room;
     }
@@ -90,13 +106,12 @@ export class ServerRoomManager {
         }
     }
 
-    getRoomByKey(key: string): ServerRoom | null {
+    getRoomByKey(key: string): ServerRoom | undefined {
         for (let i = 0, m = this.rooms.length; i < m; i++) {
             if (key === this.rooms[i].key) {
                 return this.rooms[i];
             }
         }
-        return null;
     }
 
     getSanitizedRoomKey(dirtyKeyArr: UntrustedData): string {
@@ -106,30 +121,37 @@ export class ServerRoomManager {
     }
 
     getRoomStatus(key: string): number {
-        if (!key) {
+        if (typeof key != "string" || key.length !== ROOM_KEY_LENGTH) {
             return ROOM_STATUS.INVALID_KEY;
         }
+
         const room = this.getRoomByKey(key);
+
         if (!room) {
             return ROOM_STATUS.NOT_FOUND;
-        } else if (room.isFull()) {
+        }
+
+        if (room.isFull()) {
             return ROOM_STATUS.FULL;
-        } else if (room.rounds.hasStarted()) {
+        }
+
+        if (room.rounds.hasStarted()) {
             return ROOM_STATUS.IN_PROGRESS;
         }
+
         return ROOM_STATUS.JOINABLE;
     }
 
-    emitRoomStatus(dirtyKeyArr: string[], player: ServerPlayer): void {
-        const key = this.getSanitizedRoomKey(dirtyKeyArr);
-        const status = this.getRoomStatus(key);
-        if (status === ROOM_STATUS.JOINABLE) {
-            const room = this.getRoomByKey(key);
-            player.send(new ServerRoomMessage(room.key));
-            player.send(new RoomOptionsMessage(room.options));
-            player.emit(NC_PLAYERS_SERIALIZE, room.players.serialize(player as Player));
-        } else {
-            player.emit(NC_ROOM_JOIN_ERROR, [status]);
-        }
-    }
+    // emitRoomStatus(dirtyKeyArr: string[], player: ServerPlayer): void {
+    //     const key = this.getSanitizedRoomKey(dirtyKeyArr);
+    //     const status = this.getRoomStatus(key);
+    //     if (status === ROOM_STATUS.JOINABLE) {
+    //         const room = this.getRoomByKey(key);
+    //         player.send(new RoomKeyMessage(room.key));
+    //         player.send(new RoomOptionsMessage(room.options));
+    //         player.send(new RoomPlayersMessage(room.players));
+    //     } else {
+    //         player.emit(NC_ROOM_JOIN_ERROR, [status]);
+    //     }
+    // }
 }

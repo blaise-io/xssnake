@@ -1,14 +1,9 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
 import { DIRECTION } from "../../shared/const";
-import { Message, MessageConstructor } from "../../shared/room/netcode";
+import { Message, MessageConstructor, NETCODE_MAP } from "../../shared/room/netcode";
 import { NameMessage } from "../../shared/room/player";
 import { SnakeMessage } from "../../shared/snake";
-import { noop } from "../../shared/util";
-import {
-    COPY_SOCKET_CANNOT_CONNECT,
-    COPY_SOCKET_CONNECTION_LOST,
-    COPY_SOCKET_SERVER_AWAY,
-} from "../copy/copy";
+import { _, noop } from "../../shared/util";
 import { State } from "../state";
 import { error } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
@@ -35,7 +30,7 @@ export class ClientSocketPlayer extends ClientPlayer {
             this.onclose();
         };
         this.connection.onmessage = (event: MessageEvent) => {
-            this.onmessage(event);
+            this.onmessage(event.data);
         };
     }
 
@@ -60,20 +55,14 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connected = true;
         this.onopenCallback();
         this.send(NameMessage.from(this.name));
-        // TODO: reimplement heartbeat to see if server went away? can be done wih
     }
 
     onclose(): void {
         if (this.connected) {
-            error(COPY_SOCKET_CONNECTION_LOST);
+            error(_("Connection lost"));
         } else {
-            error(COPY_SOCKET_CANNOT_CONNECT);
+            error(_("Cannot connect"));
         }
-        this.destruct();
-    }
-
-    timeout(): void {
-        error(COPY_SOCKET_SERVER_AWAY);
         this.destruct();
     }
 
@@ -94,14 +83,26 @@ export class ClientSocketPlayer extends ClientPlayer {
     }
 
     send(message: Message): void {
-        console.info("OUT", (message.constructor as MessageConstructor).id + message.netcode);
+        console.info(
+            "OUT",
+            (message.constructor as MessageConstructor).id + message.netcode,
+            message,
+        );
         this.connection.send((message.constructor as MessageConstructor).id + message.netcode);
     }
 
-    onmessage(event: MessageEvent): void {
-        const data = JSON.parse(event.data);
-        console.log("IN ", data);
-        State.events.trigger(data[0], data.slice(1));
+    onmessage(message: string): void {
+        if (message.length) {
+            const netcodeId = message.substr(0, 2);
+            const Message = NETCODE_MAP[netcodeId];
+            if (Message) {
+                const messageObj = Message.fromNetcode(message.substring(2));
+                console.info("IN", message, messageObj);
+                if (messageObj) {
+                    State.events.trigger(Message.id, messageObj);
+                }
+            }
+        }
     }
 
     emitSnake(direction: DIRECTION): void {

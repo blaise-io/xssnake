@@ -15,21 +15,16 @@ export class ServerRoundSet {
     private levelPlayset: LevelPlayset;
     round: ServerRound;
     private score: ServerScore;
-    private roundIndex: number;
+    private roundIndex = 0;
     private nextRoundTimeout: NodeJS.Timeout;
     constructor(
         public roomEmitter: EventEmitter,
         public players: ServerPlayerRegistry,
         public options: RoomOptions,
     ) {
-        this.roomEmitter = roomEmitter;
-        this.players = players;
-        this.options = options;
-
         this.levelPlayset = new LevelPlayset(options.levelsetIndex);
         this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
         this.score = new ServerScore(players);
-        this.roundIndex = 0;
 
         this.bindEvents();
     }

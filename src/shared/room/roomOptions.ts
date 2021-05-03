@@ -1,8 +1,10 @@
+import { ROOM_KEY_LENGTH } from "../const";
+import { isStrOfLen } from "../util/sanitizer";
 import { AUDIENCE, Message, NETCODE } from "./netcode";
 
 export class RoomOptionsMessage implements Message {
     static id = NETCODE.ROOM_JOIN_MATCHING;
-    static audience = AUDIENCE.SERVER_MATCHMAKING;
+    static audience = AUDIENCE.ALL;
 
     constructor(public options: RoomOptions) {}
 
@@ -32,6 +34,23 @@ export class RoomOptionsMessage implements Message {
             Number(this.options.isPrivate),
             Number(this.options.isXSS),
         ]);
+    }
+}
+
+export class GetRoomStatusMessage implements Message {
+    static id = NETCODE.ROOM_GET_STATUS;
+    static audience = AUDIENCE.SERVER;
+
+    constructor(public roomKey: string) {}
+
+    fromNetcode(untrustedNetcode: string): GetRoomStatusMessage | undefined {
+        if (isStrOfLen(untrustedNetcode, ROOM_KEY_LENGTH)) {
+            return new GetRoomStatusMessage(untrustedNetcode);
+        }
+    }
+
+    get netcode(): string {
+        return this.roomKey;
     }
 }
 

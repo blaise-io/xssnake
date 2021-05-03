@@ -20,13 +20,12 @@ export class GameStage implements StageInterface {
         this.connectServer().then(() => {
             State.flow.data.clientPlayer.send(new RoomOptionsMessage(State.flow.data.roomOptions));
         });
-
-        if (State.flow.data.clientPlayer) {
-            State.flow.data.clientPlayer.destruct();
-        }
     }
 
     destruct(): void {
+        if (State.flow.data.clientPlayer) {
+            State.flow.data.clientPlayer.destruct();
+        }
         delete State.shapes.CONNECTING;
     }
 
