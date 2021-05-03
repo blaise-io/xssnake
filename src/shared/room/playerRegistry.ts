@@ -1,6 +1,7 @@
 import { ROOM_STATUS } from "../const";
-import { AUDIENCE, Message, NETCODE } from "./netcode";
+import { AUDIENCE, NETCODE } from "./netcode";
 import { Player } from "./player";
+import { Message } from "./types";
 
 export class RoomPlayersMessage implements Message {
     static id = NETCODE.ROOM_PLAYERS;

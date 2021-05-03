@@ -6,6 +6,7 @@ import {
     ROOM_KEY_LENGTH,
 } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
+import { NameMessage } from "../../shared/room/player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import {
     GetRoomStatusMessage,
@@ -33,6 +34,7 @@ export class ServerRoomManager {
         this.server.emitter.removeAllListeners(String(NC_ROOM_STATUS));
         this.server.emitter.removeAllListeners(String(NC_ROOM_JOIN_KEY));
         this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_MATCHING);
+        this.server.emitter.removeAllListeners(NETCODE.PLAYER_NAME);
     }
 
     bindEvents(): void {
@@ -51,6 +53,13 @@ export class ServerRoomManager {
             },
         );
 
+        this.server.emitter.on(
+            NETCODE.PLAYER_NAME,
+            (player: ServerPlayer, message: NameMessage) => {
+                player.name = message.name;
+            },
+        );
+
         this.server.emitter.on(String(NC_ROOM_JOIN_KEY), this.autojoinRoom.bind(this));
 
         this.server.emitter.on(
@@ -66,10 +75,9 @@ export class ServerRoomManager {
         );
     }
 
-    /* @deprecated */
-    room(key: string): ServerRoom {
-        return this.rooms[key];
-    }
+    // room(key: string): ServerRoom {
+    //     return this.rooms[key];
+    // }
 
     remove(room: ServerRoom): void {
         room.destruct();

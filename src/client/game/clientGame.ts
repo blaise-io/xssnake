@@ -13,7 +13,7 @@ import { SpawnableRegistry } from "./spawnableRegistry";
 
 export class ClientGame {
     started: boolean;
-    spawnables: any;
+    spawnables: SpawnableRegistry;
 
     constructor(public level: Level, public players: ClientPlayerRegistry) {
         this.players = this.updatePlayers(players);
@@ -23,6 +23,20 @@ export class ClientGame {
 
         this.spawnables = new SpawnableRegistry();
         this.bindEvents();
+    }
+
+    destruct(): void {
+        this.unbindEvents();
+
+        this.spawnables.destruct();
+
+        for (const k in Object.keys(getLevelShapes(this.level))) {
+            State.shapes[k] = undefined;
+        }
+
+        this.level = undefined;
+        this.players = undefined;
+        this.spawnables = undefined;
     }
 
     start(): void {
@@ -88,9 +102,7 @@ export class ClientGame {
         }
     }
 
-    /**
-     * Runs ~ every 16 ms (60 fps)
-     */
+    // Runs ~ every 16 ms (60 fps)
     gameloop(elapsed: number): void {
         // TODO: Fix gravity and animations
         const shift = this.level.gravity.getShift(elapsed);
@@ -99,19 +111,5 @@ export class ClientGame {
         if (this.started) {
             this.players.moveSnakes(this.level, elapsed, shift);
         }
-    }
-
-    destruct(): void {
-        this.unbindEvents();
-
-        this.spawnables.destruct();
-
-        for (const k in Object.keys(getLevelShapes(this.level))) {
-            State.shapes[k] = undefined;
-        }
-
-        this.level = undefined;
-        this.players = undefined;
-        this.spawnables = undefined;
     }
 }

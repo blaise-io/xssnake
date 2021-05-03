@@ -1,6 +1,7 @@
 import { ROOM_KEY_LENGTH } from "../const";
 import { isStrOfLen } from "../util/sanitizer";
-import { AUDIENCE, Message, NETCODE } from "./netcode";
+import { AUDIENCE, NETCODE } from "./netcode";
+import { Message } from "./types";
 
 export class RoomOptionsMessage implements Message {
     static id = NETCODE.ROOM_JOIN_MATCHING;

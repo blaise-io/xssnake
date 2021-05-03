@@ -1,6 +1,6 @@
 import { Level } from "../../shared/level/level";
-import { Message } from "../../shared/room/netcode";
 import { PlayerRegistry, RoomPlayersMessage } from "../../shared/room/playerRegistry";
+import { Message } from "../../shared/room/types";
 import { ServerPlayer } from "./serverPlayer";
 
 export class ServerPlayerRegistry extends PlayerRegistry {

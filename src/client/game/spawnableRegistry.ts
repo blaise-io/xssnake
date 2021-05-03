@@ -1,1 +1,3 @@
-export class SpawnableRegistry {}
+export class SpawnableRegistry {
+    destruct(): void {}
+}

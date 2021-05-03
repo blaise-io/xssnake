@@ -1,7 +1,8 @@
 import { DIRECTION, NETCODE_SYNC_MS } from "./const";
 import { Collision } from "./game/collision";
 import { Level } from "./level/level";
-import { AUDIENCE, Message, NETCODE } from "./room/netcode";
+import { Message } from "./room/types";
+import { AUDIENCE, NETCODE } from "./room/netcode";
 
 export class SnakeMessage implements Message {
     static id = NETCODE.SNAKE_UPDATE;

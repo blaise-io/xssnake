@@ -2,6 +2,7 @@ import { SnakeMessage } from "../snake";
 import { NameMessage } from "./player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "./playerRegistry";
 import { RoomKeyMessage, RoomOptionsMessage } from "./roomOptions";
+import { MessageConstructor } from "./types";
 
 export const enum AUDIENCE {
     CLIENT = 1 << 0,
@@ -56,14 +57,3 @@ export const NETCODE_MESSAGES: MessageConstructor[] = [
 export const NETCODE_MAP = Object.fromEntries(
     NETCODE_MESSAGES.map((Message) => [Message.id, Message]),
 );
-
-export interface MessageConstructor {
-    new (...any): Message;
-    id: NETCODE;
-    audience: AUDIENCE;
-    fromNetcode?: (untrustedNetcode: string) => Message;
-}
-
-export interface Message {
-    netcode: string;
-}

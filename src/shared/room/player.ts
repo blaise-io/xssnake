@@ -1,9 +1,10 @@
 import { Snake } from "../snake";
-import { AUDIENCE, Message, NETCODE } from "./netcode";
+import { AUDIENCE, NETCODE } from "./netcode";
+import { Message } from "./types";
 
 export class NameMessage implements Message {
     static id = NETCODE.PLAYER_NAME;
-    static audience = AUDIENCE.SERVER_ROOM;
+    static audience = AUDIENCE.SERVER;
 
     constructor(public name: string) {}
 

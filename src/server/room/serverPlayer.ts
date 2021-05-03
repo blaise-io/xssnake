@@ -1,13 +1,9 @@
+import * as util from "util";
 import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
-import {
-    AUDIENCE,
-    Message,
-    MessageConstructor,
-    NETCODE,
-    NETCODE_MAP,
-} from "../../shared/room/netcode";
+import { AUDIENCE, NETCODE, NETCODE_MAP } from "../../shared/room/netcode";
 import { Player } from "../../shared/room/player";
+import { Message, MessageConstructor } from "../../shared/room/types";
 import { ServerSnake } from "../game/serverSnake";
 import { Server, SocketClient } from "../netcode/server";
 import { ServerRoom } from "./serverRoom";
@@ -86,7 +82,11 @@ export class ServerPlayer extends Player {
 
     send(message: Message): void {
         if (this.connected && this.client) {
-            console.log("OUT", message.netcode, message);
+            console.log(
+                "OUT",
+                message.netcode,
+                util.inspect(message, { showHidden: false, depth: 1 }),
+            );
             this.client.send((message.constructor as MessageConstructor).id + message.netcode);
         }
     }

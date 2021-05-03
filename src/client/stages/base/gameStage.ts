@@ -11,6 +11,8 @@ import { center, flash } from "../../ui/shapeClient";
 import { StageInterface } from "./stage";
 
 export class GameStage implements StageInterface {
+    private room: ClientRoom;
+
     constructor() {}
 
     getShape(): Shape {
@@ -20,11 +22,11 @@ export class GameStage implements StageInterface {
     construct(): void {
         State.shapes.CONNECTING = this.connectingShape;
         this.connectServer().then(() => {
-            new ClientRoom(
+            this.room = new ClientRoom(
                 State.flow.data.clientPlayer,
-                (room: ClientRoom) => {
+                () => {
                     this.destructStageLeftovers();
-                    room.setupComponents();
+                    this.room.setupComponents();
                 },
                 noop,
             );
@@ -35,6 +37,10 @@ export class GameStage implements StageInterface {
     destruct(): void {
         if (State.flow.data.clientPlayer) {
             State.flow.data.clientPlayer.destruct();
+            delete State.flow.data.clientPlayer;
+        }
+        if (this.room) {
+            this.room.destruct();
         }
         delete State.shapes.CONNECTING;
     }
@@ -68,10 +74,10 @@ export class GameStage implements StageInterface {
     }
 
     destructStageLeftovers(): void {
+        delete State.shapes.HEADER;
+        delete State.shapes.CONNECTING;
         if (State.menuSnake) {
             State.menuSnake.destruct();
         }
-        State.shapes.CONNECTING = undefined;
-        State.shapes.HEADER = undefined;
     }
 }

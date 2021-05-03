@@ -1,17 +1,16 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
 import { DIRECTION } from "../../shared/const";
-import { Message, MessageConstructor, NETCODE_MAP } from "../../shared/room/netcode";
+import { NETCODE_MAP } from "../../shared/room/netcode";
 import { NameMessage } from "../../shared/room/player";
+import { Message, MessageConstructor } from "../../shared/room/types";
 import { SnakeMessage } from "../../shared/snake";
 import { _, noop } from "../../shared/util";
 import { State } from "../state";
 import { error } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
-import { ClientRoom } from "./clientRoom";
 
 export class ClientSocketPlayer extends ClientPlayer {
     private connection: WebSocket;
-    room: ClientRoom;
 
     constructor(name: string, private onopenCallback: CallableFunction = noop) {
         super(name);
@@ -42,10 +41,6 @@ export class ClientSocketPlayer extends ClientPlayer {
         // Close explicitly when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {
             this.connection.close();
-        }
-
-        if (this.room) {
-            this.room.destruct();
         }
     }
 
