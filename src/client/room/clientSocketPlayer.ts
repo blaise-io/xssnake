@@ -54,7 +54,7 @@ export class ClientSocketPlayer extends ClientPlayer {
     onopen(): void {
         this.connected = true;
         this.onopenCallback();
-        this.send(NameMessage.from(this.name));
+        this.send(new NameMessage(this.name));
     }
 
     onclose(): void {
@@ -96,11 +96,14 @@ export class ClientSocketPlayer extends ClientPlayer {
             const netcodeId = message.substr(0, 2);
             const Message = NETCODE_MAP[netcodeId];
             if (Message) {
+                console.log({ Message });
                 const messageObj = Message.fromNetcode(message.substring(2));
                 console.info("IN", message, messageObj);
                 if (messageObj) {
                     State.events.trigger(Message.id, messageObj);
                 }
+            } else {
+                console.error("UNREGISTERED", netcodeId, message);
             }
         }
     }

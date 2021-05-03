@@ -1,6 +1,7 @@
 import { SnakeMessage } from "../snake";
 import { NameMessage } from "./player";
-import { RoomOptionsMessage } from "./roomOptions";
+import { JoinRoomErrorMessage, RoomPlayersMessage } from "./playerRegistry";
+import { RoomKeyMessage, RoomOptionsMessage } from "./roomOptions";
 
 export const enum AUDIENCE {
     CLIENT = 1 << 0,
@@ -43,7 +44,14 @@ export const enum NETCODE {
     SNAKE_UPDATE = "S5",
 }
 
-export const NETCODE_MESSAGES = [SnakeMessage, NameMessage, RoomOptionsMessage];
+export const NETCODE_MESSAGES: MessageConstructor[] = [
+    JoinRoomErrorMessage,
+    NameMessage,
+    RoomKeyMessage,
+    RoomOptionsMessage,
+    RoomPlayersMessage,
+    SnakeMessage,
+];
 
 export const NETCODE_MAP = Object.fromEntries(
     NETCODE_MESSAGES.map((Message) => [Message.id, Message]),

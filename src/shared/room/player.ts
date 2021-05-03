@@ -7,10 +7,6 @@ export class NameMessage implements Message {
 
     constructor(public name: string) {}
 
-    static from(name: string): NameMessage {
-        return new NameMessage(name);
-    }
-
     static fromNetcode(netcode: string): NameMessage | undefined {
         // TODO: Verify length
         return new NameMessage(netcode);

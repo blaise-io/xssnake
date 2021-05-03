@@ -1,5 +1,4 @@
 import {
-    NC_ROOM_JOIN_ERROR,
     NC_ROOM_JOIN_KEY,
     NC_ROOM_STATUS,
     NC_ROUND_SERIALIZE,
@@ -10,6 +9,7 @@ import { NETCODE } from "../../shared/room/netcode";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import {
     GetRoomStatusMessage,
+    RoomKeyMessage,
     RoomOptions,
     RoomOptionsMessage,
 } from "../../shared/room/roomOptions";
@@ -18,7 +18,7 @@ import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
 import { getMatchingRoom } from "./matcher";
 import { ServerPlayer } from "./serverPlayer";
-import { ServerRoom, RoomKeyMessage } from "./serverRoom";
+import { ServerRoom } from "./serverRoom";
 
 export class ServerRoomManager {
     private rooms: ServerRoom[];
@@ -39,9 +39,9 @@ export class ServerRoomManager {
         this.server.emitter.on(
             NETCODE.ROOM_GET_STATUS,
             (player: ServerPlayer, message: GetRoomStatusMessage) => {
-                const status = this.getRoomStatus(message.roomKey);
+                const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {
-                    const room = this.getRoomByKey(message.roomKey);
+                    const room = this.getRoomByKey(message.key);
                     player.send(new RoomKeyMessage(room.key));
                     player.send(new RoomOptionsMessage(room.options));
                     player.send(new RoomPlayersMessage(room.players));
@@ -102,7 +102,7 @@ export class ServerRoomManager {
             player.emit(NC_ROUND_SERIALIZE, room.rounds.round.serialize());
             room.detectAutostart();
         } else {
-            player.emit(NC_ROOM_JOIN_ERROR, [status]);
+            player.send(new JoinRoomErrorMessage(status));
         }
     }
 

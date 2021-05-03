@@ -1,30 +1,12 @@
+import { EventEmitter } from "events";
 import { NC_CHAT_MESSAGE, SE_PLAYER_DISCONNECT } from "../../shared/const";
-import { AUDIENCE, Message, NETCODE } from "../../shared/room/netcode";
 import { RoomPlayersMessage } from "../../shared/room/playerRegistry";
-import { RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
+import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
 import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
-import { EventEmitter } from "events";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 import { ServerRoundSet } from "./serverRoundSet";
-
-// TODO: When do we need to send a room key? --> as part of serialize so others can share
-// TODO: Reuse autojoin flow a bit more?
-export class RoomKeyMessage implements Message {
-    static id = NETCODE.ROOM_KEY;
-    static audience = AUDIENCE.CLIENT;
-
-    constructor(public key: string) {}
-
-    get netcode(): string {
-        return this.key;
-    }
-
-    static fromNetcode(netcode: string): string {
-        return netcode;
-    }
-}
 
 export class ServerRoom {
     emitter: EventEmitter;

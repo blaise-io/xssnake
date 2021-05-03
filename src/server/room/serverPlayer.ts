@@ -66,10 +66,10 @@ export class ServerPlayer extends Player {
             if (Message) {
                 const audience = Message.audience;
                 if (audience & AUDIENCE.SERVER_ROOM || audience & AUDIENCE.SERVER_MATCHMAKING) {
-                    const messageObj = Message.fromNetcode(message.substring(2));
-                    console.log("IN", messageObj);
-                    if (messageObj) {
-                        this.emitMessage(Message.id, audience, messageObj);
+                    const messageInstance = Message.fromNetcode(message.substring(2));
+                    console.log("IN", messageInstance);
+                    if (messageInstance) {
+                        this.emitMessage(Message.id, audience, messageInstance);
                     }
                 }
             }
@@ -111,7 +111,7 @@ export class ServerPlayer extends Player {
             } else {
                 emit = [event];
             }
-            console.log("OUT", this.name, JSON.stringify(emit));
+            console.log("OUT (deprecated)", this.name, JSON.stringify(emit));
             this.client.send(JSON.stringify(emit), (error) => {
                 if (error) {
                     console.error("Error sending message", error);

@@ -8,7 +8,7 @@ export class RoomPlayersMessage implements Message {
 
     constructor(public players: PlayerRegistry) {}
 
-    fromNetcode(untrustedNetcode: string): RoomPlayersMessage {
+    static fromNetcode(untrustedNetcode: string): RoomPlayersMessage {
         const datas = JSON.parse(untrustedNetcode);
         const players = new PlayerRegistry();
         for (let i = 0, m = datas.length; i < m; i++) {
@@ -40,7 +40,7 @@ export class JoinRoomErrorMessage implements Message {
 
     constructor(public status: ROOM_STATUS) {}
 
-    fromNetcode(untrustedNetcode: string): JoinRoomErrorMessage {
+    static fromNetcode(untrustedNetcode: string): JoinRoomErrorMessage {
         return new JoinRoomErrorMessage(parseInt(untrustedNetcode, 10));
     }
 
