@@ -7,47 +7,38 @@ import { ClientPlayer } from "./clientPlayer";
 export class ClientPlayerRegistry extends PlayerRegistry {
     players: ClientPlayer[];
 
-    constructor(public localPlayer: ClientPlayer) {
-        super();
-        // TODO: Wrong, would always be host.
-        this.add(localPlayer);
+    get localPlayer(): ClientPlayer {
+        return this.players.find((p) => p.local);
     }
 
-    destruct(): void {
-        this.localPlayer = undefined;
-        super.destruct();
+    static fromPlayerRegistry(players: PlayerRegistry): ClientPlayerRegistry {
+        return new ClientPlayerRegistry(...players.players.map((p) => ClientPlayer.fromPlayer(p)));
     }
 
-    clone(): ClientPlayerRegistry {
-        const clone = new ClientPlayerRegistry(this.localPlayer);
-        clone.players = this.players.slice();
-        return clone;
-    }
+    // deserialize(serializedPlayers: [string, number][]): void {
+    //     for (let i = 0, m = serializedPlayers.length; i < m; i++) {
+    //         this.players[i].deserialize(serializedPlayers[i]);
+    //     }
+    // }
 
-    deserialize(serializedPlayers: [string, number][]): void {
-        for (let i = 0, m = serializedPlayers.length; i < m; i++) {
-            this.players[i].deserialize(serializedPlayers[i]);
-        }
-    }
+    // reconstruct(serializedPlayers: [string, number][]): void {
+    //     super.destruct(); // Keep localPlayer; is not in super.
+    //     for (let i = 0, m = serializedPlayers.length; i < m; i++) {
+    //         this.reconstructPlayer(serializedPlayers[i]);
+    //     }
+    // }
 
-    reconstruct(serializedPlayers: [string, number][]): void {
-        super.destruct(); // Keep localPlayer; is not in super.
-        for (let i = 0, m = serializedPlayers.length; i < m; i++) {
-            this.reconstructPlayer(serializedPlayers[i]);
-        }
-    }
-
-    reconstructPlayer(serialized: [string, number]): void {
-        const player = new ClientPlayer();
-        player.deserialize(serialized);
-
-        if (player.local) {
-            this.localPlayer.deserialize(serialized);
-            this.add(this.localPlayer);
-        } else {
-            this.add(player);
-        }
-    }
+    // reconstructPlayer(serialized: [string, number]): void {
+    //     const player = new ClientPlayer();
+    //     player.deserialize(serialized);
+    //
+    //     if (player.local) {
+    //         this.localPlayer.deserialize(serialized);
+    //         this.add(this.localPlayer);
+    //     } else {
+    //         this.add(player);
+    //     }
+    // }
 
     getNames(): string[] {
         const names = [];

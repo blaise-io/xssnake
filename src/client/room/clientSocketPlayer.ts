@@ -17,10 +17,8 @@ export class ClientSocketPlayer extends ClientPlayer {
         super(name);
 
         this.local = true;
-        this.room = undefined;
         this.connection = new WebSocket(`ws://${SERVER_HOST}:${SERVER_PORT}${SERVER_PATH}`);
         this.connection.onopen = () => {
-            console.log(this);
             this.onopen();
         };
         this.connection.onclose = () => {

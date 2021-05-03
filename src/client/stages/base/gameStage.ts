@@ -1,7 +1,9 @@
 import { CANVAS } from "../../../shared/const";
 import { RoomOptionsMessage } from "../../../shared/room/roomOptions";
 import { Shape } from "../../../shared/shape";
+import { noop } from "../../../shared/util";
 import { COPY_CONNECTING } from "../../copy/copy";
+import { ClientRoom } from "../../room/clientRoom";
 import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
 import { State } from "../../state";
 import { font } from "../../ui/font";
@@ -18,6 +20,14 @@ export class GameStage implements StageInterface {
     construct(): void {
         State.shapes.CONNECTING = this.connectingShape;
         this.connectServer().then(() => {
+            new ClientRoom(
+                State.flow.data.clientPlayer,
+                (room: ClientRoom) => {
+                    this.destructStageLeftovers();
+                    room.setupComponents();
+                },
+                noop,
+            );
             State.flow.data.clientPlayer.send(new RoomOptionsMessage(State.flow.data.roomOptions));
         });
     }

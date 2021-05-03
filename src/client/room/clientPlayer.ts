@@ -6,9 +6,14 @@ import { ClientSnake } from "../game/clientSnake";
 export class ClientPlayer extends Player {
     snake: ClientSnake;
 
-    constructor(name = "", public local = false) {
-        super(name);
-        this.snake = undefined;
+    static fromPlayer(player: Player): ClientPlayer {
+        return new ClientPlayer(
+            player.name,
+            player.connected,
+            player.local,
+            player.score,
+            player.snake,
+        );
     }
 
     /** @deprecated */

@@ -1,7 +1,7 @@
 import { ROOM_KEY_LENGTH, CANVAS } from "../shared/const";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
-import { HASH_ROOM, KEY, MENU_LEFT, NS, STORAGE } from "./const";
+import { HASH, KEY, MENU_LEFT, NS, STORAGE } from "./const";
 import { ClientRoom } from "./room/clientRoom";
 import { ClientSocketPlayer } from "./room/clientSocketPlayer";
 import { StageConstructor, StageInterface } from "./stages/base/stage";
@@ -100,7 +100,7 @@ export class StageFlow {
     }
 
     private hashChange(): void {
-        if (urlHash(HASH_ROOM).length === ROOM_KEY_LENGTH && 1 === this.history.length) {
+        if (urlHash(HASH.ROOM).length === ROOM_KEY_LENGTH && 1 === this.history.length) {
             State.flow.restart();
         }
     }

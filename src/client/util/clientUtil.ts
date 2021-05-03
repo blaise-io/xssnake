@@ -1,6 +1,6 @@
 import { GAME, CANVAS, LEVEL } from "../../shared/const";
 import { _ } from "../../shared/util";
-import { STORAGE, UC } from "../const";
+import { HASH, STORAGE, UC } from "../const";
 import { State } from "../state";
 import { Dialog, DialogType } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
@@ -62,7 +62,7 @@ export function isMac(): boolean {
     return /Macintosh/.test(navigator.appVersion);
 }
 
-export function urlHash(key = "", value = ""): string {
+export function urlHash(key?: HASH, value?: string): string {
     let newhash = "";
     const dict = {};
 

@@ -1,6 +1,5 @@
 import { EventEmitter } from "events";
 import { NC_CHAT_MESSAGE, SE_PLAYER_DISCONNECT } from "../../shared/const";
-import { RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
 import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
@@ -59,8 +58,7 @@ export class ServerRoom {
 
     addPlayer(player: ServerPlayer): void {
         this.players.add(player);
-        player.room = this;
-        this.players.send(new RoomPlayersMessage(this.players));
+        this.players.sendPlayers();
     }
 
     detectAutostart(): void {
@@ -79,7 +77,7 @@ export class ServerRoom {
         if (!this.rounds.hasStarted()) {
             this.players.remove(player);
         }
-        this.players.send(new RoomPlayersMessage(this.players));
+        this.players.sendPlayers();
         this.detectEmptyRoom();
     }
 

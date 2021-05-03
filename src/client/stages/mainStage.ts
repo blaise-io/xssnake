@@ -1,5 +1,5 @@
 import { _, getRandomName } from "../../shared/util";
-import { HASH_ROOM, STORAGE } from "../const";
+import { HASH, STORAGE } from "../const";
 import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { State } from "../state";
 import { error, storage, urlHash } from "../util/clientUtil";
@@ -17,7 +17,7 @@ export class MainStage extends SelectStage {
     constructor() {
         super();
 
-        const roomKey = urlHash(HASH_ROOM);
+        const roomKey = urlHash(HASH.ROOM);
         this.menu = this._getMenu();
 
         if (roomKey) {

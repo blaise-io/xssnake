@@ -43,7 +43,9 @@ export const MENU_WIDTH = 167;
 export const MENU_WRAP = 176;
 export const MENU_TITLE_HEIGHT = 20;
 
-export const HASH_ROOM = "room";
+export const enum HASH {
+    ROOM = "room",
+}
 
 export const enum NS {
     DEBUG = "DEBUG",

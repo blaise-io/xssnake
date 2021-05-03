@@ -6,7 +6,7 @@ export class RoomPlayersMessage implements Message {
     static id = NETCODE.ROOM_PLAYERS;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public players: PlayerRegistry) {}
+    constructor(public players: PlayerRegistry, public localPlayer?: Player) {}
 
     static fromNetcode(untrustedNetcode: string): RoomPlayersMessage {
         const datas = JSON.parse(untrustedNetcode);
@@ -15,7 +15,6 @@ export class RoomPlayersMessage implements Message {
             const data = datas[i];
             players.add(new Player(data[0], Boolean(data[1]), Boolean(data[2]), data[3]));
         }
-
         return new RoomPlayersMessage(players);
     }
 
@@ -26,7 +25,7 @@ export class RoomPlayersMessage implements Message {
             players.push([
                 player.name,
                 Number(player.connected),
-                Number(player.local),
+                Number(player === this.localPlayer),
                 player.score,
             ]);
         }
@@ -60,14 +59,13 @@ export class PlayerRegistry {
         this.players.length = 0;
     }
 
-    /** @deprecated */
-    serialize(localPlayer: Player): [string, number][] {
-        const serialized = [];
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            serialized.push(this.players[i].serialize(localPlayer === this.players[i]));
-        }
-        return serialized;
-    }
+    // serialize(localPlayer: Player): [string, number][] {
+    //     const serialized = [];
+    //     for (let i = 0, m = this.players.length; i < m; i++) {
+    //         serialized.push(this.players[i].serialize(localPlayer === this.players[i]));
+    //     }
+    //     return serialized;
+    // }
 
     add(player: Player): void {
         this.players.push(player);

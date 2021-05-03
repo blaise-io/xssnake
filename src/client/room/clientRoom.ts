@@ -1,15 +1,15 @@
 import {
     NC_OPTIONS_SERIALIZE,
     NC_PLAYERS_SERIALIZE,
-    NC_ROOM_JOIN_ERROR,
     NC_ROOM_SERIALIZE,
     NC_SNAKE_CRASH,
     ROOM_STATUS,
 } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
-import { RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
+import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
+import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
-import { EV_PLAYERS_UPDATED, NS } from "../const";
+import { HASH, NS } from "../const";
 import { State } from "../state";
 import { urlHash } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
@@ -30,26 +30,16 @@ export class ClientRoom {
     key: string;
     players: ClientPlayerRegistry;
     options: RoomOptions;
+
     private roundSet: ClientRoundSet;
     private messageBox: MessageBox;
     private scoreboard: Scoreboard;
-    private dataReceived = {
-        room: false,
-        options: false,
-        players: false,
-    };
 
     constructor(
-        clientPlayer: ClientPlayer,
+        clientPlayer: ClientPlayer, // TODO: Not used?
         private resolve: (clientRoom: ClientRoom) => void,
         private reject: (error: string) => void,
     ) {
-        this.key = "";
-
-        this.players = new ClientPlayerRegistry(clientPlayer);
-        this.options = new RoomOptions();
-        this.roundSet = new ClientRoundSet(this.players, this.options);
-
         this.bindEvents();
     }
 
@@ -63,9 +53,16 @@ export class ClientRoom {
     }
 
     bindEvents(): void {
-        State.events.on(NC_ROOM_SERIALIZE, NS.ROOM, (data) => {
-            this.setRoom(data);
+        // State.events.on(NC_ROOM_SERIALIZE, NS.ROOM, (data) => {
+        //     this.setRoom(data);
+        // });
+
+        State.events.on(NETCODE.ROOM_KEY, NS.ROOM, (message: RoomKeyMessage) => {
+            this.key = message.key;
+            urlHash(HASH.ROOM, this.key);
+            this.checkAllRoomDataReceived();
         });
+
         // State.events.on(NC_OPTIONS_SERIALIZE, NS.ROOM, (data) => {
         //     this.updateOptions(data);
         // });
@@ -74,11 +71,22 @@ export class ClientRoom {
             this.checkAllRoomDataReceived();
         });
 
-        State.events.on(NC_PLAYERS_SERIALIZE, NS.ROOM, (data) => {
-            this.updatePlayers(data);
+        // State.events.on(NC_PLAYERS_SERIALIZE, NS.ROOM, (data) => {
+        //     this.updatePlayers(data);
+        // });
+
+        State.events.on(NETCODE.ROOM_PLAYERS, NS.ROOM, (message: RoomPlayersMessage) => {
+            this.players = ClientPlayerRegistry.fromPlayerRegistry(message.players);
+            this.checkAllRoomDataReceived();
+            // State.events.trigger(EV_PLAYERS_UPDATED, this.players);
         });
-        State.events.on(NC_ROOM_JOIN_ERROR, NS.ROOM, (data) => {
-            this.handleError(data);
+
+        // State.events.on(NC_ROOM_JOIN_ERROR, NS.ROOM, (data) => {
+        //     this.handleError(data);
+        // });
+
+        State.events.on(NETCODE.ROOM_JOIN_ERROR, NS.ROOM, (message: JoinRoomErrorMessage) => {
+            this.reject(COPY_ERROR[message.status].toUpperCase());
         });
 
         // TODO: Move to a new notifier class
@@ -92,36 +100,41 @@ export class ClientRoom {
         State.events.off(NC_ROOM_SERIALIZE, NS.ROOM);
         State.events.off(NC_OPTIONS_SERIALIZE, NS.ROOM);
         State.events.off(NC_PLAYERS_SERIALIZE, NS.ROOM);
+
+        State.events.off(NETCODE.ROOM_KEY, NS.ROOM);
+        State.events.off(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM);
+        State.events.off(NETCODE.ROOM_JOIN_ERROR, NS.ROOM);
     }
 
     setupComponents(): void {
+        this.roundSet = new ClientRoundSet(this.players, this.options);
         this.roundSet.setupRound();
         this.scoreboard = new Scoreboard(this.players);
         this.messageBox = new MessageBox(this.players);
     }
 
-    setRoom(serializedRoom: [string]): void {
-        this.key = serializedRoom[0];
-        this.checkAllRoomDataReceived();
-    }
+    // setRoom(serializedRoom: [string]): void {
+    //     this.key = serializedRoom[0];
+    //     this.checkAllRoomDataReceived();
+    // }
 
     // updateOptions(serializedOptions: [number, number, number, number, number, number]): void {
     //     this.options.deserialize(serializedOptions);
     //     this.checkAllRoomDataReceived();
     // }
 
-    updatePlayers(serializedPlayers: [string, number][]): void {
-        if (this.roundSet.round && this.roundSet.round.isMidgame()) {
-            this.players.deserialize(serializedPlayers);
-        } else {
-            this.players.reconstruct(serializedPlayers);
-        }
-        this.checkAllRoomDataReceived();
-        State.events.trigger(EV_PLAYERS_UPDATED, this.players);
-    }
+    // updatePlayers(serializedPlayers: [string, number][]): void {
+    //     if (this.roundSet.round && this.roundSet.round.isMidgame()) {
+    //         this.players.deserialize(serializedPlayers);
+    //     } else {
+    //         this.players.reconstruct(serializedPlayers);
+    //     }
+    //     this.checkAllRoomDataReceived();
+    //     State.events.trigger(EV_PLAYERS_UPDATED, this.players);
+    // }
 
     get allDataReceived(): boolean {
-        return this.dataReceived.room && this.dataReceived.options && this.dataReceived.players;
+        return Boolean(this.key && this.options && this.players);
     }
 
     checkAllRoomDataReceived(): void {
@@ -156,9 +169,9 @@ export class ClientRoom {
         this.messageBox.ui.debounceUpdate();
     }
 
-    handleError(data: number[]): void {
-        this.reject(COPY_ERROR[data[0]].toUpperCase());
-    }
+    // handleError(data: number[]): void {
+    //     this.reject(COPY_ERROR[data[0]].toUpperCase());
+    // }
 
     //    /**
     //     * @param {Array.<string>} names

@@ -1,6 +1,5 @@
 import { Player } from "../../shared/room/player";
 import { getRandomName, noop, randomRange, randomStr } from "../../shared/util";
-import { COPY_CHAT_INSTRUCT } from "../copy/copy";
 import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ChatMessage } from "../room/chatMessage";
@@ -37,7 +36,7 @@ export function debugMessages(): void {
             window.setTimeout(addMessage, randomRange(0, 5000));
         }
 
-        messages.push(new ChatMessage(null, COPY_CHAT_INSTRUCT));
+        messages.push(new ChatMessage(null, "First msg"));
         ui.debounceUpdate();
         addMessage();
     }, 200);

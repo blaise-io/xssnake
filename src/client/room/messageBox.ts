@@ -1,6 +1,7 @@
 import { NC_CHAT_MESSAGE } from "../../shared/const";
-import { EV_PLAYERS_UPDATED, NS } from "../const";
-import { COPY_CHAT_INSTRUCT, COPY_PLAYER_JOINED, COPY_PLAYER_QUIT } from "../copy/copy";
+import { _ } from "../../shared/util";
+import { EV_PLAYERS_UPDATED, NS, UC } from "../const";
+import { COPY_PLAYER_JOINED, COPY_PLAYER_QUIT } from "../copy/copy";
 import { State } from "../state";
 import { MessageBoxUI } from "../ui/messageBox";
 import { format } from "../util/clientUtil";
@@ -16,17 +17,17 @@ export class MessageBox {
     private playerChangeNotified = false;
 
     constructor(public players: ClientPlayerRegistry) {
+        this.messages = [new ChatMessage(null, _(`Press ${UC.ENTER_KEY} to chat.`))];
         this.ui = new MessageBoxUI(this.messages, players.localPlayer, (body) => {
             (this.players.localPlayer as ClientSocketPlayer).emitDeprecated(NC_CHAT_MESSAGE, [
                 body,
             ]);
         });
-        this.messages = [new ChatMessage(null, COPY_CHAT_INSTRUCT)];
         State.events.on(NC_CHAT_MESSAGE, NS.MSGBOX, this.addMessage.bind(this));
         State.events.on(EV_PLAYERS_UPDATED, NS.MSGBOX, this.updatePlayers.bind(this));
     }
 
-    destruct() {
+    destruct(): void {
         this.messages.length = 0;
         this.previousPlayers = undefined;
         this.ui.destruct();
@@ -34,17 +35,17 @@ export class MessageBox {
         State.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);
     }
 
-    addMessage(serializedMessage) {
+    addMessage(serializedMessage: [number, string]): void {
         const name = String(this.players.players[serializedMessage[0]].name);
         this.messages.push(new ChatMessage(name, serializedMessage[1]));
         this.ui.debounceUpdate();
     }
 
-    addNotification(notification) {
+    addNotification(notification: string): void {
         this.messages.push(new ChatMessage(null, notification));
     }
 
-    updatePlayers() {
+    updatePlayers(): void {
         // TODO: recursion?
         const disconnectedPlayer = this.players.players.find((p) => !p.connected);
         if (disconnectedPlayer) {
@@ -55,7 +56,7 @@ export class MessageBox {
             if (this.previousPlayers && !this.playerChangeNotified) {
                 this.notifyPlayersChange();
             }
-            this.previousPlayers = this.players.clone();
+            this.previousPlayers = new ClientPlayerRegistry(...this.players.players);
             this.playerChangeNotified = false;
         }
     }

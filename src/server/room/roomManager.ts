@@ -44,7 +44,7 @@ export class ServerRoomManager {
                     const room = this.getRoomByKey(message.key);
                     player.send(new RoomKeyMessage(room.key));
                     player.send(new RoomOptionsMessage(room.options));
-                    player.send(new RoomPlayersMessage(room.players));
+                    player.send(new RoomPlayersMessage(room.players, player));
                     return;
                 }
                 player.send(new JoinRoomErrorMessage(status));
@@ -66,6 +66,7 @@ export class ServerRoomManager {
         );
     }
 
+    /* @deprecated */
     room(key: string): ServerRoom {
         return this.rooms[key];
     }
