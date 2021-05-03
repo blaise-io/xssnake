@@ -30,7 +30,7 @@ export class Shape {
         const pixels = this.pixels;
 
         const inverted = new PixelCollection();
-        bbox = bbox || this.bbox();
+        bbox = bbox || this.bbox(this.expand);
 
         for (let x = bbox.x0; x <= bbox.x1; x++) {
             for (let y = bbox.y0; y < bbox.y1; y++) {

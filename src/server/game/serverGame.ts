@@ -74,11 +74,10 @@ export class ServerGame {
     }
 
     get averageLatencyInTicks(): number {
-        const latencies = [30];
-        for (let i = 0, m = this.players.players.length; i < m; i++) {
-            latencies.push(this.players[i].client.latency);
-        }
-        return Math.round(average(latencies) / SERVER_TICK_INTERVAL);
+        const latencies = this.players.players
+            .filter((p) => p.connected)
+            .map((p) => p.client.latency);
+        return latencies.length ? Math.round(average(latencies) / SERVER_TICK_INTERVAL) : 0;
     }
 
     handleTick(): void {
