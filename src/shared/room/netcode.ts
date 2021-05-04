@@ -2,7 +2,15 @@ import { SnakeMessage } from "../snake";
 import { NameMessage } from "./player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "./playerRegistry";
 import { RoomKeyMessage, RoomOptionsMessage } from "./roomOptions";
-import { MessageConstructor } from "./types";
+
+export const NETCODE_MAP = {
+    [JoinRoomErrorMessage.id]: JoinRoomErrorMessage,
+    [NameMessage.id]: NameMessage,
+    [RoomKeyMessage.id]: RoomKeyMessage,
+    [RoomOptionsMessage.id]: RoomOptionsMessage,
+    [RoomPlayersMessage.id]: RoomPlayersMessage,
+    [SnakeMessage.id]: SnakeMessage,
+};
 
 export const enum AUDIENCE {
     CLIENT = 1 << 0,
@@ -44,16 +52,3 @@ export const enum NETCODE {
     SNAKE_SPEED = "S4",
     SNAKE_UPDATE = "S5",
 }
-
-export const NETCODE_MESSAGES: MessageConstructor[] = [
-    JoinRoomErrorMessage,
-    NameMessage,
-    RoomKeyMessage,
-    RoomOptionsMessage,
-    RoomPlayersMessage,
-    SnakeMessage,
-];
-
-export const NETCODE_MAP = <Record<NETCODE, MessageConstructor>>(
-    Object.fromEntries(NETCODE_MESSAGES.map((Message) => [Message.id, Message]))
-);
