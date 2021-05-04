@@ -1,22 +1,22 @@
-import { levelsets } from "../../shared/data/levelsets";
-import { Levelset } from "../../shared/levelset/levelset";
+import { levelSets } from "../../shared/levelSet/levelSets";
+import { getRandomLevelIndex, LevelSet } from "../../shared/levelSet/levelSet";
 
 export class LevelPlayset {
     private played: number[];
-    private levelset: Levelset;
+    private levelSet: LevelSet;
 
-    constructor(public levelsetIndex: number) {
-        this.levelset = levelsets[levelsetIndex];
+    constructor(public levelSetIndex: number) {
+        this.levelSet = levelSets[levelSetIndex];
         this.played = [];
     }
 
     destruct(): void {
-        this.levelset = undefined;
+        this.levelSet = undefined;
         this.played = undefined;
     }
 
     getNext(): number {
-        const nextLevelsetIndex = this.levelset.getRandomLevelIndex(this.played);
+        const nextLevelsetIndex = getRandomLevelIndex(this.levelSet, this.played);
         this.played.push(nextLevelsetIndex);
         return nextLevelsetIndex;
     }

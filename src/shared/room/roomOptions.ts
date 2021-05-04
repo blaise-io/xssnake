@@ -29,7 +29,7 @@ export class RoomOptionsMessage implements Message {
     get netcode(): string {
         return JSON.stringify([
             this.options.maxPlayers,
-            this.options.levelsetIndex,
+            this.options.levelSetIndex,
             Number(this.options.isQuickGame),
             Number(this.options.hasPowerups),
             Number(this.options.isPrivate),
@@ -73,7 +73,7 @@ export class RoomKeyMessage implements Message {
 export class RoomOptions {
     constructor(
         public maxPlayers = 6,
-        public levelsetIndex = 0,
+        public levelSetIndex = 0,
         public isQuickGame = false,
         public hasPowerups = true,
         public isPrivate = false,

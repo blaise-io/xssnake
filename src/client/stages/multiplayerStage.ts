@@ -1,4 +1,4 @@
-import { levelsets } from "../../shared/data/levelsets";
+import { levelSets } from "../../shared/levelSet/levelSets";
 import { _, noop } from "../../shared/util";
 import { UC } from "../const";
 import { State } from "../state";
@@ -28,10 +28,10 @@ export class MultiplayerStage extends FormStage {
         form.addField(
             new Field(
                 _("Level Set"),
-                levelsets.map((l, index) => [index, l.title.toUpperCase()]),
-                State.flow.data.roomOptions.levelsetIndex,
+                levelSets.map((l, index) => [index, l.title.toUpperCase()]),
+                State.flow.data.roomOptions.levelSetIndex,
                 (value) => {
-                    State.flow.data.roomOptions.levelsetIndex = value;
+                    State.flow.data.roomOptions.levelSetIndex = value;
                 },
             ),
         );

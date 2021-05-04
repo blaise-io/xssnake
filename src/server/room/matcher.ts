@@ -29,7 +29,7 @@ function matches(considered: RoomOptions, requested: RoomOptions): boolean {
     }
 
     return (
-        requested.levelsetIndex === considered.levelsetIndex &&
+        requested.levelSetIndex === considered.levelSetIndex &&
         requested.hasPowerups === considered.hasPowerups &&
         requested.maxPlayers <= considered.maxPlayers
     );

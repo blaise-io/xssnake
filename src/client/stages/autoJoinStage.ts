@@ -1,5 +1,5 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
-import { levelsets } from "../../shared/data/levelsets";
+import { levelSets } from "../../shared/levelSet/levelSets";
 import { _ } from "../../shared/util";
 import { STORAGE, UC } from "../const";
 import { State } from "../state";
@@ -30,7 +30,7 @@ export class AutoJoinStage extends InputStage {
 
         summary.push(format(_("Players ({0})"), room.players.length) + "\t" + names);
         summary.push(_("Max. players") + "\t" + room.options.maxPlayers);
-        summary.push(_("Level Set") + "\t" + levelsets[room.options.levelsetIndex].title);
+        summary.push(_("Level Set") + "\t" + levelSets[room.options.levelSetIndex].title);
         summary.push(_("Power-Ups") + "\t" + room.options.hasPowerups ? UC.YES : UC.NO);
         summary.push(_("Winner fires XSS") + "\t" + room.options.isXSS ? UC.YES : UC.NO);
 

@@ -22,7 +22,7 @@ export class ServerRoundSet {
         public players: ServerPlayerRegistry,
         public options: RoomOptions,
     ) {
-        this.levelPlayset = new LevelPlayset(options.levelsetIndex);
+        this.levelPlayset = new LevelPlayset(options.levelSetIndex);
         this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
         this.score = new ServerScore(players);
 

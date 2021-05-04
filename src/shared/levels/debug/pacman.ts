@@ -1,4 +1,4 @@
-import pacman from "../../level/levels/pacman.png";
+import pacman from "../../level/images/pacman.png";
 import { Level } from "../../level/level";
 
 export class PacmanLevel extends Level {

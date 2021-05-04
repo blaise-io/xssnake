@@ -70,7 +70,7 @@ export class ClientRound extends Round {
 
     updateRound(serializedRound: [number, number]): void {
         this.deserialize(serializedRound);
-        const Level = this.getLevel(this.levelsetIndex, this.levelIndex);
+        const Level = this.getLevel(this.levelSetIndex, this.levelIndex);
         this.level = new Level();
         this.level.load(clientImageLoader).then(() => {
             this.game.updateLevel(this.level);

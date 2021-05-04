@@ -8,7 +8,6 @@ import {
     SE_PLAYER_DISCONNECT,
     SECONDS_ROUND_COUNTDOWN,
 } from "../../shared/const";
-import { levelsets } from "../../shared/data/levelsets";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import { ServerGame } from "../game/serverGame";
@@ -32,8 +31,7 @@ export class ServerRound extends Round {
     ) {
         super(players, options);
 
-        this.levelsetIndex = options.levelsetIndex;
-        this.levelset = levelsets[this.levelsetIndex];
+        this.levelSetIndex = options.levelSetIndex;
         this.levelIndex = levelPlayset.getNext();
 
         this.countdownStarted = false;
@@ -60,7 +58,6 @@ export class ServerRound extends Round {
 
         this.handleDisconnectBound = undefined;
         this.roomEmitter = undefined;
-        this.levelset = undefined;
     }
 
     bindEvents(): void {
@@ -106,7 +103,7 @@ export class ServerRound extends Round {
 
     startRound(): void {
         this.unbindEvents();
-        const Level = this.getLevel(this.levelsetIndex, this.levelIndex);
+        const Level = this.getLevel(this.levelSetIndex, this.levelIndex);
         this.level = new Level();
         this.level.load(serverImageLoader).then(() => {
             this.game = new ServerGame(this.roomEmitter, this.level, this.players);

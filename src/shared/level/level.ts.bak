@@ -1,5 +1,5 @@
 import { LevelAnimationRegistry } from "../levelanim/registry";
-import { Config } from "../levelset/config";
+import { Config } from "../levelSet/config";
 import { Gravity } from "./gravity";
 
 export class Level {

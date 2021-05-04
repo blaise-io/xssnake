@@ -1,37 +1,34 @@
-import { levelsets } from "../data/levelsets";
+import { levelSets } from "../levelSet/levelSets";
 import { Level } from "../level/level";
-import { Levelset } from "../levelset/levelset";
 import { Player } from "./player";
 import { RoomOptions } from "./roomOptions";
 import { PlayerRegistry } from "./playerRegistry";
 
 export class Round {
-    levelsetIndex: number;
+    levelSetIndex: number;
     levelIndex: number;
-    levelset: Levelset;
     level: Level;
     private index: number;
     started: boolean;
 
     constructor(public players: PlayerRegistry<Player>, public options: RoomOptions) {
-        this.levelsetIndex = undefined;
+        this.levelSetIndex = undefined;
         this.levelIndex = undefined;
-        this.levelset = undefined;
         this.level = undefined;
         this.index = 0;
         this.started = false;
     }
 
     serialize(): number[] {
-        return [this.levelsetIndex, this.levelIndex];
+        return [this.levelSetIndex, this.levelIndex];
     }
 
     deserialize(serialized: number[]): void {
-        this.levelsetIndex = serialized[0];
+        this.levelSetIndex = serialized[0];
         this.levelIndex = serialized[1];
     }
 
-    getLevel(levelsetIndex: number, levelIndex: number): typeof Level {
-        return levelsets[levelsetIndex].getLevel(levelIndex);
+    getLevel(levelSetIndex: number, levelIndex: number): typeof Level {
+        return levelSets[levelSetIndex][levelIndex];
     }
 }
