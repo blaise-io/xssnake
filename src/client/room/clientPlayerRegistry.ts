@@ -13,11 +13,7 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     }
 
     static fromPlayerRegistry(players: Player[]): ClientPlayerRegistry {
-        console.log({ players });
-        const mapped = players.map((p) => ClientPlayer.fromPlayer(p));
-        const mappedPLayers = new ClientPlayerRegistry(...mapped);
-        console.log({ mappedPLayers });
-        return mappedPLayers;
+        return new ClientPlayerRegistry(...players.map((p) => ClientPlayer.fromPlayer(p)));
     }
 
     // deserialize(serializedPlayers: [string, number][]): void {
