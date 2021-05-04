@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "../..",
+    "baseUrl": "../../",
     "allowJs": false,
     "module": "es6",
     "target": "es2019"

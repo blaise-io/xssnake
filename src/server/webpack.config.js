@@ -14,6 +14,7 @@ module.exports = (env, argv) => {
                     test: /\.ts$/,
                     use: "ts-loader",
                     exclude: /node_modules/,
+                    sideEffects: false,
                 },
                 {
                     test: /\.png$/,

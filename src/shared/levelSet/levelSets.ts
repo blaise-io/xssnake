@@ -11,4 +11,4 @@ const alsoBasic = new LevelSet(_("Amazing!"));
 alsoBasic.push(LinesLevel);
 alsoBasic.push(CrosshairLevel);
 
-export const levelSets = [basic, alsoBasic];
+export const levelSets: LevelSet[] = [basic, alsoBasic];
