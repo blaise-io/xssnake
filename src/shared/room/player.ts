@@ -27,20 +27,20 @@ export class Player {
         public snake?: Snake,
     ) {}
 
-    /** @deprecated */
-    deserialize(serialized: [string, number]): void {
-        let byte;
-        [this.name, byte] = serialized;
-        this.connected = Boolean((byte & 1) >> 0);
-        this.local = Boolean((byte & 2) >> 1);
-        this.score = byte >> 2;
-    }
+    // /** @deprecated */
+    // deserialize(serialized: [string, number]): void {
+    //     let byte;
+    //     [this.name, byte] = serialized;
+    //     this.connected = Boolean((byte & 1) >> 0);
+    //     this.local = Boolean((byte & 2) >> 1);
+    //     this.score = byte >> 2;
+    // }
 
-    /** @deprecated */
-    serialize(local: boolean): [string, number] {
-        return [
-            this.name,
-            (Number(this.connected) << 0) | (Number(local) << 1) | (this.score << 2),
-        ];
-    }
+    // /** @deprecated */
+    // serialize(local: boolean): [string, number] {
+    //     return [
+    //         this.name,
+    //         (Number(this.connected) << 0) | (Number(local) << 1) | (this.score << 2),
+    //     ];
+    // }
 }

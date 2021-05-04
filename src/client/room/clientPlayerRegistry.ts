@@ -1,23 +1,28 @@
 import { Level } from "../../shared/level/level";
+import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { NS } from "../const";
 import { State } from "../state";
 import { ClientPlayer } from "./clientPlayer";
 
-export class ClientPlayerRegistry extends PlayerRegistry {
+export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     players: ClientPlayer[];
 
     get localPlayer(): ClientPlayer {
-        return this.players.find((p) => p.local);
+        return this.find((p) => p.local);
     }
 
-    static fromPlayerRegistry(players: PlayerRegistry): ClientPlayerRegistry {
-        return new ClientPlayerRegistry(...players.players.map((p) => ClientPlayer.fromPlayer(p)));
+    static fromPlayerRegistry(players: Player[]): ClientPlayerRegistry {
+        console.log({ players });
+        const mapped = players.map((p) => ClientPlayer.fromPlayer(p));
+        const mappedPLayers = new ClientPlayerRegistry(...mapped);
+        console.log({ mappedPLayers });
+        return mappedPLayers;
     }
 
     // deserialize(serializedPlayers: [string, number][]): void {
     //     for (let i = 0, m = serializedPlayers.length; i < m; i++) {
-    //         this.players[i].deserialize(serializedPlayers[i]);
+    //         this[i].deserialize(serializedPlayers[i]);
     //     }
     // }
 
@@ -34,37 +39,37 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     //
     //     if (player.local) {
     //         this.localPlayer.deserialize(serialized);
-    //         this.add(this.localPlayer);
+    //         this.push(this.localPlayer);
     //     } else {
-    //         this.add(player);
+    //         this.push(player);
     //     }
     // }
 
     getNames(): string[] {
         const names = [];
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            names.push(this.players[i].name);
+        for (let i = 0, m = this.length; i < m; i++) {
+            names.push(this[i].name);
         }
         return names;
     }
 
     setScores(scores: number[]): void {
         for (let i = 0, m = scores.length; i < m; i++) {
-            this.players[i].score = scores[i];
+            this[i].score = scores[i];
         }
     }
 
     setSnakes(level: Level): void {
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].setSnake(i, level);
+        for (let i = 0, m = this.length; i < m; i++) {
+            this[i].setSnake(i, level);
         }
     }
 
     unsetSnakes(): void {
         // There may still be a few shapes lingering around.
         this.clearSnakeShapes();
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].unsetSnake();
+        for (let i = 0, m = this.length; i < m; i++) {
+            this[i].unsetSnake();
         }
     }
 
@@ -78,15 +83,15 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     }
 
     moveSnakes(level: Level, elapsed: number, shift: Shift): void {
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].snake.handleNextMove(level, elapsed, shift, this.players);
-            this.players[i].snake.shiftParts(shift);
+        for (let i = 0, m = this.length; i < m; i++) {
+            this[i].snake.handleNextMove(level, elapsed, shift, this);
+            this[i].snake.shiftParts(shift);
         }
     }
 
     showMeta(): void {
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].snake.showName();
+        for (let i = 0, m = this.length; i < m; i++) {
+            this[i].snake.showName();
         }
         if (this.localPlayer) {
             this.localPlayer.snake.showDirection();
@@ -94,8 +99,8 @@ export class ClientPlayerRegistry extends PlayerRegistry {
     }
 
     hideMeta(): void {
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            this.players[i].snake.removeNameAndDirection();
+        for (let i = 0, m = this.length; i < m; i++) {
+            this[i].snake.removeNameAndDirection();
         }
     }
 
@@ -117,17 +122,13 @@ export class ClientPlayerRegistry extends PlayerRegistry {
         return null;
     }
 
-    /**
-     * Assume last joined player is last in this.players.
-     */
-    getJoinName(): string | null {
-        if (this.getTotal()) {
-            return this.players[this.players.length - 1].name;
+    getLastJoin(): string | undefined {
+        if (this.length) {
+            return this[this.length - 1].name;
         }
-        return null;
     }
 
     localPlayerIsHost(): boolean {
-        return this.localPlayer && this.players[0] === this.localPlayer;
+        return this.localPlayer && this[0] === this.localPlayer;
     }
 }

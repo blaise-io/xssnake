@@ -28,7 +28,7 @@ export class AutoJoinStage extends InputStage {
         const room = State.flow.data.room;
         const names = room.players.getNames().join(", ");
 
-        summary.push(format(_("Players ({0})"), room.players.getTotal()) + "\t" + names);
+        summary.push(format(_("Players ({0})"), room.players.length) + "\t" + names);
         summary.push(_("Max. players") + "\t" + room.options.maxPlayers);
         summary.push(_("Level Set") + "\t" + levelsets[room.options.levelsetIndex].title);
         summary.push(_("Power-Ups") + "\t" + room.options.hasPowerups ? UC.YES : UC.NO);

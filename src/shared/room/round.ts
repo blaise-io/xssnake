@@ -1,6 +1,7 @@
 import { levelsets } from "../data/levelsets";
 import { Level } from "../level/level";
 import { Levelset } from "../levelset/levelset";
+import { Player } from "./player";
 import { RoomOptions } from "./roomOptions";
 import { PlayerRegistry } from "./playerRegistry";
 
@@ -12,7 +13,7 @@ export class Round {
     private index: number;
     started: boolean;
 
-    constructor(public players: PlayerRegistry, public options: RoomOptions) {
+    constructor(public players: PlayerRegistry<Player>, public options: RoomOptions) {
         this.levelsetIndex = undefined;
         this.levelIndex = undefined;
         this.levelset = undefined;

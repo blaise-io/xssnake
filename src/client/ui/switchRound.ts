@@ -2,6 +2,7 @@ import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { COPY_ROUND_DRAW_TITLE, COPY_ROUND_NEW_BODY, COPY_ROUND_WINNER_TITLE } from "../copy/copy";
+import { ClientPlayer } from "../room/clientPlayer";
 import { State } from "../state";
 import { format } from "../util/clientUtil";
 import { Dialog } from "./dialog";
@@ -11,7 +12,7 @@ export class WrapupGame {
     private countdownStarted: Date;
     private countdownInterval: number;
 
-    constructor(public players: PlayerRegistry, public winner: Player) {
+    constructor(public players: PlayerRegistry<ClientPlayer>, public winner: Player) {
         this.dialog = undefined;
 
         this.countdownStarted = new Date();

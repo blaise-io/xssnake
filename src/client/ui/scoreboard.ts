@@ -56,14 +56,14 @@ export class ScoreboardUI {
         for (let i = 0, m = this.podiumSize; i < m; i++) {
             if (i >= oldOrder.length) {
                 // New player.
-                this.paint(this.players.players[i], i, i);
+                this.paint(this.players[i], i, i);
                 this.queue = true;
             } else if (typeof oldOrder[i] === "undefined") {
                 // Player placeholder.
                 this.paint(null, i, i);
-            } else if (-1 === this.players.players.indexOf(oldOrder[i])) {
+            } else if (-1 === this.players.indexOf(oldOrder[i])) {
                 // Player left.
-                this.paint(null, i, this.players.getTotal());
+                this.paint(null, i, this.players.length);
                 this.queue = true;
             } else {
                 // Existing player.
@@ -156,7 +156,7 @@ export class ScoreboardUI {
     }
 
     getPlayersSortedByScore(): ClientPlayer[] {
-        const players = this.players.players.slice();
+        const players = this.players.slice();
         players.sort(function (a, b) {
             return (b.connected ? b.score : -1) - (a.connected ? a.score : -1);
         });

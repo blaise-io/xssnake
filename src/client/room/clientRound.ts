@@ -89,7 +89,7 @@ export class ClientRound extends Round {
     }
 
     wrapupGame(winnerIndex: number): void {
-        this.wrapupGameUI = new WrapupGame(this.players, this.players.players[winnerIndex] || null);
+        this.wrapupGameUI = new WrapupGame(this.players, this.players[winnerIndex] || null);
     }
 
     isMidgame(): boolean {

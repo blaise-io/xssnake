@@ -36,7 +36,7 @@ export class MessageBox {
     }
 
     addMessage(serializedMessage: [number, string]): void {
-        const name = String(this.players.players[serializedMessage[0]].name);
+        const name = String(this.players[serializedMessage[0]].name);
         this.messages.push(new ChatMessage(name, serializedMessage[1]));
         this.ui.debounceUpdate();
     }
@@ -47,7 +47,7 @@ export class MessageBox {
 
     updatePlayers(): void {
         // TODO: recursion?
-        const disconnectedPlayer = this.players.players.find((p) => !p.connected);
+        const disconnectedPlayer = this.players.find((p) => !p.connected);
         if (disconnectedPlayer) {
             this.notifyMidgameDisconnect(disconnectedPlayer);
             this.playerChangeNotified = true;
@@ -56,7 +56,7 @@ export class MessageBox {
             if (this.previousPlayers && !this.playerChangeNotified) {
                 this.notifyPlayersChange();
             }
-            this.previousPlayers = new ClientPlayerRegistry(...this.players.players);
+            this.previousPlayers = new ClientPlayerRegistry(...this.players);
             this.playerChangeNotified = false;
         }
     }
@@ -73,9 +73,9 @@ export class MessageBox {
 
     notifyPlayersChange(): void {
         let message;
-        if (this.players.getTotal() > this.previousPlayers.getTotal()) {
-            message = format(COPY_PLAYER_JOINED, String(this.players.getJoinName()));
-        } else if (this.players.getTotal() < this.previousPlayers.getTotal()) {
+        if (this.players.length > this.previousPlayers.length) {
+            message = format(COPY_PLAYER_JOINED, String(this.players.getLastJoin()));
+        } else if (this.players.length < this.previousPlayers.length) {
             message = format(
                 COPY_PLAYER_QUIT,
                 String(this.players.getQuitName(this.previousPlayers)),

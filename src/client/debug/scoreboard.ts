@@ -1,4 +1,5 @@
 import { Player } from "../../shared/room/player";
+import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ChatMessage } from "../room/chatMessage";
 import { Scoreboard } from "../room/scoreboard";
@@ -24,22 +25,22 @@ export function debugScoreboard(): void {
 
         const players = new ClientPlayerRegistry();
         for (let i = 0, m = 5; i <= m; i++) {
-            const player = new Player("Player " + (i + 1), true, i === 0);
-            players.add(player);
+            const player = new ClientPlayer("Player " + (i + 1), true, i === 0);
+            players.push(player);
         }
         const scoreboard = new Scoreboard(players);
 
         setTimeout(() => {
             // Mimic player leaving, joining during lobby.
-            players.players[2].score = 1; // Player 3 leads.
+            players[2].score = 1; // Player 3 leads.
             scoreboard.ui.updateScoreboard();
 
             setTimeout(() => {
-                players.players[2].connected = false; // Player 3 leaves.
+                players[2].connected = false; // Player 3 leaves.
                 scoreboard.ui.debounceUpdate();
 
                 setTimeout(() => {
-                    players.add(new Player("Player 6")); // Player 6 joins.
+                    players.push(new ClientPlayer("Player 6")); // Player 6 joins.
                     scoreboard.ui.debounceUpdate();
                 }, 1000);
             }, 1000);
@@ -47,7 +48,7 @@ export function debugScoreboard(): void {
 
         // Mimic game.
         //function increase() {
-        //    randomArrItem(players.players).score += randomRange(1, 3);
+        //    randomArrItem(players).score += randomRange(1, 3);
         //    scoreboard.ui.debounceUpdate();
         //    setTimeout(increase, randomRange(0, 500));
         //}

@@ -1,8 +1,8 @@
 import { GAME_SHIFT_MAP } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
-import { Player } from "../../shared/room/player";
 import { Snake } from "../../shared/snake";
+import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 
 export class ServerSnake extends Snake {
     private elapsed: number;
@@ -19,7 +19,12 @@ export class ServerSnake extends Snake {
         return [this.index, this.direction, this.parts];
     }
 
-    handleNextMove(tick: number, elapsed: number, shift: Shift, players: Player[]): void {
+    handleNextMove(
+        tick: number,
+        elapsed: number,
+        shift: Shift,
+        players: ServerPlayerRegistry,
+    ): void {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {

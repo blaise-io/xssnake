@@ -85,7 +85,7 @@ export class ClientGame {
 
     ncUpdateSnake(serializedSnake: [number, number, Coordinate[]]): void {
         const clientIndex = serializedSnake[0];
-        const snake = this.players.players[clientIndex].snake;
+        const snake = this.players[clientIndex].snake;
         snake.deserialize([serializedSnake[1], serializedSnake[2]]);
     }
 
@@ -96,7 +96,7 @@ export class ClientGame {
     ncSetSnakesCrashed(serializedCollisions: any): void {
         for (let i = 0, m = serializedCollisions.length; i < m; i++) {
             const collision = serializedCollisions[i];
-            const snake = this.players.players[collision[0]].snake;
+            const snake = this.players[collision[0]].snake;
             snake.parts = collision[1];
             snake.setCrashed(collision[2]);
         }

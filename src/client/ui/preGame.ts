@@ -40,8 +40,8 @@ export class PreGameUI {
     destruct(): void {
         window.clearInterval(this.countdownInterval);
         this.unbindKeys();
-        this.players = undefined;
-        this.options = undefined;
+        delete this.players;
+        delete this.options;
         if (this.dialog) {
             this.dialog.destruct();
         }
@@ -96,11 +96,11 @@ export class PreGameUI {
     }
 
     playerCanStartRound(): boolean {
-        return this.players.getTotal() > 1 && this.players.localPlayerIsHost();
+        return this.players.length > 1 && this.players.localPlayerIsHost();
     }
 
     showInvitePlayersDialog(): void {
-        const numplayers = this.players.getTotal();
+        const numplayers = this.players.length;
         const remaining = this.options.maxPlayers - numplayers;
         let body = format(COPY_AWAITING_PLAYERS_BODY, remaining, remaining === 1 ? "" : "s");
 
@@ -125,9 +125,7 @@ export class PreGameUI {
 
         this.dialog = new Dialog(
             COPY_CONFIRM_EXIT_HEADER,
-            this.players.getTotal() === 2
-                ? COPY_CONFIRM_EXIT_BODY_DRAMATIC
-                : COPY_CONFIRM_EXIT_BODY,
+            this.players.length === 2 ? COPY_CONFIRM_EXIT_BODY_DRAMATIC : COPY_CONFIRM_EXIT_BODY,
             settings,
         );
     }

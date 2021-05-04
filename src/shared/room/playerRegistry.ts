@@ -7,22 +7,22 @@ export class RoomPlayersMessage implements Message {
     static id = NETCODE.ROOM_PLAYERS;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public players: PlayerRegistry, public localPlayer?: Player) {}
+    constructor(public players: PlayerRegistry<Player>, public localPlayer?: Player) {}
 
     static fromNetcode(untrustedNetcode: string): RoomPlayersMessage {
         const datas = JSON.parse(untrustedNetcode);
-        const players = new PlayerRegistry();
+        const players = new PlayerRegistry<Player>();
         for (let i = 0, m = datas.length; i < m; i++) {
             const data = datas[i];
-            players.add(new Player(data[0], Boolean(data[1]), Boolean(data[2]), data[3]));
+            players.push(new Player(data[0], Boolean(data[1]), Boolean(data[2]), data[3]));
         }
         return new RoomPlayersMessage(players);
     }
 
     get netcode(): string {
         const players = [];
-        for (let i = 0, m = this.players.players.length; i < m; i++) {
-            const player = this.players.players[i];
+        for (let i = 0, m = this.players.length; i < m; i++) {
+            const player = this.players[i];
             players.push([
                 player.name,
                 Number(player.connected),
@@ -49,41 +49,24 @@ export class JoinRoomErrorMessage implements Message {
     }
 }
 
-export class PlayerRegistry {
-    players: Player[];
-
-    constructor(...players: Player[]) {
-        this.players = players;
+export class PlayerRegistry<T> extends Array<T> {
+    constructor(...items: T[]) {
+        super(); // new Array();
+        this.push(...items);
     }
 
     destruct(): void {
-        this.players.length = 0;
+        this.length = 0;
     }
 
-    // serialize(localPlayer: Player): [string, number][] {
-    //     const serialized = [];
-    //     for (let i = 0, m = this.players.length; i < m; i++) {
-    //         serialized.push(this.players[i].serialize(localPlayer === this.players[i]));
-    //     }
-    //     return serialized;
-    // }
-
-    add(player: Player): void {
-        this.players.push(player);
-    }
-
-    remove(player: Player): void {
-        const index = this.players.indexOf(player);
-        if (-1 !== index) {
-            this.players.splice(index, 1);
+    remove(player: T): void {
+        const index = this.indexOf(player);
+        if (index !== -1) {
+            this.splice(index, 1);
         }
     }
 
-    getTotal(): number {
-        return this.players.length;
-    }
-
-    isHost(player: Player): boolean {
-        return 0 === this.players.indexOf(player);
+    isHost(player: T): boolean {
+        return 0 === this.indexOf(player);
     }
 }

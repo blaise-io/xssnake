@@ -6,24 +6,23 @@ import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 export class ServerScore {
     constructor(public players: ServerPlayerRegistry) {}
 
-    destruct() {
-        this.players = undefined;
+    destruct(): void {
+        delete this.players;
     }
 
     /**
      * Returns whether player score is affected.
      */
     update(crashedPlayers: ServerPlayer[], level: Level): boolean {
-        let points;
         let scoreUpdated = false;
         if (!level) {
             console.error("FIXME");
             return false;
         }
-        points = crashedPlayers.length * level.config.pointsKnockout;
+        const points = crashedPlayers.length * level.config.pointsKnockout;
         if (points) {
-            for (let i = 0, m = this.players.players.length; i < m; i++) {
-                const player = this.players.players[i];
+            for (let i = 0, m = this.players.length; i < m; i++) {
+                const player = this.players[i];
                 if (-1 === crashedPlayers.indexOf(player) && !player.snake.crashed) {
                     player.score += points;
                     scoreUpdated = true;
@@ -37,8 +36,8 @@ export class ServerScore {
 
     serialize(): number[] {
         const score = [];
-        for (let i = 0, m = this.players.players.length; i < m; i++) {
-            score.push(this.players.players[i].score);
+        for (let i = 0, m = this.players.length; i < m; i++) {
+            score.push(this.players[i].score);
         }
         return score;
     }

@@ -39,7 +39,7 @@ export class ServerRoom {
         if (sanitizer.valid()) {
             // TODO Prevent spam.
             player.broadcast(NC_CHAT_MESSAGE, [
-                this.players.players.indexOf(player),
+                this.players.indexOf(player),
                 sanitizer.getValueOr(),
             ]);
         }
@@ -57,7 +57,7 @@ export class ServerRoom {
     }
 
     addPlayer(player: ServerPlayer): void {
-        this.players.add(player);
+        this.players.push(player);
         this.players.sendPlayers();
     }
 
@@ -83,12 +83,12 @@ export class ServerRoom {
 
     /** @deprecated move to RoomManager */
     detectEmptyRoom(): void {
-        if (this.players.players.some((sp) => sp.connected)) {
+        if (this.players.some((sp) => !sp.connected)) {
             this.server.roomManager.remove(this);
         }
     }
 
     isFull(): boolean {
-        return this.players.getTotal() === this.options.maxPlayers;
+        return this.players.length === this.options.maxPlayers;
     }
 }

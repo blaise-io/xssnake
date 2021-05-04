@@ -46,10 +46,20 @@ export class ClientRoom {
     destruct(): void {
         urlHash();
         this.unbindEvents();
-        this.players.destruct();
-        this.roundSet.destruct();
-        this.messageBox.destruct();
-        this.scoreboard.destruct();
+        delete this.key;
+        delete this.options;
+        if (this.players) {
+            this.players.destruct();
+        }
+        if (this.roundSet) {
+            this.roundSet.destruct();
+        }
+        if (this.messageBox) {
+            this.messageBox.destruct();
+        }
+        if (this.scoreboard) {
+            this.scoreboard.destruct();
+        }
     }
 
     bindEvents(): void {
@@ -109,8 +119,8 @@ export class ClientRoom {
     setupComponents(): void {
         this.roundSet = new ClientRoundSet(this.players, this.options);
         this.roundSet.setupRound();
-        this.scoreboard = new Scoreboard(this.players);
-        this.messageBox = new MessageBox(this.players);
+        // this.scoreboard = new Scoreboard(this.players);
+        // this.messageBox = new MessageBox(this.players);
     }
 
     // setRoom(serializedRoom: [string]): void {

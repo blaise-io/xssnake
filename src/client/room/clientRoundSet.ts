@@ -15,26 +15,26 @@ export class ClientRoundSet {
         this.bindEvents();
     }
 
-    destruct() {
-        this.players = undefined;
-        this.options = undefined;
+    destruct(): void {
+        delete this.players;
+        delete this.options;
         this.round.destruct();
-        this.round = undefined;
+        delete this.round;
     }
 
-    bindEvents() {
+    bindEvents(): void {
         State.events.on(NC_ROUND_SERIALIZE, NS.ROUND_SET, this.updateRound.bind(this));
     }
 
-    unbindEvents() {
+    unbindEvents(): void {
         State.events.off(NC_ROUND_SERIALIZE, NS.ROUND_SET);
     }
 
-    setupRound() {
+    setupRound(): void {
         this.round = new ClientRound(this.players, this.options);
     }
 
-    updateRound(serializedRound) {
+    updateRound(serializedRound): void {
         if (this.round.isMidgame()) {
             this.round.destruct();
             this.round = new ClientRound(this.players, this.options);

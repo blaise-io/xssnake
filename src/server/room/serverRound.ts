@@ -44,7 +44,7 @@ export class ServerRound extends Round {
         this.bindEvents();
     }
 
-    destruct() {
+    destruct(): void {
         clearTimeout(this.countdownTimer);
         this.unbindEvents();
 
@@ -82,11 +82,11 @@ export class ServerRound extends Round {
     }
 
     getAlivePlayers(): ServerPlayer[] {
-        return this.players.players.filter((player) => !player.snake.crashed);
+        return this.players.filter((player) => !player.snake.crashed);
     }
 
     wrapUp(winner: ServerPlayer): void {
-        const data = [this.players.players.indexOf(winner)];
+        const data = [this.players.indexOf(winner)];
         this.players.emit(NC_ROUND_WRAPUP, data);
         this.wrappingUp = true;
     }

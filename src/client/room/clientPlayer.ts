@@ -16,13 +16,13 @@ export class ClientPlayer extends Player {
         );
     }
 
-    /** @deprecated */
-    deserialize(serialized: [string, number]): void {
-        super.deserialize(serialized);
-        if (!this.connected && this.snake) {
-            this.snake.setCrashed();
-        }
-    }
+    // /** @deprecated */
+    // deserialize(serialized: [string, number]): void {
+    //     super.deserialize(serialized);
+    //     if (!this.connected && this.snake) {
+    //         this.snake.setCrashed();
+    //     }
+    // }
 
     setSnake(index: number, level: Level): void {
         this.snake = new ClientSnake(index, this.local, this.name, this.emitSnake, level);
