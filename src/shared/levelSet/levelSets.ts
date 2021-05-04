@@ -7,7 +7,7 @@ const basic = new LevelSet(_("Basic"));
 basic.push(LinesLevel);
 basic.push(CrosshairLevel);
 
-const alsoBasic = new LevelSet(_("Amazing!"));
+const alsoBasic = new LevelSet(_("Amazing"));
 alsoBasic.push(LinesLevel);
 alsoBasic.push(CrosshairLevel);
 

@@ -19,7 +19,7 @@
     "html-webpack-plugin": "5.3.1",
     "pngjs": "6.0.0",
     "ts-loader": "8.1.0",
-    "typescript": "4.2.3",
+    "typescript": "^4.2.4",
     "webpack": "5.33.2",
     "webpack-cli": "4.6.0",
     "ws": "7.4.4"

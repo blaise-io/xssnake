@@ -54,6 +54,6 @@ export const NETCODE_MESSAGES: MessageConstructor[] = [
     SnakeMessage,
 ];
 
-export const NETCODE_MAP = Object.fromEntries(
-    NETCODE_MESSAGES.map((Message) => [Message.id, Message]),
+export const NETCODE_MAP = <Record<NETCODE, MessageConstructor>>(
+    Object.fromEntries(NETCODE_MESSAGES.map((Message) => [Message.id, Message]))
 );

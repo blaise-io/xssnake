@@ -76,12 +76,9 @@ export class ClientSocketPlayer extends ClientPlayer {
     }
 
     send(message: Message): void {
-        console.info(
-            "OUT",
-            (message.constructor as MessageConstructor).id + message.netcode,
-            message,
-        );
-        this.connection.send((message.constructor as MessageConstructor).id + message.netcode);
+        const id = (message.constructor as MessageConstructor).id;
+        console.info("OUT", id + message.netcode, message);
+        this.connection.send(id + message.netcode);
     }
 
     onmessage(message: string): void {
