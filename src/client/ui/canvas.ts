@@ -46,9 +46,8 @@ export class Canvas {
             this._frame(now);
         });
 
-        window.onerror = (error) => {
+        window.onerror = () => {
             this.error = true;
-            console.error(error);
         };
     }
 

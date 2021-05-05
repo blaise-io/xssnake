@@ -3,8 +3,10 @@
  * is created. It will show the snakes, level, name labels and directions
  * until ClientGame.start() is called.
  */
-import { NC_SNAKE_CRASH, NC_SNAKE_UPDATE } from "../../shared/const";
+import { NC_SNAKE_CRASH } from "../../shared/const";
 import { Level } from "../../shared/level/level";
+import { NETCODE } from "../../shared/room/netcode";
+import { SnakeUpdateClientMessage } from "../../shared/snakeMessages";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
@@ -47,8 +49,20 @@ export class ClientGame {
 
     bindEvents(): void {
         State.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));
-        State.events.on(NC_SNAKE_UPDATE, NS.GAME, this.ncUpdateSnake.bind(this));
-        State.events.on(NC_SNAKE_CRASH, NS.GAME, this.ncSetSnakesCrashed.bind(this));
+        State.events.on(
+            NETCODE.SNAKE_UPDATE_CLIENT,
+            NS.GAME,
+            (message: SnakeUpdateClientMessage) => {
+                const clientIndex = message.playerIndex as number;
+                const snake = this.players[clientIndex].snake;
+                snake.direction = message.direction;
+                snake.parts = message.parts;
+                // If server updated snake, client prediction
+                // of snake crashing was incorrect.
+                delete snake.collision;
+                State.events.on(NC_SNAKE_CRASH, NS.GAME, this.ncSetSnakesCrashed.bind(this));
+            },
+        );
 
         //State.events.on(NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
@@ -61,7 +75,7 @@ export class ClientGame {
 
     unbindEvents(): void {
         State.events.off(EV_GAME_TICK, NS.GAME);
-        State.events.off(NC_SNAKE_UPDATE, NS.GAME);
+        State.events.off(NETCODE.SNAKE_UPDATE_CLIENT, NS.GAME);
     }
 
     /**
@@ -81,12 +95,6 @@ export class ClientGame {
         Object.assign(State.shapes, getLevelShapes(level));
         // Apply changes in spawns.
         this.updatePlayers(this.players);
-    }
-
-    ncUpdateSnake(serializedSnake: [number, number, Coordinate[]]): void {
-        const clientIndex = serializedSnake[0];
-        const snake = this.players[clientIndex].snake;
-        snake.deserialize([serializedSnake[1], serializedSnake[2]]);
     }
 
     /**

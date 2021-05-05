@@ -63,12 +63,9 @@ export function fontPixels(str: string, x = 0, y = 0, options: any = {}) {
  * @return {number}
  */
 export function fontHeight(str, x = 0, y = 0, options = {}) {
-    let remainder;
-    let height;
     const LH = LINE_HEIGHT;
-    height = font(str, x, y, options).pixels.pixels.length + 1;
-    // Don't allow absence of font descenders affect height.
-    remainder = LH - ((height - (y || 0)) % LH || LH);
+    const height = font(str, x, y, options).pixels.pixels.length + 1; // Don't allow absence of font descenders affect height.
+    const remainder = LH - ((height - (y || 0)) % LH || LH);
     return height + remainder;
 }
 
@@ -80,17 +77,14 @@ export function fontHeight(str, x = 0, y = 0, options = {}) {
  * @return {number}
  */
 export function fontWidth(str, x = 0, y = 0, options = {}) {
-    let pixels;
-    let width;
     const maxes = [0];
-    pixels = font(str, x, y, options).pixels;
+    const pixels = font(str, x, y, options).pixels;
     for (let i = pixels.pixels.length - LINE_HEIGHT + 1, m = pixels.pixels.length; i < m; i++) {
         if (pixels.pixels[i]) {
             maxes.push(Math.max.apply(this, pixels.pixels[i]));
         }
     }
-    width = Math.max.apply(this, maxes) + 2;
-    // Ends with a space. Ending with multiple spaces not supported.
+    let width = Math.max.apply(this, maxes) + 2; // Ends with a space. Ending with multiple spaces not supported.
     if (" " === str.slice(-1)) {
         width += 3;
     }
@@ -103,9 +97,8 @@ export function fontWidth(str, x = 0, y = 0, options = {}) {
  * @return {number}
  */
 export function fastWidth(str) {
-    let chrs;
     let width = 0;
-    chrs = str.split("\n");
+    let chrs = str.split("\n");
     chrs = chrs[chrs.length - 1].split("");
     for (let i = 0, m = chrs.length; i < m; i++) {
         width += _chrProperties(chrs[i]).width;
@@ -148,18 +141,14 @@ function _chrProperties(chr) {
  * @private
  */
 function _appendChr(x, y, shape, chr, pointer) {
-    let chrProperties;
-    let shiftedPixels;
     let kerning = 0;
 
-    chrProperties = _chrProperties(chr);
-
+    const chrProperties = _chrProperties(chr);
     if (pointer.x) {
         kerning = getKerning(x, y, shape, pointer, chrProperties);
     }
 
-    shiftedPixels = shift(chrProperties.pixels, pointer.x + x + kerning, pointer.y + y);
-
+    const shiftedPixels = shift(chrProperties.pixels, pointer.x + x + kerning, pointer.y + y);
     shape.add(shiftedPixels);
     return chrProperties.width + kerning;
 }
@@ -244,20 +233,12 @@ function _invert(shape, y) {
  * @private
  */
 function _getContext() {
-    let canvas;
-    let context;
-    let font;
-
-    canvas = document.createElement("canvas");
+    const canvas = document.createElement("canvas");
     canvas.width = MAX_WIDTH;
     canvas.height = MAX_HEIGHT;
 
-    context = canvas.getContext("2d");
-
-    // "xssnake" is a special font that was crafted for this game.
-    font = "8px xssnake";
-    // Specify blurry fonts in the fallback, to make it easier to detect
-    // glyphs that are (un)supported by the xssnake font.
+    const context = canvas.getContext("2d"); // "xssnake" is a special font that was crafted for this game.
+    let font = "8px xssnake"; // Specify blurry fonts in the fallback, to make it easier to detect // glyphs that are (un)supported by the xssnake font.
     font += ", courier new, serif";
     context.font = font;
 
@@ -270,12 +251,10 @@ function _getContext() {
  * @private
  */
 function _getChrProperties(chr) {
-    let data;
     const pixels = new PixelCollection();
     let width = 0;
     let len = 0;
     let blurry = 0;
-    let valid;
     const w = MAX_WIDTH;
     const h = MAX_HEIGHT;
 
@@ -290,7 +269,7 @@ function _getChrProperties(chr) {
     _ctx.fillStyle = "#fff";
     _ctx.fillText(chr, 0, BASELINE);
 
-    data = _ctx.getImageData(0, 0, w, h).data;
+    const data = _ctx.getImageData(0, 0, w, h).data;
     for (let i = 0, m = data.length; i < m; i += 4) {
         // When this does not work on some OS, try a few presets until
         // it matches a known pattern.
@@ -306,7 +285,7 @@ function _getChrProperties(chr) {
         }
     }
 
-    valid = len && blurry / len <= BLURRY_TRESHOLD;
+    const valid = len && blurry / len <= BLURRY_TRESHOLD;
     return valid ? { width: width, pixels: pixels } : null;
 }
 

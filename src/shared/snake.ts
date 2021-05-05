@@ -1,67 +1,22 @@
-import { DIRECTION, NETCODE_SYNC_MS } from "./const";
+import { DIRECTION } from "./const";
 import { Collision } from "./game/collision";
 import { Level } from "./level/level";
-import { Message } from "./room/types";
-import { AUDIENCE, NETCODE } from "./room/netcode";
-
-export class SnakeUpdateMessage implements Message {
-    static id = NETCODE.SNAKE_UPDATE;
-    static audience = AUDIENCE.SERVER_ROOM_BID;
-
-    constructor(public direction: DIRECTION, public parts: Coordinate[]) {}
-
-    static fromSnake(snake: Snake, direction = -1): SnakeUpdateMessage {
-        // Direction can be upcoming, may not be part of snake.
-        // This syncs a partial snake. That makes it only useful from client to server?
-        const sync = Math.ceil(NETCODE_SYNC_MS / snake.speed);
-        return new SnakeUpdateMessage(
-            direction !== -1 ? direction : snake.direction,
-            snake.parts.slice(-sync),
-        );
-    }
-
-    static fromNetcode(untrustedNetcode: string): SnakeUpdateMessage | undefined {
-        try {
-            const [direction, ...parts] = JSON.parse(untrustedNetcode);
-            if (
-                direction !== DIRECTION.LEFT &&
-                direction !== DIRECTION.UP &&
-                direction !== DIRECTION.RIGHT &&
-                direction !== DIRECTION.DOWN
-            ) {
-                return;
-            }
-            return new SnakeUpdateMessage(direction, parts);
-        } catch (error) {
-            console.error(error);
-            return;
-        }
-    }
-
-    get netcode(): string {
-        return JSON.stringify([this.direction, ...this.parts]);
-    }
-}
 
 export class Snake {
     /** Head is last in array */
+    crashed = false;
     parts: Coordinate[];
     direction: DIRECTION;
     size: number;
     speed: number;
-    crashed: boolean;
     collision: Collision;
 
     constructor(public index: number, level: Level) {
         const spawn = level.data.spawns[index];
-
         this.parts = [spawn.location];
         this.direction = spawn.direction;
         this.size = level.config.snakeSize;
         this.speed = level.config.snakeSpeed;
-
-        this.crashed = false;
-        delete this.collision;
     }
 
     move(position: Coordinate): void {

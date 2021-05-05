@@ -1,4 +1,4 @@
-import { SnakeUpdateMessage } from "../snake";
+import { SnakeUpdateClientMessage, SnakeUpdateServerMessage } from "../snakeMessages";
 import { NameMessage } from "./player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "./playerRegistry";
 import { RoomKeyMessage, RoomOptionsMessage } from "./roomOptions";
@@ -13,7 +13,8 @@ export const NETCODE_MAP = {
     [RoomOptionsMessage.id]: RoomOptionsMessage,
     [RoomPlayersMessage.id]: RoomPlayersMessage,
     [RoomRoundMessage.id]: RoomRoundMessage,
-    [SnakeUpdateMessage.id]: SnakeUpdateMessage,
+    [SnakeUpdateServerMessage.id]: SnakeUpdateServerMessage,
+    [SnakeUpdateClientMessage.id]: SnakeUpdateClientMessage,
 };
 
 export const enum AUDIENCE {
@@ -54,5 +55,6 @@ export const enum NETCODE {
     SNAKE_CRASH = "S2",
     SNAKE_SIZE = "S3",
     SNAKE_SPEED = "S4",
-    SNAKE_UPDATE = "S5",
+    SNAKE_UPDATE_SERVER = "S5",
+    SNAKE_UPDATE_CLIENT = "S6",
 }

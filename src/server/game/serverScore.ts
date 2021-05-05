@@ -50,23 +50,23 @@ export class ServerScore {
     // * @return {netcode.Client}
     // */
     //getWinner() {
-    //    let sorted, last, index;
+    //    let sorted, last, playerIndex;
     //
     //    sorted = this.points.slice().sort();
     //    last = sorted.length - 1;
-    //    index = this.points.indexOf(sorted[last]);
+    //    playerIndex = this.points.indexOf(sorted[last]);
     //
     //    return (sorted[last] - ROOM_WIN_BY_MIN >= sorted[last - 1]) ?
-    //        this.room.players[index] : null;
+    //        this.room.players[playerIndex] : null;
     //},
     //
     ///**
     // * @param {netcode.Client} client
     // */
     //bufferApplePoints(client) {
-    //    let points = ++this.points[client.model.index];
+    //    let points = ++this.points[client.model.playerIndex];
     //    this.room.buffer(
-    //        NC_SCORE_UPDATE, [client.model.index, points]
+    //        NC_SCORE_UPDATE, [client.model.playerIndex, points]
     //    );
     //},
     //
@@ -81,7 +81,7 @@ export class ServerScore {
     //        return SCORE_NEUTRAL;
     //    }
     //
-    //    clientPoints = points[client.model.index];
+    //    clientPoints = points[client.model.playerIndex];
     //    for (let i = 0, m = points.length; i < m; i++) {
     //        if (clientPoints > points[i]) {
     //            position++;

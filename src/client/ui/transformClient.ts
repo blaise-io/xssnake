@@ -1,24 +1,11 @@
-/**
- * @param {Shape} shape
- * @param {number=} hPadding
- * @param {number=} vPadding
- * @param {boolean=} round
- * @return {Shape}
- */
 import { PixelCollection } from "../../shared/pixelCollection";
+import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { shift } from "../../shared/transform";
 
-export function outline(shape, hPadding = 6, vPadding = 6, round = true) {
-    let r;
-    let x0;
-    let x1;
-    let y0;
-    let y1;
+export function outline(shape, hPadding = 6, vPadding = 6, round = true): Shape {
     let bbox = shape.bbox();
-
-    r = round ? 1 : 0;
-
+    const r = round ? 1 : 0;
     hPadding = typeof hPadding === "number" ? hPadding : 6;
     vPadding = typeof vPadding === "number" ? vPadding : 6;
 
@@ -28,11 +15,10 @@ export function outline(shape, hPadding = 6, vPadding = 6, round = true) {
         bbox = shape.bbox();
     }
 
-    x0 = bbox.x0 - hPadding;
-    x1 = bbox.x1 + hPadding;
-    y0 = bbox.y0 - vPadding;
-    y1 = bbox.y1 + vPadding;
-
+    const x0 = bbox.x0 - hPadding;
+    const x1 = bbox.x1 + hPadding;
+    const y0 = bbox.y0 - vPadding;
+    const y1 = bbox.y1 + vPadding;
     shape.add(
         line(x0, y0 + 1, x0, y1), // Left
         line(x0 + r, y0, x1 - r, y0), // Top
@@ -48,13 +34,7 @@ export function outline(shape, hPadding = 6, vPadding = 6, round = true) {
     return shape;
 }
 
-/**
- * @param {PixelCollection} pixels
- * @param {number=} xshift
- * @param {number=} yshift
- * @return {PixelCollection}
- */
-export function zoomIn(pixels, xshift = 0, yshift = 0) {
+export function zoomIn(pixels: PixelCollection, xshift = 0, yshift = 0): PixelCollection {
     const ret = new PixelCollection();
 
     pixels.each(function (x, y) {
@@ -69,15 +49,13 @@ export function zoomIn(pixels, xshift = 0, yshift = 0) {
     return ret;
 }
 
-/**
- * @param {number} zoomlevel (2 or 4)
- * @param {PixelCollection} pixels
- * @param {number=} shiftX
- * @param {number=} shiftY
- * @param {boolean=} antiAlising
- * @return {PixelCollection}
- */
-export function zoom(zoomlevel, pixels, shiftX = 0, shiftY = 0, antiAlising = true) {
+export function zoom(
+    zoomlevel: 2 | 4,
+    pixels: PixelCollection,
+    shiftX = 0,
+    shiftY = 0,
+    antiAlising = true,
+): PixelCollection {
     let zoomedPixels;
 
     shiftX = shiftX || 0;
@@ -103,12 +81,8 @@ export function zoom(zoomlevel, pixels, shiftX = 0, shiftY = 0, antiAlising = tr
     }
 
     function add(dirX, dirY, x, y) {
-        let baseY;
-        let baseX;
-
-        baseX = x * zoomlevel + shiftX;
-        baseY = y * zoomlevel + shiftY;
-
+        const baseX = x * zoomlevel + shiftX;
+        const baseY = y * zoomlevel + shiftY;
         if (2 === zoomlevel) {
             x = baseX + (dirX === -1 ? 0 : 1);
             y = baseY + (dirY === -1 ? 0 : 1);
@@ -131,12 +105,8 @@ export function zoom(zoomlevel, pixels, shiftX = 0, shiftY = 0, antiAlising = tr
     //  XX
     //   X
     function addX4s(baseX, dirX2, baseY, dirY2) {
-        let compX;
-        let compY;
-
-        compX = baseX + (dirX2 === -1 ? 0 : 3);
-        compY = baseY + (dirY2 === -1 ? 0 : 3);
-
+        const compX = baseX + (dirX2 === -1 ? 0 : 3);
+        const compY = baseY + (dirY2 === -1 ? 0 : 3);
         zoomedPixels.add(compX, compY);
         zoomedPixels.add(compX - 1 * dirX2, compY);
         zoomedPixels.add(compX - 2 * dirX2, compY);

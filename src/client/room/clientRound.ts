@@ -74,7 +74,9 @@ export class ClientRound extends Round {
     }
 
     updatePlayers(): void {
-        this.game.updatePlayers(this.players);
+        if (this.game) {
+            this.game.updatePlayers(this.players);
+        }
         this.preGameUI.updateUI();
     }
 

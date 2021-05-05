@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import { NC_SNAKE_CRASH, SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { NETCODE } from "../../shared/room/netcode";
-import { SnakeUpdateMessage } from "../../shared/snake";
+import { SnakeUpdateServerMessage } from "../../shared/snakeMessages";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -46,15 +46,15 @@ export class ServerGame {
 
     bindEvents(): void {
         this.roomEmitter.on(
-            NETCODE.SNAKE_UPDATE,
-            (player: ServerPlayer, message: SnakeUpdateMessage) => {
+            NETCODE.SNAKE_UPDATE_SERVER,
+            (player: ServerPlayer, message: SnakeUpdateServerMessage) => {
                 this.handleMove(new ServerSnakeMove(message.parts, message.direction, player));
             },
         );
     }
 
     unbindEvents(): void {
-        this.roomEmitter.removeAllListeners(NETCODE.SNAKE_UPDATE);
+        this.roomEmitter.removeAllListeners(NETCODE.SNAKE_UPDATE_SERVER);
     }
 
     private handleMove(move: ServerSnakeMove) {
@@ -64,9 +64,10 @@ export class ServerGame {
             snake.parts = move.parts;
             snake.trimParts();
         }
-        this.players.send(SnakeUpdateMessage.fromSnake(snake), {
-            exclude: move.isValid() ? move.player : undefined,
-        });
+        this.players.send(
+            SnakeUpdateServerMessage.fromData(snake, this.players.indexOf(move.player)),
+            { exclude: move.isValid() ? move.player : undefined },
+        );
     }
 
     get averageLatencyInTicks(): number {
