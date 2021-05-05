@@ -23,19 +23,17 @@ export class ClientRoundSet {
     }
 
     bindEvents(): void {
-        State.events.on(
-            NETCODE.ROUND_SERIALIZE,
-            NS.ROUND_SET,
-            async (message: RoomRoundMessage) => {
-                // TODO: Why would I do this?
-                // Why would the level even update mid-game?
-                if (this.round.game && this.round.game.started) {
-                    this.round.destruct();
-                    this.round = new ClientRound(this.players, this.options);
-                    await this.round.setLevel(message.levelSetIndex, message.levelIndex);
-                }
-            },
-        );
+        State.events.on(NETCODE.ROUND_SERIALIZE, NS.ROUND_SET, (message: RoomRoundMessage) => {
+            // TODO: Why would I do this?
+            // Why would the level even update mid-game?
+            if (this.round.game && this.round.game.started) {
+                console.log(message);
+                throw new Error("Ok so this is used.");
+                // this.round.destruct();
+                // this.round = new ClientRound(this.players, this.options);
+                // await this.round.setLevel(message.levelSetIndex, message.levelIndex);
+            }
+        });
     }
 
     unbindEvents(): void {
