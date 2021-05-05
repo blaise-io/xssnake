@@ -34,21 +34,23 @@ export class ServerPlayer extends Player {
         if (this.connected) {
             this.disconnect();
         }
-        this.server = undefined;
-        this.snake = undefined;
-        this.room = undefined;
+        delete this.server;
+        delete this.snake;
+        delete this.room;
     }
 
     disconnect(): void {
         this.connected = false;
         if (this.snake) {
             this.snake.crashed = true;
+        }
+        if (this.room) {
             this.room.emitter.emit(String(SE_PLAYER_COLLISION), [this]);
         }
         // this.emitMessage(String(SE_PLAYER_DISCONNECT), this);
         if (this.client) {
             this.client.close(); // TODO: terminate()?
-            this.client = undefined; // TODO: not my job?
+            delete this.client; // TODO: not my job?
         }
     }
 
