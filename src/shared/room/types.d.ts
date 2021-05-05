@@ -8,5 +8,5 @@ export interface MessageConstructor {
     new (...any): Message;
     id: NETCODE;
     audience: AUDIENCE;
-    fromNetcode?: (untrustedNetcode: string) => Message;
+    fromNetcode: (untrustedNetcode: string) => Message;
 }

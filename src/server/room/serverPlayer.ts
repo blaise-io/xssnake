@@ -55,14 +55,14 @@ export class ServerPlayer extends Player {
     /**
      * Player sends a message to the server.
      */
-    onmessage(message: string): void {
-        if (message.length) {
-            const netcodeId = message.substr(0, 2);
+    onmessage(messageString: string): void {
+        if (messageString.length) {
+            const netcodeId = messageString.substr(0, 2);
             const Message = NETCODE_MAP[netcodeId];
             if (Message) {
                 const audience = Message.audience;
                 if (audience & AUDIENCE.SERVER_ROOM || audience & AUDIENCE.SERVER_MATCHMAKING) {
-                    const messageInstance = Message.fromNetcode(message.substring(2));
+                    const messageInstance = Message.fromNetcode(messageString.substring(2));
                     console.log("IN", messageInstance);
                     if (messageInstance) {
                         this.emitMessage(Message.id, audience, messageInstance);
@@ -87,7 +87,7 @@ export class ServerPlayer extends Player {
                 message.netcode,
                 util.inspect(message, { showHidden: false, depth: 1 }),
             );
-            this.client.send((message.constructor as MessageConstructor).id + message.netcode);
+            this.client.send((<MessageConstructor>message.constructor).id + message.netcode);
         }
     }
 
