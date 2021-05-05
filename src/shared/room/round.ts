@@ -1,8 +1,29 @@
 import { levelSets } from "../levelSet/levelSets";
 import { Level } from "../level/level";
+import { AUDIENCE, NETCODE } from "./netcode";
 import { Player } from "./player";
 import { RoomOptions } from "./roomOptions";
 import { PlayerRegistry } from "./playerRegistry";
+import { Message } from "./types";
+
+export class RoomRoundMessage implements Message {
+    static id = NETCODE.ROUND_SERIALIZE;
+    static audience = AUDIENCE.CLIENT;
+
+    constructor(public levelSetIndex: number, public levelIndex: number) {}
+
+    static fromNetcode(trustedNetcode: string): RoomRoundMessage {
+        return new RoomRoundMessage(...(JSON.parse(trustedNetcode) as [number, number]));
+    }
+
+    static fromRound(round: Round): RoomRoundMessage {
+        return new RoomRoundMessage(round.levelSetIndex, round.levelIndex);
+    }
+
+    get netcode(): string {
+        return JSON.stringify([this.levelSetIndex, this.levelIndex]);
+    }
+}
 
 export class Round {
     levelSetIndex: number;
@@ -14,21 +35,11 @@ export class Round {
     constructor(public players: PlayerRegistry<Player>, public options: RoomOptions) {
         this.levelSetIndex = undefined;
         this.levelIndex = undefined;
-        this.level = undefined;
         this.index = 0;
         this.started = false;
     }
 
-    serialize(): number[] {
-        return [this.levelSetIndex, this.levelIndex];
-    }
-
-    deserialize(serialized: number[]): void {
-        this.levelSetIndex = serialized[0];
-        this.levelIndex = serialized[1];
-    }
-
-    getLevel(levelSetIndex: number, levelIndex: number): typeof Level {
-        return levelSets[levelSetIndex][levelIndex];
+    get LevelClass(): typeof Level {
+        return levelSets[this.levelSetIndex][this.levelIndex];
     }
 }

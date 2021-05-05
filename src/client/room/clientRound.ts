@@ -1,13 +1,7 @@
-import {
-    NC_ROUND_COUNTDOWN,
-    NC_ROUND_SERIALIZE,
-    NC_ROUND_START,
-    NC_ROUND_WRAPUP,
-} from "../../shared/const";
-import { Level } from "../../shared/level/level";
-import { BlankLevel } from "../../shared/levels/debug/blank";
+import { NC_ROUND_COUNTDOWN, NC_ROUND_START, NC_ROUND_WRAPUP } from "../../shared/const";
+import { NETCODE } from "../../shared/room/netcode";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { Round } from "../../shared/room/round";
+import { RoomRoundMessage, Round } from "../../shared/room/round";
 import { EV_PLAYERS_UPDATED, NS } from "../const";
 import { ClientGame } from "../game/clientGame";
 import { State } from "../state";
@@ -17,27 +11,29 @@ import { clientImageLoader } from "../util/clientUtil";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 
 export class ClientRound extends Round {
-    private game: ClientGame;
+    game: ClientGame;
     private preGameUI: PreGameUI;
     private wrapupGameUI: WrapupGame = undefined;
-    level: Level;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         super(players, options);
 
         this.preGameUI = new PreGameUI(players, options);
 
-        this.level = new BlankLevel();
-        this.level.load(clientImageLoader).then(() => {
-            this.game = new ClientGame(this.level, this.players);
-            this.bindEvents();
-        });
+        // this.setLevel(BlankLevel).then(() => {
+        //     console.log("BLANK LEVEL SET");
+        //     this.game = new ClientGame(this.level, this.players);
+        //     this.bindEvents();
+        // });
+        this.bindEvents();
     }
 
     destruct(): void {
         this.unbindEvents();
-        this.game.destruct();
-        this.game = undefined;
+        if (this.game) {
+            this.game.destruct();
+            delete this.game;
+        }
         if (this.preGameUI) {
             this.preGameUI.destruct();
             this.preGameUI = undefined;
@@ -48,9 +44,23 @@ export class ClientRound extends Round {
         }
     }
 
+    setLevel(levelSetIndex: number, levelIndex: number): Promise<void> {
+        this.levelSetIndex = levelSetIndex;
+        this.levelIndex = levelIndex;
+        this.level = new this.LevelClass();
+        return this.level.load(clientImageLoader).then(() => {
+            if (this.game) {
+                this.game.destruct();
+            }
+            this.game = new ClientGame(this.level, this.players);
+        });
+    }
+
     bindEvents(): void {
         State.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
-        State.events.on(NC_ROUND_SERIALIZE, NS.ROUND, this.updateRound.bind(this));
+        State.events.on(NETCODE.ROUND_SERIALIZE, NS.ROUND, async (message: RoomRoundMessage) => {
+            await this.setLevel(message.levelSetIndex, message.levelIndex);
+        });
         State.events.on(NC_ROUND_COUNTDOWN, NS.ROUND, this.updateCountdown.bind(this));
         State.events.on(NC_ROUND_START, NS.ROUND, this.startGame.bind(this));
         State.events.on(NC_ROUND_WRAPUP, NS.ROUND, this.wrapupGame.bind(this));
@@ -58,7 +68,7 @@ export class ClientRound extends Round {
 
     unbindEvents(): void {
         State.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
-        State.events.off(NC_ROUND_SERIALIZE, NS.ROUND);
+        State.events.off(NETCODE.ROUND_SERIALIZE, NS.ROUND);
         State.events.off(NC_ROUND_COUNTDOWN, NS.ROUND);
         State.events.off(NC_ROUND_START, NS.ROUND);
     }
@@ -66,15 +76,6 @@ export class ClientRound extends Round {
     updatePlayers(): void {
         this.game.updatePlayers(this.players);
         this.preGameUI.updateUI();
-    }
-
-    updateRound(serializedRound: [number, number]): void {
-        this.deserialize(serializedRound);
-        const Level = this.getLevel(this.levelSetIndex, this.levelIndex);
-        this.level = new Level();
-        this.level.load(clientImageLoader).then(() => {
-            this.game.updateLevel(this.level);
-        });
     }
 
     updateCountdown(serializedStarted: [boolean]): void {
@@ -90,9 +91,5 @@ export class ClientRound extends Round {
 
     wrapupGame(winnerIndex: number): void {
         this.wrapupGameUI = new WrapupGame(this.players, this.players[winnerIndex] || null);
-    }
-
-    isMidgame(): boolean {
-        return this.game.started;
     }
 }

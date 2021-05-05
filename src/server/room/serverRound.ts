@@ -2,14 +2,12 @@ import { EventEmitter } from "events";
 import {
     NC_ROOM_START,
     NC_ROUND_COUNTDOWN,
-    NC_ROUND_SERIALIZE,
     NC_ROUND_START,
     NC_ROUND_WRAPUP,
-    SE_PLAYER_DISCONNECT,
     SECONDS_ROUND_COUNTDOWN,
 } from "../../shared/const";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { Round } from "../../shared/room/round";
+import { RoomRoundMessage, Round } from "../../shared/room/round";
 import { ServerGame } from "../game/serverGame";
 import { serverImageLoader } from "../level/serverImageLoader";
 import { LevelPlayset } from "./playset";
@@ -20,7 +18,6 @@ export class ServerRound extends Round {
     private game: ServerGame;
     wrappingUp: boolean;
     private countdownStarted: boolean;
-    private handleDisconnectBound: (...args: any[]) => void;
     private countdownTimer: NodeJS.Timeout;
 
     constructor(
@@ -36,8 +33,6 @@ export class ServerRound extends Round {
 
         this.countdownStarted = false;
         this.wrappingUp = false;
-
-        this.handleDisconnectBound = this.handleDisconnect.bind(this);
 
         this.bindEvents();
     }
@@ -56,26 +51,25 @@ export class ServerRound extends Round {
             this.level = undefined;
         }
 
-        this.handleDisconnectBound = undefined;
         this.roomEmitter = undefined;
     }
 
     bindEvents(): void {
-        this.roomEmitter.on(String(SE_PLAYER_DISCONNECT), this.handleDisconnectBound);
+        // this.roomEmitter.on(String(SE_PLAYER_DISCONNECT), "xx");
         this.roomEmitter.on(String(NC_ROOM_START), this.handleManualRoomStart.bind(this));
     }
 
     unbindEvents(): void {
-        this.roomEmitter.removeListener(String(SE_PLAYER_DISCONNECT), this.handleDisconnectBound);
+        // this.roomEmitter.removeListener(String(SE_PLAYER_DISCONNECT), "xx");
         this.roomEmitter.removeAllListeners(String(NC_ROOM_START));
     }
 
     emit(player: ServerPlayer): void {
-        player.emit(NC_ROUND_SERIALIZE, this.serialize());
+        player.send(RoomRoundMessage.fromRound(this));
     }
 
     emitAll(): void {
-        this.players.emit(NC_ROUND_SERIALIZE, this.serialize());
+        this.players.send(RoomRoundMessage.fromRound(this));
     }
 
     getAlivePlayers(): ServerPlayer[] {
@@ -103,8 +97,7 @@ export class ServerRound extends Round {
 
     startRound(): void {
         this.unbindEvents();
-        const Level = this.getLevel(this.levelSetIndex, this.levelIndex);
-        this.level = new Level();
+        this.level = new this.LevelClass();
         this.level.load(serverImageLoader).then(() => {
             this.game = new ServerGame(this.roomEmitter, this.level, this.players);
             this.started = true;

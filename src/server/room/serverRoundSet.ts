@@ -29,7 +29,7 @@ export class ServerRoundSet {
         this.bindEvents();
     }
 
-    destruct() {
+    destruct(): void {
         this.roomEmitter.removeAllListeners(String(SE_PLAYER_COLLISION));
         clearTimeout(this.nextRoundTimeout);
 
@@ -46,7 +46,7 @@ export class ServerRoundSet {
         this.options = undefined;
     }
 
-    bindEvents() {
+    bindEvents(): void {
         this.roomEmitter.on(String(SE_PLAYER_COLLISION), this.handleCollisions.bind(this));
     }
 
@@ -60,7 +60,7 @@ export class ServerRoundSet {
         }
     }
 
-    startNewRound() {
+    startNewRound(): void {
         this.round.destruct();
         this.round = new ServerRound(
             this.roomEmitter,
@@ -73,11 +73,11 @@ export class ServerRoundSet {
         this.round.toggleCountdown(true);
     }
 
-    hasSetWinner() {
+    hasSetWinner(): boolean {
         return false;
     }
 
-    handleCollisions(crashingPlayers) {
+    handleCollisions(crashingPlayers: ServerPlayer[]): void {
         const alive = this.round.getAlivePlayers();
         this.score.update(crashingPlayers, this.round.level);
         if (alive.length <= 1) {
@@ -85,11 +85,11 @@ export class ServerRoundSet {
         }
     }
 
-    hasStarted() {
+    hasStarted(): boolean {
         return this.roundIndex >= 1 || this.round.started;
     }
 
-    detectAutostart(full) {
+    detectAutostart(full: boolean): void {
         if (full && 0 === this.roundIndex) {
             this.round.toggleCountdown(true);
         }

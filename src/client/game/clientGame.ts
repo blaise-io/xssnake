@@ -78,7 +78,7 @@ export class ClientGame {
     updateLevel(level: Level): void {
         this.level.destruct();
         this.level = level;
-        Object.assign(State.shapes, getLevelShapes(this.level));
+        Object.assign(State.shapes, getLevelShapes(level));
         // Apply changes in spawns.
         this.updatePlayers(this.players);
     }

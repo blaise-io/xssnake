@@ -35,7 +35,7 @@ export class SnakeMessage implements Message {
     }
 
     get netcode(): string {
-        return JSON.stringify([this.direction, ...this.parts], null, 0);
+        return JSON.stringify([this.direction, ...this.parts]);
     }
 }
 

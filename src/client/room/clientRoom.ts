@@ -118,9 +118,8 @@ export class ClientRoom {
 
     setupComponents(): void {
         this.roundSet = new ClientRoundSet(this.players, this.options);
-        this.roundSet.setupRound();
-        // this.scoreboard = new Scoreboard(this.players);
-        // this.messageBox = new MessageBox(this.players);
+        this.scoreboard = new Scoreboard(this.players);
+        this.messageBox = new MessageBox(this.players);
     }
 
     // setRoom(serializedRoom: [string]): void {

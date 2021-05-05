@@ -81,19 +81,18 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.send(id + message.netcode);
     }
 
-    onmessage(message: string): void {
-        if (message.length) {
-            const netcodeId = message.substr(0, 2);
-            const Message = NETCODE_MAP[netcodeId];
+    onmessage(messageString: string): void {
+        if (messageString.length) {
+            const Message = NETCODE_MAP[messageString.substr(0, 2)];
             if (Message) {
                 console.log({ Message });
-                const messageObj = Message.fromNetcode(message.substring(2));
-                console.info("IN", message, messageObj);
-                if (messageObj) {
-                    State.events.trigger(Message.id, messageObj);
+                const message = Message.fromNetcode(messageString.substring(2));
+                console.info("IN", messageString, message);
+                if (message) {
+                    State.events.trigger(Message.id, message);
                 }
             } else {
-                console.error("UNREGISTERED", netcodeId, message);
+                console.error("UNREGISTERED", messageString);
             }
         }
     }
