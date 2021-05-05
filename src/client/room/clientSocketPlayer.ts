@@ -85,7 +85,6 @@ export class ClientSocketPlayer extends ClientPlayer {
         if (messageString.length) {
             const Message = NETCODE_MAP[messageString.substr(0, 2)];
             if (Message) {
-                console.log({ Message });
                 const message = Message.fromNetcode(messageString.substring(2));
                 console.info("IN", messageString, message);
                 if (message) {

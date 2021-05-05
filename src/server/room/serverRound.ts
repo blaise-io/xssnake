@@ -1,13 +1,12 @@
 import { EventEmitter } from "events";
-import {
-    NC_ROOM_START,
-    NC_ROUND_COUNTDOWN,
-    NC_ROUND_START,
-    NC_ROUND_WRAPUP,
-    SECONDS_ROUND_COUNTDOWN,
-} from "../../shared/const";
+import { NC_ROOM_START, NC_ROUND_WRAPUP, SECONDS_ROUND_COUNTDOWN } from "../../shared/const";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoomRoundMessage, Round } from "../../shared/room/round";
+import {
+    RoundCountdownMessage,
+    RoomRoundMessage,
+    Round,
+    RoundStartMessage,
+} from "../../shared/room/round";
 import { ServerGame } from "../game/serverGame";
 import { serverImageLoader } from "../level/serverImageLoader";
 import { LevelPlayset } from "./playset";
@@ -85,13 +84,11 @@ export class ServerRound extends Round {
     toggleCountdown(enabled: boolean): void {
         clearTimeout(this.countdownTimer);
         this.countdownStarted = enabled;
-        this.players.emit(NC_ROUND_COUNTDOWN, [+enabled]);
-
+        this.players.send(new RoundCountdownMessage(enabled));
         if (enabled) {
-            this.countdownTimer = setTimeout(
-                this.startRound.bind(this),
-                SECONDS_ROUND_COUNTDOWN * 1000,
-            );
+            this.countdownTimer = setTimeout(() => {
+                this.startRound();
+            }, SECONDS_ROUND_COUNTDOWN * 1000);
         }
     }
 
@@ -101,7 +98,7 @@ export class ServerRound extends Round {
         this.level.load(serverImageLoader).then(() => {
             this.game = new ServerGame(this.roomEmitter, this.level, this.players);
             this.started = true;
-            this.players.emit(NC_ROUND_START);
+            this.players.send(new RoundStartMessage());
         });
     }
 

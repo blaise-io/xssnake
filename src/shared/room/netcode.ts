@@ -2,11 +2,13 @@ import { SnakeMessage } from "../snake";
 import { NameMessage } from "./player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "./playerRegistry";
 import { RoomKeyMessage, RoomOptionsMessage } from "./roomOptions";
-import { RoomRoundMessage } from "./round";
+import { RoundCountdownMessage, RoomRoundMessage, RoundStartMessage } from "./round";
 
 export const NETCODE_MAP = {
     [JoinRoomErrorMessage.id]: JoinRoomErrorMessage,
     [NameMessage.id]: NameMessage,
+    [RoundCountdownMessage.id]: RoundCountdownMessage,
+    [RoundStartMessage.id]: RoundStartMessage,
     [RoomKeyMessage.id]: RoomKeyMessage,
     [RoomOptionsMessage.id]: RoomOptionsMessage,
     [RoomPlayersMessage.id]: RoomPlayersMessage,

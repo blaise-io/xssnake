@@ -1,7 +1,7 @@
-import { NC_ROUND_COUNTDOWN, NC_ROUND_START, NC_ROUND_WRAPUP } from "../../shared/const";
+import { NC_ROUND_WRAPUP } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoomRoundMessage, Round } from "../../shared/room/round";
+import { RoundCountdownMessage, RoomRoundMessage, Round } from "../../shared/room/round";
 import { EV_PLAYERS_UPDATED, NS } from "../const";
 import { ClientGame } from "../game/clientGame";
 import { State } from "../state";
@@ -54,32 +54,28 @@ export class ClientRound extends Round {
         State.events.on(NETCODE.ROUND_SERIALIZE, NS.ROUND, async (message: RoomRoundMessage) => {
             await this.setLevel(message.levelSetIndex, message.levelIndex);
         });
-        State.events.on(NC_ROUND_COUNTDOWN, NS.ROUND, this.updateCountdown.bind(this));
-        State.events.on(NC_ROUND_START, NS.ROUND, this.startGame.bind(this));
+        State.events.on(NETCODE.ROUND_COUNTDOWN, NS.ROUND, (message: RoundCountdownMessage) => {
+            this.preGameUI.toggleCountdown(message.enabled);
+            this.preGameUI.updateUI();
+        });
+        State.events.on(NETCODE.ROUND_START, NS.ROUND, () => {
+            this.unbindEvents();
+            this.preGameUI.destruct();
+            this.game.start();
+        });
         State.events.on(NC_ROUND_WRAPUP, NS.ROUND, this.wrapupGame.bind(this));
     }
 
     unbindEvents(): void {
         State.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
         State.events.off(NETCODE.ROUND_SERIALIZE, NS.ROUND);
-        State.events.off(NC_ROUND_COUNTDOWN, NS.ROUND);
-        State.events.off(NC_ROUND_START, NS.ROUND);
+        State.events.off(NETCODE.ROUND_COUNTDOWN, NS.ROUND);
+        State.events.off(NETCODE.ROUND_START, NS.ROUND);
     }
 
     updatePlayers(): void {
         this.game.updatePlayers(this.players);
         this.preGameUI.updateUI();
-    }
-
-    updateCountdown(serializedStarted: [boolean]): void {
-        this.preGameUI.toggleCountdown(Boolean(serializedStarted[0]));
-        this.preGameUI.updateUI();
-    }
-
-    startGame(): void {
-        this.unbindEvents();
-        this.preGameUI.destruct();
-        this.game.start();
     }
 
     wrapupGame(winnerIndex: number): void {

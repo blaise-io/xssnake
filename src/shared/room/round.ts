@@ -25,6 +25,34 @@ export class RoomRoundMessage implements Message {
     }
 }
 
+export class RoundCountdownMessage implements Message {
+    static id = NETCODE.ROUND_COUNTDOWN;
+    static audience = AUDIENCE.CLIENT;
+
+    constructor(public enabled: boolean) {}
+
+    static fromNetcode(trustedNetcode: string): RoundCountdownMessage {
+        return new RoundCountdownMessage(Boolean(parseInt(trustedNetcode, 10)));
+    }
+
+    get netcode(): string {
+        return Number(this.enabled).toString();
+    }
+}
+
+export class RoundStartMessage implements Message {
+    static id = NETCODE.ROUND_START;
+    static audience = AUDIENCE.CLIENT;
+
+    static fromNetcode(): RoundStartMessage {
+        return new RoundStartMessage();
+    }
+
+    get netcode(): string {
+        return "";
+    }
+}
+
 export class Round {
     levelSetIndex: number;
     levelIndex: number;
