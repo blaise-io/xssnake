@@ -3,7 +3,6 @@ import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoomRoundMessage } from "../../shared/room/round";
 import { NS } from "../const";
 import { State } from "../state";
-import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRound } from "./clientRound";
 
 export class ClientRoundSet {

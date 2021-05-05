@@ -6,7 +6,6 @@ import { State } from "../state";
 import { MessageBoxUI } from "../ui/messageBox";
 import { format } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
-import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
 import { ChatMessage } from "./chatMessage";
 

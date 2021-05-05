@@ -4,16 +4,19 @@ import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { NS } from "../const";
 import { State } from "../state";
 import { ClientPlayer } from "./clientPlayer";
+import { ClientSocketPlayer } from "./clientSocketPlayer";
 
-export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
+export class ClientPlayers extends PlayerRegistry<ClientPlayer> {
     players: ClientPlayer[];
 
     get localPlayer(): ClientPlayer {
         return this.find((p) => p.local);
     }
 
-    static fromPlayerRegistry(players: Player[]): ClientPlayerRegistry {
-        return new ClientPlayerRegistry(...players.map((p) => ClientPlayer.fromPlayer(p)));
+    static fromPlayerRegistry(localPlayer: ClientSocketPlayer, players: Player[]): ClientPlayers {
+        return new ClientPlayers(
+            ...players.map((p) => (p.local ? localPlayer : ClientPlayer.fromPlayer(p))),
+        );
     }
 
     // deserialize(serializedPlayers: [string, number][]): void {
@@ -106,7 +109,7 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
         }
     }
 
-    getQuitName(prevPlayers: ClientPlayerRegistry): string | null {
+    getQuitName(prevPlayers: ClientPlayers): string | null {
         const prevNames = prevPlayers.getNames();
         const newNames = this.getNames();
         for (let i = 0, m = prevNames.length; i < m; i++) {

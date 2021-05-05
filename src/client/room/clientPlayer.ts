@@ -25,7 +25,15 @@ export class ClientPlayer extends Player {
     // }
 
     setSnake(index: number, level: Level): void {
-        this.snake = new ClientSnake(index, this.local, this.name, this.emitSnake, level);
+        this.snake = new ClientSnake(
+            index,
+            this.local,
+            this.name,
+            (direction) => {
+                this.emitSnake(direction);
+            },
+            level,
+        );
     }
 
     emitSnake(direction: DIRECTION): void {

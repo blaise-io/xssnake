@@ -12,8 +12,8 @@ import { translateGame } from "../util/clientUtil";
 import { ClientSnakeControls } from "./clientSnakeControls";
 
 export class ClientSnake extends Snake {
-    elapsed: number;
-    private exploded: boolean;
+    elapsed = 0;
+    private exploded = false;
     private controls: ClientSnakeControls;
     private shapeKeys: { snake: string; name: string; direction: string };
 
@@ -25,11 +25,6 @@ export class ClientSnake extends Snake {
         level: Level,
     ) {
         super(index, level);
-
-        this.elapsed = 0;
-        this.exploded = false;
-
-        this.controls = undefined;
 
         this.shapeKeys = {
             snake: NS.SNAKE + index,

@@ -51,7 +51,7 @@ export class ClientSnakeControls {
     }
 
     move(): void {
-        if (this.upcomingDirections.length) {
+        if (this.upcomingDirections.length && this.snake.emitSnake) {
             this.snake.emitSnake(this.upcomingDirections.shift());
         }
     }

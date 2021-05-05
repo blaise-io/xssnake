@@ -12,9 +12,9 @@ import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, HASH, NS } from "../const";
 import { State } from "../state";
 import { urlHash } from "../util/clientUtil";
-import { ClientPlayer } from "./clientPlayer";
-import { ClientPlayerRegistry } from "./clientPlayerRegistry";
+import { ClientPlayers } from "./clientPlayerRegistry";
 import { ClientRoundSet } from "./clientRoundSet";
+import { ClientSocketPlayer } from "./clientSocketPlayer";
 import { MessageBox } from "./messageBox";
 import { Scoreboard } from "./scoreboard";
 
@@ -28,7 +28,7 @@ const COPY_ERROR = {
 
 export class ClientRoom {
     key: string;
-    players: ClientPlayerRegistry;
+    players: ClientPlayers;
     options: RoomOptions;
 
     private roundSet: ClientRoundSet;
@@ -36,7 +36,7 @@ export class ClientRoom {
     private scoreboard: Scoreboard;
 
     constructor(
-        clientPlayer: ClientPlayer, // TODO: Not used?
+        private clientPlayer: ClientSocketPlayer,
         private resolve: (clientRoom: ClientRoom) => void,
         private reject: (error: string) => void,
     ) {
@@ -75,7 +75,7 @@ export class ClientRoom {
         });
 
         State.events.on(NETCODE.ROOM_PLAYERS, NS.ROOM, (message: RoomPlayersMessage) => {
-            this.players = ClientPlayerRegistry.fromPlayerRegistry(message.players);
+            this.players = ClientPlayers.fromPlayerRegistry(this.clientPlayer, message.players);
             this.checkAllRoomDataReceived();
             State.events.trigger(EV_PLAYERS_UPDATED, this.players);
         });
