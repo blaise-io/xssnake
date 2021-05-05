@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "html-webpack-plugin": "5.3.1",
+    "nano-server": "^0.5.4",
     "pngjs": "6.0.0",
     "ts-loader": "8.1.0",
     "typescript": "^4.2.4",
@@ -45,6 +46,8 @@
     "client": "webpack --mode development --watch --config src/client/webpack.config.js",
     "client.production": "webpack --mode production --config src/client/webpack.config.js",
     "server": "webpack --mode development --watch --config src/server/webpack.config.js",
+    "server.production": "webpack --mode production --config src/server/webpack.config.js",
+    "browser": "(nano-server 8002 dist &); open http://127.0.0.1:8002",
     "lint": "eslint . --fix --ext .ts; prettier --write '**/*.ts'",
     "start": "node dist/server.js --enable-source-maps --throw-deprecation",
     "restart": "supervisor --watch dist/server.js -- dist/server.js --enable-source-maps --throw-deprecation"

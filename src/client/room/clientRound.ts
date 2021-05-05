@@ -13,18 +13,11 @@ import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 export class ClientRound extends Round {
     game: ClientGame;
     private preGameUI: PreGameUI;
-    private wrapupGameUI: WrapupGame = undefined;
+    private wrapupGameUI: WrapupGame;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         super(players, options);
-
         this.preGameUI = new PreGameUI(players, options);
-
-        // this.setLevel(BlankLevel).then(() => {
-        //     console.log("BLANK LEVEL SET");
-        //     this.game = new ClientGame(this.level, this.players);
-        //     this.bindEvents();
-        // });
         this.bindEvents();
     }
 

@@ -4,10 +4,10 @@ import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { Snake } from "../../shared/snake";
-import { FRAME, NS } from "../const";
+import { NS } from "../const";
 import { State } from "../state";
 import { explosion, showAction, tooltipName } from "../ui/clientShapeGenerator";
-import { flash, lifetime, setGameTransform } from "../ui/shapeClient";
+import { flash, setGameTransform } from "../ui/shapeClient";
 import { translateGame } from "../util/clientUtil";
 import { ClientSnakeControls } from "./clientSnakeControls";
 
@@ -133,11 +133,11 @@ export class ClientSnake extends Snake {
             this.controls.destruct();
         }
         if (!this.exploded) {
+            for (let i = 0, m = this.parts.length; i < m; i++) {
+                this.explodeParticles(this.parts[i]);
+            }
+            State.shapes[this.shapeKeys.snake] = undefined;
             this.exploded = true;
-            this.explodeParticles(crashingPart);
-            const shape = this.updateShape();
-            lifetime(shape, 0, FRAME * 50);
-            flash(shape, FRAME * 5, FRAME * 10);
         }
     }
 

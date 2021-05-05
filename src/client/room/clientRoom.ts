@@ -63,37 +63,22 @@ export class ClientRoom {
     }
 
     bindEvents(): void {
-        // State.events.on(NC_ROOM_SERIALIZE, NS.ROOM, (data) => {
-        //     this.setRoom(data);
-        // });
-
         State.events.on(NETCODE.ROOM_KEY, NS.ROOM, (message: RoomKeyMessage) => {
             this.key = message.key;
             urlHash(HASH.ROOM, this.key);
             this.checkAllRoomDataReceived();
         });
 
-        // State.events.on(NC_OPTIONS_SERIALIZE, NS.ROOM, (data) => {
-        //     this.updateOptions(data);
-        // });
         State.events.on(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM, (message: RoomOptionsMessage) => {
             this.options = message.options;
             this.checkAllRoomDataReceived();
         });
-
-        // State.events.on(NC_PLAYERS_SERIALIZE, NS.ROOM, (data) => {
-        //     this.updatePlayers(data);
-        // });
 
         State.events.on(NETCODE.ROOM_PLAYERS, NS.ROOM, (message: RoomPlayersMessage) => {
             this.players = ClientPlayerRegistry.fromPlayerRegistry(message.players);
             this.checkAllRoomDataReceived();
             // State.events.trigger(EV_PLAYERS_UPDATED, this.players);
         });
-
-        // State.events.on(NC_ROOM_JOIN_ERROR, NS.ROOM, (data) => {
-        //     this.handleError(data);
-        // });
 
         State.events.on(NETCODE.ROOM_JOIN_ERROR, NS.ROOM, (message: JoinRoomErrorMessage) => {
             this.reject(COPY_ERROR[message.status].toUpperCase());
@@ -177,10 +162,6 @@ export class ClientRoom {
         }
         this.messageBox.ui.debounceUpdate();
     }
-
-    // handleError(data: number[]): void {
-    //     this.reject(COPY_ERROR[data[0]].toUpperCase());
-    // }
 
     //    /**
     //     * @param {Array.<string>} names
