@@ -116,7 +116,7 @@ export class ClientSnake extends Snake {
             // made a turn in time.
             if (move.collision) {
                 if (this.local) {
-                    this.setCrashed(move.collision.location);
+                    this.setCrashed();
                 } else {
                     this.collision = move.collision;
                 }
@@ -127,38 +127,20 @@ export class ClientSnake extends Snake {
         }
     }
 
-    setCrashed(crashingPart?: Coordinate): void {
+    setCrashed(): void {
         this.crashed = true;
         if (this.controls) {
             this.controls.destruct();
         }
         if (!this.exploded) {
             for (let i = 0, m = this.parts.length; i < m; i++) {
-                this.explodeParticles(this.parts[i]);
+                window.setTimeout(() => {
+                    explosion(translateGame(this.parts[i]));
+                }, (this.parts.length - i - 1) * 50);
             }
-            State.shapes[this.shapeKeys.snake] = undefined;
+            delete State.shapes[this.shapeKeys.snake];
             this.exploded = true;
         }
-    }
-
-    // TODO: pass direction instead.
-    explodeParticles(collisionPart?: Coordinate): void {
-        let direction;
-
-        if (collisionPart) {
-            // Crashed part is specified.
-            direction = -1;
-        } else {
-            // Assume head has crashed.
-            direction = this.direction;
-            collisionPart = this.getHead();
-        }
-
-        const location = translateGame(collisionPart);
-        location[0] += 1;
-        location[1] += 2;
-
-        explosion(location, direction);
     }
 
     deserialize(serializedSnake: [number, Coordinate[]]): void {

@@ -98,7 +98,7 @@ export class ClientGame {
             const collision = serializedCollisions[i];
             const snake = this.players[collision[0]].snake;
             snake.parts = collision[1];
-            snake.setCrashed(collision[2]);
+            snake.setCrashed();
         }
     }
 

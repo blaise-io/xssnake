@@ -18,7 +18,7 @@ export class MainStage extends SelectStage {
         super();
 
         const roomKey = urlHash(HASH.ROOM);
-        this.menu = this._getMenu();
+        this.menu = this.getMenu();
 
         if (roomKey) {
             this.initializeAutoJoin(roomKey);
@@ -44,9 +44,8 @@ export class MainStage extends SelectStage {
         super.construct();
     }
 
-    private _getMenu(): Menu {
+    private getMenu(): Menu {
         const name = storage.get(STORAGE.NAME) as string;
-
         const header = (name
             ? `Yay ${name.toUpperCase()} is back!`
             : "Multiplayer Snake!"
@@ -57,7 +56,7 @@ export class MainStage extends SelectStage {
         menu.add(
             new MenuOption(_("Quick Game"), "", () => {
                 State.flow.data.roomOptions.isQuickGame = true;
-                State.flow.data.name = name || getRandomName();
+                State.flow.data.name = (storage.get(STORAGE.NAME) as string) || getRandomName();
                 State.flow.switchStage(GameStage);
             }),
         );
@@ -68,6 +67,7 @@ export class MainStage extends SelectStage {
         );
         menu.add(
             new MenuOption(_("Single Player"), "", () => {
+                State.flow.data.name = (storage.get(STORAGE.NAME) as string) || _("You");
                 State.flow.data.roomOptions.maxPlayers = 1;
                 State.flow.data.roomOptions.isOnline = false;
                 State.flow.data.roomOptions.isPrivate = true;

@@ -9,7 +9,7 @@ import { NETCODE } from "../../shared/room/netcode";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
-import { HASH, NS } from "../const";
+import { EV_PLAYERS_UPDATED, HASH, NS } from "../const";
 import { State } from "../state";
 import { urlHash } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
@@ -77,7 +77,7 @@ export class ClientRoom {
         State.events.on(NETCODE.ROOM_PLAYERS, NS.ROOM, (message: RoomPlayersMessage) => {
             this.players = ClientPlayerRegistry.fromPlayerRegistry(message.players);
             this.checkAllRoomDataReceived();
-            // State.events.trigger(EV_PLAYERS_UPDATED, this.players);
+            State.events.trigger(EV_PLAYERS_UPDATED, this.players);
         });
 
         State.events.on(NETCODE.ROOM_JOIN_ERROR, NS.ROOM, (message: JoinRoomErrorMessage) => {
