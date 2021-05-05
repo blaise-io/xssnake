@@ -10,10 +10,15 @@ export const LINE_HEIGHT = 8;
 export const LINE_HEIGHT_MENU = 9;
 export const BLURRY_TRESHOLD = 3;
 
-const _cache: any = {};
+const _cache: Record<string, { width: number; pixels: PixelCollection }> = {};
 const _ctx = _getContext();
 
-export function font(str: string, x = 0, y = 0, options: any = {}): Shape {
+export type FontOptions = {
+    wrap?: number;
+    invert?: boolean;
+};
+
+export function font(str: string, x = 0, y = 0, options: FontOptions = {}): Shape {
     let tabx1;
 
     const shape = new Shape();
@@ -51,32 +56,18 @@ export function font(str: string, x = 0, y = 0, options: any = {}): Shape {
     return shape;
 }
 
-export function fontPixels(str: string, x = 0, y = 0, options: any = {}) {
+export function fontPixels(str: string, x = 0, y = 0, options: FontOptions = {}): PixelCollection {
     return font(str, x, y, options).pixels;
 }
 
-/**
- * @param {string} str
- * @param {number=} x
- * @param {number=} y
- * @param {Object=} options
- * @return {number}
- */
-export function fontHeight(str, x = 0, y = 0, options = {}) {
+export function fontHeight(str: string, x = 0, y = 0, options: FontOptions = {}): number {
     const LH = LINE_HEIGHT;
     const height = font(str, x, y, options).pixels.pixels.length + 1; // Don't allow absence of font descenders affect height.
     const remainder = LH - ((height - (y || 0)) % LH || LH);
     return height + remainder;
 }
 
-/**
- * @param {string} str
- * @param {number=} x
- * @param {number=} y
- * @param {Object=} options
- * @return {number}
- */
-export function fontWidth(str, x = 0, y = 0, options = {}) {
+export function fontWidth(str: string, x = 0, y = 0, options: FontOptions = {}): number {
     const maxes = [0];
     const pixels = font(str, x, y, options).pixels;
     for (let i = pixels.pixels.length - LINE_HEIGHT + 1, m = pixels.pixels.length; i < m; i++) {
@@ -91,12 +82,8 @@ export function fontWidth(str, x = 0, y = 0, options = {}) {
     return width;
 }
 
-/**
- * Ignores kerning.
- * @param {string} str
- * @return {number}
- */
-export function fastWidth(str) {
+// Get width, ignores kerning.
+export function fastWidth(str: string): number {
     let width = 0;
     let chrs = str.split("\n");
     chrs = chrs[chrs.length - 1].split("");
@@ -107,23 +94,16 @@ export function fastWidth(str) {
     return width;
 }
 
-/**
- * @param {string} str
- * @param {number=} x
- * @param {number=} y
- * @param {Object=} options
- * @return {Array}
- */
-export function fontEndPos(str, x, y, options) {
+export function fontEndPos(
+    str: string,
+    x: number,
+    y: number,
+    options: FontOptions = {},
+): [number, number] {
     return [fontWidth(str, x, y, options), fontHeight(str, x, y, options) - LINE_HEIGHT];
 }
 
-/**
- * @param chr
- * @return {Object}
- * @private
- */
-function _chrProperties(chr) {
+function _chrProperties(chr: string): { width: number; pixels: PixelCollection } {
     if (!_cache[chr]) {
         const chrProperties = _getChrProperties(chr);
         _cache[chr] = chrProperties || _chrProperties(UC.SQUARE);
@@ -140,7 +120,13 @@ function _chrProperties(chr) {
  * @return {number}
  * @private
  */
-function _appendChr(x, y, shape, chr, pointer) {
+function _appendChr(
+    x: number,
+    y: number,
+    shape: Shape,
+    chr: string,
+    pointer: { x: number; y: number },
+) {
     let kerning = 0;
 
     const chrProperties = _chrProperties(chr);
@@ -153,7 +139,12 @@ function _appendChr(x, y, shape, chr, pointer) {
     return chrProperties.width + kerning;
 }
 
-export function getMaxes(x, y, shape, pointer) {
+export function getMaxes(
+    x: number,
+    y: number,
+    shape: Shape,
+    pointer: { x: number; y: number },
+): number[] {
     const maxes = [];
     for (let i = 0; i < LINE_HEIGHT; i++) {
         if (shape.pixels.pixels[y + pointer.y + i]) {
@@ -163,7 +154,13 @@ export function getMaxes(x, y, shape, pointer) {
     return maxes;
 }
 
-export function getKerning(x, y, shape, pointer, chrProperties) {
+export function getKerning(
+    x: number,
+    y: number,
+    shape: Shape,
+    pointer: { x: number; y: number },
+    chrProperties: { width: number; pixels: PixelCollection },
+): number {
     const gaps = [];
     const maxes = getMaxes(x, y, shape, pointer);
 
@@ -228,11 +225,7 @@ function _invert(shape, y) {
     shape.invert(bbox);
 }
 
-/**
- * @return {CanvasRenderingContext2D}
- * @private
- */
-function _getContext() {
+function _getContext(): CanvasRenderingContext2D {
     const canvas = document.createElement("canvas");
     canvas.width = MAX_WIDTH;
     canvas.height = MAX_HEIGHT;
@@ -245,12 +238,7 @@ function _getContext() {
     return context;
 }
 
-/**
- * @param {string} chr
- * @return {{width: number, pixels: PixelCollection}|null}
- * @private
- */
-function _getChrProperties(chr) {
+function _getChrProperties(chr: string): { width: number; pixels: PixelCollection } {
     const pixels = new PixelCollection();
     let width = 0;
     let len = 0;
@@ -286,7 +274,7 @@ function _getChrProperties(chr) {
     }
 
     const valid = len && blurry / len <= BLURRY_TRESHOLD;
-    return valid ? { width: width, pixels: pixels } : null;
+    return valid ? { width: width, pixels: pixels } : undefined;
 }
 
 export function fontLoad(): Promise<void> {

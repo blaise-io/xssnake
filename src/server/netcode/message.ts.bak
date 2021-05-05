@@ -25,23 +25,18 @@ export class Message {
     }
 
     sanitize(jsonStr) {
-        let sanitizer;
-        let arrayValidator;
-        let eventNumberValidator;
-        let messageJson;
-
-        sanitizer = new Sanitizer(jsonStr).assertStringOfLength(3, 512).assertJSON();
+        const sanitizer = new Sanitizer(jsonStr).assertStringOfLength(3, 512).assertJSON();
         if (!sanitizer.valid()) {
             return null;
         }
 
-        messageJson = sanitizer.json();
-        arrayValidator = new Sanitizer(messageJson).assertArrayLengthBetween(1, 20);
+        const messageJson = sanitizer.json();
+        const arrayValidator = new Sanitizer(messageJson).assertArrayLengthBetween(1, 20);
         if (!arrayValidator.valid()) {
             return null;
         }
 
-        eventNumberValidator = new Sanitizer(messageJson[0]).assertType("number");
+        const eventNumberValidator = new Sanitizer(messageJson[0]).assertType("number");
         if (!eventNumberValidator.valid()) {
             return null;
         }

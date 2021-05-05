@@ -117,30 +117,24 @@ export function tooltipName(text: string, part: Coordinate, direction: DIRECTION
     return tooltip(text, x, y, direction);
 }
 
-/**
- * @param {string} label
- * @param {Coordinate} coordinate
- * @param {number} duration
- * @param {number=} amount
- */
-export function showAction(label, coordinate, duration, amount = 3) {
+export function showAction(
+    label: string,
+    coordinate: Coordinate,
+    duration = 200,
+    amount = 3,
+): void {
     for (let s = 0; s <= duration * amount; s += duration) {
-        let shape;
-        let name;
-        shape = font(
+        const shape = font(
             label,
             coordinate[0] * GAME.TILE + randomRange(-12, 12),
             coordinate[1] * GAME.TILE + randomRange(-12, 12),
         );
-        name = NS.ACTION + randomStr();
+        const name = NS.ACTION + randomStr();
         State.shapes[name] = lifetime(shape, s, s + duration);
     }
 }
 
-/**
- * @return {Shape}
- */
-export function innerBorder() {
+export function innerBorder(): Shape {
     const w = CANVAS.WIDTH - 1;
     const h = CANVAS.HEIGHT - 1;
     return new Shape(line(2, h - 25, w - 2, h - 25), line(2, h - 26, w - 2, h - 26));
@@ -159,15 +153,11 @@ export function outerBorder(): Record<string, Shape> {
 }
 
 export function xssnakeHeader(): Shape {
-    let x;
-    let y;
-    let shape;
     const welcome = font("<XSSNAKE>").pixels;
 
-    x = MENU_LEFT - 2;
-    y = MENU_TOP - 34;
-
-    shape = new Shape(zoom(4, welcome, x, y));
+    let x = MENU_LEFT - 2;
+    let y = MENU_TOP - 34;
+    const shape = new Shape(zoom(4, welcome, x, y));
     x += 2;
     y += 28;
     shape.add(line(x, y, x + MENU_WIDTH, y));

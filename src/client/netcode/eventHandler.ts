@@ -6,10 +6,9 @@ export class EventHandler {
     }
 
     trigger(topic: string, ...eventData: unknown[]): void {
-        let topicKeys;
         const topics = this._topics[topic];
         if (topics) {
-            topicKeys = Object.keys(topics);
+            const topicKeys = Object.keys(topics);
             for (let i = 0, m = topicKeys.length; i < m; i++) {
                 const key = topicKeys[i];
                 topics[key](...eventData);
@@ -31,21 +30,24 @@ export class EventHandler {
         }
     }
 
-    once(topic: number | string, key: string, callback: CallableFunction): void {
-        const callbackAndOff = function (...args) {
-            callback(...args);
-            this.off(topic, key);
-        }.bind(this);
-        this.on(topic, key, callbackAndOff);
-    }
+    // once(topic: number | string, key: string, callback: CallableFunction): void {
+    //     const callbackAndOff = function (...args) {
+    //         callback(...args);
+    //         this.off(topic, key);
+    //     }.bind(this);
+    //     this.on(topic, key, callbackAndOff);
+    // }
 
     off(topic: number | string, key?: string): void {
-        let callback;
         if (topic in this._topics) {
             if (typeof key !== "undefined") {
                 if ("on" + topic in document) {
-                    callback = this._topics[topic][key];
-                    document.removeEventListener(String(topic), callback, false);
+                    const callback = this._topics[topic][key];
+                    document.removeEventListener(
+                        topic.toString() as keyof DocumentEventMap,
+                        callback as (Event) => void,
+                        false,
+                    );
                 }
                 delete this._topics[topic][key];
             } else {

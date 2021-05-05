@@ -4,6 +4,7 @@
  * until ClientGame.start() is called.
  */
 import { NC_SNAKE_CRASH } from "../../shared/const";
+import { Collision } from "../../shared/game/collision";
 import { Level } from "../../shared/level/level";
 import { NETCODE } from "../../shared/room/netcode";
 import { SnakeUpdateClientMessage } from "../../shared/snakeMessages";
@@ -101,7 +102,7 @@ export class ClientGame {
      * TODO: Typing for things like these.
      * @param {Array} serializedCollisions
      */
-    ncSetSnakesCrashed(serializedCollisions: any): void {
+    ncSetSnakesCrashed(serializedCollisions: Collision[]): void {
         for (let i = 0, m = serializedCollisions.length; i < m; i++) {
             const collision = serializedCollisions[i];
             const snake = this.players[collision[0]].snake;

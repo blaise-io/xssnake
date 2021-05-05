@@ -1,7 +1,7 @@
 import { CRASH_OPPONENT_DRAW } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 
-// TODO: Not used?
+// Used in game.bak
 export class Crash {
     location: Coordinate;
     parts: Coordinate[];
@@ -14,10 +14,9 @@ export class Crash {
         this.draw = this.detectDraw();
     }
 
-    detectDraw() {
-        let diff;
+    detectDraw(): boolean {
         if (this.opponent) {
-            diff = this.client.snake.direction + this.opponent.snake.direction;
+            const diff = this.client.snake.direction + this.opponent.snake.direction;
             if (Math.abs(diff) === 2) {
                 this.type = CRASH_OPPONENT_DRAW;
                 return true;

@@ -25,7 +25,6 @@
     "unused-imports/no-unused-imports": "warn",
     "prefer-const": "warn",
     "no-extend-native": "error",
-    "one-var": ["error", {"initialized": "never"}],
     "no-restricted-syntax": [
       "error",
       {

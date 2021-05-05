@@ -82,17 +82,13 @@ export abstract class InputStage implements StageInterface {
     }
 
     private handleKeys(event: KeyboardEvent): void {
-        let value;
-        let top;
-        switch (event.key) {
-            case KEY.ESCAPE:
-                State.flow.previousStage();
-                event.preventDefault();
-                break;
-            case KEY.ENTER:
-                value = this.value.trim();
-                top = fontHeight(this.label, MENU_LEFT, this.inputTop, this.fontOptions);
-                this.inputSubmit(this.getInputError(value), value, top);
+        if (event.key === KEY.ESCAPE) {
+            State.flow.previousStage();
+            event.preventDefault();
+        } else if (event.key === KEY.ENTER) {
+            const value = this.value.trim();
+            const top = fontHeight(this.label, MENU_LEFT, this.inputTop, this.fontOptions);
+            this.inputSubmit(this.getInputError(value), value, top);
         }
     }
 

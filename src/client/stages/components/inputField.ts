@@ -3,21 +3,21 @@ import { Shape } from "../../../shared/shape";
 import { lineShape } from "../../../shared/shapeGenerator";
 import { FRAME, NS } from "../../const";
 import { State } from "../../state";
-import { fontEndPos, fontPixels, fontWidth } from "../../ui/font";
+import { fontEndPos, FontOptions, fontPixels, fontWidth } from "../../ui/font";
 import { flash } from "../../ui/shapeClient";
 
 export class InputField {
     maxValWidth: number;
     displayWidth: number;
     maxlength: number;
-    callback: any;
+    callback: CallableFunction;
     private input: HTMLInputElement;
 
     constructor(
         public x: number,
         public y: number,
         public prefix: string,
-        public fontOptions?: any,
+        public fontOptions?: FontOptions,
     ) {
         this.callback = () => {};
         delete this.maxValWidth;
@@ -30,7 +30,7 @@ export class InputField {
         State.keysBlocked = true;
     }
 
-    destruct() {
+    destruct(): void {
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
@@ -40,13 +40,13 @@ export class InputField {
         State.keysBlocked = false;
     }
 
-    unbindEvents() {
+    unbindEvents(): void {
         State.events.off("keypress", NS.INPUT);
         State.events.off("keydown", NS.INPUT);
         State.events.off("keyup", NS.INPUT);
     }
 
-    bindEvents() {
+    bindEvents(): void {
         State.events.on("keypress", NS.INPUT, function () {
             State.audio.play("menu_alt");
         });
@@ -65,24 +65,18 @@ export class InputField {
         this.updateShapes();
     }
 
-    /**
-     * @return {string}
-     */
-    getValue() {
+    getValue(): string {
         return this.input.value;
     }
 
-    updateShapes() {
+    updateShapes(): void {
         this.maxwidthCutOff();
         this.callback(this.input.value);
         State.shapes.INPUT_CARET = this.getCaretShape();
         State.shapes.INPUT_VALUE = this.getInputValueShape();
     }
 
-    /**
-     * @return {Element}
-     */
-    addInputToDom() {
+    addInputToDom(): HTMLInputElement {
         const input = document.createElement("input");
         input.setAttribute("maxlength", String(this.maxlength));
         input.focus();
@@ -104,9 +98,9 @@ export class InputField {
     }
 
     getInputValueShape(): Shape {
-        let endpos;
         const values = this.getSelectionSegments();
         const shape = new Shape();
+        let endpos;
         shape.add(fontPixels(this.prefix + values[0], this.x, this.y, this.fontOptions));
 
         if (values[1]) {
@@ -116,28 +110,16 @@ export class InputField {
         }
 
         endpos = fontEndPos(this.prefix + values[0] + values[1], this.x, this.y, this.fontOptions);
-
         shape.add(fontPixels(values[2], endpos[0], endpos[1]));
 
         return shape;
     }
 
-    /**
-     * @return {Array.<string>}
-     * @private
-     */
-    getSelectionSegments() {
-        let input;
-        let value;
-        let start;
-        let end;
-
-        input = this.input;
-        value = input.value;
-        start = input.selectionStart;
-        end = input.selectionEnd;
-
-        // Handle situation where input value is wider than display width.
+    getSelectionSegments(): string[] {
+        const input = this.input;
+        let value = input.value;
+        let start = input.selectionStart;
+        let end = input.selectionEnd; // Handle situation where input value is wider than display width.
         while (fontWidth(value) > this.displayWidth) {
             if (start === 0) {
                 value = value.substring(0, value.length - 2);

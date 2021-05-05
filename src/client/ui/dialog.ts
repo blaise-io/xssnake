@@ -59,10 +59,10 @@ export class Dialog {
         State.events.off("keydown", NS.DIALOG);
     }
 
-    restore(): void {
-        this._bindEvents();
-        this._updateShape();
-    }
+    // restore(): void {
+    //     this._bindEvents();
+    //     this._updateShape();
+    // }
 
     ok(): void {
         this.destruct();
@@ -74,10 +74,7 @@ export class Dialog {
         this.settings.cancel();
     }
 
-    //    /**
-    //     * @param {string} header
-    //     */
-    //    setHeader(header) {
+    //    setHeader(header: string) {
     //        State.audio.play('menu_alt');
     //        this._header = header.toUpperCase();
     //        this._updateShape();
@@ -144,16 +141,14 @@ export class Dialog {
     }
 
     private _getHeaderPixels(): PixelCollection {
-        let header;
-        header = fontPixels(this.header, 0, 0);
+        let header = fontPixels(this.header, 0, 0);
         header = zoom(2, header, 0, 0);
         return header;
     }
 
     private _getBodyPixels(): PixelCollection {
-        let y;
         const settings = { wrap: this._getContentWidth() };
-        y = 1 + MAX_HEIGHT * 2;
+        const y = 1 + MAX_HEIGHT * 2;
         return fontPixels(this._body, 0, y, settings);
     }
 
