@@ -1,7 +1,8 @@
 import { EventEmitter } from "events";
 import { NC_SNAKE_CRASH, NC_SNAKE_UPDATE, SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
-import { Snake } from "../../shared/snake";
+import { NETCODE } from "../../shared/room/netcode";
+import { Snake, SnakeMessage } from "../../shared/snake";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -44,22 +45,31 @@ export class ServerGame {
     }
 
     bindEvents(): void {
-        this.roomEmitter.on(String(NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));
+        // this.roomEmitter.on(String(NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));
+        this.roomEmitter.on(NETCODE.SNAKE_UPDATE, (player: ServerPlayer, message: SnakeMessage) => {
+            const move = new ServerSnakeMove(message, player);
+            if (move.isValid()) {
+                this.applyMove(player.snake, move);
+                this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize(), player);
+            } else {
+                this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize());
+            }
+        });
     }
 
     unbindEvents(): void {
         this.roomEmitter.removeAllListeners(String(NC_SNAKE_UPDATE));
     }
 
-    ncSnakeUpdate(dirtySnake: WebsocketData, player: ServerPlayer): void {
-        const move = new ServerSnakeMove(dirtySnake, player);
-        if (move.isValid()) {
-            this.applyMove(player.snake, move);
-            this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize(), player);
-        } else {
-            this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize());
-        }
-    }
+    // ncSnakeUpdate(dirtySnake: WebsocketData, player: ServerPlayer): void {
+    //     const move = new ServerSnakeMove(dirtySnake, player);
+    //     if (move.isValid()) {
+    //         this.applyMove(player.snake, move);
+    //         this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize(), player);
+    //     } else {
+    //         this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize());
+    //     }
+    // }
 
     get averageLatencyInTicks(): number {
         const latencies = this.players.filter((p) => p.connected).map((p) => p.client.latency);

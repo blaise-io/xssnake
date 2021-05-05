@@ -6,7 +6,7 @@ import { AUDIENCE, NETCODE } from "./room/netcode";
 
 export class SnakeMessage implements Message {
     static id = NETCODE.SNAKE_UPDATE;
-    static audience = AUDIENCE.SERVER_ROOM;
+    static audience = AUDIENCE.SERVER;
 
     constructor(public direction: DIRECTION, public parts: Coordinate[]) {}
 
@@ -23,10 +23,15 @@ export class SnakeMessage implements Message {
     static fromNetcode(untrustedNetcode: string): SnakeMessage | undefined {
         console.log(untrustedNetcode);
         try {
-            const data = JSON.parse(untrustedNetcode);
-            // TODO: Validate direction
-            const direction = data.shift();
-            const parts = data;
+            const [direction, ...parts] = JSON.parse(untrustedNetcode);
+            if (
+                direction !== DIRECTION.LEFT &&
+                direction !== DIRECTION.UP &&
+                direction !== DIRECTION.RIGHT &&
+                direction !== DIRECTION.DOWN
+            ) {
+                return;
+            }
             return new SnakeMessage(direction, parts);
         } catch (error) {
             console.error(error);

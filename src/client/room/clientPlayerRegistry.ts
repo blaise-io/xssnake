@@ -6,15 +6,18 @@ import { State } from "../state";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
 
-export class ClientPlayers extends PlayerRegistry<ClientPlayer> {
+export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     players: ClientPlayer[];
 
     get localPlayer(): ClientPlayer {
         return this.find((p) => p.local);
     }
 
-    static fromPlayerRegistry(localPlayer: ClientSocketPlayer, players: Player[]): ClientPlayers {
-        return new ClientPlayers(
+    static fromPlayerRegistry(
+        localPlayer: ClientSocketPlayer,
+        players: Player[],
+    ): ClientPlayerRegistry {
+        return new ClientPlayerRegistry(
             ...players.map((p) => (p.local ? localPlayer : ClientPlayer.fromPlayer(p))),
         );
     }
@@ -109,7 +112,7 @@ export class ClientPlayers extends PlayerRegistry<ClientPlayer> {
         }
     }
 
-    getQuitName(prevPlayers: ClientPlayers): string | null {
+    getQuitName(prevPlayers: ClientPlayerRegistry): string | null {
         const prevNames = prevPlayers.getNames();
         const newNames = this.getNames();
         for (let i = 0, m = prevNames.length; i < m; i++) {

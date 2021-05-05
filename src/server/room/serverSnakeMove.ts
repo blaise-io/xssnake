@@ -6,72 +6,68 @@ import {
     VALIDATE_ERR_NO_COMMON,
     VALIDATE_SUCCES,
 } from "../../shared/const";
+import { SnakeMessage } from "../../shared/snake";
 import { delta, eq } from "../../shared/util";
-import { Sanitizer } from "../../shared/util/sanitizer";
+import { ServerPlayer } from "./serverPlayer";
 
 export class ServerSnakeMove {
     private status: number;
     parts: Coordinate[];
     direction: DIRECTION;
 
-    constructor(public dirtyMove, public player) {
+    constructor(public message: SnakeMessage, public player: ServerPlayer) {
         this.parts = undefined;
         this.direction = undefined;
         this.status = -1;
     }
 
-    isValid() {
+    isValid(): boolean {
         if (this.isValidJson()) {
             this.status = this.getStatus();
+            console.log(this.status, "valid?");
             return VALIDATE_SUCCES === this.status;
         }
     }
 
-    isValidJson() {
-        let snake;
-        let parts;
-        let direction;
-
-        snake = new Sanitizer(this.dirtyMove);
-        snake.assertArrayLengthBetween(2, 2);
-
-        if (!snake.valid()) {
-            return false;
-        }
-
-        direction = new Sanitizer(snake.getValueOr()[0]);
-        direction.assertBetween(DIRECTION.LEFT, DIRECTION.DOWN);
-
-        if (!direction.valid()) {
-            return false;
-        }
-
-        parts = new Sanitizer(snake.getValueOr()[1]);
-        parts.assertArray();
-
-        if (!parts.valid()) {
-            return false;
-        }
-
-        this.parts = parts.getValueOr();
-        this.direction = direction.getValueOr();
+    isValidJson(): boolean {
+        // TODO: Reimplement
+        // let snake;
+        // let parts;
+        // let direction;
+        //
+        // snake = new Sanitizer(this.dirtyMove);
+        // snake.assertArrayLengthBetween(2, 2);
+        //
+        // if (!snake.valid()) {
+        //     return false;
+        // }
+        //
+        // direction = new Sanitizer(snake.getValueOr()[0]);
+        // direction.assertBetween(DIRECTION.LEFT, DIRECTION.DOWN);
+        //
+        // if (!direction.valid()) {
+        //     return false;
+        // }
+        //
+        // parts = new Sanitizer(snake.getValueOr()[1]);
+        // parts.assertArray();
+        //
+        // if (!parts.valid()) {
+        //     return false;
+        // }
+        //
+        // this.parts = parts.getValueOr();
+        // this.direction = direction.getValueOr();
 
         return true;
     }
 
-    getStatus() {
-        let numSyncParts;
-        let serverParts;
-        let commonPartIndices;
-        let mismatches;
-        let snake;
-        let clientParts;
-
-        snake = this.player.snake;
-        clientParts = this.parts;
+    getStatus(): number {
+        const snake = this.player.snake;
+        let clientParts = this.parts;
 
         // Crop client snake because we don't trust the length the client sent.
-        numSyncParts = NETCODE_SYNC_MS / this.player.snake.speed;
+        const numSyncParts = NETCODE_SYNC_MS / this.player.snake.speed;
         clientParts = clientParts.slice(-numSyncParts);
 
         // Don't allow gaps in the snake.
@@ -79,17 +75,15 @@ export class ServerSnakeMove {
             return VALIDATE_ERR_GAP;
         }
 
-        // Find tile cloest to head where client and server matched.
-        serverParts = snake.parts.slice(-numSyncParts);
-        commonPartIndices = this.getCommonPartIndices(clientParts, serverParts);
-
-        // Reject if there was no common.
+        // Find tile closest to head where client and server matched.
+        const serverParts = snake.parts.slice(-numSyncParts);
+        const commonPartIndices = this.getCommonPartIndices(clientParts, serverParts); // Reject if there was no common.
         if (!commonPartIndices) {
             return VALIDATE_ERR_NO_COMMON;
         }
 
         // Check if client-server delta does not exceed limit.
-        mismatches = Math.abs(commonPartIndices[1] - commonPartIndices[0]);
+        const mismatches = Math.abs(commonPartIndices[1] - commonPartIndices[0]);
         if (mismatches > this.player.getMaxMismatchesAllowed()) {
             return VALIDATE_ERR_MISMATCHES;
         }
