@@ -56,6 +56,9 @@ export class PlayerRegistry<T> extends Array<T> {
     }
 
     destruct(): void {
+        for (let i = 0, m = this.length; i < m; i++) {
+            ((this[i] as unknown) as Player).destruct();
+        }
         this.length = 0;
     }
 

@@ -31,7 +31,7 @@ export class MessageBoxUI {
         this.skipQueue = false;
         this.queued = 0;
 
-        this.inputField = undefined;
+        delete this.inputField;
 
         this.lineHeight = 7;
         this.animationDuration = 200;
@@ -51,7 +51,7 @@ export class MessageBoxUI {
         State.events.off("keydown", NS.CHAT);
         if (this.inputField) {
             this.inputField.destruct();
-            this.inputField = undefined;
+            delete this.inputField;
         }
     }
 
@@ -97,7 +97,7 @@ export class MessageBoxUI {
     hideInput(): void {
         if (this.inputField) {
             this.inputField.destruct();
-            this.inputField = undefined;
+            delete this.inputField;
         }
         this.updateMessages();
     }

@@ -13,21 +13,21 @@ export class WrapupGame {
     private countdownInterval: number;
 
     constructor(public players: PlayerRegistry<ClientPlayer>, public winner: Player) {
-        this.dialog = undefined;
+        delete this.dialog;
 
         this.countdownStarted = new Date();
-        this.countdownInterval = undefined;
+        delete this.countdownInterval;
 
         this.showCountdown();
     }
 
     destruct(): void {
         window.clearInterval(this.countdownInterval);
-        this.players = undefined;
-        this.winner = undefined;
+        delete this.players;
+        delete this.winner;
         if (this.dialog) {
             this.dialog.destruct();
-            this.dialog = undefined;
+            delete this.dialog;
         }
     }
 

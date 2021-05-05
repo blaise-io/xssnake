@@ -45,7 +45,7 @@ export class ClientSnake extends Snake {
 
         if (this.controls) {
             this.controls.destruct();
-            this.controls = undefined;
+            delete this.controls;
         }
     }
 
@@ -143,7 +143,7 @@ export class ClientSnake extends Snake {
         this.parts = serializedSnake[1];
         // If server updated snake, client prediction
         // of snake crashing was incorrect.
-        this.collision = undefined;
+        delete this.collision;
     }
 
     getNextPosition(): Coordinate {

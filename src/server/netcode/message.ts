@@ -9,9 +9,9 @@ export class Message {
     data: any;
 
     constructor(jsonStr: string) {
-        this.isClean = undefined;
-        this.event = undefined;
-        this.data = undefined;
+        delete this.isClean;
+        delete this.event;
+        delete this.data;
         this.process(jsonStr);
     }
 

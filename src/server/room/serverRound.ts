@@ -42,15 +42,15 @@ export class ServerRound extends Round {
 
         if (this.game) {
             this.game.destruct();
-            this.game = undefined;
+            delete this.game;
         }
 
         if (this.level) {
             this.level.destruct();
-            this.level = undefined;
+            delete this.level;
         }
 
-        this.roomEmitter = undefined;
+        delete this.roomEmitter;
     }
 
     bindEvents(): void {

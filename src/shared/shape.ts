@@ -44,8 +44,8 @@ export class Shape {
     }
 
     uncache(): Shape {
-        this.cache = undefined;
-        this._bbox = undefined;
+        delete this.cache;
+        delete this._bbox;
         return this;
     }
 

@@ -17,7 +17,7 @@ export class ClientSnakeControls {
 
     destruct(): void {
         State.events.off("keydown", NS.SNAKE_CONTROLS);
-        this.snake = undefined;
+        delete this.snake;
     }
 
     setDirection(direction: DIRECTION): void {

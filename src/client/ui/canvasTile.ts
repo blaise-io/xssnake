@@ -7,8 +7,8 @@ export class CanvasTile {
     off: CanvasPattern;
 
     constructor(public colorScheme: ColorScheme) {
-        this.on = undefined;
-        this.off = undefined;
+        delete this.on;
+        delete this.off;
         this.size = 0;
     }
 

@@ -1,4 +1,4 @@
-import { SnakeMessage } from "../snake";
+import { SnakeUpdateMessage } from "../snake";
 import { NameMessage } from "./player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "./playerRegistry";
 import { RoomKeyMessage, RoomOptionsMessage } from "./roomOptions";
@@ -13,15 +13,15 @@ export const NETCODE_MAP = {
     [RoomOptionsMessage.id]: RoomOptionsMessage,
     [RoomPlayersMessage.id]: RoomPlayersMessage,
     [RoomRoundMessage.id]: RoomRoundMessage,
-    [SnakeMessage.id]: SnakeMessage,
+    [SnakeUpdateMessage.id]: SnakeUpdateMessage,
 };
 
 export const enum AUDIENCE {
     CLIENT = 1 << 0,
     SERVER_MATCHMAKING = 1 << 1,
+    SERVER_MATCHMAKING_BID = CLIENT | SERVER_MATCHMAKING,
     SERVER_ROOM = 1 << 2,
-    SERVER = SERVER_MATCHMAKING | SERVER_ROOM,
-    ALL = CLIENT | SERVER,
+    SERVER_ROOM_BID = CLIENT | SERVER_ROOM,
 }
 
 export const enum NETCODE {

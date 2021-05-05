@@ -26,10 +26,10 @@ export class PreGameUI {
     private confirmStart: boolean;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
-        this.dialog = undefined;
+        delete this.dialog;
 
-        this.countdownStarted = undefined;
-        this.countdownInterval = undefined;
+        delete this.countdownStarted;
+        delete this.countdownInterval;
         this.confirmExit = false;
         this.confirmStart = false;
 
@@ -147,7 +147,7 @@ export class PreGameUI {
         if (started) {
             this.countdownStarted = new Date();
         } else {
-            this.countdownStarted = undefined;
+            delete this.countdownStarted;
             window.clearInterval(this.countdownInterval);
         }
     }

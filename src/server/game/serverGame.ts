@@ -1,8 +1,8 @@
 import { EventEmitter } from "events";
-import { NC_SNAKE_CRASH, NC_SNAKE_UPDATE, SE_PLAYER_COLLISION } from "../../shared/const";
+import { NC_SNAKE_CRASH, SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { NETCODE } from "../../shared/room/netcode";
-import { Snake, SnakeMessage } from "../../shared/snake";
+import { SnakeUpdateMessage } from "../../shared/snake";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -39,37 +39,35 @@ export class ServerGame {
 
         this.items.destruct();
 
-        this.level = undefined;
-        this.players = undefined;
-        this.items = undefined;
+        delete this.level;
+        delete this.players;
+        delete this.items;
     }
 
     bindEvents(): void {
-        // this.roomEmitter.on(String(NC_SNAKE_UPDATE), this.ncSnakeUpdate.bind(this));
-        this.roomEmitter.on(NETCODE.SNAKE_UPDATE, (player: ServerPlayer, message: SnakeMessage) => {
-            const move = new ServerSnakeMove(message, player);
-            if (move.isValid()) {
-                this.applyMove(player.snake, move);
-                this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize(), player);
-            } else {
-                this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize());
-            }
-        });
+        this.roomEmitter.on(
+            NETCODE.SNAKE_UPDATE,
+            (player: ServerPlayer, message: SnakeUpdateMessage) => {
+                this.handleMove(new ServerSnakeMove(message.parts, message.direction, player));
+            },
+        );
     }
 
     unbindEvents(): void {
-        this.roomEmitter.removeAllListeners(String(NC_SNAKE_UPDATE));
+        this.roomEmitter.removeAllListeners(NETCODE.SNAKE_UPDATE);
     }
 
-    // ncSnakeUpdate(dirtySnake: WebsocketData, player: ServerPlayer): void {
-    //     const move = new ServerSnakeMove(dirtySnake, player);
-    //     if (move.isValid()) {
-    //         this.applyMove(player.snake, move);
-    //         this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize(), player);
-    //     } else {
-    //         this.players.emit(NC_SNAKE_UPDATE, player.snake.serialize());
-    //     }
-    // }
+    private handleMove(move: ServerSnakeMove) {
+        const snake = move.player.snake;
+        if (move.isValid()) {
+            snake.direction = move.direction;
+            snake.parts = move.parts;
+            snake.trimParts();
+        }
+        this.players.send(SnakeUpdateMessage.fromSnake(snake), {
+            exclude: move.isValid() ? move.player : undefined,
+        });
+    }
 
     get averageLatencyInTicks(): number {
         const latencies = this.players.filter((p) => p.connected).map((p) => p.client.latency);
@@ -106,11 +104,5 @@ export class ServerGame {
             // Let round manager know.
             this.roomEmitter.emit(String(SE_PLAYER_COLLISION), crashingPlayers);
         }
-    }
-
-    applyMove(snake: Snake, move: ServerSnakeMove): void {
-        snake.direction = move.direction;
-        snake.parts = move.parts;
-        snake.trimParts();
     }
 }

@@ -31,6 +31,7 @@ export class ServerPlayer extends Player {
     }
 
     destruct(): void {
+        super.destruct();
         if (this.connected) {
             this.disconnect();
         }

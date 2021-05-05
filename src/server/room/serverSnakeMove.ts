@@ -6,27 +6,23 @@ import {
     VALIDATE_ERR_NO_COMMON,
     VALIDATE_SUCCES,
 } from "../../shared/const";
-import { SnakeMessage } from "../../shared/snake";
 import { delta, eq } from "../../shared/util";
 import { ServerPlayer } from "./serverPlayer";
 
 export class ServerSnakeMove {
-    private status: number;
-    parts: Coordinate[];
-    direction: DIRECTION;
+    private status = -1;
 
-    constructor(public message: SnakeMessage, public player: ServerPlayer) {
-        this.parts = undefined;
-        this.direction = undefined;
-        this.status = -1;
-    }
+    constructor(
+        public parts: Coordinate[],
+        public direction: DIRECTION,
+        public player: ServerPlayer,
+    ) {}
 
     isValid(): boolean {
-        if (this.isValidJson()) {
+        if (this.status === -1 && this.isValidJson()) {
             this.status = this.getStatus();
-            console.log(this.status, "valid?");
-            return VALIDATE_SUCCES === this.status;
         }
+        return VALIDATE_SUCCES === this.status;
     }
 
     isValidJson(): boolean {

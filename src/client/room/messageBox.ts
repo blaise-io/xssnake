@@ -6,6 +6,7 @@ import { State } from "../state";
 import { MessageBoxUI } from "../ui/messageBox";
 import { format } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
+import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
 import { ChatMessage } from "./chatMessage";
 
@@ -28,7 +29,7 @@ export class MessageBox {
 
     destruct(): void {
         this.messages.length = 0;
-        this.previousPlayers = undefined;
+        delete this.previousPlayers;
         this.ui.destruct();
         State.events.off(NC_CHAT_MESSAGE, NS.MSGBOX);
         State.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);

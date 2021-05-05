@@ -4,7 +4,7 @@ import { Message } from "./types";
 
 export class NameMessage implements Message {
     static id = NETCODE.PLAYER_NAME;
-    static audience = AUDIENCE.SERVER;
+    static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public name: string) {}
 
@@ -26,6 +26,10 @@ export class Player {
         public score = 0,
         public snake?: Snake,
     ) {}
+
+    destruct(): void {
+        delete this.snake;
+    }
 
     // /** @deprecated */
     // deserialize(serialized: [string, number]): void {

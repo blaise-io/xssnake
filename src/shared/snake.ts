@@ -4,24 +4,23 @@ import { Level } from "./level/level";
 import { Message } from "./room/types";
 import { AUDIENCE, NETCODE } from "./room/netcode";
 
-export class SnakeMessage implements Message {
+export class SnakeUpdateMessage implements Message {
     static id = NETCODE.SNAKE_UPDATE;
-    static audience = AUDIENCE.SERVER;
+    static audience = AUDIENCE.SERVER_ROOM_BID;
 
     constructor(public direction: DIRECTION, public parts: Coordinate[]) {}
 
-    static fromSnake(snake: Snake, direction = -1): SnakeMessage {
+    static fromSnake(snake: Snake, direction = -1): SnakeUpdateMessage {
         // Direction can be upcoming, may not be part of snake.
         // This syncs a partial snake. That makes it only useful from client to server?
         const sync = Math.ceil(NETCODE_SYNC_MS / snake.speed);
-        return new SnakeMessage(
+        return new SnakeUpdateMessage(
             direction !== -1 ? direction : snake.direction,
             snake.parts.slice(-sync),
         );
     }
 
-    static fromNetcode(untrustedNetcode: string): SnakeMessage | undefined {
-        console.log(untrustedNetcode);
+    static fromNetcode(untrustedNetcode: string): SnakeUpdateMessage | undefined {
         try {
             const [direction, ...parts] = JSON.parse(untrustedNetcode);
             if (
@@ -32,7 +31,7 @@ export class SnakeMessage implements Message {
             ) {
                 return;
             }
-            return new SnakeMessage(direction, parts);
+            return new SnakeUpdateMessage(direction, parts);
         } catch (error) {
             console.error(error);
             return;
@@ -62,7 +61,7 @@ export class Snake {
         this.speed = level.config.snakeSpeed;
 
         this.crashed = false;
-        this.collision = undefined;
+        delete this.collision;
     }
 
     move(position: Coordinate): void {

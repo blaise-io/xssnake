@@ -5,7 +5,7 @@ import { Message } from "./types";
 
 export class RoomOptionsMessage implements Message {
     static id = NETCODE.ROOM_JOIN_MATCHING;
-    static audience = AUDIENCE.ALL;
+    static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public options: RoomOptions) {}
 
@@ -40,7 +40,7 @@ export class RoomOptionsMessage implements Message {
 
 export class GetRoomStatusMessage implements Message {
     static id = NETCODE.ROOM_GET_STATUS;
-    static audience = AUDIENCE.SERVER;
+    static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public key: string) {}
 

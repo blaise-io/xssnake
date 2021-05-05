@@ -3,7 +3,7 @@ import { DIRECTION } from "../../shared/const";
 import { NETCODE_MAP } from "../../shared/room/netcode";
 import { NameMessage } from "../../shared/room/player";
 import { Message, MessageConstructor } from "../../shared/room/types";
-import { SnakeMessage } from "../../shared/snake";
+import { SnakeUpdateMessage } from "../../shared/snake";
 import { _, noop } from "../../shared/util";
 import { State } from "../state";
 import { error } from "../util/clientUtil";
@@ -97,6 +97,6 @@ export class ClientSocketPlayer extends ClientPlayer {
     }
 
     emitSnake(direction: DIRECTION): void {
-        this.send(SnakeMessage.fromSnake(this.snake, direction));
+        this.send(SnakeUpdateMessage.fromSnake(this.snake, direction));
     }
 }

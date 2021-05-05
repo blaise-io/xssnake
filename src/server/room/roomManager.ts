@@ -63,6 +63,8 @@ export class ServerRoomManager {
                 const matchingRoom = getMatchingRoom(this.rooms, message.options);
                 const room = matchingRoom || this.createRoom(message.options);
 
+                player.room = room;
+
                 room.addPlayer(player);
                 room.emitAll(player);
                 room.detectAutostart();

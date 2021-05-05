@@ -20,15 +20,15 @@ export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
         }
     }
 
-    send(message: Message, exclude?: ServerPlayer): void {
+    send(message: Message, options: { exclude?: ServerPlayer } = {}): void {
         for (let i = 0, m = this.length; i < m; i++) {
-            if (exclude !== this[i]) {
+            if (this[i] !== options.exclude) {
                 this[i].send(message);
             }
         }
     }
 
-    // Players each get a unique message because player.local depends on the receiver.
+    // Players each get a unique message because Player.local depends on the receiver.
     sendPlayers(): void {
         for (let i = 0, m = this.length; i < m; i++) {
             this[i].send(new RoomPlayersMessage(this, this[i]));

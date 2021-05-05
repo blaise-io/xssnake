@@ -2,6 +2,7 @@ import { NC_PLAYERS_SERIALIZE, NC_SCORE_UPDATE } from "../../shared/const";
 import { NS } from "../const";
 import { State } from "../state";
 import { ScoreboardUI } from "../ui/scoreboard";
+import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 
 export class Scoreboard {
     ui: ScoreboardUI;
@@ -12,9 +13,9 @@ export class Scoreboard {
     }
 
     destruct(): void {
-        this.players = undefined;
+        delete this.players;
         this.ui.destruct();
-        this.ui = undefined;
+        delete this.ui;
         this.unbindEvents();
     }
 
