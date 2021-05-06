@@ -1,13 +1,13 @@
 import { Shape } from "../../shared/shape";
-import { MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, UC } from "../const";
+import { MENU_POS, UC } from "../const";
 import { ScreenStage } from "./base/screenStage";
 import { fontPixels } from "../ui/font";
 import { zoom } from "../ui/transformClient";
 
 export class CreditsStage extends ScreenStage {
     getShape(): Shape {
-        const left = MENU_LEFT;
-        const top = MENU_TOP;
+        const left = MENU_POS.LEFT;
+        const top = MENU_POS.TOP;
 
         const icons = [UC.BULB, "{}", UC.FONT, UC.BUG, UC.MUSIC, UC.SKULL];
 
@@ -22,7 +22,7 @@ export class CreditsStage extends ScreenStage {
 
         return new Shape(
             zoom(2, fontPixels("CREDITS"), left, top),
-            fontPixels(body, left, top + MENU_TITLE_HEIGHT),
+            fontPixels(body, left, top + MENU_POS.TITLE_HEIGHT),
         );
     }
 }

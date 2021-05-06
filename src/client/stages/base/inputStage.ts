@@ -1,5 +1,5 @@
 import { Shape } from "../../../shared/shape";
-import { KEY, MENU_LEFT, MENU_TOP, MENU_WIDTH, NS, STORAGE } from "../../const";
+import { KEY, MENU_POS, NS, STORAGE } from "../../const";
 import { InputField } from "../components/inputField";
 import { State } from "../../state";
 import { font, fontHeight, fontPixels } from "../../ui/font";
@@ -10,10 +10,10 @@ import { StageConstructor, StageInterface } from "./stage";
 
 export abstract class InputStage implements StageInterface {
     shape: Shape;
-    private fontOptions = { wrap: MENU_LEFT + MENU_WIDTH - 25 };
+    private fontOptions = { wrap: MENU_POS.LEFT + MENU_POS.WIDTH - 25 };
     private value: string;
     private input: InputField;
-    private inputTop = MENU_TOP + 17;
+    private inputTop = MENU_POS.TOP + 17;
 
     abstract name: STORAGE;
     abstract header: string;
@@ -57,13 +57,13 @@ export abstract class InputStage implements StageInterface {
             State.flow.switchStage(this.next);
             State.events.off("keydown", NS.INPUT);
         } else {
-            State.shapes.message = font(error, MENU_LEFT, top);
+            State.shapes.message = font(error, MENU_POS.LEFT, top);
             lifetime(State.shapes.message, 0, 500);
         }
     }
 
     private setupInputField(): InputField {
-        const input = new InputField(MENU_LEFT, this.inputTop, this.label, this.fontOptions);
+        const input = new InputField(MENU_POS.LEFT, this.inputTop, this.label, this.fontOptions);
 
         input.maxValWidth = this.maxwidth || input.maxValWidth;
         input.displayWidth = this.displayWidth || input.displayWidth;
@@ -87,7 +87,7 @@ export abstract class InputStage implements StageInterface {
             event.preventDefault();
         } else if (event.key === KEY.ENTER) {
             const value = this.value.trim();
-            const top = fontHeight(this.label, MENU_LEFT, this.inputTop, this.fontOptions);
+            const top = fontHeight(this.label, MENU_POS.LEFT, this.inputTop, this.fontOptions);
             this.inputSubmit(this.getInputError(value), value, top);
         }
     }
@@ -103,12 +103,12 @@ export abstract class InputStage implements StageInterface {
 
     private getLabelShape(): Shape {
         let pixels = fontPixels(this.header);
-        pixels = zoom(2, pixels, MENU_LEFT, MENU_TOP);
+        pixels = zoom(2, pixels, MENU_POS.LEFT, MENU_POS.TOP);
         return new Shape(pixels);
     }
 
     private getValueShape(): Shape {
         const value = this.label + this.value;
-        return new Shape(fontPixels(value, MENU_LEFT, this.inputTop, this.fontOptions));
+        return new Shape(fontPixels(value, MENU_POS.LEFT, this.inputTop, this.fontOptions));
     }
 }

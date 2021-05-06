@@ -1,6 +1,6 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { _, getRandomItemFrom } from "../../shared/util";
-import { MENU_LEFT, NS, STORAGE, UC } from "../const";
+import { MENU_POS, NS, STORAGE, UC } from "../const";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -37,7 +37,7 @@ export class NameStage extends InputStage {
             }, duration);
         }
 
-        const shape = font(text, MENU_LEFT, top);
+        const shape = font(text, MENU_POS.LEFT, top);
         lifetime(shape, 0, duration);
 
         State.shapes.message = shape;

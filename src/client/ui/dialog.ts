@@ -1,7 +1,7 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
-import { KEY, MENU_TOP, NS } from "../const";
+import { KEY, MENU_POS, NS } from "../const";
 import { COPY_DIALOG_CANCEL, COPY_DIALOG_OK } from "../copy/copy";
 import { State } from "../state";
 import { stylizeUpper } from "../util/clientUtil";
@@ -201,7 +201,7 @@ export class Dialog {
 
         const shape = new Shape(header, body, buttons);
         shape.flags.isOverlay = true;
-        shape.transform.translate[1] = MENU_TOP - 2;
+        shape.transform.translate[1] = MENU_POS.TOP - 2;
 
         outline(shape);
         center(shape);

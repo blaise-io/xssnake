@@ -1,5 +1,5 @@
 import { _, getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
-import { MENU_LEFT, NS } from "../const";
+import { MENU_POS, NS } from "../const";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -45,7 +45,7 @@ export class ChallengeStage extends InputStage {
             );
         }
 
-        const shape = font(text, MENU_LEFT, top);
+        const shape = font(text, MENU_POS.LEFT, top);
         lifetime(shape, 0, 1000);
 
         State.shapes.message = shape;

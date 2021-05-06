@@ -3,7 +3,7 @@ import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { randomRange, randomStr } from "../../shared/util";
-import { MENU_LEFT, MENU_TOP, MENU_WIDTH, NS } from "../const";
+import { MENU_POS, NS } from "../const";
 import { State } from "../state";
 import { font, fontWidth } from "./font";
 import { animate, lifetime } from "./shapeClient";
@@ -155,12 +155,12 @@ export function outerBorder(): Record<string, Shape> {
 export function xssnakeHeader(): Shape {
     const welcome = font("<XSSNAKE>").pixels;
 
-    let x = MENU_LEFT - 2;
-    let y = MENU_TOP - 34;
+    let x = MENU_POS.LEFT - 2;
+    let y = MENU_POS.TOP - 34;
     const shape = new Shape(zoom(4, welcome, x, y));
     x += 2;
     y += 28;
-    shape.add(line(x, y, x + MENU_WIDTH, y));
+    shape.add(line(x, y, x + MENU_POS.WIDTH, y));
 
     return shape;
 }

@@ -2,7 +2,7 @@ import { CANVAS } from "../../../shared/const";
 import { PixelCollection } from "../../../shared/pixelCollection";
 import { Shape } from "../../../shared/shape";
 import { _, indexCarousel } from "../../../shared/util";
-import { KEY, MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WIDTH, UC } from "../../const";
+import { KEY, MENU_POS, UC } from "../../const";
 import { State } from "../../state";
 import {
     font,
@@ -107,25 +107,26 @@ export class Form {
     }
 
     getShape(): Shape {
-        let y = MENU_TOP;
+        let y = MENU_POS.TOP;
 
-        const optionX = MENU_LEFT + 2 + MENU_WIDTH - this.maxwidth - fontWidth(" " + UC.TR_LEFT);
+        const optionX =
+            MENU_POS.LEFT + 2 + MENU_POS.WIDTH - this.maxwidth - fontWidth(" " + UC.TR_LEFT);
 
         const shape = new Shape();
-        shape.add(this.getHeaderPixels(MENU_LEFT, y));
-        shape.add(this.getFooterPixels(MENU_LEFT));
+        shape.add(this.getHeaderPixels(MENU_POS.LEFT, y));
+        shape.add(this.getFooterPixels(MENU_POS.LEFT));
 
-        y += MENU_TITLE_HEIGHT;
+        y += MENU_POS.TITLE_HEIGHT;
 
         // Draw options
         for (let i = 0, m = this.fields.length; i < m; i++) {
             const active = this.focusFieldIndex === i;
-            const option = this.fields[i].getShape(MENU_LEFT, optionX, y, this.maxwidth);
+            const option = this.fields[i].getShape(MENU_POS.LEFT, optionX, y, this.maxwidth);
 
             if (active) {
                 const bbox = option.bbox();
-                bbox.x0 = MENU_LEFT - 2;
-                bbox.x1 = MENU_LEFT + MENU_WIDTH + 3;
+                bbox.x0 = MENU_POS.LEFT - 2;
+                bbox.x1 = MENU_POS.LEFT + MENU_POS.WIDTH + 3;
                 bbox.y0 = y - 1;
                 bbox.y1 = y + LINE_HEIGHT;
                 option.invert(bbox);

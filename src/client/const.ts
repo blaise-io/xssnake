@@ -37,11 +37,13 @@ KEY_TO_DIRECTION[KEY.UP] = DIRECTION.UP;
 KEY_TO_DIRECTION[KEY.RIGHT] = DIRECTION.RIGHT;
 KEY_TO_DIRECTION[KEY.DOWN] = DIRECTION.DOWN;
 
-export const MENU_LEFT = 44;
-export const MENU_TOP = 48;
-export const MENU_WIDTH = 167;
-export const MENU_WRAP = 176;
-export const MENU_TITLE_HEIGHT = 20;
+export const enum MENU_POS {
+    LEFT = 44,
+    TOP = 48,
+    WIDTH = 167,
+    WRAP = 176,
+    TITLE_HEIGHT = 20,
+}
 
 export const enum HASH {
     ROOM = "room",

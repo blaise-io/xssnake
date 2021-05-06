@@ -1,7 +1,7 @@
 import { ROOM_KEY_LENGTH, CANVAS } from "../shared/const";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
-import { HASH, KEY, MENU_LEFT, NS, STORAGE } from "./const";
+import { HASH, KEY, MENU_POS, NS, STORAGE } from "./const";
 import { ClientRoom } from "./room/clientRoom";
 import { ClientSocketPlayer } from "./room/clientSocketPlayer";
 import { StageConstructor, StageInterface } from "./stages/base/stage";
@@ -129,7 +129,7 @@ export class StageFlow {
     private switchStageAnimate(oldShape: Shape, newShape: Shape, back: boolean, callback): void {
         let oldStageAnim;
         let newStageAnim;
-        const width = CANVAS.WIDTH - MENU_LEFT;
+        const width = CANVAS.WIDTH - MENU_POS.LEFT;
 
         if (back) {
             oldStageAnim = { to: [width, 0] };
