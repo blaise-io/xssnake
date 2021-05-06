@@ -4,7 +4,7 @@ import { EventHandler } from "./netcode/eventHandler";
 import { StageFlow } from "./flow";
 import { State } from "./state";
 import { AudioPlayer } from "./ui/audioPlayer";
-import { Canvas } from "./ui/canvas";
+import { Canvas } from "./ui/canvas/canvas";
 
 console.log(`XSSnake client version ${ENV_VERSION}`);
 

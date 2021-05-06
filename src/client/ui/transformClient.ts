@@ -3,7 +3,7 @@ import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { shift } from "../../shared/transform";
 
-export function outline(shape, hPadding = 6, vPadding = 6, round = true): Shape {
+export function outline(shape: Shape, hPadding = 6, vPadding = 6, round = true): Shape {
     let bbox = shape.bbox();
     const r = round ? 1 : 0;
     hPadding = typeof hPadding === "number" ? hPadding : 6;

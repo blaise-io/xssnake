@@ -1,14 +1,14 @@
-import { NC_ROOM_JOIN_KEY, NC_ROOM_STATUS, ROOM_STATUS, ROOM_KEY_LENGTH } from "../../shared/const";
+import { ROOM_STATUS, ROOM_KEY_LENGTH } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
 import { NameMessage } from "../../shared/room/player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import {
-    GetRoomStatusMessage,
+    GetRoomStatusServerMessage,
+    RoomJoinMessage,
     RoomKeyMessage,
     RoomOptions,
     RoomOptionsMessage,
 } from "../../shared/room/roomOptions";
-import { RoomRoundMessage } from "../../shared/room/round";
 import { randomStr } from "../../shared/util";
 import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
@@ -26,28 +26,13 @@ export class ServerRoomManager {
 
     destruct(): void {
         this.removeAllRooms();
-        this.server.emitter.removeAllListeners(String(NC_ROOM_STATUS));
-        this.server.emitter.removeAllListeners(String(NC_ROOM_JOIN_KEY));
-        this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_MATCHING);
         this.server.emitter.removeAllListeners(NETCODE.PLAYER_NAME);
+        this.server.emitter.removeAllListeners(NETCODE.ROOM_STATUS_SERVER);
+        this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_KEY);
+        this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_MATCHING);
     }
 
     bindEvents(): void {
-        this.server.emitter.on(
-            NETCODE.ROOM_GET_STATUS,
-            (player: ServerPlayer, message: GetRoomStatusMessage) => {
-                const status = this.getRoomStatus(message.key);
-                if (status === ROOM_STATUS.JOINABLE) {
-                    const room = this.getRoomByKey(message.key);
-                    player.send(new RoomKeyMessage(room.key));
-                    player.send(new RoomOptionsMessage(room.options));
-                    player.send(new RoomPlayersMessage(room.players, player));
-                    return;
-                }
-                player.send(new JoinRoomErrorMessage(status));
-            },
-        );
-
         this.server.emitter.on(
             NETCODE.PLAYER_NAME,
             (player: ServerPlayer, message: NameMessage) => {
@@ -55,26 +40,53 @@ export class ServerRoomManager {
             },
         );
 
-        this.server.emitter.on(String(NC_ROOM_JOIN_KEY), this.autojoinRoom.bind(this));
+        // Get status with intent to join.
+        this.server.emitter.on(
+            NETCODE.ROOM_STATUS_SERVER,
+            (player: ServerPlayer, message: GetRoomStatusServerMessage) => {
+                const status = this.getRoomStatus(message.key);
+                if (status === ROOM_STATUS.JOINABLE) {
+                    const room = this.getRoomByKey(message.key);
+                    player.send(new RoomKeyMessage(room.key));
+                    player.send(new RoomOptionsMessage(room.options));
+                    player.send(new RoomPlayersMessage(room.players, player));
+                } else {
+                    player.send(new JoinRoomErrorMessage(status));
+                }
+            },
+        );
 
+        // Join room by key.
+        this.server.emitter.on(
+            NETCODE.ROOM_JOIN_KEY,
+            (player: ServerPlayer, message: RoomJoinMessage) => {
+                const status = this.getRoomStatus(message.key);
+                if (status === ROOM_STATUS.JOINABLE) {
+                    this.joinRoom(player, this.getRoomByKey(message.key));
+                } else {
+                    player.send(new JoinRoomErrorMessage(status));
+                }
+            },
+        );
+
+        // Join any room matching user's preferences,
+        // if no matching room is found, create a new room.
         this.server.emitter.on(
             NETCODE.ROOM_JOIN_MATCHING,
             (player: ServerPlayer, message: RoomOptionsMessage) => {
                 const matchingRoom = getMatchingRoom(this.rooms, message.options);
                 const room = matchingRoom || this.createRoom(message.options);
-
-                player.room = room;
-
-                room.addPlayer(player);
-                room.emitAll(player);
-                room.detectAutostart();
+                this.joinRoom(player, room);
             },
         );
     }
 
-    // room(key: string): ServerRoom {
-    //     return this.rooms[key];
-    // }
+    joinRoom(player: ServerPlayer, room: ServerRoom): void {
+        player.room = room;
+        room.addPlayer(player);
+        room.emitAll(player);
+        room.detectAutostart();
+    }
 
     remove(room: ServerRoom): void {
         room.destruct();
@@ -98,19 +110,19 @@ export class ServerRoomManager {
         return room;
     }
 
-    autojoinRoom(dirtyKeyArr: UntrustedData, player: ServerPlayer): void {
-        const key = this.getSanitizedRoomKey(dirtyKeyArr);
-        const status = this.getRoomStatus(key);
-
-        if (status === ROOM_STATUS.JOINABLE) {
-            const room = this.getRoomByKey(key);
-            room.addPlayer(player);
-            player.send(RoomRoundMessage.fromRound(room.rounds.round));
-            room.detectAutostart();
-        } else {
-            player.send(new JoinRoomErrorMessage(status));
-        }
-    }
+    // autojoinRoom(dirtyKeyArr: UntrustedData, player: ServerPlayer): void {
+    //     const key = this.getSanitizedRoomKey(dirtyKeyArr);
+    //     const status = this.getRoomStatus(key);
+    //
+    //     if (status === ROOM_STATUS.JOINABLE) {
+    //         const room = this.getRoomByKey(key);
+    //         room.addPlayer(player);
+    //         player.send(RoomRoundMessage.fromRound(room.rounds.round));
+    //         room.detectAutostart();
+    //     } else {
+    //         player.send(new JoinRoomErrorMessage(status));
+    //     }
+    // }
 
     getRoomByKey(key: string): ServerRoom | undefined {
         for (let i = 0, m = this.rooms.length; i < m; i++) {

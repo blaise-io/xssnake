@@ -1,4 +1,6 @@
+import { ROOM_KEY_LENGTH } from "../../shared/const";
 import { _, getRandomName } from "../../shared/util";
+import { isStrOfLen } from "../../shared/util/sanitizer";
 import { HASH, STORAGE } from "../const";
 import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { State } from "../state";
@@ -7,7 +9,7 @@ import { AutoJoinStage } from "./autoJoinStage";
 import { GameStage } from "./base/gameStage";
 import { SelectStage } from "./base/selectStage";
 import { ColorStage } from "./colorStage";
-import { AutoJoinDialog } from "./components/autoJoinDialog";
+import { AutoJoinDialog } from "../ui/autoJoinDialog";
 import { Menu, MenuOption } from "./components/menu";
 import { MenuSnake } from "./components/menuSnake";
 import { CreditsStage } from "./creditsStage";
@@ -20,7 +22,7 @@ export class MainStage extends SelectStage {
         const roomKey = urlHash(HASH.ROOM);
         this.menu = this.getMenu();
 
-        if (roomKey) {
+        if (isStrOfLen(roomKey, ROOM_KEY_LENGTH)) {
             this.initializeAutoJoin(roomKey);
         } else if (!State.menuSnake) {
             State.menuSnake = new MenuSnake();

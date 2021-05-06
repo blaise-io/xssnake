@@ -1,9 +1,9 @@
-import { GetRoomStatusMessage } from "../../../shared/room/roomOptions";
-import { _ } from "../../../shared/util";
-import { ClientRoom } from "../../room/clientRoom";
-import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
-import { State } from "../../state";
-import { Dialog } from "../../ui/dialog";
+import { GetRoomStatusServerMessage } from "../../shared/room/roomOptions";
+import { _ } from "../../shared/util";
+import { ClientRoom } from "../room/clientRoom";
+import { ClientSocketPlayer } from "../room/clientSocketPlayer";
+import { State } from "../state";
+import { Dialog } from "./dialog";
 
 export class AutoJoinDialog {
     private clientPlayer: ClientSocketPlayer;
@@ -17,7 +17,15 @@ export class AutoJoinDialog {
     ) {
         this.dialog = new Dialog(_("Auto-Join room").toUpperCase(), _("Connecting to server…"));
         this.clientPlayer = new ClientSocketPlayer(State.flow.data.name, this.onconnect.bind(this));
-        new ClientRoom(this.clientPlayer, resolve, reject);
+
+        new ClientRoom(
+            this.clientPlayer,
+            (room) => {
+                this.destruct();
+                resolve(room);
+            },
+            reject,
+        );
     }
 
     destruct(): void {
@@ -26,6 +34,6 @@ export class AutoJoinDialog {
     }
 
     onconnect(): void {
-        this.clientPlayer.send(new GetRoomStatusMessage(this.roomKey));
+        this.clientPlayer.send(new GetRoomStatusServerMessage(this.roomKey));
     }
 }

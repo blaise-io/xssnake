@@ -66,11 +66,13 @@ export class ServerPlayer extends Player {
                 const audience = Message.audience;
                 if (audience & AUDIENCE.SERVER_ROOM || audience & AUDIENCE.SERVER_MATCHMAKING) {
                     const messageInstance = Message.fromNetcode(messageString.substring(2));
-                    console.log("IN", messageInstance);
                     if (messageInstance) {
+                        console.log("IN", messageString, messageInstance);
                         this.emitMessage(Message.id, audience, messageInstance);
                     }
                 }
+            } else {
+                console.warn("Unregistered message", netcodeId, messageString);
             }
         }
     }

@@ -4,7 +4,7 @@ import { ClientSocketPlayer } from "./room/clientSocketPlayer";
 import { MenuSnake } from "./stages/components/menuSnake";
 import { StageFlow } from "./flow";
 import { AudioPlayer } from "./ui/audioPlayer";
-import { Canvas } from "./ui/canvas";
+import { Canvas } from "./ui/canvas/canvas";
 
 export class State {
     static audio: AudioPlayer;

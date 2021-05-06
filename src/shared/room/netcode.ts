@@ -1,7 +1,12 @@
 import { SnakeUpdateClientMessage, SnakeUpdateServerMessage } from "../snakeMessages";
 import { ChatClientMessage, ChatServerMessage, NameMessage } from "./player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "./playerRegistry";
-import { RoomKeyMessage, RoomOptionsMessage } from "./roomOptions";
+import {
+    GetRoomStatusServerMessage,
+    RoomJoinMessage,
+    RoomKeyMessage,
+    RoomOptionsMessage,
+} from "./roomOptions";
 import { RoundCountdownMessage, RoomRoundMessage, RoundStartMessage } from "./round";
 
 export const NETCODE_MAP = {
@@ -15,6 +20,8 @@ export const NETCODE_MAP = {
     [RoomOptionsMessage.id]: RoomOptionsMessage,
     [RoomPlayersMessage.id]: RoomPlayersMessage,
     [RoomRoundMessage.id]: RoomRoundMessage,
+    [RoomJoinMessage.id]: RoomJoinMessage,
+    [GetRoomStatusServerMessage.id]: GetRoomStatusServerMessage,
     [SnakeUpdateServerMessage.id]: SnakeUpdateServerMessage,
     [SnakeUpdateClientMessage.id]: SnakeUpdateClientMessage,
 };
@@ -39,15 +46,14 @@ export const enum NETCODE {
     OPTIONS_SERIALIZE = "O1",
 
     PLAYER_NAME = "P1",
-    PLAYERS_SERIALIZE = "P2",
+    PLAYERS = "P2",
 
     ROOM_JOIN_KEY = "O1",
     ROOM_JOIN_MATCHING = "O2",
     ROOM_KEY = "O3",
-    ROOM_START = "O4",
-    ROOM_GET_STATUS = "O5",
+    ROOM_STATUS_SERVER = "O4",
+    ROOM_STATUS_CLIENT = "O5",
     ROOM_JOIN_ERROR = "O6",
-    ROOM_PLAYERS = "O7",
 
     ROUND_SERIALIZE = "R1",
     ROUND_COUNTDOWN = "R2",

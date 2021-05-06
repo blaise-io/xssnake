@@ -1,5 +1,5 @@
-import { CANVAS } from "../../shared/const";
-import { ColorScheme, PixelStyle } from "./colorScheme";
+import { CANVAS } from "../../../shared/const";
+import { ColorScheme, PixelStyle } from "../colorScheme";
 
 export class CanvasTile {
     size: number;

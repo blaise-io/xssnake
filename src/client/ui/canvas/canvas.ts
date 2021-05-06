@@ -1,20 +1,20 @@
-import { CANVAS } from "../../shared/const";
-import { Shape } from "../../shared/shape";
-import { average } from "../../shared/util";
-import { colorSchemes } from "../bootstrap/registerColorSchemes";
+import { CANVAS } from "../../../shared/const";
+import { Shape } from "../../../shared/shape";
+import { average } from "../../../shared/util";
+import { colorSchemes } from "../../bootstrap/registerColorSchemes";
 import {
     EV_GAME_TICK,
     EV_WIN_FOCUS_CHANGE,
     MAX_FRAME_DELTA,
     MIN_FRAME_DELTA,
     STORAGE,
-} from "../const";
-import { State } from "../state";
-import { debounce, instruct, storage } from "../util/clientUtil";
+} from "../../const";
+import { State } from "../../state";
+import { debounce, instruct, storage } from "../../util/clientUtil";
 import { CanvasTile } from "./canvasTile";
-import { ColorScheme } from "./colorScheme";
+import { ColorScheme } from "../colorScheme";
 import { ShapeCache } from "./shapeCache";
-import { applyEffects } from "./shapeClient";
+import { applyEffects } from "../shapeClient";
 
 export class Canvas {
     fps: any;

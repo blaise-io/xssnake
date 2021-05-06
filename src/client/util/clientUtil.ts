@@ -21,6 +21,10 @@ export function instruct(str: string, duration = 2000, flashInstruct = false): v
     State.shapes.INSTRUCTION = shape;
 }
 
+export function stylizeUpper(str: string): string {
+    return str.toUpperCase().replace("I", "i");
+}
+
 export function error(str: string, callback?: CallableFunction): void {
     urlHash();
 
@@ -94,6 +98,7 @@ export function urlHash(key?: HASH, value?: string): string {
     }
 }
 
+/* @deprecated use template string */
 export function format(str: string, ...data: (string | number)[]): string {
     return str.replace(/{(\d+)}/g, (match, number) => {
         return String(data[number]);

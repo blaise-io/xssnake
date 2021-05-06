@@ -4,7 +4,7 @@ import { Player } from "./player";
 import { Message } from "./types";
 
 export class RoomPlayersMessage implements Message {
-    static id = NETCODE.ROOM_PLAYERS;
+    static id = NETCODE.PLAYERS;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public players: PlayerRegistry<Player>, public localPlayer?: Player) {}

@@ -38,15 +38,15 @@ export class RoomOptionsMessage implements Message {
     }
 }
 
-export class GetRoomStatusMessage implements Message {
-    static id = NETCODE.ROOM_GET_STATUS;
+export class RoomJoinMessage implements Message {
+    static id = NETCODE.ROOM_JOIN_KEY;
     static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public key: string) {}
 
-    static fromNetcode(untrustedNetcode: string): GetRoomStatusMessage | undefined {
+    static fromNetcode(untrustedNetcode: string): RoomJoinMessage | undefined {
         if (isStrOfLen(untrustedNetcode, ROOM_KEY_LENGTH)) {
-            return new GetRoomStatusMessage(untrustedNetcode);
+            return new RoomJoinMessage(untrustedNetcode);
         }
     }
 
@@ -54,6 +54,40 @@ export class GetRoomStatusMessage implements Message {
         return this.key;
     }
 }
+
+export class GetRoomStatusServerMessage implements Message {
+    static id = NETCODE.ROOM_STATUS_SERVER;
+    static audience = AUDIENCE.SERVER_MATCHMAKING;
+
+    constructor(public key: string) {}
+
+    static fromNetcode(untrustedNetcode: string): GetRoomStatusServerMessage | undefined {
+        if (isStrOfLen(untrustedNetcode, ROOM_KEY_LENGTH)) {
+            return new GetRoomStatusServerMessage(untrustedNetcode);
+        }
+    }
+
+    get netcode(): string {
+        return this.key;
+    }
+}
+
+// export class GetRoomStatusClientMessage implements Message {
+//     static id = NETCODE.ROOM_STATUS_CLIENT;
+//     static audience = AUDIENCE.CLIENT;
+//
+//     constructor(public key: string) {}
+//
+//     static fromNetcode(untrustedNetcode: string): GetRoomStatusClientMessage | undefined {
+//         if (isStrOfLen(untrustedNetcode, ROOM_KEY_LENGTH)) {
+//             return new GetRoomStatusClientMessage(untrustedNetcode);
+//         }
+//     }
+//
+//     get netcode(): string {
+//         return this.key;
+//     }
+// }
 
 export class RoomKeyMessage implements Message {
     static id = NETCODE.ROOM_KEY;
@@ -66,7 +100,7 @@ export class RoomKeyMessage implements Message {
     }
 
     static fromNetcode(netcode: string): RoomKeyMessage {
-        return new GetRoomStatusMessage(netcode);
+        return new GetRoomStatusServerMessage(netcode);
     }
 }
 

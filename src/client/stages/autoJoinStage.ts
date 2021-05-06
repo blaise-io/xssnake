@@ -1,15 +1,15 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { levelSets } from "../../shared/levelSet/levelSets";
 import { _ } from "../../shared/util";
-import { STORAGE, UC } from "../const";
+import { STORAGE } from "../const";
 import { State } from "../state";
 import { GameStage } from "./base/gameStage";
 import { InputStage } from "./base/inputStage";
-import { format } from "../util/clientUtil";
+import { stylizeUpper } from "../util/clientUtil";
 import { ChallengeStage } from "./challenge";
 
 export class AutoJoinStage extends InputStage {
-    header = _("JOiN GAME");
+    header = stylizeUpper(_("Join game"));
     name = STORAGE.NAME;
     minlength = PLAYER_NAME_MINLENGTH;
     maxwidth = PLAYER_NAME_MAXWIDTH;
@@ -26,13 +26,15 @@ export class AutoJoinStage extends InputStage {
     private getLabel() {
         const summary = [];
         const room = State.flow.data.room;
-        const names = room.players.getNames().join(", ");
+        const names = room.players.getNames();
 
-        summary.push(format(_("Players ({0})"), room.players.length) + "\t" + names);
-        summary.push(_("Max. players") + "\t" + room.options.maxPlayers);
-        summary.push(_("Level Set") + "\t" + levelSets[room.options.levelSetIndex].title);
-        summary.push(_("Power-Ups") + "\t" + room.options.hasPowerups ? UC.YES : UC.NO);
-        summary.push(_("Winner fires XSS") + "\t" + room.options.isXSS ? UC.YES : UC.NO);
+        this.header = stylizeUpper(_(`Join ${names[0]}'s game`));
+
+        summary.push(`${_("Players")} (${room.players.length})\t${names.join(", ")}`);
+        summary.push(`${_("Max. players")}\t${room.options.maxPlayers}`);
+        summary.push(`${_("Level set")}\t${levelSets[room.options.levelSetIndex].title}`);
+        summary.push(`${_("Power-ups")}\t${room.options.hasPowerups ? _("Yes") : _("Yes")}`);
+        summary.push(`${_("Winner fires XSS")}\t${room.options.isXSS ? _("No") : _("No")}`);
 
         return summary.join("\n") + "\n\n" + _("Enter your name to join: ");
     }

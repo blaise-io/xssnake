@@ -72,7 +72,7 @@ export class ClientRoom {
             this.checkAllRoomDataReceived();
         });
 
-        State.events.on(NETCODE.ROOM_PLAYERS, NS.ROOM, (message: RoomPlayersMessage) => {
+        State.events.on(NETCODE.PLAYERS, NS.ROOM, (message: RoomPlayersMessage) => {
             this.players = ClientPlayerRegistry.fromPlayerRegistry(
                 this.clientPlayer,
                 message.players,
@@ -92,7 +92,7 @@ export class ClientRoom {
         State.events.off(NETCODE.ROOM_JOIN_ERROR, NS.ROOM);
         State.events.off(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM);
         State.events.off(NETCODE.ROOM_KEY, NS.ROOM);
-        State.events.off(NETCODE.ROOM_PLAYERS, NS.ROOM);
+        State.events.off(NETCODE.PLAYERS, NS.ROOM);
     }
 
     setupComponents(): void {
@@ -126,6 +126,7 @@ export class ClientRoom {
     }
 
     checkAllRoomDataReceived(): void {
+        console.log("this.allDataReceived", this.allDataReceived);
         if (this.allDataReceived) {
             this.resolve(this);
         }

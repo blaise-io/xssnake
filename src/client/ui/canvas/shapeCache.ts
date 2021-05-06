@@ -1,6 +1,6 @@
-import { BoundingBox } from "../../shared/boundingBox";
-import { PixelCollection } from "../../shared/pixelCollection";
-import { Shape } from "../../shared/shape";
+import { BoundingBox } from "../../../shared/boundingBox";
+import { PixelCollection } from "../../../shared/pixelCollection";
+import { Shape } from "../../../shared/shape";
 import { CanvasTile } from "./canvasTile";
 
 export class ShapeCache {
