@@ -1,8 +1,10 @@
 import { EventEmitter } from "events";
-import { SE_PLAYER_DISCONNECT } from "../../shared/const";
+import { SERVER_EVENT } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/player";
-import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
+import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
+import { RoomOptions } from "../../shared/room/roomOptions";
+import { RoomRoundMessage } from "../../shared/room/round";
 import { Server } from "../netcode/server";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
@@ -40,7 +42,18 @@ export class ServerRoom {
                 );
             },
         );
-        this.emitter.on(String(SE_PLAYER_DISCONNECT), this.handlePlayerDisconnect.bind(this));
+        this.emitter.on(SERVER_EVENT.PLAYER_DISCONNECT, (player: ServerPlayer) => {
+            // Remove immediately if rounds have not started.
+            // [else: set player.connected to false]
+            if (!this.rounds.hasStarted()) {
+                this.players.remove(player);
+            } else {
+                // TODO: Check whether this dupes PlayerRegistry, should also inform room.
+                player.connected = false;
+            }
+            this.players.sendPlayers();
+            this.detectEmptyRoom();
+        });
     }
 
     restartRounds(): void {
@@ -66,17 +79,7 @@ export class ServerRoom {
     emitAll(player: ServerPlayer): void {
         player.send(new RoomKeyMessage(this.key));
         player.send(new RoomOptionsMessage(this.options));
-        this.rounds.round.emit(player);
-    }
-
-    handlePlayerDisconnect(player: ServerPlayer): void {
-        // Remove immediately if rounds have not started.
-        // [else: set player.connected to false]
-        if (!this.rounds.hasStarted()) {
-            this.players.remove(player);
-        }
-        this.players.sendPlayers();
-        this.detectEmptyRoom();
+        player.send(RoomRoundMessage.fromRound(this.rounds.round));
     }
 
     /** @deprecated move to RoomManager */

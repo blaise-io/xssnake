@@ -1,7 +1,8 @@
 import { NC_SNAKE_CRASH, ROOM_STATUS } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
-import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
+import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
+import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, HASH, NS } from "../const";
 import { State } from "../state";

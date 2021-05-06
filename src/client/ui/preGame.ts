@@ -1,15 +1,12 @@
-import { NC_ROOM_START, SECONDS_ROUND_COUNTDOWN } from "../../shared/const";
+import { SECONDS_ROUND_COUNTDOWN } from "../../shared/const";
+import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
+import { _ } from "../../shared/util";
 import { KEY, NS } from "../const";
 import {
     COPY_AWAITING_PLAYERS_BODY,
     COPY_AWAITING_PLAYERS_HEADER,
     COPY_AWAITING_PLAYERS_START_NOW,
-    COPY_CONFIRM_EXIT_BODY,
-    COPY_CONFIRM_EXIT_BODY_DRAMATIC,
-    COPY_CONFIRM_EXIT_HEADER,
-    COPY_CONFIRM_START_BODY,
-    COPY_CONFIRM_START_HEADER,
     COPY_COUNTDOWN_BODY,
     COPY_COUNTDOWN_TITLE,
 } from "../copy/copy";
@@ -124,23 +121,27 @@ export class PreGameUI {
         };
 
         this.dialog = new Dialog(
-            COPY_CONFIRM_EXIT_HEADER,
-            this.players.length === 2 ? COPY_CONFIRM_EXIT_BODY_DRAMATIC : COPY_CONFIRM_EXIT_BODY,
+            _("Confirm exit"),
+            this.players.length === 2
+                ? _("Do you REALLY want to leave that other player ALL ALONE in this room?")
+                : _("Do you really want to leave this room?"),
             settings,
         );
     }
 
     showConfirmStartDialog(): void {
-        const settings = {
-            type: DialogType.CONFIRM,
-            cancel: this.hideConfirmDialog.bind(this),
-            ok: function () {
-                this.players.emit(NC_ROOM_START);
-                this.hideConfirmDialog();
-            }.bind(this),
-        };
-
-        this.dialog = new Dialog(COPY_CONFIRM_START_HEADER, COPY_CONFIRM_START_BODY, settings);
+        this.dialog = new Dialog(
+            _("Confirm start"),
+            _("Do you really want to start the game before the room is full?"),
+            {
+                type: DialogType.CONFIRM,
+                cancel: this.hideConfirmDialog.bind(this),
+                ok: () => {
+                    this.players.localPlayer.send(new RoomManualStartMessage());
+                    this.hideConfirmDialog();
+                },
+            },
+        );
     }
 
     toggleCountdown(started: boolean): void {

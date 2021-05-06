@@ -1,4 +1,4 @@
-import { GetRoomStatusServerMessage } from "../../shared/room/roomOptions";
+import { GetRoomStatusServerMessage } from "../../shared/room/roomMessages";
 import { _ } from "../../shared/util";
 import { ClientRoom } from "../room/clientRoom";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";

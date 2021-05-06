@@ -47,6 +47,11 @@ export const enum GAME {
 /** @deprecated: Use Message */ export const SE_PLAYER_DISCONNECT = 101;
 /** @deprecated: Use Message */ export const SE_PLAYER_COLLISION = 102;
 
+export const enum SERVER_EVENT {
+    PLAYER_DISCONNECT = "SE0",
+    PLAYER_COLLISION = "SE1",
+}
+
 export const HEARTBEAT_INTERVAL_MS = 5000;
 
 export const GAME_SHIFT_MAP = [

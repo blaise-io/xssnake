@@ -1,5 +1,5 @@
 import * as util from "util";
-import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION } from "../../shared/const";
+import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION, SERVER_EVENT } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { AUDIENCE, NETCODE, NETCODE_MAP } from "../../shared/room/netcode";
 import { Player } from "../../shared/room/player";
@@ -48,7 +48,7 @@ export class ServerPlayer extends Player {
         if (this.room) {
             this.room.emitter.emit(String(SE_PLAYER_COLLISION), [this]);
         }
-        // this.emitMessage(String(SE_PLAYER_DISCONNECT), this);
+        this.room.emitter.emit(SERVER_EVENT.PLAYER_DISCONNECT, this);
         if (this.client) {
             this.client.close(); // TODO: terminate()?
             delete this.client; // TODO: not my job?

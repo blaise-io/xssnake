@@ -1,10 +1,9 @@
 import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
-import { COPY_ROUND_DRAW_TITLE, COPY_ROUND_NEW_BODY, COPY_ROUND_WINNER_TITLE } from "../copy/copy";
+import { _ } from "../../shared/util";
 import { ClientPlayer } from "../room/clientPlayer";
 import { State } from "../state";
-import { format } from "../util/clientUtil";
 import { Dialog } from "./dialog";
 
 export class WrapupGame {
@@ -38,13 +37,11 @@ export class WrapupGame {
     }
 
     getBody(): string {
-        return format(COPY_ROUND_NEW_BODY, this.getCountdownRemaining());
+        return _(`New round starting in: ${this.getCountdownRemaining()}`);
     }
 
     showCountdown(): void {
-        const title = this.winner
-            ? format(COPY_ROUND_WINNER_TITLE, String(this.winner.name))
-            : COPY_ROUND_DRAW_TITLE;
+        const title = this.winner ? _(`${this.winner.name} won!`) : _("Round ended in a draw");
 
         this.dialog = new Dialog(title, this.getBody(), {
             keysBlocked: false,

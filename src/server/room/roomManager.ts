@@ -6,9 +6,9 @@ import {
     GetRoomStatusServerMessage,
     RoomJoinMessage,
     RoomKeyMessage,
-    RoomOptions,
     RoomOptionsMessage,
-} from "../../shared/room/roomOptions";
+} from "../../shared/room/roomMessages";
+import { RoomOptions } from "../../shared/room/roomOptions";
 import { randomStr } from "../../shared/util";
 import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
@@ -27,7 +27,7 @@ export class ServerRoomManager {
     destruct(): void {
         this.removeAllRooms();
         this.server.emitter.removeAllListeners(NETCODE.PLAYER_NAME);
-        this.server.emitter.removeAllListeners(NETCODE.ROOM_STATUS_SERVER);
+        this.server.emitter.removeAllListeners(NETCODE.ROOM_GET_STATUS);
         this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_KEY);
         this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_MATCHING);
     }
@@ -42,7 +42,7 @@ export class ServerRoomManager {
 
         // Get status with intent to join.
         this.server.emitter.on(
-            NETCODE.ROOM_STATUS_SERVER,
+            NETCODE.ROOM_GET_STATUS,
             (player: ServerPlayer, message: GetRoomStatusServerMessage) => {
                 const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {

@@ -6,7 +6,7 @@ import {
     RoomJoinMessage,
     RoomKeyMessage,
     RoomOptionsMessage,
-} from "./roomOptions";
+} from "./roomMessages";
 import { RoundCountdownMessage, RoomRoundMessage, RoundStartMessage } from "./round";
 
 export const NETCODE_MAP = {
@@ -51,9 +51,9 @@ export const enum NETCODE {
     ROOM_JOIN_KEY = "O1",
     ROOM_JOIN_MATCHING = "O2",
     ROOM_KEY = "O3",
-    ROOM_STATUS_SERVER = "O4",
-    ROOM_STATUS_CLIENT = "O5",
-    ROOM_JOIN_ERROR = "O6",
+    ROOM_MANUAL_START = "O4",
+    ROOM_GET_STATUS = "O5",
+    ROOM_JOIN_ERROR = "O7",
 
     ROUND_SERIALIZE = "R1",
     ROUND_COUNTDOWN = "R2",

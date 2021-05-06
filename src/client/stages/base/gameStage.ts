@@ -1,5 +1,5 @@
 import { CANVAS } from "../../../shared/const";
-import { RoomOptionsMessage } from "../../../shared/room/roomOptions";
+import { RoomOptionsMessage } from "../../../shared/room/roomMessages";
 import { Shape } from "../../../shared/shape";
 import { noop } from "../../../shared/util";
 import { COPY_CONNECTING } from "../../copy/copy";
