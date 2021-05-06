@@ -8,10 +8,9 @@ import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
 import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 import { ServerSnakeMove } from "../room/serverSnakeMove";
-import { ServerItems } from "./serverItems";
 
 export class ServerGame {
-    private items: ServerItems;
+    // private items: ServerItems;
     private tick: number;
     private lastTick: number;
     private tickInterval: NodeJS.Timeout;
@@ -22,7 +21,7 @@ export class ServerGame {
         public level: Level,
         public players: ServerPlayerRegistry,
     ) {
-        this.items = new ServerItems(level, players);
+        // this.items = new ServerItems(level, players);
         this.tick = 0;
         this.lastTick = +new Date();
 
@@ -37,11 +36,11 @@ export class ServerGame {
         clearInterval(this.tickInterval);
         this.unbindEvents();
 
-        this.items.destruct();
+        // this.items.destruct();
 
         delete this.level;
         delete this.players;
-        delete this.items;
+        // delete this.items;
     }
 
     bindEvents(): void {

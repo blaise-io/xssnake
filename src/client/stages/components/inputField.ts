@@ -54,10 +54,7 @@ export class InputField {
         State.events.on("keyup", NS.INPUT, this.updateShapes.bind(this));
     }
 
-    /**
-     * @param {string} value
-     */
-    setValue(value): void {
+    setValue(value: string): void {
         this.input.focus();
         this.input.value = value;
         this.input.setSelectionRange(value.length, value.length);

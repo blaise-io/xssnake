@@ -10,7 +10,6 @@ import {
 } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { randomStr } from "../../shared/util";
-import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
 import { getMatchingRoom } from "./matcher";
 import { ServerPlayer } from "./serverPlayer";
@@ -130,12 +129,6 @@ export class ServerRoomManager {
                 return this.rooms[i];
             }
         }
-    }
-
-    getSanitizedRoomKey(dirtyKeyArr: UntrustedData): string {
-        const keySanitizer = new Sanitizer(dirtyKeyArr[0]);
-        keySanitizer.assertStringOfLength(ROOM_KEY_LENGTH);
-        return keySanitizer.getValueOr() as string;
     }
 
     getRoomStatus(key: string): number {

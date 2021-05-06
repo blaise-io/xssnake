@@ -2,28 +2,20 @@ import { BoundingBox } from "./boundingBox";
 import { PixelCollection } from "./pixelCollection";
 
 export class Shape {
-    _bbox: BoundingBox;
+    private bboxCache: BoundingBox;
     pixels: PixelCollection;
-    cache: any = undefined; // ShapeCache but is client...
-    enabled: boolean;
+    cache: unknown; // ShapeCache actually, but is only known to client.
     effects: Record<string, (delta) => void> = {};
     expand = 0;
-    flags: Record<string, boolean> = {
-        enabled: true,
-        isOverlay: false,
-    };
+    flags = { enabled: true, isOverlay: false };
     transform: { translate: [number, number]; scale: number };
     isOverlay: boolean;
-    mask: number[] = undefined;
+    mask: number[] = [];
 
     constructor(...pixelCollections: PixelCollection[]) {
         this.pixels = new PixelCollection();
         this.transform = { translate: [0, 0], scale: 1 };
         this.add(...pixelCollections);
-    }
-
-    clone(): Shape {
-        return new Shape(this.pixels);
     }
 
     invert(bbox?: BoundingBox): Shape {
@@ -45,7 +37,7 @@ export class Shape {
 
     uncache(): Shape {
         delete this.cache;
-        delete this._bbox;
+        delete this.bboxCache;
         return this;
     }
 
@@ -62,22 +54,22 @@ export class Shape {
         return this.uncache();
     }
 
-    remove(...pixelCollections: PixelCollection[]): Shape {
-        const remove = this.pixels.remove.bind(this.pixels);
-        for (let i = 0, m = pixelCollections.length; i < m; i++) {
-            pixelCollections[i].each(remove);
-        }
-        return this.uncache();
-    }
+    // remove(...pixelCollections: PixelCollection[]): Shape {
+    //     const remove = this.pixels.remove.bind(this.pixels);
+    //     for (let i = 0, m = pixelCollections.length; i < m; i++) {
+    //         pixelCollections[i].each(remove);
+    //     }
+    //     return this.uncache();
+    // }
 
     bbox(expand = 0): BoundingBox {
-        if (!this._bbox || this.expand !== expand) {
-            this._bbox = this.pixels.bbox();
+        if (!this.bboxCache || this.expand !== expand) {
+            this.bboxCache = this.pixels.bbox();
             if (expand) {
-                this._bbox.expand(expand);
+                this.bboxCache.expand(expand);
             }
         }
         this.expand = expand;
-        return this._bbox;
+        return this.bboxCache;
     }
 }

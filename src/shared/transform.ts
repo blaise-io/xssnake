@@ -1,12 +1,6 @@
-/**
- * @param {PixelCollection} pixels
- * @param {number=} xshift
- * @param {number=} yshift
- * @return {PixelCollection}
- */
 import { PixelCollection } from "./pixelCollection";
 
-export function shift(pixels: PixelCollection, xshift = 0, yshift = 0) {
+export function shift(pixels: PixelCollection, xshift = 0, yshift = 0): PixelCollection {
     if (xshift === 0 && yshift === 0) {
         return pixels; // No shift
     }

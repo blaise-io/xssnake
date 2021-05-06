@@ -2,6 +2,7 @@
 // import { State } from "../../client/state/state";
 // import { setGameTransform } from "../../client/ui/shapeClient";
 
+// TODO: Extend Array
 export class LevelAnimationRegistry {
     animations = [];
     walls = [];

@@ -30,20 +30,17 @@ export class ServerScore {
             }
         }
         if (scoreUpdated) {
-            this.emitScore();
+            this.players.emit(NC_SCORE_UPDATE, this.serialize());
         }
     }
 
+    /** @deprecated */
     serialize(): number[] {
         const score = [];
         for (let i = 0, m = this.players.length; i < m; i++) {
             score.push(this.players[i].score);
         }
         return score;
-    }
-
-    emitScore() {
-        this.players.emit(NC_SCORE_UPDATE, this.serialize());
     }
 
     ///**

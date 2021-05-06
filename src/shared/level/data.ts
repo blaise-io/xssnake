@@ -10,7 +10,7 @@ export class LevelData {
     walls: PixelCollection;
     spawns: Spawn[];
     private unreachables: PixelCollection;
-    private animations: any;
+    private animations = { walls: [] };
 
     constructor(imagedata: ImageData) {
         const parser = new Parser(imagedata);
@@ -19,7 +19,6 @@ export class LevelData {
         this.walls = parser.walls;
         this.spawns = parser.spawns;
         this.unreachables = parser.unreachables;
-        this.animations = { walls: [] }; // TODO: how to register and sync animations?
     }
 
     isWall(x: number, y: number): boolean {

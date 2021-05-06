@@ -47,8 +47,8 @@ export class ServerPlayer extends Player {
         }
         if (this.room) {
             this.room.emitter.emit(String(SE_PLAYER_COLLISION), [this]);
+            this.room.emitter.emit(SERVER_EVENT.PLAYER_DISCONNECT, this);
         }
-        this.room.emitter.emit(SERVER_EVENT.PLAYER_DISCONNECT, this);
         if (this.client) {
             this.client.close(); // TODO: terminate()?
             delete this.client; // TODO: not my job?

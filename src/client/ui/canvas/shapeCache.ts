@@ -4,8 +4,8 @@ import { Shape } from "../../../shared/shape";
 import { CanvasTile } from "./canvasTile";
 
 export class ShapeCache {
-    private bbox: BoundingBox;
-    private canvas: HTMLCanvasElement;
+    bbox: BoundingBox;
+    canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
 
     constructor(public shape: Shape, public tile: CanvasTile) {

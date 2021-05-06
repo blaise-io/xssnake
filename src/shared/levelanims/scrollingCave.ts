@@ -19,7 +19,6 @@ export class ScrollingCave {
 
         this._max = {
             // Stalactite ‾\/‾
-            // Mnemonic: They hang...
             stalactite: this._LEVEL_WIDTH,
             // Stalagmite _/\_
             stalagmite: this._LEVEL_WIDTH + Math.round(average(this._BUMP_WIDTH)),
