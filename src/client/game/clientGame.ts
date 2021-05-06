@@ -6,7 +6,6 @@
 import { NC_SNAKE_CRASH } from "../../shared/const";
 import { Collision } from "../../shared/game/collision";
 import { Level } from "../../shared/level/level";
-import { NETCODE } from "../../shared/room/netcode";
 import { SnakeUpdateClientMessage } from "../../shared/snakeMessages";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
@@ -51,7 +50,7 @@ export class ClientGame {
     bindEvents(): void {
         State.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));
         State.events.on(
-            NETCODE.SNAKE_UPDATE_CLIENT,
+            SnakeUpdateClientMessage.id,
             NS.GAME,
             (message: SnakeUpdateClientMessage) => {
                 const clientIndex = message.playerIndex as number;
@@ -76,7 +75,7 @@ export class ClientGame {
 
     unbindEvents(): void {
         State.events.off(EV_GAME_TICK, NS.GAME);
-        State.events.off(NETCODE.SNAKE_UPDATE_CLIENT, NS.GAME);
+        State.events.off(SnakeUpdateClientMessage.id, NS.GAME);
     }
 
     /**

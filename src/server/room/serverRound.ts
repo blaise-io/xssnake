@@ -1,8 +1,9 @@
 import { EventEmitter } from "events";
 import { NC_ROUND_WRAPUP, SECONDS_ROUND_COUNTDOWN, SERVER_EVENT } from "../../shared/const";
-import { NETCODE } from "../../shared/room/netcode";
+import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoundCountdownMessage, Round, RoundStartMessage } from "../../shared/room/round";
+import { Round } from "../../shared/room/round";
+import { RoundCountdownMessage, RoundStartMessage } from "../../shared/room/roundMessages";
 import { ServerGame } from "../game/serverGame";
 import { serverImageLoader } from "../level/serverImageLoader";
 import { LevelPlayset } from "./playset";
@@ -32,7 +33,7 @@ export class ServerRound extends Round {
         this.stopCountDown = this.stopCountDown.bind(this);
 
         this.roomEmitter.on(SERVER_EVENT.PLAYER_DISCONNECT, this.stopCountDown);
-        this.roomEmitter.on(NETCODE.ROOM_MANUAL_START, (player: ServerPlayer) => {
+        this.roomEmitter.on(RoomManualStartMessage.id, (player: ServerPlayer) => {
             if (this.players.isHost(player) && !this.countdownTimer) {
                 this.toggleCountdown(true);
             }
@@ -58,7 +59,7 @@ export class ServerRound extends Round {
 
     unbindEvents(): void {
         this.roomEmitter.off(SERVER_EVENT.PLAYER_DISCONNECT, this.stopCountDown);
-        this.roomEmitter.removeAllListeners(NETCODE.ROOM_MANUAL_START);
+        this.roomEmitter.removeAllListeners(RoomManualStartMessage.id);
     }
 
     getAlivePlayers(): ServerPlayer[] {

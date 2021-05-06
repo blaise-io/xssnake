@@ -1,4 +1,5 @@
-import { NC_PLAYERS_SERIALIZE, NC_SCORE_UPDATE } from "../../shared/const";
+import { NC_SCORE_UPDATE } from "../../shared/const";
+import { RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import { NS } from "../const";
 import { State } from "../state";
 import { ScoreboardUI } from "../ui/scoreboard";
@@ -20,12 +21,14 @@ export class Scoreboard {
     }
 
     bindEvents(): void {
-        State.events.on(NC_PLAYERS_SERIALIZE, NS.SCORE, this.ui.debounceUpdate.bind(this.ui));
+        State.events.on(RoomPlayersMessage.id, NS.SCORE, (message: RoomPlayersMessage) => {
+            this.ui.debounceUpdate();
+        });
         State.events.on(NC_SCORE_UPDATE, NS.SCORE, this.updatePlayerScores.bind(this));
     }
 
     unbindEvents(): void {
-        State.events.off(NC_PLAYERS_SERIALIZE, NS.SCORE);
+        State.events.off(RoomPlayersMessage.id, NS.SCORE);
         State.events.off(NC_SCORE_UPDATE, NS.SCORE);
     }
 

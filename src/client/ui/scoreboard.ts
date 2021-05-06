@@ -27,7 +27,6 @@ export class ScoreboardUI {
         this.queue = false;
         this.queueTimer = 0;
         this.oldPlayerOrder = this.getPlayersSortedByScore();
-
         this.updateScoreboard();
     }
 

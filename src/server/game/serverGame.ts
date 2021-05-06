@@ -1,7 +1,6 @@
 import { EventEmitter } from "events";
 import { NC_SNAKE_CRASH, SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
-import { NETCODE } from "../../shared/room/netcode";
 import { SnakeUpdateServerMessage } from "../../shared/snakeMessages";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
@@ -45,7 +44,7 @@ export class ServerGame {
 
     bindEvents(): void {
         this.roomEmitter.on(
-            NETCODE.SNAKE_UPDATE_SERVER,
+            SnakeUpdateServerMessage.id,
             (player: ServerPlayer, message: SnakeUpdateServerMessage) => {
                 this.handleMove(new ServerSnakeMove(message.parts, message.direction, player));
             },
@@ -53,7 +52,7 @@ export class ServerGame {
     }
 
     unbindEvents(): void {
-        this.roomEmitter.removeAllListeners(NETCODE.SNAKE_UPDATE_SERVER);
+        this.roomEmitter.removeAllListeners(SnakeUpdateServerMessage.id);
     }
 
     private handleMove(move: ServerSnakeMove) {

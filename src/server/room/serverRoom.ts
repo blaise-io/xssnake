@@ -1,10 +1,9 @@
 import { EventEmitter } from "events";
 import { SERVER_EVENT } from "../../shared/const";
-import { NETCODE } from "../../shared/room/netcode";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/player";
 import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoomRoundMessage } from "../../shared/room/round";
+import { RoomRoundMessage } from "../../shared/room/roundMessages";
 import { Server } from "../netcode/server";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
@@ -34,7 +33,7 @@ export class ServerRoom {
     bindEvents(): void {
         this.emitter.on(
             // TODO: Prevent spam.
-            NETCODE.CHAT_MESSAGE_SERVER,
+            ChatServerMessage.id,
             (player: ServerPlayer, message: ChatServerMessage) => {
                 this.players.send(
                     new ChatClientMessage(this.players.indexOf(player), message.body),

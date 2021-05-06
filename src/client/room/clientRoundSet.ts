@@ -1,6 +1,5 @@
-import { NETCODE } from "../../shared/room/netcode";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoomRoundMessage } from "../../shared/room/round";
+import { RoomRoundMessage } from "../../shared/room/roundMessages";
 import { NS } from "../const";
 import { State } from "../state";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
@@ -23,22 +22,18 @@ export class ClientRoundSet {
     }
 
     bindEvents(): void {
-        State.events.on(
-            NETCODE.ROUND_SERIALIZE,
-            NS.ROUND_SET,
-            async (message: RoomRoundMessage) => {
-                // Switch level between rounds.
-                // TODO: NETCODE.ROUND_SWITCH?
-                if (this.round.game && this.round.game.started) {
-                    this.round.destruct();
-                    this.round = new ClientRound(this.players, this.options);
-                    await this.round.setLevel(message.levelSetIndex, message.levelIndex);
-                }
-            },
-        );
+        State.events.on(RoomRoundMessage.id, NS.ROUND_SET, async (message: RoomRoundMessage) => {
+            // Switch level between rounds.
+            // TODO: NETCODE.ROUND_SWITCH?
+            if (this.round.game && this.round.game.started) {
+                this.round.destruct();
+                this.round = new ClientRound(this.players, this.options);
+                await this.round.setLevel(message.levelSetIndex, message.levelIndex);
+            }
+        });
     }
 
     unbindEvents(): void {
-        State.events.off(NETCODE.ROUND_SERIALIZE, NS.ROUND_SET);
+        State.events.off(RoomRoundMessage.id, NS.ROUND_SET);
     }
 }

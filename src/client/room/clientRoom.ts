@@ -1,5 +1,4 @@
 import { NC_SNAKE_CRASH, ROOM_STATUS } from "../../shared/const";
-import { NETCODE } from "../../shared/room/netcode";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
@@ -58,22 +57,22 @@ export class ClientRoom {
     }
 
     bindEvents(): void {
-        State.events.on(NETCODE.ROOM_JOIN_ERROR, NS.ROOM, (message: JoinRoomErrorMessage) => {
+        State.events.on(JoinRoomErrorMessage.id, NS.ROOM, (message: JoinRoomErrorMessage) => {
             this.reject(COPY_ERROR[message.status]);
         });
 
-        State.events.on(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM, (message: RoomOptionsMessage) => {
+        State.events.on(RoomOptionsMessage.id, NS.ROOM, (message: RoomOptionsMessage) => {
             this.options = message.options;
             this.checkAllRoomDataReceived();
         });
 
-        State.events.on(NETCODE.ROOM_KEY, NS.ROOM, (message: RoomKeyMessage) => {
+        State.events.on(RoomKeyMessage.id, NS.ROOM, (message: RoomKeyMessage) => {
             this.key = message.key;
             urlHash(HASH.ROOM, this.key);
             this.checkAllRoomDataReceived();
         });
 
-        State.events.on(NETCODE.PLAYERS, NS.ROOM, (message: RoomPlayersMessage) => {
+        State.events.on(RoomPlayersMessage.id, NS.ROOM, (message: RoomPlayersMessage) => {
             this.players = ClientPlayerRegistry.fromPlayerRegistry(
                 this.clientPlayer,
                 message.players,
@@ -90,10 +89,10 @@ export class ClientRoom {
     }
 
     unbindEvents(): void {
-        State.events.off(NETCODE.ROOM_JOIN_ERROR, NS.ROOM);
-        State.events.off(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM);
-        State.events.off(NETCODE.ROOM_KEY, NS.ROOM);
-        State.events.off(NETCODE.PLAYERS, NS.ROOM);
+        State.events.off(JoinRoomErrorMessage.id, NS.ROOM);
+        State.events.off(RoomOptionsMessage.id, NS.ROOM);
+        State.events.off(RoomKeyMessage.id, NS.ROOM);
+        State.events.off(RoomPlayersMessage.id, NS.ROOM);
     }
 
     setupComponents(): void {

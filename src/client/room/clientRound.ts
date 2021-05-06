@@ -1,7 +1,11 @@
-import { NC_ROUND_WRAPUP } from "../../shared/const";
-import { NETCODE } from "../../shared/room/netcode";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoundCountdownMessage, RoomRoundMessage, Round } from "../../shared/room/round";
+import { Round } from "../../shared/room/round";
+import {
+    RoomRoundMessage,
+    RoundCountdownMessage,
+    RoundStartMessage,
+    RoundWrapupMessage,
+} from "../../shared/room/roundMessages";
 import { EV_PLAYERS_UPDATED, NS } from "../const";
 import { ClientGame } from "../game/clientGame";
 import { State } from "../state";
@@ -51,26 +55,32 @@ export class ClientRound extends Round {
 
     bindEvents(): void {
         State.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
-        State.events.on(NETCODE.ROUND_SERIALIZE, NS.ROUND, async (message: RoomRoundMessage) => {
+        State.events.on(RoomRoundMessage.id, NS.ROUND, async (message: RoomRoundMessage) => {
             await this.setLevel(message.levelSetIndex, message.levelIndex);
         });
-        State.events.on(NETCODE.ROUND_COUNTDOWN, NS.ROUND, (message: RoundCountdownMessage) => {
+        State.events.on(RoundCountdownMessage.id, NS.ROUND, (message: RoundCountdownMessage) => {
             this.preGameUI.toggleCountdown(message.enabled);
             this.preGameUI.updateUI();
         });
-        State.events.on(NETCODE.ROUND_START, NS.ROUND, () => {
+        State.events.on(RoundStartMessage.id, NS.ROUND, () => {
             this.unbindEvents();
             this.preGameUI.destruct();
             this.game.start();
         });
-        State.events.on(NC_ROUND_WRAPUP, NS.ROUND, this.wrapupGame.bind(this));
+        State.events.on(RoundWrapupMessage.id, NS.ROUND, (message: RoundWrapupMessage) => {
+            this.wrapupGameUI = new WrapupGame(
+                this.players,
+                this.players[message.winningPlayerIndex],
+            );
+        });
     }
 
     unbindEvents(): void {
         State.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
-        State.events.off(NETCODE.ROUND_SERIALIZE, NS.ROUND);
-        State.events.off(NETCODE.ROUND_COUNTDOWN, NS.ROUND);
-        State.events.off(NETCODE.ROUND_START, NS.ROUND);
+        State.events.off(RoomRoundMessage.id, NS.ROUND);
+        State.events.off(RoundCountdownMessage.id, NS.ROUND);
+        State.events.off(RoundStartMessage.id, NS.ROUND);
+        State.events.off(RoundWrapupMessage.id, NS.ROUND);
     }
 
     updatePlayers(): void {
@@ -78,9 +88,5 @@ export class ClientRound extends Round {
             this.game.updatePlayers(this.players);
         }
         this.preGameUI.updateUI();
-    }
-
-    wrapupGame(winnerIndex: number): void {
-        this.wrapupGameUI = new WrapupGame(this.players, this.players[winnerIndex] || null);
     }
 }

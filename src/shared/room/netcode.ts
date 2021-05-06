@@ -7,7 +7,12 @@ import {
     RoomKeyMessage,
     RoomOptionsMessage,
 } from "./roomMessages";
-import { RoundCountdownMessage, RoomRoundMessage, RoundStartMessage } from "./round";
+import {
+    RoomRoundMessage,
+    RoundCountdownMessage,
+    RoundStartMessage,
+    RoundWrapupMessage,
+} from "./roundMessages";
 
 export const NETCODE_MAP = {
     [ChatClientMessage.id]: ChatClientMessage,
@@ -17,6 +22,7 @@ export const NETCODE_MAP = {
     [RoundCountdownMessage.id]: RoundCountdownMessage,
     [RoundStartMessage.id]: RoundStartMessage,
     [RoomKeyMessage.id]: RoomKeyMessage,
+    [RoundWrapupMessage.id]: RoundWrapupMessage,
     [RoomOptionsMessage.id]: RoomOptionsMessage,
     [RoomPlayersMessage.id]: RoomPlayersMessage,
     [RoomRoundMessage.id]: RoomRoundMessage,

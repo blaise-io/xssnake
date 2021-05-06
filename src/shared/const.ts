@@ -14,37 +14,9 @@ export const enum GAME {
     TOP = 2,
 }
 
-/** @deprecated: Use Message */ export const NC_CHAT_NOTICE = 10;
-/** @deprecated: Use Message */ export const NC_CHAT_MESSAGE = 11;
-
-/** @deprecated: Use Message */ export const NC_GAME_DESPAWN = 20;
-/** @deprecated: Use Message */ export const NC_GAME_STATE = 21;
-/** @deprecated: Use Message */ export const NC_GAME_SPAWN = 22;
-
-/** @deprecated: Use Message */ export const NC_PLAYER_NAME = 30;
-/** @deprecated: Use Message */ export const NC_PLAYERS_SERIALIZE = 31;
-
-/** @deprecated: Use Message */ export const NC_ROOM_JOIN_KEY = 40;
-/** @deprecated: Use Message */ export const NC_ROOM_JOIN_MATCHING = 41;
-/** @deprecated: Use Message */ export const NC_ROOM_SERIALIZE = 42;
-/** @deprecated: Use Message */ export const NC_ROOM_START = 43;
-/** @deprecated: Use Message */ export const NC_ROOM_STATUS = 44;
-/** @deprecated: Use Message */ export const NC_ROOM_JOIN_ERROR = 45;
-
-/** @deprecated: Use Message */ export const NC_OPTIONS_SERIALIZE = 47;
-
-/** @deprecated: Use Message */ export const NC_ROUND_SERIALIZE = 50;
-/** @deprecated: Use Message */ export const NC_ROUND_COUNTDOWN = 51;
-/** @deprecated: Use Message */ export const NC_ROUND_START = 52;
 /** @deprecated: Use Message */ export const NC_ROUND_WRAPUP = 53;
 /** @deprecated: Use Message */ export const NC_SCORE_UPDATE = 60;
 /** @deprecated: Use Message */ export const NC_SNAKE_CRASH = 71;
-/** @deprecated: Use Message */ export const NC_SNAKE_SIZE = 72;
-/** @deprecated: Use Message */ export const NC_SNAKE_SPEED = 73;
-/** @deprecated: Use Message */ export const NC_SNAKE_UPDATE = 74;
-/** @deprecated: Use Message */ export const NC_XSS = 666;
-
-/** @deprecated: Use Message */ export const SE_PLAYER_DISCONNECT = 101;
 /** @deprecated: Use Message */ export const SE_PLAYER_COLLISION = 102;
 
 export const enum SERVER_EVENT {

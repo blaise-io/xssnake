@@ -1,5 +1,4 @@
 import { ROOM_STATUS, ROOM_KEY_LENGTH } from "../../shared/const";
-import { NETCODE } from "../../shared/room/netcode";
 import { NameMessage } from "../../shared/room/player";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import {
@@ -25,23 +24,20 @@ export class ServerRoomManager {
 
     destruct(): void {
         this.removeAllRooms();
-        this.server.emitter.removeAllListeners(NETCODE.PLAYER_NAME);
-        this.server.emitter.removeAllListeners(NETCODE.ROOM_GET_STATUS);
-        this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_KEY);
-        this.server.emitter.removeAllListeners(NETCODE.ROOM_JOIN_MATCHING);
+        this.server.emitter.removeAllListeners(NameMessage.id);
+        this.server.emitter.removeAllListeners(GetRoomStatusServerMessage.id);
+        this.server.emitter.removeAllListeners(RoomJoinMessage.id);
+        this.server.emitter.removeAllListeners(RoomOptionsMessage.id);
     }
 
     bindEvents(): void {
-        this.server.emitter.on(
-            NETCODE.PLAYER_NAME,
-            (player: ServerPlayer, message: NameMessage) => {
-                player.name = message.name;
-            },
-        );
+        this.server.emitter.on(NameMessage.id, (player: ServerPlayer, message: NameMessage) => {
+            player.name = message.name;
+        });
 
         // Get status with intent to join.
         this.server.emitter.on(
-            NETCODE.ROOM_GET_STATUS,
+            GetRoomStatusServerMessage.id,
             (player: ServerPlayer, message: GetRoomStatusServerMessage) => {
                 const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {
@@ -57,7 +53,7 @@ export class ServerRoomManager {
 
         // Join room by key.
         this.server.emitter.on(
-            NETCODE.ROOM_JOIN_KEY,
+            RoomJoinMessage.id,
             (player: ServerPlayer, message: RoomJoinMessage) => {
                 const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {
@@ -71,7 +67,7 @@ export class ServerRoomManager {
         // Join any room matching user's preferences,
         // if no matching room is found, create a new room.
         this.server.emitter.on(
-            NETCODE.ROOM_JOIN_MATCHING,
+            RoomOptionsMessage.id,
             (player: ServerPlayer, message: RoomOptionsMessage) => {
                 const matchingRoom = getMatchingRoom(this.rooms, message.options);
                 const room = matchingRoom || this.createRoom(message.options);

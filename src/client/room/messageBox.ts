@@ -1,4 +1,3 @@
-import { NETCODE } from "../../shared/room/netcode";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/player";
 import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, NS, UC } from "../const";
@@ -23,7 +22,7 @@ export class MessageBox {
             this.players.localPlayer.send(new ChatServerMessage(body));
         });
 
-        State.events.on(NETCODE.CHAT_MESSAGE_CLIENT, NS.MSGBOX, (message: ChatClientMessage) => {
+        State.events.on(ChatClientMessage.id, NS.MSGBOX, (message: ChatClientMessage) => {
             const name = String(this.players[message.playerIndex].name);
             this.messages.push(new ChatMessage(name, message.body));
             this.ui.debounceUpdate();
@@ -35,7 +34,7 @@ export class MessageBox {
         this.messages.length = 0;
         delete this.previousPlayers;
         this.ui.destruct();
-        State.events.off(NETCODE.CHAT_MESSAGE_CLIENT, NS.MSGBOX);
+        State.events.off(ChatClientMessage.id, NS.MSGBOX);
         State.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);
     }
 
