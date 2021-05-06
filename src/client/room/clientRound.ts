@@ -1,7 +1,7 @@
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import {
-    RoomRoundMessage,
+    RoundMessage,
     RoundCountdownMessage,
     RoundStartMessage,
     RoundWrapupMessage,
@@ -55,7 +55,7 @@ export class ClientRound extends Round {
 
     bindEvents(): void {
         State.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
-        State.events.on(RoomRoundMessage.id, NS.ROUND, async (message: RoomRoundMessage) => {
+        State.events.on(RoundMessage.id, NS.ROUND, async (message: RoundMessage) => {
             await this.setLevel(message.levelSetIndex, message.levelIndex);
         });
         State.events.on(RoundCountdownMessage.id, NS.ROUND, (message: RoundCountdownMessage) => {
@@ -77,7 +77,7 @@ export class ClientRound extends Round {
 
     unbindEvents(): void {
         State.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
-        State.events.off(RoomRoundMessage.id, NS.ROUND);
+        State.events.off(RoundMessage.id, NS.ROUND);
         State.events.off(RoundCountdownMessage.id, NS.ROUND);
         State.events.off(RoundStartMessage.id, NS.ROUND);
         State.events.off(RoundWrapupMessage.id, NS.ROUND);

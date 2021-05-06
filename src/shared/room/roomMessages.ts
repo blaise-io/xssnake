@@ -1,16 +1,16 @@
-import { ROOM_KEY_LENGTH } from "../const";
+import { ROOM_KEY_LENGTH, ROOM_STATUS } from "../const";
+import { AUDIENCE } from "../messages";
 import { isStrOfLen } from "../util/sanitizer";
-import { AUDIENCE, NETCODE } from "./netcode";
 import { RoomOptions } from "./roomOptions";
-import { Message } from "./types";
+import { Message, MessageId } from "./types";
 
 export class RoomOptionsMessage implements Message {
-    static id = NETCODE.ROOM_JOIN_MATCHING;
+    static id: MessageId;
     static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public options: RoomOptions) {}
 
-    static fromNetcode(untrustedNetcode: string): RoomOptionsMessage | undefined {
+    static deserialize(untrustedNetcode: string): RoomOptionsMessage | undefined {
         try {
             const data = JSON.parse(untrustedNetcode);
             const roomOptions = new RoomOptions(
@@ -27,7 +27,7 @@ export class RoomOptionsMessage implements Message {
         }
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return JSON.stringify([
             this.options.maxPlayers,
             this.options.levelSetIndex,
@@ -40,63 +40,78 @@ export class RoomOptionsMessage implements Message {
 }
 
 export class RoomJoinMessage implements Message {
-    static id = NETCODE.ROOM_JOIN_KEY;
+    static id: MessageId;
     static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public key: string) {}
 
-    static fromNetcode(untrustedNetcode: string): RoomJoinMessage | undefined {
+    static deserialize(untrustedNetcode: string): RoomJoinMessage | undefined {
         if (isStrOfLen(untrustedNetcode, ROOM_KEY_LENGTH)) {
             return new RoomJoinMessage(untrustedNetcode);
         }
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return this.key;
     }
 }
 
 export class RoomManualStartMessage implements Message {
-    static id = NETCODE.ROOM_MANUAL_START;
+    static id: MessageId;
     static audience = AUDIENCE.SERVER_ROOM;
 
-    static fromNetcode(): RoomManualStartMessage | undefined {
+    static deserialize(): RoomManualStartMessage | undefined {
         return new RoomManualStartMessage();
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return "";
     }
 }
 
-export class GetRoomStatusServerMessage implements Message {
-    static id = NETCODE.ROOM_GET_STATUS;
+export class RoomGetStatusMessage implements Message {
+    static id: MessageId;
     static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public key: string) {}
 
-    static fromNetcode(untrustedNetcode: string): GetRoomStatusServerMessage | undefined {
+    static deserialize(untrustedNetcode: string): RoomGetStatusMessage | undefined {
         if (isStrOfLen(untrustedNetcode, ROOM_KEY_LENGTH)) {
-            return new GetRoomStatusServerMessage(untrustedNetcode);
+            return new RoomGetStatusMessage(untrustedNetcode);
         }
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return this.key;
     }
 }
 
 export class RoomKeyMessage implements Message {
-    static id = NETCODE.ROOM_KEY;
+    static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public key: string) {}
 
-    get netcode(): string {
+    get serialized(): string {
         return this.key;
     }
 
-    static fromNetcode(netcode: string): RoomKeyMessage {
-        return new GetRoomStatusServerMessage(netcode);
+    static deserialize(netcode: string): RoomKeyMessage {
+        return new RoomGetStatusMessage(netcode);
+    }
+}
+
+export class RoomJoinErrorMessage implements Message {
+    static id: MessageId;
+    static audience = AUDIENCE.CLIENT;
+
+    constructor(public status: ROOM_STATUS) {}
+
+    static deserialize(untrustedNetcode: string): RoomJoinErrorMessage {
+        return new RoomJoinErrorMessage(parseInt(untrustedNetcode, 10));
+    }
+
+    get serialized(): string {
+        return this.status.toString();
     }
 }

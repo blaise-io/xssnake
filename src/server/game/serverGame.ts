@@ -1,12 +1,13 @@
 import { EventEmitter } from "events";
-import { NC_SNAKE_CRASH, SE_PLAYER_COLLISION } from "../../shared/const";
+import { SE_PLAYER_COLLISION } from "../../shared/const";
 import { Level } from "../../shared/level/level";
-import { SnakeUpdateServerMessage } from "../../shared/snakeMessages";
+import { SnakeCrashMessage, SnakeUpdateServerMessage } from "../../shared/game/snakeMessages";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
 import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 import { ServerSnakeMove } from "../room/serverSnakeMove";
+import { ServerSnake } from "./serverSnake";
 
 export class ServerGame {
     // private items: ServerItems;
@@ -87,18 +88,18 @@ export class ServerGame {
     }
 
     handleCrashingPlayers(tick: number): void {
-        const collisions = [];
+        const snakes: ServerSnake[] = [];
         const crashingPlayers = this.players.getCollisionsOnTick(tick);
 
         if (crashingPlayers.length) {
             for (let i = 0, m = crashingPlayers.length; i < m; i++) {
                 const snake = crashingPlayers[i].snake;
                 snake.crashed = true;
-                collisions.push([snake.index, snake.parts, snake.collision.serialize()]);
+                snakes.push(snake);
             }
 
             // Emit crashed snakes.
-            this.players.emit(NC_SNAKE_CRASH, collisions);
+            this.players.send(SnakeCrashMessage.fromSnakes(...snakes));
 
             // Let round manager know.
             this.roomEmitter.emit(String(SE_PLAYER_COLLISION), crashingPlayers);

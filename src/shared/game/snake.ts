@@ -1,6 +1,6 @@
-import { DIRECTION } from "./const";
-import { Collision } from "./game/collision";
-import { Level } from "./level/level";
+import { DIRECTION } from "../const";
+import { Collision } from "./collision";
+import { Level } from "../level/level";
 
 export class Snake {
     /** Head is last in array */
@@ -28,10 +28,10 @@ export class Snake {
         return this.parts[this.parts.length - 1];
     }
 
-    hasPartPredict(part: Coordinate): boolean {
-        const treshold = this.crashed ? -1 : 0;
-        return this.getPartIndex(part) > treshold;
-    }
+    // hasPartPredict(part: Coordinate): boolean {
+    //     const treshold = this.crashed ? -1 : 0;
+    //     return this.getPartIndex(part) > treshold;
+    // }
 
     trimParts(): void {
         while (this.parts.length > this.size) {
@@ -64,16 +64,16 @@ export class Snake {
         }
     }
 
-    reverse(): void {
-        const dx = this.parts[0][0] - this.parts[1][0];
-        const dy = this.parts[0][1] - this.parts[1][1];
-
-        if (dx === 0) {
-            this.direction = dy === -1 ? 1 : 3;
-        } else {
-            this.direction = dx === -1 ? 0 : 2;
-        }
-
-        this.parts.reverse();
-    }
+    // reverse(): void {
+    //     const dx = this.parts[0][0] - this.parts[1][0];
+    //     const dy = this.parts[0][1] - this.parts[1][1];
+    //
+    //     if (dx === 0) {
+    //         this.direction = dy === -1 ? 1 : 3;
+    //     } else {
+    //         this.direction = dx === -1 ? 0 : 2;
+    //     }
+    //
+    //     this.parts.reverse();
+    // }
 }

@@ -1,7 +1,7 @@
 import { CRASH_MOVING_WALL, CRASH_OPPONENT, CRASH_SELF, CRASH_WALL } from "../const";
 import { Level } from "../level/level";
 import { Player } from "../room/player";
-import { Snake } from "../snake";
+import { Snake } from "./snake";
 import { Collision } from "./collision";
 
 export class SnakeMove {

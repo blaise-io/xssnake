@@ -1,4 +1,4 @@
-import { ChatClientMessage, ChatServerMessage } from "../../shared/room/player";
+import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
 import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, NS, UC } from "../const";
 import { COPY_PLAYER_JOINED, COPY_PLAYER_QUIT } from "../copy/copy";

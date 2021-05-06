@@ -1,5 +1,5 @@
-import { NC_SCORE_UPDATE } from "../../shared/const";
-import { RoomPlayersMessage } from "../../shared/room/playerRegistry";
+import { ScoreMessage } from "../../shared/game/scoreMessages";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { NS } from "../const";
 import { State } from "../state";
 import { ScoreboardUI } from "../ui/scoreboard";
@@ -21,19 +21,17 @@ export class Scoreboard {
     }
 
     bindEvents(): void {
-        State.events.on(RoomPlayersMessage.id, NS.SCORE, (message: RoomPlayersMessage) => {
+        State.events.on(PlayersMessage.id, NS.SCORE, () => {
             this.ui.debounceUpdate();
         });
-        State.events.on(NC_SCORE_UPDATE, NS.SCORE, this.updatePlayerScores.bind(this));
+        State.events.on(ScoreMessage.id, NS.SCORE, (message: ScoreMessage) => {
+            this.players.setScores(message.score);
+            this.ui.debounceUpdate();
+        });
     }
 
     unbindEvents(): void {
-        State.events.off(RoomPlayersMessage.id, NS.SCORE);
-        State.events.off(NC_SCORE_UPDATE, NS.SCORE);
-    }
-
-    updatePlayerScores(scoreArray: number[]): void {
-        this.players.setScores(scoreArray);
-        this.ui.debounceUpdate();
+        State.events.off(PlayersMessage.id, NS.SCORE);
+        State.events.off(ScoreMessage.id, NS.SCORE);
     }
 }

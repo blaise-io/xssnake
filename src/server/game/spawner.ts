@@ -51,7 +51,7 @@
 //     }
 //
 //     /**
-//      * @param {netcode.Client} client
+//      * @param {serialized.Client} client
 //      * @param {number} index
 //      */
 //     hit(client, index): void {
@@ -69,7 +69,7 @@
 //     }
 //
 //     /**
-//      * @param {netcode.Client} client
+//      * @param {serialized.Client} client
 //      * @param {Coordinate} location
 //      * @return {Array}
 //      */

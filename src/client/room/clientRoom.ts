@@ -1,6 +1,11 @@
-import { NC_SNAKE_CRASH, ROOM_STATUS } from "../../shared/const";
-import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
-import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
+import { ROOM_STATUS } from "../../shared/const";
+import { SnakeCrashMessage } from "../../shared/game/snakeMessages";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
+import {
+    RoomJoinErrorMessage,
+    RoomKeyMessage,
+    RoomOptionsMessage,
+} from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, HASH, NS } from "../const";
@@ -57,7 +62,7 @@ export class ClientRoom {
     }
 
     bindEvents(): void {
-        State.events.on(JoinRoomErrorMessage.id, NS.ROOM, (message: JoinRoomErrorMessage) => {
+        State.events.on(RoomJoinErrorMessage.id, NS.ROOM, (message: RoomJoinErrorMessage) => {
             this.reject(COPY_ERROR[message.status]);
         });
 
@@ -72,7 +77,7 @@ export class ClientRoom {
             this.checkAllRoomDataReceived();
         });
 
-        State.events.on(RoomPlayersMessage.id, NS.ROOM, (message: RoomPlayersMessage) => {
+        State.events.on(PlayersMessage.id, NS.ROOM, (message: PlayersMessage) => {
             this.players = ClientPlayerRegistry.fromPlayerRegistry(
                 this.clientPlayer,
                 message.players,
@@ -81,18 +86,20 @@ export class ClientRoom {
             State.events.trigger(EV_PLAYERS_UPDATED, this.players);
         });
 
-        // TODO: Move to a new notifier class
-        State.events.on(NC_SNAKE_CRASH, NS.ROOM, this.ncNotifySnakesCrashed.bind(this));
+        // TODO: Notify separately?
+        State.events.on(SnakeCrashMessage.id, NS.ROOM, (message: SnakeCrashMessage) => {
+            this.notifySnakesCrashed(message);
+        });
 
         //State.events.on(NC_XSS, NS.ROOM, this._requestXss.bind(this));
         //State.events.on(NC_XSS, NS.ROOM, this._evalXss.bind(this));
     }
 
     unbindEvents(): void {
-        State.events.off(JoinRoomErrorMessage.id, NS.ROOM);
+        State.events.off(RoomJoinErrorMessage.id, NS.ROOM);
         State.events.off(RoomOptionsMessage.id, NS.ROOM);
         State.events.off(RoomKeyMessage.id, NS.ROOM);
-        State.events.off(RoomPlayersMessage.id, NS.ROOM);
+        State.events.off(PlayersMessage.id, NS.ROOM);
     }
 
     setupComponents(): void {
@@ -131,11 +138,12 @@ export class ClientRoom {
             this.resolve(this);
         }
     }
-    ncNotifySnakesCrashed(serializedCollisions: any[]): void {
+    notifySnakesCrashed(message: SnakeCrashMessage): void {
+        const colissions = message.colissions;
         let notification = "";
         const names = this.players.getNames();
-        for (let i = 0, m = serializedCollisions.length; i < m; i++) {
-            notification += names[serializedCollisions[i][0]];
+        for (let i = 0, m = colissions.length; i < m; i++) {
+            notification += names[colissions[i].playerIndex];
 
             if (i + 1 === m) {
                 notification += " crashed.";

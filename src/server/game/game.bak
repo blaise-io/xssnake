@@ -68,7 +68,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @param {Array.<Array>} clientParts
      * @param {number} direction
      * @return {number}
@@ -176,7 +176,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @param {number} index
      */
     hitApple: function(client, index): void {
@@ -195,7 +195,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @param {number} index
      */
     hitPowerup: function(client, index): void {
@@ -298,7 +298,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @return {number}
      * @private
      */
@@ -339,7 +339,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @private
      */
     _emitSnakeRoom: function(client): void {
@@ -348,7 +348,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @private
      */
     _broadcastSnakeRoom: function(client): void {
@@ -361,7 +361,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @param {Array.<Coordinate>} parts
      * @return {game.Crash}
      * @private
@@ -407,7 +407,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @param {Array.<Coordinate>=} parts
      * @param {boolean=} emit
      * @private
@@ -441,7 +441,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @param {number} delta
      * @param {Shift} shift
      * @private
@@ -472,7 +472,7 @@ game.GameStage.prototype = {
     },
 
     /**
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @private
      */
     _applyNewPosition: function(client): void {
@@ -511,7 +511,7 @@ game.GameStage.prototype = {
 
     /**
      * Snake is considered dead (crashed) when in limbo for too long.
-     * @param {netcode.Client} client
+     * @param {serialized.Client} client
      * @return {boolean}
      */
     _canReturnFromLimbo: function(client): void {

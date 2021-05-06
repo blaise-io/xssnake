@@ -1,12 +1,14 @@
-import { AUDIENCE, NETCODE } from "./netcode";
+import { AUDIENCE } from "../messages";
 
-export interface Message {
-    netcode: string;
-}
+export type MessageId = string;
 
 export interface MessageConstructor {
     new (...any): Message;
-    id: NETCODE;
+    id: MessageId;
     audience: AUDIENCE;
-    fromNetcode: (untrustedNetcode: string) => Message;
+    deserialize: (untrustedNetcode: string) => Message;
+}
+
+export interface Message {
+    serialized: string;
 }

@@ -1,9 +1,9 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
 import { DIRECTION } from "../../shared/const";
-import { NETCODE_MAP } from "../../shared/room/netcode";
-import { NameMessage } from "../../shared/room/player";
+import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
+import { NameMessage } from "../../shared/room/playerMessages";
 import { Message, MessageConstructor } from "../../shared/room/types";
-import { SnakeUpdateServerMessage } from "../../shared/snakeMessages";
+import { SnakeUpdateServerMessage } from "../../shared/game/snakeMessages";
 import { _, noop } from "../../shared/util";
 import { State } from "../state";
 import { error } from "../util/clientUtil";
@@ -59,33 +59,17 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.destruct();
     }
 
-    /**
-     * Send messages as [event, eventdata1, eventdata2]
-     * @deprecated
-     */
-    emitDeprecated(event: number, data?: any): void {
-        let emit;
-        if (data) {
-            emit = data;
-            emit.unshift(event);
-        } else {
-            emit = [event];
-        }
-        console.log("OUT", emit);
-        this.connection.send(JSON.stringify(emit));
-    }
-
     send(message: Message): void {
         const id = (message.constructor as MessageConstructor).id;
-        console.info("OUT", id + message.netcode, message);
-        this.connection.send(id + message.netcode);
+        console.info("OUT", id + message.serialized, message);
+        this.connection.send(id + message.serialized);
     }
 
     onmessage(messageString: string): void {
         if (messageString.length) {
             const Message = NETCODE_MAP[messageString.substr(0, 2)];
-            if (Message) {
-                const message = Message.fromNetcode(messageString.substring(2));
+            if (Message && Message.audience === AUDIENCE.CLIENT) {
+                const message = Message.deserialize(messageString.substring(2));
                 console.info("IN", messageString, message);
                 if (message) {
                     State.events.trigger(Message.id, message);

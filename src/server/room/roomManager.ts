@@ -1,8 +1,9 @@
 import { ROOM_STATUS, ROOM_KEY_LENGTH } from "../../shared/const";
-import { NameMessage } from "../../shared/room/player";
-import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
+import { NameMessage } from "../../shared/room/playerMessages";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
 import {
-    GetRoomStatusServerMessage,
+    RoomGetStatusMessage,
+    RoomJoinErrorMessage,
     RoomJoinMessage,
     RoomKeyMessage,
     RoomOptionsMessage,
@@ -25,7 +26,7 @@ export class ServerRoomManager {
     destruct(): void {
         this.removeAllRooms();
         this.server.emitter.removeAllListeners(NameMessage.id);
-        this.server.emitter.removeAllListeners(GetRoomStatusServerMessage.id);
+        this.server.emitter.removeAllListeners(RoomGetStatusMessage.id);
         this.server.emitter.removeAllListeners(RoomJoinMessage.id);
         this.server.emitter.removeAllListeners(RoomOptionsMessage.id);
     }
@@ -37,16 +38,16 @@ export class ServerRoomManager {
 
         // Get status with intent to join.
         this.server.emitter.on(
-            GetRoomStatusServerMessage.id,
-            (player: ServerPlayer, message: GetRoomStatusServerMessage) => {
+            RoomGetStatusMessage.id,
+            (player: ServerPlayer, message: RoomGetStatusMessage) => {
                 const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {
                     const room = this.getRoomByKey(message.key);
                     player.send(new RoomKeyMessage(room.key));
                     player.send(new RoomOptionsMessage(room.options));
-                    player.send(new RoomPlayersMessage(room.players, player));
+                    player.send(new PlayersMessage(room.players, player));
                 } else {
-                    player.send(new JoinRoomErrorMessage(status));
+                    player.send(new RoomJoinErrorMessage(status));
                 }
             },
         );
@@ -59,7 +60,7 @@ export class ServerRoomManager {
                 if (status === ROOM_STATUS.JOINABLE) {
                     this.joinRoom(player, this.getRoomByKey(message.key));
                 } else {
-                    player.send(new JoinRoomErrorMessage(status));
+                    player.send(new RoomJoinErrorMessage(status));
                 }
             },
         );
@@ -79,7 +80,7 @@ export class ServerRoomManager {
     joinRoom(player: ServerPlayer, room: ServerRoom): void {
         player.room = room;
         room.addPlayer(player);
-        room.emitAll(player);
+        room.sendInitial(player);
         room.detectAutostart();
     }
 
@@ -112,10 +113,10 @@ export class ServerRoomManager {
     //     if (status === ROOM_STATUS.JOINABLE) {
     //         const room = this.getRoomByKey(key);
     //         room.addPlayer(player);
-    //         player.send(RoomRoundMessage.fromRound(room.rounds.round));
+    //         player.send(RoundMessage.fromRound(room.rounds.round));
     //         room.detectAutostart();
     //     } else {
-    //         player.send(new JoinRoomErrorMessage(status));
+    //         player.send(new RoomJoinErrorMessage(status));
     //     }
     // }
 
@@ -156,7 +157,7 @@ export class ServerRoomManager {
     //         const room = this.getRoomByKey(key);
     //         player.send(new RoomKeyMessage(room.key));
     //         player.send(new RoomOptionsMessage(room.options));
-    //         player.send(new RoomPlayersMessage(room.players));
+    //         player.send(new PlayersMessage(room.players));
     //     } else {
     //         player.emit(NC_ROOM_JOIN_ERROR, [status]);
     //     }

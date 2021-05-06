@@ -1,7 +1,7 @@
 import { GAME_SHIFT_MAP } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
-import { Snake } from "../../shared/snake";
+import { Snake } from "../../shared/game/snake";
 import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 
 export class ServerSnake extends Snake {

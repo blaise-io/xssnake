@@ -1,25 +1,24 @@
-import { ROOM_STATUS } from "../const";
-import { AUDIENCE, NETCODE } from "./netcode";
+import { AUDIENCE } from "../messages";
 import { Player } from "./player";
-import { Message } from "./types";
+import { Message, MessageId } from "./types";
 
-export class RoomPlayersMessage implements Message {
-    static id = NETCODE.PLAYERS;
+export class PlayersMessage implements Message {
+    static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public players: PlayerRegistry<Player>, public localPlayer?: Player) {}
 
-    static fromNetcode(untrustedNetcode: string): RoomPlayersMessage {
+    static deserialize(untrustedNetcode: string): PlayersMessage {
         const datas = JSON.parse(untrustedNetcode);
         const players = new PlayerRegistry<Player>();
         for (let i = 0, m = datas.length; i < m; i++) {
             const data = datas[i];
             players.push(new Player(data[0], Boolean(data[1]), Boolean(data[2]), data[3]));
         }
-        return new RoomPlayersMessage(players);
+        return new PlayersMessage(players);
     }
 
-    get netcode(): string {
+    get serialized(): string {
         const players = [];
         for (let i = 0, m = this.players.length; i < m; i++) {
             const player = this.players[i];
@@ -31,21 +30,6 @@ export class RoomPlayersMessage implements Message {
             ]);
         }
         return JSON.stringify(players);
-    }
-}
-
-export class JoinRoomErrorMessage implements Message {
-    static id = NETCODE.ROOM_JOIN_ERROR;
-    static audience = AUDIENCE.CLIENT;
-
-    constructor(public status: ROOM_STATUS) {}
-
-    static fromNetcode(untrustedNetcode: string): JoinRoomErrorMessage {
-        return new JoinRoomErrorMessage(parseInt(untrustedNetcode, 10));
-    }
-
-    get netcode(): string {
-        return this.status.toString();
     }
 }
 

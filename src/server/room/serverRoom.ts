@@ -1,9 +1,9 @@
 import { EventEmitter } from "events";
 import { SERVER_EVENT } from "../../shared/const";
-import { ChatClientMessage, ChatServerMessage } from "../../shared/room/player";
+import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
 import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoomRoundMessage } from "../../shared/room/roundMessages";
+import { RoundMessage } from "../../shared/room/roundMessages";
 import { Server } from "../netcode/server";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
@@ -55,12 +55,12 @@ export class ServerRoom {
         });
     }
 
-    restartRounds(): void {
-        //        this.rounds.destruct();
-        //        this.rounds = new RoundManager(this);
-        //        this.rounds.detectAutoStart();
-        //        this.emitState();
-    }
+    // restartRounds(): void {
+    //    this.rounds.destruct();
+    //    this.rounds = new RoundManager(this);
+    //    this.rounds.detectAutoStart();
+    //    this.emitState();
+    // }
 
     isAwaitingPlayers(): boolean {
         return !this.isFull() && !this.rounds.hasStarted();
@@ -75,10 +75,10 @@ export class ServerRoom {
         this.rounds.detectAutostart(this.isFull());
     }
 
-    emitAll(player: ServerPlayer): void {
+    sendInitial(player: ServerPlayer): void {
         player.send(new RoomKeyMessage(this.key));
         player.send(new RoomOptionsMessage(this.options));
-        player.send(RoomRoundMessage.fromRound(this.rounds.round));
+        player.send(RoundMessage.fromRound(this.rounds.round));
     }
 
     /** @deprecated move to RoomManager */

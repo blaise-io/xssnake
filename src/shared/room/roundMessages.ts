@@ -1,65 +1,65 @@
-import { AUDIENCE, NETCODE } from "./netcode";
+import { AUDIENCE } from "../messages";
 import { Round } from "./round";
-import { Message } from "./types";
+import { Message, MessageId } from "./types";
 
-export class RoomRoundMessage implements Message {
-    static id = NETCODE.ROUND_SERIALIZE;
+export class RoundMessage implements Message {
+    static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public levelSetIndex: number, public levelIndex: number) {}
 
-    static fromNetcode(trustedNetcode: string): RoomRoundMessage {
-        return new RoomRoundMessage(...(JSON.parse(trustedNetcode) as [number, number]));
+    static deserialize(trustedNetcode: string): RoundMessage {
+        return new RoundMessage(...(JSON.parse(trustedNetcode) as [number, number]));
     }
 
-    static fromRound(round: Round): RoomRoundMessage {
-        return new RoomRoundMessage(round.levelSetIndex, round.levelIndex);
+    static fromRound(round: Round): RoundMessage {
+        return new RoundMessage(round.levelSetIndex, round.levelIndex);
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return JSON.stringify([this.levelSetIndex, this.levelIndex]);
     }
 }
 
 export class RoundCountdownMessage implements Message {
-    static id = NETCODE.ROUND_COUNTDOWN;
+    static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public enabled: boolean) {}
 
-    static fromNetcode(trustedNetcode: string): RoundCountdownMessage {
+    static deserialize(trustedNetcode: string): RoundCountdownMessage {
         return new RoundCountdownMessage(Boolean(parseInt(trustedNetcode, 10)));
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return Number(this.enabled).toString();
     }
 }
 
 export class RoundStartMessage implements Message {
-    static id = NETCODE.ROUND_START;
+    static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    static fromNetcode(): RoundStartMessage {
+    static deserialize(): RoundStartMessage {
         return new RoundStartMessage();
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return "";
     }
 }
 
 export class RoundWrapupMessage implements Message {
-    static id = NETCODE.ROUND_WRAPUP;
+    static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public winningPlayerIndex = -1) {}
 
-    static fromNetcode(trustedNetcode: string): RoundWrapupMessage {
+    static deserialize(trustedNetcode: string): RoundWrapupMessage {
         return new RoundWrapupMessage(parseInt(trustedNetcode, 10));
     }
 
-    get netcode(): string {
+    get serialized(): string {
         return this.winningPlayerIndex.toString();
     }
 }

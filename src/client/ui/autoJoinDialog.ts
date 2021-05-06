@@ -1,4 +1,4 @@
-import { GetRoomStatusServerMessage } from "../../shared/room/roomMessages";
+import { RoomGetStatusMessage } from "../../shared/room/roomMessages";
 import { _ } from "../../shared/util";
 import { ClientRoom } from "../room/clientRoom";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
@@ -34,6 +34,6 @@ export class AutoJoinDialog {
     }
 
     onconnect(): void {
-        this.clientPlayer.send(new GetRoomStatusServerMessage(this.roomKey));
+        this.clientPlayer.send(new RoomGetStatusMessage(this.roomKey));
     }
 }

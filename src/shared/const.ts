@@ -14,9 +14,6 @@ export const enum GAME {
     TOP = 2,
 }
 
-/** @deprecated: Use Message */ export const NC_ROUND_WRAPUP = 53;
-/** @deprecated: Use Message */ export const NC_SCORE_UPDATE = 60;
-/** @deprecated: Use Message */ export const NC_SNAKE_CRASH = 71;
 /** @deprecated: Use Message */ export const SE_PLAYER_COLLISION = 102;
 
 export const enum SERVER_EVENT {

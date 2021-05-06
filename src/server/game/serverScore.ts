@@ -1,4 +1,4 @@
-import { NC_SCORE_UPDATE } from "../../shared/const";
+import { ScoreMessage } from "../../shared/game/scoreMessages";
 import { Level } from "../../shared/level/level";
 import { ServerPlayer } from "../room/serverPlayer";
 import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
@@ -30,21 +30,12 @@ export class ServerScore {
             }
         }
         if (scoreUpdated) {
-            this.players.emit(NC_SCORE_UPDATE, this.serialize());
+            this.players.send(new ScoreMessage(this.players.map((p) => p.score)));
         }
-    }
-
-    /** @deprecated */
-    serialize(): number[] {
-        const score = [];
-        for (let i = 0, m = this.players.length; i < m; i++) {
-            score.push(this.players[i].score);
-        }
-        return score;
     }
 
     ///**
-    // * @return {netcode.Client}
+    // * @return {serialized.Client}
     // */
     //getWinner() {
     //    let sorted, last, playerIndex;
@@ -58,7 +49,7 @@ export class ServerScore {
     //},
     //
     ///**
-    // * @param {netcode.Client} client
+    // * @param {serialized.Client} client
     // */
     //bufferApplePoints(client) {
     //    let points = ++this.points[client.model.playerIndex];
@@ -68,7 +59,7 @@ export class ServerScore {
     //},
     //
     ///**
-    // * @param {netcode.Client} client
+    // * @param {serialized.Client} client
     // * @return {number}
     // */
     //rank(client) {

@@ -3,10 +3,8 @@
  * is created. It will show the snakes, level, name labels and directions
  * until ClientGame.start() is called.
  */
-import { NC_SNAKE_CRASH } from "../../shared/const";
-import { Collision } from "../../shared/game/collision";
 import { Level } from "../../shared/level/level";
-import { SnakeUpdateClientMessage } from "../../shared/snakeMessages";
+import { SnakeCrashMessage, SnakeUpdateClientMessage } from "../../shared/game/snakeMessages";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
@@ -60,7 +58,14 @@ export class ClientGame {
                 // If server updated snake, client prediction
                 // of snake crashing was incorrect.
                 delete snake.collision;
-                State.events.on(NC_SNAKE_CRASH, NS.GAME, this.ncSetSnakesCrashed.bind(this));
+                State.events.on(SnakeCrashMessage.id, NS.GAME, (message: SnakeCrashMessage) => {
+                    for (let i = 0, m = message.colissions.length; i < m; i++) {
+                        const collision = message.colissions[i];
+                        const snake = this.players[collision.playerIndex].snake;
+                        snake.parts = collision.parts;
+                        snake.setCrashed();
+                    }
+                });
             },
         );
 
@@ -97,18 +102,18 @@ export class ClientGame {
         this.updatePlayers(this.players);
     }
 
-    /**
-     * TODO: Typing for things like these.
-     * @param {Array} serializedCollisions
-     */
-    ncSetSnakesCrashed(serializedCollisions: Collision[]): void {
-        for (let i = 0, m = serializedCollisions.length; i < m; i++) {
-            const collision = serializedCollisions[i];
-            const snake = this.players[collision[0]].snake;
-            snake.parts = collision[1];
-            snake.setCrashed();
-        }
-    }
+    // /**
+    //  * TODO: Typing for things like these.
+    //  * @param {Array} serializedCollisions
+    //  */
+    // ncSetSnakesCrashed(serializedCollisions: Collision[]): void {
+    //     for (let i = 0, m = serializedCollisions.length; i < m; i++) {
+    //         const collision = serializedCollisions[i];
+    //         const snake = this.players[collision[0]].snake;
+    //         snake.parts = collision[1];
+    //         snake.setCrashed();
+    //     }
+    // }
 
     // Runs ~ every 16 ms (60 fps)
     gameloop(elapsed: number): void {

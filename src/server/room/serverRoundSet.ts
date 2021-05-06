@@ -5,7 +5,7 @@
 import { EventEmitter } from "events";
 import { SE_PLAYER_COLLISION, SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoomRoundMessage } from "../../shared/room/roundMessages";
+import { RoundMessage } from "../../shared/room/roundMessages";
 import { ServerScore } from "../game/serverScore";
 import { LevelPlayset } from "./playset";
 import { ServerPlayer } from "./serverPlayer";
@@ -69,7 +69,7 @@ export class ServerRoundSet {
             this.options,
             this.levelPlayset,
         );
-        this.players.send(RoomRoundMessage.fromRound(this.round));
+        this.players.send(RoundMessage.fromRound(this.round));
         this.players.removeDisconnectedPlayers();
         this.round.toggleCountdown(true);
     }

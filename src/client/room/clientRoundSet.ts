@@ -1,5 +1,5 @@
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoomRoundMessage } from "../../shared/room/roundMessages";
+import { RoundMessage } from "../../shared/room/roundMessages";
 import { NS } from "../const";
 import { State } from "../state";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
@@ -22,9 +22,9 @@ export class ClientRoundSet {
     }
 
     bindEvents(): void {
-        State.events.on(RoomRoundMessage.id, NS.ROUND_SET, async (message: RoomRoundMessage) => {
+        State.events.on(RoundMessage.id, NS.ROUND_SET, async (message: RoundMessage) => {
             // Switch level between rounds.
-            // TODO: NETCODE.ROUND_SWITCH?
+            // TODO: MessageId.ROUND_SWITCH?
             if (this.round.game && this.round.game.started) {
                 this.round.destruct();
                 this.round = new ClientRound(this.players, this.options);
@@ -34,6 +34,6 @@ export class ClientRoundSet {
     }
 
     unbindEvents(): void {
-        State.events.off(RoomRoundMessage.id, NS.ROUND_SET);
+        State.events.off(RoundMessage.id, NS.ROUND_SET);
     }
 }

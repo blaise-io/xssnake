@@ -1,9 +1,13 @@
 import { EventEmitter } from "events";
-import { NC_ROUND_WRAPUP, SECONDS_ROUND_COUNTDOWN, SERVER_EVENT } from "../../shared/const";
+import { SECONDS_ROUND_COUNTDOWN, SERVER_EVENT } from "../../shared/const";
 import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
-import { RoundCountdownMessage, RoundStartMessage } from "../../shared/room/roundMessages";
+import {
+    RoundCountdownMessage,
+    RoundStartMessage,
+    RoundWrapupMessage,
+} from "../../shared/room/roundMessages";
 import { ServerGame } from "../game/serverGame";
 import { serverImageLoader } from "../level/serverImageLoader";
 import { LevelPlayset } from "./playset";
@@ -66,9 +70,8 @@ export class ServerRound extends Round {
         return this.players.filter((player) => player.snake && !player.snake.crashed);
     }
 
-    wrapUp(winner: ServerPlayer): void {
-        const data = [this.players.indexOf(winner)];
-        this.players.emit(NC_ROUND_WRAPUP, data);
+    wrapUp(winnerPlayer: ServerPlayer): void {
+        this.players.send(new RoundWrapupMessage(this.players.indexOf(winnerPlayer)));
         this.wrappingUp = true;
     }
 

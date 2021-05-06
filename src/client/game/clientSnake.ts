@@ -3,7 +3,7 @@ import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
-import { Snake } from "../../shared/snake";
+import { Snake } from "../../shared/game/snake";
 import { NS } from "../const";
 import { State } from "../state";
 import { explosion, showAction, tooltipName } from "../ui/clientShapeGenerator";

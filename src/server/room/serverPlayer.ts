@@ -1,9 +1,9 @@
 import * as util from "util";
 import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION, SERVER_EVENT } from "../../shared/const";
 import { Level } from "../../shared/level/level";
-import { AUDIENCE, NETCODE, NETCODE_MAP } from "../../shared/room/netcode";
+import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
 import { Player } from "../../shared/room/player";
-import { Message, MessageConstructor } from "../../shared/room/types";
+import { Message, MessageConstructor, MessageId } from "../../shared/room/types";
 import { ServerSnake } from "../game/serverSnake";
 import { Server, SocketClient } from "../netcode/server";
 import { ServerRoom } from "./serverRoom";
@@ -20,7 +20,7 @@ export class ServerPlayer extends Player {
                 // Cannot destruct immediately, game expects player.
                 // Room should destruct player at end of round, or
                 // when all players in room have disconnected.
-                // TODO: Always disconnect, later destruct
+                // TODO: Always disconnect, destruct during rounds (or when cleaning up room)
                 this.disconnect();
             } else {
                 this.destruct();
@@ -63,12 +63,14 @@ export class ServerPlayer extends Player {
             const netcodeId = messageString.substr(0, 2);
             const Message = NETCODE_MAP[netcodeId];
             if (Message) {
-                const audience = Message.audience;
-                if (audience & AUDIENCE.SERVER_ROOM || audience & AUDIENCE.SERVER_MATCHMAKING) {
-                    const messageInstance = Message.fromNetcode(messageString.substring(2));
+                if (
+                    Message.audience === AUDIENCE.SERVER_ROOM ||
+                    Message.audience === AUDIENCE.SERVER_MATCHMAKING
+                ) {
+                    const messageInstance = Message.deserialize(messageString.substring(2));
                     if (messageInstance) {
                         console.log("IN", messageString, messageInstance);
-                        this.emitMessage(Message.id, audience, messageInstance);
+                        this.emitMessage(Message.id, Message.audience, messageInstance);
                     }
                 }
             } else {
@@ -77,7 +79,7 @@ export class ServerPlayer extends Player {
         }
     }
 
-    emitMessage(event: NETCODE, audience: AUDIENCE, message: Message): void {
+    emitMessage(event: MessageId, audience: AUDIENCE, message: Message): void {
         if (this.room && audience & AUDIENCE.SERVER_ROOM) {
             this.room.emitter.emit(event, this, message);
         } else if (audience & AUDIENCE.SERVER_MATCHMAKING) {
@@ -89,56 +91,23 @@ export class ServerPlayer extends Player {
         if (this.connected && this.client) {
             console.log(
                 "OUT",
-                message.netcode,
+                message.serialized,
                 util.inspect(message, { showHidden: false, depth: 1 }),
             );
-            this.client.send((<MessageConstructor>message.constructor).id + message.netcode);
+            this.client.send((<MessageConstructor>message.constructor).id + message.serialized);
         }
     }
 
-    /** @deprecated use `send` */
-    emit(event: number, data?: WebsocketData): boolean {
-        let emit;
-
-        if (!this.connected) {
-            return false;
-        }
-
-        if (this.client) {
-            if (data) {
-                emit = data.slice();
-                emit.unshift(event);
-            } else {
-                emit = [event];
-            }
-            console.log("OUT (deprecated)", this.name, JSON.stringify(emit));
-            this.client.send(JSON.stringify(emit), (error) => {
-                if (error) {
-                    console.error("Error sending message", error);
-                }
-            });
-            return true;
-        }
-
-        return false;
-    }
-
-    /** @deprecated use `room` */
-    broadcast(type: number, data: unknown): void {
-        if (this.room) {
-            this.room.players.emit(type, data, this);
-        }
-    }
-
+    // TODO: Ensure matching index instead?
     setSnake(index: number, level: Level): void {
         this.snake = new ServerSnake(index, level);
     }
 
-    unsetSnake(): void {
-        if (this.snake) {
-            this.snake.destruct();
-        }
-    }
+    // unsetSnake(): void {
+    //     if (this.snake) {
+    //         this.snake.destruct();
+    //     }
+    // }
 
     getMaxMismatchesAllowed(): number {
         const latency = Math.min(NETCODE_SYNC_MS, this.client.latency);

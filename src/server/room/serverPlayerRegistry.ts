@@ -1,23 +1,11 @@
 import { Level } from "../../shared/level/level";
-import { PlayerRegistry, RoomPlayersMessage } from "../../shared/room/playerRegistry";
+import { PlayerRegistry, PlayersMessage } from "../../shared/room/playerRegistry";
 import { Message } from "../../shared/room/types";
 import { ServerPlayer } from "./serverPlayer";
 
 export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
     constructor() {
         super();
-    }
-
-    /**
-     * @deprecated
-     * Send data to everyone in the room.
-     */
-    emit(type: number, data?: any, exclude?: ServerPlayer): void {
-        for (let i = 0, m = this.length; i < m; i++) {
-            if (exclude !== this[i]) {
-                this[i].emit(type, data);
-            }
-        }
     }
 
     send(message: Message, options: { exclude?: ServerPlayer } = {}): void {
@@ -31,7 +19,7 @@ export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
     // Players each get a unique message because Player.local depends on the receiver.
     sendPlayers(): void {
         for (let i = 0, m = this.length; i < m; i++) {
-            this[i].send(new RoomPlayersMessage(this, this[i]));
+            this[i].send(new PlayersMessage(this, this[i]));
         }
     }
 
@@ -40,7 +28,7 @@ export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
             if (!this[i].connected) {
                 this[i].destruct();
                 this.remove(this[i]);
-                this.send(new RoomPlayersMessage(this, this[i]));
+                this.send(new PlayersMessage(this, this[i]));
             }
         }
     }

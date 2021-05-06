@@ -109,7 +109,7 @@
 //     }
 //
 //     /**
-//      * @return {Array.<netcode.Client>}
+//      * @return {Array.<serialized.Client>}
 //      * @private
 //      */
 //     _others() {
@@ -154,7 +154,7 @@
 //     }
 //
 //     /**
-//      * @param {Array.<netcode.Client>} clients
+//      * @param {Array.<serialized.Client>} clients
 //      * @param {number} delta
 //      * @param {string} label
 //      * @param {number} duration
@@ -225,7 +225,7 @@
 //     }
 //
 //     /**
-//      * @param {Array.<netcode.Client>} clients
+//      * @param {Array.<serialized.Client>} clients
 //      * @private
 //      */
 //     _reverse(clients): void {
@@ -257,7 +257,7 @@
 //     }
 //
 //     /**
-//      * @param {Array.<netcode.Client>} clients
+//      * @param {Array.<serialized.Client>} clients
 //      * @param {number} delta
 //      * @param {string} message
 //      * @private
