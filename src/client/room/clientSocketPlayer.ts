@@ -91,7 +91,7 @@ export class ClientSocketPlayer extends ClientPlayer {
                     State.events.trigger(Message.id, message);
                 }
             } else {
-                console.error("UNREGISTERED", messageString);
+                console.error("Unregistered message:", messageString.substr(0, 2));
             }
         }
     }

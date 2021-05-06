@@ -18,9 +18,11 @@ export class MessageBox {
 
     constructor(public players: ClientPlayerRegistry) {
         this.messages = [new ChatMessage(null, _(`Press ${UC.ENTER_KEY} to chat.`))];
+
         this.ui = new MessageBoxUI(this.messages, players.localPlayer, (body) => {
             this.players.localPlayer.send(new ChatServerMessage(body));
         });
+
         State.events.on(NETCODE.CHAT_MESSAGE_CLIENT, NS.MSGBOX, (message: ChatClientMessage) => {
             const name = String(this.players[message.playerIndex].name);
             this.messages.push(new ChatMessage(name, message.body));
