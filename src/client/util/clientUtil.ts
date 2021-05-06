@@ -22,7 +22,7 @@ export function instruct(str: string, duration = 2000, flashInstruct = false): v
 }
 
 export function stylizeUpper(str: string): string {
-    return str.toUpperCase().replace("I", "i");
+    return str.toUpperCase().replace(/I/, "i");
 }
 
 export function error(str: string, callback?: CallableFunction): void {

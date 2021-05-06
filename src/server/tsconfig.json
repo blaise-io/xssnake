@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
+    "allowJs": false,
     "baseUrl": "../..",
     "experimentalDecorators": true,
     "module": "es6",
     "moduleResolution": "node",
-    "allowJs": false,
+    "noEmitOnError": true,
     "target": "es2019"
   },
   "typeRoots": [

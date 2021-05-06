@@ -4,7 +4,7 @@ import { isStrOfLen } from "../../shared/util/sanitizer";
 import { HASH, STORAGE } from "../const";
 import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { State } from "../state";
-import { error, storage, urlHash } from "../util/clientUtil";
+import { error, storage, stylizeUpper, urlHash } from "../util/clientUtil";
 import { AutoJoinStage } from "./autoJoinStage";
 import { GameStage } from "./base/gameStage";
 import { SelectStage } from "./base/selectStage";
@@ -48,10 +48,7 @@ export class MainStage extends SelectStage {
 
     private getMenu(): Menu {
         const name = storage.get(STORAGE.NAME) as string;
-        const header = (name
-            ? `Yay ${name.toUpperCase()} is back!`
-            : "Multiplayer Snake!"
-        ).toUpperCase();
+        const header = stylizeUpper(name ? `Yay ${name} is back!` : "Multiplayer Snake!");
 
         const menu = new Menu(header, COPY_MAIN_INSTRUCT);
 

@@ -13,6 +13,7 @@ import {
     LINE_HEIGHT_MENU,
 } from "../../ui/font";
 import { zoom } from "../../ui/transformClient";
+import { stylizeUpper } from "../../util/clientUtil";
 
 const FORM_FOOTER_COPY = [
     _(`${UC.ARR_UP} & ${UC.ARR_DOWN} to select an option`),
@@ -26,7 +27,9 @@ export class Field<Type> {
         public options: [Type, string][],
         public value: Type,
         public onupdate: (value: Type) => void,
-    ) {}
+    ) {
+        this.label = stylizeUpper(label);
+    }
 
     get selectedOption(): [Type, string] {
         return this.options.find((option) => option[0] === this.value) || this.options[0];
@@ -35,7 +38,7 @@ export class Field<Type> {
     getShape(x: number, col2X: number, y: number, maxwidth: number): Shape {
         const props: { left?: number; right?: number; option?: number } = {};
         const shape = font(this.label, x, y);
-        const value = this.selectedOption[1].toUpperCase();
+        const value = stylizeUpper(this.selectedOption[1]);
 
         props.option = col2X + (maxwidth - fontWidth(value)) / 2;
         props.option = Math.floor(props.option);
@@ -57,7 +60,7 @@ export class Form {
     private maxwidth = 0;
 
     constructor(public header: string, public footer = FORM_FOOTER_COPY) {
-        this.header = header.toUpperCase();
+        this.header = stylizeUpper(header);
     }
 
     handleKeys(event: KeyboardEvent): boolean {
@@ -87,7 +90,7 @@ export class Form {
 
         // TODO: getter / es6 arr fn
         for (let i = 0, m = field.options.length; i < m; i++) {
-            this.maxwidth = Math.max(this.maxwidth, fontWidth(field.options[i][1].toUpperCase()));
+            this.maxwidth = Math.max(this.maxwidth, fontWidth(stylizeUpper(field.options[i][1])));
         }
     }
 

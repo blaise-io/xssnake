@@ -10,7 +10,7 @@ export class ColorStage extends SelectStage {
     constructor() {
         super();
         const selected = indexCarousel(storage.get(STORAGE.COLOR) as number, colorSchemes.length);
-        this.menu = new Menu(_("Color Scheme").toUpperCase(), "", selected);
+        this.menu = new Menu(_("Color Scheme"), "", selected);
         this.menu.options = colorSchemes.map((colorScheme) => {
             return new MenuOption(
                 colorScheme.title,

@@ -15,7 +15,7 @@ export class AutoJoinDialog {
         private resolve: (clientRoom: ClientRoom) => void,
         private reject: (error: string) => void,
     ) {
-        this.dialog = new Dialog(_("Auto-Join room").toUpperCase(), _("Connecting to server…"));
+        this.dialog = new Dialog(_("Auto-Join room"), _("Connecting to server…"));
         this.clientPlayer = new ClientSocketPlayer(State.flow.data.name, this.onconnect.bind(this));
 
         new ClientRoom(

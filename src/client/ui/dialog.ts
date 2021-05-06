@@ -4,6 +4,7 @@ import { line } from "../../shared/shapeGenerator";
 import { KEY, MENU_TOP, NS } from "../const";
 import { COPY_DIALOG_CANCEL, COPY_DIALOG_OK } from "../copy/copy";
 import { State } from "../state";
+import { stylizeUpper } from "../util/clientUtil";
 import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";
 import { center } from "./shapeClient";
 import { outline, zoom } from "./transformClient";
@@ -34,7 +35,7 @@ export class Dialog {
     private _okSelected: boolean;
 
     constructor(public header: string, body: string, settings: DialogSettings = {}) {
-        this.header = header.toUpperCase();
+        this.header = stylizeUpper(header);
         this._body = body;
 
         // TODO: Make class.
@@ -76,7 +77,7 @@ export class Dialog {
 
     //    setHeader(header: string) {
     //        State.audio.play('menu_alt');
-    //        this._header = header.toUpperCase();
+    //        this._header = stylizeUpper(header)();
     //        this._updateShape();
     //    }
     //

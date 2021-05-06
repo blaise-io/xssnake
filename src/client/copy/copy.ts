@@ -1,5 +1,5 @@
 import { UC } from "../const";
-import { isMac } from "../util/clientUtil";
+import { isMac, stylizeUpper } from "../util/clientUtil";
 
 export const COPY_AWAITING_PLAYERS_HEADER = "Msg your friends";
 export const COPY_AWAITING_PLAYERS_BODY =
@@ -16,8 +16,8 @@ export const COPY_CONFIRM_EXIT_BODY_DRAMATIC =
     "Do you REALLY want to leave that other player ALL ALONE in this room?";
 
 // Dialog common.
-export const COPY_DIALOG_OK = "Ok".toUpperCase();
-export const COPY_DIALOG_CANCEL = "Cancel".toUpperCase();
+export const COPY_DIALOG_OK = stylizeUpper("Ok");
+export const COPY_DIALOG_CANCEL = stylizeUpper("Cancel");
 
 // Main stage.
 export const COPY_MAIN_INSTRUCT = [
@@ -38,6 +38,6 @@ export const COPY_PLAYER_JOINED = "{0} joined.";
 export const COPY_PLAYER_QUIT = "{0} quit.";
 
 // Round winner.
-export const COPY_ROUND_DRAW_TITLE = "Round ended in a draw".toUpperCase();
-export const COPY_ROUND_WINNER_TITLE = "{0} won!".toUpperCase();
+export const COPY_ROUND_DRAW_TITLE = stylizeUpper("Round ended in a draw");
+export const COPY_ROUND_WINNER_TITLE = stylizeUpper("{0} won!");
 export const COPY_ROUND_NEW_BODY = "New round starting in: {0}";

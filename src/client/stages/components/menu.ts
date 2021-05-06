@@ -5,6 +5,7 @@ import { KEY, MENU_LEFT, MENU_TITLE_HEIGHT, MENU_TOP, MENU_WRAP } from "../../co
 import { State } from "../../state";
 import { fontHeight, fontPixels, LINE_HEIGHT, LINE_HEIGHT_MENU } from "../../ui/font";
 import { zoom } from "../../ui/transformClient";
+import { stylizeUpper } from "../../util/clientUtil";
 
 export class MenuOption {
     constructor(
@@ -13,14 +14,16 @@ export class MenuOption {
         public onsubmit: (index: number) => void,
         public onselect: (index: number) => void = noop,
     ) {
-        this.title = this.title.toUpperCase();
+        this.title = stylizeUpper(title);
     }
 }
 
 export class Menu {
     options: MenuOption[] = [];
 
-    constructor(public header: string, public footer: string = "", public selected = 0) {}
+    constructor(public header: string, public footer: string = "", public selected = 0) {
+        this.header = stylizeUpper(header);
+    }
 
     add(option: MenuOption): void {
         this.options.push(option);

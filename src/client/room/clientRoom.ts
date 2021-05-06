@@ -58,7 +58,7 @@ export class ClientRoom {
 
     bindEvents(): void {
         State.events.on(NETCODE.ROOM_JOIN_ERROR, NS.ROOM, (message: JoinRoomErrorMessage) => {
-            this.reject(COPY_ERROR[message.status].toUpperCase());
+            this.reject(COPY_ERROR[message.status]);
         });
 
         State.events.on(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM, (message: RoomOptionsMessage) => {

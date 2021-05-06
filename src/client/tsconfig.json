@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "../../",
     "allowJs": false,
+    "baseUrl": "../../",
     "module": "es6",
+    "noEmitOnError": true,
     "target": "es2019"
   },
   "include": [
