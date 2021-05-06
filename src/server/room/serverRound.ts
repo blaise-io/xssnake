@@ -72,7 +72,7 @@ export class ServerRound extends Round {
     }
 
     getAlivePlayers(): ServerPlayer[] {
-        return this.players.filter((player) => !player.snake.crashed);
+        return this.players.filter((player) => player.snake && !player.snake.crashed);
     }
 
     wrapUp(winner: ServerPlayer): void {
