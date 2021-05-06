@@ -22,15 +22,6 @@ export const enum KEY {
     START = "s",
 }
 
-export const FIELD_BUGS = -1;
-export const FIELD_NAME = 0;
-export const FIELD_QUICK_GAME = 1;
-export const FIELD_MAX_PLAYERS = 2;
-export const FIELD_LEVEL_SET = 3;
-export const FIELD_POWERUPS = 4;
-export const FIELD_PRIVATE = 5;
-export const FIELD_XSS = 6;
-
 export const KEY_TO_DIRECTION = {};
 KEY_TO_DIRECTION[KEY.LEFT] = DIRECTION.LEFT;
 KEY_TO_DIRECTION[KEY.UP] = DIRECTION.UP;

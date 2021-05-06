@@ -10,39 +10,23 @@ import { font, fontPixels, fontWidth } from "./font";
 import { animate, flash, lifetime } from "./shapeClient";
 
 export class MessageBoxUI {
-    private animating: boolean;
-    private skipQueue: boolean;
-    private queued: number;
+    private animating = false;
+    private skipQueue = false;
+    private queued = 0;
     private inputField: InputField;
-    private lineHeight: number;
-    private animationDuration: number;
-    private x0: number;
-    private x1: number;
-    private y0: number;
-    private y1: number;
-    private padding: { y0: number; x0: number; y1: number; x1: number };
+    private lineHeight = 7;
+    private animationDuration = 200;
+    private x0 = 109;
+    private x1 = CANVAS.WIDTH - 2;
+    private y0 = CANVAS.HEIGHT - 25;
+    private y1 = CANVAS.HEIGHT - 2;
+    private padding = { x0: 0, x1: 0, y0: 1, y1: 1 };
 
     constructor(
         public messages: ChatMessage[],
         public localPlayer: Player,
         private sendMessageFn: (string) => void,
     ) {
-        this.animating = false;
-        this.skipQueue = false;
-        this.queued = 0;
-
-        delete this.inputField;
-
-        this.lineHeight = 7;
-        this.animationDuration = 200;
-
-        this.x0 = 109;
-        this.x1 = CANVAS.WIDTH - 2;
-        this.y0 = CANVAS.HEIGHT - 25;
-        this.y1 = CANVAS.HEIGHT - 2;
-
-        this.padding = { x0: 0, x1: 0, y0: 1, y1: 1 };
-
         this.bindEvents();
         this.updateMessages();
     }
