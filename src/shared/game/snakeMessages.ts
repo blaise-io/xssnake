@@ -1,4 +1,3 @@
-import { ServerSnake } from "../../server/game/serverSnake";
 import { DIRECTION, NETCODE_SYNC_MS } from "../const";
 import { AUDIENCE } from "../messages";
 import { Message, MessageId } from "../room/types";
@@ -50,11 +49,7 @@ export class SnakeUpdateClientMessage implements Message {
         public playerIndex: number,
     ) {}
 
-    static fromData(snake: Snake, playerIndex: number): SnakeUpdateClientMessage {
-        return new SnakeUpdateClientMessage(snake.direction, snake.parts, playerIndex);
-    }
-
-    static deserialize(trustedNetcode: string): SnakeUpdateClientMessage | undefined {
+    static deserialize(trustedNetcode: string): SnakeUpdateClientMessage {
         const [direction, playerIndex, ...parts] = JSON.parse(trustedNetcode);
         return new SnakeUpdateClientMessage(direction, parts, playerIndex);
     }
@@ -64,28 +59,37 @@ export class SnakeUpdateClientMessage implements Message {
     }
 }
 
-type SerializedColission = {
-    playerIndex: number;
-    parts: Coordinate[];
-    collision: Collision;
-};
-
 export class SnakeCrashMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
-    colissions: SerializedColission[];
 
-    constructor(...collisions: SerializedColission[]) {
-        this.colissions = collisions;
+    constructor(
+        public colissions: {
+            playerIndex: number;
+            parts: Coordinate[];
+            collision: Collision;
+        }[],
+    ) {}
+
+    static fromSnakes(...snakes: Snake[]): SnakeCrashMessage {
+        return new SnakeCrashMessage(
+            snakes.map((snake) => {
+                return {
+                    playerIndex: snake.index,
+                    parts: snake.parts,
+                    collision: snake.collision,
+                };
+            }),
+        );
     }
 
-    static deserialize(trustedNetcode: string): SnakeCrashMessage | undefined {
+    static deserialize(trustedNetcode: string): SnakeCrashMessage {
         return new SnakeCrashMessage(
-            ...JSON.parse(trustedNetcode).map((colissionLinear) => {
+            JSON.parse(trustedNetcode).map((colission) => {
                 return {
-                    index: colissionLinear[0],
-                    parts: colissionLinear[1],
-                    colission: new Collision(colissionLinear[2], colissionLinear[3]),
+                    index: colission[0],
+                    parts: colission[1],
+                    colission: new Collision(colission[2], colission[3]),
                 };
             }),
         );
@@ -93,24 +97,12 @@ export class SnakeCrashMessage implements Message {
 
     get serialized(): string {
         return JSON.stringify(
-            this.colissions.map((c) => [
-                c.playerIndex,
-                c.parts,
-                c.collision.location,
-                c.collision.into,
+            this.colissions.map((colission) => [
+                colission.playerIndex,
+                colission.parts,
+                colission.collision.location,
+                colission.collision.into,
             ]),
-        );
-    }
-
-    static fromSnakes(...snakes: ServerSnake[]): SnakeCrashMessage {
-        return new SnakeCrashMessage(
-            ...snakes.map((snake) => {
-                return {
-                    playerIndex: snake.index,
-                    parts: snake.parts,
-                    collision: snake.collision,
-                };
-            }),
         );
     }
 }
