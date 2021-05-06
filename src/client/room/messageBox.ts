@@ -1,4 +1,5 @@
-import { NC_CHAT_MESSAGE } from "../../shared/const";
+import { NETCODE } from "../../shared/room/netcode";
+import { ChatClientMessage, ChatServerMessage } from "../../shared/room/player";
 import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, NS, UC } from "../const";
 import { COPY_PLAYER_JOINED, COPY_PLAYER_QUIT } from "../copy/copy";
@@ -7,7 +8,6 @@ import { MessageBoxUI } from "../ui/messageBox";
 import { format } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
-import { ClientSocketPlayer } from "./clientSocketPlayer";
 import { ChatMessage } from "./chatMessage";
 
 export class MessageBox {
@@ -19,11 +19,13 @@ export class MessageBox {
     constructor(public players: ClientPlayerRegistry) {
         this.messages = [new ChatMessage(null, _(`Press ${UC.ENTER_KEY} to chat.`))];
         this.ui = new MessageBoxUI(this.messages, players.localPlayer, (body) => {
-            (this.players.localPlayer as ClientSocketPlayer).emitDeprecated(NC_CHAT_MESSAGE, [
-                body,
-            ]);
+            this.players.localPlayer.send(new ChatServerMessage(body));
         });
-        State.events.on(NC_CHAT_MESSAGE, NS.MSGBOX, this.addMessage.bind(this));
+        State.events.on(NETCODE.CHAT_MESSAGE_CLIENT, NS.MSGBOX, (message: ChatClientMessage) => {
+            const name = String(this.players[message.playerIndex].name);
+            this.messages.push(new ChatMessage(name, message.body));
+            this.ui.debounceUpdate();
+        });
         State.events.on(EV_PLAYERS_UPDATED, NS.MSGBOX, this.updatePlayers.bind(this));
     }
 
@@ -31,14 +33,8 @@ export class MessageBox {
         this.messages.length = 0;
         delete this.previousPlayers;
         this.ui.destruct();
-        State.events.off(NC_CHAT_MESSAGE, NS.MSGBOX);
+        State.events.off(NETCODE.CHAT_MESSAGE_CLIENT, NS.MSGBOX);
         State.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);
-    }
-
-    addMessage(serializedMessage: [number, string]): void {
-        const name = String(this.players[serializedMessage[0]].name);
-        this.messages.push(new ChatMessage(name, serializedMessage[1]));
-        this.ui.debounceUpdate();
     }
 
     addNotification(notification: string): void {
@@ -46,7 +42,6 @@ export class MessageBox {
     }
 
     updatePlayers(): void {
-        // TODO: recursion?
         const disconnectedPlayer = this.players.find((p) => !p.connected);
         if (disconnectedPlayer) {
             this.notifyMidgameDisconnect(disconnectedPlayer);

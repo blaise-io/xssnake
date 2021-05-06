@@ -27,7 +27,8 @@ export const enum AUDIENCE {
 
 export const enum NETCODE {
     CHAT_NOTICE = "C1",
-    CHAT_MESSAGE = "C2",
+    CHAT_MESSAGE_SERVER = "C2",
+    CHAT_MESSAGE_CLIENT = "C3",
 
     GAME_DESPAWN = "G1",
     GAME_STATE = "G2",

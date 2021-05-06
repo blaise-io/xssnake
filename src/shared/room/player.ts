@@ -1,4 +1,5 @@
 import { Snake } from "../snake";
+import { isStrOfMaxLen } from "../util/sanitizer";
 import { AUDIENCE, NETCODE } from "./netcode";
 import { Message } from "./types";
 
@@ -15,6 +16,38 @@ export class NameMessage implements Message {
 
     get netcode(): string {
         return this.name;
+    }
+}
+
+export class ChatServerMessage implements Message {
+    static id = NETCODE.CHAT_MESSAGE_SERVER;
+    static audience = AUDIENCE.SERVER_ROOM;
+
+    constructor(public body: string) {}
+
+    static fromNetcode(netcode: string): ChatServerMessage | undefined {
+        if (isStrOfMaxLen(netcode, 64)) {
+            return new ChatServerMessage(netcode);
+        }
+    }
+
+    get netcode(): string {
+        return this.body;
+    }
+}
+
+export class ChatClientMessage implements Message {
+    static id = NETCODE.CHAT_MESSAGE_CLIENT;
+    static audience = AUDIENCE.CLIENT;
+
+    constructor(public playerIndex: number, public body: string) {}
+
+    static fromNetcode(netcode: string): ChatClientMessage | undefined {
+        return new ChatClientMessage(parseInt(netcode.charAt(0), 10), netcode.substring(1));
+    }
+
+    get netcode(): string {
+        return this.playerIndex + this.body;
     }
 }
 

@@ -2,6 +2,10 @@ export function isStrOfLen(data: unknown, len: number): boolean {
     return typeof data === "string" && data.length === len;
 }
 
+export function isStrOfMaxLen(data: unknown, len: number): boolean {
+    return typeof data === "string" && data.length <= len;
+}
+
 export function isArrayOfLen(data: unknown, len: number): boolean {
     return data instanceof Array && data.length === len;
 }

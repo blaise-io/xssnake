@@ -1,10 +1,4 @@
-import {
-    NC_OPTIONS_SERIALIZE,
-    NC_PLAYERS_SERIALIZE,
-    NC_ROOM_SERIALIZE,
-    NC_SNAKE_CRASH,
-    ROOM_STATUS,
-} from "../../shared/const";
+import { NC_SNAKE_CRASH, ROOM_STATUS } from "../../shared/const";
 import { NETCODE } from "../../shared/room/netcode";
 import { JoinRoomErrorMessage, RoomPlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
@@ -63,14 +57,18 @@ export class ClientRoom {
     }
 
     bindEvents(): void {
-        State.events.on(NETCODE.ROOM_KEY, NS.ROOM, (message: RoomKeyMessage) => {
-            this.key = message.key;
-            urlHash(HASH.ROOM, this.key);
-            this.checkAllRoomDataReceived();
+        State.events.on(NETCODE.ROOM_JOIN_ERROR, NS.ROOM, (message: JoinRoomErrorMessage) => {
+            this.reject(COPY_ERROR[message.status].toUpperCase());
         });
 
         State.events.on(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM, (message: RoomOptionsMessage) => {
             this.options = message.options;
+            this.checkAllRoomDataReceived();
+        });
+
+        State.events.on(NETCODE.ROOM_KEY, NS.ROOM, (message: RoomKeyMessage) => {
+            this.key = message.key;
+            urlHash(HASH.ROOM, this.key);
             this.checkAllRoomDataReceived();
         });
 
@@ -83,10 +81,6 @@ export class ClientRoom {
             State.events.trigger(EV_PLAYERS_UPDATED, this.players);
         });
 
-        State.events.on(NETCODE.ROOM_JOIN_ERROR, NS.ROOM, (message: JoinRoomErrorMessage) => {
-            this.reject(COPY_ERROR[message.status].toUpperCase());
-        });
-
         // TODO: Move to a new notifier class
         State.events.on(NC_SNAKE_CRASH, NS.ROOM, this.ncNotifySnakesCrashed.bind(this));
 
@@ -95,13 +89,10 @@ export class ClientRoom {
     }
 
     unbindEvents(): void {
-        State.events.off(NC_ROOM_SERIALIZE, NS.ROOM);
-        State.events.off(NC_OPTIONS_SERIALIZE, NS.ROOM);
-        State.events.off(NC_PLAYERS_SERIALIZE, NS.ROOM);
-
-        State.events.off(NETCODE.ROOM_KEY, NS.ROOM);
-        State.events.off(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM);
         State.events.off(NETCODE.ROOM_JOIN_ERROR, NS.ROOM);
+        State.events.off(NETCODE.ROOM_JOIN_MATCHING, NS.ROOM);
+        State.events.off(NETCODE.ROOM_KEY, NS.ROOM);
+        State.events.off(NETCODE.ROOM_PLAYERS, NS.ROOM);
     }
 
     setupComponents(): void {

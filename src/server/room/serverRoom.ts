@@ -1,7 +1,8 @@
 import { EventEmitter } from "events";
-import { NC_CHAT_MESSAGE, SE_PLAYER_DISCONNECT } from "../../shared/const";
+import { SE_PLAYER_DISCONNECT } from "../../shared/const";
+import { NETCODE } from "../../shared/room/netcode";
+import { ChatClientMessage, ChatServerMessage } from "../../shared/room/player";
 import { RoomKeyMessage, RoomOptions, RoomOptionsMessage } from "../../shared/room/roomOptions";
-import { Sanitizer } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
@@ -29,20 +30,17 @@ export class ServerRoom {
     }
 
     bindEvents(): void {
-        this.emitter.on(String(NC_CHAT_MESSAGE), this.ncChatMessage.bind(this));
+        this.emitter.on(
+            // TODO: Prevent spam.
+            NETCODE.CHAT_MESSAGE_SERVER,
+            (player: ServerPlayer, message: ChatServerMessage) => {
+                this.players.send(
+                    new ChatClientMessage(this.players.indexOf(player), message.body),
+                    { exclude: player },
+                );
+            },
+        );
         this.emitter.on(String(SE_PLAYER_DISCONNECT), this.handlePlayerDisconnect.bind(this));
-    }
-
-    ncChatMessage(serializedMessage, player) {
-        const sanitizer = new Sanitizer(serializedMessage[0]);
-        sanitizer.assertStringOfLength(1, 64);
-        if (sanitizer.valid()) {
-            // TODO Prevent spam.
-            player.broadcast(NC_CHAT_MESSAGE, [
-                this.players.indexOf(player),
-                sanitizer.getValueOr(),
-            ]);
-        }
     }
 
     restartRounds(): void {

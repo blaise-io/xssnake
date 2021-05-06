@@ -9,8 +9,8 @@ import { ClientSocketPlayer } from "./clientSocketPlayer";
 export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     players: ClientPlayer[];
 
-    get localPlayer(): ClientPlayer {
-        return this.find((p) => p.local);
+    get localPlayer(): ClientSocketPlayer {
+        return this.find((p) => p.local) as ClientSocketPlayer;
     }
 
     static fromPlayerRegistry(
