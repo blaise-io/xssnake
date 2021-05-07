@@ -3,38 +3,35 @@ import { LevelData } from "./data";
 import { LevelGravity } from "./levelGravity";
 
 export class LevelConfig {
-    constructor(
-        public gravity = [0, 0],
-        public enableApples = true,
-        public enablePowerups = [],
-        public snakeSize = 4,
-        public snakeSpeed = 120, // Change tile every ms.
-        public snakeIncrease = 1,
-        public pointsApple = 1,
-        public pointsKnockout = 3,
-    ) {}
+    gravity = [0, 0];
+    enableApples = true;
+    enablePowerups = [];
+    snakeSize = 4;
+    snakeSpeed = 120; // Change tile every ms.
+    snakeAppleIncrease = 1;
+    pointsApple = 1;
+    pointsKnockout = 3;
+
+    constructor(options: Partial<LevelConfig> = {}) {
+        Object.assign(this, options);
+    }
 }
 
 export class Level {
     image: string;
+    animations = new LevelAnimationRegistry();
+    config = new LevelConfig();
     data: LevelData;
-    config: LevelConfig;
-    animations: LevelAnimationRegistry;
-    gravity: LevelGravity;
-
-    constructor() {
-        this.config = new LevelConfig();
-        this.animations = new LevelAnimationRegistry();
-        this.gravity = new LevelGravity();
-    }
+    gravity = new LevelGravity();
 
     async load(loader: (string) => Promise<ImageData>): Promise<void> {
         this.data = new LevelData(await loader(this.image));
     }
 
     destruct(): void {
-        delete this.config;
         delete this.animations;
         delete this.config;
+        delete this.data;
+        delete this.gravity;
     }
 }
