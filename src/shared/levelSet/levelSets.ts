@@ -1,5 +1,5 @@
-import { CrosshairLevel } from "../levels/debug/crosshair";
-import { LinesLevel } from "../levels/debug/lines";
+import { CrosshairLevel } from "../levels/crosshair";
+import { LinesLevel } from "../levels/lines";
 import { LevelSet } from "./levelSet";
 import { _ } from "../util";
 
