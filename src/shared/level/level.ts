@@ -19,9 +19,9 @@ export class LevelConfig {
 
 export class Level {
     image: string;
+    data: LevelData;
     animations = new LevelAnimationRegistry();
     config = new LevelConfig();
-    data: LevelData;
     gravity = new LevelGravity();
 
     async load(loader: (string) => Promise<ImageData>): Promise<void> {
