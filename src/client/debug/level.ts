@@ -1,6 +1,6 @@
-import { CrosshairLevel } from "../../shared/levels/crosshair";
-import { LinesLevel } from "../../shared/levels/lines";
-import { PacmanLevel } from "../../shared/levels/pacman";
+import { CrosshairLevel } from "../../shared/level/levels/crosshair";
+import { LinesLevel } from "../../shared/level/levels/lines";
+import { PacmanLevel } from "../../shared/level/levels/pacman";
 import { getRandomItemFrom } from "../../shared/util";
 import { ClientGame } from "../game/clientGame";
 import { ClientPlayer } from "../room/clientPlayer";

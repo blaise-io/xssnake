@@ -1,6 +1,6 @@
 import { GAME } from "../../../shared/const";
 import { Level } from "../../../shared/level/level";
-import { BlankLevel } from "../../../shared/levels/internal/blank";
+import { BlankLevel } from "../../../shared/level/levels/internal/blank";
 import { Shape } from "../../../shared/shape";
 import { _, noop } from "../../../shared/util";
 import { ClientSnake } from "../../game/clientSnake";
