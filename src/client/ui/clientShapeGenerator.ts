@@ -10,8 +10,8 @@ import { animate, lifetime } from "./shapeClient";
 import { zoom } from "./transformClient";
 
 export function tooltip(text: string, x: number, y: number, direction: DIRECTION): Shape {
-    let shape;
-    let hw;
+    let shape: Shape;
+    let hw: number;
     const width = fontWidth(text);
     switch (direction) {
         case DIRECTION.LEFT:

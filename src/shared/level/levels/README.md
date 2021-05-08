@@ -1,18 +1,9 @@
 # Level images
 
-XSSNAKE uses PNG images to create levels. This allows for editing levels in
-a more graphical manner. These images can be found in the `level_images` dir.
+PNG images are used to define the walls, spawns and unreachable areas of a level.
+Level images must be 63 pixels wide, 33 pixels high.
 
-Levels are registered in `levels.js`. This file is also the place for adding
-animated objects to levels.
-
-If you change one of the images, you have to rebuild `shared/data/level_images.js`
-by running `grunt levels`. You should not edit `level_images.js` directly.
-
-| Example (zoomed in)
-|---
-| <img src="level_images/poles.png" height="99"/>
-
+Animations and powerups are defined seperately.
 
 ## Pixel color table
 
@@ -37,5 +28,3 @@ Every pixel translates to a tile.
  * Next to each Spawn Player pixel should be *one* Player Direction pixel.
    This is the initital direction the player will move to.
  * All players should have an equal-ish chance to survive.
-
-The grunt script will warn you if anything is wrong.

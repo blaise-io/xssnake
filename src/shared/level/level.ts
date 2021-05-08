@@ -1,18 +1,20 @@
 import { LevelAnimationRegistry } from "../levelanim/registry";
-import { LevelData } from "./data";
+import { LevelData } from "./levelData";
 import { LevelGravity } from "./levelGravity";
+import { Reverse, SpeedBoost } from "./spawnables";
 
-export class LevelConfig {
+export class LevelSettings {
     gravity = [0, 0];
-    enableApples = true;
-    enablePowerups = [];
+    powerups = [Reverse, SpeedBoost];
     snakeSize = 4;
     snakeSpeed = 120; // Change tile every ms.
     snakeAppleIncrease = 1;
     pointsApple = 1;
     pointsKnockout = 3;
+    spawnFirstAppleAfter = 0.5;
+    spawnPowerupIntervalS = [10, 60];
 
-    constructor(options: Partial<LevelConfig> = {}) {
+    constructor(options: Partial<LevelSettings> = {}) {
         Object.assign(this, options);
     }
 }
@@ -21,7 +23,7 @@ export class Level {
     image: string;
     data: LevelData;
     animations = new LevelAnimationRegistry();
-    config = new LevelConfig();
+    settings = new LevelSettings();
     gravity = new LevelGravity();
 
     async load(loader: (string) => Promise<ImageData>): Promise<void> {
@@ -30,7 +32,7 @@ export class Level {
 
     destruct(): void {
         delete this.animations;
-        delete this.config;
+        delete this.settings;
         delete this.data;
         delete this.gravity;
     }

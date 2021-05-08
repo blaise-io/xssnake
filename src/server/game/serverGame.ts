@@ -1,7 +1,9 @@
 import { EventEmitter } from "events";
 import { SE_PLAYER_COLLISION } from "../../shared/const";
+import { Spawner } from "../../shared/game/spawner";
 import { Level } from "../../shared/level/level";
 import { SnakeCrashMessage, SnakeUpdateServerMessage } from "../../shared/game/snakeMessages";
+import { Spawnable, SpawnableMessage } from "../../shared/level/spawnables";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -10,50 +12,44 @@ import { ServerSnakeMove } from "../room/serverSnakeMove";
 import { ServerSnake } from "./serverSnake";
 
 export class ServerGame {
-    // private items: ServerItems;
-    private tick: number;
-    private lastTick: number;
+    private tick = 0;
+    private lastTick = new Date().getTime();
     private tickInterval: NodeJS.Timeout;
     private started: boolean;
+    private spawner: Spawner;
 
     constructor(
         private roomEmitter: EventEmitter,
         public level: Level,
         public players: ServerPlayerRegistry,
     ) {
-        // this.items = new ServerItems(level, players);
-        this.tick = 0;
-        this.lastTick = +new Date();
-
         this.players.setSnakes(this.level);
 
-        this.bindEvents();
+        this.spawner = new Spawner(this.level, this.players, (spawnable: Spawnable) => {
+            this.players.send(new SpawnableMessage(spawnable.type, spawnable.coordinate));
+        });
 
-        this.tickInterval = setInterval(this.handleTick.bind(this), SERVER_TICK_INTERVAL);
-    }
-
-    destruct(): void {
-        clearInterval(this.tickInterval);
-        this.unbindEvents();
-
-        // this.items.destruct();
-
-        delete this.level;
-        delete this.players;
-        // delete this.items;
-    }
-
-    bindEvents(): void {
         this.roomEmitter.on(
             SnakeUpdateServerMessage.id,
             (player: ServerPlayer, message: SnakeUpdateServerMessage) => {
                 this.handleMove(new ServerSnakeMove(message.parts, message.direction, player));
             },
         );
+
+        this.tickInterval = setInterval(() => {
+            this.handleTick();
+        }, SERVER_TICK_INTERVAL);
     }
 
-    unbindEvents(): void {
+    destruct(): void {
+        clearInterval(this.tickInterval);
         this.roomEmitter.removeAllListeners(SnakeUpdateServerMessage.id);
+
+        // this.spawner.destruct();
+        // delete this.spawner;
+
+        delete this.level;
+        delete this.players;
     }
 
     private handleMove(move: ServerSnakeMove) {

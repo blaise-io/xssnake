@@ -15,8 +15,8 @@ export class Snake {
         const spawn = level.data.spawns[index];
         this.parts = [spawn.location];
         this.direction = spawn.direction;
-        this.size = level.config.snakeSize;
-        this.speed = level.config.snakeSpeed;
+        this.size = level.settings.snakeSize;
+        this.speed = level.settings.snakeSpeed;
     }
 
     move(position: Coordinate): void {
@@ -64,16 +64,16 @@ export class Snake {
         }
     }
 
-    // reverse(): void {
-    //     const dx = this.parts[0][0] - this.parts[1][0];
-    //     const dy = this.parts[0][1] - this.parts[1][1];
-    //
-    //     if (dx === 0) {
-    //         this.direction = dy === -1 ? 1 : 3;
-    //     } else {
-    //         this.direction = dx === -1 ? 0 : 2;
-    //     }
-    //
-    //     this.parts.reverse();
-    // }
+    reverse(): void {
+        const dx = this.parts[0][0] - this.parts[1][0];
+        const dy = this.parts[0][1] - this.parts[1][1];
+
+        if (dx === 0) {
+            this.direction = dy === -1 ? 1 : 3;
+        } else {
+            this.direction = dx === -1 ? 0 : 2;
+        }
+
+        this.parts.reverse();
+    }
 }

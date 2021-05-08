@@ -54,13 +54,13 @@ export class Shape {
         return this.uncache();
     }
 
-    // remove(...pixelCollections: PixelCollection[]): Shape {
-    //     const remove = this.pixels.remove.bind(this.pixels);
-    //     for (let i = 0, m = pixelCollections.length; i < m; i++) {
-    //         pixelCollections[i].each(remove);
-    //     }
-    //     return this.uncache();
-    // }
+    remove(...pixelCollections: PixelCollection[]): Shape {
+        const remove = this.pixels.remove.bind(this.pixels);
+        for (let i = 0, m = pixelCollections.length; i < m; i++) {
+            pixelCollections[i].each(remove);
+        }
+        return this.uncache();
+    }
 
     bbox(expand = 0): BoundingBox {
         if (!this.bboxCache || this.expand !== expand) {

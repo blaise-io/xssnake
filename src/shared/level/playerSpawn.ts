@@ -1,5 +1,5 @@
 import { DIRECTION } from "../const";
 
-export class Spawn {
+export class PlayerSpawn {
     constructor(public location: Coordinate, public direction: DIRECTION) {}
 }

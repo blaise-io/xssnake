@@ -19,7 +19,7 @@ export class ServerScore {
             console.error("FIXME");
             return false;
         }
-        const points = crashedPlayers.length * level.config.pointsKnockout;
+        const points = crashedPlayers.length * level.settings.pointsKnockout;
         if (points) {
             for (let i = 0, m = this.players.length; i < m; i++) {
                 const player = this.players[i];

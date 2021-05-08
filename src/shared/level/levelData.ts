@@ -1,24 +1,20 @@
 import { GAME } from "../const";
 import { PixelCollection } from "../pixelCollection";
 import { ShapeCollection } from "../shapeCollection";
-import { Parser } from "./parser";
-import { Spawn } from "./spawn";
+import { parseLevelData } from "./parser";
+import { PlayerSpawn } from "./playerSpawn";
 
 export class LevelData {
     private width: number;
     private height: number;
     walls: PixelCollection;
-    spawns: Spawn[];
+    spawns: PlayerSpawn[];
     private unreachables: PixelCollection;
     private animations = { walls: [] };
 
     constructor(imagedata: ImageData) {
-        const parser = new Parser(imagedata);
-        this.width = imagedata.width;
-        this.height = imagedata.height;
-        this.walls = parser.walls;
-        this.spawns = parser.spawns;
-        this.unreachables = parser.unreachables;
+        Object.assign(this, parseLevelData(imagedata));
+        console.log(this.spawns);
     }
 
     isWall(x: number, y: number): boolean {
@@ -69,42 +65,34 @@ export class LevelData {
         }
     }
 
-    getSpawn(playerID: number): Coordinate {
-        return this.spawns[playerID].location;
-    }
-
-    getSpawnDirection(playerID: number): number {
-        return this.spawns[playerID].direction;
-    }
-
-    getEmptyLocation(nonEmptyLocations: Coordinate[]): Coordinate {
-        let maxTries = 50;
-        while (--maxTries) {
-            const location = [
-                Math.floor(Math.random() * this.width),
-                Math.floor(Math.random() * this.height),
-            ] as Coordinate;
-            if (this.isEmptyLocation(nonEmptyLocations, location)) {
-                return location;
-            }
-        }
-    }
-
-    isEmptyLocation(nonEmptyLocations: Coordinate[], location: Coordinate): boolean {
-        if (this.isWall(location[0], location[1])) {
-            return false;
-        }
-        if (this.unreachables.has(location[0], location[1])) {
-            return false;
-        }
-        for (let i = 0, m = nonEmptyLocations.length; i < m; i++) {
-            const nonE = nonEmptyLocations[i];
-            if (nonE && nonE[0] === location[0] && nonE[1] === location[1]) {
-                return false;
-            }
-        }
-        return true;
-    }
+    // getEmptyLocation(nonEmptyLocations: Coordinate[]): Coordinate {
+    //     let maxTries = 50;
+    //     while (--maxTries) {
+    //         const location = [
+    //             Math.floor(Math.random() * this.width),
+    //             Math.floor(Math.random() * this.height),
+    //         ] as Coordinate;
+    //         if (this.isEmptyLocation(nonEmptyLocations, location)) {
+    //             return location;
+    //         }
+    //     }
+    // }
+    //
+    // isEmptyLocation(nonEmptyLocations: Coordinate[], location: Coordinate): boolean {
+    //     if (this.isWall(location[0], location[1])) {
+    //         return false;
+    //     }
+    //     if (this.unreachables.has(location[0], location[1])) {
+    //         return false;
+    //     }
+    //     for (let i = 0, m = nonEmptyLocations.length; i < m; i++) {
+    //         const nonE = nonEmptyLocations[i];
+    //         if (nonE && nonE[0] === location[0] && nonE[1] === location[1]) {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
 
     outOfBounds(x: number, y: number): boolean {
         if (x < 0 || y < 0) {

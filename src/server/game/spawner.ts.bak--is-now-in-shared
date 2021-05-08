@@ -1,34 +1,14 @@
-// /**
-//  * Spawner
-//  * @param {game.Game} game
-//  * @constructor
-//  */
-// import { NC_GAME_SPAWN, SPAWN_APPLE, SPAWN_POWERUP } from "../../shared/const";
-// import { eq } from "../../shared/util";
-// import { ServerGame } from "./serverGame";
-//
 // export class Spawner {
-//     private spawns: any[];
-//     private locations: any[];
+//     constructor(public game: ServerGame, public spawns: Spawn[] = []) {}
 //
-//     constructor(public game: ServerGame) {
-//         this.spawns = [];
-//         this.locations = []; // Keep separate list for getEmptyLocation speed
-//     }
-//
-//     destruct() {
-//         for (let i = 0, m = this.spawns.length; i < m; i++) {
-//             this._destructSpawn(i);
-//         }
+//     destruct(): void {
+//         delete this.game;
+//         delete this.spawns;
 //     }
 //
 //     spawn(type: number, location: Coordinate, buffer: boolean): unknown {
-//         let spawn;
 //         let index;
-//         let data;
-//         const game = this.game;
-//
-//         spawn = {
+//         const spawn = new Spawn(){
 //             // location: location || game.getEmptyLocation(),
 //             location: location,
 //             type: type,
@@ -38,15 +18,7 @@
 //         this.spawns[index] = spawn;
 //         this.locations[index] = spawn.location;
 //
-//         data = [type, index, spawn.location];
-//
-//         // TODO: game no longer has room?
-//         // if (buffer) {
-//         //     game.room.buffer(NC_GAME_SPAWN, data);
-//         // } else {
-//         //     game.room.emitDeprecated(NC_GAME_SPAWN, data);
-//         // }
-//
+//         let data = [type, index, spawn.location]; // TODO: game no longer has room? // if (buffer) { //     game.room.buffer(NC_GAME_SPAWN, data); // } else { //     game.room.emitDeprecated(NC_GAME_SPAWN, data); // }
 //         return spawn;
 //     }
 //
@@ -103,7 +75,7 @@
 //      * @private
 //      */
 //     _destructSpawn(index): void {
-//         this.spawns[index]  = undefined;
-//         this.locations[index]  = undefined;
+//         this.spawns[index] = undefined;
+//         this.locations[index] = undefined;
 //     }
 // }
