@@ -164,7 +164,7 @@ export class Canvas {
             shape.cache = new ShapeCache(shape, this.tile);
         }
 
-        if (shape.mask) {
+        if (shape.mask.length) {
             // A mask specifies a bounding box (x0, y0, x1, y1)
             // where anything outside will not get drawn.
             this.drawMaskedShape(shape);

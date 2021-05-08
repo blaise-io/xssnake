@@ -14,7 +14,6 @@ export class LevelData {
 
     constructor(imagedata: ImageData) {
         Object.assign(this, parseLevelData(imagedata));
-        console.log(this.spawns);
     }
 
     isWall(x: number, y: number): boolean {

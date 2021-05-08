@@ -126,12 +126,13 @@ export class ShapeCache {
         const size = this._getSize();
         const pixelBBox = this.shape.pixels.bbox();
         const tileBBox = new BoundingBox();
-        const tileBBoxKeys = Object.keys(pixelBBox);
 
-        for (let i = 0, m = tileBBoxKeys.length; i < m; i++) {
-            const k = tileBBoxKeys[i];
-            tileBBox[k] = pixelBBox[k] * size;
-        }
+        tileBBox.x0 = pixelBBox.x0 * size;
+        tileBBox.x1 = pixelBBox.x1 * size;
+        tileBBox.y0 = pixelBBox.y0 * size;
+        tileBBox.y1 = pixelBBox.y1 * size;
+        tileBBox.width = pixelBBox.width * size;
+        tileBBox.height = pixelBBox.height * size;
 
         return tileBBox;
     }

@@ -13,9 +13,12 @@ export function center(shape: Shape, width = CANVAS.WIDTH, height = CANVAS.HEIGH
 }
 
 export function setGameTransform(shape: Shape): Shape {
-    shape.transform.scale = GAME.TILE;
-    shape.transform.translate[0] = shape.transform.translate[0] * GAME.TILE + GAME.TILE / GAME.LEFT;
-    shape.transform.translate[1] = shape.transform.translate[1] * GAME.TILE + GAME.TILE / GAME.TOP;
+    const transform = shape.transform;
+    if (transform.scale != GAME.TILE) {
+        transform.scale = GAME.TILE;
+        transform.translate[0] = transform.translate[0] * GAME.TILE + GAME.TILE / GAME.LEFT;
+        transform.translate[1] = transform.translate[1] * GAME.TILE + GAME.TILE / GAME.TOP;
+    }
     return shape;
 }
 

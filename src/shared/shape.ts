@@ -9,7 +9,6 @@ export class Shape {
     expand = 0;
     flags = { enabled: true, isOverlay: false };
     transform: { translate: [number, number]; scale: number };
-    isOverlay: boolean;
     mask: number[] = [];
 
     constructor(...pixelCollections: PixelCollection[]) {
