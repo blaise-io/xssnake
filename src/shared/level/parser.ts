@@ -95,12 +95,13 @@ export function parseLevelData(
 
 function getDirectionForSpawn(spawn, spawnDirections) {
     for (let i = 0, m = spawnDirections.length; i < m; i++) {
-        const dx = spawn[0] - spawnDirections[i][0];
-        const dy = spawn[1] - spawnDirections[i][1];
-        if (Math.abs(dx) === 1 && Math.abs(dy) === 0) {
-            return dy === 1 ? DIRECTION.UP : DIRECTION.DOWN;
-        } else if (Math.abs(dx) === 0 && Math.abs(dy) === 1) {
-            return dx === 1 ? DIRECTION.LEFT : DIRECTION.RIGHT;
+        const horizontalDelta = spawnDirections[i][0] - spawn[0];
+        const verticalDelta = spawnDirections[i][1] - spawn[1];
+
+        if (Math.abs(horizontalDelta) === 1 && verticalDelta === 0) {
+            return horizontalDelta === 1 ? DIRECTION.RIGHT : DIRECTION.LEFT;
+        } else if (Math.abs(verticalDelta) === 1 && horizontalDelta === 0) {
+            return verticalDelta === 1 ? DIRECTION.DOWN : DIRECTION.UP;
         }
     }
 
