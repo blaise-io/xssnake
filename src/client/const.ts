@@ -1,9 +1,8 @@
 // Client-only extension of server/shared/const.js
-import { DIRECTION } from "../shared/const";
 
 export const FRAME = 1000 / 60;
-export const MIN_FRAME_DELTA = 5;
-export const MAX_FRAME_DELTA = 250;
+export const MIN_FRAME_DELTA = FRAME / 2;
+export const MAX_FRAME_DELTA = FRAME * 15;
 
 // Corresponds with Event.key.
 // TODO: Use Event.code?
@@ -21,12 +20,6 @@ export const enum KEY {
     MUTE = "m",
     START = "s",
 }
-
-export const KEY_TO_DIRECTION = {};
-KEY_TO_DIRECTION[KEY.LEFT] = DIRECTION.LEFT;
-KEY_TO_DIRECTION[KEY.UP] = DIRECTION.UP;
-KEY_TO_DIRECTION[KEY.RIGHT] = DIRECTION.RIGHT;
-KEY_TO_DIRECTION[KEY.DOWN] = DIRECTION.DOWN;
 
 export const enum MENU_POS {
     LEFT = 44,
@@ -66,7 +59,6 @@ export const enum NS {
 }
 export const EV_GAME_TICK = "TIK";
 export const EV_WIN_FOCUS_CHANGE = "WFC";
-export const EV_FONT_LOAD = "FLD";
 export const EV_PLAYERS_UPDATED = "PU";
 
 export const enum STORAGE {

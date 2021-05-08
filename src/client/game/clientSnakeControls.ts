@@ -1,7 +1,14 @@
 import { DIRECTION } from "../../shared/const";
-import { KEY_TO_DIRECTION, NS } from "../const";
+import { KEY, NS } from "../const";
 import { State } from "../state";
 import { ClientSnake } from "./clientSnake";
+
+const KEY_TO_DIRECTION = Object.fromEntries([
+    [KEY.LEFT, DIRECTION.LEFT],
+    [KEY.UP, DIRECTION.UP],
+    [KEY.RIGHT, DIRECTION.RIGHT],
+    [KEY.DOWN, DIRECTION.DOWN],
+]);
 
 export class ClientSnakeControls {
     private upcomingDirections: number[] = [];
