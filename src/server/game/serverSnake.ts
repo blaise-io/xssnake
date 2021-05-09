@@ -12,7 +12,7 @@ export class ServerSnake extends Snake {
     }
 
     destruct(): void {
-        delete this.level;
+        // delete this.level;
     }
 
     serialize(): [number, number, Coordinate[]] {
@@ -33,7 +33,7 @@ export class ServerSnake extends Snake {
             this.elapsed -= this.speed;
 
             if (!move.collision) {
-                delete this.collision;
+                // delete this.collision;
                 this.move(move.location);
             } else if (!this.collision) {
                 this.collision = move.collision;

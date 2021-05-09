@@ -14,9 +14,9 @@ export class Scoreboard {
     }
 
     destruct(): void {
-        delete this.players;
+        // delete this.players;
         this.ui.destruct();
-        delete this.ui;
+        // delete this.ui;
         this.unbindEvents();
     }
 

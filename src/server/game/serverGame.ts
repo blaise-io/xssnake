@@ -48,8 +48,8 @@ export class ServerGame {
         // this.spawner.destruct();
         // delete this.spawner;
 
-        delete this.level;
-        delete this.players;
+        // delete this.level;
+        // delete this.players;
     }
 
     private handleMove(move: ServerSnakeMove) {

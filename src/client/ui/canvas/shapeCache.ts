@@ -11,7 +11,7 @@ export class ShapeCache {
     constructor(public shape: Shape, public tile: CanvasTile) {
         this.bbox = this._getBBox();
         this.canvas = this._getCanvas();
-        this.context = this.canvas.getContext("2d");
+        this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
         this._paintShapePixels();
     }
 
@@ -32,9 +32,9 @@ export class ShapeCache {
         return this._getRectangles(lines);
     }
 
-    private _getLines(pixels: PixelCollection): Coordinate[] {
-        let cache = undefined;
-        const lines = [];
+    private _getLines(pixels: PixelCollection): [number, number, number][] {
+        let cache: [number, number, number] | undefined;
+        const lines: [number, number, number][] = [];
 
         pixels.sort().each(function (x, y) {
             // cache: x,y,w
@@ -90,7 +90,7 @@ export class ShapeCache {
 
     _fillBackground(): void {
         const expand = this.shape.expand * this.tile.size * -1;
-        this.context.fillStyle = this.tile.off;
+        this.context.fillStyle = this.tile.off as CanvasPattern;
         this.context.fillRect(
             expand,
             expand,
@@ -111,7 +111,7 @@ export class ShapeCache {
             this._fillBackground();
         }
 
-        this.context.fillStyle = this.tile.on;
+        this.context.fillStyle = this.tile.on as CanvasPattern;
         for (let i = 0, m = rectangles.length; i < m; i++) {
             this.context.fillRect(
                 rectangles[i][0] * size - this.bbox.x0,

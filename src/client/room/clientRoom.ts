@@ -45,8 +45,8 @@ export class ClientRoom {
     destruct(): void {
         urlHash();
         this.unbindEvents();
-        delete this.key;
-        delete this.options;
+        // delete this.key;
+        // delete this.options;
         if (this.players) {
             this.players.destruct();
         }

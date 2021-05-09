@@ -28,7 +28,7 @@ export class Spawner {
         for (let i = 0, m = this.spawns.length; i < m; i++) {
             this.spawns[i].destruct();
         }
-        delete this.spawns;
+        // delete this.spawns;
     }
 
     get newSpawnLocation(): Coordinate | undefined {

@@ -33,7 +33,7 @@ export class SnakeMove {
         }
     }
 
-    getCollisionAtCoordinate(index: number, coordinate: Coordinate): Collision {
+    getCollisionAtCoordinate(index: number, coordinate: Coordinate): Collision | undefined {
         const players = this.players;
         const levelData = this.level.data;
         if (index > 4) {
@@ -54,6 +54,7 @@ export class SnakeMove {
         for (let i = 0, m = players.length; i < m; i++) {
             const snakeOpponent = players[i].snake;
             if (
+                snakeOpponent &&
                 snakeOpponent.crashed === false &&
                 snakeOpponent !== this.snake &&
                 snakeOpponent.hasCoordinate(coordinate)

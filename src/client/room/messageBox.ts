@@ -32,7 +32,7 @@ export class MessageBox {
 
     destruct(): void {
         this.messages.length = 0;
-        delete this.previousPlayers;
+        // delete this.previousPlayers;
         this.ui.destruct();
         State.events.off(ChatClientMessage.id, NS.MSGBOX);
         State.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);

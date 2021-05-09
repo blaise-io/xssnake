@@ -23,10 +23,10 @@ export class PreGameUI {
     private confirmStart: boolean;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
-        delete this.dialog;
+        // delete this.dialog;
 
-        delete this.countdownStarted;
-        delete this.countdownInterval;
+        // delete this.countdownStarted;
+        // delete this.countdownInterval;
         this.confirmExit = false;
         this.confirmStart = false;
 
@@ -37,8 +37,8 @@ export class PreGameUI {
     destruct(): void {
         window.clearInterval(this.countdownInterval);
         this.unbindKeys();
-        delete this.players;
-        delete this.options;
+        // delete this.players;
+        // delete this.options;
         if (this.dialog) {
             this.dialog.destruct();
         }
@@ -148,7 +148,7 @@ export class PreGameUI {
         if (started) {
             this.countdownStarted = new Date();
         } else {
-            delete this.countdownStarted;
+            // delete this.countdownStarted;
             window.clearInterval(this.countdownInterval);
         }
     }

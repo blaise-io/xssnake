@@ -22,15 +22,13 @@ export class Canvas {
     private tile: CanvasTile;
     focus = true;
     private prevFrame = new Date().getTime();
-    private canvasWidth: number;
-    private canvasHeight: number;
     private stopRendering = false;
 
     constructor() {
         const color = storage.get(STORAGE.COLOR) as number;
 
         this.canvas = this.setupCanvas();
-        this.context = this.canvas.getContext("2d");
+        this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
         this.tile = new CanvasTile(colorSchemes[color] || colorSchemes[0]);
 
         this.setCanvasDimensions();
@@ -86,14 +84,14 @@ export class Canvas {
 
     private clear(): void {
         this.context.save();
-        this.context.fillStyle = this.tile.off;
+        this.context.fillStyle = this.tile.off as CanvasPattern;
         this.context.globalAlpha = 1 - this.tile.colorScheme.ghosting;
-        this.context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.restore();
     }
 
     private paintShapes(delta: number): void {
-        const overlays = [];
+        const overlays: Shape[] = [];
         const shapeKeys = Object.keys(State.shapes);
 
         for (let i = 0, m = shapeKeys.length; i < m; i++) {
@@ -247,12 +245,12 @@ export class Canvas {
 
     private setCanvasDimensions(): void {
         const size = this.tile.updateSize();
-        this.canvasWidth = size * CANVAS.WIDTH;
-        this.canvasHeight = size * CANVAS.HEIGHT;
-        this.canvas.width = this.canvasWidth;
-        this.canvas.height = this.canvasHeight;
-        this.canvas.style.width = `${this.canvasWidth / window.devicePixelRatio}px`;
-        this.canvas.style.height = `${this.canvasHeight / window.devicePixelRatio}px`;
+        const canvasWidth = size * CANVAS.WIDTH;
+        const canvasHeight = size * CANVAS.HEIGHT;
+        this.canvas.width = canvasWidth;
+        this.canvas.height = canvasHeight;
+        this.canvas.style.width = `${canvasWidth / window.devicePixelRatio}px`;
+        this.canvas.style.height = `${canvasHeight / window.devicePixelRatio}px`;
     }
 
     private positionCanvas(): void {
@@ -261,8 +259,8 @@ export class Canvas {
 
         const offset = 2 * window.devicePixelRatio;
 
-        const left = this.snapCanvasToTiles(windowCenter - this.canvasWidth / offset);
-        const top = this.snapCanvasToTiles(windowMiddle - this.canvasHeight / offset);
+        const left = this.snapCanvasToTiles(windowCenter - this.canvas.width / offset);
+        const top = this.snapCanvasToTiles(windowMiddle - this.canvas.height / offset);
 
         const style = this.canvas.style;
         style.position = "absolute";

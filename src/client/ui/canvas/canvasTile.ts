@@ -3,12 +3,10 @@ import { ColorScheme, PixelStyle } from "../colorScheme";
 
 export class CanvasTile {
     size: number;
-    on: CanvasPattern;
-    off: CanvasPattern;
+    on?: CanvasPattern;
+    off?: CanvasPattern;
 
     constructor(public colorScheme: ColorScheme) {
-        delete this.on;
-        delete this.off;
         this.size = 0;
     }
 
@@ -33,17 +31,16 @@ export class CanvasTile {
         canvas.setAttribute("width", String(this.size));
         canvas.setAttribute("height", String(this.size));
 
-        this.on = this._getTileForColor(canvas, this.colorScheme.on);
-        this.off = this._getTileForColor(canvas, this.colorScheme.off);
+        this.on = this.getTileForColor(canvas, this.colorScheme.on);
+        this.off = this.getTileForColor(canvas, this.colorScheme.off);
 
         document.body.style.backgroundImage = "url(" + canvas.toDataURL("image/png") + ")";
         document.body.style.backgroundColor = this.colorScheme.bg;
-        document.body.style.backgroundSize = this.size / 2 + "px";
+        document.body.style.backgroundSize = this.size / window.devicePixelRatio + "px";
     }
 
-    private _getTileForColor(canvas: HTMLCanvasElement, color: string): CanvasPattern {
-        const context = canvas.getContext("2d");
-
+    private getTileForColor(canvas: HTMLCanvasElement, color: string): CanvasPattern {
+        const context = canvas.getContext("2d") as CanvasRenderingContext2D;
         const pixelSize = this.size === 1 ? 1 : this.size - this.colorScheme.gap;
 
         context.fillStyle = this.colorScheme.bg;
@@ -57,6 +54,6 @@ export class CanvasTile {
             context.fill();
         }
 
-        return context.createPattern(canvas, "repeat");
+        return context.createPattern(canvas, null) as CanvasPattern;
     }
 }

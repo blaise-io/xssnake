@@ -29,15 +29,15 @@ export class ClientRound extends Round {
         this.unbindEvents();
         if (this.game) {
             this.game.destruct();
-            delete this.game;
+            // delete this.game;
         }
         if (this.preGameUI) {
             this.preGameUI.destruct();
-            delete this.preGameUI;
+            // delete this.preGameUI;
         }
         if (this.wrapupGameUI) {
             this.wrapupGameUI.destruct();
-            delete this.wrapupGameUI;
+            // delete this.wrapupGameUI;
         }
     }
 

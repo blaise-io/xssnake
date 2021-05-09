@@ -35,16 +35,16 @@ export class ServerRoundSet {
         clearTimeout(this.nextRoundTimeout);
 
         this.levelPlayset.destruct();
-        delete this.levelPlayset;
+        // delete this.levelPlayset;
 
         this.round.destruct();
-        delete this.round;
+        // delete this.round;
 
         this.score.destruct();
-        delete this.score;
+        // delete this.score;
 
-        delete this.players;
-        delete this.options;
+        // delete this.players;
+        // delete this.options;
     }
 
     bindEvents(): void {

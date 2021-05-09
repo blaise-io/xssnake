@@ -14,10 +14,10 @@ export class ClientRoundSet {
     }
 
     destruct(): void {
-        delete this.players;
-        delete this.options;
+        // delete this.players;
+        // delete this.options;
         this.round.destruct();
-        delete this.round;
+        // delete this.round;
         this.unbindEvents();
     }
 

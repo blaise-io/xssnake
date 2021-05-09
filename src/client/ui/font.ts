@@ -10,13 +10,10 @@ export const LINE_HEIGHT = 8;
 export const LINE_HEIGHT_MENU = 9;
 export const BLURRY_TRESHOLD = 3;
 
-const _cache: Record<string, { width: number; pixels: PixelCollection }> = {};
-const _ctx = _getContext();
+const cache: Record<string, { width: number; pixels: PixelCollection }> = {};
+const context = getContext();
 
-export type FontOptions = {
-    wrap?: number;
-    invert?: boolean;
-};
+export type FontOptions = { wrap?: number; invert?: boolean };
 
 export function font(str: string, x = 0, y = 0, options: FontOptions = {}): Shape {
     let tabx1;
@@ -29,17 +26,17 @@ export function font(str: string, x = 0, y = 0, options: FontOptions = {}): Shap
     for (let i = 0, m = chrs.length; i < m; i++) {
         let nextWordFit = true;
         const chr = chrs[i];
-        const width = _appendChr(x, y, shape, chrs[i], pointer);
+        const width = appendChar(x, y, shape, chrs[i], pointer);
 
         if (options.wrap && chr.match(/[\s-]/)) {
-            nextWordFit = _nextWordFit(str, i, pointer, options.wrap);
+            nextWordFit = nextWordFitsSameLine(str, i, pointer, options.wrap);
         }
 
         if (chr === "\t") {
             if (tabx1) {
                 pointer.x = tabx1;
             } else {
-                pointer.x = tabx1 = _getTabx1(str);
+                pointer.x = tabx1 = getFirstColumnEnd(str);
             }
         } else if (chr === "\n" || !nextWordFit) {
             pointer.x = 0;
@@ -72,10 +69,10 @@ export function fontWidth(str: string, x = 0, y = 0, options: FontOptions = {}):
     const pixels = font(str, x, y, options).pixels;
     for (let i = pixels.pixels.length - LINE_HEIGHT + 1, m = pixels.pixels.length; i < m; i++) {
         if (pixels.pixels[i]) {
-            maxes.push(Math.max.apply(this, pixels.pixels[i]));
+            maxes.push(Math.max(...pixels.pixels[i]));
         }
     }
-    let width = Math.max.apply(this, maxes) + 2; // Ends with a space. Ending with multiple spaces not supported.
+    let width = Math.max(...maxes) + 2; // Ends with a space. Ending with multiple spaces not supported.
     if (" " === str.slice(-1)) {
         width += 3;
     }
@@ -88,7 +85,7 @@ export function fastWidth(str: string): number {
     let chrs = str.split("\n");
     chrs = chrs[chrs.length - 1].split("");
     for (let i = 0, m = chrs.length; i < m; i++) {
-        width += _chrProperties(chrs[i]).width;
+        width += getCharProperties(chrs[i]).width;
         width += 2;
     }
     return width;
@@ -103,24 +100,15 @@ export function fontEndPos(
     return [fontWidth(str, x, y, options), fontHeight(str, x, y, options) - LINE_HEIGHT];
 }
 
-function _chrProperties(chr: string): { width: number; pixels: PixelCollection } {
-    if (!_cache[chr]) {
-        const chrProperties = _getChrProperties(chr);
-        _cache[chr] = chrProperties || _chrProperties(UC.SQUARE);
+function getCharProperties(chr: string): { width: number; pixels: PixelCollection } {
+    if (!cache[chr]) {
+        const chrProperties = generateCharProperties(chr);
+        cache[chr] = chrProperties || getCharProperties(UC.SQUARE);
     }
-    return _cache[chr];
+    return cache[chr];
 }
 
-/**
- * @param {number} x
- * @param {number} y
- * @param {Shape} shape
- * @param {string} chr
- * @param {Object.<string,number>} pointer
- * @return {number}
- * @private
- */
-function _appendChr(
+function appendChar(
     x: number,
     y: number,
     shape: Shape,
@@ -129,7 +117,7 @@ function _appendChr(
 ) {
     let kerning = 0;
 
-    const chrProperties = _chrProperties(chr);
+    const chrProperties = getCharProperties(chr);
     if (pointer.x) {
         kerning = getKerning(x, y, shape, pointer, chrProperties);
     }
@@ -148,7 +136,7 @@ export function getMaxes(
     const maxes = [];
     for (let i = 0; i < LINE_HEIGHT; i++) {
         if (shape.pixels.pixels[y + pointer.y + i]) {
-            maxes[i] = Math.max.apply(this, shape.pixels.pixels[y + pointer.y + i]) - x;
+            maxes[i] = Math.max(...shape.pixels.pixels[y + pointer.y + i]) - x;
         }
     }
     return maxes;
@@ -167,7 +155,7 @@ export function getKerning(
     for (let i = 0; i < LINE_HEIGHT; i++) {
         let min;
         if (chrProperties.pixels.pixels[i]) {
-            min = Math.min.apply(this, chrProperties.pixels.pixels[i]);
+            min = Math.min(...chrProperties.pixels.pixels[i]);
         }
         const max = Math.max(maxes[i - 1] || 0, maxes[i] || 0, maxes[i + 1] || 0);
         if (min !== undefined) {
@@ -175,32 +163,25 @@ export function getKerning(
         }
     }
 
-    const gap = Math.min.apply(this, gaps);
+    const gap = Math.min(...gaps);
     return Math.max(-1, 2 - gap);
 }
 
-/**
- * Determine whether the next word will fit on the same line or not.
- * @param {string} str
- * @param {number} i
- * @param {Object.<string,number>} pointer
- * @param {number} wrap
- * @return {boolean}
- * @private
- */
-function _nextWordFit(str, i, pointer, wrap) {
+function nextWordFitsSameLine(
+    str: string,
+    i: number,
+    pointer: { x: number; y: number },
+    wrap: number,
+): boolean {
     const nextWord = str.substr(i + 1).split(/[\s-]/)[0];
     return pointer.x + fastWidth(nextWord) <= wrap;
 }
 
 /**
  * Determine X position for tab end to align a two-column table.
- * Note to future self: Does not work for more than one tab per line.
- * @param {string} str
- * @return {number}
- * @private
+ * Does not work for three columns or more.
  */
-function _getTabx1(str) {
+function getFirstColumnEnd(str: string): number {
     let maxtab = 0;
     const lines = str.split(/\n/g);
     for (let i = 0, m = lines.length; i < m; i++) {
@@ -212,12 +193,7 @@ function _getTabx1(str) {
     return maxtab;
 }
 
-/**
- * @param {Shape} shape
- * @param {number} y
- * @private
- */
-function _invert(shape, y) {
+function _invert(shape: Shape, y: number) {
     const bbox = shape.bbox();
     bbox.expand(1);
     bbox.y0 = y - 1;
@@ -225,20 +201,24 @@ function _invert(shape, y) {
     shape.invert(bbox);
 }
 
-function _getContext(): CanvasRenderingContext2D {
+function getContext(): CanvasRenderingContext2D {
     const canvas = document.createElement("canvas");
     canvas.width = MAX_WIDTH;
     canvas.height = MAX_HEIGHT;
 
-    const context = canvas.getContext("2d"); // "xssnake" is a special font that was crafted for this game.
-    let font = "8px xssnake"; // Specify blurry fonts in the fallback, to make it easier to detect // glyphs that are (un)supported by the xssnake font.
-    font += ", courier new, serif";
-    context.font = font;
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+    // "xssnake" is a pixel font created for this game.
+    // Specify blurry fonts in the fallback, to make it easier to detect
+    // glyphs that are (un)supported by the xssnake font.
+    context.font = "8px xssnake, courier new, serif";
 
     return context;
 }
 
-function _getChrProperties(chr: string): { width: number; pixels: PixelCollection } {
+function generateCharProperties(
+    chr: string,
+): { width: number; pixels: PixelCollection } | undefined {
     const pixels = new PixelCollection();
     let width = 0;
     let len = 0;
@@ -251,13 +231,13 @@ function _getChrProperties(chr: string): { width: number; pixels: PixelCollectio
         return { width: 3, pixels: pixels };
     }
 
-    _ctx.fillStyle = "#000";
-    _ctx.fillRect(0, 0, w, h);
+    context.fillStyle = "#000";
+    context.fillRect(0, 0, w, h);
 
-    _ctx.fillStyle = "#fff";
-    _ctx.fillText(chr, 0, BASELINE);
+    context.fillStyle = "#fff";
+    context.fillText(chr, 0, BASELINE);
 
-    const data = _ctx.getImageData(0, 0, w, h).data;
+    const data = context.getImageData(0, 0, w, h).data;
     for (let i = 0, m = data.length; i < m; i += 4) {
         // When this does not work on some OS, try a few presets until
         // it matches a known pattern.
@@ -280,7 +260,7 @@ function _getChrProperties(chr: string): { width: number; pixels: PixelCollectio
 export function fontLoad(): Promise<void> {
     return new Promise((resolve) => {
         const interval = window.setInterval(() => {
-            const props = _getChrProperties(UC.HOURGLASS);
+            const props = generateCharProperties(UC.HOURGLASS);
             if (props && props.width === 8) {
                 window.clearInterval(interval);
                 resolve();

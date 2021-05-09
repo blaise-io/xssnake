@@ -31,9 +31,9 @@ export class Level {
     }
 
     destruct(): void {
-        delete this.animations;
-        delete this.settings;
-        delete this.data;
-        delete this.gravity;
+        // delete this.animations;
+        // delete this.settings;
+        // delete this.data;
+        // delete this.gravity;
     }
 }

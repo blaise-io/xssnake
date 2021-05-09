@@ -7,7 +7,7 @@ export class ServerScore {
     constructor(public players: ServerPlayerRegistry) {}
 
     destruct(): void {
-        delete this.players;
+        // delete this.players;
     }
 
     /**

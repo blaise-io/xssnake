@@ -2,25 +2,28 @@
 // import { State } from "../../client/state/state";
 // import { setGameTransform } from "../../client/ui/shapeClient";
 
-// TODO: Extend Array
+import { ShapeAnimation } from "../levelanims/types";
+import { ShapeCollection } from "../shapeCollection";
+
+/* TODO: Extend Array */
 export class LevelAnimationRegistry {
     animations = [];
     walls = [];
     started = false;
     progress = 0;
 
-    register(animation) {
-        this.animations.push(animation);
-    }
+    // register(animation: ShapeAnimation): void {
+    //     this.animations.push(animation);
+    // }
 
-    update(delta, started) {
+    update(delta: number, started: boolean): void {
         this.progress += delta;
         this.started = started;
         this.walls = this.updateAnimations();
         this.updateShapes();
     }
 
-    updateAnimations() {
+    updateAnimations(): ShapeCollection[] {
         const walls = [];
         for (let i = 0, m = this.animations.length; i < m; i++) {
             const shapeCollection = this.updateAnimation(this.animations[i]);
@@ -31,7 +34,7 @@ export class LevelAnimationRegistry {
         return walls;
     }
 
-    updateAnimation(animation) {
+    updateAnimation(animation: ShapeAnimation): boolean {
         return animation.update(this.progress, this.started);
     }
 

@@ -10,7 +10,7 @@ export class Player {
     ) {}
 
     destruct(): void {
-        delete this.snake;
+        // delete this.snake;
     }
 
     // /** @deprecated */

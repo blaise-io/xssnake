@@ -6,8 +6,6 @@ import { shift } from "../../shared/transform";
 export function outline(shape: Shape, hPadding = 6, vPadding = 6, round = true): Shape {
     let bbox = shape.bbox();
     const r = round ? 1 : 0;
-    hPadding = typeof hPadding === "number" ? hPadding : 6;
-    vPadding = typeof vPadding === "number" ? vPadding : 6;
 
     // Keep in viewport
     if (bbox.y0 - vPadding < 0) {
@@ -56,7 +54,7 @@ export function zoom(
     shiftY = 0,
     antiAlising = true,
 ): PixelCollection {
-    let zoomedPixels;
+    let zoomedPixels: PixelCollection;
 
     shiftX = shiftX || 0;
     shiftY = shiftY || 0;
@@ -70,7 +68,7 @@ export function zoom(
         return pixels; // Unsupported zoom level.
     }
 
-    if (antiAlising !== false) {
+    if (antiAlising) {
         pixels.each(function (x, y) {
             for (let dirX = -1; dirX <= 1; dirX += 2) {
                 for (let dirY = -1; dirY <= 1; dirY += 2) {
@@ -80,7 +78,7 @@ export function zoom(
         });
     }
 
-    function add(dirX, dirY, x, y) {
+    function add(dirX: number, dirY: number, x: number, y: number) {
         const baseX = x * zoomlevel + shiftX;
         const baseY = y * zoomlevel + shiftY;
         if (2 === zoomlevel) {
@@ -104,18 +102,18 @@ export function zoom(
     // XX#
     //  XX
     //   X
-    function addX4s(baseX, dirX2, baseY, dirY2) {
+    function addX4s(baseX: number, dirX2: number, baseY: number, dirY2: number) {
         const compX = baseX + (dirX2 === -1 ? 0 : 3);
         const compY = baseY + (dirY2 === -1 ? 0 : 3);
         zoomedPixels.add(compX, compY);
-        zoomedPixels.add(compX - 1 * dirX2, compY);
+        zoomedPixels.add(compX - dirX2, compY);
         zoomedPixels.add(compX - 2 * dirX2, compY);
-        zoomedPixels.add(compX - 1 * dirX2, compY - dirY2);
+        zoomedPixels.add(compX - dirX2, compY - dirY2);
         zoomedPixels.add(compX, compY - dirY2);
         zoomedPixels.add(compX, compY - 2 * dirY2);
     }
 
-    function handlePixel(x, y, dirX, dirY) {
+    function handlePixel(x: number, y: number, dirX: number, dirY: number) {
         // !X
         // #!
         if (

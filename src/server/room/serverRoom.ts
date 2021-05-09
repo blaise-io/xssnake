@@ -25,9 +25,9 @@ export class ServerRoom {
         this.emitter.removeAllListeners();
         this.players.destruct();
         this.rounds.destruct();
-        delete this.server;
-        delete this.players;
-        delete this.rounds;
+        // delete this.server;
+        // delete this.players;
+        // delete this.rounds;
     }
 
     bindEvents(): void {

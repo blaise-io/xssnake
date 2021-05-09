@@ -12,21 +12,21 @@ export class WrapupGame {
     private countdownInterval: number;
 
     constructor(public players: PlayerRegistry<ClientPlayer>, public winner: Player) {
-        delete this.dialog;
+        // delete this.dialog;
 
         this.countdownStarted = new Date();
-        delete this.countdownInterval;
+        // delete this.countdownInterval;
 
         this.showCountdown();
     }
 
     destruct(): void {
         window.clearInterval(this.countdownInterval);
-        delete this.players;
-        delete this.winner;
+        // delete this.players;
+        // delete this.winner;
         if (this.dialog) {
             this.dialog.destruct();
-            delete this.dialog;
+            // delete this.dialog;
         }
     }
 

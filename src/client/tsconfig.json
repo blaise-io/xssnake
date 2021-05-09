@@ -4,6 +4,7 @@
     "baseUrl": "../",
     "module": "es6",
     "noEmitOnError": true,
+    "strict": true,
     "target": "es2019"
   },
   "include": [

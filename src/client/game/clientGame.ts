@@ -34,9 +34,9 @@ export class ClientGame {
             State.shapes[k] = undefined;
         }
 
-        delete this.level;
-        delete this.players;
-        delete this.spawnables;
+        // delete this.level;
+        // delete this.players;
+        // delete this.spawnables;
     }
 
     start(): void {

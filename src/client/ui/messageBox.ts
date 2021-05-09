@@ -35,7 +35,7 @@ export class MessageBoxUI {
         State.events.off("keydown", NS.CHAT);
         if (this.inputField) {
             this.inputField.destruct();
-            delete this.inputField;
+            // delete this.inputField;
         }
     }
 
@@ -81,7 +81,7 @@ export class MessageBoxUI {
     hideInput(): void {
         if (this.inputField) {
             this.inputField.destruct();
-            delete this.inputField;
+            // delete this.inputField;
         }
         this.updateMessages();
     }

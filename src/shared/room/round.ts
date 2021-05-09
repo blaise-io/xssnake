@@ -12,8 +12,8 @@ export class Round {
     started: boolean;
 
     constructor(public players: PlayerRegistry<Player>, public options: RoomOptions) {
-        delete this.levelSetIndex;
-        delete this.levelIndex;
+        // delete this.levelSetIndex;
+        // delete this.levelIndex;
         this.index = 0;
         this.started = false;
     }

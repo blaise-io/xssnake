@@ -97,7 +97,7 @@ export function parseLevelData(
     };
 }
 
-function getDirectionForSpawn(spawn, spawnDirections) {
+function getDirectionForSpawn(spawn: Coordinate, spawnDirections: Coordinate[]) {
     for (let i = 0, m = spawnDirections.length; i < m; i++) {
         const horizontalDelta = spawnDirections[i][0] - spawn[0];
         const verticalDelta = spawnDirections[i][1] - spawn[1];

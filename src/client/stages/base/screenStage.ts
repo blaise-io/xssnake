@@ -3,12 +3,8 @@ import { KEY, NS } from "../../const";
 import { State } from "../../state";
 import { StageInterface } from "./stage";
 
-export class ScreenStage implements StageInterface {
-    screen = undefined;
-
-    getShape(): Shape {
-        return this.screen;
-    }
+export abstract class ScreenStage implements StageInterface {
+    abstract getShape(): Shape;
 
     construct(): void {
         State.events.on("keydown", NS.STAGES, this.handleKeys);
@@ -16,7 +12,7 @@ export class ScreenStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.stage = undefined;
+        delete State.shapes.stage;
     }
 
     private handleKeys(event: KeyboardEvent): void {

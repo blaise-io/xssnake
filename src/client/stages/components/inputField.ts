@@ -20,7 +20,7 @@ export class InputField {
         public fontOptions?: FontOptions,
     ) {
         this.callback = () => {};
-        delete this.maxValWidth;
+        // delete this.maxValWidth;
         this.displayWidth = CANVAS.WIDTH - x - 8;
         this.maxlength = 156;
 

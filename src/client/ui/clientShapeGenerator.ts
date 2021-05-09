@@ -166,7 +166,7 @@ export function xssnakeHeader(): Shape {
 }
 
 export function explosion(location: Coordinate, direction = -1, intensity = 16): void {
-    let to;
+    let to: Coordinate;
     const w = 10;
     const d = 20;
     while (intensity--) {

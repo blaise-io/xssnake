@@ -35,9 +35,9 @@ export class ServerPlayer extends Player {
         if (this.connected) {
             this.disconnect();
         }
-        delete this.server;
-        delete this.snake;
-        delete this.room;
+        // delete this.server;
+        // delete this.snake;
+        // delete this.room;
     }
 
     disconnect(): void {
@@ -51,7 +51,7 @@ export class ServerPlayer extends Player {
         }
         if (this.client) {
             this.client.close(); // TODO: terminate()?
-            delete this.client; // TODO: not my job?
+            // delete this.client; // TODO: not my job?
         }
     }
 

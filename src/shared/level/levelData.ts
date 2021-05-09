@@ -5,13 +5,14 @@ import { parseLevelData } from "./parser";
 import { PlayerSpawn } from "./playerSpawn";
 
 export class LevelData {
-    private width: number;
-    private height: number;
-    empties: PixelCollection;
-    walls: PixelCollection;
+    private width = 0;
+    private height = 0;
+
+    empties = new PixelCollection();
+    walls = new PixelCollection();
     spawns: PlayerSpawn[];
-    private unreachables: PixelCollection;
-    private animations = { walls: [] };
+    unreachables = new PixelCollection();
+    animations = { walls: [] };
 
     constructor(imagedata: ImageData) {
         Object.assign(this, parseLevelData(imagedata));
