@@ -397,7 +397,7 @@
 //
 //             // Opponent
 //             for (let ii = 0, mm = clients.length; ii < mm; ii++) {
-//                 if (client !== clients[ii] && clients[ii].snake.hasPart(part)) {
+//                 if (client !== clients[ii] && clients[ii].snake.hasCoordinate(part)) {
 //                     return new game.Crash(CRASH_OPPONENT, client, clients[ii]);
 //                 }
 //             }

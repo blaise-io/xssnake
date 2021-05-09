@@ -27,12 +27,14 @@ export function parseLevelData(
     width: number;
     height: number;
     spawns: PlayerSpawn[];
-    walls: PixelCollection;
+    empties: PixelCollection;
     unreachables: PixelCollection;
+    walls: PixelCollection;
 } {
     const data = imageData.data;
-    const walls = new PixelCollection();
     const unreachables = new PixelCollection();
+    const walls = new PixelCollection();
+    const empties = new PixelCollection();
     const directionCoordinates: Coordinate[] = [];
     const spawnCoordinates: Coordinate[] = new Array(6);
 
@@ -40,12 +42,13 @@ export function parseLevelData(
         const coordinate = [i % imageData.width, Math.floor(i / imageData.width)] as Coordinate;
         switch ((data[i * 4] << C.R) | (data[i * 4 + 1] << C.G) | (data[i * 4 + 2] << C.B)) {
             case COLOR_FUNCTION.BLANK:
-                break;
-            case COLOR_FUNCTION.WALL:
-                walls.add(...coordinate);
+                empties.add(...coordinate);
                 break;
             case COLOR_FUNCTION.UNREACHABLE:
                 unreachables.add(...coordinate);
+                break;
+            case COLOR_FUNCTION.WALL:
+                walls.add(...coordinate);
                 break;
             case COLOR_FUNCTION.SPAWN_DIRECTION:
                 directionCoordinates.push(coordinate);
@@ -82,8 +85,9 @@ export function parseLevelData(
     return {
         width: imageData.width,
         height: imageData.height,
-        walls,
+        empties,
         unreachables,
+        walls,
         spawns: spawnCoordinates.map((coordinate) => {
             return new PlayerSpawn(
                 coordinate,

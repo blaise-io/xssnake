@@ -7,6 +7,7 @@ import { PlayerSpawn } from "./playerSpawn";
 export class LevelData {
     private width: number;
     private height: number;
+    empties: PixelCollection;
     walls: PixelCollection;
     spawns: PlayerSpawn[];
     private unreachables: PixelCollection;
@@ -25,6 +26,7 @@ export class LevelData {
         return false;
     }
 
+    // TODO: Keep walls in game coordinate system in client.
     isMovingWall(coordinate: Coordinate): boolean {
         for (let i = 0, m = this.animations.walls.length; i < m; i++) {
             if (this.inShapes(this.animations.walls[i], coordinate)) {
@@ -48,10 +50,6 @@ export class LevelData {
         return false;
     }
 
-    /**
-     * Translate coordinate to game coordinate system.
-     * TODO: Why is not everything in game system on server?
-     */
     convertToGameSystem(coordinate: Coordinate, translate: Shift): Coordinate {
         if (ENV_IS_CLIENT) {
             const tx = (translate[0] - GAME.LEFT) / GAME.TILE;

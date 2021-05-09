@@ -56,4 +56,14 @@ export class PlayerRegistry<T> extends Array<T> {
     isHost(player: T): boolean {
         return 0 === this.indexOf(player);
     }
+
+    hasCoordinate(coordinate: Coordinate): boolean {
+        for (let i = 0, m = this.length; i < m; i++) {
+            const player = (this[i] as unknown) as Player;
+            if (player.snake && player.snake.hasCoordinate(coordinate)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

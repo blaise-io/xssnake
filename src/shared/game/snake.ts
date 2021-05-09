@@ -39,7 +39,7 @@ export class Snake {
         }
     }
 
-    hasPart(part: Coordinate): boolean {
+    hasCoordinate(part: Coordinate): boolean {
         return -1 !== this.getPartIndex(part);
     }
 

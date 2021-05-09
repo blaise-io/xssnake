@@ -170,7 +170,7 @@ export class MessageBoxUI {
     animate(shape: Shape): void {
         this.animating = true;
         const anim = {
-            to: [0, -this.lineHeight] as Coordinate,
+            to: [0, -this.lineHeight] as Shift,
             duration: this.animationDuration,
             doneCallback: this.animateCallback.bind(this),
         };

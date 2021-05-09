@@ -2,7 +2,7 @@ declare let ENV_DEBUG: boolean;
 declare let ENV_IS_CLIENT: boolean;
 declare let ENV_VERSION: string;
 
-type Coordinate = [number, number];
+type Coordinate = [number, number]; // x, y
 type Shift = [number, number];
 type WebsocketData = (string | number | (string | number)[])[];
 type UntrustedData = unknown;

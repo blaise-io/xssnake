@@ -1,18 +1,27 @@
 import { BoundingBox } from "./boundingBox";
-import { sort } from "./util";
+import { getRandomItemFrom, randomArrIndex, sort } from "./util";
 
 /**
  * Store and manipulate pixels.
  * This class contains code optimized for speed.
  *
  * Shape pixels stored in a multi-dimensional array.
- * [[4, 5, 3, 9], undefined, [3, 5, 2]].
+ * [[4, 0, 3, 9], undefined, [3, 5, 2]].
  */
 export class PixelCollection {
     pixels: number[][];
 
     constructor(pixels = []) {
         this.pixels = pixels;
+    }
+
+    clone(): PixelCollection {
+        const pixels = this.pixels;
+        const clone = new PixelCollection();
+        for (let i = 0, m = pixels.length; i < m; i++) {
+            clone.pixels[i] = pixels[i].slice();
+        }
+        return clone;
     }
 
     add(x: number, y: number): PixelCollection {
@@ -81,9 +90,24 @@ export class PixelCollection {
         }
     }
 
-    removeLine(y: number): void {
-        if (this.pixels[y]) {
-            this.pixels[y].length = 0;
+    random(): Coordinate {
+        const rowsPopulated = [];
+        for (let i = 0, m = this.pixels.length; i < m; i++) {
+            if (this.pixels[i].length) {
+                rowsPopulated.push(i);
+            }
         }
+        const y = randomArrIndex(rowsPopulated);
+        return [getRandomItemFrom(this.pixels[y]), y];
+    }
+
+    // removeCoordinates(...coordinates: Coordinate[]): void {
+    //     for (let i = 0, m = coordinates.length; i < m; i++) {
+    //         this.remove(...coordinates[i]);
+    //     }
+    // }
+
+    removeLine(y: number): void {
+        this.pixels[y] = undefined;
     }
 }

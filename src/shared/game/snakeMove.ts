@@ -13,56 +13,53 @@ export class SnakeMove {
         public level: Level,
         public location: Coordinate,
     ) {
-        this.collision = this.getCollission();
+        this.collision = this.getCollision();
     }
 
-    getParts(part: Coordinate): Coordinate[] {
+    getCoordinates(part: Coordinate): Coordinate[] {
         const parts = this.snake.parts.slice();
         parts.unshift();
         parts.push(part);
         return parts;
     }
 
-    getCollission(): Collision {
-        const parts = this.getParts(this.location);
-        for (let i = 0, m = parts.length; i < m; i++) {
-            const collision = this.getCollisionPart(i, parts[i]);
+    getCollision(): Collision {
+        const coordinates = this.getCoordinates(this.location);
+        for (let i = 0, m = coordinates.length; i < m; i++) {
+            const collision = this.getCollisionAtCoordinate(i, coordinates[i]);
             if (collision) {
                 return collision;
             }
         }
-        return null;
     }
 
-    getCollisionPart(index: number, part: Coordinate): Collision {
+    getCollisionAtCoordinate(index: number, coordinate: Coordinate): Collision {
         const players = this.players;
         const levelData = this.level.data;
         if (index > 4) {
-            const partIndex = this.snake.getPartIndex(part);
+            const partIndex = this.snake.getPartIndex(coordinate);
             if (-1 !== partIndex && index !== partIndex) {
-                return new Collision(part, CRASH_SELF);
+                return new Collision(coordinate, CRASH_SELF);
             }
         }
 
-        if (levelData.isWall(part[0], part[1])) {
-            return new Collision(part, CRASH_WALL);
+        if (levelData.isWall(coordinate[0], coordinate[1])) {
+            return new Collision(coordinate, CRASH_WALL);
         }
 
-        if (levelData.isMovingWall(part)) {
-            return new Collision(part, CRASH_MOVING_WALL);
+        if (levelData.isMovingWall(coordinate)) {
+            return new Collision(coordinate, CRASH_MOVING_WALL);
         }
 
         for (let i = 0, m = players.length; i < m; i++) {
-            const opponentSnake = players[i].snake;
+            const snakeOpponent = players[i].snake;
             if (
-                opponentSnake.crashed === false &&
-                opponentSnake !== this.snake &&
-                opponentSnake.hasPart(part)
+                snakeOpponent.crashed === false &&
+                snakeOpponent !== this.snake &&
+                snakeOpponent.hasCoordinate(coordinate)
             ) {
-                return new Collision(part, CRASH_OPPONENT);
+                return new Collision(coordinate, CRASH_OPPONENT);
             }
         }
-
-        return null;
     }
 }
