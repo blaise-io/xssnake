@@ -1,3 +1,4 @@
+import { Snake } from "../game/snake";
 import { AUDIENCE } from "../messages";
 import { Player } from "../room/player";
 import { Message, MessageId } from "../room/types";
@@ -31,25 +32,28 @@ export class SpawnableMessage implements Message {
 }
 
 export abstract class Spawnable {
-    abstract type: TYPE;
-    timer: ReturnType<typeof setTimeout>;
-
     constructor(public levelSettings: LevelSettings, public coordinate: Coordinate) {}
 
-    abstract applyEffects(player: Player): void;
     abstract id: SPAWNABLE_ID;
+    abstract type: TYPE;
+    abstract applyEffects(player: Player, snake: Snake): void;
+
+    timer?: ReturnType<typeof setTimeout>;
+
     snakeNotifyModifier?: string;
 
     despawn(): void {}
 
     destruct(): void {
         // Lifetime continues after hit.
-        clearTimeout(this.timer);
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
     }
 }
 
 export class Apple extends Spawnable {
-    id: SPAWNABLE_ID.POINTS;
+    id = SPAWNABLE_ID.POINTS;
     type = TYPE.APPLE;
 
     constructor(public levelSettings: LevelSettings, public coordinate: Coordinate) {
@@ -63,22 +67,22 @@ export class Apple extends Spawnable {
 }
 
 export class Reverse extends Spawnable {
+    id = SPAWNABLE_ID.REVERSE;
     type = TYPE.POWER;
-    id: SPAWNABLE_ID.REVERSE;
 
-    applyEffects(player: Player): void {
-        player.snake.reverse();
+    applyEffects(player: Player, snake: Snake): void {
+        snake.reverse();
     }
 }
 
 export class SpeedBoost extends Spawnable {
-    id: SPAWNABLE_ID.SPEED_BOOST;
+    id = SPAWNABLE_ID.SPEED_BOOST;
     type = TYPE.POWER;
 
-    applyEffects(player: Player): void {
-        player.snake.speed += 150;
+    applyEffects(player: Player, snake: Snake): void {
+        snake.speed += 150;
         this.timer = setTimeout(() => {
-            player.snake.speed -= 150;
+            snake.speed -= 150;
         }, 5000);
     }
 }

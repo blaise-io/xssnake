@@ -10,7 +10,7 @@ export class LevelData {
 
     empties = new PixelCollection();
     walls = new PixelCollection();
-    spawns: PlayerSpawn[];
+    spawns: PlayerSpawn[] = [];
     unreachables = new PixelCollection();
     animations = { walls: [] };
 
@@ -38,8 +38,8 @@ export class LevelData {
     }
 
     inShapes(shapeCollection: ShapeCollection, coordinate: Coordinate): boolean {
-        for (let i = 0, m = shapeCollection.shapes.length; i < m; i++) {
-            const shape = shapeCollection.shapes[i];
+        for (let i = 0, m = shapeCollection.length; i < m; i++) {
+            const shape = shapeCollection[i];
             if (shape) {
                 const translate = shape.transform.translate;
                 const translated = this.convertToGameSystem(coordinate, translate);

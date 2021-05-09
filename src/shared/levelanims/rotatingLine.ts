@@ -23,7 +23,6 @@ export class RotatingLine {
     }
 
     private _update(radian: number): ShapeCollection {
-        const shape = new Shape(radianLine(this.x, this.y, radian, this.len));
-        return new ShapeCollection(shape);
+        return [new Shape(radianLine(this.x, this.y, radian, this.len))];
     }
 }

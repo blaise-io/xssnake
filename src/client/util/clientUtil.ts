@@ -1,10 +1,11 @@
 import { GAME, CANVAS, LEVEL } from "../../shared/const";
 import { _ } from "../../shared/util";
-import { HASH, STORAGE, UC } from "../const";
+import { STORAGE, UC } from "../const";
 import { State } from "../state";
 import { Dialog, DialogType } from "../ui/dialog";
 import { font, fontHeight, fontWidth } from "../ui/font";
 import { flash, lifetime } from "../ui/shapeClient";
+import { clearHash } from "./url";
 
 export function instruct(str: string, duration = 2000, flashInstruct = false): void {
     const x = CANVAS.WIDTH - fontWidth(str) - 2;
@@ -26,7 +27,7 @@ export function stylizeUpper(str: string): string {
 }
 
 export function error(str: string, callback?: CallableFunction): void {
-    urlHash();
+    clearHash();
 
     const exit = function () {
         dialog.destruct();
@@ -46,7 +47,7 @@ export function error(str: string, callback?: CallableFunction): void {
 export const storage = {
     get: (key: STORAGE): unknown => {
         try {
-            return JSON.parse(localStorage.getItem(key));
+            return JSON.parse(localStorage.getItem(key) as string);
         } catch (err) {
             localStorage.removeItem(key);
         }
@@ -64,38 +65,6 @@ export const storage = {
 
 export function isMac(): boolean {
     return /Macintosh/.test(navigator.appVersion);
-}
-
-export function urlHash(key?: HASH, value?: string): string {
-    let newhash = "";
-    const dict = {};
-
-    const hash = location.hash.substr(1);
-    const arr = hash.split(/[:;]/g);
-
-    // Populate dict
-    for (let i = 0, m = arr.length; i < m; i += 2) {
-        dict[arr[i]] = arr[i + 1];
-    }
-
-    switch (arguments.length) {
-        case 0: // Empty
-            if (location.hash) {
-                history.replaceState(null, "", location.pathname + location.search);
-            }
-            return;
-        case 1: // Return value
-            return dict[key] || "";
-        case 2: // Set value
-            dict[key] = value;
-            for (const k in dict) {
-                if (k && dict[k]) {
-                    newhash += k + ":" + dict[k] + ";";
-                }
-            }
-            location.replace("#" + newhash.replace(/;$/, ""));
-            return value;
-    }
 }
 
 /* @deprecated use template string */
@@ -119,12 +88,14 @@ export function translateGameY(y: number): number {
     return y * GAME.TILE + GAME.TOP;
 }
 
-export function debounce(fn: CallableFunction, delay = 100): (...args) => void {
-    let timeout;
+export function debounce(fn: CallableFunction, delay = 100): (...args: unknown[]) => void {
+    let timeout: number;
     return (...args) => {
-        window.clearTimeout(timeout);
+        if (timeout) {
+            window.clearTimeout(timeout);
+        }
         timeout = window.setTimeout(() => {
-            timeout = undefined;
+            clearTimeout(timeout);
             fn(...args);
         }, delay);
     };
@@ -136,7 +107,7 @@ export async function clientImageLoader(base64Image: string): Promise<ImageData>
         canvas.width = LEVEL.WIDTH;
         canvas.height = LEVEL.HEIGHT;
 
-        const context = canvas.getContext("2d");
+        const context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
         const image = new Image();
         image.onload = function () {

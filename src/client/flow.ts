@@ -8,36 +8,33 @@ import { StageConstructor, StageInterface } from "./stages/base/stage";
 import { MainStage } from "./stages/mainStage";
 import { State } from "./state";
 import { outerBorder, xssnakeHeader } from "./ui/clientShapeGenerator";
-import { fontLoad } from "./ui/font";
-import { animate } from "./ui/shapeClient";
-import { instruct, storage, urlHash } from "./util/clientUtil";
+import { animate, StageAnimateOptions } from "./ui/shapeClient";
+import { instruct, storage } from "./util/clientUtil";
+import { clearHash, getHash } from "./util/url";
 
 export interface FlowData {
     xss: string;
     name: string;
-    clientPlayer: ClientSocketPlayer;
-    room: ClientRoom;
+    room?: ClientRoom;
     roomOptions: RoomOptions;
+    clientPlayer?: ClientSocketPlayer;
 }
 
 export class StageFlow {
-    GameStage: StageConstructor;
-    stage: StageInterface;
+    GameStage?: StageConstructor;
+    stage: StageInterface = new MainStage();
     data: FlowData = {
         xss: storage.get(STORAGE.XSS) as string,
         name: storage.get(STORAGE.NAME) as string,
-        clientPlayer: undefined,
-        roomOptions: undefined,
+        roomOptions: new RoomOptions(),
         room: undefined,
+        clientPlayer: undefined,
     };
 
     private history: StageInterface[] = [];
 
     constructor(private FirstStage = MainStage as StageConstructor) {
-        this.data.roomOptions = new RoomOptions();
-        fontLoad().then(() => {
-            this.start();
-        });
+        this.start();
     }
 
     destruct(): void {
@@ -60,14 +57,14 @@ export class StageFlow {
         Object.assign(State.shapes, outerBorder());
         State.shapes.HEADER = xssnakeHeader();
 
-        this.setStage(new this.FirstStage(this.data), false);
+        this.setStage(new this.FirstStage(), false);
     }
 
-    switchStage(Stage: StageConstructor, options = { back: false }): void {
-        let switchToStage;
+    switchStage(Stage?: StageConstructor, options = { back: false }): void {
+        let switchToStage: StageInterface;
 
         if (Stage && !options.back) {
-            switchToStage = new Stage(this.data);
+            switchToStage = new Stage();
         } else {
             switchToStage = this.history[this.history.length - 2];
         }
@@ -76,9 +73,8 @@ export class StageFlow {
         this.stage.destruct();
 
         // Remove everything
-        State.shapes.stage = undefined;
+        delete State.shapes.stage;
 
-        // Replace by levelanim
         this.switchStageAnimate(
             this.stage.getShape(),
             switchToStage.getShape(),
@@ -91,7 +87,7 @@ export class StageFlow {
 
     previousStage(): void {
         if (this.history.length > 1) {
-            this.switchStage(null, { back: true });
+            this.switchStage(undefined, { back: true });
         }
     }
 
@@ -100,7 +96,7 @@ export class StageFlow {
     }
 
     private hashChange(): void {
-        if (urlHash(HASH.ROOM).length === ROOM_KEY_LENGTH && 1 === this.history.length) {
+        if ((getHash(HASH.ROOM) || "").length === ROOM_KEY_LENGTH && this.history.length === 1) {
             State.flow.restart();
         }
     }
@@ -126,17 +122,22 @@ export class StageFlow {
         }
     }
 
-    private switchStageAnimate(oldShape: Shape, newShape: Shape, back: boolean, callback): void {
-        let oldStageAnim;
-        let newStageAnim;
+    private switchStageAnimate(
+        oldShape: Shape,
+        newShape: Shape,
+        back = false,
+        callback = () => {},
+    ): void {
+        let oldStageAnim: Partial<StageAnimateOptions>;
+        let newStageAnim: Partial<StageAnimateOptions>;
         const width = CANVAS.WIDTH - MENU_POS.LEFT;
 
         if (back) {
-            oldStageAnim = { to: [width, 0] };
-            newStageAnim = { from: [-width, 0] };
+            oldStageAnim = { to: [width, 0] as Coordinate };
+            newStageAnim = { from: [-width, 0] as Coordinate };
         } else {
-            oldStageAnim = { to: [-width, 0] };
-            newStageAnim = { from: [width, 0] };
+            oldStageAnim = { to: [-width, 0] as Coordinate };
+            newStageAnim = { from: [width, 0] as Coordinate };
         }
 
         newStageAnim.doneCallback = callback;
@@ -148,8 +149,8 @@ export class StageFlow {
 
     private setStage(stage: StageInterface, back = false) {
         // Remove animated stages
-        State.shapes.oldstage = undefined;
-        State.shapes.newstage = undefined;
+        delete State.shapes.oldstage;
+        delete State.shapes.newstage;
 
         this.stage = stage;
         this.stage.construct();
@@ -157,7 +158,7 @@ export class StageFlow {
 
         if (back) {
             this.history.pop();
-            urlHash();
+            clearHash();
         } else {
             this.history.push(stage);
         }

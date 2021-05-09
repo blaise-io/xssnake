@@ -1,5 +1,4 @@
 import { Shape } from "../../../shared/shape";
-import { FlowData } from "../../flow";
 
 export interface StageInterface {
     construct(): void;
@@ -8,5 +7,5 @@ export interface StageInterface {
 }
 
 interface StageConstructor {
-    new (stageflowData: FlowData): StageInterface;
+    new (): StageInterface;
 }

@@ -2,6 +2,7 @@ import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const"
 import { levelSets } from "../../shared/levelSet/levelSets";
 import { _ } from "../../shared/util";
 import { STORAGE } from "../const";
+import { ClientRoom } from "../room/clientRoom";
 import { State } from "../state";
 import { GameStage } from "./base/gameStage";
 import { InputStage } from "./base/inputStage";
@@ -13,19 +14,13 @@ export class AutoJoinStage extends InputStage {
     name = STORAGE.NAME;
     minlength = PLAYER_NAME_MINLENGTH;
     maxwidth = PLAYER_NAME_MAXWIDTH;
-    next = undefined;
-    label = undefined;
-
-    constructor() {
-        super();
-        this.next = State.flow.data.room.options.isXSS ? ChallengeStage : GameStage;
-        this.label = this.getLabel();
-        this.shape = this.getLabelAndValueShape();
-    }
+    next = State.flow.data.room!.options.isXSS ? ChallengeStage : GameStage;
+    label = this.getLabel();
+    shape = this.getLabelAndValueShape();
 
     private getLabel() {
         const summary = [];
-        const room = State.flow.data.room;
+        const room = State.flow.data.room as ClientRoom;
         const names = room.players.getNames();
 
         this.header = stylizeUpper(_(`Join ${names[0]}'s game`));

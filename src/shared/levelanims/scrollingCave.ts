@@ -6,15 +6,15 @@ import { average } from "../util";
 
 export class ScrollingCave {
     private seedIteration: number;
-    private _shapes: ShapeCollection;
+    private _shapes: ShapeCollection = [];
     private _scroll: number;
     private _scrollPref: number;
     private _max: { stalactite: number; stalagmite: number };
     private gameStartedAtMs: number;
+
     constructor(public seed: number) {
         this.seedIteration = 0;
 
-        this._shapes = new ShapeCollection();
         this._scroll = this._scrollPref = 0;
 
         this._max = {
@@ -56,11 +56,9 @@ export class ScrollingCave {
     _updateShapePixelsArrs(offset: number): void {
         const max = this._max;
 
-        this._shapes.each(
-            function (shape, index) {
-                this._updateShape(shape, index, offset);
-            }.bind(this),
-        );
+        this._shapes.forEach((shape, index) => {
+            this._updateShape(shape, index, offset);
+        });
 
         max.stalactite += offset;
         max.stalagmite += offset;
@@ -80,7 +78,7 @@ export class ScrollingCave {
         const gameTileNormalized = Math.abs(translate[0]) / GAME.TILE;
         if (gameTileNormalized - shape.bbox().width > this._LEVEL_WIDTH) {
             // No longer visible, despawn shape.
-            this._shapes.set(index, null);
+            this._shapes.splice(index, 1);
         } else {
             // Visible, move shape.
             translate[0] += offset * GAME.TILE;
@@ -132,6 +130,6 @@ export class ScrollingCave {
             }
         }
 
-        this._shapes.add(shape);
+        this._shapes.push(shape);
     }
 }

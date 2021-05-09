@@ -1,5 +1,5 @@
 import { _, getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
-import { MENU_POS, NS } from "../const";
+import { MENU_POS, NS, STORAGE } from "../const";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -9,11 +9,11 @@ import { InputXssStage } from "./inputXssStage";
 export class ChallengeStage extends InputStage {
     private _challenge: string;
 
-    name = undefined;
+    name = null;
     maxwidth = 80;
     header = _("Danger Danger");
     next = InputXssStage;
-    label = undefined;
+    label: string;
 
     constructor() {
         super();
@@ -37,12 +37,9 @@ export class ChallengeStage extends InputStage {
         if (value.replace(/['"]/g, "").trim() === String(eval(this._challenge))) {
             text = "> bleep!";
             State.events.off("keydown", NS.INPUT);
-            setTimeout(
-                function () {
-                    State.flow.switchStage(this.next);
-                }.bind(this),
-                1000,
-            );
+            setTimeout(() => {
+                State.flow.switchStage(this.next);
+            }, 1000);
         }
 
         const shape = font(text, MENU_POS.LEFT, top);

@@ -14,7 +14,7 @@ export class ClientSnakeControls {
     private upcomingDirections: number[] = [];
 
     constructor(public snake: ClientSnake) {
-        State.events.on("keydown", NS.SNAKE_CONTROLS, (event) => {
+        State.events.on("keydown", NS.SNAKE_CONTROLS, (event: KeyboardEvent) => {
             const direction = KEY_TO_DIRECTION[event.key];
             if (!State.keysBlocked && typeof direction !== "undefined") {
                 this.setDirection(direction);
@@ -59,7 +59,7 @@ export class ClientSnakeControls {
 
     move(): void {
         if (this.upcomingDirections.length && this.snake.emitSnake) {
-            this.snake.emitSnake(this.upcomingDirections.shift());
+            this.snake.emitSnake(this.upcomingDirections.shift()!);
         }
     }
 }

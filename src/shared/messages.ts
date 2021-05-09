@@ -21,7 +21,7 @@ import {
 } from "./room/roundMessages";
 import { MessageConstructor, MessageId } from "./room/types";
 
-export const NETCODE_MAP = Object.fromEntries([
+export const NETCODE_MAP: Record<MessageId, MessageConstructor> = Object.fromEntries([
     ["C1", ChatClientMessage],
     ["C2", ChatServerMessage],
 

@@ -1,11 +1,19 @@
-import { CRASH_MOVING_WALL, CRASH_OPPONENT, CRASH_SELF, CRASH_WALL } from "../const";
 import { Level } from "../level/level";
 import { Player } from "../room/player";
 import { Snake } from "./snake";
 import { Collision } from "./collision";
 
+export const enum CRASH_INTO {
+    // UNKNOWN,
+    WALL,
+    MOVING_WALL,
+    SELF,
+    OPPONENT_BODY,
+    // OPPONENT_HEAD,
+}
+
 export class SnakeMove {
-    collision: Collision;
+    collision?: Collision;
 
     constructor(
         public snake: Snake,
@@ -23,7 +31,7 @@ export class SnakeMove {
         return parts;
     }
 
-    getCollision(): Collision {
+    getCollision(): Collision | undefined {
         const coordinates = this.getCoordinates(this.location);
         for (let i = 0, m = coordinates.length; i < m; i++) {
             const collision = this.getCollisionAtCoordinate(i, coordinates[i]);
@@ -33,22 +41,27 @@ export class SnakeMove {
         }
     }
 
-    getCollisionAtCoordinate(index: number, coordinate: Coordinate): Collision | undefined {
+    getCollisionAtCoordinate(index: number, coordinate: Coordinate): Collision | null {
         const players = this.players;
-        const levelData = this.level.data;
+        const levelData = this.level.data!;
+
+        if (!coordinate) {
+            return null;
+        }
+
         if (index > 4) {
             const partIndex = this.snake.getPartIndex(coordinate);
             if (-1 !== partIndex && index !== partIndex) {
-                return new Collision(coordinate, CRASH_SELF);
+                return new Collision(coordinate, CRASH_INTO.SELF);
             }
         }
 
         if (levelData.isWall(coordinate[0], coordinate[1])) {
-            return new Collision(coordinate, CRASH_WALL);
+            return new Collision(coordinate, CRASH_INTO.WALL);
         }
 
         if (levelData.isMovingWall(coordinate)) {
-            return new Collision(coordinate, CRASH_MOVING_WALL);
+            return new Collision(coordinate, CRASH_INTO.MOVING_WALL);
         }
 
         for (let i = 0, m = players.length; i < m; i++) {
@@ -59,8 +72,10 @@ export class SnakeMove {
                 snakeOpponent !== this.snake &&
                 snakeOpponent.hasCoordinate(coordinate)
             ) {
-                return new Collision(coordinate, CRASH_OPPONENT);
+                return new Collision(coordinate, CRASH_INTO.OPPONENT_BODY);
             }
         }
+
+        return null;
     }
 }

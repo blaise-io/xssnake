@@ -1,3 +1,4 @@
+import blank from "./levels/blank.png";
 import { LevelAnimationRegistry } from "../levelanim/registry";
 import { LevelData } from "./levelData";
 import { LevelGravity } from "./levelGravity";
@@ -20,14 +21,15 @@ export class LevelSettings {
 }
 
 export class Level {
-    image: string;
-    data: LevelData;
+    data?: LevelData;
+    image = blank;
     animations = new LevelAnimationRegistry();
     settings = new LevelSettings();
     gravity = new LevelGravity();
 
-    async load(loader: (string) => Promise<ImageData>): Promise<void> {
+    async load(loader: (base64image: string) => Promise<ImageData>): Promise<LevelData> {
         this.data = new LevelData(await loader(this.image));
+        return this.data;
     }
 
     destruct(): void {

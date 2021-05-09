@@ -10,8 +10,7 @@ import { animate } from "./shapeClient";
 export class ScoreboardUI {
     private x0 = 3;
     private x1 = 56;
-    private y0 = CANVAS.HEIGHT - 24;
-    private y1 = CANVAS.HEIGHT - 2;
+    private y = CANVAS.HEIGHT - 24;
     private animating: boolean;
     private queue: boolean;
     private queueTimer: number;
@@ -37,7 +36,7 @@ export class ScoreboardUI {
 
     destructShapes(): void {
         for (let i = 0; i < this.podiumSize; i++) {
-            State.shapes[NS.SCORE + i] = undefined;
+            delete State.shapes[NS.SCORE + i];
         }
     }
 
@@ -73,7 +72,7 @@ export class ScoreboardUI {
         this.oldPlayerOrder = newOrder;
     }
 
-    paint(player: ClientPlayer, oldIndex: number, newIndex: number): void {
+    paint(player: ClientPlayer | null, oldIndex: number, newIndex: number): void {
         const oldCoordinate = this.getCoordinatesForIndex(oldIndex);
         const shape = this.getPlayerScoreShape(player, oldCoordinate);
         State.shapes[NS.SCORE + oldIndex] = shape;
@@ -105,7 +104,7 @@ export class ScoreboardUI {
         }
     }
 
-    getPlayerScoreShape(player: ClientPlayer, coordinate: Coordinate): Shape {
+    getPlayerScoreShape(player: ClientPlayer | null, coordinate: Coordinate): Shape {
         let name = "-",
             score = 0;
         if (player && player.connected) {
@@ -142,7 +141,7 @@ export class ScoreboardUI {
         // 2 5
         return [
             this.x0 + (index + 1 <= this.podiumSize / 2 ? 0 : this.itemWidth()),
-            this.y0 + (index % (this.podiumSize / 2)) * this.lineHeight,
+            this.y + (index % (this.podiumSize / 2)) * this.lineHeight,
         ];
         // More chaotic?
         // 0 1

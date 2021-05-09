@@ -22,6 +22,7 @@
     ],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-non-null-assertion": "warn",
     "unused-imports/no-unused-imports": "warn",
     "prefer-const": "warn",
     "no-extend-native": "error",

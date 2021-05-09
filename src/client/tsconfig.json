@@ -3,9 +3,9 @@
     "allowJs": false,
     "baseUrl": "../",
     "module": "es6",
-    "noEmitOnError": true,
+    "noEmitOnError": false,
     "strict": true,
-    "target": "es2019"
+    "target": "esnext"
   },
   "include": [
     "./*/**.ts",

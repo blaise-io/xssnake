@@ -15,9 +15,9 @@ import { clientImageLoader } from "../util/clientUtil";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 
 export class ClientRound extends Round {
-    game: ClientGame;
-    private preGameUI: PreGameUI;
-    private wrapupGameUI: WrapupGame;
+    game?: ClientGame;
+    private preGameUI?: PreGameUI;
+    private wrapupGameUI?: WrapupGame;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         super(players, options);
@@ -29,15 +29,15 @@ export class ClientRound extends Round {
         this.unbindEvents();
         if (this.game) {
             this.game.destruct();
-            // delete this.game;
+            delete this.game;
         }
         if (this.preGameUI) {
             this.preGameUI.destruct();
-            // delete this.preGameUI;
+            delete this.preGameUI;
         }
         if (this.wrapupGameUI) {
             this.wrapupGameUI.destruct();
-            // delete this.wrapupGameUI;
+            delete this.wrapupGameUI;
         }
     }
 
@@ -49,7 +49,7 @@ export class ClientRound extends Round {
             if (this.game) {
                 this.game.destruct();
             }
-            this.game = new ClientGame(this.level, this.players);
+            this.game = new ClientGame(this.level!, this.players);
         });
     }
 
@@ -59,13 +59,20 @@ export class ClientRound extends Round {
             await this.setLevel(message.levelSetIndex, message.levelIndex);
         });
         State.events.on(RoundCountdownMessage.id, NS.ROUND, (message: RoundCountdownMessage) => {
-            this.preGameUI.toggleCountdown(message.enabled);
-            this.preGameUI.updateUI();
+            if (this.preGameUI) {
+                this.preGameUI.toggleCountdown(message.enabled);
+                this.preGameUI.updateUI();
+            }
         });
         State.events.on(RoundStartMessage.id, NS.ROUND, () => {
             this.unbindEvents();
-            this.preGameUI.destruct();
-            this.game.start();
+            if (this.preGameUI) {
+                this.preGameUI.destruct();
+                delete this.preGameUI;
+            }
+            if (this.game) {
+                this.game.start();
+            }
         });
         State.events.on(RoundWrapupMessage.id, NS.ROUND, (message: RoundWrapupMessage) => {
             this.wrapupGameUI = new WrapupGame(
@@ -87,6 +94,8 @@ export class ClientRound extends Round {
         if (this.game) {
             this.game.updatePlayers(this.players);
         }
-        this.preGameUI.updateUI();
+        if (this.preGameUI) {
+            this.preGameUI.updateUI();
+        }
     }
 }

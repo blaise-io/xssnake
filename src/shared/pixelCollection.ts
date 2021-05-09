@@ -108,6 +108,6 @@ export class PixelCollection {
     // }
 
     removeLine(y: number): void {
-        this.pixels[y] = undefined;
+        delete this.pixels[y];
     }
 }

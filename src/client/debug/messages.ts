@@ -10,7 +10,7 @@ import { MessageBoxUI } from "../ui/messageBox";
 
 export function debugMessages(): void {
     setTimeout(function () {
-        const messages = [];
+        const messages: ChatMessage[] = [];
         const author = new Player("Dummy");
         const ui = new MessageBoxUI(messages, author, noop);
 
@@ -36,7 +36,7 @@ export function debugMessages(): void {
             window.setTimeout(addMessage, randomRange(0, 5000));
         }
 
-        messages.push(new ChatMessage(null, "First msg"));
+        messages.push(new ChatMessage(undefined, "First msg"));
         ui.debounceUpdate();
         addMessage();
     }, 200);

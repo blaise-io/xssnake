@@ -5,26 +5,14 @@ import { Shape } from "../../../shared/shape";
 import { _, noop } from "../../../shared/util";
 import { ClientSnake } from "../../game/clientSnake";
 import { State } from "../../state";
-import { setGameTransform } from "../../ui/shapeClient";
 import { zoom } from "../../ui/transformClient";
-import { clientImageLoader, instruct } from "../../util/clientUtil";
+import { instruct } from "../../util/clientUtil";
 
 export class MenuSnake {
-    snake: ClientSnake;
-    timeouts: number[];
-    level: Level;
+    private snake: ClientSnake;
+    private timeouts: number[] = [];
 
-    constructor(level?: typeof Level) {
-        this.timeouts = [];
-
-        this.level = level ? new level() : new BlankLevel();
-        this.level.load(clientImageLoader).then(() => {
-            State.shapes.level = setGameTransform(new Shape(this.level.data.walls));
-            this.spawnSnake();
-        });
-    }
-
-    spawnSnake(): void {
+    constructor(private level: Level) {
         this.snake = new ClientSnake(0, false, "", noop, this.level);
         this.snake.addControls();
         this.snake.showDirection();
@@ -37,7 +25,6 @@ export class MenuSnake {
             clearTimeout(this.timeouts[i]);
         }
         this.snake.destruct();
-        // this.level.destruct();
     }
 
     move(): void {
@@ -65,13 +52,11 @@ export class MenuSnake {
             return true;
         } else if (snakeShape) {
             const pixels = zoom(4, snakeShape.pixels, GAME.LEFT, GAME.TOP, false);
-            pixels.each(
-                function (x, y) {
-                    if (this.overlaysShape(snakeShape, x, y)) {
-                        crash = true;
-                    }
-                }.bind(this),
-            );
+            pixels.each((x: number, y: number) => {
+                if (this.overlaysShape(snakeShape, x, y)) {
+                    crash = true;
+                }
+            });
         }
         return crash;
     }
@@ -89,5 +74,8 @@ export class MenuSnake {
 }
 
 export class NeuteredMenuSnake extends MenuSnake {
-    spawnSnake(): void {}
+    constructor() {
+        super(new BlankLevel());
+        this.destruct();
+    }
 }

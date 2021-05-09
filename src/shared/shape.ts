@@ -2,10 +2,10 @@ import { BoundingBox } from "./boundingBox";
 import { PixelCollection } from "./pixelCollection";
 
 export class Shape {
-    private bboxCache: BoundingBox;
+    private bboxCache?: BoundingBox;
     pixels: PixelCollection;
     cache: unknown; // ShapeCache actually, but is only known to client.
-    effects: Record<string, (delta) => void> = {};
+    effects: Record<string, (delta: number) => void> = {};
     expand = 0;
     flags = { enabled: true, isOverlay: false };
     transform: { translate: [number, number]; scale: number };

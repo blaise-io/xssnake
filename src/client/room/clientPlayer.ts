@@ -4,7 +4,7 @@ import { Player } from "../../shared/room/player";
 import { ClientSnake } from "../game/clientSnake";
 
 export class ClientPlayer extends Player {
-    snake: ClientSnake;
+    snake?: ClientSnake;
 
     static fromPlayer(player: Player): ClientPlayer {
         return new ClientPlayer(

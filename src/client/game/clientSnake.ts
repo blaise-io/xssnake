@@ -1,4 +1,4 @@
-import { GAME_SHIFT_MAP } from "../../shared/const";
+import { DIRECTION, GAME_SHIFT_MAP } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
@@ -14,14 +14,14 @@ import { ClientSnakeControls } from "./clientSnakeControls";
 export class ClientSnake extends Snake {
     elapsed = 0;
     private exploded = false;
-    private controls: ClientSnakeControls;
+    private controls?: ClientSnakeControls;
     private shapeKeys: { snake: string; name: string; direction: string };
 
     constructor(
         public index: number,
         public local: boolean,
         public name: string,
-        public emitSnake: (number) => void,
+        public emitSnake: (direction: DIRECTION) => void,
         level: Level,
     ) {
         super(index, level);
@@ -36,17 +36,10 @@ export class ClientSnake extends Snake {
     }
 
     destruct(): void {
-        // Remove any related shape.
-        const keys = Object.keys(this.shapeKeys);
-        for (let i = 0, m = keys.length; i < m; i++) {
-            const shapeKey = this.shapeKeys[keys[i]];
-            State.shapes[shapeKey] = undefined;
-        }
-
-        if (this.controls) {
-            this.controls.destruct();
-            // delete this.controls;
-        }
+        delete State.shapes[this.shapeKeys.snake];
+        delete State.shapes[this.shapeKeys.name];
+        delete State.shapes[this.shapeKeys.direction];
+        this.controls?.destruct();
     }
 
     move(coordinate: Coordinate): void {
@@ -81,8 +74,8 @@ export class ClientSnake extends Snake {
     }
 
     removeNameAndDirection(): void {
-        State.shapes[this.shapeKeys.name] = undefined;
-        State.shapes[this.shapeKeys.direction] = undefined;
+        delete State.shapes[this.shapeKeys.name];
+        delete State.shapes[this.shapeKeys.direction];
     }
 
     addControls(): void {

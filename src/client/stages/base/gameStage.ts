@@ -1,7 +1,6 @@
 import { CANVAS } from "../../../shared/const";
 import { RoomOptionsMessage } from "../../../shared/room/roomMessages";
 import { Shape } from "../../../shared/shape";
-import { noop } from "../../../shared/util";
 import { COPY_CONNECTING } from "../../copy/copy";
 import { ClientRoom } from "../../room/clientRoom";
 import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
@@ -11,7 +10,7 @@ import { center, flash } from "../../ui/shapeClient";
 import { StageInterface } from "./stage";
 
 export class GameStage implements StageInterface {
-    private room: ClientRoom;
+    private room?: ClientRoom;
 
     constructor() {}
 
@@ -21,16 +20,12 @@ export class GameStage implements StageInterface {
 
     construct(): void {
         State.shapes.CONNECTING = this.connectingShape;
-        this.connectServer().then(() => {
-            this.room = new ClientRoom(
-                State.flow.data.clientPlayer,
-                () => {
-                    this.destructStageLeftovers();
-                    this.room.setupComponents();
-                },
-                noop,
-            );
-            State.flow.data.clientPlayer.send(new RoomOptionsMessage(State.flow.data.roomOptions));
+        this.connectServer().then((clientSocketPlayer) => {
+            this.room = new ClientRoom(clientSocketPlayer, (room) => {
+                this.destructStageLeftovers();
+                room.setupComponents();
+            });
+            clientSocketPlayer.send(new RoomOptionsMessage(State.flow.data.roomOptions));
         });
     }
 
@@ -45,10 +40,10 @@ export class GameStage implements StageInterface {
         delete State.shapes.CONNECTING;
     }
 
-    async connectServer(): Promise<void> {
+    async connectServer(): Promise<ClientSocketPlayer> {
         return new Promise((resolve) => {
             if (State.flow.data.clientPlayer) {
-                resolve();
+                resolve(State.flow.data.clientPlayer);
             } else {
                 State.flow.data.clientPlayer = new ClientSocketPlayer(
                     State.flow.data.name,

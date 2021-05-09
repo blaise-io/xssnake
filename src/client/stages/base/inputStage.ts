@@ -9,13 +9,13 @@ import { storage } from "../../util/clientUtil";
 import { StageConstructor, StageInterface } from "./stage";
 
 export abstract class InputStage implements StageInterface {
-    shape: Shape;
+    shape = new Shape();
     private fontOptions = { wrap: MENU_POS.LEFT + MENU_POS.WIDTH - 25 };
-    private value: string;
-    private input: InputField;
+    private value = "";
+    private input?: InputField;
     private inputTop = MENU_POS.TOP + 17;
 
-    abstract name: STORAGE;
+    abstract name: STORAGE | null;
     abstract header: string;
     abstract label: string;
     abstract next: StageConstructor;
@@ -45,8 +45,8 @@ export abstract class InputStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.message = undefined;
-        this.input.destruct();
+        delete State.shapes.message;
+        this.input?.destruct();
         if (this.name) {
             storage.set(this.name, this.value);
         }
@@ -68,9 +68,9 @@ export abstract class InputStage implements StageInterface {
         input.maxValWidth = this.maxwidth || input.maxValWidth;
         input.displayWidth = this.displayWidth || input.displayWidth;
 
-        input.callback = function (value) {
+        input.callback = (value: string) => {
             this.value = value;
-        }.bind(this);
+        };
 
         input.setValue(this.value);
 

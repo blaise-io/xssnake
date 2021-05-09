@@ -4,8 +4,8 @@ import { State } from "../state";
 import { storage } from "../util/clientUtil";
 
 export class AudioPlayer {
-    private files: Record<string, string>;
-    private mimetype: string;
+    private files?: Record<string, string>;
+    private mimetype?: string;
 
     constructor() {
         const audioFiles = this.getSupportedAudioFiles();

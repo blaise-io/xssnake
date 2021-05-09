@@ -13,7 +13,7 @@ export class RoundMessage implements Message {
     }
 
     static fromRound(round: Round): RoundMessage {
-        return new RoundMessage(round.levelSetIndex, round.levelIndex);
+        return new RoundMessage(round.levelSetIndex as number, round.levelIndex as number);
     }
 
     get serialized(): string {

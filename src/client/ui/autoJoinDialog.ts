@@ -8,7 +8,7 @@ import { Dialog } from "./dialog";
 export class AutoJoinDialog {
     private clientPlayer: ClientSocketPlayer;
     private dialog: Dialog;
-    private messageTimeout: number;
+    private messageTimeout?: number;
 
     constructor(
         public roomKey: string,

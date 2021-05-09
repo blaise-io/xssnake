@@ -3,6 +3,7 @@ import { AUDIENCE } from "../messages";
 import { Message, MessageId } from "../room/types";
 import { Collision } from "./collision";
 import { Snake } from "./snake";
+import { CRASH_INTO } from "./snakeMove";
 
 export class SnakeUpdateServerMessage implements Message {
     static id: MessageId;
@@ -77,7 +78,7 @@ export class SnakeCrashMessage implements Message {
                 return {
                     playerIndex: snake.index,
                     parts: snake.parts,
-                    collision: snake.collision,
+                    collision: snake.collision!,
                 };
             }),
         );
@@ -85,13 +86,15 @@ export class SnakeCrashMessage implements Message {
 
     static deserialize(trustedNetcode: string): SnakeCrashMessage {
         return new SnakeCrashMessage(
-            JSON.parse(trustedNetcode).map((colission) => {
-                return {
-                    index: colission[0],
-                    parts: colission[1],
-                    colission: new Collision(colission[2], colission[3]),
-                };
-            }),
+            JSON.parse(trustedNetcode).map(
+                (colission: [number, Coordinate[], Coordinate, CRASH_INTO]) => {
+                    return {
+                        index: colission[0],
+                        parts: colission[1],
+                        colission: new Collision(colission[2], colission[3]),
+                    };
+                },
+            ),
         );
     }
 

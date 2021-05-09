@@ -62,6 +62,7 @@ export const EV_WIN_FOCUS_CHANGE = "WFC";
 export const EV_PLAYERS_UPDATED = "PU";
 
 export const enum STORAGE {
+    NO_STORE = "",
     MUTE = "mute",
     NAME = "name",
     XSS = "xss",

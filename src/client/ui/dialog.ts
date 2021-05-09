@@ -16,11 +16,11 @@ export const enum DialogType {
 }
 
 export interface DialogSettings {
-    keysBlocked?: boolean;
-    type?: DialogType;
-    width?: number;
-    ok?: () => void;
-    cancel?: () => void;
+    keysBlocked: boolean;
+    type: DialogType;
+    width: number;
+    ok: () => void;
+    cancel: () => void;
 }
 
 /**
@@ -32,9 +32,9 @@ export interface DialogSettings {
 export class Dialog {
     private settings: DialogSettings;
     private _body: string;
-    private _okSelected: boolean;
+    private _okSelected = false;
 
-    constructor(public header: string, body: string, settings: DialogSettings = {}) {
+    constructor(public header: string, body: string, settings: Partial<DialogSettings> = {}) {
         this.header = stylizeUpper(header);
         this._body = body;
 
@@ -55,7 +55,7 @@ export class Dialog {
     }
 
     destruct(): void {
-        State.shapes.dialog = undefined;
+        delete State.shapes.dialog;
         State.keysBlocked = false;
         State.events.off("keydown", NS.DIALOG);
     }

@@ -24,7 +24,7 @@ export class EventHandler {
         if ("on" + topic in document) {
             document.addEventListener(
                 topic as keyof DocumentEventMap,
-                callback as (Event) => void,
+                callback as (event: Event) => void,
                 false,
             );
         }
@@ -45,7 +45,7 @@ export class EventHandler {
                     const callback = this._topics[topic][key];
                     document.removeEventListener(
                         topic.toString() as keyof DocumentEventMap,
-                        callback as (Event) => void,
+                        callback as (event: Event) => void,
                         false,
                     );
                 }

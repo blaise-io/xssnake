@@ -7,43 +7,43 @@ import {
     RoomOptionsMessage,
 } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { _ } from "../../shared/util";
+import { _, noop } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, HASH, NS } from "../const";
 import { State } from "../state";
-import { urlHash } from "../util/clientUtil";
+import { clearHash, setHash } from "../util/url";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRoundSet } from "./clientRoundSet";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
 import { MessageBox } from "./messageBox";
 import { Scoreboard } from "./scoreboard";
 
-const COPY_ERROR = {
-    [ROOM_STATUS.INVALID_KEY]: _("Invalid room key"),
-    [ROOM_STATUS.NOT_FOUND]: _("Room not found"),
-    [ROOM_STATUS.FULL]: _("The room is full"),
-    [ROOM_STATUS.IN_PROGRESS]: _("Game in progress"),
-    [ROOM_STATUS.UNKNOWN_ERROR]: _("Unknown errooshiii#^%^"),
-};
+const COPY_ERROR = Object.fromEntries([
+    [ROOM_STATUS.INVALID_KEY, _("Invalid room key")],
+    [ROOM_STATUS.NOT_FOUND, _("Room not found")],
+    [ROOM_STATUS.FULL, _("The room is full")],
+    [ROOM_STATUS.IN_PROGRESS, _("Game in progress")],
+    [ROOM_STATUS.UNKNOWN_ERROR, _("Unknown errooshiii#^%^")],
+]);
 
 export class ClientRoom {
-    key: string;
-    players: ClientPlayerRegistry;
-    options: RoomOptions;
+    key?: string;
+    players = new ClientPlayerRegistry();
+    options = new RoomOptions();
 
-    private roundSet: ClientRoundSet;
-    private messageBox: MessageBox;
-    private scoreboard: Scoreboard;
+    private roundSet?: ClientRoundSet;
+    private messageBox?: MessageBox;
+    private scoreboard?: Scoreboard;
 
     constructor(
         private clientPlayer: ClientSocketPlayer,
         private resolve: (clientRoom: ClientRoom) => void,
-        private reject: (error: string) => void,
+        private reject: (error: string) => void = noop,
     ) {
         this.bindEvents();
     }
 
     destruct(): void {
-        urlHash();
+        clearHash();
         this.unbindEvents();
         // delete this.key;
         // delete this.options;
@@ -73,7 +73,7 @@ export class ClientRoom {
 
         State.events.on(RoomKeyMessage.id, NS.ROOM, (message: RoomKeyMessage) => {
             this.key = message.key;
-            urlHash(HASH.ROOM, this.key);
+            setHash(HASH.ROOM, this.key);
             this.checkAllRoomDataReceived();
         });
 
@@ -119,7 +119,7 @@ export class ClientRoom {
     // }
 
     // updatePlayers(serializedPlayers: [string, number][]): void {
-    //     if (this.roundSet.round && this.roundSet.round.isMidgame()) {
+    //     if (this.roundSet.round && this.roundSet.round.isMidGame()) {
     //         this.players.deserialize(serializedPlayers);
     //     } else {
     //         this.players.reconstruct(serializedPlayers);
@@ -159,11 +159,11 @@ export class ClientRoom {
                     // Continuing.
                     notification += "…";
                 }
-                this.messageBox.addNotification(notification);
+                this.messageBox?.addNotification(notification);
                 notification = "";
             }
         }
-        this.messageBox.ui.debounceUpdate();
+        this.messageBox?.ui.debounceUpdate();
     }
 
     //    /**

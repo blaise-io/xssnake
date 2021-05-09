@@ -1,5 +1,6 @@
 import { GAME, CANVAS } from "../../shared/const";
 import { Shape } from "../../shared/shape";
+import { noop } from "../../shared/util";
 import { FRAME } from "../const";
 import { State } from "../state";
 
@@ -52,7 +53,7 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
         if (end && progress >= end) {
             Object.entries(State.shapes).forEach(([key, _shape]) => {
                 if (_shape === shape) {
-                    State.shapes[key] = undefined;
+                    delete State.shapes[key];
                 }
             });
         }
@@ -63,38 +64,38 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
     return shape;
 }
 
-export function animate(
-    shape: Shape,
-    options: {
-        from?: Coordinate;
-        to?: Coordinate;
-        duration?: number;
-        doneCallback?: (shape: Shape) => void;
-        progressCallback?: (shape: Shape, x: number, y: number) => void;
-    },
-): Shape {
+export type StageAnimateOptions = {
+    from: Coordinate;
+    to: Coordinate;
+    duration: number;
+    doneCallback: (shape: Shape) => void;
+    progressCallback: (shape: Shape, x: number, y: number) => void;
+};
+
+export function animate(shape: Shape, options: Partial<StageAnimateOptions>): Shape {
     let progress = 0;
-    options = {
+
+    const _options: StageAnimateOptions = {
         from: [0, 0],
         to: [0, 0],
         duration: 200,
-        doneCallback: () => {},
-        progressCallback: () => {},
-        ...options,
+        doneCallback: noop,
+        progressCallback: noop,
     };
+    Object.assign(_options, options);
 
     shape.effects.animate = (delta) => {
         progress += delta;
-        const percent = Math.sqrt(progress / options.duration);
-        if (progress < options.duration) {
-            const x = Math.round(options.from[0] - (options.from[0] - options.to[0]) * percent);
-            const y = Math.round(options.from[1] - (options.from[1] - options.to[1]) * percent);
+        const percent = Math.sqrt(progress / _options.duration);
+        if (progress < _options.duration) {
+            const x = Math.round(_options.from[0] - (_options.from[0] - _options.to[0]) * percent);
+            const y = Math.round(_options.from[1] - (_options.from[1] - _options.to[1]) * percent);
             shape.transform.translate = [x, y];
-            options.progressCallback(shape, x, y);
+            _options.progressCallback(shape, x, y);
         } else {
-            shape.transform.translate = options.to;
+            shape.transform.translate = _options.to;
             delete shape.effects.animate;
-            options.doneCallback(shape);
+            _options.doneCallback(shape);
         }
     };
 

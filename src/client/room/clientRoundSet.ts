@@ -27,6 +27,7 @@ export class ClientRoundSet {
             // TODO: MessageId.ROUND_SWITCH?
             if (this.round.game && this.round.game.started) {
                 this.round.destruct();
+                // TODO: set levelSetIndex, levelIndex immediately.
                 this.round = new ClientRound(this.players, this.options);
                 await this.round.setLevel(message.levelSetIndex, message.levelIndex);
             }

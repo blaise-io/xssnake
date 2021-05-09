@@ -7,7 +7,7 @@ import { fontEndPos, FontOptions, fontPixels, fontWidth } from "../../ui/font";
 import { flash } from "../../ui/shapeClient";
 
 export class InputField {
-    maxValWidth: number;
+    maxValWidth?: number;
     displayWidth: number;
     maxlength: number;
     callback: CallableFunction;
@@ -35,8 +35,8 @@ export class InputField {
             this.input.parentNode.removeChild(this.input);
         }
         this.unbindEvents();
-        State.shapes.INPUT_CARET = undefined;
-        State.shapes.INPUT_VALUE = undefined;
+        delete State.shapes.INPUT_CARET;
+        delete State.shapes.INPUT_VALUE;
         State.keysBlocked = false;
     }
 
@@ -115,8 +115,9 @@ export class InputField {
     getSelectionSegments(): string[] {
         const input = this.input;
         let value = input.value;
-        let start = input.selectionStart;
-        let end = input.selectionEnd; // Handle situation where input value is wider than display width.
+        let start = input.selectionStart as number;
+        let end = input.selectionEnd as number;
+        // Handle situation where input value is wider than display width.
         while (fontWidth(value) > this.displayWidth) {
             if (start === 0) {
                 value = value.substring(0, value.length - 2);

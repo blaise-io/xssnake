@@ -33,10 +33,10 @@ export class ClientSocketPlayer extends ClientPlayer {
 
     destruct(): void {
         this.connected = false;
-        this.connection.onopen = undefined;
-        this.connection.onclose = undefined;
-        this.connection.onerror = undefined;
-        this.connection.onmessage = undefined;
+        this.connection.onopen = noop;
+        this.connection.onclose = noop;
+        this.connection.onerror = noop;
+        this.connection.onmessage = noop;
 
         // Close explicitly when CONNECTING or OPEN.
         if (this.connection.readyState <= 1) {
@@ -46,7 +46,7 @@ export class ClientSocketPlayer extends ClientPlayer {
 
     onopen(): void {
         this.connected = true;
-        this.onopenCallback();
+        this.onopenCallback(this);
         this.send(new NameMessage(this.name));
     }
 
@@ -81,6 +81,6 @@ export class ClientSocketPlayer extends ClientPlayer {
     }
 
     emitSnake(direction: DIRECTION): void {
-        this.send(SnakeUpdateServerMessage.fromData(this.snake, direction));
+        this.send(SnakeUpdateServerMessage.fromData(this.snake!, direction));
     }
 }

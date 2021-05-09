@@ -5,7 +5,7 @@ import { Menu } from "../components/menu";
 import { StageInterface } from "./stage";
 
 export class SelectStage implements StageInterface {
-    menu: Menu;
+    menu = new Menu("");
 
     getShape(): Shape {
         return this.menu.getShape();
@@ -17,7 +17,7 @@ export class SelectStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.stage = undefined;
+        delete State.shapes.stage;
     }
 
     handleKeys(event: KeyboardEvent): void {

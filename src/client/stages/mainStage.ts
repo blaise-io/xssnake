@@ -1,10 +1,12 @@
 import { ROOM_KEY_LENGTH } from "../../shared/const";
+import { BlankLevel } from "../../shared/level/levels/internal/blank";
 import { _, getRandomName } from "../../shared/util";
 import { isStrOfLen } from "../../shared/util/sanitizer";
 import { HASH, STORAGE } from "../const";
 import { COPY_MAIN_INSTRUCT } from "../copy/copy";
 import { State } from "../state";
-import { error, storage, stylizeUpper, urlHash } from "../util/clientUtil";
+import { clientImageLoader, error, storage, stylizeUpper } from "../util/clientUtil";
+import { getHash } from "../util/url";
 import { AutoJoinStage } from "./autoJoinStage";
 import { GameStage } from "./base/gameStage";
 import { SelectStage } from "./base/selectStage";
@@ -19,17 +21,20 @@ export class MainStage extends SelectStage {
     constructor() {
         super();
 
-        const roomKey = urlHash(HASH.ROOM);
+        const roomKey = getHash(HASH.ROOM);
         this.menu = this.getMenu();
 
         if (isStrOfLen(roomKey, ROOM_KEY_LENGTH)) {
             this.initializeAutoJoin(roomKey);
         } else if (!State.menuSnake) {
-            State.menuSnake = new MenuSnake();
+            const level = new BlankLevel();
+            level.load(clientImageLoader).then(() => {
+                State.menuSnake = new MenuSnake(level);
+            });
         }
     }
 
-    private initializeAutoJoin(roomKey) {
+    private initializeAutoJoin(roomKey: string) {
         new AutoJoinDialog(
             roomKey,
             (clientRoom) => {

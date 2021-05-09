@@ -9,6 +9,7 @@ import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
+import { ClientSnake } from "./clientSnake";
 import { SpawnableRegistry } from "./spawnableRegistry";
 
 export class ClientGame {
@@ -31,7 +32,7 @@ export class ClientGame {
         this.spawnables.destruct();
 
         for (const k in Object.keys(getLevelShapes(this.level))) {
-            State.shapes[k] = undefined;
+            delete State.shapes[k];
         }
 
         // delete this.level;
@@ -51,8 +52,7 @@ export class ClientGame {
             SnakeUpdateClientMessage.id,
             NS.GAME,
             (message: SnakeUpdateClientMessage) => {
-                const clientIndex = message.playerIndex as number;
-                const snake = this.players[clientIndex].snake;
+                const snake = this.players[message.playerIndex].snake as ClientSnake;
                 snake.direction = message.direction;
                 snake.parts = message.parts;
                 // If server updated snake, client prediction
@@ -61,9 +61,12 @@ export class ClientGame {
                 State.events.on(SnakeCrashMessage.id, NS.GAME, (message: SnakeCrashMessage) => {
                     for (let i = 0, m = message.colissions.length; i < m; i++) {
                         const collision = message.colissions[i];
-                        const snake = this.players[collision.playerIndex].snake;
-                        snake.parts = collision.parts;
-                        snake.setCrashed();
+                        const opponent = this.players[collision.playerIndex];
+                        if (opponent && opponent.snake) {
+                            const snake = opponent.snake;
+                            snake.parts = collision.parts;
+                            snake.setCrashed();
+                        }
                     }
                 });
             },
@@ -94,13 +97,13 @@ export class ClientGame {
         return players;
     }
 
-    updateLevel(level: Level): void {
-        this.level.destruct();
-        this.level = level;
-        Object.assign(State.shapes, getLevelShapes(level));
-        // Apply changes in spawns.
-        this.updatePlayers(this.players);
-    }
+    // updateLevel(level: Level): void {
+    //     this.level.destruct();
+    //     this.level = level;
+    //     Object.assign(State.shapes, getLevelShapes(level));
+    //     // Apply changes in spawns.
+    //     this.updatePlayers(this.players);
+    // }
 
     // /**
     //  * TODO: Typing for things like these.

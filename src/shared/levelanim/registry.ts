@@ -7,8 +7,8 @@ import { ShapeCollection } from "../shapeCollection";
 
 /* TODO: Extend Array */
 export class LevelAnimationRegistry {
-    animations = [];
-    walls = [];
+    animations: ShapeAnimation[] = [];
+    walls: ShapeCollection[] = [];
     started = false;
     progress = 0;
 
@@ -34,7 +34,7 @@ export class LevelAnimationRegistry {
         return walls;
     }
 
-    updateAnimation(animation: ShapeAnimation): boolean {
+    updateAnimation(animation: ShapeAnimation): ShapeCollection {
         return animation.update(this.progress, this.started);
     }
 
@@ -47,7 +47,7 @@ export class LevelAnimationRegistry {
     }
 
     // private _updateShapes(animIndex, shapeCollection) {
-    //     const shapes = shapeCollection.shapes;
+    //     const shapes = shapeCollection;
     //     for (let i = 0, m = shapes.length; i < m; i++) {
     //         this._updateShape([NS.ANIM, animIndex, i].join("_"), shapes[i]);
     //     }
@@ -61,7 +61,7 @@ export class LevelAnimationRegistry {
     //         }
     //         State.shapes[key] = shape;
     //     } else {
-    //         State.shapes[key]  = undefined;
+    //         delete State.shapes[key]  ;
     //     }
     // }
 }

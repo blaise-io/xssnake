@@ -13,7 +13,7 @@ export class MessageBoxUI {
     private animating = false;
     private skipQueue = false;
     private queued = 0;
-    private inputField: InputField;
+    private inputField?: InputField;
     private lineHeight = 7;
     private animationDuration = 200;
     private x0 = 109;
@@ -25,7 +25,7 @@ export class MessageBoxUI {
     constructor(
         public messages: ChatMessage[],
         public localPlayer: Player,
-        private sendMessageFn: (string) => void,
+        private sendMessageFn: (body: string) => void,
     ) {
         this.bindEvents();
         this.updateMessages();
@@ -111,7 +111,7 @@ export class MessageBoxUI {
             flash(State.shapes.MSG_ENTER, speed, speed);
             lifetime(State.shapes.MSG_ENTER, 0, speed);
         } else {
-            State.shapes.MSG_ENTER = undefined;
+            delete State.shapes.MSG_ENTER;
         }
     }
 

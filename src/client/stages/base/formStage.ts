@@ -5,7 +5,7 @@ import { Form } from "../components/form";
 import { StageConstructor, StageInterface } from "./stage";
 
 export abstract class FormStage implements StageInterface {
-    form: Form = undefined;
+    form = new Form("");
 
     getShape(): Shape {
         return this.form.getShape();
@@ -19,7 +19,7 @@ export abstract class FormStage implements StageInterface {
 
     destruct(): void {
         State.events.off("keydown", NS.STAGES);
-        State.shapes.stage = undefined;
+        delete State.shapes.stage;
     }
 
     private handleKeys(event: KeyboardEvent): void {

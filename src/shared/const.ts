@@ -74,13 +74,6 @@ export const enum ROOM_STATUS {
     UNKNOWN_ERROR,
 }
 
-export const CRASH_UNKNOWN = 0;
-export const CRASH_WALL = 1;
-export const CRASH_MOVING_WALL = 2;
-export const CRASH_SELF = 3;
-export const CRASH_OPPONENT = 4;
-export const CRASH_OPPONENT_DRAW = 5;
-
 export const NETCODE_PING_INTERVAL = 3000;
 export const NETCODE_SYNC_MS = 500;
 

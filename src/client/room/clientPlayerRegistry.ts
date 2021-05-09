@@ -7,7 +7,7 @@ import { ClientPlayer } from "./clientPlayer";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
 
 export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
-    players: ClientPlayer[];
+    players: ClientPlayer[] = [];
 
     get localPlayer(): ClientSocketPlayer {
         return this.find((p) => p.local) as ClientSocketPlayer;
@@ -79,36 +79,36 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
         const keys = Object.keys(State.shapes);
         for (let i = 0, m = keys.length; i < m; i++) {
             if (keys[i].substr(0, NS.SNAKE.length) === NS.SNAKE) {
-                State.shapes[keys[i]] = undefined;
+                delete State.shapes[keys[i]];
             }
         }
     }
 
     moveSnakes(level: Level, elapsed: number, shift: Shift): void {
         for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake.handleNextMove(level, elapsed, shift, this);
-            this[i].snake.shiftParts(shift);
+            this[i].snake!.handleNextMove(level, elapsed, shift, this);
+            this[i].snake!.shiftParts(shift);
         }
     }
 
     showMeta(): void {
         for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake.showName();
+            this[i].snake!.showName();
         }
         if (this.localPlayer) {
-            this.localPlayer.snake.showDirection();
+            this.localPlayer.snake!.showDirection();
         }
     }
 
     hideMeta(): void {
         for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake.removeNameAndDirection();
+            this[i].snake!.removeNameAndDirection();
         }
     }
 
     addControls(): void {
         if (this.localPlayer) {
-            this.localPlayer.snake.addControls();
+            this.localPlayer.snake!.addControls();
         }
     }
 

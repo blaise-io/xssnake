@@ -6,7 +6,7 @@
     "module": "es6",
     "moduleResolution": "node",
     "noEmitOnError": true,
-    "target": "es2019"
+    "target": "esnext"
   },
   "typeRoots": [
     "../../node_modules/@types",
