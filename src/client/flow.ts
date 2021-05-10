@@ -21,7 +21,6 @@ export interface FlowData {
 }
 
 export class StageFlow {
-    GameStage?: StageConstructor;
     stage: StageInterface = new MainStage();
     data: FlowData = {
         xss: storage.get(STORAGE.XSS) as string,
