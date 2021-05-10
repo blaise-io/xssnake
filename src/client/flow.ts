@@ -21,7 +21,7 @@ export interface FlowData {
 }
 
 export class StageFlow {
-    stage: StageInterface = new MainStage();
+    stage: StageInterface;
     data: FlowData = {
         xss: storage.get(STORAGE.XSS) as string,
         name: storage.get(STORAGE.NAME) as string,
@@ -33,6 +33,7 @@ export class StageFlow {
     private history: StageInterface[] = [];
 
     constructor(private FirstStage = MainStage as StageConstructor) {
+        this.stage = new FirstStage();
         this.start();
     }
 
@@ -46,6 +47,7 @@ export class StageFlow {
 
     restart(): void {
         this.destruct();
+        this.stage = new this.FirstStage();
         this.start();
     }
 
@@ -56,7 +58,7 @@ export class StageFlow {
         Object.assign(State.shapes, outerBorder());
         State.shapes.HEADER = xssnakeHeader();
 
-        this.setStage(new this.FirstStage(), false);
+        this.setStage(this.stage, false);
     }
 
     switchStage(Stage?: StageConstructor, options = { back: false }): void {

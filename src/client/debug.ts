@@ -6,7 +6,7 @@ import { debugMessages } from "./debug/messages";
 import { debugScoreboard } from "./debug/scoreboard";
 import { debugTabUI } from "./debug/tabui";
 
-export function runDebug(): void {
+export function runDebug(): () => void {
     const registry = Object.fromEntries([
         ["dialog", debugDialog],
         ["font", debugFont],
@@ -17,8 +17,6 @@ export function runDebug(): void {
         ["tabui", debugTabUI],
     ]);
 
-    const debug = new URL(window.location.href).searchParams.get("debug");
-    if (debug) {
-        registry[debug]();
-    }
+    const debug = new URL(window.location.href).searchParams.get("debug") || "";
+    return registry[debug];
 }
