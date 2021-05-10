@@ -1,5 +1,6 @@
 import { EventEmitter } from "events";
 import { SECONDS_ROUND_COUNTDOWN, SERVER_EVENT } from "../../shared/const";
+import { loadLevel } from "../../shared/level/level";
 import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
@@ -79,20 +80,18 @@ export class ServerRound extends Round {
         this.countdownStarted = enabled;
         this.players.send(new RoundCountdownMessage(enabled));
         if (enabled) {
-            this.countdownTimer = setTimeout(() => {
-                this.startRound();
+            this.countdownTimer = setTimeout(async () => {
+                await this.startRound();
             }, SECONDS_ROUND_COUNTDOWN * 1000);
         }
     }
 
-    startRound(): void {
+    async startRound(): Promise<void> {
         this.unbindEvents();
-        this.level = new this.LevelClass();
-        this.level.load(serverImageLoader).then(() => {
-            this.game = new ServerGame(this.roomEmitter, this.level!, this.players);
-            this.started = true;
-            this.players.send(new RoundStartMessage());
-        });
+        this.level = await loadLevel(this.LevelClass, serverImageLoader);
+        this.game = new ServerGame(this.roomEmitter, this.level, this.players);
+        this.started = true;
+        this.players.send(new RoundStartMessage());
     }
 
     stopCountDown(): void {

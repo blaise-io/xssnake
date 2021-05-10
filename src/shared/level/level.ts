@@ -21,21 +21,25 @@ export class LevelSettings {
 }
 
 export class Level {
-    data?: LevelData;
-    image = blank;
+    static image: LevelString = blank;
+
     animations = new LevelAnimationRegistry();
     settings = new LevelSettings();
     gravity = new LevelGravity();
 
-    async load(loader: (base64image: string) => Promise<ImageData>): Promise<LevelData> {
-        this.data = new LevelData(await loader(this.image));
-        return this.data;
-    }
+    constructor(public data: LevelData) {}
 
     destruct(): void {
-        // delete this.animations;
-        // delete this.settings;
-        // delete this.data;
-        // delete this.gravity;
+        // this.animations.destruct();
+        // this.settings.destruct();
+        // delete this.gravity.destruct();
     }
+}
+
+export async function loadLevel(
+    LevelClass: typeof Level,
+    loader: (image: LevelString) => Promise<ImageData>,
+): Promise<Level> {
+    const imageData = await loader(LevelClass.image);
+    return new LevelClass(new LevelData(imageData));
 }

@@ -1,3 +1,4 @@
+import { loadLevel } from "../../shared/level/level";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import {
@@ -41,16 +42,16 @@ export class ClientRound extends Round {
         }
     }
 
-    setLevel(levelSetIndex: number, levelIndex: number): Promise<void> {
+    async setLevel(levelSetIndex: number, levelIndex: number): Promise<void> {
         this.levelSetIndex = levelSetIndex;
         this.levelIndex = levelIndex;
-        this.level = new this.LevelClass();
-        return this.level.load(clientImageLoader).then(() => {
-            if (this.game) {
-                this.game.destruct();
-            }
-            this.game = new ClientGame(this.level!, this.players);
-        });
+
+        if (this.game) {
+            this.game.destruct();
+        }
+
+        this.level = await loadLevel(this.LevelClass, clientImageLoader);
+        this.game = new ClientGame(this.level, this.players);
     }
 
     bindEvents(): void {

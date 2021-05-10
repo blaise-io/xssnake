@@ -1,4 +1,5 @@
 import { ROOM_KEY_LENGTH } from "../../shared/const";
+import { loadLevel } from "../../shared/level/level";
 import { BlankLevel } from "../../shared/level/levels/internal/blank";
 import { _, getRandomName } from "../../shared/util";
 import { isStrOfLen } from "../../shared/util/sanitizer";
@@ -26,8 +27,7 @@ export class MainStage extends SelectStage {
         if (isStrOfLen(roomKey, ROOM_KEY_LENGTH)) {
             this.initializeAutoJoin(roomKey);
         } else if (!State.menuSnake) {
-            const level = new BlankLevel();
-            level.load(clientImageLoader).then(() => {
+            loadLevel(BlankLevel, clientImageLoader).then((level) => {
                 State.menuSnake = new MenuSnake(level);
             });
         }
