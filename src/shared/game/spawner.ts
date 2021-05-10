@@ -37,7 +37,7 @@ export class Spawner {
         // Try multiple times, is less logic/iterations versus compiling a list.
         const attempts = 50;
         for (let i = 0; i < attempts; i++) {
-            const r = this.level.data!.empties.random();
+            const r = this.level.data.empties.random();
             for (let ii = 0, mm = this.spawns.length; ii < mm; ii++) {
                 if (!eq(r, this.spawns[ii].coordinate) && !this.players.hasCoordinate(r)) {
                     return r;

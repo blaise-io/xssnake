@@ -3,31 +3,35 @@ import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { shift } from "../../shared/transform";
 
-export function outline(shape: Shape, hPadding = 6, vPadding = 6, round = true): Shape {
-    let bbox = shape.bbox();
-    const r = round ? 1 : 0;
+export function outline(shape: Shape, hPadding = 10, vPadding = 10, roundedCorners = true): Shape {
+    const bbox = shape.bbox();
 
-    // Keep in viewport
-    if (bbox.y0 - vPadding < 0) {
-        shape.set(shift(shape.pixels, 0, vPadding - bbox.y0));
-        bbox = shape.bbox();
+    // Cannot have negative pixel positions, so we need to shift pixels and offset using transform.
+    const offsetX = Math.abs(Math.min(bbox.x0 - hPadding - 1, 0));
+    const offsetY = Math.abs(Math.min(bbox.y0 - vPadding - 1, 0));
+
+    if (offsetX || offsetY) {
+        shape.transform.translate[0] += -offsetX;
+        shape.transform.translate[1] += -offsetY;
+        shape.set(shift(shape.pixels, offsetX, offsetY));
+        bbox.x0 += offsetX;
+        bbox.y0 += offsetY;
     }
 
-    const x0 = bbox.x0 - hPadding;
-    const x1 = bbox.x1 + hPadding;
-    const y0 = bbox.y0 - vPadding;
-    const y1 = bbox.y1 + vPadding;
+    const lw = 1;
+    const x0 = bbox.x0 - hPadding - lw;
+    const x1 = bbox.x1 + hPadding * 2 + lw * 2;
+    const y0 = bbox.y0 - vPadding - lw;
+    const y1 = bbox.y1 + vPadding * 2;
+    const r = +roundedCorners;
+
     shape.add(
         line(x0, y0 + 1, x0, y1), // Left
         line(x0 + r, y0, x1 - r, y0), // Top
         line(x1, y0 + 1, x1, y1), // Right
         line(x0, y1, x1, y1), // Bottom
-        line(x0 + r, y1 + 1, x1 - r, y1 + 1), // Bottom 2
+        line(x0 + r, y1 + 1, x1 - r, y1 + 1), // Bottom shadow
     );
-
-    // Don't clear the missing pixel in the corners
-    // because of rounded corners:
-    shape.bbox(-1);
 
     return shape;
 }

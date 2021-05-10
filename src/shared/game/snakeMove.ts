@@ -43,7 +43,7 @@ export class SnakeMove {
 
     getCollisionAtCoordinate(index: number, coordinate: Coordinate): Collision | null {
         const players = this.players;
-        const levelData = this.level.data!;
+        const levelData = this.level.data;
 
         if (!coordinate) {
             return null;

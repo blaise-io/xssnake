@@ -22,13 +22,12 @@ export class BoundingBox {
         }
     }
 
-    expand(expand: number): BoundingBox {
+    expand(expand: number): void {
         this.x0 -= expand;
         this.y0 -= expand;
         this.x1 += expand;
         this.y1 += expand;
         this.setDimensions();
-        return this;
     }
 
     private calculate(pixels: PixelCollection): BoundingBox {

@@ -1,6 +1,5 @@
 import { GAME } from "../../../shared/const";
 import { Level } from "../../../shared/level/level";
-import { BlankLevel } from "../../../shared/level/levels/internal/blank";
 import { Shape } from "../../../shared/shape";
 import { _, noop } from "../../../shared/util";
 import { ClientSnake } from "../../game/clientSnake";
@@ -29,8 +28,7 @@ export class MenuSnake {
 
     move(): void {
         const snake = this.snake;
-
-        snake.collision = undefined;
+        delete snake.collision;
 
         const nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {
@@ -70,12 +68,5 @@ export class MenuSnake {
             }
         }
         return false;
-    }
-}
-
-export class NeuteredMenuSnake extends MenuSnake {
-    constructor() {
-        super(new BlankLevel());
-        this.destruct();
     }
 }

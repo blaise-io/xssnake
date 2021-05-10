@@ -3,6 +3,7 @@ import { LevelAnimationRegistry } from "../levelanim/registry";
 import { LevelData } from "./levelData";
 import { LevelGravity } from "./levelGravity";
 import { Reverse, SpeedBoost } from "./spawnables";
+import { LevelString } from "./types";
 
 export class LevelSettings {
     gravity = [0, 0];

@@ -12,8 +12,9 @@ State.shapes = {};
 State.events = new EventHandler();
 State.canvas = new Canvas();
 State.audio = new AudioPlayer();
-State.flow = new StageFlow();
 
 if (ENV_DEBUG) {
     runDebug();
+} else {
+    State.flow = new StageFlow();
 }

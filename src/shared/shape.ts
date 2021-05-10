@@ -35,8 +35,8 @@ export class Shape {
     }
 
     uncache(): Shape {
-        // delete this.cache;
-        // delete this.bboxCache;
+        delete this.cache;
+        delete this.bboxCache;
         return this;
     }
 

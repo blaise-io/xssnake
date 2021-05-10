@@ -13,7 +13,7 @@ export class Snake {
 
     // TODO: pass spawn, direction, size, speed
     constructor(public index: number, level: Level) {
-        const spawn = level.data!.spawns[index];
+        const spawn = level.data.spawns[index];
         this.parts = [spawn.location];
         this.direction = spawn.direction;
         this.size = level.settings.snakeSize;

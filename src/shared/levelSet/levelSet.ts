@@ -1,9 +1,5 @@
-import { Level } from "../level/level";
+import { LevelConstructor } from "../level/types";
 import { randomArrIndex } from "../util";
-
-interface LevelConstructor {
-    new (): Level;
-}
 
 export class LevelSet extends Array<LevelConstructor> {
     constructor(public title: string) {

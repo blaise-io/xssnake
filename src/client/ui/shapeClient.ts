@@ -4,13 +4,23 @@ import { noop } from "../../shared/util";
 import { FRAME } from "../const";
 import { State } from "../state";
 
-export function center(shape: Shape, width = CANVAS.WIDTH, height = CANVAS.HEIGHT): void {
+export function center(
+    shape: Shape,
+    width = CANVAS.WIDTH,
+    height = CANVAS.HEIGHT,
+    reset = false,
+): void {
     const bbox = shape.bbox();
 
     const x = Math.round((width - bbox.width) / 2);
-    const y = Math.round((height - bbox.height) / 2);
+    const y = Math.round((height - bbox.height) / 2.5); // Intentional, looks better.
 
-    shape.transform.translate = [x - bbox.x0, y - bbox.y0];
+    if (reset) {
+        shape.transform.translate = [x - bbox.x0, y - bbox.y0];
+    } else {
+        shape.transform.translate[0] += x - bbox.x0;
+        shape.transform.translate[1] += y - bbox.y0;
+    }
 }
 
 export function setGameTransform(shape: Shape): Shape {
