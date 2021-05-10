@@ -1,5 +1,5 @@
 import * as util from "util";
-import { NETCODE_SYNC_MS, SE_PLAYER_COLLISION, SERVER_EVENT } from "../../shared/const";
+import { SE_PLAYER_COLLISION, SERVER_EVENT } from "../../shared/const";
 import { Level } from "../../shared/level/level";
 import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
 import { Player } from "../../shared/room/player";
@@ -9,8 +9,8 @@ import { Server, SocketClient } from "../netcode/server";
 import { ServerRoom } from "./serverRoom";
 
 export class ServerPlayer extends Player {
-    room: ServerRoom;
-    snake: ServerSnake;
+    room?: ServerRoom;
+    snake?: ServerSnake;
 
     constructor(public server: Server, public client: SocketClient) {
         super();
@@ -35,9 +35,8 @@ export class ServerPlayer extends Player {
         if (this.connected) {
             this.disconnect();
         }
-        // delete this.server;
-        // delete this.snake;
-        // delete this.room;
+        delete this.room;
+        delete this.snake;
     }
 
     disconnect(): void {
@@ -108,9 +107,4 @@ export class ServerPlayer extends Player {
     //         this.snake.destruct();
     //     }
     // }
-
-    getMaxMismatchesAllowed(): number {
-        const latency = Math.min(NETCODE_SYNC_MS, this.client.latency);
-        return Math.ceil(latency / this.snake.speed);
-    }
 }

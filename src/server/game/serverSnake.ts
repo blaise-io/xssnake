@@ -6,18 +6,13 @@ import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 
 export class ServerSnake extends Snake {
     private elapsed: number;
+
     constructor(public index: number, public level: Level) {
         super(index, level);
         this.elapsed = 0;
     }
 
-    destruct(): void {
-        // delete this.level;
-    }
-
-    serialize(): [number, number, Coordinate[]] {
-        return [this.index, this.direction, this.parts];
-    }
+    destruct(): void {}
 
     handleNextMove(
         tick: number,
@@ -49,6 +44,6 @@ export class ServerSnake extends Snake {
     }
 
     hasCollisionLteTick(tick: number): boolean {
-        return !this.crashed && this.collision && this.collision.tick <= tick;
+        return !this.crashed && !!this.collision && this.collision.tick <= tick;
     }
 }

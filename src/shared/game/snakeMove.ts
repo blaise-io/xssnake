@@ -9,7 +9,7 @@ export const enum CRASH_INTO {
     MOVING_WALL,
     SELF,
     OPPONENT_BODY,
-    // OPPONENT_HEAD,
+    OPPONENT_HEAD,
 }
 
 export class SnakeMove {

@@ -17,7 +17,7 @@ export class ServerRoundSet {
     round: ServerRound;
     private score: ServerScore;
     private roundIndex = 0;
-    private nextRoundTimeout: NodeJS.Timeout;
+    private nextRoundTimeout?: NodeJS.Timeout;
     constructor(
         public roomEmitter: EventEmitter,
         public players: ServerPlayerRegistry,
@@ -32,7 +32,9 @@ export class ServerRoundSet {
 
     destruct(): void {
         this.roomEmitter.removeAllListeners(String(SE_PLAYER_COLLISION));
-        clearTimeout(this.nextRoundTimeout);
+        if (this.nextRoundTimeout) {
+            clearTimeout(this.nextRoundTimeout);
+        }
 
         this.levelPlayset.destruct();
         // delete this.levelPlayset;
@@ -80,7 +82,7 @@ export class ServerRoundSet {
 
     handleCollisions(crashingPlayers: ServerPlayer[]): void {
         const alive = this.round.getAlivePlayers();
-        this.score.update(crashingPlayers, this.round.level);
+        this.score.update(crashingPlayers, this.round.level!);
         if (alive.length <= 1) {
             this.switchRounds(alive[0] || null);
         }

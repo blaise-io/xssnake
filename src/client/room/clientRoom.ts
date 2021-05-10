@@ -129,7 +129,7 @@ export class ClientRoom {
     // }
 
     get allDataReceived(): boolean {
-        return Boolean(this.key && this.options && this.players);
+        return !!this.key && !!this.options && !!this.players;
     }
 
     checkAllRoomDataReceived(): void {

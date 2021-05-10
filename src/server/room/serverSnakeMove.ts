@@ -59,11 +59,11 @@ export class ServerSnakeMove {
     }
 
     getStatus(): number {
-        const snake = this.player.snake;
+        const snake = this.player.snake!;
         let clientParts = this.parts;
 
         // Crop client snake because we don't trust the length the client sent.
-        const numSyncParts = NETCODE_SYNC_MS / this.player.snake.speed;
+        const numSyncParts = NETCODE_SYNC_MS / snake.speed;
         clientParts = clientParts.slice(-numSyncParts);
 
         // Don't allow gaps in the snake.
@@ -80,7 +80,10 @@ export class ServerSnakeMove {
 
         // Check if client-server delta does not exceed limit.
         const mismatches = Math.abs(commonPartIndices[1] - commonPartIndices[0]);
-        if (mismatches > this.player.getMaxMismatchesAllowed()) {
+        const maxMismatches = Math.ceil(
+            Math.min(NETCODE_SYNC_MS, this.player.client.latency) / snake.speed,
+        );
+        if (mismatches > maxMismatches) {
             return VALIDATE_ERR_MISMATCHES;
         }
 

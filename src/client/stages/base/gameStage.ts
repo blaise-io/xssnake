@@ -1,7 +1,7 @@
 import { CANVAS } from "../../../shared/const";
 import { RoomOptionsMessage } from "../../../shared/room/roomMessages";
 import { Shape } from "../../../shared/shape";
-import { COPY_CONNECTING } from "../../copy/copy";
+import { _ } from "../../../shared/util";
 import { ClientRoom } from "../../room/clientRoom";
 import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
 import { State } from "../../state";
@@ -62,7 +62,7 @@ export class GameStage implements StageInterface {
     }
 
     get connectingShape(): Shape {
-        const shape = font(COPY_CONNECTING);
+        const shape = font(_("Connecting..."));
         center(shape, CANVAS.WIDTH, CANVAS.HEIGHT - 20);
         flash(shape);
         return shape;

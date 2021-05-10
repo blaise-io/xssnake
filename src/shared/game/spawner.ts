@@ -5,7 +5,7 @@ import { PlayerRegistry } from "../room/playerRegistry";
 import { eq } from "../util";
 
 export class Spawner {
-    private spawnAppleTimer: ReturnType<typeof setTimeout>;
+    private spawnAppleTimer?: ReturnType<typeof setTimeout>;
     private spawns: Spawnable[] = [];
 
     constructor(
@@ -24,18 +24,20 @@ export class Spawner {
     }
 
     destruct(): void {
-        clearTimeout(this.spawnAppleTimer);
+        if (this.spawnAppleTimer) {
+            clearTimeout(this.spawnAppleTimer);
+        }
         for (let i = 0, m = this.spawns.length; i < m; i++) {
             this.spawns[i].destruct();
         }
-        // delete this.spawns;
+        this.spawns.length = 0;
     }
 
     get newSpawnLocation(): Coordinate | undefined {
         // Try multiple times, is less logic/iterations versus compiling a list.
         const attempts = 50;
         for (let i = 0; i < attempts; i++) {
-            const r = this.level.data.empties.random();
+            const r = this.level.data!.empties.random();
             for (let ii = 0, mm = this.spawns.length; ii < mm; ii++) {
                 if (!eq(r, this.spawns[ii].coordinate) && !this.players.hasCoordinate(r)) {
                     return r;

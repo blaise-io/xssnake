@@ -2,10 +2,9 @@ import { ROOM_KEY_LENGTH } from "../../shared/const";
 import { BlankLevel } from "../../shared/level/levels/internal/blank";
 import { _, getRandomName } from "../../shared/util";
 import { isStrOfLen } from "../../shared/util/sanitizer";
-import { HASH, STORAGE } from "../const";
-import { COPY_MAIN_INSTRUCT } from "../copy/copy";
+import { HASH, STORAGE, UC } from "../const";
 import { State } from "../state";
-import { clientImageLoader, error, storage, stylizeUpper } from "../util/clientUtil";
+import { clientImageLoader, error, isMac, storage, stylizeUpper } from "../util/clientUtil";
 import { getHash } from "../util/url";
 import { AutoJoinStage } from "./autoJoinStage";
 import { GameStage } from "./base/gameStage";
@@ -55,7 +54,14 @@ export class MainStage extends SelectStage {
         const name = storage.get(STORAGE.NAME) as string;
         const header = stylizeUpper(name ? `Yay ${name} is back!` : "Multiplayer Snake!");
 
-        const menu = new Menu(header, COPY_MAIN_INSTRUCT);
+        const menu = new Menu(
+            header,
+            [
+                _("M to mute/unmute sounds"),
+                _(`${isMac() ? "Cmd+Ctrl+F11" : "F11"} to enter/exit fullscreen`),
+                _("Arrow keys, Esc and " + UC.ENTER_KEY + " to navigate"),
+            ].join(" …\n"),
+        );
 
         menu.add(
             new MenuOption(_("Quick Game"), "", () => {

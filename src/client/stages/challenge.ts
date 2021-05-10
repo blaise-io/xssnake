@@ -1,5 +1,5 @@
 import { _, getRandomItemFrom, randomRange, randomStr } from "../../shared/util";
-import { MENU_POS, NS, STORAGE } from "../const";
+import { MENU_POS, NS } from "../const";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -52,9 +52,8 @@ export class ChallengeStage extends InputStage {
         "document.scripts[0].tagName",
         "document.documentElement.tagName",
         "location.protocol.split('').reverse().join('')[%d]",
-        "'OUIMERCI!'.charAt(Math.ceil(Math.random())*%d)",
+        "'OUIMERCIFROMAGE'.charAt(Math.ceil(Math.random())*%d)",
         "Array(%d).join(encodeURI(' '))",
-        "parseInt('1000',%d+2)",
         "2e%d",
         "String([1,2,3][3]).charAt(%d)",
         "String(typeof []).charAt(%d)",

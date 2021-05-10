@@ -5,7 +5,8 @@
     "experimentalDecorators": true,
     "module": "es6",
     "moduleResolution": "node",
-    "noEmitOnError": true,
+    "noEmitOnError": false,
+    "strict": true,
     "target": "esnext"
   },
   "typeRoots": [

@@ -28,7 +28,7 @@ export class RoundCountdownMessage implements Message {
     constructor(public enabled: boolean) {}
 
     static deserialize(trustedNetcode: string): RoundCountdownMessage {
-        return new RoundCountdownMessage(Boolean(parseInt(trustedNetcode, 10)));
+        return new RoundCountdownMessage(!!+trustedNetcode);
     }
 
     get serialized(): string {
@@ -56,7 +56,7 @@ export class RoundWrapupMessage implements Message {
     constructor(public winningPlayerIndex = -1) {}
 
     static deserialize(trustedNetcode: string): RoundWrapupMessage {
-        return new RoundWrapupMessage(parseInt(trustedNetcode, 10));
+        return new RoundWrapupMessage(+trustedNetcode);
     }
 
     get serialized(): string {

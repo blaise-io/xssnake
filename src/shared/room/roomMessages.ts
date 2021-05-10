@@ -14,12 +14,12 @@ export class RoomOptionsMessage implements Message {
         try {
             const data = JSON.parse(untrustedNetcode);
             const roomOptions = new RoomOptions(
-                parseInt(data[0], 10),
-                parseInt(data[1], 10),
-                Boolean(data[2]),
-                Boolean(data[3]),
-                Boolean(data[4]),
-                Boolean(data[5]),
+                +data[0],
+                +data[1],
+                !!data[2],
+                !!data[3],
+                !!data[4],
+                !!data[5],
             );
             return new RoomOptionsMessage(roomOptions);
         } catch (error) {
@@ -108,7 +108,7 @@ export class RoomJoinErrorMessage implements Message {
     constructor(public status: ROOM_STATUS) {}
 
     static deserialize(untrustedNetcode: string): RoomJoinErrorMessage {
-        return new RoomJoinErrorMessage(parseInt(untrustedNetcode, 10));
+        return new RoomJoinErrorMessage(+untrustedNetcode);
     }
 
     get serialized(): string {

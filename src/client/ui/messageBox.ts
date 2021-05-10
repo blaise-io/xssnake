@@ -93,7 +93,7 @@ export class MessageBoxUI {
             this.sendMessageFn(body);
             this.skipQueue = true;
         }
-        this.hideEnterKey(Boolean(body.trim()));
+        this.hideEnterKey(body.trim().length === 0);
     }
 
     showEnterKey(): void {

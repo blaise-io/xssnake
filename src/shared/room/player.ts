@@ -17,8 +17,8 @@ export class Player {
     // deserialize(serialized: [string, number]): void {
     //     let byte;
     //     [this.name, byte] = serialized;
-    //     this.connected = Boolean((byte & 1) >> 0);
-    //     this.local = Boolean((byte & 2) >> 1);
+    //     this.connected = !!((byte & 1) >> 0);
+    //     this.local = !!((byte & 2) >> 1);
     //     this.score = byte >> 2;
     // }
 

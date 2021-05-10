@@ -23,7 +23,7 @@ export class ServerScore {
         if (points) {
             for (let i = 0, m = this.players.length; i < m; i++) {
                 const player = this.players[i];
-                if (-1 === crashedPlayers.indexOf(player) && !player.snake.crashed) {
+                if (-1 === crashedPlayers.indexOf(player) && !player.snake!.crashed) {
                     player.score += points;
                     scoreUpdated = true;
                 }
@@ -32,6 +32,7 @@ export class ServerScore {
         if (scoreUpdated) {
             this.players.send(new ScoreMessage(this.players.map((p) => p.score)));
         }
+        return scoreUpdated;
     }
 
     ///**

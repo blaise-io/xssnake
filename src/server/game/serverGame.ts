@@ -15,7 +15,7 @@ export class ServerGame {
     private tick = 0;
     private lastTick = new Date().getTime();
     private tickInterval: NodeJS.Timeout;
-    private started: boolean;
+    private started = false;
     private spawner: Spawner;
 
     constructor(
@@ -44,16 +44,11 @@ export class ServerGame {
     destruct(): void {
         clearInterval(this.tickInterval);
         this.roomEmitter.removeAllListeners(SnakeUpdateServerMessage.id);
-
-        // this.spawner.destruct();
-        // delete this.spawner;
-
-        // delete this.level;
-        // delete this.players;
+        this.spawner.destruct();
     }
 
     private handleMove(move: ServerSnakeMove) {
-        const snake = move.player.snake;
+        const snake = move.player.snake!;
         if (move.isValid()) {
             snake.direction = move.direction;
             snake.parts = move.parts;
@@ -89,7 +84,7 @@ export class ServerGame {
 
         if (crashingPlayers.length) {
             for (let i = 0, m = crashingPlayers.length; i < m; i++) {
-                const snake = crashingPlayers[i].snake;
+                const snake = crashingPlayers[i].snake!;
                 snake.crashed = true;
                 snakes.push(snake);
             }

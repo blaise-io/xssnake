@@ -13,7 +13,7 @@ export interface SocketClient extends ws {
 
 export class Server {
     emitter: EventEmitter;
-    roomManager?: ServerRoomManager;
+    roomManager: ServerRoomManager;
     private ws: ws.Server;
     private pingInterval: NodeJS.Timeout;
 
@@ -31,17 +31,15 @@ export class Server {
         this.ws.on("connection", (client: SocketClient) => {
             client.pingSent = client.pongReceived = new Date().getTime();
             client.latency = 0;
-
             client.on("pong", () => {
                 client.pongReceived = new Date().getTime();
                 client.latency = new Date().getTime() - client.pingSent;
             });
-
             new ServerPlayer(this, client);
         });
 
         this.pingInterval = setInterval(() => {
-            this.ws.clients.forEach((client: SocketClient) => {
+            ((this.ws.clients as unknown) as SocketClient[]).forEach((client: SocketClient) => {
                 if (client.pongReceived - client.pingSent > HEARTBEAT_INTERVAL_MS * 2) {
                     return client.terminate();
                 }

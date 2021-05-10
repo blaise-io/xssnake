@@ -1,8 +1,8 @@
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
+import { _ } from "../../shared/util";
 import { KEY, MENU_POS, NS } from "../const";
-import { COPY_DIALOG_CANCEL, COPY_DIALOG_OK } from "../copy/copy";
 import { State } from "../state";
 import { stylizeUpper } from "../util/clientUtil";
 import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";
@@ -159,12 +159,12 @@ export class Dialog {
 
     private _getCancelButton(x: number, y: number): PixelCollection {
         const settings = { invert: !this._okSelected };
-        return fontPixels(COPY_DIALOG_CANCEL, x, y, settings);
+        return fontPixels(stylizeUpper(_("Cancel")), x, y, settings);
     }
 
     private _getOkButton(x: number, y: number): PixelCollection {
         const settings = { invert: this._okSelected };
-        return fontPixels(COPY_DIALOG_OK, x, y, settings);
+        return fontPixels(stylizeUpper(_("Ok")), x, y, settings);
     }
 
     private _getAlertPixels(): PixelCollection {
@@ -176,7 +176,7 @@ export class Dialog {
     }
 
     private _getConfirmPixels(): PixelCollection {
-        const x = fontWidth(COPY_DIALOG_CANCEL) + 5;
+        const x = fontWidth(stylizeUpper("Cancel")) + 5;
         const y = this._getButtonPosition();
         const cancel = this._getCancelButton(1, y);
         const ok = this._getOkButton(x, y);

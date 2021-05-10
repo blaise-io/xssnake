@@ -15,7 +15,7 @@ export function debugScoreboard(): void {
         Object.assign(State.shapes, outerBorder());
 
         const messages = [
-            new ChatMessage(null, "This is a notification"),
+            new ChatMessage(undefined, "This is a notification"),
             new ChatMessage("Player 1", "Hello world"),
         ];
         const author = new Player("Dummy");

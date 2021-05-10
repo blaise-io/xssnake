@@ -15,10 +15,10 @@ import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 
 export class ServerRound extends Round {
-    private game: ServerGame;
+    private game?: ServerGame;
     wrappingUp: boolean;
     private countdownStarted: boolean;
-    private countdownTimer: NodeJS.Timeout;
+    private countdownTimer?: NodeJS.Timeout;
 
     constructor(
         public roomEmitter: EventEmitter,
@@ -45,20 +45,17 @@ export class ServerRound extends Round {
     }
 
     destruct(): void {
-        clearTimeout(this.countdownTimer);
         this.unbindEvents();
 
-        if (this.game) {
-            this.game.destruct();
-            // delete this.game;
+        if (this.countdownTimer) {
+            clearTimeout(this.countdownTimer);
         }
 
-        if (this.level) {
-            this.level.destruct();
-            // delete this.level;
-        }
+        this.game?.destruct();
+        delete this.game;
 
-        // delete this.roomEmitter;
+        this.level?.destruct();
+        delete this.level;
     }
 
     unbindEvents(): void {
@@ -76,7 +73,9 @@ export class ServerRound extends Round {
     }
 
     toggleCountdown(enabled: boolean): void {
-        clearTimeout(this.countdownTimer);
+        if (this.countdownTimer) {
+            clearTimeout(this.countdownTimer);
+        }
         this.countdownStarted = enabled;
         this.players.send(new RoundCountdownMessage(enabled));
         if (enabled) {
@@ -90,7 +89,7 @@ export class ServerRound extends Round {
         this.unbindEvents();
         this.level = new this.LevelClass();
         this.level.load(serverImageLoader).then(() => {
-            this.game = new ServerGame(this.roomEmitter, this.level, this.players);
+            this.game = new ServerGame(this.roomEmitter, this.level!, this.players);
             this.started = true;
             this.players.send(new RoundStartMessage());
         });

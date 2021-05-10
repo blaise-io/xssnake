@@ -42,7 +42,7 @@ export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
     getCollisionsOnTick(tick: number): ServerPlayer[] {
         const crashingPlayers = [];
         for (let i = 0, m = this.length; i < m; i++) {
-            if (this[i].snake.hasCollisionLteTick(tick)) {
+            if (this[i].snake!.hasCollisionLteTick(tick)) {
                 crashingPlayers.push(this[i]);
             }
         }
@@ -51,8 +51,8 @@ export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
 
     moveSnakes(tick: number, elapsed: number, shift: Shift): void {
         for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake.handleNextMove(tick, elapsed, shift, this);
-            this[i].snake.shiftParts(shift);
+            this[i].snake!.handleNextMove(tick, elapsed, shift, this);
+            this[i].snake!.shiftParts(shift);
         }
     }
 }

@@ -1,22 +1,21 @@
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
 import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, NS, UC } from "../const";
-import { COPY_PLAYER_JOINED, COPY_PLAYER_QUIT } from "../copy/copy";
 import { State } from "../state";
 import { MessageBoxUI } from "../ui/messageBox";
-import { format } from "../util/clientUtil";
 import { ClientPlayer } from "./clientPlayer";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ChatMessage } from "./chatMessage";
 
 export class MessageBox {
-    private previousPlayers: ClientPlayerRegistry = undefined; // Keep old registry until player leaving is propagated.
+    // Keep previous players until player leaving is propagated.
+    private previousPlayers?: ClientPlayerRegistry;
     private messages: ChatMessage[];
     ui: MessageBoxUI;
     private playerChangeNotified = false;
 
     constructor(public players: ClientPlayerRegistry) {
-        this.messages = [new ChatMessage(null, _(`Press ${UC.ENTER_KEY} to chat.`))];
+        this.messages = [new ChatMessage(undefined, _(`Press ${UC.ENTER_KEY} to chat.`))];
 
         this.ui = new MessageBoxUI(this.messages, players.localPlayer, (body) => {
             this.players.localPlayer.send(new ChatServerMessage(body));
@@ -39,7 +38,7 @@ export class MessageBox {
     }
 
     addNotification(notification: string): void {
-        this.messages.push(new ChatMessage(null, notification));
+        this.messages.push(new ChatMessage(undefined, notification));
     }
 
     updatePlayers(): void {
@@ -58,27 +57,21 @@ export class MessageBox {
     }
 
     notifyMidgameDisconnect(player: ClientPlayer): void {
-        const message = format(COPY_PLAYER_QUIT, player.name);
-        this.notifyPlayersChangeUI(message);
+        this.notifyPlayersChangeUI(_(`${player.name} quit`));
     }
 
     notifyPlayersChangeUI(message: string): void {
-        this.messages.push(new ChatMessage(null, message));
+        this.messages.push(new ChatMessage(undefined, message));
         this.ui.debounceUpdate();
     }
 
     notifyPlayersChange(): void {
-        let message;
-        if (this.players.length > this.previousPlayers.length) {
-            message = format(COPY_PLAYER_JOINED, String(this.players.getLastJoin()));
+        if (!this.previousPlayers || this.players.length > this.previousPlayers.length) {
+            const name = this.players.getLastJoin();
+            this.notifyPlayersChangeUI(_(`${name} joined`));
         } else if (this.players.length < this.previousPlayers.length) {
-            message = format(
-                COPY_PLAYER_QUIT,
-                String(this.players.getQuitName(this.previousPlayers)),
-            );
-        }
-        if (message) {
-            this.notifyPlayersChangeUI(message);
+            const name = this.players.getQuitName(this.previousPlayers);
+            this.notifyPlayersChangeUI(_(`${name} quit`));
         }
     }
 }

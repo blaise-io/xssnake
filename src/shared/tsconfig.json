@@ -3,7 +3,8 @@
     "allowJs": false,
     "baseUrl": "../",
     "module": "es6",
-    "noEmitOnError": true,
+    "noEmitOnError": false,
+    "strict": true,
     "target": "esnext"
   },
   "include": [

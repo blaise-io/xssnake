@@ -1,24 +1,24 @@
-import { CRASH_OPPONENT_DRAW } from "../../shared/const";
+import { CRASH_INTO } from "../../shared/game/snakeMove";
 import { Player } from "../../shared/room/player";
 
 // Used in game.bak
 export class Crash {
-    location: Coordinate;
+    location?: Coordinate;
     parts: Coordinate[];
     time: Date;
     draw: boolean;
 
     constructor(public type: number, public client: Player, public opponent: Player) {
-        this.parts = client.snake.parts.slice();
+        this.parts = client.snake!.parts.slice();
         this.time = new Date();
         this.draw = this.detectDraw();
     }
 
     detectDraw(): boolean {
-        if (this.opponent) {
-            const diff = this.client.snake.direction + this.opponent.snake.direction;
+        if (this.opponent && this.opponent.snake) {
+            const diff = this.client.snake!.direction + this.opponent.snake!.direction;
             if (Math.abs(diff) === 2) {
-                this.type = CRASH_OPPONENT_DRAW;
+                this.type = CRASH_INTO.OPPONENT_HEAD;
                 return true;
             }
         }

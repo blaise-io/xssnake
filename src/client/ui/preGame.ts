@@ -3,22 +3,14 @@ import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { KEY, NS } from "../const";
-import {
-    COPY_AWAITING_PLAYERS_BODY,
-    COPY_AWAITING_PLAYERS_HEADER,
-    COPY_AWAITING_PLAYERS_START_NOW,
-    COPY_COUNTDOWN_BODY,
-    COPY_COUNTDOWN_TITLE,
-} from "../copy/copy";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
-import { format } from "../util/clientUtil";
 import { Dialog, DialogType } from "./dialog";
 
 export class PreGameUI {
-    private dialog: Dialog;
-    private countdownStarted: Date;
-    private countdownInterval: number;
+    private dialog?: Dialog;
+    private countdownStarted?: Date;
+    private countdownInterval?: number;
     private confirmExit: boolean;
     private confirmStart: boolean;
 
@@ -35,7 +27,9 @@ export class PreGameUI {
     }
 
     destruct(): void {
-        window.clearInterval(this.countdownInterval);
+        if (this.countdownInterval) {
+            window.clearInterval(this.countdownInterval);
+        }
         this.unbindKeys();
         // delete this.players;
         // delete this.options;
@@ -99,13 +93,19 @@ export class PreGameUI {
     showInvitePlayersDialog(): void {
         const numplayers = this.players.length;
         const remaining = this.options.maxPlayers - numplayers;
-        let body = format(COPY_AWAITING_PLAYERS_BODY, remaining, remaining === 1 ? "" : "s");
+
+        // TODO: Pluralize.
+        let body = _(
+            `You can fit ${remaining} more player${
+                remaining !== 1 ? "s" : ""
+            } in this room! Share the current page URL with your online friends to allow direct access.`,
+        );
 
         if (this.playerCanStartRound()) {
-            body += "\n\n" + COPY_AWAITING_PLAYERS_START_NOW;
+            body += "\n\n" + _("Press S to start now.");
         }
 
-        this.dialog = new Dialog(COPY_AWAITING_PLAYERS_HEADER, body, {
+        this.dialog = new Dialog(_("Msg your friends"), body, {
             keysBlocked: false,
         });
     }
@@ -114,10 +114,10 @@ export class PreGameUI {
         const settings = {
             type: DialogType.CONFIRM,
             cancel: this.hideConfirmDialog.bind(this),
-            ok: function () {
+            ok: () => {
                 this.destruct();
                 State.flow.restart();
-            }.bind(this),
+            },
         };
 
         this.dialog = new Dialog(
@@ -155,7 +155,7 @@ export class PreGameUI {
 
     getCountdownRemaining(): number {
         let remaining = SECONDS_ROUND_COUNTDOWN;
-        remaining -= (+new Date() - +this.countdownStarted) / 1000;
+        remaining -= (new Date().getTime() - this.countdownStarted!.getTime()) / 1000;
         return Math.max(0, Math.round(remaining));
     }
 
@@ -163,22 +163,20 @@ export class PreGameUI {
         if (this.countdownInterval) {
             window.clearInterval(this.countdownInterval);
         }
-        this.countdownInterval = window.setInterval(
-            function () {
-                State.audio.play("menu_alt");
-                // Prevent re-creating dialog which destroys button selection.
-                if (!this.confirmExit) {
-                    this.updateUI();
-                }
-            }.bind(this),
-            1000,
-        );
+        this.countdownInterval = window.setInterval(() => {
+            State.audio.play("menu_alt");
+            // Prevent re-creating dialog which destroys button selection.
+            if (!this.confirmExit) {
+                this.updateUI();
+            }
+        }, 1000);
     }
 
     showCountdown(): void {
-        const body = format(COPY_COUNTDOWN_BODY, this.getCountdownRemaining());
+        const remaining = this.getCountdownRemaining();
+        const body = _(`Game starting in: ${remaining}`);
         this.startCountdownTimer();
-        this.dialog = new Dialog(COPY_COUNTDOWN_TITLE, body, {
+        this.dialog = new Dialog(_("Get ready!"), body, {
             keysBlocked: false,
         });
     }

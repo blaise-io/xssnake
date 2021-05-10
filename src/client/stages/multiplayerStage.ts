@@ -29,7 +29,7 @@ export class MultiplayerStage extends FormStage {
         form.addField(
             new Field(
                 _("Level Set"),
-                levelSets.map((l, index) => [index, stylizeUpper(l.title)]),
+                levelSets.map((levelset, index) => [index, stylizeUpper(levelset.title)]),
                 State.flow.data.roomOptions.levelSetIndex,
                 (value) => {
                     State.flow.data.roomOptions.levelSetIndex = value;

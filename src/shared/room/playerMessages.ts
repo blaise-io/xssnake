@@ -42,7 +42,7 @@ export class ChatClientMessage implements Message {
     constructor(public playerIndex: number, public body: string) {}
 
     static deserialize(netcode: string): ChatClientMessage | undefined {
-        return new ChatClientMessage(parseInt(netcode.charAt(0), 10), netcode.substring(1));
+        return new ChatClientMessage(+netcode.charAt(0), netcode.substring(1));
     }
 
     get serialized(): string {

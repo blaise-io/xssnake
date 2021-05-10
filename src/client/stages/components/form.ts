@@ -56,7 +56,7 @@ export class Field<Type> {
 
 export class Form {
     private focusFieldIndex = 0;
-    private fields: Field<number | boolean>[] = [];
+    private fields: Field<any>[] = [];
     private maxwidth = 0;
 
     constructor(public header: string, public footer = FORM_FOOTER_COPY) {
@@ -85,7 +85,7 @@ export class Form {
         return false;
     }
 
-    addField(field: Field<number | boolean>): void {
+    addField(field: Field<any>): void {
         this.fields.push(field);
 
         // TODO: getter / es6 arr fn
