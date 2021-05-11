@@ -13,7 +13,7 @@ import { ServerSnake } from "./serverSnake";
 
 export class ServerGame {
     private tick = 0;
-    private lastTick = new Date().getTime();
+    private lastTick = new Date();
     private tickInterval: NodeJS.Timeout;
     private started = false;
     private spawner: Spawner;
@@ -73,9 +73,8 @@ export class ServerGame {
         return latencies.length ? Math.round(average(latencies) / SERVER_TICK_INTERVAL) : 0;
     }
 
-    handleTick(): void {
-        const now = +new Date();
-        this.gameloop(++this.tick, now - this.lastTick);
+    handleTick(now = new Date()): void {
+        this.gameloop(++this.tick, now.getTime() - this.lastTick.getTime());
         this.lastTick = now;
     }
 
@@ -83,18 +82,11 @@ export class ServerGame {
         const shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
 
-        this.handleCrashingPlayers(tick - this.averageLatencyInTicks);
+        this.detectCrashes(tick - this.averageLatencyInTicks);
         this.moveSnakes(tick, elapsed, shift);
     }
 
-    moveSnakes(tick: number, elapsed: number, shift: Shift): void {
-        this.snakes.forEach((snake) => {
-            snake.handleNextMove(tick, elapsed, shift, this.snakes);
-            snake.shiftParts(shift);
-        });
-    }
-
-    handleCrashingPlayers(tick: number): void {
+    detectCrashes(tick: number): void {
         const crashedSnakes = this.snakes.filter((s) => s.hasCollisionLteTick(tick));
 
         if (crashedSnakes.length) {
@@ -106,8 +98,15 @@ export class ServerGame {
             // Let round manager know.
             this.roomEmitter.emit(
                 String(SE_PLAYER_COLLISION),
-                crashedSnakes.map((s) => this.players[this.snakes.indexOf(s)]),
+                crashedSnakes.map((snake) => this.players[snake.index]),
             );
         }
+    }
+
+    moveSnakes(tick: number, elapsed: number, shift: Shift): void {
+        this.snakes.forEach((snake) => {
+            snake.handleNextMove(tick, elapsed, shift, this.snakes);
+            snake.shiftParts(shift);
+        });
     }
 }
