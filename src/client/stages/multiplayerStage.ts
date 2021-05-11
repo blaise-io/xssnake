@@ -31,8 +31,8 @@ export class MultiplayerStage extends FormStage {
                 _("Level Set"),
                 levelSets.map((levelset, index) => [index, stylizeUpper(levelset.title)]),
                 State.flow.data.roomOptions.levelSetIndex,
-                (value) => {
-                    State.flow.data.roomOptions.levelSetIndex = value;
+                (levelSetIndex) => {
+                    State.flow.data.roomOptions.levelSetIndex = levelSetIndex as number;
                 },
             ),
         );
@@ -45,8 +45,8 @@ export class MultiplayerStage extends FormStage {
                     [false, _("No")],
                 ],
                 State.flow.data.roomOptions.hasPowerups,
-                (value) => {
-                    State.flow.data.roomOptions.hasPowerups = value;
+                (hasPowerups) => {
+                    State.flow.data.roomOptions.hasPowerups = hasPowerups as boolean;
                 },
             ),
         );
@@ -78,8 +78,8 @@ export class MultiplayerStage extends FormStage {
                     [false, _("No")],
                 ],
                 State.flow.data.roomOptions.isPrivate,
-                (value) => {
-                    State.flow.data.roomOptions.isPrivate = value;
+                (isPrivate) => {
+                    State.flow.data.roomOptions.isPrivate = isPrivate as boolean;
                 },
             ),
         );
@@ -92,8 +92,8 @@ export class MultiplayerStage extends FormStage {
                     [false, _("No")],
                 ],
                 State.flow.data.roomOptions.isXSS,
-                (value) => {
-                    State.flow.data.roomOptions.isXSS = value;
+                (isXSS) => {
+                    State.flow.data.roomOptions.isXSS = isXSS as boolean;
                 },
             ),
         );
@@ -110,8 +110,8 @@ export class MultiplayerStage extends FormStage {
                     [6, "6"],
                 ],
                 State.flow.data.roomOptions.maxPlayers,
-                (value) => {
-                    State.flow.data.roomOptions.maxPlayers = value;
+                (maxPlayers) => {
+                    State.flow.data.roomOptions.maxPlayers = maxPlayers as number;
                 },
             ),
         );

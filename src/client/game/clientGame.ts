@@ -13,16 +13,14 @@ import { ClientSnake } from "./clientSnake";
 import { SpawnableRegistry } from "./spawnableRegistry";
 
 export class ClientGame {
-    started: boolean;
-    spawnables: SpawnableRegistry;
+    started = false;
+    spawnables = new SpawnableRegistry();
 
     constructor(public level: Level, public players: ClientPlayerRegistry) {
         this.players = this.updatePlayers(players);
 
         Object.assign(State.shapes, getLevelShapes(this.level));
-        this.started = false;
 
-        this.spawnables = new SpawnableRegistry();
         this.bindEvents();
     }
 

@@ -15,23 +15,25 @@ import {
 import { zoom } from "../../ui/transformClient";
 import { stylizeUpper } from "../../util/clientUtil";
 
+type FieldOptionValue = boolean | number;
+
 const FORM_FOOTER_COPY = [
     _(`${UC.ARR_UP} & ${UC.ARR_DOWN} to select an option`),
     _(`${UC.ARR_LEFT} & ${UC.ARR_RIGHT} to change the value`),
     _(`${UC.ENTER_KEY} to continue`),
 ].join(" …\n");
 
-export class Field<Type> {
+export class Field {
     constructor(
         public label: string,
-        public options: [Type, string][],
-        public value: Type,
-        public onupdate: (value: Type) => void,
+        public options: [FieldOptionValue, string][],
+        public value: FieldOptionValue,
+        public onupdate: (value: FieldOptionValue) => void,
     ) {
         this.label = stylizeUpper(label);
     }
 
-    get selectedOption(): [Type, string] {
+    get selectedOption(): [FieldOptionValue, string] {
         return this.options.find((option) => option[0] === this.value) || this.options[0];
     }
 
@@ -56,7 +58,9 @@ export class Field<Type> {
 
 export class Form {
     private focusFieldIndex = 0;
-    private fields: Field<any>[] = [];
+
+    private fields: Field[] = [];
+
     private maxwidth = 0;
 
     constructor(public header: string, public footer = FORM_FOOTER_COPY) {
@@ -85,7 +89,7 @@ export class Form {
         return false;
     }
 
-    addField(field: Field<any>): void {
+    addField(field: Field): void {
         this.fields.push(field);
 
         // TODO: getter / es6 arr fn
