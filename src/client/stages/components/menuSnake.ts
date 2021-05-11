@@ -33,14 +33,22 @@ export class MenuSnake {
         const nextpos = snake.getNextPosition();
         if (this.isCrash(snake, nextpos)) {
             snake.setCrashed();
-            instruct(_("Have you seen my snake?"));
-            this.timeouts.push(window.setTimeout(snake.destruct.bind(snake), 2200));
-        } else {
-            snake.elapsed = 1000; // Trigger move.
-            snake.move(snake.getNextPosition());
-            snake.updateShape();
-            this.timeouts.push(window.setTimeout(this.move.bind(this), 100));
+            this.timeouts.push(
+                window.setTimeout(() => {
+                    snake.destruct();
+                    instruct(_("Have you seen my snake?"), 0, 2.5);
+                }, 6000),
+            );
+            return;
         }
+
+        snake.move(snake.getNextPosition());
+        snake.updateShape();
+        this.timeouts.push(
+            window.setTimeout(() => {
+                this.move();
+            }, 100),
+        );
     }
 
     isCrash(snake: ClientSnake, nextpos: Coordinate): boolean {

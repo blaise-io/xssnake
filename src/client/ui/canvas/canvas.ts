@@ -239,7 +239,7 @@ export class Canvas {
 
     private promoteKeyboard(event: MouseEvent): void {
         if (event.button === 0) {
-            instruct("No mousing please", 2000);
+            instruct("No mousing please", 0, 2);
         }
     }
 

@@ -11,11 +11,12 @@ import {
     SnakeUpdateClientMessage,
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
-import { _ } from "../../shared/util";
+import { _, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
+import { stylizeUpper } from "../util/clientUtil";
 import { ClientSnake } from "./clientSnake";
 import { SpawnableRegistry } from "./spawnableRegistry";
 
@@ -23,10 +24,6 @@ export class ClientGame {
     started = false;
     spawnables = new SpawnableRegistry();
     snakes: ClientSnake[];
-
-    private emit = (snake: Snake, direction: DIRECTION) => {
-        this.players.localPlayer.send(SnakeUpdateServerMessage.fromData(snake, direction));
-    };
 
     constructor(public level: Level, public players: ClientPlayerRegistry) {
         Object.assign(State.shapes, getLevelShapes(this.level));
@@ -58,12 +55,20 @@ export class ClientGame {
         this.started = true;
         this.hideName();
         this.localSnake?.addControls();
-        this.localSnake?.showAction(_("¡Vamos!"));
+        this.localSnake?.showAction(
+            stylizeUpper(getRandomItemFrom([_("¡Vamos!"), _("Let's goooo"), _("Gogogo!")])),
+        );
     }
 
     get localSnake(): ClientSnake | undefined {
         return this.snakes.find((s) => s.local);
     }
+
+    private emit = (snake: Snake, direction: DIRECTION) => {
+        if (this.players.localPlayer.connected) {
+            this.players.localPlayer.send(SnakeUpdateServerMessage.fromData(snake, direction));
+        }
+    };
 
     bindEvents(): void {
         State.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));

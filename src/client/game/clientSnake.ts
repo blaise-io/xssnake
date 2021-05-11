@@ -78,7 +78,6 @@ export class ClientSnake extends Snake {
     }
 
     addControls(): void {
-        // TODO: Remove bidirectional dependency.
         this.controls = new ClientSnakeControls(this);
     }
 

@@ -7,13 +7,13 @@ import { font, fontHeight, fontWidth } from "../ui/font";
 import { flash, lifetime } from "../ui/shapeClient";
 import { clearHash } from "./url";
 
-export function instruct(str: string, duration = 2000, flashInstruct = false): void {
+export function instruct(str: string, start = 0, duration = 2, flashInstruct = false): void {
     const x = CANVAS.WIDTH - fontWidth(str) - 2;
     const y = CANVAS.HEIGHT - fontHeight(str) - 2;
 
     const shape = font(str, x, y, { invert: true });
     shape.flags.isOverlay = true;
-    lifetime(shape, 0, duration);
+    lifetime(shape, start, duration * 1000);
 
     if (flashInstruct) {
         flash(shape);

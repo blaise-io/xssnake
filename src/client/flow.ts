@@ -117,7 +117,7 @@ export class StageFlow {
             if (event.key === KEY.MUTE) {
                 const mute = !storage.get(STORAGE.MUTE) as boolean;
                 storage.set(STORAGE.MUTE, mute);
-                instruct("Sounds " + (mute ? "muted" : "unmuted"), 1000);
+                instruct("Sounds " + (mute ? "muted" : "unmuted"), 0, 1);
                 State.audio.play("menu_alt");
             }
         }
