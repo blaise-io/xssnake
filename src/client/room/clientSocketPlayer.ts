@@ -1,13 +1,13 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
 import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
+import { Player } from "../../shared/room/player";
 import { NameMessage } from "../../shared/room/playerMessages";
 import { Message, MessageConstructor } from "../../shared/room/types";
 import { _, noop } from "../../shared/util";
 import { State } from "../state";
 import { error } from "../util/clientUtil";
-import { ClientPlayer } from "./clientPlayer";
 
-export class ClientSocketPlayer extends ClientPlayer {
+export class ClientSocketPlayer extends Player {
     private connection: WebSocket;
 
     constructor(name: string, private onopenCallback: CallableFunction = noop) {
@@ -35,11 +35,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         this.connection.onclose = noop;
         this.connection.onerror = noop;
         this.connection.onmessage = noop;
-
-        // Close explicitly when CONNECTING or OPEN.
-        if (this.connection.readyState <= 1) {
-            this.connection.close();
-        }
+        this.connection.close();
     }
 
     onopen(): void {

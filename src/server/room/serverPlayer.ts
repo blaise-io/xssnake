@@ -10,7 +10,8 @@ export class ServerPlayer extends Player {
     room?: ServerRoom;
 
     constructor(public server: Server, public client: SocketClient) {
-        super();
+        super("<anon>");
+
         this.client.on("message", this.onmessage.bind(this));
         this.client.on("close", () => {
             if (this.room && this.room.rounds && this.room.rounds.started) {

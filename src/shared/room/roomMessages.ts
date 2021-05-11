@@ -4,13 +4,13 @@ import { isStrOfLen } from "../util/sanitizer";
 import { RoomOptions } from "./roomOptions";
 import { Message, MessageId } from "./types";
 
-export class RoomOptionsMessage implements Message {
+export class RoomOptionsServerMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.SERVER_MATCHMAKING;
 
     constructor(public options: RoomOptions) {}
 
-    static deserialize(untrustedNetcode: string): RoomOptionsMessage | undefined {
+    static deserialize(untrustedNetcode: string): RoomOptionsServerMessage | undefined {
         try {
             const data = JSON.parse(untrustedNetcode);
             const roomOptions = new RoomOptions(
@@ -21,7 +21,7 @@ export class RoomOptionsMessage implements Message {
                 !!data[4],
                 !!data[5],
             );
-            return new RoomOptionsMessage(roomOptions);
+            return new RoomOptionsServerMessage(roomOptions);
         } catch (error) {
             return;
         }
@@ -37,6 +37,10 @@ export class RoomOptionsMessage implements Message {
             Number(this.options.isXSS),
         ]);
     }
+}
+
+export class RoomOptionsClientMessage extends RoomOptionsServerMessage {
+    static audience = AUDIENCE.CLIENT;
 }
 
 export class RoomJoinMessage implements Message {

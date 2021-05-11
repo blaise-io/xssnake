@@ -15,8 +15,8 @@ State.canvas = new Canvas();
 State.audio = new AudioPlayer();
 
 if (ENV_DEBUG && runDebug()) {
-    State.flow = new StageFlow(DebugStage);
+    new StageFlow(DebugStage);
     runDebug()();
 } else {
-    State.flow = new StageFlow();
+    new StageFlow();
 }

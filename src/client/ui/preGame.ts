@@ -11,17 +11,10 @@ export class PreGameUI {
     private dialog?: Dialog;
     private countdownStarted?: Date;
     private countdownInterval?: number;
-    private confirmExit: boolean;
-    private confirmStart: boolean;
+    private confirmExit = false;
+    private confirmStart = false;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
-        // delete this.dialog;
-
-        // delete this.countdownStarted;
-        // delete this.countdownInterval;
-        this.confirmExit = false;
-        this.confirmStart = false;
-
         this.bindKeys();
         this.updateUI();
     }

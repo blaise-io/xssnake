@@ -1,6 +1,5 @@
 import { Player } from "../../shared/room/player";
 import { getRandomName, noop, randomRange, randomStr } from "../../shared/util";
-import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ChatMessage } from "../room/chatMessage";
 import { Scoreboard } from "../room/scoreboard";
@@ -19,7 +18,7 @@ export function debugMessages(): void {
         State.shapes.innerBorder = innerBorder();
         Object.assign(State.shapes, outerBorder());
 
-        const players = new ClientPlayerRegistry(new ClientPlayer("Blaise", true));
+        const players = new ClientPlayerRegistry(new Player("Blaise", true));
         new Scoreboard(players);
 
         function randomBody() {

@@ -33,19 +33,6 @@ export class MainStage extends SelectStage {
         }
     }
 
-    private initializeAutoJoin(roomKey: string) {
-        new AutoJoinDialog(
-            roomKey,
-            (clientRoom) => {
-                State.flow.data.room = clientRoom;
-                State.flow.switchStage(AutoJoinStage);
-            },
-            (msg) => {
-                error(msg);
-            },
-        );
-    }
-
     construct(): void {
         super.construct();
     }
@@ -96,5 +83,19 @@ export class MainStage extends SelectStage {
         );
 
         return menu;
+    }
+
+    private initializeAutoJoin(roomKey: string) {
+        new AutoJoinDialog(
+            roomKey,
+            (messages) => {
+                State.flow.data.roomPlayers = messages[0].players;
+                State.flow.data.roomOptions = messages[1].options;
+                State.flow.switchStage(AutoJoinStage);
+            },
+            (msg) => {
+                error(msg);
+            },
+        );
     }
 }

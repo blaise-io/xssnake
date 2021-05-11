@@ -1,9 +1,9 @@
+import { Player } from "../../shared/room/player";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
 import { _ } from "../../shared/util";
 import { EV_PLAYERS_UPDATED, NS, UC } from "../const";
 import { State } from "../state";
 import { MessageBoxUI } from "../ui/messageBox";
-import { ClientPlayer } from "./clientPlayer";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ChatMessage } from "./chatMessage";
 
@@ -56,7 +56,7 @@ export class MessageBox {
         }
     }
 
-    notifyMidgameDisconnect(player: ClientPlayer): void {
+    notifyMidgameDisconnect(player: Player): void {
         this.notifyPlayersChangeUI(_(`${player.name} quit`));
     }
 

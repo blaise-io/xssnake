@@ -1,4 +1,6 @@
 import { ROOM_KEY_LENGTH, CANVAS } from "../shared/const";
+import { Player } from "../shared/room/player";
+import { PlayerRegistry } from "../shared/room/playerRegistry";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
 import { HASH, KEY, MENU_POS, NS, STORAGE } from "./const";
@@ -13,11 +15,12 @@ import { instruct, storage } from "./util/clientUtil";
 import { clearHash, getHash } from "./util/url";
 
 export interface FlowData {
-    xss: string;
+    clientPlayer?: ClientSocketPlayer;
     name: string;
+    roomPlayers: PlayerRegistry<Player>;
     room?: ClientRoom;
     roomOptions: RoomOptions;
-    clientPlayer?: ClientSocketPlayer;
+    xss: string;
 }
 
 export class StageFlow {
@@ -25,6 +28,7 @@ export class StageFlow {
     data: FlowData = {
         xss: storage.get(STORAGE.XSS) as string,
         name: storage.get(STORAGE.NAME) as string,
+        roomPlayers: new PlayerRegistry(),
         roomOptions: new RoomOptions(),
         room: undefined,
         clientPlayer: undefined,
@@ -33,6 +37,7 @@ export class StageFlow {
     private history: StageInterface[] = [];
 
     constructor(private FirstStage = MainStage as StageConstructor) {
+        State.flow = this; // TODO: Make StageFlow.data static
         this.stage = new FirstStage();
         this.start();
     }

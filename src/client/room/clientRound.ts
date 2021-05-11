@@ -28,22 +28,21 @@ export class ClientRound extends Round {
         super(players, options, levelIndex);
         this.preGameUI = new PreGameUI(players, options);
         this.bindEvents();
+
+        this.setLevel(this.levelIndex);
     }
 
     destruct(): void {
         this.unbindEvents();
-        if (this.game) {
-            this.game.destruct();
-            delete this.game;
-        }
-        if (this.preGameUI) {
-            this.preGameUI.destruct();
-            delete this.preGameUI;
-        }
-        if (this.wrapupGameUI) {
-            this.wrapupGameUI.destruct();
-            delete this.wrapupGameUI;
-        }
+
+        this.game?.destruct();
+        delete this.game;
+
+        this.preGameUI?.destruct();
+        delete this.preGameUI;
+
+        this.wrapupGameUI?.destruct();
+        delete this.wrapupGameUI;
     }
 
     async setLevel(levelIndex: number): Promise<void> {

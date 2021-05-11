@@ -1,7 +1,7 @@
 import { CANVAS } from "../../shared/const";
+import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { NS } from "../const";
-import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { font, fontPixels, fontWidth } from "./font";
@@ -19,7 +19,7 @@ export class ScoreboardUI {
     private animationDuration = 200;
     private animationPause = 200;
     private columnSpacing = fontWidth(" ");
-    private oldPlayerOrder: ClientPlayer[];
+    private oldPlayerOrder: Player[];
 
     constructor(public players: ClientPlayerRegistry) {
         this.animating = false;
@@ -72,7 +72,7 @@ export class ScoreboardUI {
         this.oldPlayerOrder = newOrder;
     }
 
-    paint(player: ClientPlayer | null, oldIndex: number, newIndex: number): void {
+    paint(player: Player | null, oldIndex: number, newIndex: number): void {
         const oldCoordinate = this.getCoordinatesForIndex(oldIndex);
         const shape = this.getPlayerScoreShape(player, oldCoordinate);
         State.shapes[NS.SCORE + oldIndex] = shape;
@@ -104,7 +104,7 @@ export class ScoreboardUI {
         }
     }
 
-    getPlayerScoreShape(player: ClientPlayer | null, coordinate: Coordinate): Shape {
+    getPlayerScoreShape(player: Player | null, coordinate: Coordinate): Shape {
         let name = "-",
             score = 0;
         if (player && player.connected) {
@@ -153,7 +153,7 @@ export class ScoreboardUI {
         //];
     }
 
-    getPlayersSortedByScore(): ClientPlayer[] {
+    getPlayersSortedByScore(): Player[] {
         const players = this.players.slice();
         players.sort(function (a, b) {
             return (b.connected ? b.score : -1) - (a.connected ? a.score : -1);

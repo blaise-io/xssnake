@@ -2,9 +2,9 @@ import { loadLevel } from "../../shared/level/level";
 import { CrosshairLevel } from "../../shared/level/levels/crosshair";
 import { LinesLevel } from "../../shared/level/levels/lines";
 import { PacmanLevel } from "../../shared/level/levels/pacman";
+import { Player } from "../../shared/room/player";
 import { getRandomItemFrom } from "../../shared/util";
 import { ClientGame } from "../game/clientGame";
-import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { clientImageLoader } from "../util/clientUtil";
@@ -25,7 +25,7 @@ export function debugLevel(): void {
         State.flow.destruct();
 
         const level = await loadLevel(levels[levelName], clientImageLoader);
-        const localPlayer = new ClientPlayer("Blaise", undefined, true);
+        const localPlayer = new Player("Blaise", undefined, true);
         const players = new ClientPlayerRegistry(localPlayer);
         const game = new ClientGame(level, players);
 

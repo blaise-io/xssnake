@@ -5,8 +5,8 @@ import {
     RoomGetStatusMessage,
     RoomJoinErrorMessage,
     RoomJoinMessage,
-    RoomKeyMessage,
-    RoomOptionsMessage,
+    RoomOptionsServerMessage,
+    RoomOptionsClientMessage,
 } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { randomStr } from "../../shared/util";
@@ -28,7 +28,7 @@ export class ServerRoomManager {
         this.server.emitter.removeAllListeners(NameMessage.id);
         this.server.emitter.removeAllListeners(RoomGetStatusMessage.id);
         this.server.emitter.removeAllListeners(RoomJoinMessage.id);
-        this.server.emitter.removeAllListeners(RoomOptionsMessage.id);
+        this.server.emitter.removeAllListeners(RoomOptionsServerMessage.id);
     }
 
     bindEvents(): void {
@@ -36,15 +36,14 @@ export class ServerRoomManager {
             player.name = message.name;
         });
 
-        // Get status with intent to join.
+        // Get status with intent to join later.
         this.server.emitter.on(
             RoomGetStatusMessage.id,
             (player: ServerPlayer, message: RoomGetStatusMessage) => {
                 const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {
                     const room = this.getRoomByKey(message.key) as ServerRoom;
-                    player.send(new RoomKeyMessage(room.key));
-                    player.send(new RoomOptionsMessage(room.options));
+                    player.send(new RoomOptionsClientMessage(room.options));
                     player.send(new PlayersMessage(room.players, player));
                 } else {
                     player.send(new RoomJoinErrorMessage(status));
@@ -68,8 +67,8 @@ export class ServerRoomManager {
         // Join any room matching user's preferences,
         // if no matching room is found, create a new room.
         this.server.emitter.on(
-            RoomOptionsMessage.id,
-            (player: ServerPlayer, message: RoomOptionsMessage) => {
+            RoomOptionsServerMessage.id,
+            (player: ServerPlayer, message: RoomOptionsServerMessage) => {
                 const matchingRoom = getMatchingRoom(this.rooms, message.options);
                 const room = matchingRoom || this.createRoom(message.options);
                 this.joinRoom(player, room);

@@ -2,25 +2,25 @@ import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { _ } from "../../shared/util";
-import { ClientPlayer } from "../room/clientPlayer";
 import { State } from "../state";
 import { Dialog } from "./dialog";
 
 export class WrapupGame {
-    private dialog?: Dialog;
-    private countdownInterval?: number;
+    private dialog: Dialog;
+    private countdownInterval: number;
     private countdownStarted = new Date();
 
-    constructor(public players: PlayerRegistry<ClientPlayer>, public winner: Player) {
+    constructor(public players: PlayerRegistry<Player>, public winner: Player) {
         this.dialog = this.getCountdownDialog();
+
+        this.countdownInterval = window.setInterval(() => {
+            State.audio.play("menu_alt");
+            this.dialog.body = this.body;
+        }, 100);
     }
 
     destruct(): void {
-        if (this.countdownInterval) {
-            window.clearInterval(this.countdownInterval);
-        }
-        // delete this.players;
-        // delete this.winner;
+        window.clearInterval(this.countdownInterval);
         this.dialog?.destruct();
     }
 
@@ -37,16 +37,9 @@ export class WrapupGame {
     private getCountdownDialog(): Dialog {
         const title = this.winner ? _(`${this.winner.name} won!`) : _("Round ended in a draw");
 
-        const dialog = new Dialog(title, this.body, {
+        return new Dialog(title, this.body, {
             keysBlocked: false,
             width: 100,
         });
-
-        this.countdownInterval = window.setInterval(() => {
-            State.audio.play("menu_alt");
-            dialog.body = this.body;
-        }, 100);
-
-        return dialog;
     }
 }

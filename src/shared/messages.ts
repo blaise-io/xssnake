@@ -11,7 +11,8 @@ import {
     RoomJoinErrorMessage,
     RoomJoinMessage,
     RoomKeyMessage,
-    RoomOptionsMessage,
+    RoomOptionsServerMessage,
+    RoomOptionsClientMessage,
 } from "./room/roomMessages";
 import {
     RoundLevelMessage,
@@ -38,7 +39,8 @@ export const NETCODE_MAP: Record<MessageId, MessageConstructor> = Object.fromEnt
     ["O2", RoomJoinErrorMessage],
     ["O3", RoomJoinMessage],
     ["O4", RoomKeyMessage],
-    ["O5", RoomOptionsMessage],
+    ["O5", RoomOptionsServerMessage],
+    ["O6", RoomOptionsClientMessage],
 
     ["S1", ScoreMessage],
 

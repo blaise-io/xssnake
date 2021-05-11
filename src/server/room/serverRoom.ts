@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import { SERVER_EVENT } from "../../shared/const";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
-import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
+import { RoomKeyMessage, RoomOptionsClientMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
 import { Server } from "../netcode/server";
@@ -77,7 +77,7 @@ export class ServerRoom {
 
     sendInitial(player: ServerPlayer): void {
         player.send(new RoomKeyMessage(this.key));
-        player.send(new RoomOptionsMessage(this.options));
+        player.send(new RoomOptionsClientMessage(this.options));
         player.send(RoundLevelMessage.fromRound(this.rounds.round));
     }
 

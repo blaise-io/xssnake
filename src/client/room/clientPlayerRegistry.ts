@@ -1,13 +1,8 @@
 import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
-import { NS } from "../const";
-import { State } from "../state";
-import { ClientPlayer } from "./clientPlayer";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
 
-export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
-    players: ClientPlayer[] = [];
-
+export class ClientPlayerRegistry extends PlayerRegistry<Player> {
     get localPlayer(): ClientSocketPlayer {
         return this.find((p) => p.local) as ClientSocketPlayer;
     }
@@ -16,9 +11,7 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
         localPlayer: ClientSocketPlayer,
         players: Player[],
     ): ClientPlayerRegistry {
-        return new ClientPlayerRegistry(
-            ...players.map((p) => (p.local ? localPlayer : ClientPlayer.fromPlayer(p))),
-        );
+        return new ClientPlayerRegistry(...players.map((p) => (p.local ? localPlayer : p)));
     }
 
     // deserialize(serializedPlayers: [string, number][]): void {
@@ -35,7 +28,7 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     // }
 
     // reconstructPlayer(serialized: [string, number]): void {
-    //     const player = new ClientPlayer();
+    //     const player = new Player();
     //     player.deserialize(serialized);
     //
     //     if (player.local) {
@@ -45,21 +38,6 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     //         this.push(player);
     //     }
     // }
-
-    getNames(): string[] {
-        const names = [];
-        for (let i = 0, m = this.length; i < m; i++) {
-            names.push(this[i].name);
-        }
-        return names;
-    }
-
-    setScores(scores: number[]): void {
-        for (let i = 0, m = scores.length; i < m; i++) {
-            this[i].score = scores[i];
-        }
-    }
-
     // setSnakes(level: Level): void {
     //     for (let i = 0, m = this.length; i < m; i++) {
     //         this[i].setSnake(i, level);
@@ -74,14 +52,15 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     //     }
     // }
 
-    clearSnakeShapes(): void {
-        const keys = Object.keys(State.shapes);
-        for (let i = 0, m = keys.length; i < m; i++) {
-            if (keys[i].substr(0, NS.SNAKE.length) === NS.SNAKE) {
-                delete State.shapes[keys[i]];
-            }
-        }
-    }
+    // TODO: Game should do this?
+    // clearSnakeShapes(): void {
+    //     const keys = Object.keys(State.shapes);
+    //     for (let i = 0, m = keys.length; i < m; i++) {
+    //         if (keys[i].substr(0, NS.SNAKE.length) === NS.SNAKE) {
+    //             delete State.shapes[keys[i]];
+    //         }
+    //     }
+    // }
 
     // moveSnakes(level: Level, elapsed: number, shift: Shift): void {
     //     for (let i = 0, m = this.length; i < m; i++) {
@@ -112,8 +91,8 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
     // }
 
     getQuitName(prevPlayers: ClientPlayerRegistry): string | null {
-        const prevNames = prevPlayers.getNames();
-        const newNames = this.getNames();
+        const prevNames = prevPlayers.map((p) => p.name);
+        const newNames = this.map((p) => p.name);
         for (let i = 0, m = prevNames.length; i < m; i++) {
             if (-1 === newNames.indexOf(prevNames[i])) {
                 return prevNames[i];

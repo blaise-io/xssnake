@@ -1,5 +1,4 @@
 import { Player } from "../../shared/room/player";
-import { ClientPlayer } from "../room/clientPlayer";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ChatMessage } from "../room/chatMessage";
 import { Scoreboard } from "../room/scoreboard";
@@ -25,7 +24,7 @@ export function debugScoreboard(): void {
 
         const players = new ClientPlayerRegistry();
         for (let i = 0, m = 5; i <= m; i++) {
-            const player = new ClientPlayer("Player " + (i + 1), true, i === 0);
+            const player = new Player("Player " + (i + 1), true, i === 0);
             players.push(player);
         }
         const scoreboard = new Scoreboard(players);
@@ -40,7 +39,7 @@ export function debugScoreboard(): void {
                 scoreboard.ui.debounceUpdate();
 
                 setTimeout(() => {
-                    players.push(new ClientPlayer("Player 6")); // Player 6 joins.
+                    players.push(new Player("Player 6")); // Player 6 joins.
                     scoreboard.ui.debounceUpdate();
                 }, 1000);
             }, 1000);

@@ -10,27 +10,21 @@ export class Scoreboard {
 
     constructor(public players: ClientPlayerRegistry) {
         this.ui = new ScoreboardUI(players);
-        this.bindEvents();
-    }
 
-    destruct(): void {
-        // delete this.players;
-        this.ui.destruct();
-        // delete this.ui;
-        this.unbindEvents();
-    }
-
-    bindEvents(): void {
         State.events.on(PlayersMessage.id, NS.SCORE, () => {
             this.ui.debounceUpdate();
         });
+
         State.events.on(ScoreMessage.id, NS.SCORE, (message: ScoreMessage) => {
-            this.players.setScores(message.score);
+            message.score.forEach((score, index) => {
+                this.players[index].score = score;
+            });
             this.ui.debounceUpdate();
         });
     }
 
-    unbindEvents(): void {
+    destruct(): void {
+        this.ui.destruct();
         State.events.off(PlayersMessage.id, NS.SCORE);
         State.events.off(ScoreMessage.id, NS.SCORE);
     }
