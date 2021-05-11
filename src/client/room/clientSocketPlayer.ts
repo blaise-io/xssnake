@@ -52,7 +52,7 @@ export class ClientSocketPlayer extends ClientPlayer {
         if (this.connected) {
             error(_("Connection lost"));
         } else {
-            error(_("Cannot connect"));
+            error(_("Server down!!"));
         }
         this.destruct();
     }
