@@ -42,7 +42,7 @@ export class ServerRoomManager {
             (player: ServerPlayer, message: RoomGetStatusMessage) => {
                 const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {
-                    const room = this.getRoomByKey(message.key)!;
+                    const room = this.getRoomByKey(message.key) as ServerRoom;
                     player.send(new RoomKeyMessage(room.key));
                     player.send(new RoomOptionsMessage(room.options));
                     player.send(new PlayersMessage(room.players, player));
@@ -58,7 +58,7 @@ export class ServerRoomManager {
             (player: ServerPlayer, message: RoomJoinMessage) => {
                 const status = this.getRoomStatus(message.key);
                 if (status === ROOM_STATUS.JOINABLE) {
-                    this.joinRoom(player, this.getRoomByKey(message.key)!);
+                    this.joinRoom(player, this.getRoomByKey(message.key) as ServerRoom);
                 } else {
                     player.send(new RoomJoinErrorMessage(status));
                 }
@@ -139,11 +139,11 @@ export class ServerRoomManager {
             return ROOM_STATUS.NOT_FOUND;
         }
 
-        if (room.isFull()) {
+        if (room.full) {
             return ROOM_STATUS.FULL;
         }
 
-        if (room.rounds.hasStarted()) {
+        if (room.rounds.started) {
             return ROOM_STATUS.IN_PROGRESS;
         }
 

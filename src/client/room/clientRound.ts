@@ -2,8 +2,8 @@ import { loadLevel } from "../../shared/level/level";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import {
-    RoundMessage,
-    RoundCountdownMessage,
+    RoundLevelMessage,
+    RoundCountDownMessage,
     RoundStartMessage,
     RoundWrapupMessage,
 } from "../../shared/room/roundMessages";
@@ -20,8 +20,12 @@ export class ClientRound extends Round {
     private preGameUI?: PreGameUI;
     private wrapupGameUI?: WrapupGame;
 
-    constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
-        super(players, options);
+    constructor(
+        public players: ClientPlayerRegistry,
+        public options: RoomOptions,
+        public levelIndex: number,
+    ) {
+        super(players, options, levelIndex);
         this.preGameUI = new PreGameUI(players, options);
         this.bindEvents();
     }
@@ -42,8 +46,7 @@ export class ClientRound extends Round {
         }
     }
 
-    async setLevel(levelSetIndex: number, levelIndex: number): Promise<void> {
-        this.levelSetIndex = levelSetIndex;
+    async setLevel(levelIndex: number): Promise<void> {
         this.levelIndex = levelIndex;
 
         if (this.game) {
@@ -56,10 +59,10 @@ export class ClientRound extends Round {
 
     bindEvents(): void {
         State.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
-        State.events.on(RoundMessage.id, NS.ROUND, async (message: RoundMessage) => {
-            await this.setLevel(message.levelSetIndex, message.levelIndex);
+        State.events.on(RoundLevelMessage.id, NS.ROUND, async (message: RoundLevelMessage) => {
+            await this.setLevel(message.levelIndex);
         });
-        State.events.on(RoundCountdownMessage.id, NS.ROUND, (message: RoundCountdownMessage) => {
+        State.events.on(RoundCountDownMessage.id, NS.ROUND, (message: RoundCountDownMessage) => {
             if (this.preGameUI) {
                 this.preGameUI.toggleCountdown(message.enabled);
                 this.preGameUI.updateUI();
@@ -85,8 +88,8 @@ export class ClientRound extends Round {
 
     unbindEvents(): void {
         State.events.off(EV_PLAYERS_UPDATED, NS.ROUND);
-        State.events.off(RoundMessage.id, NS.ROUND);
-        State.events.off(RoundCountdownMessage.id, NS.ROUND);
+        State.events.off(RoundLevelMessage.id, NS.ROUND);
+        State.events.off(RoundCountDownMessage.id, NS.ROUND);
         State.events.off(RoundStartMessage.id, NS.ROUND);
         State.events.off(RoundWrapupMessage.id, NS.ROUND);
     }

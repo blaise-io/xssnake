@@ -5,7 +5,7 @@ import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { Round } from "../../shared/room/round";
 import {
-    RoundCountdownMessage,
+    RoundCountDownMessage as RoundCountDownMessage,
     RoundStartMessage,
     RoundWrapupMessage,
 } from "../../shared/room/roundMessages";
@@ -16,10 +16,11 @@ import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 
 export class ServerRound extends Round {
-    private game?: ServerGame;
-    wrappingUp: boolean;
-    private countdownStarted: boolean;
+    game?: ServerGame;
+    wrappingUp = false;
+    private _countDown = false;
     private countdownTimer?: NodeJS.Timeout;
+    private onPlayerDisconnect: () => void;
 
     constructor(
         public roomEmitter: EventEmitter,
@@ -27,20 +28,16 @@ export class ServerRound extends Round {
         public options: RoomOptions,
         public levelPlayset: LevelPlayset,
     ) {
-        super(players, options);
+        super(players, options, levelPlayset.nextLevelIndex);
 
-        this.levelSetIndex = options.levelSetIndex;
-        this.levelIndex = levelPlayset.getNext();
+        this.onPlayerDisconnect = () => {
+            this.countDown = false;
+        };
 
-        this.countdownStarted = false;
-        this.wrappingUp = false;
-
-        this.stopCountDown = this.stopCountDown.bind(this);
-
-        this.roomEmitter.on(SERVER_EVENT.PLAYER_DISCONNECT, this.stopCountDown);
+        this.roomEmitter.on(SERVER_EVENT.PLAYER_DISCONNECT, this.onPlayerDisconnect);
         this.roomEmitter.on(RoomManualStartMessage.id, (player: ServerPlayer) => {
             if (this.players.isHost(player) && !this.countdownTimer) {
-                this.toggleCountdown(true);
+                this.countDown = true;
             }
         });
     }
@@ -59,8 +56,15 @@ export class ServerRound extends Round {
         delete this.level;
     }
 
+    async startRound(): Promise<void> {
+        this.unbindEvents();
+        this.level = await loadLevel(this.LevelClass, serverImageLoader);
+        this.game = new ServerGame(this.roomEmitter, this.level, this.players);
+        this.players.send(new RoundStartMessage());
+    }
+
     unbindEvents(): void {
-        this.roomEmitter.off(SERVER_EVENT.PLAYER_DISCONNECT, this.stopCountDown);
+        this.roomEmitter.off(SERVER_EVENT.PLAYER_DISCONNECT, this.onPlayerDisconnect);
         this.roomEmitter.removeAllListeners(RoomManualStartMessage.id);
     }
 
@@ -73,30 +77,23 @@ export class ServerRound extends Round {
         this.wrappingUp = true;
     }
 
-    toggleCountdown(enabled: boolean): void {
+    start(): void {
+        this.countDown = true;
+    }
+
+    set countDown(enabled: boolean) {
+        if (this._countDown === enabled) {
+            return;
+        }
         if (this.countdownTimer) {
             clearTimeout(this.countdownTimer);
         }
-        this.countdownStarted = enabled;
-        this.players.send(new RoundCountdownMessage(enabled));
+        this._countDown = enabled;
+        this.players.send(new RoundCountDownMessage(enabled));
         if (enabled) {
             this.countdownTimer = setTimeout(async () => {
                 await this.startRound();
             }, SECONDS_ROUND_COUNTDOWN * 1000);
-        }
-    }
-
-    async startRound(): Promise<void> {
-        this.unbindEvents();
-        this.level = await loadLevel(this.LevelClass, serverImageLoader);
-        this.game = new ServerGame(this.roomEmitter, this.level, this.players);
-        this.started = true;
-        this.players.send(new RoundStartMessage());
-    }
-
-    stopCountDown(): void {
-        if (this.countdownStarted) {
-            this.toggleCountdown(false);
         }
     }
 }

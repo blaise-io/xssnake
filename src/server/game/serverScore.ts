@@ -15,15 +15,15 @@ export class ServerScore {
      */
     update(crashedPlayers: ServerPlayer[], level: Level): boolean {
         let scoreUpdated = false;
-        if (!level) {
-            console.error("FIXME");
-            return false;
-        }
         const points = crashedPlayers.length * level.settings.pointsKnockout;
         if (points) {
             for (let i = 0, m = this.players.length; i < m; i++) {
                 const player = this.players[i];
-                if (-1 === crashedPlayers.indexOf(player) && !player.snake!.crashed) {
+                if (
+                    -1 === crashedPlayers.indexOf(player) &&
+                    player.snake &&
+                    !player.snake.crashed
+                ) {
                     player.score += points;
                     scoreUpdated = true;
                 }
@@ -35,19 +35,20 @@ export class ServerScore {
         return scoreUpdated;
     }
 
-    ///**
-    // * @return {serialized.Client}
-    // */
-    //getWinner() {
-    //    let sorted, last, playerIndex;
-    //
-    //    sorted = this.points.slice().sort();
-    //    last = sorted.length - 1;
-    //    playerIndex = this.points.indexOf(sorted[last]);
-    //
-    //    return (sorted[last] - ROOM_WIN_BY_MIN >= sorted[last - 1]) ?
-    //        this.room.players[playerIndex] : null;
-    //},
+    get points(): number[] {
+        return this.players.map((p) => p.score);
+    }
+
+    getWinner(minPointsDiff: number): ServerPlayer | undefined {
+        if (this.players.length <= 1) {
+            return undefined;
+        }
+        const playersByScore = this.players.sort((p1, p2) => p1.score - p2.score);
+        if (playersByScore[0].score - playersByScore[1].score >= minPointsDiff) {
+            return playersByScore[0];
+        }
+    }
+
     //
     ///**
     // * @param {serialized.Client} client

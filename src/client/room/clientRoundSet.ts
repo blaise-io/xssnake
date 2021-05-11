@@ -1,40 +1,38 @@
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoundMessage } from "../../shared/room/roundMessages";
+import { RoundLevelMessage } from "../../shared/room/roundMessages";
 import { NS } from "../const";
 import { State } from "../state";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRound } from "./clientRound";
 
 export class ClientRoundSet {
-    round: ClientRound;
+    round: ClientRound = new ClientRound(this.players, this.options, this.levelIndex);
 
-    constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
-        this.round = new ClientRound(this.players, this.options);
+    constructor(
+        public players: ClientPlayerRegistry,
+        public options: RoomOptions,
+        private levelIndex: number,
+    ) {
         this.bindEvents();
     }
 
     destruct(): void {
-        // delete this.players;
-        // delete this.options;
         this.round.destruct();
-        // delete this.round;
         this.unbindEvents();
     }
 
     bindEvents(): void {
-        State.events.on(RoundMessage.id, NS.ROUND_SET, async (message: RoundMessage) => {
+        State.events.on(RoundLevelMessage.id, NS.ROUND_SET, async (message: RoundLevelMessage) => {
             // Switch level between rounds.
-            // TODO: MessageId.ROUND_SWITCH?
             if (this.round.game && this.round.game.started) {
                 this.round.destruct();
-                // TODO: set levelSetIndex, levelIndex immediately.
-                this.round = new ClientRound(this.players, this.options);
-                await this.round.setLevel(message.levelSetIndex, message.levelIndex);
+                this.round = new ClientRound(this.players, this.options, this.levelIndex);
+                await this.round.setLevel(message.levelIndex);
             }
         });
     }
 
     unbindEvents(): void {
-        State.events.off(RoundMessage.id, NS.ROUND_SET);
+        State.events.off(RoundLevelMessage.id, NS.ROUND_SET);
     }
 }

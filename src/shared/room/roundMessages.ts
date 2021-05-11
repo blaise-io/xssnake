@@ -2,33 +2,33 @@ import { AUDIENCE } from "../messages";
 import { Round } from "./round";
 import { Message, MessageId } from "./types";
 
-export class RoundMessage implements Message {
+export class RoundLevelMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public levelSetIndex: number, public levelIndex: number) {}
+    constructor(public levelIndex: number) {}
 
-    static deserialize(trustedNetcode: string): RoundMessage {
-        return new RoundMessage(...(JSON.parse(trustedNetcode) as [number, number]));
+    static deserialize(trustedNetcode: string): RoundLevelMessage {
+        return new RoundLevelMessage(+trustedNetcode);
     }
 
-    static fromRound(round: Round): RoundMessage {
-        return new RoundMessage(round.levelSetIndex as number, round.levelIndex as number);
+    static fromRound(round: Round): RoundLevelMessage {
+        return new RoundLevelMessage(round.levelIndex as number);
     }
 
     get serialized(): string {
-        return JSON.stringify([this.levelSetIndex, this.levelIndex]);
+        return this.levelIndex.toString();
     }
 }
 
-export class RoundCountdownMessage implements Message {
+export class RoundCountDownMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
     constructor(public enabled: boolean) {}
 
-    static deserialize(trustedNetcode: string): RoundCountdownMessage {
-        return new RoundCountdownMessage(!!+trustedNetcode);
+    static deserialize(trustedNetcode: string): RoundCountDownMessage {
+        return new RoundCountDownMessage(!!+trustedNetcode);
     }
 
     get serialized(): string {

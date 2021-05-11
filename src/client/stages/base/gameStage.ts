@@ -20,23 +20,20 @@ export class GameStage implements StageInterface {
 
     construct(): void {
         State.shapes.CONNECTING = this.connectingShape;
+
         this.connectServer().then((clientSocketPlayer) => {
-            this.room = new ClientRoom(clientSocketPlayer, (room) => {
-                this.destructStageLeftovers();
-                room.setupComponents();
+            this.room = new ClientRoom(clientSocketPlayer, () => {
+                delete State.shapes.HEADER;
+                delete State.shapes.CONNECTING;
+                State.menuSnake?.destruct();
             });
-            clientSocketPlayer.send(new RoomOptionsMessage(State.flow.data.roomOptions));
         });
     }
 
     destruct(): void {
-        if (State.flow.data.clientPlayer) {
-            State.flow.data.clientPlayer.destruct();
-            delete State.flow.data.clientPlayer;
-        }
-        if (this.room) {
-            this.room.destruct();
-        }
+        State.flow.data.clientPlayer?.destruct();
+        delete State.flow.data.clientPlayer;
+        this.room?.destruct();
         delete State.shapes.CONNECTING;
     }
 
@@ -51,14 +48,6 @@ export class GameStage implements StageInterface {
                 );
             }
         });
-
-        // const clientPlayer = new ClientSocketPlayer(() => {
-        //     clientPlayer.room = new ClientRoom(clientPlayer);
-        //     clientPlayer.room.setupComponents();
-        //     clientPlayer.emitDeprecated(NC_PLAYER_NAME, [State.flow.data.name]);
-        //     clientPlayer.emitDeprecated(NC_ROOM_JOIN_MATCHING, State.flow.data.roomOptions.serialize());
-        //     this.destructStageLeftovers();
-        // });
     }
 
     get connectingShape(): Shape {
@@ -66,13 +55,5 @@ export class GameStage implements StageInterface {
         center(shape, CANVAS.WIDTH, CANVAS.HEIGHT - 20);
         flash(shape);
         return shape;
-    }
-
-    destructStageLeftovers(): void {
-        delete State.shapes.HEADER;
-        delete State.shapes.CONNECTING;
-        if (State.menuSnake) {
-            State.menuSnake.destruct();
-        }
     }
 }

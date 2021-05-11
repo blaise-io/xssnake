@@ -3,7 +3,7 @@ import { SERVER_EVENT } from "../../shared/const";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
 import { RoomKeyMessage, RoomOptionsMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoundMessage } from "../../shared/room/roundMessages";
+import { RoundLevelMessage } from "../../shared/room/roundMessages";
 import { Server } from "../netcode/server";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
@@ -44,7 +44,7 @@ export class ServerRoom {
         this.emitter.on(SERVER_EVENT.PLAYER_DISCONNECT, (player: ServerPlayer) => {
             // Remove immediately if rounds have not started.
             // [else: set player.connected to false]
-            if (!this.rounds.hasStarted()) {
+            if (!this.rounds.started) {
                 this.players.remove(player);
             } else {
                 // TODO: Check whether this dupes PlayerRegistry, should also inform room.
@@ -63,7 +63,7 @@ export class ServerRoom {
     // }
 
     isAwaitingPlayers(): boolean {
-        return !this.isFull() && !this.rounds.hasStarted();
+        return !this.full && !this.rounds.started;
     }
 
     addPlayer(player: ServerPlayer): void {
@@ -72,13 +72,13 @@ export class ServerRoom {
     }
 
     detectAutostart(): void {
-        this.rounds.detectAutostart(this.isFull());
+        this.rounds.detectAutostart(this.full);
     }
 
     sendInitial(player: ServerPlayer): void {
         player.send(new RoomKeyMessage(this.key));
         player.send(new RoomOptionsMessage(this.options));
-        player.send(RoundMessage.fromRound(this.rounds.round));
+        player.send(RoundLevelMessage.fromRound(this.rounds.round));
     }
 
     /** @deprecated move to RoomManager */
@@ -88,7 +88,7 @@ export class ServerRoom {
         }
     }
 
-    isFull(): boolean {
+    get full(): boolean {
         return this.players.length === this.options.maxPlayers;
     }
 }

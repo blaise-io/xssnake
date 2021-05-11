@@ -5,18 +5,15 @@ import { PlayerRegistry } from "./playerRegistry";
 import { RoomOptions } from "./roomOptions";
 
 export class Round {
-    levelSetIndex?: number;
-    levelIndex?: number;
     level?: Level;
-    private index: number;
-    started: boolean;
 
-    constructor(public players: PlayerRegistry<Player>, public options: RoomOptions) {
-        this.index = 0;
-        this.started = false;
-    }
+    constructor(
+        public players: PlayerRegistry<Player>,
+        public options: RoomOptions,
+        public levelIndex: number,
+    ) {}
 
     get LevelClass(): typeof Level {
-        return levelSets[this.levelSetIndex as number][this.levelIndex as number];
+        return levelSets[this.options.levelSetIndex as number][this.levelIndex as number];
     }
 }

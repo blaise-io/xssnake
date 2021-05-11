@@ -1,5 +1,5 @@
+import { RoundLevelMessage } from "../../shared/room/roundMessages";
 import { ROOM_STATUS } from "../../shared/const";
-import { SnakeCrashMessage } from "../../shared/game/snakeMessages";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import {
     RoomJoinErrorMessage,
@@ -27,9 +27,10 @@ const COPY_ERROR = Object.fromEntries([
 
 export class ClientRoom {
     key?: string;
-    players = new ClientPlayerRegistry();
-    options = new RoomOptions();
+    players?: ClientPlayerRegistry; // TODO: move fetching to controller
+    options?: RoomOptions; // TODO: move fetching to controller
 
+    private levelIndex?: number;
     private roundSet?: ClientRoundSet;
     private messageBox?: MessageBox;
     private scoreboard?: Scoreboard;
@@ -39,6 +40,7 @@ export class ClientRoom {
         private resolve: (clientRoom: ClientRoom) => void,
         private reject: (error: string) => void = noop,
     ) {
+        this.clientPlayer.send(new RoomOptionsMessage(State.flow.data.roomOptions));
         this.bindEvents();
     }
 
@@ -47,18 +49,10 @@ export class ClientRoom {
         this.unbindEvents();
         // delete this.key;
         // delete this.options;
-        if (this.players) {
-            this.players.destruct();
-        }
-        if (this.roundSet) {
-            this.roundSet.destruct();
-        }
-        if (this.messageBox) {
-            this.messageBox.destruct();
-        }
-        if (this.scoreboard) {
-            this.scoreboard.destruct();
-        }
+        this.players?.destruct();
+        this.roundSet?.destruct();
+        this.messageBox?.destruct();
+        this.scoreboard?.destruct();
     }
 
     bindEvents(): void {
@@ -68,13 +62,13 @@ export class ClientRoom {
 
         State.events.on(RoomOptionsMessage.id, NS.ROOM, (message: RoomOptionsMessage) => {
             this.options = message.options;
-            this.checkAllRoomDataReceived();
+            this.checkDataReceived();
         });
 
         State.events.on(RoomKeyMessage.id, NS.ROOM, (message: RoomKeyMessage) => {
             this.key = message.key;
             setHash(HASH.ROOM, this.key);
-            this.checkAllRoomDataReceived();
+            this.checkDataReceived();
         });
 
         State.events.on(PlayersMessage.id, NS.ROOM, (message: PlayersMessage) => {
@@ -82,14 +76,23 @@ export class ClientRoom {
                 this.clientPlayer,
                 message.players,
             );
-            this.checkAllRoomDataReceived();
+            this.scoreboard = new Scoreboard(this.players);
+            this.messageBox = new MessageBox(this.players);
+            this.checkDataReceived();
+
+            // TODO: Bind to netcode event instead?
             State.events.trigger(EV_PLAYERS_UPDATED, this.players);
         });
 
-        // TODO: Notify separately?
-        State.events.on(SnakeCrashMessage.id, NS.ROOM, (message: SnakeCrashMessage) => {
-            this.notifySnakesCrashed(message);
+        State.events.on(RoundLevelMessage.id, NS.ROUND_SET, (message: RoundLevelMessage) => {
+            this.levelIndex = message.levelIndex;
+            this.checkDataReceived();
         });
+
+        // TODO: Create notifier netcode and listen in MessageBox
+        // State.events.on(SnakeCrashMessage.id, NS.ROOM, (message: SnakeCrashMessage) => {
+        //     this.notifySnakesCrashed(message);
+        // });
 
         //State.events.on(NC_XSS, NS.ROOM, this._requestXss.bind(this));
         //State.events.on(NC_XSS, NS.ROOM, this._evalXss.bind(this));
@@ -102,10 +105,27 @@ export class ClientRoom {
         State.events.off(PlayersMessage.id, NS.ROOM);
     }
 
-    setupComponents(): void {
-        this.roundSet = new ClientRoundSet(this.players, this.options);
-        this.scoreboard = new Scoreboard(this.players);
-        this.messageBox = new MessageBox(this.players);
+    get allDataReceived(): boolean {
+        return (
+            this.key !== undefined &&
+            this.options !== undefined &&
+            this.players !== undefined &&
+            this.levelIndex !== undefined
+        );
+    }
+
+    checkDataReceived(): void {
+        if (
+            this.options !== undefined &&
+            this.players !== undefined &&
+            this.levelIndex !== undefined
+        ) {
+            this.roundSet = new ClientRoundSet(this.players, this.options, this.levelIndex);
+        }
+
+        if (this.allDataReceived) {
+            this.resolve(this);
+        }
     }
 
     // setRoom(serializedRoom: [string]): void {
@@ -128,43 +148,33 @@ export class ClientRoom {
     //     State.events.trigger(EV_PLAYERS_UPDATED, this.players);
     // }
 
-    get allDataReceived(): boolean {
-        return !!this.key && !!this.options && !!this.players;
-    }
+    // notifySnakesCrashed(message: SnakeCrashMessage): void {
+    //     const colissions = message.colissions;
+    //     let notification = "";
+    //     const names = this.players.getNames();
+    //     for (let i = 0, m = colissions.length; i < m; i++) {
+    //         notification += names[colissions[i].playerIndex];
 
-    checkAllRoomDataReceived(): void {
-        console.log("this.allDataReceived", this.allDataReceived);
-        if (this.allDataReceived) {
-            this.resolve(this);
-        }
-    }
-    notifySnakesCrashed(message: SnakeCrashMessage): void {
-        const colissions = message.colissions;
-        let notification = "";
-        const names = this.players.getNames();
-        for (let i = 0, m = colissions.length; i < m; i++) {
-            notification += names[colissions[i].playerIndex];
+    //         if (i + 1 === m) {
+    //             notification += " crashed.";
+    //         } else if (i + 2 === m) {
+    //             notification += " & ";
+    //         } else {
+    //             notification += ", ";
+    //         }
 
-            if (i + 1 === m) {
-                notification += " crashed.";
-            } else if (i + 2 === m) {
-                notification += " & ";
-            } else {
-                notification += ", ";
-            }
-
-            if (1 === i % 2 || m === i + 1) {
-                // Line end.
-                if (i + 1 < m) {
-                    // Continuing.
-                    notification += "…";
-                }
-                this.messageBox?.addNotification(notification);
-                notification = "";
-            }
-        }
-        this.messageBox?.ui.debounceUpdate();
-    }
+    //         if (1 === i % 2 || m === i + 1) {
+    //             // Line end.
+    //             if (i + 1 < m) {
+    //                 // Continuing.
+    //                 notification += "…";
+    //             }
+    //             this.messageBox?.addNotification(notification);
+    //             notification = "";
+    //         }
+    //     }
+    //     this.messageBox?.ui.debounceUpdate();
+    // }
 
     //    /**
     //     * @param {Array.<string>} names

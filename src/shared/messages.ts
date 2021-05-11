@@ -14,8 +14,8 @@ import {
     RoomOptionsMessage,
 } from "./room/roomMessages";
 import {
-    RoundMessage,
-    RoundCountdownMessage,
+    RoundLevelMessage,
+    RoundCountDownMessage,
     RoundStartMessage,
     RoundWrapupMessage,
 } from "./room/roundMessages";
@@ -29,8 +29,8 @@ export const NETCODE_MAP: Record<MessageId, MessageConstructor> = Object.fromEnt
 
     ["P1", PlayersMessage],
 
-    ["R1", RoundMessage],
-    ["R2", RoundCountdownMessage],
+    ["R1", RoundLevelMessage],
+    ["R2", RoundCountDownMessage],
     ["R3", RoundStartMessage],
     ["R4", RoundWrapupMessage],
 

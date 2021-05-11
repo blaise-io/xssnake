@@ -16,7 +16,7 @@ export class ServerPlayer extends Player {
         super();
         this.client.on("message", this.onmessage.bind(this));
         this.client.on("close", () => {
-            if (this.room && this.room.rounds && this.room.rounds.hasStarted()) {
+            if (this.room && this.room.rounds && this.room.rounds.started) {
                 // Cannot destruct immediately, game expects player.
                 // Room should destruct player at end of round, or
                 // when all players in room have disconnected.
