@@ -72,7 +72,7 @@ export class ClientSnake extends Snake {
         State.shapes[this.shapeKeys.direction] = shape;
     }
 
-    removeNameAndDirection(): void {
+    hideNameAndDirection(): void {
         delete State.shapes[this.shapeKeys.name];
         delete State.shapes[this.shapeKeys.direction];
     }

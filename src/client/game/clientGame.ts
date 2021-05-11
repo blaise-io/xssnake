@@ -32,12 +32,13 @@ export class ClientGame {
             (p, index) => new ClientSnake(index, p.local, p.name, this.emit, level),
         );
 
-        this.showMeta();
+        this.showNames();
         this.bindEvents();
     }
 
     destruct(): void {
         this.unbindEvents();
+        this.hideNames();
 
         this.spawnables.destruct();
         this.snakes.length = 0;
@@ -53,7 +54,7 @@ export class ClientGame {
 
     start(): void {
         this.started = true;
-        this.hideName();
+        this.hideNames();
         this.localSnake?.addControls();
         this.localSnake?.showAction(
             stylizeUpper(getRandomItemFrom([_("¡Vamos!"), _("Let's goooo"), _("Gogogo!")])),
@@ -138,16 +139,16 @@ export class ClientGame {
         });
     }
 
-    showMeta(): void {
+    showNames(): void {
         for (let i = 0, m = this.snakes.length; i < m; i++) {
             this.snakes[i].showName();
         }
         this.localSnake?.showDirection();
     }
 
-    hideName(): void {
+    hideNames(): void {
         for (let i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].removeNameAndDirection();
+            this.snakes[i].hideNameAndDirection();
         }
     }
 }

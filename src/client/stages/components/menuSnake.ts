@@ -15,7 +15,7 @@ export class MenuSnake {
         this.snake = new ClientSnake(0, false, "", noop, this.level);
         this.snake.addControls();
         this.snake.showDirection();
-        this.snake.removeNameAndDirection();
+        this.snake.hideNameAndDirection();
         this.timeouts.push(window.setTimeout(() => this.move(), 1500));
     }
 
