@@ -26,8 +26,6 @@ export function debugLevel(): void {
 
         const level = await loadLevel(levels[levelName], clientImageLoader);
         const localPlayer = new ClientPlayer("Blaise", undefined, true);
-        localPlayer.setSnake(0, level);
-
         const players = new ClientPlayerRegistry(localPlayer);
         const game = new ClientGame(level, players);
 

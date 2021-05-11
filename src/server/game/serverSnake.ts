@@ -2,7 +2,6 @@ import { GAME_SHIFT_MAP } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
 import { Snake } from "../../shared/game/snake";
-import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 
 export class ServerSnake extends Snake {
     private elapsed: number;
@@ -14,16 +13,11 @@ export class ServerSnake extends Snake {
 
     destruct(): void {}
 
-    handleNextMove(
-        tick: number,
-        elapsed: number,
-        shift: Shift,
-        players: ServerPlayerRegistry,
-    ): void {
+    handleNextMove(tick: number, elapsed: number, shift: Shift, opponents: ServerSnake[]): void {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
-            const move = new SnakeMove(this, players, this.level, this.getNextPosition());
+            const move = new SnakeMove(this, opponents, this.level, this.getNextPosition());
 
             this.elapsed -= this.speed;
 

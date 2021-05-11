@@ -1,4 +1,3 @@
-import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
 import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { NS } from "../const";
@@ -61,19 +60,19 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
         }
     }
 
-    setSnakes(level: Level): void {
-        for (let i = 0, m = this.length; i < m; i++) {
-            this[i].setSnake(i, level);
-        }
-    }
-
-    unsetSnakes(): void {
-        // There may still be a few shapes lingering around.
-        this.clearSnakeShapes();
-        for (let i = 0, m = this.length; i < m; i++) {
-            this[i].unsetSnake();
-        }
-    }
+    // setSnakes(level: Level): void {
+    //     for (let i = 0, m = this.length; i < m; i++) {
+    //         this[i].setSnake(i, level);
+    //     }
+    // }
+    //
+    // unsetSnakes(): void {
+    //     // There may still be a few shapes lingering around.
+    //     this.clearSnakeShapes();
+    //     for (let i = 0, m = this.length; i < m; i++) {
+    //         this[i].unsetSnake();
+    //     }
+    // }
 
     clearSnakeShapes(): void {
         const keys = Object.keys(State.shapes);
@@ -84,33 +83,33 @@ export class ClientPlayerRegistry extends PlayerRegistry<ClientPlayer> {
         }
     }
 
-    moveSnakes(level: Level, elapsed: number, shift: Shift): void {
-        for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake!.handleNextMove(level, elapsed, shift, this);
-            this[i].snake!.shiftParts(shift);
-        }
-    }
+    // moveSnakes(level: Level, elapsed: number, shift: Shift): void {
+    //     for (let i = 0, m = this.length; i < m; i++) {
+    //         this[i].snake!.handleNextMove(level, elapsed, shift, this);
+    //         this[i].snake!.shiftParts(shift);
+    //     }
+    // }
 
-    showMeta(): void {
-        for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake!.showName();
-        }
-        if (this.localPlayer) {
-            this.localPlayer.snake!.showDirection();
-        }
-    }
+    // showMeta(): void {
+    //     for (let i = 0, m = this.length; i < m; i++) {
+    //         this[i].snake!.showName();
+    //     }
+    //     if (this.localPlayer) {
+    //         this.localPlayer.snake!.showDirection();
+    //     }
+    // }
 
-    hideMeta(): void {
-        for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake!.removeNameAndDirection();
-        }
-    }
+    // hideMeta(): void {
+    //     for (let i = 0, m = this.length; i < m; i++) {
+    //         this[i].snake!.removeNameAndDirection();
+    //     }
+    // }
 
-    addControls(): void {
-        if (this.localPlayer) {
-            this.localPlayer.snake!.addControls();
-        }
-    }
+    // addControls(): void {
+    //     if (this.localPlayer) {
+    //         this.localPlayer.snake!.addControls();
+    //     }
+    // }
 
     getQuitName(prevPlayers: ClientPlayerRegistry): string | null {
         const prevNames = prevPlayers.getNames();

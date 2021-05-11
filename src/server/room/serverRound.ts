@@ -68,10 +68,6 @@ export class ServerRound extends Round {
         this.roomEmitter.removeAllListeners(RoomManualStartMessage.id);
     }
 
-    getAlivePlayers(): ServerPlayer[] {
-        return this.players.filter((player) => player.snake && !player.snake.crashed);
-    }
-
     wrapUp(winnerPlayer: ServerPlayer): void {
         this.players.send(new RoundWrapupMessage(this.players.indexOf(winnerPlayer)));
         this.wrappingUp = true;

@@ -1,9 +1,7 @@
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
-import { DIRECTION } from "../../shared/const";
 import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
 import { NameMessage } from "../../shared/room/playerMessages";
 import { Message, MessageConstructor } from "../../shared/room/types";
-import { SnakeUpdateServerMessage } from "../../shared/game/snakeMessages";
 import { _, noop } from "../../shared/util";
 import { State } from "../state";
 import { error } from "../util/clientUtil";
@@ -78,9 +76,5 @@ export class ClientSocketPlayer extends ClientPlayer {
                 console.error("Unregistered message:", messageString.substr(0, 2));
             }
         }
-    }
-
-    emitSnake(direction: DIRECTION): void {
-        this.send(SnakeUpdateServerMessage.fromData(this.snake!, direction));
     }
 }

@@ -31,7 +31,7 @@ export class ServerRoundSet {
         this.score = new ServerScore(players);
 
         // TODO: this.round.game should emit a winner.
-        this.roomEmitter.on(String(SE_PLAYER_COLLISION), this.handleCollisions.bind(this));
+        // this.roomEmitter.on(String(SE_PLAYER_COLLISION), this.handleCollisions.bind(this));
     }
 
     destruct(): void {
@@ -78,15 +78,16 @@ export class ServerRoundSet {
         return this.score.getWinner(this.minPointsDiff);
     }
 
-    private handleCollisions(crashingPlayers: ServerPlayer[]): void {
-        if (this.round.level) {
-            const alive = this.round.getAlivePlayers();
-            this.score.update(crashingPlayers, this.round.level);
-            if (alive.length <= 1) {
-                this.switchRounds(alive[0] || null);
-            }
-        }
-    }
+    /** @deprecated should be part of ServerGame */
+    // private handleCollisions(crashingSnakes: ServerSnake[]): void {
+    //     if (this.round.level) {
+    //         const alive = this.round.getAlivePlayers();
+    //         this.score.update(crashingSnakes, this.round.level);
+    //         if (alive.length <= 1) {
+    //             this.switchRounds(alive[0] || null);
+    //         }
+    //     }
+    // }
 
     detectAutostart(full: boolean): void {
         if (full && 0 === this.roundIndex) {

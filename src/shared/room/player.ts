@@ -1,12 +1,9 @@
-import { Snake } from "../game/snake";
-
 export class Player {
     constructor(
         public name = "",
         public connected = false,
         public local = false,
         public score = 0,
-        public snake?: Snake,
     ) {}
 
     destruct(): void {

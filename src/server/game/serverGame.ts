@@ -17,22 +17,32 @@ export class ServerGame {
     private tickInterval: NodeJS.Timeout;
     private started = false;
     private spawner: Spawner;
+    private snakes: ServerSnake[] = [];
 
     constructor(
         private roomEmitter: EventEmitter,
         public level: Level,
         public players: ServerPlayerRegistry,
     ) {
-        this.players.setSnakes(this.level);
+        this.snakes = this.players.map((p, index) => new ServerSnake(index, level));
 
-        this.spawner = new Spawner(this.level, this.players, (spawnable: Spawnable) => {
+        this.spawner = new Spawner(this.level, this.snakes, (spawnable: Spawnable) => {
             this.players.send(new SpawnableMessage(spawnable.type, spawnable.coordinate));
         });
 
         this.roomEmitter.on(
             SnakeUpdateServerMessage.id,
             (player: ServerPlayer, message: SnakeUpdateServerMessage) => {
-                this.handleMove(new ServerSnakeMove(message.parts, message.direction, player));
+                const snake = this.snakes[this.players.indexOf(player)];
+                this.handleMove(
+                    player,
+                    new ServerSnakeMove(
+                        message.parts,
+                        message.direction,
+                        snake,
+                        player.client.latency,
+                    ),
+                );
             },
         );
 
@@ -47,17 +57,15 @@ export class ServerGame {
         this.spawner.destruct();
     }
 
-    private handleMove(move: ServerSnakeMove) {
-        const snake = move.player.snake!;
+    private handleMove(player: ServerPlayer, move: ServerSnakeMove) {
         if (move.isValid()) {
-            snake.direction = move.direction;
-            snake.parts = move.parts;
-            snake.trimParts();
+            move.snake.direction = move.direction;
+            move.snake.parts = move.parts;
+            move.snake.trimParts();
         }
-        this.players.send(
-            SnakeUpdateServerMessage.fromData(snake, this.players.indexOf(move.player)),
-            { exclude: move.isValid() ? move.player : undefined },
-        );
+        this.players.send(SnakeUpdateServerMessage.fromData(move.snake, move.direction), {
+            exclude: move.isValid() ? player : undefined,
+        });
     }
 
     get averageLatencyInTicks(): number {
@@ -74,26 +82,32 @@ export class ServerGame {
     gameloop(tick: number, elapsed: number): void {
         const shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
+
         this.handleCrashingPlayers(tick - this.averageLatencyInTicks);
-        this.players.moveSnakes(tick, elapsed, shift);
+        this.moveSnakes(tick, elapsed, shift);
+    }
+
+    moveSnakes(tick: number, elapsed: number, shift: Shift): void {
+        this.snakes.forEach((snake) => {
+            snake.handleNextMove(tick, elapsed, shift, this.snakes);
+            snake.shiftParts(shift);
+        });
     }
 
     handleCrashingPlayers(tick: number): void {
-        const snakes: ServerSnake[] = [];
-        const crashingPlayers = this.players.getCollisionsOnTick(tick);
+        const crashedSnakes = this.snakes.filter((s) => s.hasCollisionLteTick(tick));
 
-        if (crashingPlayers.length) {
-            for (let i = 0, m = crashingPlayers.length; i < m; i++) {
-                const snake = crashingPlayers[i].snake!;
-                snake.crashed = true;
-                snakes.push(snake);
+        if (crashedSnakes.length) {
+            for (let i = 0, m = crashedSnakes.length; i < m; i++) {
+                crashedSnakes[i].crashed = true;
             }
-
-            // Emit crashed snakes.
-            this.players.send(SnakeCrashMessage.fromSnakes(...snakes));
+            this.players.send(SnakeCrashMessage.fromSnakes(...crashedSnakes));
 
             // Let round manager know.
-            this.roomEmitter.emit(String(SE_PLAYER_COLLISION), crashingPlayers);
+            this.roomEmitter.emit(
+                String(SE_PLAYER_COLLISION),
+                crashedSnakes.map((s) => this.players[this.snakes.indexOf(s)]),
+            );
         }
     }
 }

@@ -49,34 +49,28 @@ export class ClientRound extends Round {
     async setLevel(levelIndex: number): Promise<void> {
         this.levelIndex = levelIndex;
 
-        if (this.game) {
-            this.game.destruct();
-        }
-
+        this.game?.destruct();
         this.level = await loadLevel(this.LevelClass, clientImageLoader);
         this.game = new ClientGame(this.level, this.players);
     }
 
     bindEvents(): void {
-        State.events.on(EV_PLAYERS_UPDATED, NS.ROUND, this.updatePlayers.bind(this));
+        State.events.on(EV_PLAYERS_UPDATED, NS.ROUND, async () => {
+            this.preGameUI?.updateUI();
+            await this.setLevel(this.levelIndex);
+        });
         State.events.on(RoundLevelMessage.id, NS.ROUND, async (message: RoundLevelMessage) => {
             await this.setLevel(message.levelIndex);
         });
         State.events.on(RoundCountDownMessage.id, NS.ROUND, (message: RoundCountDownMessage) => {
-            if (this.preGameUI) {
-                this.preGameUI.toggleCountdown(message.enabled);
-                this.preGameUI.updateUI();
-            }
+            this.preGameUI?.toggleCountdown(message.enabled);
+            this.preGameUI?.updateUI();
         });
         State.events.on(RoundStartMessage.id, NS.ROUND, () => {
             this.unbindEvents();
-            if (this.preGameUI) {
-                this.preGameUI.destruct();
-                delete this.preGameUI;
-            }
-            if (this.game) {
-                this.game.start();
-            }
+            this.preGameUI?.destruct();
+            this.game?.start();
+            delete this.preGameUI;
         });
         State.events.on(RoundWrapupMessage.id, NS.ROUND, (message: RoundWrapupMessage) => {
             this.wrapupGameUI = new WrapupGame(
@@ -92,14 +86,5 @@ export class ClientRound extends Round {
         State.events.off(RoundCountDownMessage.id, NS.ROUND);
         State.events.off(RoundStartMessage.id, NS.ROUND);
         State.events.off(RoundWrapupMessage.id, NS.ROUND);
-    }
-
-    updatePlayers(): void {
-        if (this.game) {
-            this.game.updatePlayers(this.players);
-        }
-        if (this.preGameUI) {
-            this.preGameUI.updateUI();
-        }
     }
 }

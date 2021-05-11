@@ -1,19 +1,10 @@
-import { DIRECTION } from "../../shared/const";
-import { Level } from "../../shared/level/level";
 import { Player } from "../../shared/room/player";
-import { ClientSnake } from "../game/clientSnake";
 
 export class ClientPlayer extends Player {
-    snake?: ClientSnake;
+    // snake?: ClientSnake;
 
     static fromPlayer(player: Player): ClientPlayer {
-        return new ClientPlayer(
-            player.name,
-            player.connected,
-            player.local,
-            player.score,
-            player.snake,
-        );
+        return new ClientPlayer(player.name, player.connected, player.local, player.score);
     }
 
     // /** @deprecated */
@@ -24,25 +15,21 @@ export class ClientPlayer extends Player {
     //     }
     // }
 
-    setSnake(index: number, level: Level): void {
-        this.snake = new ClientSnake(
-            index,
-            this.local,
-            this.name,
-            (direction) => {
-                this.emitSnake(direction);
-            },
-            level,
-        );
-    }
+    // setSnake(index: number, level: Level): void {
+    //     this.snake = new ClientSnake(
+    //         index,
+    //         this.local,
+    //         this.name,
+    //         (direction) => {
+    //             this.emitSnake(direction);
+    //         },
+    //         level,
+    //     );
+    // }
 
-    emitSnake(direction: DIRECTION): void {
-        console.log(direction);
-    }
-
-    unsetSnake(): void {
-        if (this.snake) {
-            this.snake.destruct();
-        }
-    }
+    // unsetSnake(): void {
+    //     if (this.snake) {
+    //         this.snake.destruct();
+    //     }
+    // }
 }

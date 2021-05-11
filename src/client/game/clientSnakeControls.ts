@@ -11,7 +11,7 @@ const KEY_TO_DIRECTION = Object.fromEntries([
 ]);
 
 export class ClientSnakeControls {
-    private upcomingDirections: number[] = [];
+    nextMove: number[] = [];
 
     constructor(public snake: ClientSnake) {
         State.events.on("keydown", NS.SNAKE_CONTROLS, (event: KeyboardEvent) => {
@@ -29,13 +29,13 @@ export class ClientSnakeControls {
 
     setDirection(direction: DIRECTION): void {
         if (this.isDirectionAllowed(direction, this.getPreviousDirection())) {
-            this.upcomingDirections.push(direction);
+            this.nextMove.push(direction);
         }
     }
 
     getPreviousDirection(): number {
-        if (this.upcomingDirections.length) {
-            return this.upcomingDirections[0];
+        if (this.nextMove.length) {
+            return this.nextMove[0];
         }
         return this.snake.direction;
     }
@@ -43,7 +43,7 @@ export class ClientSnakeControls {
     isDirectionAllowed(direction: DIRECTION, prevDirection: number): boolean {
         const turn = Math.abs(direction - prevDirection);
         return (
-            this.upcomingDirections.length <= 2 &&
+            this.nextMove.length <= 2 &&
             this.snake.parts.length >= 2 && // Must go to direction pixel at start.
             turn !== 0 &&
             turn !== 2 // No turn and 180 turn not allowed.
@@ -51,15 +51,9 @@ export class ClientSnakeControls {
     }
 
     getNextDirection(): number {
-        if (this.upcomingDirections.length) {
-            this.snake.direction = this.upcomingDirections[0];
+        if (this.nextMove.length) {
+            this.snake.direction = this.nextMove[0];
         }
         return this.snake.direction;
-    }
-
-    move(): void {
-        if (this.upcomingDirections.length && this.snake.emitSnake) {
-            this.snake.emitSnake(this.upcomingDirections.shift()!);
-        }
     }
 }

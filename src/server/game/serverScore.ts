@@ -1,5 +1,3 @@
-import { ScoreMessage } from "../../shared/game/scoreMessages";
-import { Level } from "../../shared/level/level";
 import { ServerPlayer } from "../room/serverPlayer";
 import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 
@@ -10,30 +8,25 @@ export class ServerScore {
         // delete this.players;
     }
 
-    /**
-     * Returns whether player score is affected.
-     */
-    update(crashedPlayers: ServerPlayer[], level: Level): boolean {
-        let scoreUpdated = false;
-        const points = crashedPlayers.length * level.settings.pointsKnockout;
-        if (points) {
-            for (let i = 0, m = this.players.length; i < m; i++) {
-                const player = this.players[i];
-                if (
-                    -1 === crashedPlayers.indexOf(player) &&
-                    player.snake &&
-                    !player.snake.crashed
-                ) {
-                    player.score += points;
-                    scoreUpdated = true;
-                }
-            }
-        }
-        if (scoreUpdated) {
-            this.players.send(new ScoreMessage(this.players.map((p) => p.score)));
-        }
-        return scoreUpdated;
-    }
+    // /**
+    //  * Returns whether player score is affected.
+    //  */
+    // update(crashedSnakes: ServerSnake[], level: Level): boolean {
+    //     let scoreUpdated = false;
+    //     const points = crashedSnakes.length * level.settings.pointsKnockout;
+    //     if (points) {
+    //         for (let i = 0, m = crashedSnakes.length; i < m; i++) {
+    //             if (!crashedSnakes.crashed) {
+    //                 player.score += points;
+    //                 scoreUpdated = true;
+    //             }
+    //         }
+    //     }
+    //     if (scoreUpdated) {
+    //         this.players.send(new ScoreMessage(this.players.map((p) => p.score)));
+    //     }
+    //     return scoreUpdated;
+    // }
 
     get points(): number[] {
         return this.players.map((p) => p.score);

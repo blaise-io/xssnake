@@ -1,16 +1,13 @@
 import * as util from "util";
 import { SE_PLAYER_COLLISION, SERVER_EVENT } from "../../shared/const";
-import { Level } from "../../shared/level/level";
 import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
 import { Player } from "../../shared/room/player";
 import { Message, MessageConstructor, MessageId } from "../../shared/room/types";
-import { ServerSnake } from "../game/serverSnake";
 import { Server, SocketClient } from "../netcode/server";
 import { ServerRoom } from "./serverRoom";
 
 export class ServerPlayer extends Player {
     room?: ServerRoom;
-    snake?: ServerSnake;
 
     constructor(public server: Server, public client: SocketClient) {
         super();
@@ -36,14 +33,10 @@ export class ServerPlayer extends Player {
             this.disconnect();
         }
         delete this.room;
-        delete this.snake;
     }
 
     disconnect(): void {
         this.connected = false;
-        if (this.snake) {
-            this.snake.crashed = true;
-        }
         if (this.room) {
             this.room.emitter.emit(String(SE_PLAYER_COLLISION), [this]);
             this.room.emitter.emit(SERVER_EVENT.PLAYER_DISCONNECT, this);
@@ -96,15 +89,4 @@ export class ServerPlayer extends Player {
             this.client.send((<MessageConstructor>message.constructor).id + message.serialized);
         }
     }
-
-    // TODO: Ensure matching index instead?
-    setSnake(index: number, level: Level): void {
-        this.snake = new ServerSnake(index, level);
-    }
-
-    // unsetSnake(): void {
-    //     if (this.snake) {
-    //         this.snake.destruct();
-    //     }
-    // }
 }

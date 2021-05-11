@@ -1,4 +1,3 @@
-import { Level } from "../../shared/level/level";
 import { PlayerRegistry, PlayersMessage } from "../../shared/room/playerRegistry";
 import { Message } from "../../shared/room/types";
 import { ServerPlayer } from "./serverPlayer";
@@ -30,29 +29,6 @@ export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
                 this.remove(this[i]);
                 this.send(new PlayersMessage(this, this[i]));
             }
-        }
-    }
-
-    setSnakes(level: Level): void {
-        for (let i = 0, m = this.length; i < m; i++) {
-            this[i].setSnake(i, level);
-        }
-    }
-
-    getCollisionsOnTick(tick: number): ServerPlayer[] {
-        const crashingPlayers = [];
-        for (let i = 0, m = this.length; i < m; i++) {
-            if (this[i].snake!.hasCollisionLteTick(tick)) {
-                crashingPlayers.push(this[i]);
-            }
-        }
-        return crashingPlayers;
-    }
-
-    moveSnakes(tick: number, elapsed: number, shift: Shift): void {
-        for (let i = 0, m = this.length; i < m; i++) {
-            this[i].snake!.handleNextMove(tick, elapsed, shift, this);
-            this[i].snake!.shiftParts(shift);
         }
     }
 }

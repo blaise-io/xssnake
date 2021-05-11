@@ -1,7 +1,6 @@
 import { DIRECTION, GAME_SHIFT_MAP } from "../../shared/const";
 import { SnakeMove } from "../../shared/game/snakeMove";
 import { Level } from "../../shared/level/level";
-import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { Snake } from "../../shared/game/snake";
 import { NS } from "../const";
@@ -21,8 +20,8 @@ export class ClientSnake extends Snake {
         public index: number,
         public local: boolean,
         public name: string,
-        public emitSnake: (direction: DIRECTION) => void,
-        level: Level,
+        public emitDirection: (snake: Snake, direction: DIRECTION) => void,
+        private level: Level,
     ) {
         super(index, level);
 
@@ -43,8 +42,8 @@ export class ClientSnake extends Snake {
     }
 
     move(coordinate: Coordinate): void {
-        if (this.controls) {
-            this.controls.move();
+        if (this.controls && this.controls.nextMove.length && this.emitDirection) {
+            this.emitDirection(this, this.controls.nextMove.shift() as DIRECTION);
         }
         super.move(coordinate);
     }
@@ -91,11 +90,11 @@ export class ClientSnake extends Snake {
         return shape;
     }
 
-    handleNextMove(level: Level, elapsed: number, shift: Shift, players: Player[]): void {
+    handleNextMove(elapsed: number, shift: Shift, opponents: Snake[]): void {
         this.elapsed += elapsed;
 
         if (!this.crashed && this.elapsed >= this.speed) {
-            const move = new SnakeMove(this, players, level, this.getNextPosition());
+            const move = new SnakeMove(this, opponents, this.level, this.getNextPosition());
 
             this.elapsed -= this.speed;
 

@@ -3,8 +3,15 @@
  * is created. It will show the snakes, level, name labels and directions
  * until ClientGame.start() is called.
  */
+import { DIRECTION } from "../../shared/const";
+import { Snake } from "../../shared/game/snake";
 import { Level } from "../../shared/level/level";
-import { SnakeCrashMessage, SnakeUpdateClientMessage } from "../../shared/game/snakeMessages";
+import {
+    SnakeCrashMessage,
+    SnakeUpdateClientMessage,
+    SnakeUpdateServerMessage,
+} from "../../shared/game/snakeMessages";
+import { _ } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
@@ -15,12 +22,20 @@ import { SpawnableRegistry } from "./spawnableRegistry";
 export class ClientGame {
     started = false;
     spawnables = new SpawnableRegistry();
+    snakes: ClientSnake[];
+
+    private emit = (snake: Snake, direction: DIRECTION) => {
+        this.players.localPlayer.send(SnakeUpdateServerMessage.fromData(snake, direction));
+    };
 
     constructor(public level: Level, public players: ClientPlayerRegistry) {
-        this.players = this.updatePlayers(players);
-
         Object.assign(State.shapes, getLevelShapes(this.level));
 
+        this.snakes = this.players.map(
+            (p, index) => new ClientSnake(index, p.local, p.name, this.emit, level),
+        );
+
+        this.showMeta();
         this.bindEvents();
     }
 
@@ -28,6 +43,7 @@ export class ClientGame {
         this.unbindEvents();
 
         this.spawnables.destruct();
+        this.snakes.length = 0;
 
         for (const k in Object.keys(getLevelShapes(this.level))) {
             delete State.shapes[k];
@@ -40,8 +56,13 @@ export class ClientGame {
 
     start(): void {
         this.started = true;
-        this.players.hideMeta();
-        this.players.addControls();
+        this.hideName();
+        this.localSnake?.addControls();
+        this.localSnake?.showAction(_("¡Vamos!"));
+    }
+
+    get localSnake(): ClientSnake | undefined {
+        return this.snakes.find((s) => s.local);
     }
 
     bindEvents(): void {
@@ -50,7 +71,7 @@ export class ClientGame {
             SnakeUpdateClientMessage.id,
             NS.GAME,
             (message: SnakeUpdateClientMessage) => {
-                const snake = this.players[message.playerIndex].snake as ClientSnake;
+                const snake = this.snakes[message.playerIndex];
                 snake.direction = message.direction;
                 snake.parts = message.parts;
                 // If server updated snake, client prediction
@@ -59,12 +80,9 @@ export class ClientGame {
                 State.events.on(SnakeCrashMessage.id, NS.GAME, (message: SnakeCrashMessage) => {
                     for (let i = 0, m = message.colissions.length; i < m; i++) {
                         const collision = message.colissions[i];
-                        const opponent = this.players[collision.playerIndex];
-                        if (opponent && opponent.snake) {
-                            const snake = opponent.snake;
-                            snake.parts = collision.parts;
-                            snake.setCrashed();
-                        }
+                        const opponentSnake = this.snakes[collision.playerIndex];
+                        opponentSnake.parts = collision.parts;
+                        opponentSnake.setCrashed();
                     }
                 });
             },
@@ -83,25 +101,6 @@ export class ClientGame {
         State.events.off(EV_GAME_TICK, NS.GAME);
         State.events.off(SnakeUpdateClientMessage.id, NS.GAME);
     }
-
-    /**
-     * Update game before round has started.
-     * Don't call this mid-game.
-     */
-    updatePlayers(players: ClientPlayerRegistry): ClientPlayerRegistry {
-        players.unsetSnakes();
-        players.setSnakes(this.level);
-        players.showMeta();
-        return players;
-    }
-
-    // updateLevel(level: Level): void {
-    //     this.level.destruct();
-    //     this.level = level;
-    //     Object.assign(State.shapes, getLevelShapes(level));
-    //     // Apply changes in spawns.
-    //     this.updatePlayers(this.players);
-    // }
 
     // /**
     //  * TODO: Typing for things like these.
@@ -123,7 +122,27 @@ export class ClientGame {
         this.level.animations.update(elapsed, this.started);
 
         if (this.started) {
-            this.players.moveSnakes(this.level, elapsed, shift);
+            this.moveSnakes(elapsed, shift);
+        }
+    }
+
+    moveSnakes(elapsed: number, shift: Shift): void {
+        this.snakes.forEach((snake) => {
+            snake.handleNextMove(elapsed, shift, this.snakes);
+            snake.shiftParts(shift);
+        });
+    }
+
+    showMeta(): void {
+        for (let i = 0, m = this.snakes.length; i < m; i++) {
+            this.snakes[i].showName();
+        }
+        this.localSnake?.showDirection();
+    }
+
+    hideName(): void {
+        for (let i = 0, m = this.snakes.length; i < m; i++) {
+            this.snakes[i].removeNameAndDirection();
         }
     }
 }

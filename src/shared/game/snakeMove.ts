@@ -1,10 +1,8 @@
 import { Level } from "../level/level";
-import { Player } from "../room/player";
 import { Snake } from "./snake";
 import { Collision } from "./collision";
 
 export const enum CRASH_INTO {
-    // UNKNOWN,
     WALL,
     MOVING_WALL,
     SELF,
@@ -17,7 +15,7 @@ export class SnakeMove {
 
     constructor(
         public snake: Snake,
-        public players: Player[],
+        public opponents: Snake[],
         public level: Level,
         public location: Coordinate,
     ) {
@@ -42,7 +40,6 @@ export class SnakeMove {
     }
 
     getCollisionAtCoordinate(index: number, coordinate: Coordinate): Collision | null {
-        const players = this.players;
         const levelData = this.level.data;
 
         if (!coordinate) {
@@ -64,13 +61,12 @@ export class SnakeMove {
             return new Collision(coordinate, CRASH_INTO.MOVING_WALL);
         }
 
-        for (let i = 0, m = players.length; i < m; i++) {
-            const snakeOpponent = players[i].snake;
+        for (let i = 0, m = this.opponents.length; i < m; i++) {
+            const opponent = this.opponents[i];
             if (
-                snakeOpponent &&
-                snakeOpponent.crashed === false &&
-                snakeOpponent !== this.snake &&
-                snakeOpponent.hasCoordinate(coordinate)
+                opponent !== this.snake &&
+                !opponent.crashed &&
+                opponent.hasCoordinate(coordinate)
             ) {
                 return new Collision(coordinate, CRASH_INTO.OPPONENT_BODY);
             }

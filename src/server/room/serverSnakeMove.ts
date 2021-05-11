@@ -7,7 +7,7 @@ import {
     VALIDATE_SUCCES,
 } from "../../shared/const";
 import { delta, eq } from "../../shared/util";
-import { ServerPlayer } from "./serverPlayer";
+import { ServerSnake } from "../game/serverSnake";
 
 export class ServerSnakeMove {
     private status = -1;
@@ -15,7 +15,8 @@ export class ServerSnakeMove {
     constructor(
         public parts: Coordinate[],
         public direction: DIRECTION,
-        public player: ServerPlayer,
+        public snake: ServerSnake,
+        private latency: number,
     ) {}
 
     isValid(): boolean {
@@ -59,11 +60,10 @@ export class ServerSnakeMove {
     }
 
     getStatus(): number {
-        const snake = this.player.snake!;
         let clientParts = this.parts;
 
         // Crop client snake because we don't trust the length the client sent.
-        const numSyncParts = NETCODE_SYNC_MS / snake.speed;
+        const numSyncParts = NETCODE_SYNC_MS / this.snake.speed;
         clientParts = clientParts.slice(-numSyncParts);
 
         // Don't allow gaps in the snake.
@@ -72,24 +72,22 @@ export class ServerSnakeMove {
         }
 
         // Find tile closest to head where client and server matched.
-        const serverParts = snake.parts.slice(-numSyncParts);
-        const commonPartIndices = this.getCommonPartIndices(clientParts, serverParts); // Reject if there was no common.
+        const serverParts = this.snake.parts.slice(-numSyncParts);
+        const commonPartIndices = this.getCommonPartIndices(clientParts, serverParts);
         if (!commonPartIndices) {
             return VALIDATE_ERR_NO_COMMON;
         }
 
         // Check if client-server delta does not exceed limit.
         const mismatches = Math.abs(commonPartIndices[1] - commonPartIndices[0]);
-        const maxMismatches = Math.ceil(
-            Math.min(NETCODE_SYNC_MS, this.player.client.latency) / snake.speed,
-        );
+        const maxMismatches = Math.ceil(Math.min(NETCODE_SYNC_MS, this.latency) / this.snake.speed);
         if (mismatches > maxMismatches) {
             return VALIDATE_ERR_MISMATCHES;
         }
 
         // Glue snake back together.
         this.parts = serverParts;
-        this.parts = snake.parts.concat(
+        this.parts = this.snake.parts.concat(
             serverParts.slice(0, commonPartIndices[1] + 1),
             clientParts.slice(commonPartIndices[0] + 1),
         );

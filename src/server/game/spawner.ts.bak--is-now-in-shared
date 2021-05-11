@@ -18,7 +18,12 @@
 //         this.spawns[index] = spawn;
 //         this.locations[index] = spawn.location;
 //
-//         let data = [type, index, spawn.location]; // TODO: game no longer has room? // if (buffer) { //     game.room.buffer(NC_GAME_SPAWN, data); // } else { //     game.room.emitDeprecated(NC_GAME_SPAWN, data); // }
+//         let data = [type, index, spawn.location]; // TODO: game no longer has room?
+// if (buffer) {
+//     game.room.buffer(NC_GAME_SPAWN, data);
+// } else {
+//     game.room.emitDeprecated(NC_GAME_SPAWN, data);
+// }
 //         return spawn;
 //     }
 //
