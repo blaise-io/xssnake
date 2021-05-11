@@ -1,5 +1,4 @@
 import { CANVAS } from "../../../shared/const";
-import { RoomOptionsMessage } from "../../../shared/room/roomMessages";
 import { Shape } from "../../../shared/shape";
 import { _ } from "../../../shared/util";
 import { ClientRoom } from "../../room/clientRoom";
