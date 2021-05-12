@@ -1,13 +1,8 @@
 import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { colorSchemes } from "../../bootstrap/registerColorSchemes";
-import {
-    EV_GAME_TICK,
-    EV_WIN_FOCUS_CHANGE,
-    MAX_FRAME_DELTA,
-    MIN_FRAME_DELTA,
-    STORAGE,
-} from "../../const";
+import { EV_GAME_TICK, MAX_FRAME_DELTA, MIN_FRAME_DELTA, STORAGE } from "../../const";
+import { eventx } from "../../netcode/eventHandler";
 import { State } from "../../state";
 import { debounce, instruct, storage } from "../../util/clientUtil";
 import { CanvasTile } from "./canvasTile";
@@ -51,7 +46,8 @@ export class Canvas {
 
     paint(delta: number): void {
         // Abuse this loop to trigger game tick
-        State.events.trigger(EV_GAME_TICK, delta, this.focus);
+        // TODO: Separate message
+        eventx.global.trigger(EV_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this.clear();
@@ -234,7 +230,8 @@ export class Canvas {
 
     private handleFocusChange(ev: Event): void {
         this.focus = ev.type !== "blur";
-        State.events.trigger(EV_WIN_FOCUS_CHANGE, this.focus);
+        console.log("focus", this.focus);
+        // TODO: Handle?
     }
 
     private promoteKeyboard(event: MouseEvent): void {

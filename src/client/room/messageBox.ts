@@ -1,8 +1,9 @@
 import { Player } from "../../shared/room/player";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _ } from "../../shared/util";
-import { EV_PLAYERS_UPDATED, NS, UC } from "../const";
-import { State } from "../state";
+import { UC } from "../const";
+import { eventx } from "../netcode/eventHandler";
 import { MessageBoxUI } from "../ui/messageBox";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ChatMessage } from "./chatMessage";
@@ -13,6 +14,7 @@ export class MessageBox {
     private messages: ChatMessage[];
     ui: MessageBoxUI;
     private playerChangeNotified = false;
+    private eventContext = eventx.context;
 
     constructor(public players: ClientPlayerRegistry) {
         this.messages = [new ChatMessage(undefined, _(`Press ${UC.ENTER_KEY} to chat.`))];
@@ -21,20 +23,20 @@ export class MessageBox {
             this.players.localPlayer.send(new ChatServerMessage(body));
         });
 
-        State.events.on(ChatClientMessage.id, NS.MSGBOX, (message: ChatClientMessage) => {
+        this.eventContext.on(ChatClientMessage.id, (message: ChatClientMessage) => {
             const name = String(this.players[message.playerIndex].name);
             this.messages.push(new ChatMessage(name, message.body));
             this.ui.debounceUpdate();
         });
-        State.events.on(EV_PLAYERS_UPDATED, NS.MSGBOX, this.updatePlayers.bind(this));
+        this.eventContext.on(PlayersMessage.id, this.updatePlayers.bind(this));
     }
 
     destruct(): void {
         this.messages.length = 0;
-        // delete this.previousPlayers;
+        this.previousPlayers?.destruct();
         this.ui.destruct();
-        State.events.off(ChatClientMessage.id, NS.MSGBOX);
-        State.events.off(EV_PLAYERS_UPDATED, NS.MSGBOX);
+        this.eventContext.destruct();
+        delete this.previousPlayers;
     }
 
     addNotification(notification: string): void {

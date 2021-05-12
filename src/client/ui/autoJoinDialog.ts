@@ -5,6 +5,7 @@ import {
     RoomOptionsClientMessage,
 } from "../../shared/room/roomMessages";
 import { _ } from "../../shared/util";
+import { eventx } from "../netcode/eventHandler";
 import { COPY_ERROR } from "../room/clientRoom";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
 import { State } from "../state";
@@ -13,7 +14,7 @@ import { Dialog } from "./dialog";
 export class AutoJoinDialog {
     private clientSocketPlayer: ClientSocketPlayer;
     private dialog: Dialog;
-    private ns = "autojoindialog";
+    private eventContext = eventx.context;
 
     constructor(
         public roomKey: string,
@@ -31,24 +32,23 @@ export class AutoJoinDialog {
 
         Promise.all<PlayersMessage, RoomOptionsClientMessage>([
             new Promise((resolve) => {
-                State.events.on(PlayersMessage.id, this.ns, resolve);
+                this.eventContext.on(PlayersMessage.id, resolve);
             }),
             new Promise((resolve) => {
-                State.events.on(RoomOptionsClientMessage.id, this.ns, resolve);
+                this.eventContext.on(RoomOptionsClientMessage.id, resolve);
             }),
         ]).then((messages) => {
             this.destruct();
             this.resolve(messages);
         });
 
-        State.events.on(RoomJoinErrorMessage.id, this.ns, (message: RoomJoinErrorMessage) => {
+        this.eventContext.on(RoomJoinErrorMessage.id, (message: RoomJoinErrorMessage) => {
             this.reject(COPY_ERROR[message.status]);
         });
     }
 
     destruct(): void {
         this.dialog.destruct();
-        State.events.off(PlayersMessage.id, this.ns);
-        State.events.off(RoomOptionsClientMessage.id, this.ns);
+        this.eventContext.destruct();
     }
 }

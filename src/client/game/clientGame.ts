@@ -8,8 +8,9 @@ import {
 } from "../../shared/game/snakeMessages";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, getRandomItemFrom } from "../../shared/util";
-import { EV_GAME_TICK, NS } from "../const";
+import { EV_GAME_TICK } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
+import { eventx } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { stylizeUpper } from "../util/clientUtil";
@@ -20,6 +21,7 @@ export class ClientGame {
     started = false;
     spawnables = new SpawnableRegistry();
     snakes: ClientSnake[];
+    private eventContext = eventx.context;
 
     constructor(public level: Level, public players: ClientPlayerRegistry) {
         Object.assign(State.shapes, getLevelShapes(this.level));
@@ -32,8 +34,7 @@ export class ClientGame {
     }
 
     destruct(): void {
-        this.unbindEvents();
-
+        this.eventContext.destruct();
         this.level.destruct();
         this.spawnables.destruct();
         this.snakes.forEach((s) => s.destruct());
@@ -45,7 +46,7 @@ export class ClientGame {
     }
 
     start(): void {
-        State.events.off(PlayersMessage.id); // Don't reindex snakes.
+        this.eventContext.off(PlayersMessage.id); // Don't reindex snakes.
         this.started = true;
         this.localSnake?.addControls();
         this.localSnake?.showAction(
@@ -64,9 +65,11 @@ export class ClientGame {
     };
 
     bindEvents(): void {
-        State.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));
+        this.eventContext.on(EV_GAME_TICK, (delta: number) => {
+            this.gameloop(delta);
+        });
 
-        State.events.on(PlayersMessage.id, NS.GAME, (message: PlayersMessage) => {
+        this.eventContext.on(PlayersMessage.id, (message: PlayersMessage) => {
             while (this.snakes.length !== 0) {
                 this.snakes.pop()?.destruct();
             }
@@ -77,26 +80,22 @@ export class ClientGame {
             );
         });
 
-        State.events.on(
-            SnakeUpdateClientMessage.id,
-            NS.GAME,
-            (message: SnakeUpdateClientMessage) => {
-                const snake = this.snakes[message.playerIndex];
-                snake.direction = message.direction;
-                snake.parts = message.parts;
-                // If server updated snake, client prediction
-                // of snake crashing was incorrect.
-                delete snake.collision;
-                State.events.on(SnakeCrashMessage.id, NS.GAME, (message: SnakeCrashMessage) => {
-                    for (let i = 0, m = message.collisions.length; i < m; i++) {
-                        const collision = message.collisions[i];
-                        const opponentSnake = this.snakes[collision.playerIndex];
-                        opponentSnake.parts = collision.parts;
-                        opponentSnake.setCrashed();
-                    }
-                });
-            },
-        );
+        this.eventContext.on(SnakeUpdateClientMessage.id, (message: SnakeUpdateClientMessage) => {
+            const snake = this.snakes[message.playerIndex];
+            snake.direction = message.direction;
+            snake.parts = message.parts;
+            // If server updated snake, client prediction
+            // of snake crashing was incorrect.
+            delete snake.collision;
+            this.eventContext.on(SnakeCrashMessage.id, (message: SnakeCrashMessage) => {
+                for (let i = 0, m = message.collisions.length; i < m; i++) {
+                    const collision = message.collisions[i];
+                    const opponentSnake = this.snakes[collision.playerIndex];
+                    opponentSnake.parts = collision.parts;
+                    opponentSnake.setCrashed();
+                }
+            });
+        });
 
         //State.events.on(NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
@@ -105,11 +104,6 @@ export class ClientGame {
         //State.events.on(NC_SNAKE_CRASH,    ns, this._evSnakeCrash.bind(this));
         //State.events.on(NC_SNAKE_ACTION,   ns, this._evSnakeAction.bind(this));
         //State.events.on(NC_SNAKE_SPEED,    ns, this._evSnakeSpeed.bind(this));
-    }
-
-    unbindEvents(): void {
-        State.events.off(EV_GAME_TICK, NS.GAME);
-        State.events.off(SnakeUpdateClientMessage.id, NS.GAME);
     }
 
     // /**

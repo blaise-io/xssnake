@@ -4,6 +4,7 @@ import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { KEY, NS } from "../const";
+import { eventx } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { Dialog, DialogType } from "./dialog";
@@ -14,13 +15,14 @@ export class PreGameUI {
     private countdownInterval?: number;
     private confirmExit = false;
     private confirmStart = false;
+    private eventContext = eventx.context;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         this.updateUI();
         State.events.on("keydown", NS.PRE_GAME, (event: KeyboardEvent) => {
             this.handleKeys(event);
         });
-        State.events.on(PlayersMessage.id, NS.PRE_GAME, () => {
+        this.eventContext.on(PlayersMessage.id, () => {
             setTimeout(() => {
                 this.updateUI();
             }, 0);
@@ -33,6 +35,7 @@ export class PreGameUI {
         }
         State.events.off("keydown", NS.PRE_GAME);
         this.dialog?.destruct();
+        this.eventContext.destruct();
     }
 
     handleKeys(event: KeyboardEvent): void {
