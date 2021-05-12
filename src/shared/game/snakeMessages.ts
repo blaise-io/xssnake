@@ -65,7 +65,7 @@ export class SnakeCrashMessage implements Message {
     static audience = AUDIENCE.CLIENT;
 
     constructor(
-        public colissions: {
+        public collisions: {
             playerIndex: number;
             parts: Coordinate[];
             collision: Collision;
@@ -87,11 +87,11 @@ export class SnakeCrashMessage implements Message {
     static deserialize(trustedNetcode: string): SnakeCrashMessage {
         return new SnakeCrashMessage(
             JSON.parse(trustedNetcode).map(
-                (colission: [number, Coordinate[], Coordinate, CRASH_INTO]) => {
+                (collision: [number, Coordinate[], Coordinate, CRASH_INTO]) => {
                     return {
-                        index: colission[0],
-                        parts: colission[1],
-                        colission: new Collision(colission[2], colission[3]),
+                        index: collision[0],
+                        parts: collision[1],
+                        collision: new Collision(collision[2], collision[3]),
                     };
                 },
             ),
@@ -100,11 +100,11 @@ export class SnakeCrashMessage implements Message {
 
     get serialized(): string {
         return JSON.stringify(
-            this.colissions.map((colission) => [
-                colission.playerIndex,
-                colission.parts,
-                colission.collision.location,
-                colission.collision.into,
+            this.collisions.map((collision) => [
+                collision.playerIndex,
+                collision.parts,
+                collision.collision.location,
+                collision.collision.into,
             ]),
         );
     }

@@ -1,4 +1,5 @@
 import { SECONDS_ROUND_COUNTDOWN } from "../../shared/const";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
@@ -15,46 +16,35 @@ export class PreGameUI {
     private confirmStart = false;
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
-        this.bindKeys();
         this.updateUI();
+        State.events.on("keydown", NS.PRE_GAME, (event: KeyboardEvent) => {
+            this.handleKeys(event);
+        });
+        State.events.on(PlayersMessage.id, NS.PRE_GAME, () => {
+            setTimeout(() => {
+                this.updateUI();
+            }, 0);
+        });
     }
 
     destruct(): void {
         if (this.countdownInterval) {
             window.clearInterval(this.countdownInterval);
         }
-        this.unbindKeys();
-        // delete this.players;
-        // delete this.options;
-        if (this.dialog) {
-            this.dialog.destruct();
-        }
-    }
-
-    bindKeys(): void {
-        State.events.on("keydown", NS.PRE_GAME, this.handleKeys.bind(this));
-    }
-
-    unbindKeys(): void {
         State.events.off("keydown", NS.PRE_GAME);
+        this.dialog?.destruct();
     }
 
     handleKeys(event: KeyboardEvent): void {
         if (State.keysBlocked) {
             return;
         }
-        switch (event.key) {
-            case KEY.BACKSPACE:
-            case KEY.ESCAPE:
-                this.confirmExit = true;
-                this.updateUI();
-                break;
-            case KEY.START:
-                if (this.playerCanStartRound()) {
-                    this.confirmStart = true;
-                    this.updateUI();
-                }
-                break;
+        if (event.key === KEY.BACKSPACE || event.key === KEY.ESCAPE) {
+            this.confirmExit = true;
+            this.updateUI();
+        } else if (this.playerIsAdmin && event.key === KEY.START) {
+            this.confirmStart = true;
+            this.updateUI();
         }
     }
 
@@ -79,22 +69,21 @@ export class PreGameUI {
         this.updateUI();
     }
 
-    playerCanStartRound(): boolean {
-        return this.players.length > 1 && this.players.localPlayerIsHost();
+    get playerIsAdmin(): boolean {
+        return this.players.length > 1 && this.players[0].local;
     }
 
     showInvitePlayersDialog(): void {
         const numplayers = this.players.length;
         const remaining = this.options.maxPlayers - numplayers;
 
-        // TODO: Pluralize.
         let body = _(
             `You can fit ${remaining} more player${
                 remaining !== 1 ? "s" : ""
             } in this room! Share the current page URL with your online friends to allow direct access.`,
         );
 
-        if (this.playerCanStartRound()) {
+        if (this.playerIsAdmin) {
             body += "\n\n" + _("Press S to start now.");
         }
 
@@ -148,7 +137,7 @@ export class PreGameUI {
 
     getCountdownRemaining(): number {
         let remaining = SECONDS_ROUND_COUNTDOWN;
-        remaining -= (new Date().getTime() - this.countdownStarted!.getTime()) / 1000;
+        remaining -= (new Date().getTime() - (this.countdownStarted as Date).getTime()) / 1000;
         return Math.max(0, Math.round(remaining));
     }
 

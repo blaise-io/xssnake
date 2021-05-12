@@ -1,8 +1,10 @@
 import { ROOM_STATUS } from "../../shared/const";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
 
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { HASH } from "../const";
+import { State } from "../state";
 import { clearHash, setHash } from "../util/url";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRoundSet } from "./clientRoundSet";
@@ -21,6 +23,7 @@ export class ClientRoom {
     private messageBox = new MessageBox(this.players);
     private scoreboard = new Scoreboard(this.players);
     private roundSet = new ClientRoundSet(this.players, this.options, this.levelIndex);
+    private ns = "room";
 
     constructor(
         private key: string,
@@ -41,18 +44,24 @@ export class ClientRoom {
     }
 
     bindEvents(): void {
+        State.events.on(PlayersMessage.id, this.ns, (message: PlayersMessage) => {
+            this.players.updateFromMessage(message.players);
+        });
+
         //State.events.on(NC_XSS, NS.ROOM, this._requestXss.bind(this));
         //State.events.on(NC_XSS, NS.ROOM, this._evalXss.bind(this));
     }
 
-    unbindEvents(): void {}
+    unbindEvents(): void {
+        State.events.off(PlayersMessage.id, this.ns);
+    }
 
     // notifySnakesCrashed(message: SnakeCrashMessage): void {
-    //     const colissions = message.colissions;
+    //     const collisions = message.collisions;
     //     let notification = "";
     //     const names = this.players.getNames();
-    //     for (let i = 0, m = colissions.length; i < m; i++) {
-    //         notification += names[colissions[i].playerIndex];
+    //     for (let i = 0, m = collisions.length; i < m; i++) {
+    //         notification += names[collisions[i].playerIndex];
 
     //         if (i + 1 === m) {
     //             notification += " crashed.";

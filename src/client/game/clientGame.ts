@@ -1,8 +1,3 @@
-/***
- * A Game does not start immediately after a new instance of the Game class
- * is created. It will show the snakes, level, name labels and directions
- * until ClientGame.start() is called.
- */
 import { DIRECTION } from "../../shared/const";
 import { Snake } from "../../shared/game/snake";
 import { Level } from "../../shared/level/level";
@@ -11,6 +6,7 @@ import {
     SnakeUpdateClientMessage,
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
@@ -32,29 +28,25 @@ export class ClientGame {
             (p, index) => new ClientSnake(index, p.local, p.name, this.emit, level),
         );
 
-        this.showNames();
         this.bindEvents();
     }
 
     destruct(): void {
         this.unbindEvents();
-        this.hideNames();
 
+        this.level.destruct();
         this.spawnables.destruct();
+        this.snakes.forEach((s) => s.destruct());
         this.snakes.length = 0;
 
-        for (const k in Object.keys(getLevelShapes(this.level))) {
+        Object.keys(getLevelShapes(this.level)).forEach((k) => {
             delete State.shapes[k];
-        }
-
-        // delete this.level;
-        // delete this.players;
-        // delete this.spawnables;
+        });
     }
 
     start(): void {
+        State.events.off(PlayersMessage.id); // Don't reindex snakes.
         this.started = true;
-        this.hideNames();
         this.localSnake?.addControls();
         this.localSnake?.showAction(
             stylizeUpper(getRandomItemFrom([_("¡Vamos!"), _("Let's goooo"), _("Gogogo!")])),
@@ -73,6 +65,18 @@ export class ClientGame {
 
     bindEvents(): void {
         State.events.on(EV_GAME_TICK, NS.GAME, this.gameloop.bind(this));
+
+        State.events.on(PlayersMessage.id, NS.GAME, (message: PlayersMessage) => {
+            while (this.snakes.length !== 0) {
+                this.snakes.pop()?.destruct();
+            }
+            this.snakes.push(
+                ...message.players.map(
+                    (p, index) => new ClientSnake(index, p.local, p.name, this.emit, this.level),
+                ),
+            );
+        });
+
         State.events.on(
             SnakeUpdateClientMessage.id,
             NS.GAME,
@@ -84,8 +88,8 @@ export class ClientGame {
                 // of snake crashing was incorrect.
                 delete snake.collision;
                 State.events.on(SnakeCrashMessage.id, NS.GAME, (message: SnakeCrashMessage) => {
-                    for (let i = 0, m = message.colissions.length; i < m; i++) {
-                        const collision = message.colissions[i];
+                    for (let i = 0, m = message.collisions.length; i < m; i++) {
+                        const collision = message.collisions[i];
                         const opponentSnake = this.snakes[collision.playerIndex];
                         opponentSnake.parts = collision.parts;
                         opponentSnake.setCrashed();
@@ -109,7 +113,6 @@ export class ClientGame {
     }
 
     // /**
-    //  * TODO: Typing for things like these.
     //  * @param {Array} serializedCollisions
     //  */
     // ncSetSnakesCrashed(serializedCollisions: Collision[]): void {
@@ -123,7 +126,7 @@ export class ClientGame {
 
     // Runs ~ every 16 ms (60 fps)
     gameloop(elapsed: number): void {
-        // TODO: Fix gravity and animations
+        // TODO: Apply gravity and animations
         const shift = this.level.gravity.getShift(elapsed);
         this.level.animations.update(elapsed, this.started);
 
@@ -137,18 +140,5 @@ export class ClientGame {
             snake.handleNextMove(elapsed, shift, this.snakes);
             snake.shiftParts(shift);
         });
-    }
-
-    showNames(): void {
-        for (let i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].showName();
-        }
-        this.localSnake?.showDirection();
-    }
-
-    hideNames(): void {
-        for (let i = 0, m = this.snakes.length; i < m; i++) {
-            this.snakes[i].hideNameAndDirection();
-        }
     }
 }

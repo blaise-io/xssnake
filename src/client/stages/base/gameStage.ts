@@ -97,8 +97,8 @@ export class GameStage implements StageInterface {
         State.menuSnake?.destruct();
 
         const players = ClientPlayerRegistry.fromPlayerRegistry(
-            clientSocketPlayer,
             playersMessage.players,
+            clientSocketPlayer,
         );
 
         this.room = new ClientRoom(

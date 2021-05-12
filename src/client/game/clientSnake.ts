@@ -31,7 +31,12 @@ export class ClientSnake extends Snake {
             direction: NS.SNAKE + "DIR" + index,
         };
 
+        this.showName();
         this.updateShape();
+
+        if (this.local) {
+            this.showDirection();
+        }
     }
 
     destruct(): void {
@@ -42,6 +47,8 @@ export class ClientSnake extends Snake {
     }
 
     move(coordinate: Coordinate): void {
+        this.hideNameAndDirection();
+
         if (this.controls && this.controls.nextMove.length && this.emitDirection) {
             this.emitDirection(this, this.controls.nextMove.shift() as DIRECTION);
         }

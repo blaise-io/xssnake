@@ -21,7 +21,9 @@ export class EventHandler {
             this._topics[topic] = {};
         }
         this._topics[topic][key] = callback;
+
         if ("on" + topic in document) {
+            console.log(`Deprecated: on${topic}`);
             document.addEventListener(
                 topic as keyof DocumentEventMap,
                 callback as (event: Event) => void,
