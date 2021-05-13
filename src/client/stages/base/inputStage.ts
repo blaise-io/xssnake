@@ -1,5 +1,6 @@
 import { Shape } from "../../../shared/shape";
-import { KEY, MENU_POS, NS, STORAGE } from "../../const";
+import { KEY, MENU_POS, STORAGE } from "../../const";
+import { EventHandler } from "../../netcode/eventHandler";
 import { InputField } from "../components/inputField";
 import { State } from "../../state";
 import { font, fontHeight, fontPixels } from "../../ui/font";
@@ -10,6 +11,7 @@ import { StageConstructor, StageInterface } from "./stage";
 
 export abstract class InputStage implements StageInterface {
     shape = new Shape();
+    eventHandler = new EventHandler();
     private fontOptions = { wrap: MENU_POS.LEFT + MENU_POS.WIDTH - 25 };
     private value = "";
     private input?: InputField;
@@ -44,7 +46,7 @@ export abstract class InputStage implements StageInterface {
     }
 
     destruct(): void {
-        State.events.off("keydown", NS.STAGES);
+        this.eventHandler.destruct();
         delete State.shapes.message;
         this.input?.destruct();
         if (this.name) {
@@ -54,8 +56,8 @@ export abstract class InputStage implements StageInterface {
 
     inputSubmit(error: string, value: string, top: number): void {
         if (!error && value && top) {
+            this.eventHandler.destruct();
             State.flow.switchStage(this.next);
-            State.events.off("keydown", NS.INPUT);
         } else {
             State.shapes.message = font(error, MENU_POS.LEFT, top);
             lifetime(State.shapes.message, 0, 500);
@@ -78,7 +80,7 @@ export abstract class InputStage implements StageInterface {
     }
 
     private bindEvents(): void {
-        State.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
+        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
     }
 
     private handleKeys(event: KeyboardEvent): void {

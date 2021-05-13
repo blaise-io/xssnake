@@ -8,12 +8,10 @@
     "target": "es2019"
   },
   "typeRoots": [
-    "../../node_modules/@types",
-    "node_modules/@types"
+    "../../node_modules/@types"
   ],
   "include": [
-    "*/**.ts",
-    "*/**/types.d.ts",
-    "../index.d.ts"
+    "../index.d.ts",
+    "*/**.ts"
   ]
 }

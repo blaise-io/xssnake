@@ -1,5 +1,6 @@
 import { DIRECTION } from "../../shared/const";
-import { KEY, NS } from "../const";
+import { KEY } from "../const";
+import { EventHandler } from "../netcode/eventHandler";
 import { State } from "../state";
 import { ClientSnake } from "./clientSnake";
 
@@ -12,19 +13,19 @@ const KEY_TO_DIRECTION = Object.fromEntries([
 
 export class ClientSnakeControls {
     nextMove: number[] = [];
+    private eventHandler = new EventHandler();
 
     constructor(public snake: ClientSnake) {
-        State.events.on("keydown", NS.SNAKE_CONTROLS, (event: KeyboardEvent) => {
+        this.eventHandler.document.on("keydown", (event: KeyboardEvent) => {
             const direction = KEY_TO_DIRECTION[event.key];
-            if (!State.keysBlocked && typeof direction !== "undefined") {
+            if (!State.keysBlocked && direction !== undefined) {
                 this.setDirection(direction);
             }
         });
     }
 
     destruct(): void {
-        State.events.off("keydown", NS.SNAKE_CONTROLS);
-        // delete this.snake;
+        this.eventHandler.destruct();
     }
 
     setDirection(direction: DIRECTION): void {

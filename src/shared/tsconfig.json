@@ -7,7 +7,7 @@
     "target": "es2019"
   },
   "include": [
-    "./*/**.ts",
-    "../index.d.ts"
+    "../index.d.ts",
+    "./*/**.ts"
   ]
 }

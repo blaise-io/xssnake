@@ -1,10 +1,12 @@
 import { Shape } from "../../../shared/shape";
-import { KEY, NS } from "../../const";
+import { KEY } from "../../const";
+import { EventHandler } from "../../netcode/eventHandler";
 import { State } from "../../state";
 import { Form } from "../components/form";
 import { StageConstructor, StageInterface } from "./stage";
 
 export abstract class FormStage implements StageInterface {
+    private eventHandler = new EventHandler();
     form = new Form("");
 
     getShape(): Shape {
@@ -14,11 +16,11 @@ export abstract class FormStage implements StageInterface {
     abstract get nextStage(): StageConstructor;
 
     construct(): void {
-        State.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
+        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
     }
 
     destruct(): void {
-        State.events.off("keydown", NS.STAGES);
+        this.eventHandler.destruct();
         delete State.shapes.stage;
     }
 

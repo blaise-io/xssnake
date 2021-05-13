@@ -4,7 +4,7 @@ import { Player } from "../../shared/room/player";
 import { NameMessage } from "../../shared/room/playerMessages";
 import { Message, MessageConstructor } from "../../shared/room/types";
 import { _, noop } from "../../shared/util";
-import { eventx } from "../netcode/eventHandler";
+import { globalEventHandler } from "../netcode/eventHandler";
 import { error } from "../util/clientUtil";
 
 export class ClientSocketPlayer extends Player {
@@ -66,7 +66,7 @@ export class ClientSocketPlayer extends Player {
                 const message = Message.deserialize(messageString.substring(2));
                 console.info("IN", messageString, message);
                 if (message) {
-                    eventx.global.trigger(Message.id, message);
+                    globalEventHandler.trigger(Message.id, message);
                 }
             } else {
                 console.error("Unregistered message:", messageString.substr(0, 2));

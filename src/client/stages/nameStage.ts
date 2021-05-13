@@ -1,6 +1,6 @@
 import { PLAYER_NAME_MAXWIDTH, PLAYER_NAME_MINLENGTH } from "../../shared/const";
 import { _, getRandomItemFrom } from "../../shared/util";
-import { MENU_POS, NS, STORAGE, UC } from "../const";
+import { MENU_POS, STORAGE, UC } from "../const";
 import { InputStage } from "./base/inputStage";
 import { State } from "../state";
 import { font } from "../ui/font";
@@ -29,7 +29,7 @@ export class NameStage extends InputStage {
         if (error) {
             text = error;
         } else {
-            State.events.off("keydown", NS.INPUT);
+            this.eventHandler.destruct();
             text = getRandomItemFrom(this.wits).replace(/%s/g, value);
             duration = Math.max(Math.min(text.length * 30, 500), 100);
             setTimeout(() => {

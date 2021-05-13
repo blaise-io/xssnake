@@ -2,7 +2,8 @@ import { PixelCollection } from "../../shared/pixelCollection";
 import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { _ } from "../../shared/util";
-import { KEY, NS } from "../const";
+import { KEY } from "../const";
+import { EventHandler } from "../netcode/eventHandler";
 import { State } from "../state";
 import { stylizeUpper } from "../util/clientUtil";
 import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";
@@ -24,6 +25,7 @@ export interface DialogSettings {
 }
 
 export class Dialog {
+    private eventHandler = new EventHandler();
     private settings: DialogSettings;
     private _body: string;
     private _okSelected = false;
@@ -51,7 +53,7 @@ export class Dialog {
     destruct(): void {
         delete State.shapes.dialog;
         State.keysBlocked = false;
-        State.events.off("keydown", NS.DIALOG);
+        this.eventHandler.destruct();
     }
 
     // restore(): void {
@@ -85,7 +87,7 @@ export class Dialog {
     private bindEvents(): void {
         State.keysBlocked = this.settings.keysBlocked;
         if (this.settings.type !== DialogType.INFO) {
-            State.events.on("keydown", NS.DIALOG, this.handleKeys.bind(this));
+            this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
         }
         if (this.settings.type === DialogType.ALERT) {
             this._okSelected = true;

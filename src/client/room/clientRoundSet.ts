@@ -1,11 +1,11 @@
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
-import { eventx } from "../netcode/eventHandler";
+import { EventHandler } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRound } from "./clientRound";
 
 export class ClientRoundSet {
-    private eventContext = eventx.context;
+    private eventHandler = new EventHandler();
     round: ClientRound = new ClientRound(this.players, this.options, this.levelIndex);
 
     constructor(
@@ -18,11 +18,11 @@ export class ClientRoundSet {
 
     destruct(): void {
         this.round.destruct();
-        this.eventContext.destruct();
+        this.eventHandler.destruct();
     }
 
     bindEvents(): void {
-        this.eventContext.on(RoundLevelMessage.id, async (message: RoundLevelMessage) => {
+        this.eventHandler.on(RoundLevelMessage.id, async (message: RoundLevelMessage) => {
             // Switch level between rounds.
             if (this.round.game && this.round.game.started) {
                 this.round.destruct();

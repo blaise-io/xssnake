@@ -9,7 +9,7 @@ import {
 import { RoundLevelMessage } from "../../../shared/room/roundMessages";
 import { Shape } from "../../../shared/shape";
 import { _ } from "../../../shared/util";
-import { eventx } from "../../netcode/eventHandler";
+import { EventHandler } from "../../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../../room/clientPlayerRegistry";
 import { ClientRoom, COPY_ERROR } from "../../room/clientRoom";
 import { ClientSocketPlayer } from "../../room/clientSocketPlayer";
@@ -21,7 +21,7 @@ import { StageInterface } from "./stage";
 
 export class GameStage implements StageInterface {
     private room?: ClientRoom;
-    private eventContext = eventx.context;
+    private eventHandler = new EventHandler();
 
     getShape(): Shape {
         return new Shape();
@@ -41,7 +41,7 @@ export class GameStage implements StageInterface {
         delete State.flow.data.clientPlayer;
 
         this.room?.destruct();
-        this.eventContext.destruct();
+        this.eventHandler.destruct();
     }
 
     async connectServer(): Promise<ClientSocketPlayer> {
@@ -61,22 +61,22 @@ export class GameStage implements StageInterface {
 
         Promise.all<RoomKeyMessage, PlayersMessage, RoomOptionsClientMessage, RoundLevelMessage>([
             new Promise((resolve) => {
-                this.eventContext.on(RoomKeyMessage.id, resolve);
+                this.eventHandler.on(RoomKeyMessage.id, resolve);
             }),
             new Promise((resolve) => {
-                this.eventContext.on(PlayersMessage.id, resolve);
+                this.eventHandler.on(PlayersMessage.id, resolve);
             }),
             new Promise((resolve) => {
-                this.eventContext.on(RoomOptionsClientMessage.id, resolve);
+                this.eventHandler.on(RoomOptionsClientMessage.id, resolve);
             }),
             new Promise((resolve) => {
-                this.eventContext.on(RoundLevelMessage.id, resolve);
+                this.eventHandler.on(RoundLevelMessage.id, resolve);
             }),
         ]).then((messages) => {
             this.createClientRoom(clientSocketPlayer, ...messages);
         });
 
-        this.eventContext.on(RoomJoinErrorMessage.id, (message: RoomJoinErrorMessage) => {
+        this.eventHandler.on(RoomJoinErrorMessage.id, (message: RoomJoinErrorMessage) => {
             error(COPY_ERROR[message.status]);
         });
     }

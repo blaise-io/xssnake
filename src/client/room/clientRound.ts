@@ -9,7 +9,7 @@ import {
     RoundWrapupMessage,
 } from "../../shared/room/roundMessages";
 import { ClientGame } from "../game/clientGame";
-import { eventx } from "../netcode/eventHandler";
+import { EventHandler } from "../netcode/eventHandler";
 import { PreGameUI } from "../ui/preGame";
 import { WrapupGame } from "../ui/switchRound";
 import { clientImageLoader } from "../util/clientUtil";
@@ -19,7 +19,7 @@ export class ClientRound extends Round {
     game?: ClientGame;
     private preGameUI?: PreGameUI;
     private wrapupGameUI?: WrapupGame;
-    private eventContext = eventx.context;
+    private eventHandler = new EventHandler();
 
     constructor(
         public players: ClientPlayerRegistry,
@@ -34,7 +34,7 @@ export class ClientRound extends Round {
     }
 
     destruct(): void {
-        this.eventContext.destruct();
+        this.eventHandler.destruct();
 
         this.game?.destruct();
         delete this.game;
@@ -55,24 +55,24 @@ export class ClientRound extends Round {
     }
 
     bindEvents(): void {
-        this.eventContext.on(PlayersMessage.id, async () => {
+        this.eventHandler.on(PlayersMessage.id, async () => {
             this.preGameUI?.updateUI();
             await this.setLevel(this.levelIndex);
         });
-        this.eventContext.on(RoundLevelMessage.id, async (message: RoundLevelMessage) => {
+        this.eventHandler.on(RoundLevelMessage.id, async (message: RoundLevelMessage) => {
             await this.setLevel(message.levelIndex);
         });
-        this.eventContext.on(RoundCountDownMessage.id, (message: RoundCountDownMessage) => {
+        this.eventHandler.on(RoundCountDownMessage.id, (message: RoundCountDownMessage) => {
             this.preGameUI?.toggleCountdown(message.enabled);
             this.preGameUI?.updateUI();
         });
-        this.eventContext.on(RoundStartMessage.id, () => {
-            this.eventContext.destruct();
+        this.eventHandler.on(RoundStartMessage.id, () => {
+            this.eventHandler.destruct();
             this.preGameUI?.destruct();
             this.game?.start();
             delete this.preGameUI;
         });
-        this.eventContext.on(RoundWrapupMessage.id, (message: RoundWrapupMessage) => {
+        this.eventHandler.on(RoundWrapupMessage.id, (message: RoundWrapupMessage) => {
             this.wrapupGameUI = new WrapupGame(
                 this.players,
                 this.players[message.winningPlayerIndex],

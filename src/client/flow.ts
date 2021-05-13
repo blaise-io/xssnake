@@ -3,7 +3,8 @@ import { Player } from "../shared/room/player";
 import { PlayerRegistry } from "../shared/room/playerRegistry";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
-import { HASH, KEY, MENU_POS, NS, STORAGE } from "./const";
+import { HASH, KEY, MENU_POS, STORAGE } from "./const";
+import { EventHandler } from "./netcode/eventHandler";
 import { ClientRoom } from "./room/clientRoom";
 import { ClientSocketPlayer } from "./room/clientSocketPlayer";
 import { StageConstructor, StageInterface } from "./stages/base/stage";
@@ -34,6 +35,7 @@ export class StageFlow {
         clientPlayer: undefined,
     };
 
+    private eventHandler = new EventHandler();
     private history: StageInterface[] = [];
 
     constructor(private FirstStage = MainStage as StageConstructor) {
@@ -46,7 +48,7 @@ export class StageFlow {
         this.stage.destruct();
         this.history.length = 0;
         State.shapes = {};
-        State.events.off("keydown", NS.FLOW);
+        this.eventHandler.destruct();
         State.canvas.garbageCollect();
     }
 
@@ -58,7 +60,7 @@ export class StageFlow {
 
     start(): void {
         window.onhashchange = this.hashChange.bind(this);
-        State.events.on("keydown", NS.FLOW, this.handleKeys.bind(this));
+        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
 
         Object.assign(State.shapes, outerBorder());
         State.shapes.HEADER = xssnakeHeader();

@@ -1,10 +1,12 @@
 import { Shape } from "../../../shared/shape";
-import { KEY, NS } from "../../const";
+import { KEY } from "../../const";
+import { EventHandler } from "../../netcode/eventHandler";
 import { State } from "../../state";
 import { Menu } from "../components/menu";
 import { StageInterface } from "./stage";
 
 export class SelectStage implements StageInterface {
+    private eventHandler = new EventHandler();
     menu = new Menu("");
 
     getShape(): Shape {
@@ -12,11 +14,11 @@ export class SelectStage implements StageInterface {
     }
 
     construct(): void {
-        State.events.on("keydown", NS.STAGES, this.handleKeys.bind(this));
+        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
     }
 
     destruct(): void {
-        State.events.off("keydown", NS.STAGES);
+        this.eventHandler.destruct();
         delete State.shapes.stage;
     }
 

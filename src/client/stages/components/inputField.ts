@@ -1,7 +1,8 @@
 import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { lineShape } from "../../../shared/shapeGenerator";
-import { FRAME, NS } from "../../const";
+import { FRAME } from "../../const";
+import { EventHandler } from "../../netcode/eventHandler";
 import { State } from "../../state";
 import { fontEndPos, FontOptions, fontPixels, fontWidth } from "../../ui/font";
 import { flash } from "../../ui/shapeClient";
@@ -9,9 +10,10 @@ import { flash } from "../../ui/shapeClient";
 export class InputField {
     maxValWidth?: number;
     displayWidth: number;
-    maxlength: number;
     callback: CallableFunction;
     private input: HTMLInputElement;
+    private eventHandler = new EventHandler();
+    private maxlength: number;
 
     constructor(
         public x: number,
@@ -19,8 +21,8 @@ export class InputField {
         public prefix: string,
         public fontOptions?: FontOptions,
     ) {
+        // TODO: Move to an options object.
         this.callback = () => {};
-        // delete this.maxValWidth;
         this.displayWidth = CANVAS.WIDTH - x - 8;
         this.maxlength = 156;
 
@@ -34,24 +36,18 @@ export class InputField {
         if (this.input && this.input.parentNode) {
             this.input.parentNode.removeChild(this.input);
         }
-        this.unbindEvents();
+        this.eventHandler.destruct();
         delete State.shapes.INPUT_CARET;
         delete State.shapes.INPUT_VALUE;
         State.keysBlocked = false;
     }
 
-    unbindEvents(): void {
-        State.events.off("keypress", NS.INPUT);
-        State.events.off("keydown", NS.INPUT);
-        State.events.off("keyup", NS.INPUT);
-    }
-
     bindEvents(): void {
-        State.events.on("keypress", NS.INPUT, function () {
+        this.eventHandler.document.on("keypress", () => {
             State.audio.play("menu_alt");
         });
-        State.events.on("keydown", NS.INPUT, this.updateShapes.bind(this));
-        State.events.on("keyup", NS.INPUT, this.updateShapes.bind(this));
+        this.eventHandler.document.on("keydown", this.updateShapes.bind(this));
+        this.eventHandler.document.on("keyup", this.updateShapes.bind(this));
     }
 
     setValue(value: string): void {
@@ -62,18 +58,18 @@ export class InputField {
         this.updateShapes();
     }
 
-    getValue(): string {
+    get value(): string {
         return this.input.value;
     }
 
-    updateShapes(): void {
+    private updateShapes(): void {
         this.maxwidthCutOff();
         this.callback(this.input.value);
         State.shapes.INPUT_CARET = this.getCaretShape();
         State.shapes.INPUT_VALUE = this.getInputValueShape();
     }
 
-    addInputToDom(): HTMLInputElement {
+    private addInputToDom(): HTMLInputElement {
         const input = document.createElement("input");
         input.setAttribute("maxlength", String(this.maxlength));
         input.focus();
@@ -81,7 +77,7 @@ export class InputField {
         return input;
     }
 
-    getCaretShape(): Shape {
+    private getCaretShape(): Shape {
         const segments = this.getSelectionSegments();
         const untilCaretStr = segments[0] + segments[1];
         const endPos = fontEndPos(this.prefix + untilCaretStr, this.x, this.y, this.fontOptions);
@@ -94,7 +90,7 @@ export class InputField {
         return caretShape;
     }
 
-    getInputValueShape(): Shape {
+    private getInputValueShape(): Shape {
         const values = this.getSelectionSegments();
         const shape = new Shape();
         let endpos;
@@ -112,7 +108,7 @@ export class InputField {
         return shape;
     }
 
-    getSelectionSegments(): string[] {
+    private getSelectionSegments(): string[] {
         const input = this.input;
         let value = input.value;
         let start = input.selectionStart as number;
@@ -131,7 +127,7 @@ export class InputField {
         return [value.substring(0, start), value.substring(start, end), value.substring(end)];
     }
 
-    maxwidthCutOff(): void {
+    private maxwidthCutOff(): void {
         if (this.maxValWidth) {
             while (fontWidth(this.input.value) > (this.maxValWidth as number)) {
                 this.input.value = this.input.value.slice(0, -1);

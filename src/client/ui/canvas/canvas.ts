@@ -2,7 +2,7 @@ import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { colorSchemes } from "../../bootstrap/registerColorSchemes";
 import { EV_GAME_TICK, MAX_FRAME_DELTA, MIN_FRAME_DELTA, STORAGE } from "../../const";
-import { eventx } from "../../netcode/eventHandler";
+import { globalEventHandler } from "../../netcode/eventHandler";
 import { State } from "../../state";
 import { debounce, instruct, storage } from "../../util/clientUtil";
 import { CanvasTile } from "./canvasTile";
@@ -47,7 +47,7 @@ export class Canvas {
     paint(delta: number): void {
         // Abuse this loop to trigger game tick
         // TODO: Separate message
-        eventx.global.trigger(EV_GAME_TICK, delta, this.focus);
+        globalEventHandler.trigger(EV_GAME_TICK, delta, this.focus);
 
         // Clear canvas
         this.clear();

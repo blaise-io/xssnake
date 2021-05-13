@@ -3,8 +3,8 @@ import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
-import { KEY, NS } from "../const";
-import { eventx } from "../netcode/eventHandler";
+import { KEY } from "../const";
+import { EventHandler } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { Dialog, DialogType } from "./dialog";
@@ -15,14 +15,14 @@ export class PreGameUI {
     private countdownInterval?: number;
     private confirmExit = false;
     private confirmStart = false;
-    private eventContext = eventx.context;
+    private eventHandler = new EventHandler();
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         this.updateUI();
-        State.events.on("keydown", NS.PRE_GAME, (event: KeyboardEvent) => {
+        this.eventHandler.document.on("keydown", (event: KeyboardEvent) => {
             this.handleKeys(event);
         });
-        this.eventContext.on(PlayersMessage.id, () => {
+        this.eventHandler.on(PlayersMessage.id, () => {
             setTimeout(() => {
                 this.updateUI();
             }, 0);
@@ -33,9 +33,9 @@ export class PreGameUI {
         if (this.countdownInterval) {
             window.clearInterval(this.countdownInterval);
         }
-        State.events.off("keydown", NS.PRE_GAME);
+        this.eventHandler.destruct();
         this.dialog?.destruct();
-        this.eventContext.destruct();
+        this.eventHandler.destruct();
     }
 
     handleKeys(event: KeyboardEvent): void {

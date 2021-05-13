@@ -1,17 +1,19 @@
 import { Shape } from "../../../shared/shape";
-import { KEY, NS } from "../../const";
+import { KEY } from "../../const";
+import { EventHandler } from "../../netcode/eventHandler";
 import { State } from "../../state";
 import { StageInterface } from "./stage";
 
 export abstract class ScreenStage implements StageInterface {
     abstract getShape(): Shape;
+    private eventHandler = new EventHandler();
 
     construct(): void {
-        State.events.on("keydown", NS.STAGES, this.handleKeys);
+        this.eventHandler.document.on("keydown", this.handleKeys);
     }
 
     destruct(): void {
-        State.events.off("keydown", NS.STAGES);
+        this.eventHandler.destruct();
         delete State.shapes.stage;
     }
 

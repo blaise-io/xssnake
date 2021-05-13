@@ -4,7 +4,7 @@ import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { HASH } from "../const";
-import { eventx } from "../netcode/eventHandler";
+import { EventHandler } from "../netcode/eventHandler";
 import { clearHash, setHash } from "../util/url";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRoundSet } from "./clientRoundSet";
@@ -23,7 +23,7 @@ export class ClientRoom {
     private messageBox = new MessageBox(this.players);
     private scoreboard = new Scoreboard(this.players);
     private roundSet = new ClientRoundSet(this.players, this.options, this.levelIndex);
-    private eventContext = eventx.context;
+    private eventHandler = new EventHandler();
 
     constructor(
         private key: string,
@@ -31,7 +31,7 @@ export class ClientRoom {
         public options: RoomOptions,
         private levelIndex: number,
     ) {
-        this.eventContext.on(PlayersMessage.id, (message: PlayersMessage) => {
+        this.eventHandler.on(PlayersMessage.id, (message: PlayersMessage) => {
             this.players.updateFromMessage(message.players);
         });
         setHash(HASH.ROOM, key);
@@ -39,7 +39,7 @@ export class ClientRoom {
 
     destruct(): void {
         clearHash();
-        this.eventContext.destruct();
+        this.eventHandler.destruct();
         this.messageBox?.destruct();
         this.scoreboard?.destruct();
         this.roundSet?.destruct();

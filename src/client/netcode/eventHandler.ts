@@ -11,8 +11,8 @@ const topics: Record<Topic, CallBackWithContext[]> = {};
 const contextGlobal = 0;
 let contextPointer = 1;
 
-class ContextEvent {
-    constructor(private context: context = contextGlobal) {}
+export class EventHandler {
+    constructor(private context: context = contextPointer++) {}
 
     on(id: Topic, fn: Callback): void {
         const callbackWithContext: CallBackWithContext = [fn, this.context];
@@ -36,7 +36,30 @@ class ContextEvent {
         });
     }
 
-    destruct() {
+    document = {
+        on: this.onDom,
+        off: this.offDom,
+    };
+
+    private onDom(event: keyof DocumentEventMap, fn: Callback) {
+        document.addEventListener(event, fn as EventListener);
+        this.on(event, fn);
+    }
+
+    private offDom(event: keyof DocumentEventMap) {
+        const nativeEvents: EventListener[] = [];
+        topics[event].forEach((fn: CallBackWithContext) => {
+            if (this.context === fn[1]) {
+                nativeEvents.push(fn[0] as EventListener);
+            }
+        });
+        nativeEvents.forEach((handler) => {
+            document.removeEventListener(event, handler);
+        });
+        this.off(event);
+    }
+
+    destruct(): void {
         this.off();
     }
 
@@ -49,72 +72,4 @@ class ContextEvent {
     }
 }
 
-export const eventx = {
-    global: new ContextEvent(0),
-
-    get context(): ContextEvent {
-        return new ContextEvent(contextPointer++);
-    },
-};
-
-/** @deprecated */
-export class EventHandler {
-    _topics: Record<string, Record<string, CallableFunction>>;
-
-    constructor() {
-        this._topics = {};
-    }
-
-    trigger(topic: string, ...eventData: unknown[]): void {
-        const topics = this._topics[topic];
-        if (topics) {
-            const topicKeys = Object.keys(topics);
-            for (let i = 0, m = topicKeys.length; i < m; i++) {
-                const key = topicKeys[i];
-                topics[key](...eventData);
-            }
-        }
-    }
-
-    on(topic: number | string, key: string, callback: CallableFunction): void {
-        if (!this._topics[topic]) {
-            this._topics[topic] = {};
-        }
-        this._topics[topic][key] = callback;
-
-        if ("on" + topic in document) {
-            console.log(`Deprecated: on${topic}`);
-            document.addEventListener(
-                topic as keyof DocumentEventMap,
-                callback as (event: Event) => void,
-                false,
-            );
-        }
-    }
-
-    // once(topic: number | string, key: string, callback: CallableFunction): void {
-    //     const callbackAndOff = function (...args) {
-    //         callback(...args);
-    //         this.off(topic, key);
-    //     }.bind(this);
-    //     this.on(topic, key, callbackAndOff);
-    // }
-
-    off(topic: number | string, key?: string): void {
-        if (topic in this._topics) {
-            if (typeof key !== "undefined") {
-                if ("on" + topic in document) {
-                    const callback = this._topics[topic][key];
-                    document.removeEventListener(
-                        topic.toString() as keyof DocumentEventMap,
-                        callback as (event: Event) => void,
-                        false,
-                    );
-                }
-                delete this._topics[topic][key];
-            } else {
-                delete this._topics[topic];
-            }
-        }
-    }
-}
+export const globalEventHandler = new EventHandler(0);

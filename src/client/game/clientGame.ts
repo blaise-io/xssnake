@@ -10,7 +10,7 @@ import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
-import { eventx } from "../netcode/eventHandler";
+import { EventHandler } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { stylizeUpper } from "../util/clientUtil";
@@ -21,7 +21,7 @@ export class ClientGame {
     started = false;
     spawnables = new SpawnableRegistry();
     snakes: ClientSnake[];
-    private eventContext = eventx.context;
+    private eventHandler = new EventHandler();
 
     constructor(public level: Level, public players: ClientPlayerRegistry) {
         Object.assign(State.shapes, getLevelShapes(this.level));
@@ -34,7 +34,7 @@ export class ClientGame {
     }
 
     destruct(): void {
-        this.eventContext.destruct();
+        this.eventHandler.destruct();
         this.level.destruct();
         this.spawnables.destruct();
         this.snakes.forEach((s) => s.destruct());
@@ -46,7 +46,7 @@ export class ClientGame {
     }
 
     start(): void {
-        this.eventContext.off(PlayersMessage.id); // Don't reindex snakes.
+        this.eventHandler.off(PlayersMessage.id); // Don't reindex snakes.
         this.started = true;
         this.localSnake?.addControls();
         this.localSnake?.showAction(
@@ -65,11 +65,11 @@ export class ClientGame {
     };
 
     bindEvents(): void {
-        this.eventContext.on(EV_GAME_TICK, (delta: number) => {
+        this.eventHandler.on(EV_GAME_TICK, (delta: number) => {
             this.gameloop(delta);
         });
 
-        this.eventContext.on(PlayersMessage.id, (message: PlayersMessage) => {
+        this.eventHandler.on(PlayersMessage.id, (message: PlayersMessage) => {
             while (this.snakes.length !== 0) {
                 this.snakes.pop()?.destruct();
             }
@@ -80,14 +80,14 @@ export class ClientGame {
             );
         });
 
-        this.eventContext.on(SnakeUpdateClientMessage.id, (message: SnakeUpdateClientMessage) => {
+        this.eventHandler.on(SnakeUpdateClientMessage.id, (message: SnakeUpdateClientMessage) => {
             const snake = this.snakes[message.playerIndex];
             snake.direction = message.direction;
             snake.parts = message.parts;
             // If server updated snake, client prediction
             // of snake crashing was incorrect.
             delete snake.collision;
-            this.eventContext.on(SnakeCrashMessage.id, (message: SnakeCrashMessage) => {
+            this.eventHandler.on(SnakeCrashMessage.id, (message: SnakeCrashMessage) => {
                 for (let i = 0, m = message.collisions.length; i < m; i++) {
                     const collision = message.collisions[i];
                     const opponentSnake = this.snakes[collision.playerIndex];

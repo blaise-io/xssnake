@@ -3,7 +3,7 @@ import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMe
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _ } from "../../shared/util";
 import { UC } from "../const";
-import { eventx } from "../netcode/eventHandler";
+import { EventHandler } from "../netcode/eventHandler";
 import { MessageBoxUI } from "../ui/messageBox";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ChatMessage } from "./chatMessage";
@@ -14,7 +14,7 @@ export class MessageBox {
     private messages: ChatMessage[];
     ui: MessageBoxUI;
     private playerChangeNotified = false;
-    private eventContext = eventx.context;
+    private eventHandler = new EventHandler();
 
     constructor(public players: ClientPlayerRegistry) {
         this.messages = [new ChatMessage(undefined, _(`Press ${UC.ENTER_KEY} to chat.`))];
@@ -23,19 +23,19 @@ export class MessageBox {
             this.players.localPlayer.send(new ChatServerMessage(body));
         });
 
-        this.eventContext.on(ChatClientMessage.id, (message: ChatClientMessage) => {
+        this.eventHandler.on(ChatClientMessage.id, (message: ChatClientMessage) => {
             const name = String(this.players[message.playerIndex].name);
             this.messages.push(new ChatMessage(name, message.body));
             this.ui.debounceUpdate();
         });
-        this.eventContext.on(PlayersMessage.id, this.updatePlayers.bind(this));
+        this.eventHandler.on(PlayersMessage.id, this.updatePlayers.bind(this));
     }
 
     destruct(): void {
         this.messages.length = 0;
         this.previousPlayers?.destruct();
         this.ui.destruct();
-        this.eventContext.destruct();
+        this.eventHandler.destruct();
         delete this.previousPlayers;
     }
 

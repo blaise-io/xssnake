@@ -2,7 +2,8 @@ import { CANVAS } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
-import { FRAME, KEY, NS, UC } from "../const";
+import { FRAME, KEY, UC } from "../const";
+import { EventHandler } from "../netcode/eventHandler";
 import { ChatMessage } from "../room/chatMessage";
 import { InputField } from "../stages/components/inputField";
 import { State } from "../state";
@@ -21,6 +22,7 @@ export class MessageBoxUI {
     private y0 = CANVAS.HEIGHT - 25;
     private y1 = CANVAS.HEIGHT - 2;
     private padding = { x0: 0, x1: 0, y0: 1, y1: 1 };
+    private eventHandler = new EventHandler();
 
     constructor(
         public messages: ChatMessage[],
@@ -32,7 +34,7 @@ export class MessageBoxUI {
     }
 
     destruct(): void {
-        State.events.off("keydown", NS.CHAT);
+        this.eventHandler.destruct();
         if (this.inputField) {
             this.inputField.destruct();
             // delete this.inputField;
@@ -40,7 +42,7 @@ export class MessageBoxUI {
     }
 
     bindEvents(): void {
-        State.events.on("keydown", NS.CHAT, this.handleKeys.bind(this));
+        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
     }
 
     handleKeys(event: KeyboardEvent): void {
@@ -52,7 +54,7 @@ export class MessageBoxUI {
                 break;
             case KEY.ENTER:
                 if (this.inputField) {
-                    this.sendMessage(this.inputField.getValue());
+                    this.sendMessage(this.inputField.value);
                     this.hideInput();
                 } else if (!State.keysBlocked) {
                     this.showInput();
