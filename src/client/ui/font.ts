@@ -103,7 +103,7 @@ export function fontEndPos(
 function getCharProperties(chr: string): { width: number; pixels: PixelCollection } {
     if (!cache[chr]) {
         const chrProperties = generateCharProperties(chr);
-        cache[chr] = chrProperties || getCharProperties(UC.SQUARE);
+        cache[chr] = chrProperties ?? getCharProperties(UC.SQUARE);
     }
     return cache[chr];
 }

@@ -60,16 +60,11 @@ export function zoom(
 ): PixelCollection {
     let zoomedPixels: PixelCollection;
 
-    shiftX = shiftX || 0;
-    shiftY = shiftY || 0;
-
     if (2 === zoomlevel) {
         zoomedPixels = zoomIn(pixels, shiftX, shiftY);
-    } else if (4 === zoomlevel) {
+    } else {
         zoomedPixels = zoomIn(pixels);
         zoomedPixels = zoomIn(zoomedPixels, shiftX, shiftY);
-    } else {
-        return pixels; // Unsupported zoom level.
     }
 
     if (antiAlising) {

@@ -8,8 +8,8 @@ export class Round {
     level?: Level;
 
     constructor(
-        public players: PlayerRegistry<Player>,
-        public options: RoomOptions,
+        readonly players: PlayerRegistry<Player>,
+        readonly options: RoomOptions,
         public levelIndex: number,
     ) {}
 

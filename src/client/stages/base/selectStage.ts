@@ -14,13 +14,11 @@ export class SelectStage implements StageInterface {
     }
 
     construct(): void {
-        console.log(this.eventHandler);
         this.eventHandler.on("keydown", this.handleKeys.bind(this));
     }
 
     destruct(): void {
         this.eventHandler.destruct();
-        delete State.shapes.stage;
     }
 
     handleKeys(event: KeyboardEvent): void {

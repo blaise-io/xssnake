@@ -22,8 +22,8 @@ export class ClientRound extends Round {
     private eventHandler = new EventHandler();
 
     constructor(
-        public players: ClientPlayerRegistry,
-        public options: RoomOptions,
+        readonly players: ClientPlayerRegistry,
+        readonly options: RoomOptions,
         public levelIndex: number,
     ) {
         super(players, options, levelIndex);

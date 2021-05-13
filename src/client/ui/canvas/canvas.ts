@@ -11,11 +11,12 @@ import { ShapeCache } from "./shapeCache";
 import { applyEffects } from "../shapeClient";
 
 export class Canvas {
+    focus = true;
+
     private fps: number[] = [];
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private tile: CanvasTile;
-    focus = true;
     private prevFrame = new Date().getTime();
     private stopRendering = false;
 
@@ -24,7 +25,7 @@ export class Canvas {
 
         this.canvas = this.setupCanvas();
         this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
-        this.tile = new CanvasTile(colorSchemes[color] || colorSchemes[0]);
+        this.tile = new CanvasTile(colorSchemes[color] ?? colorSchemes[0]);
 
         this.setCanvasDimensions();
         this.positionCanvas();
@@ -230,8 +231,6 @@ export class Canvas {
 
     private handleFocusChange(ev: Event): void {
         this.focus = ev.type !== "blur";
-        console.log("focus", this.focus);
-        // TODO: Handle?
     }
 
     private promoteKeyboard(event: MouseEvent): void {

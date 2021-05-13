@@ -1,25 +1,24 @@
 type RegistryTopic = string;
-type RegistryItem = { listener: CallableFunction; context: number; domEvent: string };
+type RegistryItem = { listener: CallableFunction; context: symbol; domEvent?: string };
 
 const registry: Record<RegistryTopic, RegistryItem[]> = {};
-const globalContext = 0;
-let localContext = 1;
+const globalContext = Symbol();
 
 export class EventHandler {
-    constructor(private context: number = localContext++) {}
+    constructor(private context = Symbol()) {}
 
-    on(id: RegistryTopic, listener: CallableFunction): void {
-        const domEvent = `on${id}` in document ? id : "";
-        if (!registry[id]) {
-            registry[id] = [];
+    on(topic: RegistryTopic, listener: CallableFunction): void {
+        const domEvent = `on${topic}` in document ? topic : undefined;
+        if (!registry[topic]) {
+            registry[topic] = [];
         }
-        registry[id].push({
+        registry[topic].push({
             listener,
             domEvent: domEvent,
             context: this.context,
         });
         if (domEvent) {
-            document.addEventListener(id, listener as EventListener);
+            document.addEventListener(topic, listener as EventListener);
         }
     }
 
@@ -39,9 +38,9 @@ export class EventHandler {
         });
     }
 
-    off(id: RegistryTopic): void {
-        if (registry[id]) {
-            this.removeFromRegistry([registry[id]]);
+    off(topic: RegistryTopic): void {
+        if (topic in registry) {
+            this.removeFromRegistry([registry[topic]]);
         }
     }
 
@@ -49,8 +48,8 @@ export class EventHandler {
         this.removeFromRegistry(Object.values(registry));
     }
 
-    trigger(id: RegistryTopic, ...data: unknown[]): void {
-        (registry[id] || []).forEach((callbackItem: RegistryItem) => {
+    trigger(topic: RegistryTopic, ...data: unknown[]): void {
+        registry[topic]?.forEach((callbackItem: RegistryItem) => {
             if (
                 !callbackItem.domEvent &&
                 (this.context === globalContext || this.context === callbackItem.context)

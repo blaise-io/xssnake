@@ -1,6 +1,7 @@
 import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { lineShape } from "../../../shared/shapeGenerator";
+import { noop } from "../../../shared/util";
 import { FRAME } from "../../const";
 import { EventHandler } from "../../netcode/eventHandler";
 import { State } from "../../state";
@@ -9,11 +10,11 @@ import { flash } from "../../ui/shapeClient";
 
 export class InputField {
     maxValWidth?: number;
-    displayWidth: number;
-    callback: CallableFunction;
+    displayWidth = CANVAS.WIDTH - this.x - 8;
+    callback: CallableFunction = noop;
     private input: HTMLInputElement;
     private eventHandler = new EventHandler();
-    private maxlength: number;
+    private maxlength = 156;
 
     constructor(
         public x: number,
@@ -21,15 +22,9 @@ export class InputField {
         public prefix: string,
         public fontOptions?: FontOptions,
     ) {
-        // TODO: Move to an options object.
-        this.callback = () => {};
-        this.displayWidth = CANVAS.WIDTH - x - 8;
-        this.maxlength = 156;
-
+        State.keysBlocked = true;
         this.input = this.addInputToDom();
         this.input.focus();
-
-        State.keysBlocked = true;
     }
 
     destruct(): void {

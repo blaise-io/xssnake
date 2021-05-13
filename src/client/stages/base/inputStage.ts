@@ -10,8 +10,14 @@ import { storage } from "../../util/clientUtil";
 import { StageConstructor, StageInterface } from "./stage";
 
 export abstract class InputStage implements StageInterface {
-    shape = new Shape();
-    eventHandler = new EventHandler();
+    protected shape = new Shape();
+    protected eventHandler = new EventHandler();
+    protected initial = "";
+    protected minlength = 0;
+    protected maxChars = 0;
+    protected maxwidth = 0;
+    protected displayWidth = 0;
+
     private fontOptions = { wrap: MENU_POS.LEFT + MENU_POS.WIDTH - 25 };
     private value = "";
     private input?: InputField;
@@ -21,12 +27,6 @@ export abstract class InputStage implements StageInterface {
     abstract header: string;
     abstract label: string;
     abstract next: StageConstructor;
-
-    initial = "";
-    minlength = 0;
-    maxChars = 0;
-    maxwidth = 0;
-    displayWidth = 0;
 
     getShape(): Shape {
         return this.shape;

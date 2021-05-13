@@ -49,9 +49,9 @@ export const NETCODE_MAP: Record<MessageId, MessageConstructor> = Object.fromEnt
     ["U3", SnakeCrashMessage],
 ]);
 
-Object.entries(NETCODE_MAP).forEach((netcodeEntry: [MessageId, MessageConstructor]) => {
-    netcodeEntry[1].id = netcodeEntry[0];
-});
+for (const k in NETCODE_MAP) {
+    NETCODE_MAP[k].id = k;
+}
 
 export const enum AUDIENCE {
     CLIENT, // Send to client.
