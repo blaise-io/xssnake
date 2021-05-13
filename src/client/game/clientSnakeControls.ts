@@ -16,7 +16,7 @@ export class ClientSnakeControls {
     private eventHandler = new EventHandler();
 
     constructor(public snake: ClientSnake) {
-        this.eventHandler.document.on("keydown", (event: KeyboardEvent) => {
+        this.eventHandler.on("keydown", (event: KeyboardEvent) => {
             const direction = KEY_TO_DIRECTION[event.key];
             if (!State.keysBlocked && direction !== undefined) {
                 this.setDirection(direction);

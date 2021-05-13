@@ -60,7 +60,7 @@ export class StageFlow {
 
     start(): void {
         window.onhashchange = this.hashChange.bind(this);
-        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
+        this.eventHandler.on("keydown", this.handleKeys.bind(this));
 
         Object.assign(State.shapes, outerBorder());
         State.shapes.HEADER = xssnakeHeader();

@@ -16,7 +16,7 @@ export abstract class FormStage implements StageInterface {
     abstract get nextStage(): StageConstructor;
 
     construct(): void {
-        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
+        this.eventHandler.on("keydown", this.handleKeys.bind(this));
     }
 
     destruct(): void {

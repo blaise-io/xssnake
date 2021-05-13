@@ -9,7 +9,7 @@ export abstract class ScreenStage implements StageInterface {
     private eventHandler = new EventHandler();
 
     construct(): void {
-        this.eventHandler.document.on("keydown", this.handleKeys);
+        this.eventHandler.on("keydown", this.handleKeys);
     }
 
     destruct(): void {

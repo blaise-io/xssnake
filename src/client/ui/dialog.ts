@@ -87,7 +87,7 @@ export class Dialog {
     private bindEvents(): void {
         State.keysBlocked = this.settings.keysBlocked;
         if (this.settings.type !== DialogType.INFO) {
-            this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
+            this.eventHandler.on("keydown", this.handleKeys.bind(this));
         }
         if (this.settings.type === DialogType.ALERT) {
             this._okSelected = true;

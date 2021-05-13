@@ -1,75 +1,64 @@
-import { Message } from "../../shared/room/types";
+type RegistryTopic = string;
+type RegistryItem = { listener: CallableFunction; context: number; domEvent: string };
 
-type Topic = string;
-type Messages = Message[] | unknown[];
-type Callback = CallableFunction;
-type CallBackWithContext = [Callback, context];
-type context = number;
-
-const topics: Record<Topic, CallBackWithContext[]> = {};
-
-const contextGlobal = 0;
-let contextPointer = 1;
+const registry: Record<RegistryTopic, RegistryItem[]> = {};
+const globalContext = 0;
+let localContext = 1;
 
 export class EventHandler {
-    constructor(private context: context = contextPointer++) {}
+    constructor(private context: number = localContext++) {}
 
-    on(id: Topic, fn: Callback): void {
-        const callbackWithContext: CallBackWithContext = [fn, this.context];
-        if (!topics[id]) {
-            topics[id] = [callbackWithContext];
-        } else {
-            topics[id].push(callbackWithContext);
+    on(id: RegistryTopic, listener: CallableFunction): void {
+        const domEvent = `on${id}` in document ? id : "";
+        if (!registry[id]) {
+            registry[id] = [];
+        }
+        registry[id].push({
+            listener,
+            domEvent: domEvent,
+            context: this.context,
+        });
+        if (domEvent) {
+            document.addEventListener(id, listener as EventListener);
         }
     }
 
-    off(id?: Topic): void {
-        const topicsArray: CallBackWithContext[][] = id
-            ? [topics[id]] || []
-            : Object.values(topics) || [];
-        topicsArray.forEach((topic: CallBackWithContext[]) => {
-            topic.forEach((callbackWithContext, index, topicWorkingCopy) => {
-                if (this.context === callbackWithContext[1]) {
-                    topicWorkingCopy.splice(index, 1);
+    private removeFromRegistry(registryItemsArray: RegistryItem[][]) {
+        registryItemsArray.forEach((registryItems: RegistryItem[]) => {
+            registryItems.forEach((registryItem: RegistryItem, index) => {
+                if (this.context === registryItem.context) {
+                    const [callbackItem] = registryItems.splice(index, 1);
+                    if (callbackItem.domEvent) {
+                        document.removeEventListener(
+                            callbackItem.domEvent,
+                            callbackItem.listener as EventListener,
+                        );
+                    }
                 }
             });
         });
     }
 
-    document = {
-        on: this.onDom,
-        off: this.offDom,
-    };
-
-    private onDom(event: keyof DocumentEventMap, fn: Callback) {
-        document.addEventListener(event, fn as EventListener);
-        this.on(event, fn);
-    }
-
-    private offDom(event: keyof DocumentEventMap) {
-        const nativeEvents: EventListener[] = [];
-        topics[event].forEach((fn: CallBackWithContext) => {
-            if (this.context === fn[1]) {
-                nativeEvents.push(fn[0] as EventListener);
-            }
-        });
-        nativeEvents.forEach((handler) => {
-            document.removeEventListener(event, handler);
-        });
-        this.off(event);
+    off(id: RegistryTopic): void {
+        if (registry[id]) {
+            this.removeFromRegistry([registry[id]]);
+        }
     }
 
     destruct(): void {
-        this.off();
+        this.removeFromRegistry(Object.values(registry));
     }
 
-    trigger(id: Topic, ...messages: Messages): void {
-        (topics[id] || []).forEach((l) => {
-            if (this.context === contextGlobal || this.context === l[1]) {
-                l[0](...messages);
+    trigger(id: RegistryTopic, ...data: unknown[]): void {
+        (registry[id] || []).forEach((callbackItem: RegistryItem) => {
+            if (
+                !callbackItem.domEvent &&
+                (this.context === globalContext || this.context === callbackItem.context)
+            ) {
+                callbackItem.listener(...data);
             }
         });
     }
 }
 
-export const globalEventHandler = new EventHandler(0);
+export const globalEventHandler = new EventHandler(globalContext);

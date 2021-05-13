@@ -19,7 +19,7 @@ export class PreGameUI {
 
     constructor(public players: ClientPlayerRegistry, public options: RoomOptions) {
         this.updateUI();
-        this.eventHandler.document.on("keydown", (event: KeyboardEvent) => {
+        this.eventHandler.on("keydown", (event: KeyboardEvent) => {
             this.handleKeys(event);
         });
         this.eventHandler.on(PlayersMessage.id, () => {

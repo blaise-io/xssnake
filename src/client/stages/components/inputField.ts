@@ -43,11 +43,11 @@ export class InputField {
     }
 
     bindEvents(): void {
-        this.eventHandler.document.on("keypress", () => {
+        this.eventHandler.on("keypress", () => {
             State.audio.play("menu_alt");
         });
-        this.eventHandler.document.on("keydown", this.updateShapes.bind(this));
-        this.eventHandler.document.on("keyup", this.updateShapes.bind(this));
+        this.eventHandler.on("keydown", this.updateShapes.bind(this));
+        this.eventHandler.on("keyup", this.updateShapes.bind(this));
     }
 
     setValue(value: string): void {

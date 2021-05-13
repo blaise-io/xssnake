@@ -42,7 +42,7 @@ export class MessageBoxUI {
     }
 
     bindEvents(): void {
-        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
+        this.eventHandler.on("keydown", this.handleKeys.bind(this));
     }
 
     handleKeys(event: KeyboardEvent): void {

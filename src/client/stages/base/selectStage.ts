@@ -14,7 +14,8 @@ export class SelectStage implements StageInterface {
     }
 
     construct(): void {
-        this.eventHandler.document.on("keydown", this.handleKeys.bind(this));
+        console.log(this.eventHandler);
+        this.eventHandler.on("keydown", this.handleKeys.bind(this));
     }
 
     destruct(): void {
