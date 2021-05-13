@@ -37,18 +37,18 @@ export function outline(shape: Shape, hPadding = 10, vPadding = 10, roundedCorne
 }
 
 export function zoomIn(pixels: PixelCollection, xshift = 0, yshift = 0): PixelCollection {
-    const ret = new PixelCollection();
+    const returnPixels = new PixelCollection();
 
     pixels.each(function (x, y) {
         const xx = x * 2 + xshift;
         const yy = y * 2 + yshift;
-        ret.add(xx, yy);
-        ret.add(xx, yy + 1);
-        ret.add(xx + 1, yy);
-        ret.add(xx + 1, yy + 1);
+        returnPixels.add(xx, yy);
+        returnPixels.add(xx, yy + 1);
+        returnPixels.add(xx + 1, yy);
+        returnPixels.add(xx + 1, yy + 1);
     });
 
-    return ret;
+    return returnPixels;
 }
 
 export function zoom(
