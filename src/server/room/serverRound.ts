@@ -49,7 +49,6 @@ export class ServerRound extends Round {
             clearTimeout(this.countdownTimer);
         }
 
-        console.log(this.game?.destruct, "xxxyyy");
         this.game?.destruct();
         delete this.game;
 
