@@ -17,12 +17,14 @@ const PIXEL_OFFSET_MAP = {
 };
 
 export class ClientSpawnable {
+    private readonly gameCoordinate: Coordinate;
+
     constructor(
-        private readonly shapeName: string,
+        readonly shapeName: string,
         readonly type: SPAWN_TYPE,
         readonly coordinate: Coordinate,
     ) {
-        this.coordinate = [
+        this.gameCoordinate = [
             translateGameX(coordinate[0]) + PIXEL_OFFSET_MAP[type][0],
             translateGameY(coordinate[1]) + PIXEL_OFFSET_MAP[type][1],
         ];
@@ -34,7 +36,7 @@ export class ClientSpawnable {
     }
 
     get shape(): Shape {
-        const shape = font(UC_MAP[this.type], ...this.coordinate);
+        const shape = font(UC_MAP[this.type], ...this.gameCoordinate);
         flash(shape);
         return shape;
     }

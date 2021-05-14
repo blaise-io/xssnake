@@ -61,11 +61,11 @@ export class SpawnHitMessage implements Message {
 }
 
 export abstract class Spawnable {
+    static id: SPAWN_ID;
     static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
 
     constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {}
 
-    abstract id: SPAWN_ID;
     abstract type: SPAWN_TYPE;
     abstract applyEffects(player: Player, snake: Snake): void;
 
@@ -73,8 +73,6 @@ export abstract class Spawnable {
     timer?: ReturnType<typeof setTimeout>;
 
     snakeNotifyModifier?: string;
-
-    despawn(): void {}
 
     destruct(): void {
         // Lifetime continues after hit.
@@ -85,9 +83,9 @@ export abstract class Spawnable {
 }
 
 export class Apple extends Spawnable {
+    static id = SPAWN_ID.POINTS;
     static effect = { self: EFFECT.GOOD, others: EFFECT.NONE };
 
-    id = SPAWN_ID.POINTS;
     type = SPAWN_TYPE.APPLE;
 
     constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {
@@ -101,9 +99,9 @@ export class Apple extends Spawnable {
 }
 
 export class AnonymousPowerup extends Spawnable {
+    static id = SPAWN_ID.ANONYMOUS;
     static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
 
-    id = SPAWN_ID.ANONYMOUS;
     type = SPAWN_TYPE.POWER;
 
     constructor(protected readonly levelSettings: LevelSettings, public coordinate: Coordinate) {
@@ -116,7 +114,7 @@ export class AnonymousPowerup extends Spawnable {
 export class Reverse extends Spawnable {
     static effect = { self: EFFECT.BAD, others: EFFECT.NONE };
 
-    id = SPAWN_ID.REVERSE;
+    static id = SPAWN_ID.REVERSE;
     type = SPAWN_TYPE.POWER;
 
     applyEffects(player: Player, snake: Snake): void {
@@ -125,9 +123,9 @@ export class Reverse extends Spawnable {
 }
 
 export class SpeedBoost extends Spawnable {
+    static id = SPAWN_ID.SPEED_BOOST;
     static effect = { self: EFFECT.RISKY, others: EFFECT.NONE };
 
-    id = SPAWN_ID.SPEED_BOOST;
     type = SPAWN_TYPE.POWER;
 
     applyEffects(player: Player, snake: Snake): void {

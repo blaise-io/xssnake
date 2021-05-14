@@ -2,7 +2,11 @@ import { EventEmitter } from "events";
 import { SE_PLAYER_COLLISION } from "../../shared/const";
 import { Spawner } from "../../shared/game/spawner";
 import { Level } from "../../shared/level/level";
-import { SnakeCrashMessage, SnakeUpdateServerMessage } from "../../shared/game/snakeMessages";
+import {
+    SnakeCrashMessage,
+    SnakeUpdateClientMessage,
+    SnakeUpdateServerMessage,
+} from "../../shared/game/snakeMessages";
 import { Spawnable, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
@@ -63,9 +67,16 @@ export class ServerGame {
             move.snake.parts = move.parts;
             move.snake.trimParts();
         }
-        this.players.send(SnakeUpdateServerMessage.fromData(move.snake, move.direction), {
-            exclude: move.isValid() ? player : undefined,
-        });
+        this.players.send(
+            new SnakeUpdateClientMessage(
+                move.direction,
+                move.snake.parts,
+                this.players.indexOf(player),
+            ),
+            {
+                exclude: move.isValid() ? player : undefined,
+            },
+        );
     }
 
     get averageLatencyInTicks(): number {
@@ -113,7 +124,7 @@ export class ServerGame {
                 this.players.send(
                     new SpawnHitMessage(
                         snake.index,
-                        spawnable.id,
+                        (spawnable.constructor as typeof Spawnable).id,
                         spawnable.type,
                         spawnable.coordinate,
                     ),

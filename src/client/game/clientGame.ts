@@ -6,7 +6,7 @@ import {
     SnakeUpdateClientMessage,
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
-import { Spawnable, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
+import { SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, eq, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
@@ -95,8 +95,10 @@ export class ClientGame {
                 for (let i = 0, m = message.collisions.length; i < m; i++) {
                     const collision = message.collisions[i];
                     const opponentSnake = this.snakes[collision.playerIndex];
-                    opponentSnake.parts = collision.parts;
-                    opponentSnake.setCrashed();
+                    if (opponentSnake) {
+                        opponentSnake.parts = collision.parts;
+                        opponentSnake.setCrashed();
+                    }
                 }
             });
         });
@@ -113,23 +115,25 @@ export class ClientGame {
 
         this.eventHandler.on(SpawnHitMessage.id, (message: SpawnHitMessage) => {
             const spawnable = this.spawnables.find((s) => eq(s.coordinate, message.coordinate));
+
             if (!spawnable) {
                 return;
             }
 
             explosion(translateGame(message.coordinate));
-            spawnable.shape.flags.enabled = false;
+            delete State.shapes[spawnable.shapeName];
 
-            const powerup = (this.level.settings.powerupsEnabled.find(
-                ([pu]) => (<{ id: number }>pu.prototype).id === message.id,
-            ) as unknown) as typeof Spawnable | undefined;
+            const enabledPowerup = this.level.settings.powerupsEnabled.find(
+                (spawnable) => spawnable[0].id === message.id,
+            );
 
-            if (powerup) {
+            if (enabledPowerup) {
                 // @ts-ignore
-                const y = new powerup(level.settings, message.coordinate);
-                y.applyEffects(this.players[message.playerIndex], this.snakes[message.playerIndex]);
-
-                // TODO: Propagate effects.
+                const powerup = new enabledPowerup[0](this.level.settings, message.coordinate);
+                powerup.applyEffects(
+                    this.players[message.playerIndex],
+                    this.snakes[message.playerIndex],
+                );
             }
         });
 
