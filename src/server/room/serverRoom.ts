@@ -69,10 +69,9 @@ export class ServerRoom {
     addPlayer(player: ServerPlayer): void {
         this.players.push(player);
         this.players.sendPlayers();
-    }
-
-    detectAutostart(): void {
-        this.rounds.detectAutostart(this.full);
+        if (this.full && !this.rounds.roundsPlayed) {
+            this.rounds.start();
+        }
     }
 
     sendInitial(player: ServerPlayer): void {

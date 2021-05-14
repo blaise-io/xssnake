@@ -10,16 +10,16 @@ import {
 } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { randomStr } from "../../shared/util";
+import { isStrOfLen } from "../../shared/util/sanitizer";
 import { Server } from "../netcode/server";
 import { getMatchingRoom } from "./matcher";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerRoom } from "./serverRoom";
 
 export class ServerRoomManager {
-    private rooms: ServerRoom[];
+    private rooms: ServerRoom[] = [];
 
     constructor(public server: Server) {
-        this.rooms = [];
         this.bindEvents();
     }
 
@@ -80,7 +80,6 @@ export class ServerRoomManager {
         player.room = room;
         room.addPlayer(player);
         room.sendInitial(player);
-        room.detectAutostart();
     }
 
     remove(room: ServerRoom): void {
@@ -128,7 +127,8 @@ export class ServerRoomManager {
     }
 
     getRoomStatus(key: string): number {
-        if (typeof key != "string" || key.length !== ROOM_KEY_LENGTH) {
+        // TODO: Message would just be dropped?
+        if (!isStrOfLen(key, ROOM_KEY_LENGTH)) {
             return ROOM_STATUS.INVALID_KEY;
         }
 

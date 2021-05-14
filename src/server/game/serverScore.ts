@@ -32,9 +32,9 @@ export class ServerScore {
         return this.players.map((p) => p.score);
     }
 
-    getWinner(minPointsDiff: number): ServerPlayer | undefined {
+    getRoundSetWinner(minPointsDiff: number): ServerPlayer | undefined {
         if (this.players.length <= 1) {
-            return undefined;
+            return;
         }
         const playersByScore = this.players.sort((p1, p2) => p1.score - p2.score);
         if (playersByScore[0].score - playersByScore[1].score >= minPointsDiff) {

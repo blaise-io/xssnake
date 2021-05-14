@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { SE_PLAYER_COLLISION, SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
+import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
 import { ServerScore } from "../game/serverScore";
@@ -10,42 +10,39 @@ import { ServerRound } from "./serverRound";
 
 /**
  * A set of rounds.
- * After minRoundsets rounds, the player with most points wins.
+ * After minRoundSets rounds, the player with most points wins.
  */
 export class ServerRoundSet {
-    private levelPlayset: LevelPlayset;
     round: ServerRound;
+    roundsPlayed = 0;
+
+    private levelPlayset: LevelPlayset;
     private score: ServerScore;
-    private roundIndex = 0;
     private minRoundsets = 3;
     private minPointsDiff = 1;
     private nextRoundTimeout?: NodeJS.Timeout;
 
     constructor(
-        public roomEmitter: EventEmitter,
-        public players: ServerPlayerRegistry,
-        public options: RoomOptions,
+        readonly roomEmitter: EventEmitter,
+        readonly players: ServerPlayerRegistry,
+        readonly options: RoomOptions,
     ) {
         this.levelPlayset = new LevelPlayset(options.levelSetIndex);
         this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
         this.score = new ServerScore(players);
-
-        // TODO: this.round.game should emit a winner.
-        // this.roomEmitter.on(String(SE_PLAYER_COLLISION), this.handleCollisions.bind(this));
     }
 
     destruct(): void {
         this.score.destruct();
         this.round.destruct();
         this.levelPlayset.destruct();
-        this.roomEmitter.removeAllListeners(String(SE_PLAYER_COLLISION));
         if (this.nextRoundTimeout) {
             clearTimeout(this.nextRoundTimeout);
         }
     }
 
     get started(): boolean {
-        return this.roundIndex >= 1 || !!this.round.game;
+        return this.roundsPlayed >= 1 || !!this.round.game;
     }
 
     private startNewRound(): void {
@@ -72,13 +69,12 @@ export class ServerRoundSet {
     }
 
     private get roundSetWinner(): ServerPlayer | undefined {
-        if (this.roundIndex + 1 < this.minRoundsets) {
+        if (this.roundsPlayed + 1 < this.minRoundsets) {
             return;
         }
-        return this.score.getWinner(this.minPointsDiff);
+        return this.score.getRoundSetWinner(this.minPointsDiff);
     }
 
-    /** @deprecated should be part of ServerGame */
     // private handleCollisions(crashingSnakes: ServerSnake[]): void {
     //     if (this.round.level) {
     //         const alive = this.round.getAlivePlayers();
@@ -89,9 +85,7 @@ export class ServerRoundSet {
     //     }
     // }
 
-    detectAutostart(full: boolean): void {
-        if (full && 0 === this.roundIndex) {
-            this.round.start();
-        }
+    start(): void {
+        this.round.start();
     }
 }
