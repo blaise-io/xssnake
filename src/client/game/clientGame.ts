@@ -6,20 +6,22 @@ import {
     SnakeUpdateClientMessage,
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
+import { Spawnable, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
-import { _, getRandomItemFrom } from "../../shared/util";
-import { EV_GAME_TICK } from "../const";
+import { _, eq, getRandomItemFrom } from "../../shared/util";
+import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
 import { EventHandler } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
-import { stylizeUpper } from "../util/clientUtil";
+import { explosion } from "../ui/clientShapeGenerator";
+import { stylizeUpper, translateGame } from "../util/clientUtil";
 import { ClientSnake } from "./clientSnake";
-import { SpawnableRegistry } from "./spawnableRegistry";
+import { ClientSpawnable } from "./spawnable";
 
 export class ClientGame {
     started = false;
-    spawnables = new SpawnableRegistry();
+    spawnables: ClientSpawnable[] = [];
     snakes: ClientSnake[];
     private eventHandler = new EventHandler();
 
@@ -35,19 +37,21 @@ export class ClientGame {
 
     destruct(): void {
         this.eventHandler.destruct();
-        this.level.destruct();
-        this.spawnables.destruct();
         this.snakes.forEach((s) => s.destruct());
         this.snakes.length = 0;
+        this.spawnables.forEach((s) => s.destruct());
+        this.spawnables.length = 0;
 
         Object.keys(getLevelShapes(this.level)).forEach((k) => {
             delete State.shapes[k];
         });
+        this.level.destruct();
     }
 
     start(): void {
         this.eventHandler.off(PlayersMessage.id); // Don't reindex snakes.
         this.started = true;
+
         this.localSnake?.addControls();
         this.localSnake?.showAction(
             stylizeUpper(getRandomItemFrom([_("¡Vamos!"), _("Let's goooo"), _("Gogogo!")])),
@@ -97,7 +101,38 @@ export class ClientGame {
             });
         });
 
-        //State.events.on(NC_GAME_SPAWN,     ns, this._evSpawn.bind(this));
+        this.eventHandler.on(SpawnMessage.id, (message: SpawnMessage) => {
+            this.spawnables.push(
+                new ClientSpawnable(
+                    NS.SPAWN + this.spawnables.length,
+                    message.type,
+                    message.coordinate,
+                ),
+            );
+        });
+
+        this.eventHandler.on(SpawnHitMessage.id, (message: SpawnHitMessage) => {
+            const spawnable = this.spawnables.find((s) => eq(s.coordinate, message.coordinate));
+            if (!spawnable) {
+                return;
+            }
+
+            explosion(translateGame(message.coordinate));
+            spawnable.shape.flags.enabled = false;
+
+            const powerup = (this.level.settings.powerupsEnabled.find(
+                ([pu]) => (<{ id: number }>pu.prototype).id === message.id,
+            ) as unknown) as typeof Spawnable | undefined;
+
+            if (powerup) {
+                // @ts-ignore
+                const y = new powerup(level.settings, message.coordinate);
+                y.applyEffects(this.players[message.playerIndex], this.snakes[message.playerIndex]);
+
+                // TODO: Propagate effects.
+            }
+        });
+
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));
         //
         //State.events.on(NC_SNAKE_SIZE,     ns, this._evSnakeSize.bind(this));

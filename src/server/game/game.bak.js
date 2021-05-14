@@ -122,7 +122,7 @@
 //             this._crashSnake(client, snake.parts);
 //             this.room.rounds.delegateCrash();
 //         } else {
-//             this.spawner.handleHits(client, snake.getHead());
+//             this.spawner.handleHits(client, snake..head());
 //             this._broadcastSnakeRoom(client);
 //         }
 //
@@ -466,7 +466,7 @@
 //      */
 //     _getPredictPosition: function(snake): void {
 //         let head, shift;
-//         head = snake.getHead();
+//         head = snake..head();
 //         shift = [[-1, 0], [0, -1], [1, 0], [0, 1]][snake.direction];
 //         return [head[0] + shift[0], head[1] + shift[1]];
 //     },

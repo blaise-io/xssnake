@@ -4,6 +4,7 @@ import {
     SnakeUpdateClientMessage,
     SnakeUpdateServerMessage,
 } from "./game/snakeMessages";
+import { SpawnHitMessage, SpawnMessage } from "./level/spawnables";
 import { ChatClientMessage, ChatServerMessage, NameMessage } from "./room/playerMessages";
 import { PlayersMessage } from "./room/playerRegistry";
 import {
@@ -30,23 +31,26 @@ export const NETCODE_MAP: Record<MessageId, MessageConstructor> = Object.fromEnt
 
     ["P1", PlayersMessage],
 
-    ["R1", RoundLevelMessage],
-    ["R2", RoundCountDownMessage],
-    ["R3", RoundStartMessage],
-    ["R4", RoundWrapupMessage],
+    ["R1", RoomGetStatusMessage],
+    ["R2", RoomJoinErrorMessage],
+    ["R3", RoomJoinMessage],
+    ["R4", RoomKeyMessage],
+    ["R5", RoomOptionsServerMessage],
+    ["R6", RoomOptionsClientMessage],
 
-    ["O1", RoomGetStatusMessage],
-    ["O2", RoomJoinErrorMessage],
-    ["O3", RoomJoinMessage],
-    ["O4", RoomKeyMessage],
-    ["O5", RoomOptionsServerMessage],
-    ["O6", RoomOptionsClientMessage],
+    ["1R", RoundLevelMessage],
+    ["2R", RoundCountDownMessage],
+    ["3R", RoundStartMessage],
+    ["4R", RoundWrapupMessage],
 
-    ["S1", ScoreMessage],
+    ["#1", ScoreMessage],
 
-    ["U1", SnakeUpdateClientMessage],
-    ["U2", SnakeUpdateServerMessage],
-    ["U3", SnakeCrashMessage],
+    ["S1", SnakeUpdateClientMessage],
+    ["S2", SnakeUpdateServerMessage],
+    ["S3", SnakeCrashMessage],
+
+    ["1S", SpawnMessage],
+    ["2S", SpawnHitMessage],
 ]);
 
 for (const k in NETCODE_MAP) {

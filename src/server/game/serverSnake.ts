@@ -32,9 +32,8 @@ export class ServerSnake extends Snake {
     }
 
     getNextPosition(): Coordinate {
-        const head = this.getHead();
         const shift = GAME_SHIFT_MAP[this.direction];
-        return [head[0] + shift[0], head[1] + shift[1]];
+        return [this.head[0] + shift[0], this.head[1] + shift[1]];
     }
 
     hasCollisionLteTick(tick: number): boolean {

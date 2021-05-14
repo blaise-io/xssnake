@@ -25,7 +25,7 @@ export class Snake {
         this.trimParts();
     }
 
-    getHead(): Coordinate {
+    get head(): Coordinate {
         return this.parts[this.parts.length - 1];
     }
 

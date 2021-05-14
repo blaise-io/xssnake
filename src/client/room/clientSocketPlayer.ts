@@ -54,6 +54,9 @@ export class ClientSocketPlayer extends Player {
     }
 
     send(message: Message): void {
+        if (ENV_DEBUG && !NETCODE_MAP[(<MessageConstructor>message.constructor).id]) {
+            throw new Error("Message not registered: " + message);
+        }
         const id = (message.constructor as MessageConstructor).id;
         console.info("OUT", id + message.serialized, message);
         this.connection.send(id + message.serialized);

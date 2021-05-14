@@ -1,10 +1,10 @@
 import { Level } from "../level/level";
 import { AnonymousPowerup, Apple, Spawnable } from "../level/spawnables";
-import { eq, randomRange } from "../util";
+import { eq, randomRangeFloat } from "../util";
 import { Snake } from "./snake";
 
 export class Spawner {
-    private spawns: Spawnable[] = [];
+    private spawnables: Spawnable[] = [];
     private timers: ReturnType<typeof setTimeout>[] = [];
 
     constructor(
@@ -24,33 +24,47 @@ export class Spawner {
         for (let i = 0, m = this.timers.length; i < m; i++) {
             clearTimeout(this.timers[i]);
         }
-        for (let i = 0, m = this.spawns.length; i < m; i++) {
-            this.spawns[i].destruct();
+        for (let i = 0, m = this.spawnables.length; i < m; i++) {
+            this.spawnables[i].destruct();
         }
-        this.spawns.length = 0;
+        this.spawnables.length = 0;
     }
 
-    private snakeHasCoordinate(coordinate: Coordinate): boolean {
+    handleSpawnHit(snake: Snake): Spawnable | undefined {
+        const spawnable = this.spawnableAtCoordinate(snake.head);
+        if (spawnable && spawnable.active) {
+            spawnable.active = false;
+            return spawnable;
+        }
+    }
+
+    private snakeAtCoordinate(coordinate: Coordinate): Snake | undefined {
         for (let i = 0, m = this.snakes.length; i < m; i++) {
             if (this.snakes[i].hasCoordinate(coordinate)) {
-                return true;
+                return this.snakes[i];
             }
         }
-        return false;
     }
 
     get newSpawnLocation(): Coordinate | undefined {
         // Try multiple times, is less logic/iterations compared to compiling a list.
         const maxAttempts = 50;
         for (let i = 0; i < maxAttempts; i++) {
-            const randomEmptyLevel = this.level.data.empties.random();
-            for (let ii = 0, mm = this.spawns.length; ii < mm; ii++) {
-                if (
-                    !eq(randomEmptyLevel, this.spawns[ii].coordinate) &&
-                    !this.snakeHasCoordinate(randomEmptyLevel)
-                ) {
-                    return randomEmptyLevel;
-                }
+            const tryCoordinate = this.level.data.empties.random();
+            if (
+                !this.spawnableAtCoordinate(tryCoordinate) &&
+                !this.snakeAtCoordinate(tryCoordinate)
+            ) {
+                return tryCoordinate;
+            }
+        }
+        console.warn("Could not get an empty location");
+    }
+
+    private spawnableAtCoordinate(coordinate: Coordinate): Spawnable | undefined {
+        for (let i = 0, mm = this.spawnables.length; i < mm; i++) {
+            if (eq(coordinate, this.spawnables[i].coordinate)) {
+                return this.spawnables[i];
             }
         }
     }
@@ -61,7 +75,7 @@ export class Spawner {
                 const newSpawnLocation = this.newSpawnLocation;
                 if (newSpawnLocation) {
                     const spawn = new Apple(this.level.settings, newSpawnLocation);
-                    this.spawns.push(spawn);
+                    this.spawnables.push(spawn);
                     this.onspawn(spawn);
                 }
             }, this.level.settings.spawnFirstAppleAfter * 1000),
@@ -74,12 +88,12 @@ export class Spawner {
                 const newSpawnLocation = this.newSpawnLocation;
                 if (newSpawnLocation) {
                     const spawn = new AnonymousPowerup(this.level.settings, newSpawnLocation);
-                    this.spawns.push(spawn);
+                    this.spawnables.push(spawn);
                     this.onspawn(spawn);
 
                     this.scheduleSpawnPowerup();
                 }
-            }, randomRange(...this.level.settings.powerupsInterval)),
+            }, randomRangeFloat(...this.level.settings.powerupsInterval) * 1000),
         );
     }
 }

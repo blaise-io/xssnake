@@ -64,15 +64,14 @@ export class ClientSnake extends Snake {
     }
 
     showAction(label: string): void {
-        showAction(label, this.getHead(), this.speed);
+        showAction(label, this.head, this.speed);
     }
 
     showDirection(): void {
         const shift = GAME_SHIFT_MAP[this.direction];
-        const head = this.getHead();
         const shape = new Shape();
 
-        shape.pixels.add(head[0] + shift[0], head[1] + shift[1]);
+        shape.pixels.add(this.head[0] + shift[0], this.head[1] + shift[1]);
         setGameTransform(shape);
         flash(shape);
 
@@ -145,11 +144,10 @@ export class ClientSnake extends Snake {
     }
 
     getNextPosition(): Coordinate {
-        const head = this.getHead();
         if (this.controls) {
             this.direction = this.controls.getNextDirection();
         }
         const shift = GAME_SHIFT_MAP[this.direction];
-        return [head[0] + shift[0], head[1] + shift[1]];
+        return [this.head[0] + shift[0], this.head[1] + shift[1]];
     }
 }

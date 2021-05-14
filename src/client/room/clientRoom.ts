@@ -40,8 +40,8 @@ export class ClientRoom {
     destruct(): void {
         clearHash();
         this.eventHandler.destruct();
-        this.messageBox?.destruct();
-        this.scoreboard?.destruct();
-        this.roundSet?.destruct();
+        this.messageBox.destruct();
+        this.scoreboard.destruct();
+        this.roundSet.destruct();
     }
 }

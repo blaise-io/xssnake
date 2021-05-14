@@ -4,7 +4,7 @@ import { Player } from "../room/player";
 import { Message, MessageId } from "../room/types";
 import { LevelSettings } from "./level";
 
-export const enum SPAWNABLE_ID {
+export const enum SPAWN_ID {
     ANONYMOUS, // In server games, effect of a power-up is unknown until hit.
     POINTS,
     REVERSE,
@@ -18,7 +18,7 @@ export const enum EFFECT {
     GOOD,
 }
 
-export const enum TYPE {
+export const enum SPAWN_TYPE {
     APPLE,
     POWER,
 }
@@ -27,7 +27,7 @@ export class SpawnMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(readonly type: TYPE, readonly coordinate: Coordinate) {}
+    constructor(readonly type: SPAWN_TYPE, readonly coordinate: Coordinate) {}
 
     static deserialize(trustedNetcode: string): SpawnMessage {
         const [type, coordinate] = JSON.parse(trustedNetcode);
@@ -35,7 +35,28 @@ export class SpawnMessage implements Message {
     }
 
     get serialized(): string {
-        return JSON.stringify(this.type, this.coordinate);
+        return JSON.stringify([this.type, this.coordinate]);
+    }
+}
+
+export class SpawnHitMessage implements Message {
+    static id: MessageId;
+    static audience = AUDIENCE.CLIENT;
+
+    constructor(
+        readonly playerIndex: number,
+        readonly id: SPAWN_ID,
+        readonly type: SPAWN_TYPE,
+        readonly coordinate: Coordinate,
+    ) {}
+
+    static deserialize(trustedNetcode: string): SpawnHitMessage {
+        const [playerIndex, id, type, coordinate] = JSON.parse(trustedNetcode);
+        return new SpawnHitMessage(playerIndex, id, type, coordinate);
+    }
+
+    get serialized(): string {
+        return JSON.stringify([this.playerIndex, this.id, this.type, this.coordinate]);
     }
 }
 
@@ -44,10 +65,11 @@ export abstract class Spawnable {
 
     constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {}
 
-    abstract id: SPAWNABLE_ID;
-    abstract type: TYPE;
+    abstract id: SPAWN_ID;
+    abstract type: SPAWN_TYPE;
     abstract applyEffects(player: Player, snake: Snake): void;
 
+    active = true;
     timer?: ReturnType<typeof setTimeout>;
 
     snakeNotifyModifier?: string;
@@ -65,8 +87,8 @@ export abstract class Spawnable {
 export class Apple extends Spawnable {
     static effect = { self: EFFECT.GOOD, others: EFFECT.NONE };
 
-    id = SPAWNABLE_ID.POINTS;
-    type = TYPE.APPLE;
+    id = SPAWN_ID.POINTS;
+    type = SPAWN_TYPE.APPLE;
 
     constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {
         super(levelSettings, coordinate);
@@ -81,8 +103,8 @@ export class Apple extends Spawnable {
 export class AnonymousPowerup extends Spawnable {
     static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
 
-    id = SPAWNABLE_ID.ANONYMOUS;
-    type = TYPE.POWER;
+    id = SPAWN_ID.ANONYMOUS;
+    type = SPAWN_TYPE.POWER;
 
     constructor(protected readonly levelSettings: LevelSettings, public coordinate: Coordinate) {
         super(levelSettings, coordinate);
@@ -94,8 +116,8 @@ export class AnonymousPowerup extends Spawnable {
 export class Reverse extends Spawnable {
     static effect = { self: EFFECT.BAD, others: EFFECT.NONE };
 
-    id = SPAWNABLE_ID.REVERSE;
-    type = TYPE.POWER;
+    id = SPAWN_ID.REVERSE;
+    type = SPAWN_TYPE.POWER;
 
     applyEffects(player: Player, snake: Snake): void {
         snake.reverse();
@@ -105,8 +127,8 @@ export class Reverse extends Spawnable {
 export class SpeedBoost extends Spawnable {
     static effect = { self: EFFECT.RISKY, others: EFFECT.NONE };
 
-    id = SPAWNABLE_ID.SPEED_BOOST;
-    type = TYPE.POWER;
+    id = SPAWN_ID.SPEED_BOOST;
+    type = SPAWN_TYPE.POWER;
 
     applyEffects(player: Player, snake: Snake): void {
         snake.speed += 150;

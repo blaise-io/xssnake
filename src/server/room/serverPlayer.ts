@@ -81,6 +81,9 @@ export class ServerPlayer extends Player {
     }
 
     send(message: Message): void {
+        if (ENV_DEBUG && !NETCODE_MAP[(<MessageConstructor>message.constructor).id]) {
+            throw new Error("Message not registered: " + message);
+        }
         if (this.connected && this.client) {
             console.log(
                 "OUT",

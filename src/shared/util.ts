@@ -1,6 +1,9 @@
 export function randomRange(min: number, max: number): number {
     return min + Math.floor(Math.random() * (max - min + 1));
 }
+export function randomRangeFloat(min: number, max: number): number {
+    return min + Math.random() * (max - min + 1);
+}
 
 export function getRandomItemFrom<Type>(arr: Type[]): Type {
     return arr[randomArrIndex(arr)];

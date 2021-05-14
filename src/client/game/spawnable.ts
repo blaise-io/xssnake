@@ -1,21 +1,31 @@
-import { SPAWN_APPLE } from "../../shared/const";
+import { SPAWN_TYPE } from "../../shared/level/spawnables";
 import { Shape } from "../../shared/shape";
-import { NS, UC } from "../const";
+import { UC } from "../const";
 import { State } from "../state";
 import { font } from "../ui/font";
 import { flash } from "../ui/shapeClient";
 import { translateGameX, translateGameY } from "../util/clientUtil";
 
-export class Spawnable {
-    private x: number;
-    private y: number;
-    private shapeName: string;
+const UC_MAP = {
+    [SPAWN_TYPE.APPLE]: UC.APPLE,
+    [SPAWN_TYPE.POWER]: UC.ELECTRIC,
+};
 
-    constructor(public type: number, public index: number, public location: Coordinate) {
-        this.x = translateGameX(location[0]);
-        this.y = translateGameY(location[1]);
+const PIXEL_OFFSET_MAP = {
+    [SPAWN_TYPE.APPLE]: [-1, -2],
+    [SPAWN_TYPE.POWER]: [-1, -1],
+};
 
-        this.shapeName = NS.SPAWN + index;
+export class ClientSpawnable {
+    constructor(
+        private readonly shapeName: string,
+        readonly type: SPAWN_TYPE,
+        readonly coordinate: Coordinate,
+    ) {
+        this.coordinate = [
+            translateGameX(coordinate[0]) + PIXEL_OFFSET_MAP[type][0],
+            translateGameY(coordinate[1]) + PIXEL_OFFSET_MAP[type][1],
+        ];
         State.shapes[this.shapeName] = this.shape;
     }
 
@@ -24,16 +34,7 @@ export class Spawnable {
     }
 
     get shape(): Shape {
-        let shape: Shape;
-        const x = this.x;
-        const y = this.y;
-
-        if (this.type === SPAWN_APPLE) {
-            shape = font(UC.APPLE, x - 1, y - 2);
-        } else {
-            shape = font(UC.ELECTRIC, x - 1, y - 1);
-        }
-
+        const shape = font(UC_MAP[this.type], ...this.coordinate);
         flash(shape);
         return shape;
     }

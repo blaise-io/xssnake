@@ -3,7 +3,7 @@ import { SE_PLAYER_COLLISION } from "../../shared/const";
 import { Spawner } from "../../shared/game/spawner";
 import { Level } from "../../shared/level/level";
 import { SnakeCrashMessage, SnakeUpdateServerMessage } from "../../shared/game/snakeMessages";
-import { Spawnable, SpawnMessage } from "../../shared/level/spawnables";
+import { Spawnable, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -107,6 +107,18 @@ export class ServerGame {
         this.snakes.forEach((snake) => {
             snake.handleNextMove(tick, elapsed, shift, this.snakes);
             snake.shiftParts(shift);
+            const spawnable = this.spawner.handleSpawnHit(snake);
+            if (spawnable) {
+                spawnable.applyEffects(this.players[snake.index], snake);
+                this.players.send(
+                    new SpawnHitMessage(
+                        snake.index,
+                        spawnable.id,
+                        spawnable.type,
+                        spawnable.coordinate,
+                    ),
+                );
+            }
         });
     }
 }
