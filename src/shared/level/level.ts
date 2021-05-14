@@ -6,15 +6,16 @@ import { Reverse, SpeedBoost } from "./spawnables";
 import { LevelString } from "./types";
 
 export class LevelSettings {
-    gravity = [0, 0];
-    powerups = [Reverse, SpeedBoost];
+    gravity: Shift = [0, 0];
     snakeSize = 4;
     snakeSpeed = 120; // Change tile every ms.
-    snakeAppleIncrease = 1;
+    appleSnakeGrow = 1;
+    spawnApples = true;
+    spawnFirstAppleAfter = 1;
     pointsApple = 1;
     pointsKnockout = 3;
-    spawnFirstAppleAfter = 0.5;
-    spawnPowerupIntervalS = [10, 60];
+    powerupsEnabled = [Reverse, SpeedBoost];
+    powerupsInterval: [min: number, max: number] = [10, 60];
 
     constructor(options: Partial<LevelSettings> = {}) {
         Object.assign(this, options);

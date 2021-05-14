@@ -78,7 +78,7 @@ export class SnakeCrashMessage implements Message {
                 return {
                     playerIndex: snake.index,
                     parts: snake.parts,
-                    collision: snake.collision!,
+                    collision: snake.collision as Collision,
                 };
             }),
         );

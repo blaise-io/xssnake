@@ -5,6 +5,7 @@ import { Message, MessageId } from "../room/types";
 import { LevelSettings } from "./level";
 
 export const enum SPAWNABLE_ID {
+    ANONYMOUS, // In server games, effect of a power-up is unknown until hit.
     POINTS,
     REVERSE,
     SPEED_BOOST,
@@ -15,15 +16,15 @@ export const enum TYPE {
     POWER,
 }
 
-export class SpawnableMessage implements Message {
+export class SpawnMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public type: TYPE, public coordinate: Coordinate) {}
+    constructor(readonly type: TYPE, readonly coordinate: Coordinate) {}
 
-    static deserialize(trustedNetcode: string): SpawnableMessage {
+    static deserialize(trustedNetcode: string): SpawnMessage {
         const [type, coordinate] = JSON.parse(trustedNetcode);
-        return new SpawnableMessage(type, coordinate);
+        return new SpawnMessage(type, coordinate);
     }
 
     get serialized(): string {
@@ -32,7 +33,7 @@ export class SpawnableMessage implements Message {
 }
 
 export abstract class Spawnable {
-    constructor(public levelSettings: LevelSettings, public coordinate: Coordinate) {}
+    constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {}
 
     abstract id: SPAWNABLE_ID;
     abstract type: TYPE;
@@ -56,7 +57,7 @@ export class Apple extends Spawnable {
     id = SPAWNABLE_ID.POINTS;
     type = TYPE.APPLE;
 
-    constructor(public levelSettings: LevelSettings, public coordinate: Coordinate) {
+    constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {
         super(levelSettings, coordinate);
         this.snakeNotifyModifier = `+${levelSettings.pointsApple}`;
     }
@@ -64,6 +65,17 @@ export class Apple extends Spawnable {
     applyEffects(player: Player): void {
         player.score += this.levelSettings.pointsApple;
     }
+}
+
+export class AnonymousPowerup extends Spawnable {
+    id = SPAWNABLE_ID.ANONYMOUS;
+    type = TYPE.POWER;
+
+    constructor(protected readonly levelSettings: LevelSettings, public coordinate: Coordinate) {
+        super(levelSettings, coordinate);
+    }
+
+    applyEffects(): void {}
 }
 
 export class Reverse extends Spawnable {

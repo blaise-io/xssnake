@@ -1,6 +1,6 @@
-export const enum SpawnType {
-    APPLE,
-    POWERUP,
-}
-
-class SpawnItem {}
+// export const enum SpawnType {
+//     APPLE,
+//     POWERUP,
+// }
+//
+// class SpawnItem {}

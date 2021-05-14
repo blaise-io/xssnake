@@ -3,7 +3,7 @@ import { SE_PLAYER_COLLISION } from "../../shared/const";
 import { Spawner } from "../../shared/game/spawner";
 import { Level } from "../../shared/level/level";
 import { SnakeCrashMessage, SnakeUpdateServerMessage } from "../../shared/game/snakeMessages";
-import { Spawnable, SpawnableMessage } from "../../shared/level/spawnables";
+import { Spawnable, SpawnMessage } from "../../shared/level/spawnables";
 import { average } from "../../shared/util";
 import { SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -27,7 +27,7 @@ export class ServerGame {
         this.snakes = this.players.map((p, index) => new ServerSnake(index, level));
 
         this.spawner = new Spawner(this.level, this.snakes, (spawnable: Spawnable) => {
-            this.players.send(new SpawnableMessage(spawnable.type, spawnable.coordinate));
+            this.players.send(new SpawnMessage(spawnable.type, spawnable.coordinate));
         });
 
         this.roomEmitter.on(

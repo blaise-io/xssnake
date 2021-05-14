@@ -5,17 +5,23 @@ import { parseLevelData } from "./parser";
 import { PlayerSpawn } from "./playerSpawn";
 
 export class LevelData {
-    private width = 0;
-    private height = 0;
+    animations = { walls: [] }; // TODO: move to level?
 
-    empties = new PixelCollection();
-    walls = new PixelCollection();
-    spawns: PlayerSpawn[] = [];
-    unreachables = new PixelCollection();
-    animations = { walls: [] };
+    readonly width: number;
+    readonly height: number;
+    readonly empties: PixelCollection;
+    readonly walls: PixelCollection;
+    readonly spawns: PlayerSpawn[];
+    readonly unreachables: PixelCollection;
 
     constructor(imagedata: ImageData) {
-        Object.assign(this, parseLevelData(imagedata));
+        const levelData = parseLevelData(imagedata);
+        this.width = imagedata.width;
+        this.height = imagedata.height;
+        this.empties = levelData.empties;
+        this.walls = levelData.walls;
+        this.spawns = levelData.spawns;
+        this.unreachables = levelData.unreachables;
     }
 
     isWall(x: number, y: number): boolean {
