@@ -1,5 +1,4 @@
 import { DIRECTION } from "../../shared/const";
-import { ScoreMessage } from "../../shared/game/scoreMessages";
 import { Snake } from "../../shared/game/snake";
 import {
     SnakeCrashMessage,
@@ -12,7 +11,7 @@ import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, eq, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
-import { EventHandler, globalEventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { explosion } from "../ui/clientShapeGenerator";
@@ -141,10 +140,10 @@ export class ClientGame {
                     );
                 }
             }
-            globalEventHandler.trigger(
-                ScoreMessage.id,
-                new ScoreMessage(this.players.map((p) => p.score)),
-            );
+            // globalEventHandler.trigger(
+            //     ScoreMessage.id,
+            //     new ScoreMessage(this.players.map((p) => p.score)),
+            // );
         });
 
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));

@@ -1,4 +1,6 @@
 import { Player } from "../../shared/room/player";
+import { PlayersMessage } from "../../shared/room/playerRegistry";
+import { globalEventHandler } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ChatMessage } from "../room/chatMessage";
 import { Scoreboard } from "../room/scoreboard";
@@ -27,20 +29,20 @@ export function debugScoreboard(): void {
             const player = new Player("Player " + (i + 1), true, i === 0);
             players.push(player);
         }
-        const scoreboard = new Scoreboard(players);
+        new Scoreboard(players);
 
         setTimeout(() => {
             // Mimic player leaving, joining during lobby.
             players[2].score = 1; // Player 3 leads.
-            scoreboard.ui.updateScoreboard();
+            globalEventHandler.trigger(PlayersMessage.id, new PlayersMessage(players));
 
             setTimeout(() => {
                 players[2].connected = false; // Player 3 leaves.
-                scoreboard.ui.debounceUpdate();
+                globalEventHandler.trigger(PlayersMessage.id, new PlayersMessage(players));
 
                 setTimeout(() => {
                     players.push(new Player("Player 6")); // Player 6 joins.
-                    scoreboard.ui.debounceUpdate();
+                    globalEventHandler.trigger(PlayersMessage.id, new PlayersMessage(players));
                 }, 1000);
             }, 1000);
         }, 1000);

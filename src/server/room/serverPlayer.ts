@@ -2,7 +2,7 @@ import * as util from "util";
 import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
 import { Player } from "../../shared/room/player";
 import { Message, MessageConstructor, MessageId } from "../../shared/room/types";
-import { Server, SocketClient } from "../netcode/server";
+import { Server, SocketClient } from "../server";
 import { ServerRoom } from "./serverRoom";
 
 export class ServerPlayer extends Player {
@@ -10,6 +10,9 @@ export class ServerPlayer extends Player {
 
     constructor(public server: Server, public client: SocketClient) {
         super("<anon>");
+
+        // TODO: Move to Server, so Server can propagate down.
+        //       New rule: if the consequences escalate, ensure we can propagate.
 
         this.client.on("message", this.onmessage.bind(this));
         this.client.on("close", () => {
@@ -38,7 +41,7 @@ export class ServerPlayer extends Player {
     disconnect(): void {
         this.connected = false;
         this.room?.removePlayer(this);
-        this.client?.terminate();
+        this.client?.close();
     }
 
     /**

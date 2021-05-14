@@ -11,8 +11,8 @@ import {
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { randomStr } from "../../shared/util";
 import { isStrOfLen } from "../../shared/util/sanitizer";
-import { Server } from "../netcode/server";
-import { getMatchingRoom } from "./matcher";
+import { Server } from "../server";
+import { getMatchingRoom } from "./matching";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerRoom } from "./serverRoom";
 

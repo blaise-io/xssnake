@@ -47,7 +47,7 @@ export class ServerRoundSet {
 
     private startNewRound(): void {
         this.round.destruct();
-        this.players.removeDisconnectedPlayers();
+        this.players.removeDisconnected();
         this.round = new ServerRound(
             this.roomEmitter,
             this.players,

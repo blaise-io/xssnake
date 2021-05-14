@@ -1,9 +1,9 @@
 import { EventEmitter } from "events";
 import * as ws from "ws";
-import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
-import { HEARTBEAT_INTERVAL_MS } from "../../shared/const";
-import { ServerRoomManager } from "../room/roomManager";
-import { ServerPlayer } from "../room/serverPlayer";
+import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../shared/config";
+import { HEARTBEAT_INTERVAL_MS } from "../shared/const";
+import { ServerRoomManager } from "./room/roomManager";
+import { ServerPlayer } from "./room/serverPlayer";
 
 export interface SocketClient extends ws {
     pingSent: number;

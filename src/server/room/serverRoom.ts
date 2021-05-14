@@ -3,7 +3,7 @@ import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMe
 import { RoomKeyMessage, RoomOptionsClientMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
-import { Server } from "../netcode/server";
+import { Server } from "../server";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 import { ServerRoundSet } from "./serverRoundSet";
@@ -14,6 +14,7 @@ export class ServerRoom {
     rounds: ServerRoundSet;
 
     constructor(public server: Server, public options: RoomOptions, public key: string) {
+        /** @deprecated move to RoomManager which is in charge of matchmaking */
         this.emitter = new EventEmitter();
         this.players = new ServerPlayerRegistry();
         this.rounds = new ServerRoundSet(this.emitter, this.players, this.options);
