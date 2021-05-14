@@ -16,9 +16,10 @@ export const enum GAME {
 
 /** @deprecated: Use Message */ export const SE_PLAYER_COLLISION = 102;
 
+/** @deprecated: Use Message */
 export const enum SERVER_EVENT {
+    /** @deprecated: Use Message */
     PLAYER_DISCONNECT = "SE0",
-    PLAYER_COLLISION = "SE1",
 }
 
 export const HEARTBEAT_INTERVAL_MS = 5000;

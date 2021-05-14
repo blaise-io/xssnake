@@ -1,5 +1,4 @@
 import * as util from "util";
-import { SE_PLAYER_COLLISION, SERVER_EVENT } from "../../shared/const";
 import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
 import { Player } from "../../shared/room/player";
 import { Message, MessageConstructor, MessageId } from "../../shared/room/types";
@@ -38,14 +37,8 @@ export class ServerPlayer extends Player {
 
     disconnect(): void {
         this.connected = false;
-        if (this.room) {
-            this.room.emitter.emit(String(SE_PLAYER_COLLISION), [this]);
-            this.room.emitter.emit(SERVER_EVENT.PLAYER_DISCONNECT, this);
-        }
-        if (this.client) {
-            this.client.close(); // TODO: terminate()?
-            // delete this.client; // TODO: not my job?
-        }
+        this.room?.removePlayer(this);
+        this.client?.terminate();
     }
 
     /**

@@ -1,5 +1,4 @@
 import { EventEmitter } from "events";
-import { SERVER_EVENT } from "../../shared/const";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
 import { RoomKeyMessage, RoomOptionsClientMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
@@ -41,18 +40,6 @@ export class ServerRoom {
                 );
             },
         );
-        this.emitter.on(SERVER_EVENT.PLAYER_DISCONNECT, (player: ServerPlayer) => {
-            // Remove immediately if rounds have not started.
-            // [else: set player.connected to false]
-            if (!this.rounds.started) {
-                this.players.remove(player);
-            } else {
-                // TODO: Check whether this dupes PlayerRegistry, should also inform room.
-                player.connected = false;
-            }
-            this.players.sendPlayers();
-            this.detectEmptyRoom();
-        });
     }
 
     // restartRounds(): void {
@@ -72,6 +59,19 @@ export class ServerRoom {
         if (this.full && !this.rounds.roundsPlayed) {
             this.rounds.start();
         }
+    }
+
+    removePlayer(player: ServerPlayer): void {
+        // Remove immediately if rounds have not started.
+        // [else: set player.connected to false]
+        if (!this.rounds.started) {
+            this.players.remove(player);
+        } else {
+            // TODO: Check whether this dupes PlayerRegistry, should also inform room.
+            player.connected = false;
+        }
+        this.players.sendPlayers();
+        this.detectEmptyRoom();
     }
 
     sendInitial(player: ServerPlayer): void {
