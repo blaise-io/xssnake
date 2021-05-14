@@ -16,6 +16,7 @@ export class Scoreboard {
         });
 
         this.eventHandler.on(ScoreMessage.id, (message: ScoreMessage) => {
+            console.log("UPD");
             message.score.forEach((score, index) => {
                 this.players[index].score = score;
             });

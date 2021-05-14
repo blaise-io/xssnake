@@ -121,6 +121,7 @@ export class ServerGame {
             const spawnable = this.spawner.handleSpawnHit(snake);
             if (spawnable) {
                 spawnable.applyEffects(this.players[snake.index], snake);
+                console.log(this.players.map((p) => p.score));
                 this.players.send(
                     new SpawnHitMessage(
                         snake.index,

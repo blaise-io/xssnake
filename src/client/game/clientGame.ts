@@ -1,17 +1,18 @@
 import { DIRECTION } from "../../shared/const";
+import { ScoreMessage } from "../../shared/game/scoreMessages";
 import { Snake } from "../../shared/game/snake";
-import { Level } from "../../shared/level/level";
 import {
     SnakeCrashMessage,
     SnakeUpdateClientMessage,
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
-import { SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
+import { Level } from "../../shared/level/level";
+import { Apple, SPAWN_TYPE, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, eq, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler, globalEventHandler } from "../netcode/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { explosion } from "../ui/clientShapeGenerator";
@@ -123,18 +124,27 @@ export class ClientGame {
             explosion(translateGame(message.coordinate));
             delete State.shapes[spawnable.shapeName];
 
-            const enabledPowerup = this.level.settings.powerupsEnabled.find(
-                (spawnable) => spawnable[0].id === message.id,
-            );
-
-            if (enabledPowerup) {
-                // @ts-ignore
-                const powerup = new enabledPowerup[0](this.level.settings, message.coordinate);
-                powerup.applyEffects(
-                    this.players[message.playerIndex],
-                    this.snakes[message.playerIndex],
+            if (message.type === SPAWN_TYPE.APPLE) {
+                const apple = new Apple(this.level.settings, message.coordinate);
+                apple.applyEffects(this.players[message.playerIndex]);
+            } else {
+                const enabledPowerup = this.level.settings.powerupsEnabled.find(
+                    (spawnable) => spawnable[0].id === message.id,
                 );
+
+                if (enabledPowerup) {
+                    // @ts-ignore
+                    const powerup = new enabledPowerup[0](this.level.settings, message.coordinate);
+                    powerup.applyEffects(
+                        this.players[message.playerIndex],
+                        this.snakes[message.playerIndex],
+                    );
+                }
             }
+            globalEventHandler.trigger(
+                ScoreMessage.id,
+                new ScoreMessage(this.players.map((p) => p.score)),
+            );
         });
 
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));

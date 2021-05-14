@@ -1,5 +1,5 @@
 import { Level } from "../level/level";
-import { AnonymousPowerup, Apple, Spawnable } from "../level/spawnables";
+import { AnonymousPowerup, Apple, SPAWN_TYPE, Spawnable } from "../level/spawnables";
 import { eq, randomRangeFloat } from "../util";
 import { Snake } from "./snake";
 
@@ -13,10 +13,12 @@ export class Spawner {
         private onspawn: (spawnable: Spawnable) => void,
     ) {
         if (level.settings.spawnApples) {
-            this.scheduleSpawnApple();
+            this.scheduleSpawnApple(this.level.settings.spawnFirstAppleAfter * 1000);
         }
         if (level.settings.powerupsEnabled.length) {
-            this.scheduleSpawnPowerup();
+            this.scheduleSpawnPowerup(
+                randomRangeFloat(...this.level.settings.powerupsInterval) * 1000,
+            );
         }
     }
 
@@ -34,6 +36,11 @@ export class Spawner {
         const spawnable = this.spawnableAtCoordinate(snake.head);
         if (spawnable && spawnable.active) {
             spawnable.active = false;
+
+            if (spawnable.type === SPAWN_TYPE.APPLE) {
+                this.scheduleSpawnApple();
+            }
+
             return spawnable;
         }
     }
@@ -69,7 +76,7 @@ export class Spawner {
         }
     }
 
-    private scheduleSpawnApple() {
+    private scheduleSpawnApple(delay = 0) {
         this.timers.push(
             setTimeout(() => {
                 const newSpawnLocation = this.newSpawnLocation;
@@ -78,11 +85,11 @@ export class Spawner {
                     this.spawnables.push(spawn);
                     this.onspawn(spawn);
                 }
-            }, this.level.settings.spawnFirstAppleAfter * 1000),
+            }, delay),
         );
     }
 
-    private scheduleSpawnPowerup() {
+    private scheduleSpawnPowerup(delay = 0) {
         this.timers.push(
             setTimeout(() => {
                 const newSpawnLocation = this.newSpawnLocation;
@@ -91,9 +98,11 @@ export class Spawner {
                     this.spawnables.push(spawn);
                     this.onspawn(spawn);
 
-                    this.scheduleSpawnPowerup();
+                    this.scheduleSpawnPowerup(
+                        randomRangeFloat(...this.level.settings.powerupsInterval) * 1000,
+                    );
                 }
-            }, randomRangeFloat(...this.level.settings.powerupsInterval) * 1000),
+            }, delay),
         );
     }
 }
