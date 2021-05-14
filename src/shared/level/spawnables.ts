@@ -11,6 +11,13 @@ export const enum SPAWNABLE_ID {
     SPEED_BOOST,
 }
 
+export const enum EFFECT {
+    NONE,
+    BAD,
+    RISKY,
+    GOOD,
+}
+
 export const enum TYPE {
     APPLE,
     POWER,
@@ -33,6 +40,8 @@ export class SpawnMessage implements Message {
 }
 
 export abstract class Spawnable {
+    static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
+
     constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {}
 
     abstract id: SPAWNABLE_ID;
@@ -54,6 +63,8 @@ export abstract class Spawnable {
 }
 
 export class Apple extends Spawnable {
+    static effect = { self: EFFECT.GOOD, others: EFFECT.NONE };
+
     id = SPAWNABLE_ID.POINTS;
     type = TYPE.APPLE;
 
@@ -68,6 +79,8 @@ export class Apple extends Spawnable {
 }
 
 export class AnonymousPowerup extends Spawnable {
+    static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
+
     id = SPAWNABLE_ID.ANONYMOUS;
     type = TYPE.POWER;
 
@@ -79,6 +92,8 @@ export class AnonymousPowerup extends Spawnable {
 }
 
 export class Reverse extends Spawnable {
+    static effect = { self: EFFECT.BAD, others: EFFECT.NONE };
+
     id = SPAWNABLE_ID.REVERSE;
     type = TYPE.POWER;
 
@@ -88,6 +103,8 @@ export class Reverse extends Spawnable {
 }
 
 export class SpeedBoost extends Spawnable {
+    static effect = { self: EFFECT.RISKY, others: EFFECT.NONE };
+
     id = SPAWNABLE_ID.SPEED_BOOST;
     type = TYPE.POWER;
 

@@ -1,11 +1,9 @@
-import { GAME } from "../const";
 import { PixelCollection } from "../pixelCollection";
-import { ShapeCollection } from "../shapeCollection";
 import { parseLevelData } from "./parser";
 import { PlayerSpawn } from "./playerSpawn";
 
 export class LevelData {
-    animations = { walls: [] }; // TODO: move to level?
+    animations: Record<string, PixelCollection[]> = { walls: [] };
 
     readonly width: number;
     readonly height: number;
@@ -33,41 +31,40 @@ export class LevelData {
         return false;
     }
 
-    // TODO: Keep walls in game coordinate system in client.
     isMovingWall(coordinate: Coordinate): boolean {
         for (let i = 0, m = this.animations.walls.length; i < m; i++) {
-            if (this.inShapes(this.animations.walls[i], coordinate)) {
+            if (this.animations.walls[i].has(...coordinate)) {
                 return true;
             }
         }
         return false;
     }
 
-    inShapes(shapeCollection: ShapeCollection, coordinate: Coordinate): boolean {
-        for (let i = 0, m = shapeCollection.length; i < m; i++) {
-            const shape = shapeCollection[i];
-            if (shape) {
-                const translate = shape.transform.translate;
-                const translated = this.convertToGameSystem(coordinate, translate);
-                if (shape.pixels.has(translated[0], translated[1])) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    // inShapes(shapeCollection: ShapeCollection, coordinate: Coordinate): boolean {
+    //     for (let i = 0, m = shapeCollection.length; i < m; i++) {
+    //         const shape = shapeCollection[i];
+    //         if (shape) {
+    //             const translate = shape.transform.translate;
+    //             const translated = this.convertToGameSystem(coordinate, translate);
+    //             if (shape.pixels.has(translated[0], translated[1])) {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
 
-    convertToGameSystem(coordinate: Coordinate, translate: Shift): Coordinate {
-        if (ENV_IS_CLIENT) {
-            const tx = (translate[0] - GAME.LEFT) / GAME.TILE;
-            const ty = (translate[1] - GAME.TOP) / GAME.TILE;
-            return [coordinate[0] - tx, coordinate[1] - ty];
-        } else {
-            const tx = translate[0] / GAME.TILE;
-            const ty = translate[1] / GAME.TILE;
-            return [coordinate[0] - tx, coordinate[1] - ty];
-        }
-    }
+    // convertToGameSystem(coordinate: Coordinate, translate: Shift): Coordinate {
+    //     if (ENV_IS_CLIENT) {
+    //         const tx = (translate[0] - GAME.LEFT) / GAME.TILE;
+    //         const ty = (translate[1] - GAME.TOP) / GAME.TILE;
+    //         return [coordinate[0] - tx, coordinate[1] - ty];
+    //     } else {
+    //         const tx = translate[0] / GAME.TILE;
+    //         const ty = translate[1] / GAME.TILE;
+    //         return [coordinate[0] - tx, coordinate[1] - ty];
+    //     }
+    // }
 
     // getEmptyLocation(nonEmptyLocations: Coordinate[]): Coordinate {
     //     let maxTries = 50;

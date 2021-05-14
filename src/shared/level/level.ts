@@ -2,20 +2,23 @@ import blank from "./levels/blank.png";
 import { LevelAnimationRegistry } from "../levelanim/registry";
 import { LevelData } from "./levelData";
 import { LevelGravity } from "./levelGravity";
-import { Reverse, SpeedBoost } from "./spawnables";
+import { Reverse, Spawnable, SpeedBoost } from "./spawnables";
 import { LevelString } from "./types";
 
 export class LevelSettings {
-    gravity: Shift = [0, 0];
-    snakeSize = 4;
-    snakeSpeed = 120; // Change tile every ms.
-    appleSnakeGrow = 1;
-    spawnApples = true;
-    spawnFirstAppleAfter = 1;
-    pointsApple = 1;
-    pointsKnockout = 3;
-    powerupsEnabled = [Reverse, SpeedBoost];
-    powerupsInterval: [min: number, max: number] = [10, 60];
+    readonly gravity: Shift = [0, 0];
+    readonly snakeSize = 4;
+    readonly snakeSpeed = 120; // Change tile every ms.
+    readonly appleSnakeGrow = 1;
+    readonly spawnApples = true;
+    readonly spawnFirstAppleAfter = 1;
+    readonly pointsApple = 1;
+    readonly pointsKnockout = 3;
+    readonly powerupsInterval: [min: number, max: number] = [10, 60];
+    readonly powerupsEnabled: [spawnable: typeof Spawnable, chance: number][] = [
+        [Reverse, 0.1],
+        [SpeedBoost, 0.9],
+    ];
 
     constructor(options: Partial<LevelSettings> = {}) {
         Object.assign(this, options);
