@@ -20,7 +20,6 @@ export class ServerSnake extends Snake {
 
     handleNextMove(tick: number, elapsed: number, shift: Shift, opponents: ServerSnake[]): void {
         this.elapsed += elapsed;
-
         if (!this.crashed && this.elapsed >= this.speed) {
             const move = new SnakeMove(this, opponents, this.level, this.getNextPosition());
 

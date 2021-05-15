@@ -65,7 +65,7 @@ export class ServerRoom {
         return new Promise((resolve) => {
             if (this.rounds.started) {
                 // We keep a disconnected player instance during the game.
-                // TODO: Use player ids instead of indexes.
+                // TODO: Don't
                 this.emitter.on(SERVER_EVENT.ROUND_END, () => {
                     this.players.sendPlayers();
                     resolve(this);

@@ -60,19 +60,19 @@ export class SpawnHitMessage implements Message {
     }
 }
 
-export abstract class Spawnable {
+export class Spawnable {
     static id: SPAWN_ID;
     static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
 
-    constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {}
-
-    abstract type: SPAWN_TYPE;
-    abstract applyEffects(player: Player, snake: Snake): void;
-
+    type = SPAWN_TYPE.POWER;
     active = true;
     timer?: ReturnType<typeof setTimeout>;
 
-    snakeNotifyModifier?: string;
+    constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {}
+
+    applyEffects(player: Player, snake: Snake): void {
+        console.warn("Overwrite", player, snake);
+    }
 
     destruct(): void {
         // Lifetime continues after hit.
@@ -88,34 +88,20 @@ export class Apple extends Spawnable {
 
     type = SPAWN_TYPE.APPLE;
 
-    constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {
-        super(levelSettings, coordinate);
-        this.snakeNotifyModifier = `+${levelSettings.pointsApple}`;
-    }
-
-    applyEffects(player: Player): void {
+    applyEffects(player: Player, snake: Snake): void {
         player.score += this.levelSettings.pointsApple;
+        snake.size += this.levelSettings.appleSnakeGrow;
     }
 }
 
 export class AnonymousPowerup extends Spawnable {
     static id = SPAWN_ID.ANONYMOUS;
     static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
-
-    type = SPAWN_TYPE.POWER;
-
-    constructor(protected readonly levelSettings: LevelSettings, public coordinate: Coordinate) {
-        super(levelSettings, coordinate);
-    }
-
-    applyEffects(): void {}
 }
 
 export class Reverse extends Spawnable {
     static effect = { self: EFFECT.BAD, others: EFFECT.NONE };
-
     static id = SPAWN_ID.REVERSE;
-    type = SPAWN_TYPE.POWER;
 
     applyEffects(player: Player, snake: Snake): void {
         snake.reverse();
@@ -125,8 +111,6 @@ export class Reverse extends Spawnable {
 export class SpeedBoost extends Spawnable {
     static id = SPAWN_ID.SPEED_BOOST;
     static effect = { self: EFFECT.RISKY, others: EFFECT.NONE };
-
-    type = SPAWN_TYPE.POWER;
 
     applyEffects(player: Player, snake: Snake): void {
         snake.speed += 150;

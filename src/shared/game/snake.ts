@@ -54,9 +54,9 @@ export class Snake {
     }
 
     shiftParts(shift: Shift): void {
-        const x = shift[0] || 0;
-        const y = shift[1] || 0;
-        if (x || y) {
+        const x = shift[0];
+        const y = shift[1];
+        if (x !== 0 || y !== 0) {
             for (let i = 0, m = this.parts.length; i < m; i++) {
                 this.parts[i][0] += x;
                 this.parts[i][1] += y;

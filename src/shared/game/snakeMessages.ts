@@ -14,6 +14,7 @@ export class SnakeUpdateServerMessage implements Message {
     static fromData(snake: Snake, direction = -1): SnakeUpdateServerMessage {
         // Direction can be upcoming, may not be part of snake.
         const sync = Math.ceil(NETCODE_SYNC_MS / snake.speed);
+        console.log(snake.parts.slice(-sync), snake.head);
         return new SnakeUpdateServerMessage(direction, snake.parts.slice(-sync));
     }
 

@@ -17,7 +17,7 @@ export class Server {
 
     constructor() {
         this.ws = new ws.Server({
-            host: SERVER_HOST,
+            host: "0.0.0.0",
             port: SERVER_PORT,
             path: SERVER_PATH,
             maxPayload: 256,

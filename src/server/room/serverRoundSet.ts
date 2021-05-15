@@ -31,6 +31,12 @@ export class ServerRoundSet {
         this.levelPlayset = new LevelPlayset(options.levelSetIndex);
         this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
         this.score = new ServerScore(players);
+
+        this.roomEmitter.on(SERVER_EVENT.GAME_HAS_WINNER, () => {
+            setTimeout(() => {
+                this.startNewRound();
+            }, 3000);
+        });
     }
 
     destruct(): void {

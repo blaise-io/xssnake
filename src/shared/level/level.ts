@@ -5,6 +5,8 @@ import { LevelGravity } from "./levelGravity";
 import { Reverse, Spawnable, SpeedBoost } from "./spawnables";
 import { LevelString } from "./types";
 
+export type LevelSpawnable = [spawnable: typeof Spawnable, chance: number];
+
 export class LevelSettings {
     readonly gravity: Shift = [0, 0];
     readonly snakeSize = 4;
@@ -15,7 +17,7 @@ export class LevelSettings {
     readonly pointsApple = 1;
     readonly pointsKnockout = 3;
     readonly powerupsInterval: [min: number, max: number] = [10, 60];
-    readonly powerupsEnabled: [spawnable: typeof Spawnable, chance: number][] = [
+    readonly powerupsEnabled: LevelSpawnable[] = [
         [Reverse, 0.1],
         [SpeedBoost, 0.9],
     ];

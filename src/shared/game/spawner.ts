@@ -1,6 +1,6 @@
-import { Level } from "../level/level";
-import { AnonymousPowerup, Apple, SPAWN_TYPE, Spawnable } from "../level/spawnables";
-import { eq, randomRangeFloat } from "../util";
+import { Level, LevelSpawnable } from "../level/level";
+import { AnonymousPowerup, Apple, SPAWN_ID, SPAWN_TYPE, Spawnable } from "../level/spawnables";
+import { eq, getRandomItemFrom, randomRangeFloat } from "../util";
 import { Snake } from "./snake";
 
 export class Spawner {
@@ -41,8 +41,17 @@ export class Spawner {
                 this.scheduleSpawnApple();
             }
 
-            return spawnable;
+            const id = (spawnable.constructor as typeof Spawnable).id;
+
+            return id !== SPAWN_ID.ANONYMOUS
+                ? spawnable
+                : this.exchangeAnonymous(spawnable.coordinate, this.level.settings.powerupsEnabled);
         }
+    }
+
+    exchangeAnonymous(coordinate: Coordinate, powerups: LevelSpawnable[]): Spawnable {
+        const SpawnableClass = getRandomItemFrom(powerups)[0];
+        return new SpawnableClass(this.level.settings, coordinate);
     }
 
     private snakeAtCoordinate(coordinate: Coordinate): Snake | undefined {

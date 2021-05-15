@@ -98,16 +98,17 @@ export class ClientGame {
             // If server updated snake, client prediction
             // of snake crashing was incorrect.
             delete snake.collision;
-            this.eventHandler.on(SnakeCrashMessage.id, (message: SnakeCrashMessage) => {
-                for (let i = 0, m = message.collisions.length; i < m; i++) {
-                    const collision = message.collisions[i];
-                    const opponentSnake = this.snakes[collision.playerId];
-                    if (opponentSnake) {
-                        opponentSnake.parts = collision.parts;
-                        opponentSnake.setCrashed();
-                    }
+        });
+
+        this.eventHandler.on(SnakeCrashMessage.id, (message: SnakeCrashMessage) => {
+            for (let i = 0, m = message.collisions.length; i < m; i++) {
+                const collision = message.collisions[i];
+                const opponentSnake = this.snakes.find((s) => s.playerId === collision.playerId);
+                if (opponentSnake) {
+                    opponentSnake.parts = collision.parts;
+                    opponentSnake.setCrashed();
                 }
-            });
+            }
         });
 
         this.eventHandler.on(SpawnMessage.id, (message: SpawnMessage) => {
@@ -123,8 +124,9 @@ export class ClientGame {
         this.eventHandler.on(SpawnHitMessage.id, (message: SpawnHitMessage) => {
             const spawnable = this.spawnables.find((s) => eq(s.coordinate, message.coordinate));
             const player = this.players.getById(message.playerId);
+            const snake = this.snakes.find((s) => s.playerId == message.playerId);
 
-            if (!spawnable || !player) {
+            if (!spawnable || !player || !snake) {
                 return;
             }
 
@@ -133,19 +135,15 @@ export class ClientGame {
 
             if (message.type === SPAWN_TYPE.APPLE) {
                 const apple = new Apple(this.level.settings, message.coordinate);
-                apple.applyEffects(player);
+                apple.applyEffects(player, snake);
             } else {
-                const enabledPowerup = this.level.settings.powerupsEnabled.find(
-                    (spawnable) =>
-                        (spawnable[0].constructor as typeof Spawnable).id === message.spawnId,
-                );
+                const powerupsEnabled = this.level.settings.powerupsEnabled;
+                const enabledPowerup = powerupsEnabled.find((spawnable) => {
+                    return (spawnable[0].constructor as typeof Spawnable).id === message.spawnId;
+                });
                 if (enabledPowerup) {
-                    // @ts-ignore
                     const powerup = new enabledPowerup[0](this.level.settings, message.coordinate);
-                    powerup.applyEffects(
-                        player,
-                        this.snakes.filter((s) => s.playerId == message.playerId),
-                    );
+                    powerup.applyEffects(player, snake);
                 }
             }
         });

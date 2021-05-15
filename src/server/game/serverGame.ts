@@ -37,15 +37,18 @@ export class ServerGame {
             SnakeUpdateServerMessage.id,
             (player: ServerPlayer, message: SnakeUpdateServerMessage) => {
                 const snake = this.snakes[this.players.indexOf(player)];
-                this.handleMove(
-                    player,
-                    new ServerSnakeMove(
-                        message.parts,
-                        message.direction,
-                        snake,
-                        player.socket.latency,
-                    ),
-                );
+
+                if (!snake.crashed) {
+                    this.handleMove(
+                        player,
+                        new ServerSnakeMove(
+                            message.parts,
+                            message.direction,
+                            snake,
+                            player.socket.latency,
+                        ),
+                    );
+                }
             },
         );
 
@@ -61,16 +64,16 @@ export class ServerGame {
     }
 
     private handleMove(player: ServerPlayer, move: ServerSnakeMove) {
-        if (move.isValid()) {
-            move.snake.direction = move.direction;
+        move.snake.direction = move.direction;
+
+        if (move.valid) {
             move.snake.parts = move.parts;
             move.snake.trimParts();
         }
+
         this.players.send(
-            new SnakeUpdateClientMessage(player.id, move.direction, move.snake.parts),
-            {
-                exclude: move.isValid() ? player : undefined,
-            },
+            new SnakeUpdateClientMessage(player.id, move.snake.direction, move.snake.parts),
+            { exclude: move.valid ? player : player },
         );
     }
 
@@ -101,15 +104,22 @@ export class ServerGame {
             }
             this.players.send(SnakeCrashMessage.fromSnakes(...crashedSnakes));
             this.roomEmitter.emit(SERVER_EVENT.PLAYER_COLISSION);
+            if (!this.snakes.find((s) => !s.crashed)) {
+                this.roomEmitter.emit(SERVER_EVENT.GAME_HAS_WINNER);
+            }
         }
     }
 
     moveSnakes(tick: number, elapsed: number, shift: Shift): void {
-        this.snakes.forEach((snake) => {
+        for (let i = 0, m = this.snakes.length; i < m; i++) {
+            const snake = this.snakes[i];
+
             snake.handleNextMove(tick, elapsed, shift, this.snakes);
             snake.shiftParts(shift);
+
             const spawnable = this.spawner.handleSpawnHit(snake);
             const player = this.players.byId(snake.playerId);
+
             if (spawnable && player) {
                 const spawnableId = (spawnable.constructor as typeof Spawnable).id;
                 spawnable.applyEffects(player, snake);
@@ -122,6 +132,6 @@ export class ServerGame {
                     ),
                 );
             }
-        });
+        }
     }
 }

@@ -19,7 +19,7 @@ export class ServerSnakeMove {
         private latency: number,
     ) {}
 
-    isValid(): boolean {
+    get valid(): boolean {
         if (this.status === -1 && this.isValidJson()) {
             this.status = this.getStatus();
         }
@@ -68,29 +68,34 @@ export class ServerSnakeMove {
 
         // Don't allow gaps in the snake.
         if (this.hasGaps(clientParts)) {
+            console.warn("GAPS");
             return VALIDATE_ERR_GAP;
         }
 
         // Find tile closest to head where client and server matched.
         const serverParts = this.snake.parts.slice(-numSyncParts);
-        const commonPartIndices = this.getCommonPartIndices(clientParts, serverParts);
-        if (!commonPartIndices) {
+        const commonPartIndex = this.getCommonPartIndex(clientParts, serverParts);
+        if (!commonPartIndex) {
             return VALIDATE_ERR_NO_COMMON;
         }
 
         // Check if client-server delta does not exceed limit.
-        const mismatches = Math.abs(commonPartIndices[1] - commonPartIndices[0]);
+        const mismatches = Math.abs(commonPartIndex.server - commonPartIndex.client);
         const maxMismatches = Math.ceil(Math.min(NETCODE_SYNC_MS, this.latency) / this.snake.speed);
-        if (mismatches > maxMismatches) {
+        if (mismatches > Math.max(2, maxMismatches)) {
             return VALIDATE_ERR_MISMATCHES;
         }
 
         // Glue snake back together.
         this.parts = serverParts;
-        this.parts = this.snake.parts.concat(
-            serverParts.slice(0, commonPartIndices[1] + 1),
-            clientParts.slice(commonPartIndices[0] + 1),
-        );
+
+        console.log("GLUE ––––––––––––––––––––");
+        console.log(serverParts.slice(0, commonPartIndex.server));
+        console.log(clientParts.slice(commonPartIndex.client));
+        console.log("/GLUE");
+
+        this.parts = serverParts.slice(0, commonPartIndex.server);
+        this.parts.push(...clientParts.slice(commonPartIndex.client));
 
         return VALIDATE_SUCCES;
     }
@@ -113,11 +118,14 @@ export class ServerSnakeMove {
         return false;
     }
 
-    getCommonPartIndices(clientParts: Coordinate[], serverParts: Coordinate[]): Coordinate | null {
+    getCommonPartIndex(
+        clientParts: Coordinate[],
+        serverParts: Coordinate[],
+    ): { client: number; server: number } | null {
         for (let i = clientParts.length - 1; i >= 0; i--) {
             for (let ii = serverParts.length - 1; ii >= 0; ii--) {
                 if (eq(clientParts[i], serverParts[ii])) {
-                    return [i, ii];
+                    return { client: i, server: ii };
                 }
             }
         }

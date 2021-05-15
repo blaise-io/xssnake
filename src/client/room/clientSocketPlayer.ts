@@ -1,4 +1,4 @@
-import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../../shared/config";
+import { SERVER_PATH, SERVER_PORT } from "../../shared/config";
 import { AUDIENCE, NETCODE_MAP } from "../../shared/messages";
 import { Player } from "../../shared/room/player";
 import { NameMessage } from "../../shared/room/playerMessages";
@@ -14,7 +14,8 @@ export class ClientSocketPlayer extends Player {
         super(-1, name);
 
         this.local = true;
-        this.connection = new WebSocket(`ws://${SERVER_HOST}:${SERVER_PORT}${SERVER_PATH}`);
+        console.log(location.hostname, "xx");
+        this.connection = new WebSocket(`ws://${location.hostname}:${SERVER_PORT}${SERVER_PATH}`);
         this.connection.onopen = () => {
             this.onopen();
         };
