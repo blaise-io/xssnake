@@ -18,6 +18,7 @@ const PIXEL_OFFSET_MAP = {
 
 export class ClientSpawnable {
     private readonly gameCoordinate: Coordinate;
+    active = true;
 
     constructor(
         readonly shapeName: string,
@@ -32,6 +33,8 @@ export class ClientSpawnable {
     }
 
     destruct(): void {
+        this.active = false;
+        delete State.shapes[this.shapeName].effects.flash;
         delete State.shapes[this.shapeName];
     }
 

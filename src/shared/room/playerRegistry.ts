@@ -8,12 +8,12 @@ export class PlayersMessage implements Message {
 
     constructor(public players: PlayerRegistry<Player>, public localPlayer?: Player) {}
 
-    static deserialize(untrustedNetcode: string): PlayersMessage {
-        const datas = JSON.parse(untrustedNetcode);
+    static deserialize(trustedNetcode: string): PlayersMessage {
+        const datas = JSON.parse(trustedNetcode);
         const players = new PlayerRegistry<Player>();
         for (let i = 0, m = datas.length; i < m; i++) {
-            const data = datas[i];
-            players.push(new Player(+data[0], data[1], !!data[1], !!data[2], data[3]));
+            const [id, name, connected, local, score] = datas[i];
+            players.push(new Player(id, name, !!connected, !!local, score));
         }
         return new PlayersMessage(players);
     }

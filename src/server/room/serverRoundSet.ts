@@ -33,9 +33,7 @@ export class ServerRoundSet {
         this.score = new ServerScore(players);
 
         this.roomEmitter.on(SERVER_EVENT.GAME_HAS_WINNER, () => {
-            setTimeout(() => {
-                this.startNewRound();
-            }, 3000);
+            this.switchRounds(this.players[0]); // TODO: pass winner
         });
     }
 
@@ -63,7 +61,11 @@ export class ServerRoundSet {
             this.levelPlayset,
         );
         this.players.send(RoundLevelMessage.fromRound(this.round));
-        this.round.start();
+
+        // TODO: Client UI is messed up here
+        setTimeout(() => {
+            this.round.start();
+        }, 5000);
     }
 
     private switchRounds(winner: ServerPlayer): void {

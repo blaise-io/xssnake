@@ -13,7 +13,7 @@ export class ScoreboardUI {
     private y = CANVAS.HEIGHT - 24;
     private animating: boolean;
     private queue: boolean;
-    private queueTimer: number;
+    private queueTimer?: number;
     private podiumSize = 6;
     private lineHeight = 7;
     private animationDuration = 200;
@@ -24,17 +24,14 @@ export class ScoreboardUI {
     constructor(public players: ClientPlayerRegistry) {
         this.animating = false;
         this.queue = false;
-        this.queueTimer = 0;
         this.oldPlayerOrder = this.getPlayersSortedByScore();
         this.updateScoreboard();
     }
 
     destruct(): void {
-        clearInterval(this.queueTimer);
-        this.destructShapes();
-    }
-
-    destructShapes(): void {
+        if (this.queueTimer) {
+            clearInterval(this.queueTimer);
+        }
         for (let i = 0; i < this.podiumSize; i++) {
             delete State.shapes[NS.SCORE + i];
         }

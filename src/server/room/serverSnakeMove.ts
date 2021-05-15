@@ -90,6 +90,7 @@ export class ServerSnakeMove {
         // is synced so we need to glue the head to the server snake's tail.
         this.parts = serverParts.slice(0, commonPartIndex.server);
         this.parts.push(...clientParts.slice(commonPartIndex.client));
+        this.parts.slice(-this.snake.size);
 
         return VALIDATE_SUCCES;
     }

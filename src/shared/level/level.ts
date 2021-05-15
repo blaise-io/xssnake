@@ -16,9 +16,9 @@ export class LevelSettings {
     readonly spawnFirstAppleAfter = 1;
     readonly pointsApple = 1;
     readonly pointsKnockout = 3;
-    readonly powerupsInterval: [min: number, max: number] = [10, 60];
+    readonly powerupsInterval: [min: number, max: number] = [1, 5];
     readonly powerupsEnabled: LevelSpawnable[] = [
-        [Reverse, 0.1],
+        [Reverse, 0.9],
         [SpeedBoost, 0.9],
     ];
 

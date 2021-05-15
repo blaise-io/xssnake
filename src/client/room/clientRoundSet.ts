@@ -22,8 +22,8 @@ export class ClientRoundSet {
     }
 
     bindEvents(): void {
+        // Switch level between rounds.
         this.eventHandler.on(RoundLevelMessage.id, async (message: RoundLevelMessage) => {
-            // Switch level between rounds.
             if (this.round.game && this.round.game.started) {
                 this.round.destruct();
                 this.round = new ClientRound(this.players, this.options, this.levelIndex);

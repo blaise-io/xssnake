@@ -6,13 +6,7 @@ import {
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
 import { Level } from "../../shared/level/level";
-import {
-    Apple,
-    SPAWN_TYPE,
-    Spawnable,
-    SpawnHitMessage,
-    SpawnMessage,
-} from "../../shared/level/spawnables";
+import { Apple, SPAWN_TYPE, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, eq, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
@@ -45,6 +39,7 @@ export class ClientGame {
         this.eventHandler.destruct();
         this.snakes.forEach((s) => s.destruct());
         this.snakes.length = 0;
+
         this.spawnables.forEach((s) => s.destruct());
         this.spawnables.length = 0;
 
@@ -124,14 +119,15 @@ export class ClientGame {
         this.eventHandler.on(SpawnHitMessage.id, (message: SpawnHitMessage) => {
             const spawnable = this.spawnables.find((s) => eq(s.coordinate, message.coordinate));
             const player = this.players.getById(message.playerId);
-            const snake = this.snakes.find((s) => s.playerId == message.playerId);
+            const snake = this.snakes.find((s) => s.playerId === message.playerId);
 
             if (!spawnable || !player || !snake) {
-                return;
+                throw new Error("Baaaaad");
             }
 
-            explosion(translateGame(message.coordinate));
+            spawnable.active = false;
             delete State.shapes[spawnable.shapeName];
+            explosion(translateGame(message.coordinate));
 
             if (message.type === SPAWN_TYPE.APPLE) {
                 const apple = new Apple(this.level.settings, message.coordinate);
@@ -139,7 +135,7 @@ export class ClientGame {
             } else {
                 const powerupsEnabled = this.level.settings.powerupsEnabled;
                 const enabledPowerup = powerupsEnabled.find((spawnable) => {
-                    return (spawnable[0].constructor as typeof Spawnable).id === message.spawnId;
+                    return spawnable[0].id === message.spawnId;
                 });
                 if (enabledPowerup) {
                     const powerup = new enabledPowerup[0](this.level.settings, message.coordinate);

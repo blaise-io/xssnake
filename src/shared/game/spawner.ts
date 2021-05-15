@@ -1,6 +1,6 @@
 import { Level, LevelSpawnable } from "../level/level";
 import { AnonymousPowerup, Apple, SPAWN_ID, SPAWN_TYPE, Spawnable } from "../level/spawnables";
-import { eq, getRandomItemFrom, randomRangeFloat } from "../util";
+import { eq, getRandomItemFrom, noop, randomRangeFloat } from "../util";
 import { Snake } from "./snake";
 
 export class Spawner {
@@ -30,22 +30,23 @@ export class Spawner {
             this.spawnables[i].destruct();
         }
         this.spawnables.length = 0;
+        this.onspawn = noop;
     }
 
     handleSpawnHit(snake: Snake): Spawnable | undefined {
         const spawnable = this.spawnableAtCoordinate(snake.head);
-        if (spawnable && spawnable.active) {
-            spawnable.active = false;
-
+        if (spawnable) {
+            this.spawnables.splice(this.spawnables.indexOf(spawnable));
             if (spawnable.type === SPAWN_TYPE.APPLE) {
                 this.scheduleSpawnApple();
+                return spawnable;
+            } else if ((spawnable.constructor as typeof Spawnable).id === SPAWN_ID.ANONYMOUS) {
+                console.log("EXXCCHHHHHAAAANGE");
+                return this.exchangeAnonymous(
+                    spawnable.coordinate,
+                    this.level.settings.powerupsEnabled,
+                );
             }
-
-            const id = (spawnable.constructor as typeof Spawnable).id;
-
-            return id !== SPAWN_ID.ANONYMOUS
-                ? spawnable
-                : this.exchangeAnonymous(spawnable.coordinate, this.level.settings.powerupsEnabled);
         }
     }
 

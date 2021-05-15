@@ -75,9 +75,7 @@ export function format(str: string, ...data: (string | number)[]): string {
 }
 
 export function translateGame(coordinate: Coordinate): Coordinate {
-    coordinate[0] = translateGameX(coordinate[0]);
-    coordinate[1] = translateGameY(coordinate[1]);
-    return coordinate;
+    return [translateGameX(coordinate[0]), translateGameY(coordinate[1])];
 }
 
 export function translateGameX(x: number): number {

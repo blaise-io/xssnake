@@ -51,12 +51,12 @@ export class SpawnHitMessage implements Message {
     ) {}
 
     static deserialize(trustedNetcode: string): SpawnHitMessage {
-        const [playerId, spawnId, type, coordinate] = JSON.parse(trustedNetcode);
+        const [playerId, spawnId, type, ...coordinate] = JSON.parse(trustedNetcode);
         return new SpawnHitMessage(playerId, spawnId, type, coordinate);
     }
 
     get serialized(): string {
-        return JSON.stringify([this.playerId, this.spawnId, this.type, this.coordinate]);
+        return JSON.stringify([this.playerId, this.spawnId, this.type, ...this.coordinate]);
     }
 }
 
@@ -65,7 +65,6 @@ export class Spawnable {
     static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
 
     type = SPAWN_TYPE.POWER;
-    active = true;
     timer?: ReturnType<typeof setTimeout>;
 
     constructor(protected readonly levelSettings: LevelSettings, readonly coordinate: Coordinate) {}
@@ -113,9 +112,13 @@ export class SpeedBoost extends Spawnable {
     static effect = { self: EFFECT.RISKY, others: EFFECT.NONE };
 
     applyEffects(player: Player, snake: Snake): void {
-        snake.speed += 150;
+        const speed = snake.speed;
+        snake.speed *= 0.75;
+        const diff = speed - snake.speed;
         this.timer = setTimeout(() => {
-            snake.speed -= 150;
+            snake.speed += diff;
         }, 5000);
     }
 }
+
+// TODO: Spawn extra apples, is server effect only?

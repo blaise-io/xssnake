@@ -1,4 +1,3 @@
-import { ScoreMessage } from "./game/scoreMessages";
 import {
     SnakeCrashMessage,
     SnakeUpdateClientMessage,
@@ -14,6 +13,7 @@ import {
     RoomKeyMessage,
     RoomOptionsServerMessage,
     RoomOptionsClientMessage,
+    RoomManualStartMessage,
 } from "./room/roomMessages";
 import {
     RoundLevelMessage,
@@ -27,30 +27,31 @@ export const NETCODE_MAP: Record<MessageId, MessageConstructor> = Object.fromEnt
     ["C1", ChatClientMessage],
     ["C2", ChatServerMessage],
 
-    ["N1", NameMessage],
+    ["NM", NameMessage],
 
-    ["P1", PlayersMessage],
+    ["PS", PlayersMessage],
 
-    ["R1", RoomGetStatusMessage],
-    ["R2", RoomJoinErrorMessage],
-    ["R3", RoomJoinMessage],
-    ["R4", RoomKeyMessage],
-    ["R5", RoomOptionsServerMessage],
-    ["R6", RoomOptionsClientMessage],
+    ["RG", RoomGetStatusMessage],
+    ["RE", RoomJoinErrorMessage],
+    ["RJ", RoomJoinMessage],
+    ["RK", RoomKeyMessage],
+    ["RS", RoomManualStartMessage],
+    ["RO", RoomOptionsServerMessage],
+    ["R0", RoomOptionsClientMessage],
 
     ["1R", RoundLevelMessage],
-    ["2R", RoundCountDownMessage],
-    ["3R", RoundStartMessage],
-    ["4R", RoundWrapupMessage],
+    ["#R", RoundCountDownMessage],
+    ["SR", RoundStartMessage],
+    ["WR", RoundWrapupMessage],
 
-    ["#1", ScoreMessage],
+    // ["#1", ScoreMessage],
 
-    ["S1", SnakeUpdateClientMessage],
-    ["S2", SnakeUpdateServerMessage],
-    ["S3", SnakeCrashMessage],
+    ["S<", SnakeUpdateClientMessage],
+    ["S>", SnakeUpdateServerMessage],
+    ["SC", SnakeCrashMessage],
 
-    ["1S", SpawnMessage],
-    ["2S", SpawnHitMessage],
+    ["S?", SpawnMessage],
+    ["S!", SpawnHitMessage],
 ]);
 
 for (const k in NETCODE_MAP) {

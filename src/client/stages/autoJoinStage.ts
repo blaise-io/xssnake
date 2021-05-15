@@ -33,10 +33,10 @@ export class AutoJoinStage extends InputStage {
         const options = State.flow.data.roomOptions;
         const players = State.flow.data.roomPlayers;
 
-        const names = players.map((p) => p.name).join(", ");
+        const names = players.map((p) => p.name);
         this.header = stylizeUpper(_(`Join ${names[0]}'s game`));
 
-        summary.push(`${_("Players")} (${players.length})\t${names}`);
+        summary.push(`${_("Players")} (${players.length})\t${names.join(", ")}`);
         summary.push(`${_("Max. players")}\t${options.maxPlayers}`);
         summary.push(`${_("Level set")}\t${levelSets[options.levelSetIndex].title}`);
         summary.push(`${_("Power-ups")}\t${options.hasPowerups ? _("Yes") : _("Yes")}`);

@@ -133,7 +133,10 @@ export class ClientSnake extends Snake {
         if (!this.exploded) {
             for (let i = 0, m = this.parts.length; i < m; i++) {
                 window.setTimeout(() => {
-                    explosion(translateGame(this.parts[i]));
+                    if (this.parts[i]) {
+                        // TODO: snake may be despawned.
+                        explosion(translateGame(this.parts[i]));
+                    }
                 }, (this.parts.length - i - 1) * 50);
             }
             delete State.shapes[this.shapeKeys.snake];

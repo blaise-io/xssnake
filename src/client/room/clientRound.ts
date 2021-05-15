@@ -27,6 +27,7 @@ export class ClientRound extends Round {
         public levelIndex: number,
     ) {
         super(players, options, levelIndex);
+        // Only first round:
         this.preGameUI = new PreGameUI(players, options);
         this.bindEvents();
 

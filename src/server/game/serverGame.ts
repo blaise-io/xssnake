@@ -61,6 +61,7 @@ export class ServerGame {
         clearInterval(this.tickInterval);
         this.roomEmitter.removeAllListeners(SnakeUpdateServerMessage.id);
         this.spawner.destruct();
+        this.snakes.length = 0;
     }
 
     private handleMove(player: ServerPlayer, move: ServerSnakeMove) {
@@ -73,7 +74,7 @@ export class ServerGame {
 
         this.players.send(
             new SnakeUpdateClientMessage(player.id, move.snake.direction, move.snake.parts),
-            { exclude: move.valid ? player : player },
+            { exclude: move.valid ? player : undefined },
         );
     }
 
@@ -105,6 +106,7 @@ export class ServerGame {
             this.players.send(SnakeCrashMessage.fromSnakes(...crashedSnakes));
             this.roomEmitter.emit(SERVER_EVENT.PLAYER_COLISSION);
             if (!this.snakes.find((s) => !s.crashed)) {
+                // TODO: Pass winner and stop when one survivor.
                 this.roomEmitter.emit(SERVER_EVENT.GAME_HAS_WINNER);
             }
         }
