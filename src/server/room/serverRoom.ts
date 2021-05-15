@@ -17,6 +17,7 @@ export class ServerRoom {
     readonly emitter = new EventEmitter();
     readonly players = new ServerPlayerRegistry();
     readonly rounds = new ServerRoundSet(this.emitter, this.players, this.options);
+    playerIdCounter = 100; // TODO: back to 0
 
     constructor(public options: RoomOptions, public key = randomStr(ROOM_KEY_LENGTH)) {
         this.bindEvents();
@@ -33,10 +34,9 @@ export class ServerRoom {
             // TODO: Prevent spam.
             ChatServerMessage.id,
             (player: ServerPlayer, message: ChatServerMessage) => {
-                this.players.send(
-                    new ChatClientMessage(this.players.indexOf(player), message.body),
-                    { exclude: player },
-                );
+                this.players.send(new ChatClientMessage(player.id, message.body), {
+                    exclude: player,
+                });
             },
         );
     }
@@ -53,6 +53,7 @@ export class ServerRoom {
     }
 
     addPlayer(player: ServerPlayer): void {
+        player.id = ++this.playerIdCounter;
         this.players.push(player);
         this.players.sendPlayers();
         if (this.full && !this.rounds.roundsPlayed) {

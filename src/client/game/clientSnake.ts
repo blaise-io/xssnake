@@ -17,18 +17,24 @@ export class ClientSnake extends Snake {
     private shapeKeys: { snake: string; name: string; direction: string };
 
     constructor(
-        public index: number,
+        playerId: number,
+        spawnIndex: number,
         public local: boolean,
         public name: string,
         public emitDirection: (snake: Snake, direction: DIRECTION) => void,
         private level: Level,
     ) {
-        super(index, level);
+        super(
+            playerId,
+            level.settings.snakeSize,
+            level.settings.snakeSpeed,
+            level.data.spawns[spawnIndex],
+        );
 
         this.shapeKeys = {
-            snake: NS.SNAKE + index,
-            name: NS.SNAKE + "TAG" + index,
-            direction: NS.SNAKE + "DIR" + index,
+            snake: NS.SNAKE + playerId,
+            name: NS.SNAKE + "TAG" + playerId,
+            direction: NS.SNAKE + "DIR" + playerId,
         };
 
         this.showName();

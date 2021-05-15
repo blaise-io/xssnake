@@ -13,7 +13,7 @@ export class PlayersMessage implements Message {
         const players = new PlayerRegistry<Player>();
         for (let i = 0, m = datas.length; i < m; i++) {
             const data = datas[i];
-            players.push(new Player(data[0], !!data[1], !!data[2], data[3]));
+            players.push(new Player(+data[0], data[1], !!data[1], !!data[2], data[3]));
         }
         return new PlayersMessage(players);
     }
@@ -23,6 +23,7 @@ export class PlayersMessage implements Message {
         for (let i = 0, m = this.players.length; i < m; i++) {
             const player = this.players[i];
             players.push([
+                player.id,
                 player.name,
                 Number(player.connected),
                 Number(player === this.localPlayer),

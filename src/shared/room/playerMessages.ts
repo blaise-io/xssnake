@@ -39,13 +39,14 @@ export class ChatClientMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public playerIndex: number, public body: string) {}
+    constructor(public playerId: number, public body: string) {}
 
     static deserialize(netcode: string): ChatClientMessage | undefined {
-        return new ChatClientMessage(+netcode.charAt(0), netcode.substring(1));
+        const [playerId, body] = JSON.parse(netcode);
+        return new ChatClientMessage(+playerId, body);
     }
 
     get serialized(): string {
-        return this.playerIndex + this.body;
+        return JSON.stringify([this.playerId, this.body]);
     }
 }

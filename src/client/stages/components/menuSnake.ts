@@ -12,7 +12,7 @@ export class MenuSnake {
     private timeouts: number[] = [];
 
     constructor(private level: Level) {
-        this.snake = new ClientSnake(0, false, "", noop, this.level);
+        this.snake = new ClientSnake(0, 0, false, "", noop, this.level);
         this.snake.addControls();
         this.snake.showDirection();
         this.snake.hideNameAndDirection();

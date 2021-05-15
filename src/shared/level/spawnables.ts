@@ -44,19 +44,19 @@ export class SpawnHitMessage implements Message {
     static audience = AUDIENCE.CLIENT;
 
     constructor(
-        readonly playerIndex: number,
-        readonly id: SPAWN_ID,
+        readonly playerId: number,
+        readonly spawnId: SPAWN_ID,
         readonly type: SPAWN_TYPE,
         readonly coordinate: Coordinate,
     ) {}
 
     static deserialize(trustedNetcode: string): SpawnHitMessage {
-        const [playerIndex, id, type, coordinate] = JSON.parse(trustedNetcode);
-        return new SpawnHitMessage(playerIndex, id, type, coordinate);
+        const [playerId, spawnId, type, coordinate] = JSON.parse(trustedNetcode);
+        return new SpawnHitMessage(playerId, spawnId, type, coordinate);
     }
 
     get serialized(): string {
-        return JSON.stringify([this.playerIndex, this.id, this.type, this.coordinate]);
+        return JSON.stringify([this.playerId, this.spawnId, this.type, this.coordinate]);
     }
 }
 

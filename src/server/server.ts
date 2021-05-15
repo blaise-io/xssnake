@@ -51,6 +51,6 @@ export class Server {
             });
         }, HEARTBEAT_INTERVAL_MS);
 
-        console.log(`Running WebSocket server at ${SERVER_HOST}:${SERVER_PATH}${SERVER_PORT}`);
+        console.debug(`Running WebSocket server at ${SERVER_HOST}:${SERVER_PATH}${SERVER_PORT}`);
     }
 }

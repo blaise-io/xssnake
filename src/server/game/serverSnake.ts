@@ -6,8 +6,13 @@ import { Snake } from "../../shared/game/snake";
 export class ServerSnake extends Snake {
     private elapsed: number;
 
-    constructor(public index: number, public level: Level) {
-        super(index, level);
+    constructor(playerId: number, index: number, public level: Level) {
+        super(
+            playerId,
+            level.settings.snakeSize,
+            level.settings.snakeSpeed,
+            level.data.spawns[index],
+        );
         this.elapsed = 0;
     }
 

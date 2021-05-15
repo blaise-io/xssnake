@@ -19,14 +19,14 @@ export function debugScoreboard(): void {
             new ChatMessage(undefined, "This is a notification"),
             new ChatMessage("Player 1", "Hello world"),
         ];
-        const author = new Player("Dummy");
+        const author = new Player(0, "Dummy");
         new MessageBoxUI(messages, author, (body) => {
-            console.log(body);
+            console.debug(body);
         });
 
         const players = new ClientPlayerRegistry();
         for (let i = 0, m = 5; i <= m; i++) {
-            const player = new Player("Player " + (i + 1), true, i === 0);
+            const player = new Player(i, "Player " + (i + 1), true, i === 0);
             players.push(player);
         }
         new Scoreboard(players);
@@ -41,7 +41,7 @@ export function debugScoreboard(): void {
                 globalEventHandler.trigger(PlayersMessage.id, new PlayersMessage(players));
 
                 setTimeout(() => {
-                    players.push(new Player("Player 6")); // Player 6 joins.
+                    players.push(new Player(6, "Player 6")); // Player 6 joins.
                     globalEventHandler.trigger(PlayersMessage.id, new PlayersMessage(players));
                 }, 1000);
             }, 1000);

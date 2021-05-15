@@ -11,7 +11,7 @@ export class ClientSocketPlayer extends Player {
     private connection: WebSocket;
 
     constructor(name: string, private onopenCallback: CallableFunction = noop) {
-        super(name);
+        super(-1, name);
 
         this.local = true;
         this.connection = new WebSocket(`ws://${SERVER_HOST}:${SERVER_PORT}${SERVER_PATH}`);

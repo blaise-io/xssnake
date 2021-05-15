@@ -27,7 +27,7 @@ export class ServerGame {
         public level: Level,
         public players: ServerPlayerRegistry,
     ) {
-        this.snakes = this.players.map((p, index) => new ServerSnake(index, level));
+        this.snakes = this.players.map((p, index) => new ServerSnake(p.id, index, level));
 
         this.spawner = new Spawner(this.level, this.snakes, (spawnable: Spawnable) => {
             this.players.send(new SpawnMessage(spawnable.type, spawnable.coordinate));
@@ -67,11 +67,7 @@ export class ServerGame {
             move.snake.trimParts();
         }
         this.players.send(
-            new SnakeUpdateClientMessage(
-                move.direction,
-                move.snake.parts,
-                this.players.indexOf(player),
-            ),
+            new SnakeUpdateClientMessage(player.id, move.direction, move.snake.parts),
             {
                 exclude: move.isValid() ? player : undefined,
             },
@@ -113,13 +109,14 @@ export class ServerGame {
             snake.handleNextMove(tick, elapsed, shift, this.snakes);
             snake.shiftParts(shift);
             const spawnable = this.spawner.handleSpawnHit(snake);
-            if (spawnable) {
-                spawnable.applyEffects(this.players[snake.index], snake);
-                console.log(this.players.map((p) => p.score));
+            const player = this.players.byId(snake.playerId);
+            if (spawnable && player) {
+                const spawnableId = (spawnable.constructor as typeof Spawnable).id;
+                spawnable.applyEffects(player, snake);
                 this.players.send(
                     new SpawnHitMessage(
-                        snake.index,
-                        (spawnable.constructor as typeof Spawnable).id,
+                        player.id,
+                        spawnableId,
                         spawnable.type,
                         spawnable.coordinate,
                     ),

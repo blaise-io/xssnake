@@ -44,19 +44,15 @@ export class SnakeUpdateClientMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(
-        public direction: DIRECTION,
-        public parts: Coordinate[],
-        public playerIndex: number,
-    ) {}
+    constructor(public playerId: number, public direction: DIRECTION, public parts: Coordinate[]) {}
 
     static deserialize(trustedNetcode: string): SnakeUpdateClientMessage {
-        const [direction, playerIndex, ...parts] = JSON.parse(trustedNetcode);
-        return new SnakeUpdateClientMessage(direction, parts, playerIndex);
+        const [playerId, direction, ...parts] = JSON.parse(trustedNetcode);
+        return new SnakeUpdateClientMessage(playerId, direction, parts);
     }
 
     get serialized(): string {
-        return JSON.stringify([this.direction, this.playerIndex, ...this.parts]);
+        return JSON.stringify([this.playerId, this.direction, ...this.parts]);
     }
 }
 
@@ -66,7 +62,7 @@ export class SnakeCrashMessage implements Message {
 
     constructor(
         public collisions: {
-            playerIndex: number;
+            playerId: number;
             parts: Coordinate[];
             collision: Collision;
         }[],
@@ -76,7 +72,7 @@ export class SnakeCrashMessage implements Message {
         return new SnakeCrashMessage(
             snakes.map((snake) => {
                 return {
-                    playerIndex: snake.index,
+                    playerId: snake.playerId,
                     parts: snake.parts,
                     collision: snake.collision as Collision,
                 };
@@ -89,7 +85,7 @@ export class SnakeCrashMessage implements Message {
             JSON.parse(trustedNetcode).map(
                 (collision: [number, Coordinate[], Coordinate, CRASH_INTO]) => {
                     return {
-                        index: collision[0],
+                        playerId: collision[0],
                         parts: collision[1],
                         collision: new Collision(collision[2], collision[3]),
                     };
@@ -101,7 +97,7 @@ export class SnakeCrashMessage implements Message {
     get serialized(): string {
         return JSON.stringify(
             this.collisions.map((collision) => [
-                collision.playerIndex,
+                collision.playerId,
                 collision.parts,
                 collision.collision.location,
                 collision.collision.into,

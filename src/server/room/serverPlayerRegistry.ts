@@ -7,6 +7,15 @@ export class ServerPlayerRegistry extends PlayerRegistry<ServerPlayer> {
         super();
     }
 
+    byId(id: number): ServerPlayer | undefined {
+        for (let i = 0, m = this.length; i < m; i++) {
+            if (this[i].id === id) {
+                return this[i];
+            }
+        }
+        return;
+    }
+
     send(message: Message, options: { exclude?: ServerPlayer } = {}): void {
         for (let i = 0, m = this.length; i < m; i++) {
             if (this[i] !== options.exclude) {

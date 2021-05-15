@@ -4,10 +4,10 @@ export function debugDialog(): void {
     new Dialog("HEADER TITLE", "Body text lol", {
         type: DialogType.CONFIRM,
         cancel: () => {
-            console.log("Cancel");
+            console.debug("Cancel");
         },
         ok: () => {
-            console.log("OK");
+            console.debug("OK");
         },
     });
 }

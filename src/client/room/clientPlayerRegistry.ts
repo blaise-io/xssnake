@@ -3,15 +3,27 @@ import { PlayerRegistry } from "../../shared/room/playerRegistry";
 import { ClientSocketPlayer } from "./clientSocketPlayer";
 
 export class ClientPlayerRegistry extends PlayerRegistry<Player> {
-    get localPlayer(): ClientSocketPlayer {
-        return this.find((p) => p.local) as ClientSocketPlayer;
-    }
-
     static fromPlayerRegistry(
         players: Player[],
         localPlayer: ClientSocketPlayer,
     ): ClientPlayerRegistry {
-        return new ClientPlayerRegistry(...players.map((p) => (p.local ? localPlayer : p)));
+        return new ClientPlayerRegistry(
+            ...players.map((p) => {
+                if (p.local) {
+                    localPlayer.id = p.id;
+                    return localPlayer;
+                }
+                return p;
+            }),
+        );
+    }
+
+    get localPlayer(): ClientSocketPlayer {
+        return this.find((p) => p.local) as ClientSocketPlayer;
+    }
+
+    getById(id: number): Player | undefined {
+        return this.find((p) => p.id === id);
     }
 
     updateFromMessage(players: PlayerRegistry<Player>): void {

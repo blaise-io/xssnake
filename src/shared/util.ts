@@ -77,7 +77,7 @@ export function benchmark(iterations: number, fn: () => void, label = ""): void 
         fn();
     }
     const duration = +new Date() - start;
-    console.log(label || "Benchmark", {
+    console.debug(label || "Benchmark", {
         x: iterations,
         avg: duration / iterations,
         total: duration,

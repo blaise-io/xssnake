@@ -53,13 +53,13 @@ export class RoundWrapupMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public winningPlayerIndex = -1) {}
+    constructor(public winningPlayerId = -1) {}
 
     static deserialize(trustedNetcode: string): RoundWrapupMessage {
         return new RoundWrapupMessage(+trustedNetcode);
     }
 
     get serialized(): string {
-        return this.winningPlayerIndex.toString();
+        return this.winningPlayerId.toString();
     }
 }

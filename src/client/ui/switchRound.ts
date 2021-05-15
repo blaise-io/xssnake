@@ -10,7 +10,7 @@ export class WrapupGame {
     private countdownInterval: number;
     private countdownStarted = new Date();
 
-    constructor(public players: PlayerRegistry<Player>, public winner: Player) {
+    constructor(public players: PlayerRegistry<Player>, public winner?: Player) {
         this.dialog = this.getCountdownDialog();
 
         this.countdownInterval = window.setInterval(() => {

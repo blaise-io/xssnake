@@ -10,7 +10,7 @@ export class ServerPlayer extends Player {
     room?: ServerRoom;
 
     constructor(public socket: Socket, private matchmakingEmitter: EventEmitter) {
-        super("<anon>");
+        super(-1, "<anon>");
         this.socket.on("message", this.onmessage.bind(this));
         this.connected = true;
     }
@@ -26,7 +26,7 @@ export class ServerPlayer extends Player {
                 ) {
                     const messageInstance = Message.deserialize(messageString.substring(2));
                     if (messageInstance) {
-                        console.log("IN", messageString, messageInstance);
+                        console.debug("IN", messageString, messageInstance);
                         this.emitMessage(Message.id, Message.audience, messageInstance);
                     }
                 }
@@ -51,7 +51,7 @@ export class ServerPlayer extends Player {
             throw new Error("Message not registered: " + message);
         }
         if (this.connected && this.socket) {
-            console.log(
+            console.debug(
                 "OUT",
                 message.serialized,
                 util.inspect(message, { showHidden: false, depth: 1 }),

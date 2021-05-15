@@ -1,23 +1,22 @@
 import { DIRECTION } from "../const";
+import { PlayerSpawn } from "../level/playerSpawn";
 import { Collision } from "./collision";
-import { Level } from "../level/level";
 
 export class Snake {
     /** Head is last in array */
     crashed = false;
     parts: Coordinate[];
     direction: DIRECTION;
-    size: number;
-    speed: number;
     collision?: Collision;
 
-    // TODO: pass spawn, direction, size, speed
-    constructor(public index: number, level: Level) {
-        const spawn = level.data.spawns[index];
+    constructor(
+        public playerId: number,
+        public size: number,
+        public speed: number,
+        spawn: PlayerSpawn,
+    ) {
         this.parts = [spawn.location];
         this.direction = spawn.direction;
-        this.size = level.settings.snakeSize;
-        this.speed = level.settings.snakeSpeed;
     }
 
     move(position: Coordinate): void {

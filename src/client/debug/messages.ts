@@ -10,7 +10,7 @@ import { MessageBoxUI } from "../ui/messageBox";
 export function debugMessages(): void {
     setTimeout(function () {
         const messages: ChatMessage[] = [];
-        const author = new Player("Dummy");
+        const author = new Player(0, "Dummy");
         const ui = new MessageBoxUI(messages, author, noop);
 
         State.flow.destruct();
@@ -18,7 +18,7 @@ export function debugMessages(): void {
         State.shapes.innerBorder = innerBorder();
         Object.assign(State.shapes, outerBorder());
 
-        const players = new ClientPlayerRegistry(new Player("Blaise", true));
+        const players = new ClientPlayerRegistry(new Player(1, "Blaise", true));
         new Scoreboard(players);
 
         function randomBody() {

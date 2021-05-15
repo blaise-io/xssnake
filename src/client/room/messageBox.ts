@@ -24,9 +24,12 @@ export class MessageBox {
         });
 
         this.eventHandler.on(ChatClientMessage.id, (message: ChatClientMessage) => {
-            const name = String(this.players[message.playerIndex].name);
-            this.messages.push(new ChatMessage(name, message.body));
-            this.ui.debounceUpdate();
+            const player = this.players.getById(message.playerId);
+            const name = player?.name;
+            if (name) {
+                this.messages.push(new ChatMessage(name, message.body));
+                this.ui.debounceUpdate();
+            }
         });
         this.eventHandler.on(PlayersMessage.id, this.updatePlayers.bind(this));
     }

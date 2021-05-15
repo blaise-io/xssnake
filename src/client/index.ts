@@ -7,7 +7,7 @@ import { AudioPlayer } from "./ui/audioPlayer";
 import { Canvas } from "./ui/canvas/canvas";
 import { fontLoad } from "./ui/font";
 
-console.log(`XSSnake client version ${ENV_VERSION}`);
+console.debug(`XSSnake client version ${ENV_VERSION}`);
 
 (async () => {
     State.shapes = {};

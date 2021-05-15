@@ -73,10 +73,8 @@ export class ClientRound extends Round {
             delete this.preGameUI;
         });
         this.eventHandler.on(RoundWrapupMessage.id, (message: RoundWrapupMessage) => {
-            this.wrapupGameUI = new WrapupGame(
-                this.players,
-                this.players[message.winningPlayerIndex],
-            );
+            const winner = this.players.getById(message.winningPlayerId);
+            this.wrapupGameUI = new WrapupGame(this.players, winner);
         });
     }
 }

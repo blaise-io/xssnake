@@ -73,7 +73,7 @@ export class PreGameUI {
     }
 
     get playerIsAdmin(): boolean {
-        return this.players.length > 1 && this.players[0].local;
+        return this.players[0].local;
     }
 
     showInvitePlayersDialog(): void {

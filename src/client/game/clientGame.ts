@@ -6,7 +6,13 @@ import {
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
 import { Level } from "../../shared/level/level";
-import { Apple, SPAWN_TYPE, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
+import {
+    Apple,
+    SPAWN_TYPE,
+    Spawnable,
+    SpawnHitMessage,
+    SpawnMessage,
+} from "../../shared/level/spawnables";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, eq, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
@@ -29,7 +35,7 @@ export class ClientGame {
         Object.assign(State.shapes, getLevelShapes(this.level));
 
         this.snakes = this.players.map(
-            (p, index) => new ClientSnake(index, p.local, p.name, this.emit, level),
+            (p, index) => new ClientSnake(p.id, index, p.local, p.name, this.emit, level),
         );
 
         this.bindEvents();
@@ -79,13 +85,14 @@ export class ClientGame {
             }
             this.snakes.push(
                 ...message.players.map(
-                    (p, index) => new ClientSnake(index, p.local, p.name, this.emit, this.level),
+                    (p, index) =>
+                        new ClientSnake(p.id, index, p.local, p.name, this.emit, this.level),
                 ),
             );
         });
 
         this.eventHandler.on(SnakeUpdateClientMessage.id, (message: SnakeUpdateClientMessage) => {
-            const snake = this.snakes[message.playerIndex];
+            const snake = this.snakes.find((s) => s.playerId === message.playerId) as ClientSnake;
             snake.direction = message.direction;
             snake.parts = message.parts;
             // If server updated snake, client prediction
@@ -94,7 +101,7 @@ export class ClientGame {
             this.eventHandler.on(SnakeCrashMessage.id, (message: SnakeCrashMessage) => {
                 for (let i = 0, m = message.collisions.length; i < m; i++) {
                     const collision = message.collisions[i];
-                    const opponentSnake = this.snakes[collision.playerIndex];
+                    const opponentSnake = this.snakes[collision.playerId];
                     if (opponentSnake) {
                         opponentSnake.parts = collision.parts;
                         opponentSnake.setCrashed();
@@ -115,8 +122,9 @@ export class ClientGame {
 
         this.eventHandler.on(SpawnHitMessage.id, (message: SpawnHitMessage) => {
             const spawnable = this.spawnables.find((s) => eq(s.coordinate, message.coordinate));
+            const player = this.players.getById(message.playerId);
 
-            if (!spawnable) {
+            if (!spawnable || !player) {
                 return;
             }
 
@@ -125,25 +133,21 @@ export class ClientGame {
 
             if (message.type === SPAWN_TYPE.APPLE) {
                 const apple = new Apple(this.level.settings, message.coordinate);
-                apple.applyEffects(this.players[message.playerIndex]);
+                apple.applyEffects(player);
             } else {
                 const enabledPowerup = this.level.settings.powerupsEnabled.find(
-                    (spawnable) => spawnable[0].id === message.id,
+                    (spawnable) =>
+                        (spawnable[0].constructor as typeof Spawnable).id === message.spawnId,
                 );
-
                 if (enabledPowerup) {
                     // @ts-ignore
                     const powerup = new enabledPowerup[0](this.level.settings, message.coordinate);
                     powerup.applyEffects(
-                        this.players[message.playerIndex],
-                        this.snakes[message.playerIndex],
+                        player,
+                        this.snakes.filter((s) => s.playerId == message.playerId),
                     );
                 }
             }
-            // globalEventHandler.trigger(
-            //     ScoreMessage.id,
-            //     new ScoreMessage(this.players.map((p) => p.score)),
-            // );
         });
 
         //State.events.on(NC_GAME_DESPAWN,   ns, this._evSpawnHit.bind(this));

@@ -68,7 +68,7 @@ export class ServerRound extends Round {
     }
 
     wrapUp(winnerPlayer: ServerPlayer): void {
-        this.players.send(new RoundWrapupMessage(this.players.indexOf(winnerPlayer)));
+        this.players.send(new RoundWrapupMessage(winnerPlayer.id));
         this.wrappingUp = true;
     }
 

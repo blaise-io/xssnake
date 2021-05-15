@@ -25,7 +25,7 @@ export function debugLevel(): void {
         State.flow.destruct();
 
         const level = await loadLevel(levels[levelName], clientImageLoader);
-        const localPlayer = new Player("Blaise", undefined, true);
+        const localPlayer = new Player(0, "Blaise", undefined, true);
         const players = new ClientPlayerRegistry(localPlayer);
         const game = new ClientGame(level, players);
 
