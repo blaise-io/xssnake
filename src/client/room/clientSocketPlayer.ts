@@ -14,7 +14,7 @@ export class ClientSocketPlayer extends Player {
         super(-1, name);
 
         this.local = true;
-        console.log(location.hostname, "xx");
+        // TODO: Get hostname from config, don't assume same server.
         this.connection = new WebSocket(`ws://${location.hostname}:${SERVER_PORT}${SERVER_PATH}`);
         this.connection.onopen = () => {
             this.onopen();

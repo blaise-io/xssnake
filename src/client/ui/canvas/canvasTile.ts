@@ -41,7 +41,11 @@ export class CanvasTile {
 
     private getTileForColor(canvas: HTMLCanvasElement, color: string): CanvasPattern {
         const context = canvas.getContext("2d") as CanvasRenderingContext2D;
-        const pixelSize = this.size === 1 ? 1 : this.size - this.colorScheme.gap;
+        let gap = this.colorScheme.gap;
+        if (window.devicePixelRatio < 2) {
+            gap = this.colorScheme.gap / 2;
+        }
+        const pixelSize = this.size === 1 ? 1 : this.size - gap;
 
         context.fillStyle = this.colorScheme.bg;
         context.fillRect(0, 0, this.size, this.size);

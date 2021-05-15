@@ -86,14 +86,8 @@ export class ServerSnakeMove {
             return VALIDATE_ERR_MISMATCHES;
         }
 
-        // Glue snake back together.
-        this.parts = serverParts;
-
-        console.log("GLUE ––––––––––––––––––––");
-        console.log(serverParts.slice(0, commonPartIndex.server));
-        console.log(clientParts.slice(commonPartIndex.client));
-        console.log("/GLUE");
-
+        // We accept the client's snake at this point, but only the head part
+        // is synced so we need to glue the head to the server snake's tail.
         this.parts = serverParts.slice(0, commonPartIndex.server);
         this.parts.push(...clientParts.slice(commonPartIndex.client));
 
