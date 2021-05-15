@@ -1,23 +1,24 @@
 import { EventEmitter } from "events";
 import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMessages";
-import { RoomKeyMessage, RoomOptionsClientMessage } from "../../shared/room/roomMessages";
+import {
+    ROOM_KEY_LENGTH,
+    RoomKeyMessage,
+    RoomOptionsClientMessage,
+} from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
-import { Server } from "../server";
+import { randomStr } from "../../shared/util";
+import { SERVER_EVENT } from "../const";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 import { ServerRoundSet } from "./serverRoundSet";
 
 export class ServerRoom {
-    emitter: EventEmitter;
-    players: ServerPlayerRegistry;
-    rounds: ServerRoundSet;
+    readonly emitter = new EventEmitter();
+    readonly players = new ServerPlayerRegistry();
+    readonly rounds = new ServerRoundSet(this.emitter, this.players, this.options);
 
-    constructor(public server: Server, public options: RoomOptions, public key: string) {
-        /** @deprecated move to RoomManager which is in charge of matchmaking */
-        this.emitter = new EventEmitter();
-        this.players = new ServerPlayerRegistry();
-        this.rounds = new ServerRoundSet(this.emitter, this.players, this.options);
+    constructor(public options: RoomOptions, public key = randomStr(ROOM_KEY_LENGTH)) {
         this.bindEvents();
     }
 
@@ -25,9 +26,6 @@ export class ServerRoom {
         this.emitter.removeAllListeners();
         this.players.destruct();
         this.rounds.destruct();
-        // delete this.server;
-        // delete this.players;
-        // delete this.rounds;
     }
 
     bindEvents(): void {
@@ -62,30 +60,27 @@ export class ServerRoom {
         }
     }
 
-    removePlayer(player: ServerPlayer): void {
-        // Remove immediately if rounds have not started.
-        // [else: set player.connected to false]
-        if (!this.rounds.started) {
-            this.players.remove(player);
-        } else {
-            // TODO: Check whether this dupes PlayerRegistry, should also inform room.
-            player.connected = false;
-        }
-        this.players.sendPlayers();
-        this.detectEmptyRoom();
+    removePlayer(player: ServerPlayer): Promise<ServerRoom> {
+        return new Promise((resolve) => {
+            if (this.rounds.started) {
+                // We keep a disconnected player instance during the game.
+                // TODO: Use player ids instead of indexes.
+                this.emitter.on(SERVER_EVENT.ROUND_END, () => {
+                    this.players.sendPlayers();
+                    resolve(this);
+                });
+            } else {
+                this.players.remove(player);
+                this.players.sendPlayers();
+                resolve(this);
+            }
+        });
     }
 
     sendInitial(player: ServerPlayer): void {
         player.send(new RoomKeyMessage(this.key));
         player.send(new RoomOptionsClientMessage(this.options));
         player.send(RoundLevelMessage.fromRound(this.rounds.round));
-    }
-
-    /** @deprecated move to RoomManager */
-    detectEmptyRoom(): void {
-        if (this.players.some((sp) => !sp.connected)) {
-            this.server.roomManager.remove(this);
-        }
     }
 
     get full(): boolean {

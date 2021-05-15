@@ -1,5 +1,4 @@
 import { EventEmitter } from "events";
-import { SE_PLAYER_COLLISION } from "../../shared/const";
 import { Spawner } from "../../shared/game/spawner";
 import { Level } from "../../shared/level/level";
 import {
@@ -9,7 +8,7 @@ import {
 } from "../../shared/game/snakeMessages";
 import { Spawnable, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
 import { average } from "../../shared/util";
-import { SERVER_TICK_INTERVAL } from "../const";
+import { SERVER_EVENT, SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
 import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
 import { ServerSnakeMove } from "../room/serverSnakeMove";
@@ -44,7 +43,7 @@ export class ServerGame {
                         message.parts,
                         message.direction,
                         snake,
-                        player.client.latency,
+                        player.socket.latency,
                     ),
                 );
             },
@@ -80,7 +79,7 @@ export class ServerGame {
     }
 
     get averageLatencyInTicks(): number {
-        const latencies = this.players.filter((p) => p.connected).map((p) => p.client.latency);
+        const latencies = this.players.filter((p) => p.connected).map((p) => p.socket.latency);
         return latencies.length ? Math.round(average(latencies) / SERVER_TICK_INTERVAL) : 0;
     }
 
@@ -105,12 +104,7 @@ export class ServerGame {
                 crashedSnakes[i].crashed = true;
             }
             this.players.send(SnakeCrashMessage.fromSnakes(...crashedSnakes));
-
-            // Let round manager know.
-            this.roomEmitter.emit(
-                String(SE_PLAYER_COLLISION),
-                crashedSnakes.map((snake) => this.players[snake.index]),
-            );
+            this.roomEmitter.emit(SERVER_EVENT.PLAYER_COLISSION);
         }
     }
 

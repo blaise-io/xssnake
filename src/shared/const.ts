@@ -14,14 +14,6 @@ export const enum GAME {
     TOP = 2,
 }
 
-/** @deprecated: Use Message */ export const SE_PLAYER_COLLISION = 102;
-
-/** @deprecated: Use Message */
-export const enum SERVER_EVENT {
-    /** @deprecated: Use Message */
-    PLAYER_DISCONNECT = "SE0",
-}
-
 export const HEARTBEAT_INTERVAL_MS = 5000;
 
 export const GAME_SHIFT_MAP = [
@@ -43,7 +35,6 @@ export const enum ORIENTATION {
     VERTICAL,
 }
 
-export const ROOM_KEY_LENGTH = 5;
 export const ROOM_CAPACITY = 6;
 export const ROUNDS_MAX = 3;
 export const ROOM_WIN_BY_MIN = 2;

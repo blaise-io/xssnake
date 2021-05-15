@@ -1,6 +1,6 @@
-import { ROOM_KEY_LENGTH } from "../../shared/const";
 import { loadLevel } from "../../shared/level/level";
 import { BlankLevel } from "../../shared/level/levels/internal/blank";
+import { ROOM_KEY_LENGTH } from "../../shared/room/roomMessages";
 import { _, getRandomName } from "../../shared/util";
 import { isStrOfLen } from "../../shared/util/sanitizer";
 import { HASH, STORAGE, UC } from "../const";

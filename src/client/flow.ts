@@ -1,6 +1,7 @@
-import { ROOM_KEY_LENGTH, CANVAS } from "../shared/const";
+import { CANVAS } from "../shared/const";
 import { Player } from "../shared/room/player";
 import { PlayerRegistry } from "../shared/room/playerRegistry";
+import { ROOM_KEY_LENGTH } from "../shared/room/roomMessages";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
 import { HASH, KEY, MENU_POS, STORAGE } from "./const";

@@ -5,16 +5,21 @@ import { DebugStage } from "./stages/debugStage";
 import { State } from "./state";
 import { AudioPlayer } from "./ui/audioPlayer";
 import { Canvas } from "./ui/canvas/canvas";
+import { fontLoad } from "./ui/font";
 
 console.log(`XSSnake client version ${ENV_VERSION}`);
 
-State.shapes = {};
-State.canvas = new Canvas();
-State.audio = new AudioPlayer();
+(async () => {
+    State.shapes = {};
+    State.canvas = new Canvas();
+    State.audio = new AudioPlayer();
 
-if (ENV_DEBUG && runDebug()) {
-    new StageFlow(DebugStage);
-    runDebug()();
-} else {
-    new StageFlow();
-}
+    await fontLoad();
+
+    if (ENV_DEBUG && runDebug()) {
+        new StageFlow(DebugStage);
+        runDebug()();
+    } else {
+        new StageFlow();
+    }
+})();

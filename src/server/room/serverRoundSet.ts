@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
+import { SERVER_EVENT } from "../const";
 import { ServerScore } from "../game/serverScore";
 import { LevelPlayset } from "./playset";
 import { ServerPlayer } from "./serverPlayer";
@@ -47,7 +48,8 @@ export class ServerRoundSet {
 
     private startNewRound(): void {
         this.round.destruct();
-        this.players.removeDisconnected();
+        this.roomEmitter.emit(SERVER_EVENT.ROUND_END);
+        this.roundsPlayed++;
         this.round = new ServerRound(
             this.roomEmitter,
             this.players,

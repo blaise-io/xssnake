@@ -21,7 +21,7 @@ export function randomStr(len = 3): string {
  * Ensure an index is within bounds of given array.
  * Indexes cycle, after last comes first, before first comes last.
  */
-export function indexCarousel(index: number, len: number): number {
+export function indexCarousel(index: number | unknown, len: number): number {
     if (typeof index !== "number") {
         return 0;
     } else if (index >= len) {

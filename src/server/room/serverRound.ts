@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { SECONDS_ROUND_COUNTDOWN, SERVER_EVENT } from "../../shared/const";
+import { SECONDS_ROUND_COUNTDOWN } from "../../shared/const";
 import { loadLevel } from "../../shared/level/level";
 import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
@@ -9,6 +9,7 @@ import {
     RoundStartMessage,
     RoundWrapupMessage,
 } from "../../shared/room/roundMessages";
+import { SERVER_EVENT } from "../const";
 import { ServerGame } from "../game/serverGame";
 import { serverImageLoader } from "../level/serverImageLoader";
 import { LevelPlayset } from "./playset";
@@ -20,7 +21,9 @@ export class ServerRound extends Round {
     wrappingUp = false;
     private _countDown = false;
     private countdownTimer?: NodeJS.Timeout;
-    private onPlayerDisconnect: () => void;
+    private onPlayerDisconnect = () => {
+        this.countDown = false;
+    };
 
     constructor(
         public roomEmitter: EventEmitter,
@@ -29,10 +32,6 @@ export class ServerRound extends Round {
         public levelPlayset: LevelPlayset,
     ) {
         super(players, options, levelPlayset.nextLevelIndex);
-
-        this.onPlayerDisconnect = () => {
-            this.countDown = false;
-        };
 
         this.roomEmitter.on(SERVER_EVENT.PLAYER_DISCONNECT, this.onPlayerDisconnect);
         this.roomEmitter.on(RoomManualStartMessage.id, (player: ServerPlayer) => {
@@ -56,16 +55,16 @@ export class ServerRound extends Round {
         delete this.level;
     }
 
+    unbindEvents(): void {
+        this.roomEmitter.off(SERVER_EVENT.PLAYER_DISCONNECT, this.onPlayerDisconnect);
+        this.roomEmitter.removeAllListeners(RoomManualStartMessage.id);
+    }
+
     async startRound(): Promise<void> {
         this.unbindEvents();
         this.level = await loadLevel(this.LevelClass, serverImageLoader);
         this.game = new ServerGame(this.roomEmitter, this.level, this.players);
         this.players.send(new RoundStartMessage());
-    }
-
-    unbindEvents(): void {
-        this.roomEmitter.off(SERVER_EVENT.PLAYER_DISCONNECT, this.onPlayerDisconnect);
-        this.roomEmitter.removeAllListeners(RoomManualStartMessage.id);
     }
 
     wrapUp(winnerPlayer: ServerPlayer): void {

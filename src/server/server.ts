@@ -1,25 +1,21 @@
-import { EventEmitter } from "events";
 import * as ws from "ws";
 import { SERVER_HOST, SERVER_PATH, SERVER_PORT } from "../shared/config";
 import { HEARTBEAT_INTERVAL_MS } from "../shared/const";
-import { ServerRoomManager } from "./room/roomManager";
+import { ServerRooms } from "./room/serverRooms";
 import { ServerPlayer } from "./room/serverPlayer";
 
-export interface SocketClient extends ws {
+export interface Socket extends ws {
     pingSent: number;
     pongReceived: number;
     latency: number;
 }
 
 export class Server {
-    emitter: EventEmitter;
-    roomManager: ServerRoomManager;
+    private roomManager = new ServerRooms();
     private ws: ws.Server;
     private pingInterval: NodeJS.Timeout;
 
     constructor() {
-        this.emitter = new EventEmitter();
-        this.roomManager = new ServerRoomManager(this);
         this.ws = new ws.Server({
             host: SERVER_HOST,
             port: SERVER_PORT,
@@ -28,18 +24,25 @@ export class Server {
             clientTracking: true,
         });
 
-        this.ws.on("connection", (client: SocketClient) => {
-            client.pingSent = client.pongReceived = new Date().getTime();
-            client.latency = 0;
-            client.on("pong", () => {
-                client.pongReceived = new Date().getTime();
-                client.latency = new Date().getTime() - client.pingSent;
+        this.ws.on("connection", (socket: Socket) => {
+            const player = new ServerPlayer(socket, this.roomManager.emitter);
+
+            socket.pingSent = socket.pongReceived = new Date().getTime();
+            socket.latency = 0;
+
+            socket.on("pong", () => {
+                socket.pongReceived = new Date().getTime();
+                socket.latency = new Date().getTime() - socket.pingSent;
             });
-            new ServerPlayer(this, client);
+
+            socket.on("close", async () => {
+                player.connected = false;
+                await this.roomManager.removePlayer(player);
+            });
         });
 
         this.pingInterval = setInterval(() => {
-            ((this.ws.clients as unknown) as SocketClient[]).forEach((client: SocketClient) => {
+            ((this.ws.clients as unknown) as Socket[]).forEach((client: Socket) => {
                 if (client.pongReceived - client.pingSent > HEARTBEAT_INTERVAL_MS * 2) {
                     return client.terminate();
                 }
@@ -49,11 +52,5 @@ export class Server {
         }, HEARTBEAT_INTERVAL_MS);
 
         console.log(`Running WebSocket server at ${SERVER_HOST}:${SERVER_PATH}${SERVER_PORT}`);
-    }
-
-    destruct(): void {
-        this.roomManager.destruct();
-        this.ws.close();
-        clearInterval(this.pingInterval);
     }
 }

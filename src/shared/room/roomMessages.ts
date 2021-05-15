@@ -1,8 +1,10 @@
-import { ROOM_KEY_LENGTH, ROOM_STATUS } from "../const";
+import { ROOM_STATUS } from "../const";
 import { AUDIENCE } from "../messages";
 import { isStrOfLen } from "../util/sanitizer";
 import { RoomOptions } from "./roomOptions";
 import { Message, MessageId } from "./types";
+
+export const ROOM_KEY_LENGTH = 5;
 
 export class RoomOptionsServerMessage implements Message {
     static id: MessageId;
