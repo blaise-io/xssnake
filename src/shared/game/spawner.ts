@@ -36,12 +36,11 @@ export class Spawner {
     handleSpawnHit(snake: Snake): Spawnable | undefined {
         const spawnable = this.spawnableAtCoordinate(snake.head);
         if (spawnable) {
-            this.spawnables.splice(this.spawnables.indexOf(spawnable));
+            spawnable.active = false;
             if (spawnable.type === SPAWN_TYPE.APPLE) {
                 this.scheduleSpawnApple();
                 return spawnable;
             } else if ((spawnable.constructor as typeof Spawnable).id === SPAWN_ID.ANONYMOUS) {
-                console.log("EXXCCHHHHHAAAANGE");
                 return this.exchangeAnonymous(
                     spawnable.coordinate,
                     this.level.settings.powerupsEnabled,
@@ -78,9 +77,12 @@ export class Spawner {
         console.warn("Could not get an empty location");
     }
 
-    private spawnableAtCoordinate(coordinate: Coordinate): Spawnable | undefined {
+    private spawnableAtCoordinate(coordinate: Coordinate, active = true): Spawnable | undefined {
         for (let i = 0, mm = this.spawnables.length; i < mm; i++) {
-            if (eq(coordinate, this.spawnables[i].coordinate)) {
+            if (
+                this.spawnables[i].active === active &&
+                eq(coordinate, this.spawnables[i].coordinate)
+            ) {
                 return this.spawnables[i];
             }
         }

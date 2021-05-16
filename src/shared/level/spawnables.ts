@@ -64,6 +64,7 @@ export class Spawnable {
     static id: SPAWN_ID;
     static effect = { self: EFFECT.NONE, others: EFFECT.NONE };
 
+    active = true;
     type = SPAWN_TYPE.POWER;
     timer?: ReturnType<typeof setTimeout>;
 

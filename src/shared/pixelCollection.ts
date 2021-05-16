@@ -93,7 +93,7 @@ export class PixelCollection {
     random(): Coordinate {
         const rowsPopulated = [];
         for (let i = 0, m = this.pixels.length; i < m; i++) {
-            if (this.pixels[i].length) {
+            if (this.pixels[i] && this.pixels[i].length) {
                 rowsPopulated.push(i);
             }
         }

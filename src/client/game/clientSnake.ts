@@ -144,13 +144,13 @@ export class ClientSnake extends Snake {
         }
     }
 
-    deserialize(serializedSnake: [number, Coordinate[]]): void {
-        this.direction = serializedSnake[0];
-        this.parts = serializedSnake[1];
-        // If server updated snake, client prediction
-        // of snake crashing was incorrect.
-        // delete this.collision;
-    }
+    // private deserialize(serializedSnake: [number, Coordinate[]]): void {
+    //     this.direction = serializedSnake[0];
+    //     this.parts = serializedSnake[1];
+    //     // If server updated snake, client prediction
+    //     // of snake crashing was incorrect.
+    //     // delete this.collision;
+    // }
 
     getNextPosition(): Coordinate {
         if (this.controls) {
