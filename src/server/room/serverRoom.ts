@@ -81,7 +81,7 @@ export class ServerRoom {
     sendInitial(player: ServerPlayer): void {
         player.send(new RoomKeyMessage(this.key));
         player.send(new RoomOptionsClientMessage(this.options));
-        player.send(RoundLevelMessage.fromRound(this.rounds.round));
+        player.send(new RoundLevelMessage(this.rounds.round.levelIndex));
     }
 
     get full(): boolean {

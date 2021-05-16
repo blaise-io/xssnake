@@ -1,19 +1,14 @@
 import { AUDIENCE } from "../messages";
-import { Round } from "./round";
 import { Message, MessageId } from "./types";
 
 export class RoundLevelMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public levelIndex: number) {}
+    constructor(readonly levelIndex: number) {}
 
     static deserialize(trustedNetcode: string): RoundLevelMessage {
         return new RoundLevelMessage(+trustedNetcode);
-    }
-
-    static fromRound(round: Round): RoundLevelMessage {
-        return new RoundLevelMessage(round.levelIndex as number);
     }
 
     get serialized(): string {
@@ -25,14 +20,15 @@ export class RoundCountDownMessage implements Message {
     static id: MessageId;
     static audience = AUDIENCE.CLIENT;
 
-    constructor(public enabled: boolean) {}
+    constructor(readonly enabled: boolean, readonly roundsPlayed: number) {}
 
     static deserialize(trustedNetcode: string): RoundCountDownMessage {
-        return new RoundCountDownMessage(!!+trustedNetcode);
+        const [enabled, roundsPlayed] = JSON.parse(trustedNetcode);
+        return new RoundCountDownMessage(!!enabled, roundsPlayed);
     }
 
     get serialized(): string {
-        return Number(this.enabled).toString();
+        return JSON.stringify([+this.enabled, this.roundsPlayed]);
     }
 }
 

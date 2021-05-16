@@ -3,14 +3,14 @@ import { parseLevelData } from "./parser";
 import { PlayerSpawn } from "./playerSpawn";
 
 export class LevelData {
-    animations: Record<string, PixelCollection[]> = { walls: [] };
+    animations: Record<string, ReadonlyArray<PixelCollection>> = { walls: [] }; // TODO: should be immutable.
 
-    readonly width: number;
-    readonly height: number;
-    readonly empties: PixelCollection;
-    readonly walls: PixelCollection;
-    readonly spawns: PlayerSpawn[];
-    readonly unreachables: PixelCollection;
+    readonly width: Readonly<number>;
+    readonly height: Readonly<number>;
+    readonly empties: Readonly<PixelCollection>;
+    readonly walls: Readonly<PixelCollection>;
+    readonly spawns: ReadonlyArray<PlayerSpawn>;
+    readonly unreachables: Readonly<PixelCollection>;
 
     constructor(imagedata: ImageData) {
         const levelData = parseLevelData(imagedata);

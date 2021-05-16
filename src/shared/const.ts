@@ -45,7 +45,7 @@ export const PLAYER_NAME_MAXWIDTH = 36;
 export const SECONDS_ROUND_PAUSE = 3;
 export const SECONDS_ROUND_GLOAT = 5;
 export const SECONDS_ROUNDSET_GLOAT = 10;
-export const SECONDS_ROUND_COUNTDOWN = ENV_DEBUG ? 1 : 3;
+export const SECONDS_ROUND_COUNTDOWN = 3;
 
 export const SPAWN_SOMETHING_EVERY = [20, 60];
 export const SPAWN_CHANCE_APPLE = 0.9;

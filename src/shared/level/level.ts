@@ -43,10 +43,16 @@ export class Level {
     }
 }
 
+const levelDataCache = new WeakMap();
+
 export async function loadLevel(
     LevelClass: typeof Level,
     loader: (image: LevelString) => Promise<ImageData>,
 ): Promise<Level> {
-    const imageData = await loader(LevelClass.image);
-    return new LevelClass(new LevelData(imageData));
+    let levelData = levelDataCache.get(LevelClass);
+    if (!levelData) {
+        levelData = new LevelData(await loader(LevelClass.image));
+        levelDataCache.set(LevelClass, levelData);
+    }
+    return new LevelClass(levelData);
 }

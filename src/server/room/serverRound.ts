@@ -19,6 +19,7 @@ import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 export class ServerRound extends Round {
     game?: ServerGame;
     wrappingUp = false;
+
     private _countDown = false;
     private countdownTimer?: NodeJS.Timeout;
     private onPlayerDisconnect = () => {
@@ -26,10 +27,11 @@ export class ServerRound extends Round {
     };
 
     constructor(
-        public roomEmitter: EventEmitter,
-        public players: ServerPlayerRegistry,
-        public options: RoomOptions,
-        public levelPlayset: LevelsPlayed,
+        private readonly roomEmitter: EventEmitter,
+        readonly players: ServerPlayerRegistry,
+        readonly options: RoomOptions,
+        private readonly levelPlayset: LevelsPlayed,
+        private readonly roundsPlayed = 0,
     ) {
         super(players, options, levelPlayset.nextLevelIndex);
 
@@ -68,6 +70,7 @@ export class ServerRound extends Round {
     }
 
     wrapUp(winnerPlayer: ServerPlayer): void {
+        // TODO: Handle in Client?
         this.players.send(new RoundWrapupMessage(winnerPlayer.id));
         this.wrappingUp = true;
     }
@@ -84,7 +87,7 @@ export class ServerRound extends Round {
             clearTimeout(this.countdownTimer);
         }
         this._countDown = enabled;
-        this.players.send(new RoundCountDownMessage(enabled));
+        this.players.send(new RoundCountDownMessage(enabled, this.roundsPlayed));
         if (enabled) {
             this.countdownTimer = setTimeout(async () => {
                 await this.startRound();

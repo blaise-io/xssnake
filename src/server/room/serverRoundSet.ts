@@ -59,18 +59,28 @@ export class ServerRoundSet {
             this.players,
             this.options,
             this.levelPlayset,
+            this.roundsPlayed,
         );
-        this.players.send(RoundLevelMessage.fromRound(this.round));
-        this.round.start();
+        this.players.send(new RoundLevelMessage(this.round.levelIndex));
+        this.round.countDown = true;
     }
 
     private switchRounds(winner: ServerPlayer): void {
         if (this.roundSetWinner) {
             // TODO: Fire XSS, gloat, spawn a boatload of apples, then restart rounds.
         } else if (!this.round.wrappingUp) {
-            const delay = winner ? SECONDS_ROUND_GLOAT : SECONDS_ROUND_PAUSE;
-            this.round.wrapUp(winner);
-            this.nextRoundTimeout = setTimeout(this.startNewRound.bind(this), delay * 1000);
+            let delaySeconds = SECONDS_ROUND_PAUSE;
+
+            if (this.players.length === 1) {
+                delaySeconds = 0.5;
+            } else if (winner) {
+                delaySeconds = SECONDS_ROUND_GLOAT;
+                this.round.wrapUp(winner);
+            }
+
+            setTimeout(() => {
+                this.startNewRound();
+            }, delaySeconds * 1000);
         }
     }
 
