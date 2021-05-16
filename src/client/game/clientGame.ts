@@ -117,12 +117,14 @@ export class ClientGame {
         });
 
         this.eventHandler.on(SpawnHitMessage.id, (message: SpawnHitMessage) => {
-            const spawnable = this.spawnables.find((s) => eq(s.coordinate, message.coordinate));
+            const spawnable = this.spawnables.find(
+                (s) => s.active && eq(s.coordinate, message.coordinate),
+            );
             const player = this.players.getById(message.playerId);
             const snake = this.snakes.find((s) => s.playerId === message.playerId);
 
             if (!spawnable || !player || !snake) {
-                throw new Error("Baaaaad");
+                return;
             }
 
             spawnable.active = false;

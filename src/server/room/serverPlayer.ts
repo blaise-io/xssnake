@@ -53,7 +53,7 @@ export class ServerPlayer extends Player {
         if (this.connected && this.socket) {
             console.debug(
                 "OUT",
-                message.serialized,
+                (message.constructor as MessageConstructor).id + message.serialized,
                 util.inspect(message, { showHidden: false, depth: 1 }),
             );
             this.socket.send((<MessageConstructor>message.constructor).id + message.serialized);

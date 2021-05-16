@@ -50,8 +50,8 @@ export class ClientRound extends Round {
     async setLevel(levelIndex: number): Promise<void> {
         this.levelIndex = levelIndex;
 
-        this.game?.destruct();
         this.level = await loadLevel(this.LevelClass, clientImageLoader);
+        this.game?.destruct();
         this.game = new ClientGame(this.level, this.players);
     }
 
