@@ -43,7 +43,7 @@ export class Level {
     }
 }
 
-const levelDataCache = new WeakMap();
+const levelDataCache = new WeakMap<typeof Level, LevelData>();
 
 export async function loadLevel(
     LevelClass: typeof Level,
