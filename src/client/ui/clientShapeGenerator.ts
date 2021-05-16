@@ -5,87 +5,82 @@ import { line } from "../../shared/shapeGenerator";
 import { randomRange, randomStr } from "../../shared/util";
 import { MENU_POS, NS } from "../const";
 import { State } from "../state";
-import { font, fontWidth } from "./font";
+import { font, fontPixels, fontWidth } from "./font";
 import { animate, lifetime } from "./shapeClient";
 import { zoom } from "./transformClient";
 
 export function tooltip(text: string, x: number, y: number, direction: DIRECTION): Shape {
-    let shape: Shape;
-    let hw: number;
+    const shape = new Shape();
+
     const width = fontWidth(text);
-    switch (direction) {
-        case DIRECTION.LEFT:
-            shape = font(text, x - width - 6, y - 4);
-            // Left
-            shape.add(line(x - width - 9, y - 5, x - width - 9, y + 3));
-            // Top
-            shape.add(line(x - width - 8, y - 6, x - 6, y - 6));
-            // Bottoms
-            shape.add(line(x - width - 9, y + 4, x - 5, y + 4));
-            shape.add(line(x - width - 8, y + 5, x - 6, y + 5));
-            // Top 1px
-            shape.add(line(x - 5, y - 5, x - 5, y - 5));
-            // Pointer
-            shape.add(line(x - 5, y - 4, x - 2, y - 1));
-            shape.add(line(x - 5, y + 2, x - 2, y - 1));
-            shape.add(line(x - 5, y + 3, x - 2, y));
-            break;
-        case DIRECTION.UP:
-            hw = Math.ceil(width / 2);
-            shape = font(text, x - hw, y - 13);
-            // Top
-            shape.add(line(x - hw - 2, y - 15, x + hw + 1, y - 15));
-            // Left
-            shape.add(line(x - hw - 3, y - 5, x - hw - 3, y - 14));
-            // Bottoms
-            shape.add(line(x + -hw - 2, y - 4, x + hw + 1, y - 4));
-            shape.add(line(x + -hw - 2, y - 5, x + hw + 1, y - 5));
-            // Right
-            shape.add(line(x + hw + 2, y - 5, x + hw + 2, y - 14));
-            // Pointer
-            shape.add(line(x - 1, y - 1, x - 4, y - 4));
-            shape.add(line(x - 1, y - 2, x - 4, y - 5));
-            shape.add(line(x, y - 1, x + 3, y - 4));
-            shape.add(line(x, y - 2, x + 3, y - 5));
-            shape.remove(line(x - 3, y - 4, x + 3, y - 4));
-            shape.remove(line(x - 3, y - 5, x + 3, y - 5));
-            break;
-        case DIRECTION.RIGHT:
-            shape = font(text, x + 8, y - 4);
-            // Right
-            shape.add(line(x + width + 9, y - 5, x + width + 9, y + 3));
-            // Top
-            shape.add(line(x + width + 8, y - 6, x + 6, y - 6));
-            // Bottom
-            shape.add(line(x + width + 9, y + 4, x + 5, y + 4));
-            shape.add(line(x + width + 8, y + 5, x + 6, y + 5));
-            // Top 1px
-            shape.add(line(x + 5, y - 5, x + 5, y - 5));
-            // Pointer
-            shape.add(line(x + 5, y - 4, x + 2, y - 1));
-            shape.add(line(x + 5, y + 2, x + 2, y - 1));
-            shape.add(line(x + 5, y + 3, x + 2, y));
-            break;
-        case DIRECTION.DOWN:
-            hw = Math.ceil(width / 2);
-            shape = font(text, x - hw, y + 6);
-            // Top
-            shape.add(line(x + -hw - 2, y + 4, x + hw + 1, y + 4));
-            // Left
-            shape.add(line(x - hw - 3, y + 5, x - hw - 3, y + 14));
-            // Bottoms
-            shape.add(line(x - hw - 2, y + 14, x + hw + 1, y + 14));
-            shape.add(line(x - hw - 2, y + 15, x + hw + 1, y + 15));
-            // Right
-            shape.add(line(x + hw + 2, y + 5, x + hw + 2, y + 14));
-            // Pointer
-            shape.add(line(x - 1, y + 1, x - 4, y + 4));
-            shape.add(line(x, y + 1, x + 3, y + 4));
-            shape.remove(line(x - 3, y + 4, x + 3, y + 4));
-            break;
+    if (direction === DIRECTION.LEFT) {
+        shape.add(fontPixels(text, x - width - 6, y - 4));
+        // Left
+        shape.add(line(x - width - 9, y - 5, x - width - 9, y + 3));
+        // Top
+        shape.add(line(x - width - 8, y - 6, x - 6, y - 6));
+        // Bottoms
+        shape.add(line(x - width - 9, y + 4, x - 5, y + 4));
+        shape.add(line(x - width - 8, y + 5, x - 6, y + 5));
+        // Top 1px
+        shape.add(line(x - 5, y - 5, x - 5, y - 5));
+        // Pointer
+        shape.add(line(x - 5, y - 4, x - 2, y - 1));
+        shape.add(line(x - 5, y + 2, x - 2, y - 1));
+        shape.add(line(x - 5, y + 3, x - 2, y));
+    } else if (direction === DIRECTION.UP) {
+        const hw: number = Math.ceil(width / 2);
+        shape.add(fontPixels(text, x - hw, y - 13));
+        // Top
+        shape.add(line(x - hw - 2, y - 15, x + hw + 1, y - 15));
+        // Left
+        shape.add(line(x - hw - 3, y - 5, x - hw - 3, y - 14));
+        // Bottoms
+        shape.add(line(x + -hw - 2, y - 4, x + hw + 1, y - 4));
+        shape.add(line(x + -hw - 2, y - 5, x + hw + 1, y - 5));
+        // Right
+        shape.add(line(x + hw + 2, y - 5, x + hw + 2, y - 14));
+        // Pointer
+        shape.add(line(x - 1, y - 1, x - 4, y - 4));
+        shape.add(line(x - 1, y - 2, x - 4, y - 5));
+        shape.add(line(x, y - 1, x + 3, y - 4));
+        shape.add(line(x, y - 2, x + 3, y - 5));
+        shape.remove(line(x - 3, y - 4, x + 3, y - 4));
+        shape.remove(line(x - 3, y - 5, x + 3, y - 5));
+    } else if (direction === DIRECTION.RIGHT) {
+        shape.add(fontPixels(text, x + 8, y - 4));
+        // Right
+        shape.add(line(x + width + 9, y - 5, x + width + 9, y + 3));
+        // Top
+        shape.add(line(x + width + 8, y - 6, x + 6, y - 6));
+        // Bottom
+        shape.add(line(x + width + 9, y + 4, x + 5, y + 4));
+        shape.add(line(x + width + 8, y + 5, x + 6, y + 5));
+        // Top 1px
+        shape.add(line(x + 5, y - 5, x + 5, y - 5));
+        // Pointer
+        shape.add(line(x + 5, y - 4, x + 2, y - 1));
+        shape.add(line(x + 5, y + 2, x + 2, y - 1));
+        shape.add(line(x + 5, y + 3, x + 2, y));
+    } else if (direction === DIRECTION.DOWN) {
+        const hw = Math.ceil(width / 2);
+        shape.add(fontPixels(text, x - hw, y + 6));
+        // Top
+        shape.add(line(x + -hw - 2, y + 4, x + hw + 1, y + 4));
+        // Left
+        shape.add(line(x - hw - 3, y + 5, x - hw - 3, y + 14));
+        // Bottoms
+        shape.add(line(x - hw - 2, y + 14, x + hw + 1, y + 14));
+        shape.add(line(x - hw - 2, y + 15, x + hw + 1, y + 15));
+        // Right
+        shape.add(line(x + hw + 2, y + 5, x + hw + 2, y + 14));
+        // Pointer
+        shape.add(line(x - 1, y + 1, x - 4, y + 4));
+        shape.add(line(x, y + 1, x + 3, y + 4));
+        shape.remove(line(x - 3, y + 4, x + 3, y + 4));
     }
     shape.flags.isOverlay = true;
-    shape.bbox();
+    shape.bbox(-1);
     return shape;
 }
 
