@@ -4,7 +4,7 @@ import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
 import { SERVER_EVENT } from "../const";
 import { ServerScore } from "../game/serverScore";
-import { LevelPlayset } from "./playset";
+import { LevelsPlayed } from "../../shared/levelSet/levelsPlayed";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 import { ServerRound } from "./serverRound";
@@ -17,7 +17,7 @@ export class ServerRoundSet {
     round: ServerRound;
     roundsPlayed = 0;
 
-    private levelPlayset: LevelPlayset;
+    private levelPlayset: LevelsPlayed;
     private score: ServerScore;
     private minRoundsets = 3;
     private minPointsDiff = 1;
@@ -28,7 +28,7 @@ export class ServerRoundSet {
         readonly players: ServerPlayerRegistry,
         readonly options: RoomOptions,
     ) {
-        this.levelPlayset = new LevelPlayset(options.levelSetIndex);
+        this.levelPlayset = new LevelsPlayed(options.levelSetIndex);
         this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
         this.score = new ServerScore(players);
 
@@ -61,11 +61,7 @@ export class ServerRoundSet {
             this.levelPlayset,
         );
         this.players.send(RoundLevelMessage.fromRound(this.round));
-
-        // TODO: Client UI is messed up here
-        setTimeout(() => {
-            this.round.start();
-        }, 5000);
+        this.round.start();
     }
 
     private switchRounds(winner: ServerPlayer): void {

@@ -12,7 +12,7 @@ export class Snake {
     constructor(
         public playerId: number,
         public size: number,
-        public speed: number,
+        public speed: number, // TODO: Float between 1 and 10.
         spawn: PlayerSpawn,
     ) {
         this.parts = [spawn.location];
@@ -65,15 +65,18 @@ export class Snake {
     }
 
     reverse(): void {
-        const dx = this.parts[0][0] - this.parts[1][0];
-        const dy = this.parts[0][1] - this.parts[1][1];
+        // Move snake in direction of head relative to the rest of the body.
+        if (this.parts.length >= 2) {
+            const dx = this.parts[0][0] - this.parts[1][0];
+            const dy = this.parts[0][1] - this.parts[1][1];
 
-        if (dx === 0) {
-            this.direction = dy === -1 ? 1 : 3;
-        } else {
-            this.direction = dx === -1 ? 0 : 2;
+            if (dx === 0) {
+                this.direction = dy === -1 ? 1 : 3;
+            } else {
+                this.direction = dx === -1 ? 0 : 2;
+            }
         }
 
-        this.parts.reverse();
+        this.parts = this.parts.slice().reverse();
     }
 }

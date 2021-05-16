@@ -104,7 +104,12 @@ export class Reverse extends Spawnable {
     static id = SPAWN_ID.REVERSE;
 
     applyEffects(player: Player, snake: Snake): void {
+        snake.speed *= 3;
         snake.reverse();
+
+        this.timer = setTimeout(() => {
+            snake.speed /= 3;
+        }, 1000);
     }
 }
 
@@ -113,11 +118,9 @@ export class SpeedBoost extends Spawnable {
     static effect = { self: EFFECT.RISKY, others: EFFECT.NONE };
 
     applyEffects(player: Player, snake: Snake): void {
-        const speed = snake.speed;
-        snake.speed *= 0.75;
-        const diff = speed - snake.speed;
+        snake.speed *= 0.8;
         this.timer = setTimeout(() => {
-            snake.speed += diff;
+            snake.speed /= 0.8;
         }, 5000);
     }
 }

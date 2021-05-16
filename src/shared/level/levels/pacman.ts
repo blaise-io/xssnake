@@ -1,6 +1,8 @@
 import pacman from "./pacman.png";
-import { Level } from "../level";
+import { Level, LevelSettings } from "../level";
 
 export class PacmanLevel extends Level {
     static image = pacman;
+
+    settings = new LevelSettings({ snakeSpeed: 100, powerupsEnabled: [] });
 }

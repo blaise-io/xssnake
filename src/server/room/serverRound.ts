@@ -12,7 +12,7 @@ import {
 import { SERVER_EVENT } from "../const";
 import { ServerGame } from "../game/serverGame";
 import { serverImageLoader } from "../level/serverImageLoader";
-import { LevelPlayset } from "./playset";
+import { LevelsPlayed } from "../../shared/levelSet/levelsPlayed";
 import { ServerPlayer } from "./serverPlayer";
 import { ServerPlayerRegistry } from "./serverPlayerRegistry";
 
@@ -29,7 +29,7 @@ export class ServerRound extends Round {
         public roomEmitter: EventEmitter,
         public players: ServerPlayerRegistry,
         public options: RoomOptions,
-        public levelPlayset: LevelPlayset,
+        public levelPlayset: LevelsPlayed,
     ) {
         super(players, options, levelPlayset.nextLevelIndex);
 
