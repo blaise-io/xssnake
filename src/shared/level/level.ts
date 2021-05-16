@@ -9,13 +9,13 @@ export type LevelSpawnable = [spawnable: typeof Spawnable, chance: number];
 
 export class LevelSettings {
     readonly gravity: Shift = [0, 0];
-    readonly snakeSize = 4;
-    readonly snakeSpeed = 120; // Change tile every ms.
-    readonly appleSnakeGrow = 1;
-    readonly spawnApples = true;
-    readonly spawnFirstAppleAfter = 1;
-    readonly pointsApple = 1;
-    readonly pointsKnockout = 3;
+    readonly snakeSize: number = 4;
+    readonly snakeSpeed: number = 120; // Change tile every ms.
+    readonly appleSnakeGrow: number = 1;
+    readonly spawnApples: boolean = true;
+    readonly spawnFirstAppleAfter: number = 1;
+    readonly pointsApple: number = 1;
+    readonly pointsKnockout: number = 3;
     readonly powerupsInterval: [min: number, max: number] = [1, 5];
     readonly powerupsEnabled: LevelSpawnable[] = [
         [Reverse, 0.9],

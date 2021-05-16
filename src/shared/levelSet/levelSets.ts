@@ -1,14 +1,11 @@
 import { CrosshairLevel } from "../level/levels/crosshair";
+import { BoroBudurLevel } from "../level/levels/borobudur";
 import { LinesLevel } from "../level/levels/lines";
+import { PacmanLevel } from "../level/levels/pacman";
 import { LevelSet } from "./levelSet";
 import { _ } from "../util";
 
-const basic = new LevelSet(_("Basic"));
-basic.push(LinesLevel);
-basic.push(CrosshairLevel);
-
-const alsoBasic = new LevelSet(_("Amazing"));
-alsoBasic.push(LinesLevel);
-alsoBasic.push(CrosshairLevel);
-
-export const levelSets: LevelSet[] = [basic, alsoBasic];
+export const levelSets: LevelSet[] = [
+    new LevelSet(_("Basic"), LinesLevel, BoroBudurLevel, CrosshairLevel, PacmanLevel),
+    new LevelSet(_("Amazing"), LinesLevel, BoroBudurLevel, CrosshairLevel, PacmanLevel),
+];

@@ -2,8 +2,9 @@ import { LevelConstructor } from "../level/types";
 import { randomArrIndex } from "../util";
 
 export class LevelSet extends Array<LevelConstructor> {
-    constructor(public title: string) {
+    constructor(public title: string, ...levels: LevelConstructor[]) {
         super(); // new Array();
+        this.push(...levels);
     }
 }
 

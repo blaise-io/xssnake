@@ -34,7 +34,6 @@ export class ClientSpawnable {
 
     destruct(): void {
         this.active = false;
-        delete State.shapes[this.shapeName].effects.flash;
         delete State.shapes[this.shapeName];
     }
 
