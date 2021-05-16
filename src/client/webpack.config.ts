@@ -1,8 +1,7 @@
-/* eslint-disable */
-const webpack = require("webpack");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+import * as HtmlWebpackPlugin from "html-webpack-plugin";
+import * as webpack from "webpack";
+import * as MiniCssExtractPlugin from "mini-css-extract-plugin";
+import * as TerserPlugin from "terser-webpack-plugin";
 
 module.exports = (env, argv) => {
     return {

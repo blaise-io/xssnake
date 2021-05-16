@@ -1,5 +1,4 @@
-/* eslint-disable */
-const webpack = require("webpack");
+import * as webpack from "webpack";
 
 module.exports = (env, argv) => {
     return {

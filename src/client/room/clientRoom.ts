@@ -34,7 +34,9 @@ export class ClientRoom {
         this.eventHandler.on(PlayersMessage.id, (message: PlayersMessage) => {
             this.players.updateFromMessage(message.players);
         });
-        setHash(HASH.ROOM, key);
+        if (this.options.maxPlayers !== 1) {
+            setHash(HASH.ROOM, key);
+        }
     }
 
     destruct(): void {
