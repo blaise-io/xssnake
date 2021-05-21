@@ -1,7 +1,6 @@
 import { GAME, CANVAS } from "../../shared/const";
 import { Shape } from "../../shared/shape";
 import { noop } from "../../shared/util";
-import { FRAME } from "../const";
 import { State } from "../state";
 
 export function center(
@@ -33,7 +32,7 @@ export function setGameTransform(shape: Shape): Shape {
     return shape;
 }
 
-export function flash(shape: Shape, on: number = FRAME * 24, off: number = FRAME * 6): Shape {
+export function flash(shape: Shape, on = 300, off = 100): Shape {
     let progress = 0;
     const duration = [on, off];
 
@@ -51,10 +50,10 @@ export function flash(shape: Shape, on: number = FRAME * 24, off: number = FRAME
 export function lifetime(shape: Shape, start: number, end?: number): Shape {
     let progress = 0;
     let started = false;
-
+    shape.flags.enabled = false;
     shape.effects.lifetime = (delta) => {
         // Start time reached.
-        if (start && progress >= start && !started) {
+        if (progress >= start && !started) {
             started = true;
             shape.flags.enabled = true;
         }
