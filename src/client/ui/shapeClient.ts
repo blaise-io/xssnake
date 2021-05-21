@@ -52,6 +52,8 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
     let started = false;
     shape.flags.enabled = false;
     shape.effects.lifetime = (delta) => {
+        progress += delta;
+
         // Start time reached.
         if (progress >= start && !started) {
             started = true;
@@ -66,8 +68,6 @@ export function lifetime(shape: Shape, start: number, end?: number): Shape {
                 }
             });
         }
-
-        progress += delta;
     };
 
     return shape;

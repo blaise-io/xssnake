@@ -29,6 +29,7 @@
   "devDependencies": {
     "@types/node": "14.14.37",
     "@types/pngjs": "^6.0.0",
+    "@types/tape": "^4.13.0",
     "@types/webpack": "5.28.0",
     "@types/ws": "7.4.1",
     "@typescript-eslint/eslint-plugin": "4.20.0",
@@ -39,7 +40,8 @@
     "mini-css-extract-plugin": "^1.5.0",
     "prettier": "2.2.1",
     "style-loader": "^2.0.0",
-    "supervisor": "0.12.0"
+    "supervisor": "0.12.0",
+    "tape": "^5.2.2"
   },
   "engines": {
     "node": ">= 0.6"
@@ -52,6 +54,7 @@
     "browser": "(nano-server 8002 dist &); open http://127.0.0.1:8002",
     "lint": "eslint . --fix --format codeframe --ext .ts; prettier --list-different --write '**/*.ts' --loglevel warn",
     "start": "node dist/server.js --enable-source-maps --throw-deprecation",
-    "restart": "supervisor --watch dist/server.js -- dist/server.js --enable-source-maps --throw-deprecation"
+    "restart": "supervisor --watch dist/server.js -- dist/server.js --enable-source-maps --throw-deprecation",
+    "test": "npx ts-node --files $(which tape) src/client/_tests/**/*"
   }
 }
