@@ -1,0 +1,5 @@
+.*
+dist/
+Dockerfile
+node_modules/
+src/tests/
