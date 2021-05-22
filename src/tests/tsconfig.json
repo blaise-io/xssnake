@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "baseUrl": "../",
+    "module": "es6",
+    "strict": true,
+    "target": "es2019"
+  },
+  "include": [
+    "../index.d.ts",
+    "./*/**.ts"
+  ]
+}

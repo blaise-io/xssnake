@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "../.eslintrc.json"
+  ],
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          "**/client/*"
+        ]
+      }
+    ]
+  }
+}

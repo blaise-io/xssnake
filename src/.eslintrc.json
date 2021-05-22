@@ -1,0 +1,38 @@
+{
+  "root": true,
+  "env": {
+    "browser": false,
+    "node": false
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "unused-imports"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/explicit-member-accessibility": [
+      "warn",
+      {
+        "accessibility": "no-public"
+      }
+    ],
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "lines-between-class-members": ["warn", "always", { "exceptAfterSingleLine": true }],
+    "unused-imports/no-unused-imports": "warn",
+    "prefer-const": "error",
+    "no-extend-native": "error",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "TSEnumDeclaration:not([const=true])",
+        "message": "Use const enum"
+      }
+    ]
+  }
+}

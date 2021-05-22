@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "baseUrl": "../..",
+    "module": "es6",
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "es2019"
+  },
+  "typeRoots": [
+    "../../node_modules/@types"
+  ],
+  "include": [
+    "../index.d.ts",
+    "*/**.ts"
+  ]
+}
