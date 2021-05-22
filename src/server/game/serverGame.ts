@@ -11,7 +11,7 @@ import { average } from "../../shared/util";
 import { SERVER_EVENT, SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
 import { ServerPlayerRegistry } from "../room/serverPlayerRegistry";
-import { ServerSnakeMove } from "../room/serverSnakeMove";
+import { ServerSnakeMove } from "./serverSnakeMove";
 import { ServerSnake } from "./serverSnake";
 
 export class ServerGame {

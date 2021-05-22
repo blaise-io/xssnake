@@ -1,4 +1,3 @@
-import blank from "./levels/blank.png";
 import { LevelAnimationRegistry } from "../levelanim/registry";
 import { LevelData } from "./levelData";
 import { LevelGravity } from "./levelGravity";
@@ -28,7 +27,7 @@ export class LevelSettings {
 }
 
 export class Level {
-    static image: LevelString = blank;
+    static image: LevelString = "";
 
     animations = new LevelAnimationRegistry();
     settings = new LevelSettings();

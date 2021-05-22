@@ -1,9 +1,9 @@
 import * as test from "tape";
+import { lifetime } from "../../../client/ui/shapeClient";
 import { Shape } from "../../../shared/shape";
-import { State } from "../../state";
-import { lifetime } from "../../ui/shapeClient";
+import { State } from "../../../client/state";
 
-test("Lifetime effect", async (t) => {
+test("Lifetime effect", (t) => {
     const shape = new Shape();
     lifetime(shape, 10, 100);
 
@@ -26,4 +26,6 @@ test("Lifetime effect", async (t) => {
 
     shape.effects.lifetime(10);
     t.isEquivalent(State.shapes, {}, "Deregisters itself");
+
+    t.end();
 });

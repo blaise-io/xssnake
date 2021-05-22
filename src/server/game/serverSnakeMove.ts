@@ -7,7 +7,7 @@ import {
     VALIDATE_SUCCES,
 } from "../../shared/const";
 import { delta, eq } from "../../shared/util";
-import { ServerSnake } from "../game/serverSnake";
+import { ServerSnake } from "./serverSnake";
 
 export class ServerSnakeMove {
     private status = -1;
