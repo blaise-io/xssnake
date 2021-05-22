@@ -1,6 +1,6 @@
 import { SpawnHitMessage } from "../../shared/level/spawnables";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { ScoreboardUI } from "../ui/scoreboard";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 

@@ -1,6 +1,6 @@
 import { DIRECTION } from "../../shared/const";
 import { KEY } from "../const";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { State } from "../state";
 import { ClientSnake } from "./clientSnake";
 

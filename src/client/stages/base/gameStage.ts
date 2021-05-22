@@ -9,7 +9,7 @@ import {
 import { RoundLevelMessage } from "../../../shared/room/roundMessages";
 import { Shape } from "../../../shared/shape";
 import { _ } from "../../../shared/util";
-import { EventHandler } from "../../netcode/eventHandler";
+import { EventHandler } from "../../util/eventHandler";
 import { ClientPlayerRegistry } from "../../room/clientPlayerRegistry";
 import { ClientRoom, COPY_ERROR } from "../../room/clientRoom";
 import { ClientSocketPlayer } from "../../room/clientSocketPlayer";

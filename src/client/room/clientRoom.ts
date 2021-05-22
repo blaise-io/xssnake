@@ -4,7 +4,7 @@ import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { HASH } from "../const";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { clearHash, setHash } from "../util/url";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRoundSet } from "./clientRoundSet";

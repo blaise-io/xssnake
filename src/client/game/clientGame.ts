@@ -11,7 +11,7 @@ import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _, eq, getRandomItemFrom } from "../../shared/util";
 import { EV_GAME_TICK, NS } from "../const";
 import { getLevelShapes } from "../level/levelUtil";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { explosion } from "../ui/clientShapeGenerator";

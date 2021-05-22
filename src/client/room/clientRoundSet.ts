@@ -1,6 +1,6 @@
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { RoundLevelMessage } from "../../shared/room/roundMessages";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ClientRound } from "./clientRound";
 

@@ -3,7 +3,7 @@ import { ChatClientMessage, ChatServerMessage } from "../../shared/room/playerMe
 import { PlayersMessage } from "../../shared/room/playerRegistry";
 import { _ } from "../../shared/util";
 import { UC } from "../const";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { MessageBoxUI } from "../ui/messageBox";
 import { ClientPlayerRegistry } from "./clientPlayerRegistry";
 import { ChatMessage } from "./chatMessage";

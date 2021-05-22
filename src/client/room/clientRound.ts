@@ -9,7 +9,7 @@ import {
     RoundWrapupMessage,
 } from "../../shared/room/roundMessages";
 import { ClientGame } from "../game/clientGame";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { PreGameUI } from "../ui/preGame";
 import { WrapupGame } from "../ui/switchRound";
 import { clientImageLoader } from "../util/clientUtil";

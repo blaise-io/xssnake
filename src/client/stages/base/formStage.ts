@@ -1,6 +1,6 @@
 import { Shape } from "../../../shared/shape";
 import { KEY } from "../../const";
-import { EventHandler } from "../../netcode/eventHandler";
+import { EventHandler } from "../../util/eventHandler";
 import { State } from "../../state";
 import { Form } from "../components/form";
 import { StageConstructor, StageInterface } from "./stage";

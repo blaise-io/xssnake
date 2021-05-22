@@ -5,7 +5,7 @@ import { ROOM_KEY_LENGTH } from "../shared/room/roomMessages";
 import { RoomOptions } from "../shared/room/roomOptions";
 import { Shape } from "../shared/shape";
 import { HASH, KEY, MENU_POS, STORAGE } from "./const";
-import { EventHandler } from "./netcode/eventHandler";
+import { EventHandler } from "./util/eventHandler";
 import { ClientRoom } from "./room/clientRoom";
 import { ClientSocketPlayer } from "./room/clientSocketPlayer";
 import { StageConstructor, StageInterface } from "./stages/base/stage";

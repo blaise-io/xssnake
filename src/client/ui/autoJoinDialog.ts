@@ -5,7 +5,7 @@ import {
     RoomOptionsClientMessage,
 } from "../../shared/room/roomMessages";
 import { _ } from "../../shared/util";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { COPY_ERROR } from "../room/clientRoom";
 import { ClientSocketPlayer } from "../room/clientSocketPlayer";
 import { State } from "../state";

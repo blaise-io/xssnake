@@ -4,7 +4,7 @@ import { Player } from "../../shared/room/player";
 import { NameMessage } from "../../shared/room/playerMessages";
 import { Message, MessageConstructor } from "../../shared/room/types";
 import { _, noop } from "../../shared/util";
-import { globalEventHandler } from "../netcode/eventHandler";
+import { globalEventHandler } from "../util/eventHandler";
 import { error } from "../util/clientUtil";
 
 export class ClientSocketPlayer extends Player {

@@ -1,6 +1,6 @@
 import { Player } from "../../shared/room/player";
 import { PlayersMessage } from "../../shared/room/playerRegistry";
-import { globalEventHandler } from "../netcode/eventHandler";
+import { globalEventHandler } from "../util/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { ChatMessage } from "../room/chatMessage";
 import { Scoreboard } from "../room/scoreboard";

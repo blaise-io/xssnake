@@ -3,7 +3,7 @@ import { PixelCollection } from "../../shared/pixelCollection";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
 import { FRAME, KEY, UC } from "../const";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { ChatMessage } from "../room/chatMessage";
 import { InputField } from "../stages/components/inputField";
 import { State } from "../state";

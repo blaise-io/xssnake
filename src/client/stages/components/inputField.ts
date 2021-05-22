@@ -3,7 +3,7 @@ import { Shape } from "../../../shared/shape";
 import { lineShape } from "../../../shared/shapeGenerator";
 import { noop } from "../../../shared/util";
 import { FRAME } from "../../const";
-import { EventHandler } from "../../netcode/eventHandler";
+import { EventHandler } from "../../util/eventHandler";
 import { State } from "../../state";
 import { fontEndPos, FontOptions, fontPixels, fontWidth } from "../../ui/font";
 import { flash } from "../../ui/shapeClient";

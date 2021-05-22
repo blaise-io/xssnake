@@ -2,7 +2,7 @@ import { CANVAS } from "../../../shared/const";
 import { Shape } from "../../../shared/shape";
 import { colorSchemes } from "../../bootstrap/registerColorSchemes";
 import { EV_GAME_TICK, MAX_FRAME_DELTA, MIN_FRAME_DELTA, STORAGE } from "../../const";
-import { globalEventHandler } from "../../netcode/eventHandler";
+import { globalEventHandler } from "../../util/eventHandler";
 import { State } from "../../state";
 import { debounce, instruct, storage } from "../../util/clientUtil";
 import { CanvasTile } from "./canvasTile";

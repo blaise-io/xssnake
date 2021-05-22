@@ -3,7 +3,7 @@ import { Shape } from "../../shared/shape";
 import { line } from "../../shared/shapeGenerator";
 import { _ } from "../../shared/util";
 import { KEY } from "../const";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { State } from "../state";
 import { stylizeUpper } from "../util/clientUtil";
 import { fontPixels, fontWidth, MAX_HEIGHT } from "./font";

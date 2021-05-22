@@ -4,7 +4,7 @@ import { RoomManualStartMessage } from "../../shared/room/roomMessages";
 import { RoomOptions } from "../../shared/room/roomOptions";
 import { _ } from "../../shared/util";
 import { KEY } from "../const";
-import { EventHandler } from "../netcode/eventHandler";
+import { EventHandler } from "../util/eventHandler";
 import { ClientPlayerRegistry } from "../room/clientPlayerRegistry";
 import { State } from "../state";
 import { Dialog, DialogType } from "./dialog";

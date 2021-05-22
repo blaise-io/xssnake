@@ -1,6 +1,6 @@
 import { Shape } from "../../../shared/shape";
 import { KEY, MENU_POS, STORAGE } from "../../const";
-import { EventHandler } from "../../netcode/eventHandler";
+import { EventHandler } from "../../util/eventHandler";
 import { InputField } from "../components/inputField";
 import { State } from "../../state";
 import { font, fontHeight, fontPixels } from "../../ui/font";
