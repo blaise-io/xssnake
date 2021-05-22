@@ -3,7 +3,7 @@ import { lifetime } from "../../../client/ui/shapeClient";
 import { Shape } from "../../../shared/shape";
 import { State } from "../../../client/state";
 
-test("Lifetime effect", (t) => {
+test("shape.effects.lifetime", (t) => {
     const shape = new Shape();
     lifetime(shape, 10, 100);
 

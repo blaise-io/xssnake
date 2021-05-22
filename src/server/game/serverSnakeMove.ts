@@ -73,7 +73,7 @@ export class ServerSnakeMove {
         }
 
         // Find tile closest to head where client and server matched.
-        const serverParts = this.snake.parts.slice(-numSyncParts);
+        const serverParts = this.snake.parts.slice();
         const commonPartIndex = this.getCommonPartIndex(clientParts, serverParts);
         if (!commonPartIndex) {
             return VALIDATE_ERR_NO_COMMON;
