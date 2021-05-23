@@ -16,35 +16,35 @@
     "url": "https://github.com/blaise-io/xssnake.git"
   },
   "dependencies": {
+    "nano-server": "^0.5.4",
+    "pngjs": "^6.0.0",
+    "ws": "^7.4.5"
+  },
+  "devDependencies": {
     "@types/node": "14.14.37",
     "@types/pngjs": "^6.0.0",
+    "@types/tape": "^4.13.0",
+    "@types/webpack": "5.28.0",
     "@types/ws": "7.4.1",
+    "@typescript-eslint/eslint-plugin": "4.20.0",
+    "@typescript-eslint/parser": "4.20.0",
     "css-loader": "^5.2.2",
+    "eslint": "7.23.0",
+    "eslint-plugin-unused-imports": "1.1.1",
     "html-webpack-plugin": "5.3.1",
     "mini-css-extract-plugin": "^1.5.0",
-    "nano-server": "^0.5.4",
-    "pngjs": "6.0.0",
+    "prettier": "2.2.1",
     "style-loader": "^2.0.0",
+    "supervisor": "^0.12.0",
+    "tape": "^5.2.2",
     "ts-loader": "8.1.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4",
     "webpack": "5.33.2",
-    "webpack-cli": "4.6.0",
-    "ws": "7.4.4"
-  },
-  "devDependencies": {
-    "@types/tape": "^4.13.0",
-    "@types/webpack": "5.28.0",
-    "@typescript-eslint/eslint-plugin": "4.20.0",
-    "@typescript-eslint/parser": "4.20.0",
-    "eslint": "7.23.0",
-    "eslint-plugin-unused-imports": "1.1.1",
-    "prettier": "2.2.1",
-    "supervisor": "0.12.0",
-    "tape": "^5.2.2"
+    "webpack-cli": "4.6.0"
   },
   "engines": {
-    "node": ">= 0.6"
+    "node": ">= 12"
   },
   "scripts": {
     "client": "webpack --mode development --watch --config src/client/webpack.config.ts",

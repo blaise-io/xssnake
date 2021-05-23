@@ -1,17 +1,22 @@
-# docker build . -t xssnake
-# docker run --rm -p 8001:8001 -p 8002:8002 -it xssnake
-# open http://127.0.0.1:8002
+# syntax=docker/dockerfile:1.0
 
-FROM node:slim
-
+FROM node:alpine AS main
 WORKDIR /xssnake
 
-COPY . /xssnake/
-
+FROM main as server_packages
+COPY package*.json /xssnake/
 RUN npm ci --production
+
+FROM main as app_code
+COPY package*.json /xssnake/
+COPY src/ /xssnake/src/
+RUN npm ci
 RUN npm run client.production
 RUN npm run server.production
 
+FROM main
+COPY --from=app_code /xssnake/dist/ /xssnake/
+COPY --from=server_packages /xssnake/node_modules/ /xssnake/node_modules/
+ENV PATH="/xssnake/node_modules/.bin:$PATH"
 EXPOSE 8001 8002
-
-CMD bash -c "npx nano-server 8002 dist & node dist/server.js"
+CMD sh -c "node /xssnake/server.js 8001 & nano-server 8002"
