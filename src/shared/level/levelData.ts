@@ -3,7 +3,9 @@ import { parseLevelData } from "./parser";
 import { PlayerSpawn } from "./playerSpawn";
 
 export class LevelData {
-    animations: Record<string, ReadonlyArray<PixelCollection>> = { walls: [] }; // TODO: should be immutable.
+    // TODO: should be immutable due to cache
+    /** @deprecated */
+    animations: Record<string, ReadonlyArray<PixelCollection>> = { walls: [] };
 
     readonly width: Readonly<number>;
     readonly height: Readonly<number>;

@@ -4,6 +4,21 @@ import { Player } from "../room/player";
 import { Message, MessageId } from "../room/types";
 import { LevelSettings } from "./level";
 
+// TODO: Powerups:
+// speedIncPerm
+// reverseOthers
+// speedBoostOthers
+// speedDownOthers
+// IncTailSelf
+// cutTailOthers
+// spawnApples
+// spawnPowerups
+// reverseSelf
+// speedBoostSelf
+// incTailOthers
+// cutTailSelf
+// speedDownSelf
+
 export const enum SPAWN_ID {
     ANONYMOUS, // In server games, effect of a power-up is unknown until hit.
     POINTS,

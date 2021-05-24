@@ -5,12 +5,15 @@
 import { ShapeAnimation } from "../levelanims/types";
 import { ShapeCollection } from "../shapeCollection";
 
-/* TODO: Extend Array */
-export class LevelAnimationRegistry {
+export class LevelAnimationRegistry extends Array {
     animations: ShapeAnimation[] = [];
     walls: ShapeCollection[] = [];
     started = false;
     progress = 0;
+
+    constructor() {
+        super();
+    }
 
     // register(animation: ShapeAnimation): void {
     //     this.animations.push(animation);
