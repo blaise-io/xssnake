@@ -43,6 +43,7 @@ export const PLAYER_NAME_MINLENGTH = 1;
 export const PLAYER_NAME_MAXWIDTH = 36;
 
 export const SECONDS_ROUND_PAUSE = 3;
+export const SECONDS_ROUND_PAUSE_SP = 0.5;
 export const SECONDS_ROUND_GLOAT = 5;
 export const SECONDS_ROUNDSET_GLOAT = 10;
 export const SECONDS_ROUND_COUNTDOWN = 3;

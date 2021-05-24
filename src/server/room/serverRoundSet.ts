@@ -1,7 +1,11 @@
 import { EventEmitter } from "events";
-import { SECONDS_ROUND_GLOAT, SECONDS_ROUND_PAUSE } from "../../shared/const";
+import {
+    SECONDS_ROUND_GLOAT,
+    SECONDS_ROUND_PAUSE,
+    SECONDS_ROUND_PAUSE_SP,
+} from "../../shared/const";
 import { RoomOptions } from "../../shared/room/roomOptions";
-import { RoundLevelMessage } from "../../shared/room/roundMessages";
+import { RoundLevelMessage, RoundWrapupMessage } from "../../shared/room/roundMessages";
 import { SERVER_EVENT } from "../const";
 import { ServerScore } from "../game/serverScore";
 import { LevelsPlayed } from "../../shared/levelSet/levelsPlayed";
@@ -19,8 +23,8 @@ export class ServerRoundSet {
 
     private levelPlayset: LevelsPlayed;
     private score: ServerScore;
-    private minRoundsets = 3;
-    private minPointsDiff = 1;
+    private readonly minRoundsets = 3;
+    private readonly minPointsDiff = 1;
     private nextRoundTimeout?: NodeJS.Timeout;
 
     constructor(
@@ -32,8 +36,8 @@ export class ServerRoundSet {
         this.round = new ServerRound(roomEmitter, players, options, this.levelPlayset);
         this.score = new ServerScore(players);
 
-        this.roomEmitter.on(SERVER_EVENT.GAME_HAS_WINNER, () => {
-            this.switchRounds(this.players[0]); // TODO: pass winner
+        this.roomEmitter.once(RoundWrapupMessage.id, (message: RoundWrapupMessage) => {
+            this.switchRounds(this.players.byId(message.winningPlayerId));
         });
     }
 
@@ -65,14 +69,14 @@ export class ServerRoundSet {
         this.round.countDown = true;
     }
 
-    private switchRounds(winner: ServerPlayer): void {
+    private switchRounds(winner?: ServerPlayer): void {
         if (this.roundSetWinner) {
             // TODO: Fire XSS, gloat, spawn a boatload of apples, then restart rounds.
-        } else if (!this.round.wrappingUp) {
+        } else {
             let delaySeconds = SECONDS_ROUND_PAUSE;
 
             if (this.players.length === 1) {
-                delaySeconds = 0.5;
+                delaySeconds = SECONDS_ROUND_PAUSE_SP;
             } else if (winner) {
                 delaySeconds = SECONDS_ROUND_GLOAT;
                 this.round.wrapUp(winner);

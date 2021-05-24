@@ -69,9 +69,7 @@ export class ClientSocketPlayer extends Player {
             if (Message && Message.audience === AUDIENCE.CLIENT) {
                 const message = Message.deserialize(messageString.substring(2));
                 console.info("IN", messageString, message);
-                if (message) {
-                    globalEventHandler.trigger(Message.id, message);
-                }
+                globalEventHandler.trigger(Message.id, message);
             } else {
                 console.error("Unregistered message:", messageString, Message);
             }

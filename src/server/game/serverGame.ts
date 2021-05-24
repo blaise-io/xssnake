@@ -7,6 +7,7 @@ import {
     SnakeUpdateServerMessage,
 } from "../../shared/game/snakeMessages";
 import { Spawnable, SpawnHitMessage, SpawnMessage } from "../../shared/level/spawnables";
+import { RoundWrapupMessage } from "../../shared/room/roundMessages";
 import { average } from "../../shared/util";
 import { SERVER_EVENT, SERVER_TICK_INTERVAL } from "../const";
 import { ServerPlayer } from "../room/serverPlayer";
@@ -105,9 +106,13 @@ export class ServerGame {
             }
             this.players.send(SnakeCrashMessage.fromSnakes(...crashedSnakes));
             this.roomEmitter.emit(SERVER_EVENT.PLAYER_COLISSION);
-            if (!this.snakes.find((s) => !s.crashed)) {
-                // TODO: Pass winner and stop when one survivor.
-                this.roomEmitter.emit(SERVER_EVENT.GAME_HAS_WINNER);
+
+            const survivors = this.snakes.filter((s) => !s.crashed);
+            if (this.players.length === 1 || survivors.length <= 1) {
+                this.roomEmitter.emit(
+                    RoundWrapupMessage.id,
+                    new RoundWrapupMessage(survivors[0]?.playerId),
+                );
             }
         }
     }

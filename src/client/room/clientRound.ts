@@ -30,7 +30,6 @@ export class ClientRound extends Round {
         // Only first round:
         this.preGameUI = new PreGameUI(players, options);
         this.bindEvents();
-
         this.setLevel(this.levelIndex);
     }
 
@@ -60,19 +59,25 @@ export class ClientRound extends Round {
             this.preGameUI?.updateUI();
             await this.setLevel(this.levelIndex);
         });
+
         this.eventHandler.on(RoundLevelMessage.id, async (message: RoundLevelMessage) => {
             await this.setLevel(message.levelIndex);
         });
+
         this.eventHandler.on(RoundCountDownMessage.id, (message: RoundCountDownMessage) => {
             this.preGameUI?.toggleCountdown(message.enabled);
             this.preGameUI?.updateUI();
         });
-        this.eventHandler.on(RoundStartMessage.id, () => {
-            this.eventHandler.destruct();
+
+        this.eventHandler.once(RoundStartMessage.id, () => {
+            this.eventHandler.off(PlayersMessage.id);
+            this.eventHandler.off(RoundLevelMessage.id);
+            this.eventHandler.off(RoundCountDownMessage.id);
             this.preGameUI?.destruct();
-            this.game?.start();
             delete this.preGameUI;
+            this.game?.start();
         });
+
         this.eventHandler.on(RoundWrapupMessage.id, (message: RoundWrapupMessage) => {
             const winner = this.players.getById(message.winningPlayerId);
             this.wrapupGameUI = new WrapupGame(this.players, winner);
