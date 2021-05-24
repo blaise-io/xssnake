@@ -17,7 +17,7 @@ const png = (PNG.sync.read(imagedata) as unknown) as ImageData;
 const levelData = new LevelData(png);
 const level = new Level(levelData);
 
-test("ServerSnakeMove VALIDATE_SUCCES", async (t) => {
+test("ServerSnakeMove VALIDATE_SUCCES", (t) => {
     const serverSnake = new ServerSnake(-1, 0, level);
     serverSnake.parts = [
         [1, 0],
@@ -49,9 +49,10 @@ test("ServerSnakeMove VALIDATE_SUCCES", async (t) => {
     t.isEqual(move.getStatus(), VALIDATE_SUCCES, "status is VALIDATE_SUCCES");
     t.isEqual(move.parts.length, 6, "Maintain snake size");
     t.isEquivalent(move.parts, expectedGluedParts, "Glue parts correctly");
+    t.end();
 });
 
-test("ServerSnakeMove VALIDATE_ERR_NO_COMMON", async (t) => {
+test("ServerSnakeMove VALIDATE_ERR_NO_COMMON", (t) => {
     const serverSnake = new ServerSnake(-1, 0, level);
     serverSnake.parts = [
         [1, 0],
@@ -71,17 +72,18 @@ test("ServerSnakeMove VALIDATE_ERR_NO_COMMON", async (t) => {
 
     const move = new ServerSnakeMove(clientPartialParts, DIRECTION.DOWN, serverSnake, 50);
     t.isEqual(move.getStatus(), VALIDATE_ERR_NO_COMMON, "status is VALIDATE_ERR_NO_COMMON");
+    t.end();
 });
 
-test("ServerSnakeMove VALIDATE_ERR_MISMATCHES", async (t) => {
+test("ServerSnakeMove VALIDATE_ERR_MISMATCHES", (t) => {
     const serverSnake = new ServerSnake(-1, 0, level);
     serverSnake.parts = [
-        [1, 0],
         [2, 0],
         [3, 0],
         [4, 0],
         [5, 0], // Last client-server match
         [6, 0], // Wrong prediction by server
+        [6, 1], // Wrong prediction by server
     ];
     serverSnake.size = 6;
 
@@ -94,4 +96,42 @@ test("ServerSnakeMove VALIDATE_ERR_MISMATCHES", async (t) => {
 
     const move = new ServerSnakeMove(clientPartialParts, DIRECTION.DOWN, serverSnake, 50);
     t.isEqual(move.getStatus(), VALIDATE_ERR_MISMATCHES, "status is VALIDATE_ERR_MISMATCHES");
+    t.end();
+});
+
+test("ServerSnakeMove exact match", (t) => {
+    const serverSnake = new ServerSnake(-1, 0, level);
+    serverSnake.parts = [
+        [14, 18],
+        [15, 18],
+        [16, 18],
+        [17, 18],
+        [18, 18],
+        [19, 18],
+        [20, 18],
+    ];
+    serverSnake.size = 7;
+
+    const clientPartialParts: Coordinate[] = [
+        [16, 18],
+        [17, 18],
+        [18, 18],
+        [19, 18],
+        [20, 18],
+    ];
+
+    const expectedGluedParts = [
+        [14, 18],
+        [15, 18],
+        [16, 18],
+        [17, 18],
+        [18, 18],
+        [19, 18],
+        [20, 18],
+    ];
+
+    const move = new ServerSnakeMove(clientPartialParts, DIRECTION.UP, serverSnake, 50);
+    t.isEqual(move.getStatus(), VALIDATE_SUCCES, "status is VALIDATE_SUCCES");
+    t.isEquivalent(move.parts, expectedGluedParts, "Glue parts correctly");
+    t.end();
 });

@@ -60,37 +60,38 @@ export class ServerSnakeMove {
     }
 
     getStatus(): number {
-        let clientParts = this.parts;
-
-        // Crop client snake because we don't trust the length the client sent.
-        const numSyncParts = NETCODE_SYNC_MS / this.snake.speed;
-        clientParts = clientParts.slice(-numSyncParts);
+        // Crop client snake to a manageable size.
+        const compareNumParts = Math.ceil(NETCODE_SYNC_MS / this.snake.speed);
+        const clientParts = this.parts.slice(-compareNumParts);
+        const serverParts = this.snake.parts.slice(-compareNumParts);
 
         // Don't allow gaps in the snake.
         if (this.hasGaps(clientParts)) {
-            console.warn("GAPS");
             return VALIDATE_ERR_GAP;
         }
 
         // Find tile closest to head where client and server matched.
-        const serverParts = this.snake.parts.slice();
         const commonPartIndex = this.getCommonPartIndex(clientParts, serverParts);
         if (!commonPartIndex) {
             return VALIDATE_ERR_NO_COMMON;
         }
 
-        // Check if client-server delta does not exceed limit.
-        const mismatches = Math.abs(commonPartIndex.server - commonPartIndex.client);
-        const maxMismatches = Math.ceil(Math.min(NETCODE_SYNC_MS, this.latency) / this.snake.speed);
-        if (mismatches > Math.max(2, maxMismatches)) {
-            return VALIDATE_ERR_MISMATCHES;
+        // Check if client-server delta does not exceed max mismatch.
+        const partsOutOfSync = compareNumParts - 1 - commonPartIndex.server;
+        if (partsOutOfSync) {
+            const maxLatency = Math.min(NETCODE_SYNC_MS, this.latency / 2);
+            const maxMismatches = Math.ceil(maxLatency / this.snake.speed);
+            if (partsOutOfSync > maxMismatches) {
+                return VALIDATE_ERR_MISMATCHES;
+            }
         }
 
         // We accept the client's snake at this point, but only the head part
         // is synced so we need to glue the head to the server snake's tail.
-        this.parts = serverParts.slice(0, commonPartIndex.server);
+        const cutOffSize = this.snake.parts.length - serverParts.length;
+        this.parts = this.snake.parts.slice(0, commonPartIndex.server + cutOffSize);
         this.parts.push(...clientParts.slice(commonPartIndex.client));
-        this.parts.slice(-this.snake.size);
+        this.parts = this.parts.slice(-this.snake.size);
 
         return VALIDATE_SUCCES;
     }

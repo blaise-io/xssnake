@@ -2,7 +2,7 @@ import { CANVAS } from "../../shared/const";
 import { PixelCollection } from "../../shared/pixelCollection";
 import { Player } from "../../shared/room/player";
 import { Shape } from "../../shared/shape";
-import { FRAME, KEY, UC } from "../const";
+import { KEY, UC } from "../const";
 import { EventHandler } from "../util/eventHandler";
 import { ChatMessage } from "../room/chatMessage";
 import { InputField } from "../stages/components/inputField";
@@ -108,10 +108,12 @@ export class MessageBoxUI {
     }
 
     hideEnterKey(flashKey?: boolean): void {
-        const speed = FRAME * 4;
+        const speed = 60;
         if (flashKey) {
-            flash(State.shapes.MSG_ENTER, speed, speed);
-            lifetime(State.shapes.MSG_ENTER, 0, speed);
+            if (State.shapes.MSG_ENTER) {
+                flash(State.shapes.MSG_ENTER, speed, speed);
+                lifetime(State.shapes.MSG_ENTER, 0, speed);
+            }
         } else {
             delete State.shapes.MSG_ENTER;
         }

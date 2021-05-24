@@ -18,37 +18,26 @@ import { ServerSnake } from "./serverSnake";
 export class ServerGame {
     private tick = 0;
     private lastTick = new Date();
-    private tickInterval: NodeJS.Timeout;
     private started = false;
-    private spawner: Spawner;
-    private snakes: ServerSnake[] = [];
+    private snakes: ServerSnake[] = this.players.map(
+        (p, index) => new ServerSnake(p.id, index, this.level),
+    );
+
+    private spawner = new Spawner(this.level, this.snakes, (spawnable: Spawnable) => {
+        this.players.send(new SpawnMessage(spawnable.type, spawnable.coordinate));
+    });
+
+    private timers: NodeJS.Timeout[] = [
+        setInterval(() => {
+            this.handleTick();
+        }, SERVER_TICK_INTERVAL),
+    ];
 
     constructor(
         private readonly roomEmitter: EventEmitter,
         readonly level: Level,
         readonly players: ServerPlayerRegistry,
     ) {
-        this.snakes = this.players.map((p, index) => new ServerSnake(p.id, index, level));
-
-        this.spawner = new Spawner(this.level, this.snakes, (spawnable: Spawnable) => {
-            this.players.send(new SpawnMessage(spawnable.type, spawnable.coordinate));
-        });
-
-        this.tickInterval = setInterval(() => {
-            this.handleTick();
-        }, SERVER_TICK_INTERVAL);
-
-        this.bindEvents();
-    }
-
-    destruct(): void {
-        clearInterval(this.tickInterval);
-        this.roomEmitter.removeAllListeners(SnakeUpdateServerMessage.id);
-        this.spawner.destruct();
-        this.snakes.length = 0;
-    }
-
-    private bindEvents() {
         this.roomEmitter.on(
             SnakeUpdateServerMessage.id,
             (player: ServerPlayer, message: SnakeUpdateServerMessage) => {
@@ -66,12 +55,22 @@ export class ServerGame {
         );
     }
 
+    destruct(): void {
+        for (let i = 0, m = this.timers.length; i < m; i++) {
+            clearInterval(this.timers[i]);
+        }
+        this.roomEmitter.removeAllListeners(SnakeUpdateServerMessage.id);
+        this.spawner.destruct();
+        this.snakes.length = 0;
+    }
+
     private handleMove(player: ServerPlayer, move: ServerSnakeMove) {
         move.snake.direction = move.direction;
 
         if (move.valid) {
             move.snake.parts = move.parts;
             move.snake.trimParts();
+            move.snake.limbo = false;
         }
 
         this.players.send(
@@ -99,22 +98,39 @@ export class ServerGame {
     }
 
     private detectCrashes(tick: number): void {
-        const crashedSnakes = this.snakes.filter((s) => s.hasCollisionLteTick(tick));
-
-        if (crashedSnakes.length) {
-            for (let i = 0, m = crashedSnakes.length; i < m; i++) {
-                crashedSnakes[i].crashed = true;
+        const graceMs = 20;
+        const limboSnakes = this.snakes.filter((s) => s.hasCollisionLteTick(tick));
+        if (limboSnakes.length) {
+            for (let i = 0, m = limboSnakes.length; i < m; i++) {
+                limboSnakes[i].limbo = true;
             }
-            this.players.send(SnakeCrashMessage.fromSnakes(...crashedSnakes));
+            this.timers.push(
+                setTimeout(() => {
+                    this.crashSnakesInLimbo(limboSnakes);
+                }, Math.max(graceMs, this.averageLatencyInTicks)),
+            );
+        }
+    }
+
+    private crashSnakesInLimbo(limboSnakes: ServerSnake[]): void {
+        const crashSnakes = limboSnakes.filter((s) => s.limbo);
+        if (crashSnakes.length) {
+            for (let i = 0, m = crashSnakes.length; i < m; i++) {
+                crashSnakes[i].crashed = true;
+            }
+            this.players.send(SnakeCrashMessage.fromSnakes(...crashSnakes));
             this.roomEmitter.emit(SERVER_EVENT.PLAYER_COLISSION);
+            this.detectAndWrapupRound();
+        }
+    }
 
-            const survivors = this.snakes.filter((s) => !s.crashed);
-            if (this.players.length === 1 || survivors.length <= 1) {
-                this.roomEmitter.emit(
-                    RoundWrapupMessage.id,
-                    new RoundWrapupMessage(survivors[0]?.playerId),
-                );
-            }
+    private detectAndWrapupRound() {
+        const survivors = this.snakes.filter((s) => !s.crashed);
+        if (this.players.length === 1 || survivors.length <= 1) {
+            this.roomEmitter.emit(
+                RoundWrapupMessage.id,
+                new RoundWrapupMessage(survivors[0]?.playerId),
+            );
         }
     }
 
@@ -122,13 +138,13 @@ export class ServerGame {
         for (let i = 0, m = this.snakes.length; i < m; i++) {
             const snake = this.snakes[i];
 
-            snake.handleNextMove(tick, elapsed, shift, this.snakes);
-            snake.shiftParts(shift);
-
-            const spawnable = this.spawner.handleSpawnHit(snake);
-
-            if (spawnable) {
-                this.handleSpawnableHit(spawnable, snake);
+            if (!snake.limbo) {
+                snake.handleNextMove(tick, elapsed, shift, this.snakes);
+                snake.shiftParts(shift);
+                const spawnable = this.spawner.handleSpawnHit(snake);
+                if (spawnable) {
+                    this.handleSpawnableHit(spawnable, snake);
+                }
             }
         }
     }
