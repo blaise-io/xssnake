@@ -3,12 +3,13 @@ type RegistryItem = { listener: CallableFunction; context: symbol; domEvent?: st
 
 const registry: Record<RegistryTopic, RegistryItem[]> = {};
 const globalContext = Symbol();
+const doc = typeof document !== "undefined" ? document : ({} as HTMLDocument); // Allows testing.
 
 export class EventHandler {
     constructor(private context = Symbol()) {}
 
     on(topic: RegistryTopic, listener: CallableFunction): void {
-        const domEvent = `on${topic}` in document ? topic : undefined;
+        const domEvent = `on${topic}` in doc ? topic : undefined;
         if (!registry[topic]) {
             registry[topic] = [];
         }
@@ -18,8 +19,15 @@ export class EventHandler {
             context: this.context,
         });
         if (domEvent) {
-            document.addEventListener(topic, listener as EventListener);
+            doc.addEventListener(topic, listener as EventListener);
         }
+    }
+
+    once(topic: RegistryTopic, listener: CallableFunction): void {
+        this.on(topic, (...data: unknown[]) => {
+            listener(...data);
+            this.off(topic);
+        });
     }
 
     private removeFromRegistry(registryItemsArray: RegistryItem[][]) {
@@ -28,7 +36,7 @@ export class EventHandler {
                 if (this.context === registryItem.context) {
                     const [callbackItem] = registryItems.splice(index, 1);
                     if (callbackItem.domEvent) {
-                        document.removeEventListener(
+                        doc.removeEventListener(
                             callbackItem.domEvent,
                             callbackItem.listener as EventListener,
                         );
