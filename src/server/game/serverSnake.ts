@@ -22,19 +22,23 @@ export class ServerSnake extends Snake {
 
     handleNextMove(tick: number, elapsed: number, shift: Shift, opponents: ServerSnake[]): void {
         this.elapsed += elapsed;
-        if (!this.crashed && this.elapsed >= this.speed) {
+        if (!this.crashed && !this.collision && this.elapsed >= this.speed) {
             const move = new SnakeMove(this, opponents, this.level, this.getNextPosition());
 
             this.elapsed -= this.speed;
 
-            if (!move.collision) {
-                this.move(move.location);
-                delete this.collision;
-            } else if (!this.collision) {
+            if (move.collision) {
                 this.collision = move.collision;
                 this.collision.tick = tick;
+            } else {
+                this.move(move.location);
             }
         }
+    }
+
+    recoverFromLimbo(): void {
+        this.limbo = false;
+        delete this.collision;
     }
 
     getNextPosition(): Coordinate {

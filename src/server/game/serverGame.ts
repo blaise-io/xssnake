@@ -41,8 +41,8 @@ export class ServerGame {
         this.roomEmitter.on(
             SnakeUpdateServerMessage.id,
             (player: ServerPlayer, message: SnakeUpdateServerMessage) => {
-                const snake = this.snakes[this.players.indexOf(player)];
-                if (!snake.crashed) {
+                const snake = this.snakes.find((s) => s.playerId === player.id);
+                if (snake && !snake.crashed) {
                     const move = new ServerSnakeMove(
                         message.parts,
                         message.direction,
@@ -70,7 +70,9 @@ export class ServerGame {
         if (move.valid) {
             move.snake.parts = move.parts;
             move.snake.trimParts();
-            move.snake.limbo = false;
+            if (move.snake.limbo) {
+                move.snake.recoverFromLimbo();
+            }
         }
 
         this.players.send(
@@ -98,7 +100,7 @@ export class ServerGame {
     }
 
     private detectCrashes(tick: number): void {
-        const graceMs = 20;
+        const graceMs = 30;
         const limboSnakes = this.snakes.filter((s) => s.hasCollisionLteTick(tick));
         if (limboSnakes.length) {
             for (let i = 0, m = limboSnakes.length; i < m; i++) {
@@ -113,7 +115,7 @@ export class ServerGame {
     }
 
     private crashSnakesInLimbo(limboSnakes: ServerSnake[]): void {
-        const crashSnakes = limboSnakes.filter((s) => s.limbo);
+        const crashSnakes = limboSnakes.filter((s) => s.limbo && !s.crashed);
         if (crashSnakes.length) {
             for (let i = 0, m = crashSnakes.length; i < m; i++) {
                 crashSnakes[i].crashed = true;

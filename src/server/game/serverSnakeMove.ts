@@ -67,12 +67,15 @@ export class ServerSnakeMove {
 
         // Don't allow gaps in the snake.
         if (this.hasGaps(clientParts)) {
+            console.warn("Gaps in what player sent", clientParts);
             return VALIDATE_ERR_GAP;
         }
 
         // Find tile closest to head where client and server matched.
         const commonPartIndex = this.getCommonPartIndex(clientParts, serverParts);
         if (!commonPartIndex) {
+            console.warn("No common part (client):", clientParts);
+            console.warn("No common part (server):", serverParts);
             return VALIDATE_ERR_NO_COMMON;
         }
 
@@ -82,6 +85,7 @@ export class ServerSnakeMove {
             const maxLatency = Math.min(NETCODE_SYNC_MS, this.latency / 2);
             const maxMismatches = Math.ceil(maxLatency / this.snake.speed);
             if (partsOutOfSync > maxMismatches) {
+                console.warn("Too many parts out of sync", { partsOutOfSync });
                 return VALIDATE_ERR_MISMATCHES;
             }
         }
@@ -91,7 +95,6 @@ export class ServerSnakeMove {
         const cutOffSize = this.snake.parts.length - serverParts.length;
         this.parts = this.snake.parts.slice(0, commonPartIndex.server + cutOffSize);
         this.parts.push(...clientParts.slice(commonPartIndex.client));
-        this.parts = this.parts.slice(-this.snake.size);
 
         return VALIDATE_SUCCES;
     }
