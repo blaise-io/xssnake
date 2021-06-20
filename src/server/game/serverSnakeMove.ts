@@ -80,12 +80,20 @@ export class ServerSnakeMove {
         }
 
         // Check if client-server delta does not exceed max mismatch.
-        const partsOutOfSync = compareNumParts - 1 - commonPartIndex.server;
+        // TODO: Check over longer period of time to prevent speed cheating.
+        const partsOutOfSync = Math.abs(commonPartIndex.server - commonPartIndex.client);
         if (partsOutOfSync) {
             const maxLatency = Math.min(NETCODE_SYNC_MS, this.latency / 2);
-            const maxMismatches = Math.ceil(maxLatency / this.snake.speed);
+            const maxMismatches = Math.max(Math.ceil(maxLatency / this.snake.speed), 1);
             if (partsOutOfSync > maxMismatches) {
-                console.warn("Too many parts out of sync", { partsOutOfSync });
+                console.warn("Too many parts out of sync", {
+                    partsOutOfSync,
+                    maxMismatches,
+                    maxLatency,
+                    commonPartIndex,
+                });
+                console.warn({ clientParts });
+                console.warn({ serverParts });
                 return VALIDATE_ERR_MISMATCHES;
             }
         }
