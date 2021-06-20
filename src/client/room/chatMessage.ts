@@ -1,11 +1,7 @@
-import { fontWidth } from "../ui/font";
-
 export class ChatMessage {
-    private notificationPrefix: string;
+    private readonly notificationPrefix = "#";
 
-    constructor(public author: string | undefined, public body: string) {
-        this.notificationPrefix = "#";
-    }
+    constructor(public author: string | undefined, public body: string) {}
 
     getFormatted(): string {
         if (!this.author) {
@@ -13,9 +9,5 @@ export class ChatMessage {
         } else {
             return this.author + ": " + this.body;
         }
-    }
-
-    getOffset(): number {
-        return !this.author ? 0 : fontWidth(this.notificationPrefix);
     }
 }

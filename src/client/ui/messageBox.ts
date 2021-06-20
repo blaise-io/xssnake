@@ -35,10 +35,8 @@ export class MessageBoxUI {
 
     destruct(): void {
         this.eventHandler.destruct();
-        if (this.inputField) {
-            this.inputField.destruct();
-            // delete this.inputField;
-        }
+        this.inputField?.destruct();
+        delete this.inputField;
     }
 
     bindEvents(): void {
@@ -65,7 +63,7 @@ export class MessageBoxUI {
     }
 
     showInput(): void {
-        const x = this.x0 + this.padding.x1 + new ChatMessage("", "").getOffset();
+        const x = this.x0 + this.padding.x1;
         const y = this.y1 - this.padding.y1 - this.lineHeight;
         const prefix = this.localPlayer.name + ": ";
 
@@ -81,10 +79,8 @@ export class MessageBoxUI {
     }
 
     hideInput(): void {
-        if (this.inputField) {
-            this.inputField.destruct();
-            // delete this.inputField;
-        }
+        this.inputField?.destruct();
+        delete this.inputField;
         this.updateMessages();
     }
 
@@ -94,8 +90,10 @@ export class MessageBoxUI {
             this.messages.push(new ChatMessage(author, body));
             this.sendMessageFn(body);
             this.skipQueue = true;
+            this.hideEnterKey(true);
+        } else {
+            this.hideEnterKey(false);
         }
-        this.hideEnterKey(body.trim().length === 0);
     }
 
     showEnterKey(): void {
@@ -126,7 +124,9 @@ export class MessageBoxUI {
     getNumMessagesFit(): number {
         let fits = this.y1 - this.padding.y1 - (this.y0 + this.padding.y0);
         fits = Math.floor(fits / this.lineHeight);
-        fits -= this.inputField ? 0 : 1;
+        if (this.inputField) {
+            fits--;
+        }
         return fits;
     }
 
@@ -168,7 +168,7 @@ export class MessageBoxUI {
     getMessagePixels(lineIndex: number, message: ChatMessage): PixelCollection {
         const x = this.x0 + this.padding.x0;
         const y = this.y0 + this.padding.y0 + lineIndex * this.lineHeight;
-        return fontPixels(message.getFormatted(), x + message.getOffset(), y);
+        return fontPixels(message.getFormatted(), x, y);
     }
 
     animate(shape: Shape): void {
@@ -185,7 +185,9 @@ export class MessageBoxUI {
         shape.transform.translate = [0, -this.lineHeight];
         shape.pixels.removeLine(this.y0 + this.lineHeight);
         shape.uncache();
-        setTimeout(this.processQueue.bind(this), 200);
+        setTimeout(() => {
+            this.processQueue();
+        }, 200);
     }
 
     processQueue(): void {
