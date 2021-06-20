@@ -52,16 +52,14 @@ export class PreGameUI {
     }
 
     updateUI(): void {
-        if (this.dialog) {
-            this.dialog.destruct();
-        }
+        this.dialog?.destruct();
         if (this.confirmExit) {
             this.showConfirmExitDialog();
         } else if (this.confirmStart) {
             this.showConfirmStartDialog();
         } else if (this.countdownStarted) {
             this.showCountdown();
-        } else {
+        } else if (this.options.maxPlayers > 1) {
             this.showInvitePlayersDialog();
         }
     }
@@ -136,6 +134,7 @@ export class PreGameUI {
             // delete this.countdownStarted;
             window.clearInterval(this.countdownInterval);
         }
+        this.updateUI();
     }
 
     getCountdownRemaining(): number {

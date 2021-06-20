@@ -17,6 +17,7 @@ export class ServerRoom {
     readonly emitter = new EventEmitter();
     readonly players = new ServerPlayerRegistry();
     readonly rounds = new ServerRoundSet(this.emitter, this.players, this.options);
+    private roundStartTimer = setTimeout(() => {});
     playerIdCounter = 100; // TODO: back to 0
 
     constructor(public options: RoomOptions, public key = randomStr(ROOM_KEY_LENGTH)) {
@@ -24,6 +25,7 @@ export class ServerRoom {
     }
 
     destruct(): void {
+        clearTimeout(this.roundStartTimer);
         this.emitter.removeAllListeners();
         this.players.destruct();
         this.rounds.destruct();
@@ -56,9 +58,13 @@ export class ServerRoom {
         player.id = ++this.playerIdCounter;
         this.players.push(player);
         this.players.sendPlayers();
-        if (this.full && !this.rounds.roundsPlayed) {
-            this.rounds.start();
-        }
+
+        clearTimeout(this.roundStartTimer);
+        this.roundStartTimer = setTimeout(() => {
+            if (this.full && !this.rounds.roundsPlayed) {
+                this.rounds.start();
+            }
+        }, 1000);
     }
 
     removePlayer(player: ServerPlayer): Promise<ServerRoom> {
