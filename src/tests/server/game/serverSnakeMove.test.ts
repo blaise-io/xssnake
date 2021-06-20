@@ -17,7 +17,9 @@ const png = (PNG.sync.read(imagedata) as unknown) as ImageData;
 const levelData = new LevelData(png);
 const level = new Level(levelData);
 
-test("ServerSnakeMove VALIDATE_SUCCES", (t) => {
+const FILE = __filename.split("/src/")[1] + ":";
+
+test(`${FILE} valid when slightly out of sync`, (t) => {
     const serverSnake = new ServerSnake(-1, 0, level);
     serverSnake.parts = [
         [1, 0],
@@ -30,6 +32,7 @@ test("ServerSnakeMove VALIDATE_SUCCES", (t) => {
     serverSnake.size = 6;
 
     const clientPartialParts: Coordinate[] = [
+        [2, 0],
         [3, 0],
         [4, 0],
         [5, 0], // Last client-server match
@@ -52,7 +55,7 @@ test("ServerSnakeMove VALIDATE_SUCCES", (t) => {
     t.end();
 });
 
-test("ServerSnakeMove VALIDATE_ERR_NO_COMMON", (t) => {
+test(`${FILE} no common part`, (t) => {
     const serverSnake = new ServerSnake(-1, 0, level);
     serverSnake.parts = [
         [1, 0],
@@ -75,7 +78,7 @@ test("ServerSnakeMove VALIDATE_ERR_NO_COMMON", (t) => {
     t.end();
 });
 
-test("ServerSnakeMove VALIDATE_ERR_MISMATCHES", (t) => {
+test(`${FILE} too many mismatches`, (t) => {
     const serverSnake = new ServerSnake(-1, 0, level);
     serverSnake.parts = [
         [2, 0],
@@ -99,7 +102,7 @@ test("ServerSnakeMove VALIDATE_ERR_MISMATCHES", (t) => {
     t.end();
 });
 
-test("ServerSnakeMove exact match", (t) => {
+test(`${FILE} completely in sync`, (t) => {
     const serverSnake = new ServerSnake(-1, 0, level);
     serverSnake.parts = [
         [14, 18],

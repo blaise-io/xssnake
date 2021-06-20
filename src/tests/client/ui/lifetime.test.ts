@@ -3,7 +3,9 @@ import { lifetime } from "../../../client/ui/shapeClient";
 import { Shape } from "../../../shared/shape";
 import { State } from "../../../client/state";
 
-test("shape.effects.lifetime", (t) => {
+const FILE = __filename.split("/src/")[1] + ":";
+
+test(`${FILE} shape lifetime`, (t) => {
     const shape = new Shape();
     lifetime(shape, 10, 100);
 

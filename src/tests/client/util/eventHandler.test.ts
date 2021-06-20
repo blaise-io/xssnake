@@ -1,7 +1,9 @@
 import * as test from "tape";
 import { EventHandler } from "../../../client/util/eventHandler";
 
-test("EventHandler.on/trigger/off", (t) => {
+const FILE = __filename.split("/src/")[1] + ":";
+
+test(`${FILE} adding and removing`, (t) => {
     const eventHandler = new EventHandler();
     const eventData = [];
 
@@ -26,7 +28,7 @@ test("EventHandler.on/trigger/off", (t) => {
     eventHandler.destruct();
 });
 
-test("EventHandler.once", (t) => {
+test(`${FILE} once`, (t) => {
     const eventHandler = new EventHandler();
     const eventData = [];
 
@@ -43,7 +45,7 @@ test("EventHandler.once", (t) => {
     eventHandler.destruct();
 });
 
-test("EventHandler.destruct", (t) => {
+test(`${FILE} destruct`, (t) => {
     const eventHandler1 = new EventHandler();
     const eventHandler2 = new EventHandler();
     const eventData1 = [];
@@ -78,7 +80,7 @@ test("EventHandler.destruct", (t) => {
     eventHandler2.destruct();
 });
 
-test("EventHandler.context", (t) => {
+test(`${FILE} handle context`, (t) => {
     const eventHandler1 = new EventHandler();
     const eventHandler2 = new EventHandler();
     const eventData1 = [];

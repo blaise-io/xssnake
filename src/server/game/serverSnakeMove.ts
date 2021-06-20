@@ -65,6 +65,8 @@ export class ServerSnakeMove {
         const clientParts = this.parts.slice(-compareNumParts);
         const serverParts = this.snake.parts.slice(-compareNumParts);
 
+        console.log({ compareNumParts });
+
         // Don't allow gaps in the snake.
         if (this.hasGaps(clientParts)) {
             console.warn("Gaps in what player sent", clientParts);
@@ -73,6 +75,7 @@ export class ServerSnakeMove {
 
         // Find tile closest to head where client and server matched.
         const commonPartIndex = this.getCommonPartIndex(clientParts, serverParts);
+        console.log({ commonPartIndex });
         if (!commonPartIndex) {
             console.warn("No common part (client):", clientParts);
             console.warn("No common part (server):", serverParts);
@@ -81,7 +84,11 @@ export class ServerSnakeMove {
 
         // Check if client-server delta does not exceed max mismatch.
         // TODO: Check over longer period of time to prevent speed cheating.
-        const partsOutOfSync = Math.abs(commonPartIndex.server - commonPartIndex.client);
+        const partsOutOfSync =
+            compareNumParts +
+            Math.abs(commonPartIndex.server - commonPartIndex.client) -
+            Math.max(commonPartIndex.server + 1, commonPartIndex.client + 1);
+
         if (partsOutOfSync) {
             const maxLatency = Math.min(NETCODE_SYNC_MS, this.latency / 2);
             const maxMismatches = Math.max(Math.ceil(maxLatency / this.snake.speed), 1);

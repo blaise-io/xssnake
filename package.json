@@ -18,7 +18,7 @@
   "dependencies": {
     "nano-server": "^0.5.4",
     "pngjs": "^6.0.0",
-    "ws": "^7.4.5"
+    "ws": "^7.5.0"
   },
   "devDependencies": {
     "@types/node": "14.14.37",
@@ -36,6 +36,7 @@
     "prettier": "2.2.1",
     "style-loader": "^2.0.0",
     "supervisor": "^0.12.0",
+    "tap-spec": "^5.0.0",
     "tape": "^5.2.2",
     "ts-loader": "8.1.0",
     "ts-node": "^9.1.1",
@@ -56,6 +57,6 @@
     "server.restart": "supervisor --watch dist/server.js -- dist/server.js --enable-source-maps --throw-deprecation",
     "all": "npm run client & npm run server & npm run client.browser & npm run server.restart",
     "lint": "eslint . --fix --format codeframe --ext .ts; prettier --list-different --write '**/*.ts' --loglevel warn",
-    "test": "npx ts-node --files $(which tape) 'src/tests/**/*.test.ts'"
+    "test": "npx ts-node --files $(which tape) 'src/tests/**/*.test.ts' | tap-spec"
   }
 }
